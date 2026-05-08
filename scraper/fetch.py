@@ -1683,22 +1683,38 @@ def _looks_institutional(name: str) -> bool:
 
 
 def _load_search_cache() -> Dict[str, Optional[Dict[str, str]]]:
-    """Load the persistent name → property-info cache."""
+    """Load the persistent name → property-info cache.
+
+    Wrapped in a versioned envelope: {"_version": "v2", "data": {...}}.
+    Mismatched versions return an empty cache (forces re-lookup), which
+    is how we invalidate cache entries built with an older URL format.
+    """
     path = ROOT_DIR / NCAD_SEARCH_CACHE
     if not path.exists():
         return {}
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        raw = json.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
         log.warning("could not load esearch cache: %s", exc)
         return {}
+
+    # Versioned envelope (current format).
+    if isinstance(raw, dict) and raw.get("_version") == "v2":
+        return raw.get("data", {})
+
+    # Legacy un-versioned cache — discard. Entries built with the old
+    # URL pattern were all `null` anyway (wrong format), so wiping the
+    # cache and re-querying is strictly an improvement.
+    log.info("legacy esearch cache detected — discarding (will rebuild)")
+    return {}
 
 
 def _save_search_cache(cache: Dict[str, Optional[Dict[str, str]]]) -> None:
     path = ROOT_DIR / NCAD_SEARCH_CACHE
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(cache, indent=2), encoding="utf-8")
+        envelope = {"_version": "v2", "data": cache}
+        path.write_text(json.dumps(envelope, indent=2), encoding="utf-8")
         log.info("esearch cache: %d entries written to %s",
                  len(cache), path)
     except Exception as exc:
@@ -1782,16 +1798,30 @@ async def _run_ncad_searches(names: List[str],
         context = await browser.new_context(user_agent=USER_AGENT)
         page = await context.new_page()
 
-        # Warm the session: load the search homepage once so the cookie
-        # + anti-forgery token are set on subsequent requests.
+        # Warm the session and harvest the per-session search token.
+        # The BIS Consultants esearch portal embeds a `searchSessionToken`
+        # in <meta name="search-token"> on its homepage. Every search URL
+        # must include this token or the result page returns empty.
+        token = ""
         try:
             await page.goto(NCAD_ESEARCH_BASE + "/",
                              wait_until="domcontentloaded", timeout=30_000)
+            token = await page.evaluate("""() => {
+                const m = document.querySelector('meta[name="search-token"]');
+                return m ? m.getAttribute('content') : '';
+            }""") or ""
+            log.info("esearch session token acquired: %s",
+                     "yes" if token else "no")
         except Exception as exc:
             log.error("esearch home failed to load: %s", exc)
             await context.close()
             await browser.close()
             return cache
+
+        # Detect the current tax year from the home page (defaults to current).
+        # The homepage <option selected> for tax year tells us which year
+        # the portal currently considers "current".
+        current_year = str(datetime.now(timezone.utc).year)
 
         for i, name in enumerate(names, start=1):
             if name in cache:
@@ -1800,7 +1830,7 @@ async def _run_ncad_searches(names: List[str],
                 log.warning("esearch: time budget exhausted after %d names", i)
                 break
             try:
-                info = await _esearch_one(page, name)
+                info = await _esearch_one(page, name, token, current_year)
             except Exception as exc:
                 log.warning("esearch lookup failed for %r: %s", name, exc)
                 info = None
@@ -1817,25 +1847,38 @@ async def _run_ncad_searches(names: List[str],
     return cache
 
 
-async def _esearch_one(page, name: str) -> Optional[Dict[str, str]]:
+async def _esearch_one(page, name: str, token: str,
+                        current_year: str) -> Optional[Dict[str, str]]:
     """Query NCAD esearch for a single owner name, return the first
     matching parcel's address dict, or None.
 
-    The portal expects "LAST FIRST" format. For multi-word names we try
-    the original first, then a swapped version, and finally a last-name-
-    only fallback. This handles both individuals (PEREZ JOHN A) and
-    entities (HOTROD & TT S GREAT ADVENTURES LLC).
+    The BIS Consultants esearch portal expects URLs like:
+      /search/result?keywords=OwnerName:SCHAFER Year:2026 &searchSessionToken=...
+
+    The `keywords=` value is a structured query language with key:value
+    pairs separated by spaces. `OwnerName:` scopes the search to the
+    owner-name field; `Year:` selects the tax roll year.
     """
     candidates = _esearch_query_variants(name)
 
     for candidate in candidates:
-        url = (f"{NCAD_ESEARCH_BASE}/Search/Result?"
-               + urlencode({"keywords": candidate}))
+        # Build the structured-keyword query string (with trailing space —
+        # observed in real portal URLs and may be required by the parser).
+        keywords = f"OwnerName:{candidate} Year:{current_year} "
+        params = {"keywords": keywords}
+        if token:
+            params["searchSessionToken"] = token
+        url = f"{NCAD_ESEARCH_BASE}/search/result?{urlencode(params)}"
+
         try:
             await page.goto(url, wait_until="domcontentloaded", timeout=20_000)
+            # Wait for either result rows or a "no results" indicator.
             try:
                 await page.wait_for_selector(
-                    "table tbody tr, [class*='no-results'], .alert",
+                    "a[href*='/Property/View/'], "
+                    "[class*='no-results'], "
+                    "[class*='NoResults'], "
+                    ".empty",
                     timeout=8_000,
                 )
             except Exception:
