@@ -1172,30 +1172,45 @@ def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
     ID. Files that have OWNER fields contribute owner data; files that have
     SITE/MAIL address fields contribute address data. We then join on the
     shared ID columns to produce a single row per parcel.
+
+    Note: NCAD's "Public Export" historically omits owner names for
+    privacy reasons, in which case this function will log the available
+    schema (so the operator can see what's there) and return an empty
+    lookup. The fall-back path in `enrich_with_parcels` will still
+    pull addresses from the legal-description field of clerk records.
     """
     parse_deadline = time.time() + 4 * 60   # 4 minutes
 
-    # Common ID column names used in Texas PTAD exports.
-    ID_COLS = ("PROP_ID", "PROPID", "PROPERTY_ID", "ACCOUNT_NUM", "ACCOUNTNUMBER",
-               "ACCT_NUM", "ACCOUNT", "PARCEL_ID", "PARCELID", "GEO_ID",
-               "QUICK_REF_ID")
-    OWNER_COLS = ("OWNER", "OWN1", "OWNER1", "OWNER_NAME", "PYOWNER",
-                  "PRIMARY_OWNER", "FILE_AS_NAME", "OWNER_FILE_AS_NAME")
+    # Substrings (uppercased) that identify columns by their semantic role.
+    # We match by substring rather than exact name because Texas PTAD column
+    # naming varies (OWNER, OWN1, FILE_AS_NAME, PY_OWNER_NAME, etc.).
+    ID_TOKENS    = ("PROP_ID", "PROPID", "PROPERTY_ID", "ACCOUNT_NUM",
+                    "ACCT_NUM", "PARCEL_ID", "PARCELID", "GEO_ID", "QUICK_REF")
+    OWNER_TOKENS = ("OWNER", "FILE_AS_NAME", "PY_OWNER")
+    SITE_TOKENS  = ("SITUS", "SITE_ADDR", "PROP_ADDR", "STREET")
+    MAIL_TOKENS  = ("MAIL_ADDR", "MAILING_ADDR", "ADDR_1", "ADDR1",
+                    "ADDR_LINE", "MAIL_LINE")
+    CITY_TOKENS  = ("CITY",)
+    STATE_TOKENS = ("STATE",)
+    ZIP_TOKENS   = ("ZIP", "POSTAL")
+
+    def find_col(headers: List[str], tokens: tuple, exclude: tuple = ()) -> str:
+        """Return the first header whose name contains any token (case-
+        insensitive) and none of the excludes."""
+        for h in headers:
+            up = h.upper()
+            if any(s in up for s in exclude):
+                continue
+            if any(t in up for t in tokens):
+                return h
+        return ""
 
     owner_by_id: Dict[str, str] = {}
     addr_by_id: Dict[str, Dict[str, str]] = {}
 
     text_files = [n for n in names
                   if n.lower().endswith((".txt", ".csv", ".tsv"))]
-
-    # Skip files that obviously aren't relevant (saves I/O and parse time).
-    SKIP = ("appraisal_agent", "deed_history", "improvement", "exemption",
-            "abatement", "entity", "arb_", "audit", "tax_deferral",
-            "lawsuit", "header", "country_code", "state_code",
-            "abstract_subdv", "mobile_home")
-    text_files = [n for n in text_files
-                  if not any(s in n.lower() for s in SKIP)]
-    log.info("NCAD: %d candidate text files after filtering", len(text_files))
+    log.info("NCAD: %d text files to scan", len(text_files))
 
     for name in text_files:
         if time.time() > parse_deadline:
@@ -1209,40 +1224,62 @@ def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
                 continue
             delim = _sniff_delimiter(text)
             reader = csv.DictReader(io.StringIO(text), delimiter=delim)
+            headers = [(h or "").strip() for h in (reader.fieldnames or [])]
+
+            # Find which columns play which role.
+            id_col    = find_col(headers, ID_TOKENS)
+            owner_col = find_col(headers, OWNER_TOKENS)
+            site_col  = find_col(headers, SITE_TOKENS, exclude=("CITY", "ZIP", "STATE"))
+            mail_col  = find_col(headers, MAIL_TOKENS, exclude=("CITY", "ZIP", "STATE"))
+            site_city  = find_col(headers, CITY_TOKENS) if site_col else ""
+            site_state = find_col(headers, STATE_TOKENS)
+            site_zip   = find_col(headers, ZIP_TOKENS)
+
+            # Log a header sample so we can see schema in the log.
+            log.info("  %s: cols=%d delim=%r", name, len(headers), delim)
+            log.info("    headers (first 25): %s", headers[:25])
+            log.info("    matched: id=%r owner=%r site=%r mail=%r",
+                     id_col, owner_col, site_col, mail_col)
+
             row_count = 0
             owner_added = 0
             addr_added = 0
             for row in reader:
                 row_count += 1
                 clean = _clean_row(row)
-                # Find the ID column for this row.
-                pid = ""
-                for c in ID_COLS:
-                    if c in clean and clean[c]:
-                        pid = clean[c]
-                        break
+                if not id_col:
+                    continue
+                pid = clean.get(id_col.upper(), "")
                 if not pid:
                     continue
+                if owner_col:
+                    name_val = clean.get(owner_col.upper(), "")
+                    if name_val and pid not in owner_by_id:
+                        owner_by_id[pid] = name_val
+                        owner_added += 1
+                site_val = clean.get(site_col.upper(), "") if site_col else ""
+                mail_val = clean.get(mail_col.upper(), "") if mail_col else ""
+                if (site_val or mail_val) and pid not in addr_by_id:
+                    addr_by_id[pid] = {
+                        "site_addr": site_val,
+                        "site_city": clean.get(site_city.upper(), "")
+                                     if site_city else "",
+                        "site_state": clean.get(site_state.upper(), "TX")
+                                      if site_state else "TX",
+                        "site_zip": clean.get(site_zip.upper(), "")
+                                    if site_zip else "",
+                        "mail_addr": mail_val,
+                        "mail_city": clean.get(site_city.upper(), "")
+                                     if site_city else "",
+                        "mail_state": clean.get(site_state.upper(), "TX")
+                                      if site_state else "TX",
+                        "mail_zip": clean.get(site_zip.upper(), "")
+                                    if site_zip else "",
+                    }
+                    addr_added += 1
 
-                # Try owner.
-                for c in OWNER_COLS:
-                    if c in clean and clean[c]:
-                        if pid not in owner_by_id:
-                            owner_by_id[pid] = clean[c]
-                            owner_added += 1
-                        break
-
-                # Try address (site or mail).
-                addr_info = _normalize_parcel_row(clean)
-                if addr_info:
-                    addr_info.pop("_owner_raw", None)
-                    if addr_info.get("site_addr") or addr_info.get("mail_addr"):
-                        if pid not in addr_by_id:
-                            addr_by_id[pid] = addr_info
-                            addr_added += 1
-
-            log.info("  parsed %s: %d rows (+%d owner, +%d addr), delim=%r",
-                     name, row_count, owner_added, addr_added, delim)
+            log.info("    %d rows (+%d owner, +%d addr)",
+                     row_count, owner_added, addr_added)
         except Exception as exc:
             log.warning("text parse failed for %s: %s", name, exc)
             continue
@@ -1255,8 +1292,6 @@ def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
     for pid, owner_name in owner_by_id.items():
         info = addr_by_id.get(pid)
         if not info:
-            # No address for this owner — register the owner anyway,
-            # so the clerk-side score can still bump for the LLC flag, etc.
             info = {"site_addr": "", "site_city": "", "site_state": "TX",
                     "site_zip": "", "mail_addr": "", "mail_city": "",
                     "mail_state": "", "mail_zip": ""}
@@ -1548,32 +1583,113 @@ def _owner_name_variants(name: str) -> List[str]:
 def enrich_with_parcels(records: List[ClerkRecord],
                         owner_lookup: Dict[str, Dict[str, str]]) -> None:
     """Mutates `records` in place, filling in property + mailing address
-    fields from the NCAD owner lookup whenever we can find a match.
+    fields. First tries the NCAD owner→parcel lookup. As a fallback,
+    extracts a Texas-shaped property address directly from the legal
+    description field — which the Nueces clerk often uses for the
+    site address on Lis Pendens, Foreclosure, and Mechanic Lien records.
     """
-    if not owner_lookup:
-        log.info("no owner lookup available; skipping address enrichment")
-        return
+    matched_ncad = 0
+    extracted_legal = 0
 
-    matched = 0
     for rec in records:
-        if not rec.owner:
-            continue
-        for variant in _owner_name_variants(rec.owner):
-            info = owner_lookup.get(variant)
-            if info:
-                rec.prop_address = info.get("site_addr", "")
-                rec.prop_city    = info.get("site_city", "")
-                rec.prop_state   = info.get("site_state", "TX")
-                rec.prop_zip     = info.get("site_zip", "")
-                rec.mail_address = info.get("mail_addr", "")
-                rec.mail_city    = info.get("mail_city", "")
-                rec.mail_state   = info.get("mail_state", "")
-                rec.mail_zip     = info.get("mail_zip", "")
-                matched += 1
-                break
-    log.info("address enrichment: %d/%d records matched (%d%%)",
-             matched, len(records),
-             int(100 * matched / max(1, len(records))))
+        # Strategy A: NCAD owner-name match.
+        if owner_lookup and rec.owner:
+            for variant in _owner_name_variants(rec.owner):
+                info = owner_lookup.get(variant)
+                if info:
+                    rec.prop_address = info.get("site_addr", "")
+                    rec.prop_city    = info.get("site_city", "")
+                    rec.prop_state   = info.get("site_state", "TX")
+                    rec.prop_zip     = info.get("site_zip", "")
+                    rec.mail_address = info.get("mail_addr", "")
+                    rec.mail_city    = info.get("mail_city", "")
+                    rec.mail_state   = info.get("mail_state", "")
+                    rec.mail_zip     = info.get("mail_zip", "")
+                    matched_ncad += 1
+                    break
+
+        # Strategy B: extract address from legal description.
+        # The Nueces clerk often records the property's street address in
+        # the legal-description column for Lis Pendens, Foreclosures, and
+        # Mechanic Liens. Pull it if the property fields are still empty.
+        if not rec.prop_address and rec.legal:
+            addr = _extract_tx_address(rec.legal)
+            if addr:
+                rec.prop_address = addr["street"]
+                rec.prop_city    = addr["city"] or "CORPUS CHRISTI"
+                rec.prop_state   = addr["state"] or "TX"
+                rec.prop_zip     = addr["zip"]
+                extracted_legal += 1
+
+    log.info("address enrichment: NCAD=%d, legal-extract=%d / %d total (%d%% have address)",
+             matched_ncad, extracted_legal, len(records),
+             int(100 * (matched_ncad + extracted_legal) / max(1, len(records))))
+
+
+# Texas street types we recognize when sniffing addresses out of legal text.
+_TX_STREET_TYPES = (
+    "ST", "STREET", "AVE", "AVENUE", "BLVD", "BOULEVARD",
+    "DR", "DRIVE", "RD", "ROAD", "LN", "LANE", "CT", "COURT",
+    "PL", "PLACE", "WAY", "TRL", "TRAIL", "PKWY", "PARKWAY",
+    "CIR", "CIRCLE", "TER", "TERRACE", "HWY", "HIGHWAY", "LOOP",
+    "BAY", "RUN", "ROW", "PATH", "PASS", "CROSS",
+)
+
+
+def _extract_tx_address(text: str) -> Optional[Dict[str, str]]:
+    """Pull a Texas property address out of unstructured text.
+
+    Matches patterns like:
+      "226 BUSHICK PL CORPUS CHRISTI TX 78402"
+      "1234 MAIN ST, CORPUS CHRISTI TX 78415"
+      "5678 N OAK STREET CORPUS CHRISTI, TX 78404-1234"
+
+    Returns {street, city, state, zip} or None if no clean match.
+    """
+    if not text:
+        return None
+    t = text.upper().strip()
+    # Strip trailing parentheticals and Lot/Block suffixes — those aren't
+    # part of the address but often follow it.
+    t = re.sub(r"\s*\([^)]*\)\s*$", "", t).strip()
+    t = re.sub(r"\s*\b(LOT|BLK|BLOCK|UNIT|APT|SUITE|STE)\s+[\w-]+(\s+[\w-]+)?\s*$",
+               "", t, flags=re.IGNORECASE).strip()
+    # Must start with a number (the street number).
+    if not re.match(r"^\s*\d+", t):
+        return None
+    # Build the regex capturing street-num, name, type, then optional city/state/zip.
+    types = "|".join(_TX_STREET_TYPES)
+    pattern = re.compile(
+        rf"^\s*(?P<num>\d+(?:[-/]\d+)?)\s+"
+        rf"(?P<name>[A-Z0-9 ]+?)\s+"
+        rf"(?P<type>{types})\b"
+        rf"(?P<rest>.*)$",
+        re.IGNORECASE,
+    )
+    m = pattern.match(t)
+    if not m:
+        return None
+    street = f"{m.group('num')} {m.group('name').strip()} {m.group('type')}"
+    rest = (m.group("rest") or "").strip(" ,")
+    city, state, zip_code = "", "", ""
+    if rest:
+        # Pull off ZIP first (last 5 digits, optionally with -4 extension).
+        zm = re.search(r"(\d{5})(?:-\d{4})?\s*$", rest)
+        if zm:
+            zip_code = zm.group(1)
+            rest = rest[:zm.start()].strip(" ,")
+        # State (2-letter at the end of remaining).
+        sm = re.search(r"\b([A-Z]{2})\s*$", rest)
+        if sm:
+            state = sm.group(1)
+            rest = rest[:sm.start()].strip(" ,")
+        city = rest.strip(" ,")
+    return {
+        "street": street.strip(),
+        "city": city,
+        "state": state,
+        "zip": zip_code,
+    }
 
 
 def compute_flags_and_score(rec: ClerkRecord, today_iso: str,
