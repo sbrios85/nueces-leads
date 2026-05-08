@@ -80,6 +80,21 @@ CLERK_DOC_URL = f"{CLERK_BASE}/doc"
 # we discover the most-recent one by parsing the downloads page.
 NCAD_DOWNLOADS_PAGE = "https://nuecescad.net/downloads-reports/"
 
+# NCAD's owner-name search portal (BIS Consultants "esearch" platform).
+# Used to look up property + mailing addresses for owners who appear in
+# clerk records but whose addresses aren't in the legal-description text.
+# This is the path that fills in addresses on Judgments and Tax Liens.
+NCAD_ESEARCH_BASE = "https://esearch.nuecescad.net"
+
+# Cache file for esearch lookups. Keeps us from re-querying the same name
+# every day; results are valid until the parcel data shifts (months).
+NCAD_SEARCH_CACHE = ".cache/ncad_search_cache.json"
+
+# Rate-limit knobs for the esearch lookup phase.
+NCAD_SEARCH_MAX_LOOKUPS = 100      # per run — protects against runaway loops
+NCAD_SEARCH_DELAY_SEC   = 1.5      # between requests, polite to the server
+NCAD_SEARCH_PHASE_BUDGET_SEC = 8 * 60   # hard wall-clock cap
+
 LOOKBACK_DAYS = 30   # Window covering recent filings. The clerk portal
                      # is typically 5-10 days behind real-time as records
                      # work through certification. 30 days gives us a
@@ -1619,6 +1634,389 @@ def _owner_name_variants(name: str) -> List[str]:
 
 
 # --------------------------------------------------------------------------- #
+# NCAD esearch (per-name property lookup)
+# --------------------------------------------------------------------------- #
+#
+# This complements the bulk-export path. For each owner we couldn't
+# enrich from the legal-description extractor, we hit NCAD's public
+# property-search portal at esearch.nuecescad.net and pull the
+# matching parcel's situs + mailing address.
+#
+# The portal is a server-rendered ASP.NET app powered by BIS Consultants
+# (the same vendor used by Travis, Collin, Hays, Fort Bend and dozens
+# of other Texas CADs). It uses a CSRF-style anti-forgery token baked
+# into the home page, so we drive it via Playwright (which carries the
+# token + cookies for us) rather than trying to fake the form submit.
+#
+# We aggressively cache results to disk so the same name is never
+# looked up twice, and skip names that obviously won't have parcels
+# (banks, agencies, debt collectors).
+
+# Names we never bother looking up — they're not Nueces property owners,
+# they're institutional plaintiffs/creditors/agencies that file recordings.
+_INSTITUTIONAL_RE = re.compile(
+    r"\b("
+    r"USA|UNITED\s*STATES|UNITED\s*STATES\s*OF\s*AMERICA|"
+    r"INTERNAL\s*REVENUE|IRS|TREASURY|"
+    r"STATE\s*OF\s*TEXAS|TEXAS\s*COMPTROLLER|TEXAS\s*WORKFORCE|"
+    r"COUNTY\s*OF|CITY\s*OF|DEPARTMENT\s*OF|"
+    r"DISTRICT\s*COURT|MUNICIPAL\s*COURT|COMMISSIONERS?|"
+    r"MEDICAID|MEDICARE|HHS|"
+    r"FREDDIE\s*MAC|FANNIE\s*MAE|GINNIE\s*MAE|"
+    r"BANK\s*(OF|N\.?A\.?|NATIONAL)|WELLS\s*FARGO|"
+    r"CHASE\s*(BANK)?|JPMORGAN|CITIBANK|"
+    r"(CREDIT|CAPITAL|RECEIVABLES?|RECOVERY|FUND)\s*(MANAGEMENT|SERVICES?|CORP|INC|LLC|LP)|"
+    r"MIDLAND\s*CREDIT|PORTFOLIO\s*RECOVERY|LVNV\s*FUNDING|"
+    r"DISCOVER\s*BANK|AMERICAN\s*EXPRESS|CAPITAL\s*ONE|"
+    r"HOA|HOMEOWNERS\s*ASSOCIATION|CONDOMINIUM"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+def _looks_institutional(name: str) -> bool:
+    """True if the name looks like an institution rather than a Nueces
+    property owner — used to skip pointless esearch lookups."""
+    if not name:
+        return True
+    return bool(_INSTITUTIONAL_RE.search(name))
+
+
+def _load_search_cache() -> Dict[str, Optional[Dict[str, str]]]:
+    """Load the persistent name → property-info cache."""
+    path = ROOT_DIR / NCAD_SEARCH_CACHE
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        log.warning("could not load esearch cache: %s", exc)
+        return {}
+
+
+def _save_search_cache(cache: Dict[str, Optional[Dict[str, str]]]) -> None:
+    path = ROOT_DIR / NCAD_SEARCH_CACHE
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(cache, indent=2), encoding="utf-8")
+        log.info("esearch cache: %d entries written to %s",
+                 len(cache), path)
+    except Exception as exc:
+        log.warning("could not save esearch cache: %s", exc)
+
+
+def enrich_via_ncad_search(records: List[ClerkRecord]) -> int:
+    """For each record without an address, query NCAD's esearch portal
+    for the owner's name and fill in property + mailing address.
+
+    Returns the number of records newly enriched.
+    """
+    # Pick names we want to look up.
+    todo: List[ClerkRecord] = []
+    for rec in records:
+        if rec.prop_address:
+            continue                  # already have an address
+        if not rec.owner:
+            continue
+        if _looks_institutional(rec.owner):
+            continue                  # banks/IRS/etc don't own parcels here
+        todo.append(rec)
+
+    if not todo:
+        log.info("esearch: no records eligible for lookup")
+        return 0
+
+    log.info("esearch: %d records eligible (capped at %d)",
+             len(todo), NCAD_SEARCH_MAX_LOOKUPS)
+    todo = todo[:NCAD_SEARCH_MAX_LOOKUPS]
+
+    cache = _load_search_cache()
+    log.info("esearch: %d cached entries loaded", len(cache))
+
+    try:
+        results = asyncio.run(_run_ncad_searches([r.owner for r in todo], cache))
+    except Exception as exc:
+        log.error("esearch loop failed: %s\n%s", exc, traceback.format_exc())
+        results = {}
+
+    _save_search_cache(cache)
+
+    matched = 0
+    for rec in todo:
+        info = results.get(rec.owner) or cache.get(rec.owner)
+        if not info:
+            continue
+        rec.prop_address = info.get("site_addr", "")
+        rec.prop_city    = info.get("site_city", "") or "CORPUS CHRISTI"
+        rec.prop_state   = info.get("site_state", "") or "TX"
+        rec.prop_zip     = info.get("site_zip", "")
+        rec.mail_address = info.get("mail_addr", "")
+        rec.mail_city    = info.get("mail_city", "")
+        rec.mail_state   = info.get("mail_state", "") or "TX"
+        rec.mail_zip     = info.get("mail_zip", "")
+        if rec.prop_address:
+            matched += 1
+    log.info("esearch: %d / %d records enriched", matched, len(todo))
+    return matched
+
+
+async def _run_ncad_searches(names: List[str],
+                              cache: Dict[str, Optional[Dict[str, str]]]
+                              ) -> Dict[str, Optional[Dict[str, str]]]:
+    """Drive Playwright through one esearch query per uncached name.
+
+    Updates `cache` in place. Returns the same cache for convenience.
+    `cache[name] = None` means "we tried, didn't find anything" — so we
+    don't keep retrying dead names.
+    """
+    try:
+        from playwright.async_api import async_playwright  # type: ignore
+    except ImportError:
+        log.error("playwright not available — esearch skipped")
+        return cache
+
+    deadline = time.time() + NCAD_SEARCH_PHASE_BUDGET_SEC
+
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(headless=True, args=["--no-sandbox"])
+        context = await browser.new_context(user_agent=USER_AGENT)
+        page = await context.new_page()
+
+        # Warm the session: load the search homepage once so the cookie
+        # + anti-forgery token are set on subsequent requests.
+        try:
+            await page.goto(NCAD_ESEARCH_BASE + "/",
+                             wait_until="domcontentloaded", timeout=30_000)
+        except Exception as exc:
+            log.error("esearch home failed to load: %s", exc)
+            await context.close()
+            await browser.close()
+            return cache
+
+        for i, name in enumerate(names, start=1):
+            if name in cache:
+                continue                 # already looked up (hit OR miss)
+            if time.time() > deadline:
+                log.warning("esearch: time budget exhausted after %d names", i)
+                break
+            try:
+                info = await _esearch_one(page, name)
+            except Exception as exc:
+                log.warning("esearch lookup failed for %r: %s", name, exc)
+                info = None
+            cache[name] = info  # store None for misses so we don't retry
+            if info and info.get("site_addr"):
+                log.info("  esearch[%d] %r → %s",
+                         i, name, info.get("site_addr"))
+            else:
+                log.info("  esearch[%d] %r → no match", i, name)
+            await asyncio.sleep(NCAD_SEARCH_DELAY_SEC)
+
+        await context.close()
+        await browser.close()
+    return cache
+
+
+async def _esearch_one(page, name: str) -> Optional[Dict[str, str]]:
+    """Query NCAD esearch for a single owner name, return the first
+    matching parcel's address dict, or None.
+
+    The portal expects "LAST FIRST" format. For multi-word names we try
+    the original first, then a swapped version, and finally a last-name-
+    only fallback. This handles both individuals (PEREZ JOHN A) and
+    entities (HOTROD & TT S GREAT ADVENTURES LLC).
+    """
+    candidates = _esearch_query_variants(name)
+
+    for candidate in candidates:
+        url = (f"{NCAD_ESEARCH_BASE}/Search/Result?"
+               + urlencode({"keywords": candidate}))
+        try:
+            await page.goto(url, wait_until="domcontentloaded", timeout=20_000)
+            try:
+                await page.wait_for_selector(
+                    "table tbody tr, [class*='no-results'], .alert",
+                    timeout=8_000,
+                )
+            except Exception:
+                pass
+            await page.wait_for_timeout(300)
+        except Exception as exc:
+            log.debug("esearch nav failed for %r: %s", candidate, exc)
+            continue
+
+        # Look for the first result link to a property detail page.
+        try:
+            href = await page.evaluate("""() => {
+                const links = document.querySelectorAll('a[href*="/Property/View/"]');
+                if (links.length === 0) return null;
+                return links[0].getAttribute('href');
+            }""")
+        except Exception:
+            href = None
+
+        if not href:
+            continue   # no result for this query variant — try next
+
+        # Navigate to the detail page to harvest situs + mailing address.
+        if not href.startswith("http"):
+            detail_url = NCAD_ESEARCH_BASE + (href if href.startswith("/")
+                                              else "/" + href)
+        else:
+            detail_url = href
+        try:
+            await page.goto(detail_url, wait_until="domcontentloaded",
+                             timeout=20_000)
+            await page.wait_for_timeout(400)
+        except Exception:
+            continue
+
+        try:
+            html = await page.content()
+        except Exception:
+            continue
+
+        info = _parse_esearch_detail(html)
+        if info and (info.get("site_addr") or info.get("mail_addr")):
+            return info
+
+    return None
+
+
+def _esearch_query_variants(name: str) -> List[str]:
+    """Generate up to 3 query strings to try for a given owner name."""
+    n = re.sub(r"\s+", " ", name.upper().strip())
+    n = re.sub(r"[^A-Z0-9 ,&-]", " ", n)
+    n = re.sub(r"\s+", " ", n).strip(" ,")
+    if not n:
+        return []
+    out = [n]                                # try as-is first
+    if "," in n:
+        # "SCHAFER, ROBERT" → "SCHAFER ROBERT"
+        out.append(n.replace(",", "").strip())
+    parts = n.replace(",", "").split()
+    if len(parts) >= 2:
+        # Last-name-only fallback (limits results, but at least catches
+        # individuals when the first/middle names diverge).
+        last = parts[0]
+        if len(last) >= 3 and last not in out:
+            out.append(last)
+    # Dedup while preserving order.
+    seen = set()
+    uniq = []
+    for q in out:
+        if q not in seen:
+            seen.add(q)
+            uniq.append(q)
+    return uniq[:3]
+
+
+def _parse_esearch_detail(html: str) -> Optional[Dict[str, str]]:
+    """Pull situs + mailing address out of an esearch property-detail page.
+
+    BIS Consultants property pages render addresses in <dl>/<dd> pairs
+    or in identifiable card sections labeled "Situs Address" / "Mailing
+    Address". We use BS4 to walk by label and pick up the values nearby.
+    """
+    if not html:
+        return None
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
+
+    text_pairs: Dict[str, str] = {}
+
+    # Pattern A: <dl><dt>Label</dt><dd>Value</dd>... — common BIS layout.
+    for dl in soup.find_all("dl"):
+        dts = dl.find_all("dt")
+        dds = dl.find_all("dd")
+        for dt, dd in zip(dts, dds):
+            label = dt.get_text(" ", strip=True).lower().rstrip(":")
+            value = dd.get_text(" ", strip=True)
+            if label and value:
+                text_pairs[label] = value
+
+    # Pattern B: cards with header + body where header contains "Address".
+    for card in soup.find_all(class_=re.compile(r"card|panel|section",
+                                                  re.IGNORECASE)):
+        header = card.find(class_=re.compile(r"header|title", re.IGNORECASE))
+        if not header:
+            continue
+        ht = header.get_text(" ", strip=True).lower()
+        body = card.find(class_=re.compile(r"body|content", re.IGNORECASE))
+        if not body:
+            continue
+        bv = body.get_text(" \n", strip=True)
+        if "situs" in ht or "property address" in ht:
+            text_pairs.setdefault("situs address", bv)
+        elif "mail" in ht:
+            text_pairs.setdefault("mailing address", bv)
+
+    # Pattern C: scan label cells in tables.
+    for tr in soup.find_all("tr"):
+        cells = tr.find_all(["th", "td"])
+        if len(cells) < 2:
+            continue
+        label = cells[0].get_text(" ", strip=True).lower().rstrip(":")
+        value = cells[1].get_text(" ", strip=True)
+        if label and value:
+            text_pairs.setdefault(label, value)
+
+    def find_value(*tokens: str) -> str:
+        for label, value in text_pairs.items():
+            if all(t in label for t in tokens):
+                return value
+        return ""
+
+    site_full = (find_value("situs") or find_value("property", "address")
+                 or find_value("address", "situs"))
+    mail_full = (find_value("mailing", "address") or find_value("mail", "address")
+                 or find_value("owner", "address"))
+
+    site_addr, site_city, site_state, site_zip = _split_us_address(site_full)
+    mail_addr, mail_city, mail_state, mail_zip = _split_us_address(mail_full)
+
+    if not (site_addr or mail_addr):
+        return None
+
+    return {
+        "site_addr":  site_addr,
+        "site_city":  site_city or "CORPUS CHRISTI",
+        "site_state": site_state or "TX",
+        "site_zip":   site_zip,
+        "mail_addr":  mail_addr,
+        "mail_city":  mail_city,
+        "mail_state": mail_state,
+        "mail_zip":   mail_zip,
+    }
+
+
+def _split_us_address(full: str) -> Tuple[str, str, str, str]:
+    """Split a full US address string into (street, city, state, zip)."""
+    if not full:
+        return ("", "", "", "")
+    s = re.sub(r"\s+", " ", full).strip(" ,")
+    # Pull off ZIP last, then state, then assume the rest before the last
+    # comma (or last newline) is the city.
+    state, zip_code = "", ""
+    zm = re.search(r"(\d{5})(?:-\d{4})?\s*$", s)
+    if zm:
+        zip_code = zm.group(1)
+        s = s[:zm.start()].strip(" ,")
+    sm = re.search(r"\b([A-Z]{2})\s*$", s)
+    if sm:
+        state = sm.group(1)
+        s = s[:sm.start()].strip(" ,")
+    # Now the remaining `s` is "STREET, CITY" or "STREET CITY". Try comma
+    # first; if not, take the last word as city — imperfect but workable.
+    if "," in s:
+        street, _, city = s.rpartition(",")
+        return (street.strip(), city.strip(), state, zip_code)
+    return (s.strip(), "", state, zip_code)
+
+
+# --------------------------------------------------------------------------- #
 # Enrichment + scoring
 # --------------------------------------------------------------------------- #
 
@@ -1941,15 +2339,10 @@ def main() -> int:
     log.info("NCAD phase took %.1fs (%d owner-name variants)",
              ncad_elapsed, len(owner_lookup))
 
-    # 7) If NCAD produced anything, re-enrich and re-write.
+    # 7) NCAD bulk-export enrichment. If this produced anything, redo
+    #    address pass and rewrite outputs.
     if owner_lookup:
-        # Reset prop fields populated from NCAD path only — keep legal-extract
-        # fallbacks where NCAD doesn't have a match.
-        for rec in clerk_records:
-            # Only redo enrichment for records that don't already have address.
-            pass
         enrich_with_parcels(clerk_records, owner_lookup)
-        # Recompute scores (address bonus may now apply).
         owner_idx = build_owner_cat_index(clerk_records)
         for rec in clerk_records:
             try:
@@ -1958,7 +2351,30 @@ def main() -> int:
                 pass
         clerk_records.sort(key=lambda r: r.score or 0, reverse=True)
         write_outputs(clerk_records, start_iso, end_iso)
-        log.info("=== second-pass write done with NCAD enrichment ===")
+        log.info("=== second-pass write done with NCAD bulk enrichment ===")
+
+    # 8) NCAD per-name esearch lookup — fills in addresses for owners
+    #    whose legal-description didn't contain one (most judgments and
+    #    tax liens). Best-effort with hard time budget.
+    try:
+        gained = enrich_via_ncad_search(clerk_records)
+    except Exception as exc:
+        log.error("esearch phase failed: %s\n%s",
+                  exc, traceback.format_exc())
+        gained = 0
+
+    # 9) If esearch gained any addresses, recompute scores & rewrite.
+    if gained > 0:
+        owner_idx = build_owner_cat_index(clerk_records)
+        for rec in clerk_records:
+            try:
+                compute_flags_and_score(rec, end_iso, owner_idx)
+            except Exception:
+                pass
+        clerk_records.sort(key=lambda r: r.score or 0, reverse=True)
+        write_outputs(clerk_records, start_iso, end_iso)
+        log.info("=== final write done with esearch enrichment "
+                 "(+%d addresses) ===", gained)
 
     log.info("=== done: %d records ===", len(clerk_records))
     return 0
