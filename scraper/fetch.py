@@ -363,6 +363,9 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
         return []
 
     seen: Dict[str, ClerkRecord] = {}
+    debug_dir = ROOT_DIR / "debug"
+    debug_dir.mkdir(parents=True, exist_ok=True)
+    diagnostics_saved = False  # only save one snapshot, for the first query
 
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=True, args=["--no-sandbox"])
@@ -370,23 +373,26 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
         page = await context.new_page()
 
         # Buffer for JSON responses caught on the wire.
-        captured_payloads: List[Any] = []
+        # Each entry: {"url": str, "body": Any, "ts": float}
+        captured_payloads: List[Dict[str, Any]] = []
 
         async def on_response(resp):
             try:
-                ctype = resp.headers.get("content-type", "")
-                if "json" not in ctype:
+                ctype = (resp.headers or {}).get("content-type", "")
+                if "json" not in ctype.lower():
                     return
                 url = resp.url
-                # The exact path varies; match anything plausible.
-                if not any(tok in url for tok in ("/results", "/search", "/api/")):
+                # Anything that smells like a search/results/API endpoint.
+                if not any(tok in url.lower() for tok in
+                           ("/results", "/search", "/api/", "/document", "/record")):
                     return
-                # Skip our own page-navigation HTML responses.
                 try:
                     body = await resp.json()
                 except Exception:
                     return
-                captured_payloads.append({"url": url, "body": body})
+                captured_payloads.append({
+                    "url": url, "body": body, "ts": time.time(),
+                })
             except Exception as exc:  # pragma: no cover
                 log.debug("response handler error: %s", exc)
 
@@ -398,21 +404,75 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                 log.info("clerk search: cat=%s q=%r url=%s",
                          cat_def["cat"], q, url)
                 captured_payloads.clear()
+                t_nav_start = time.time()
 
                 try:
                     async def _go():
-                        await page.goto(url, wait_until="networkidle", timeout=45_000)
-                        # Give the SPA a chance to settle / load lazy data.
-                        await page.wait_for_timeout(1500)
+                        await page.goto(url, wait_until="domcontentloaded",
+                                        timeout=45_000)
+                        # The SPA loads results AFTER initial render. Wait for
+                        # either a result row to appear or a "no results" state.
+                        try:
+                            await page.wait_for_selector(
+                                "[data-testid='search-result'], "
+                                "[class*='result-row'], "
+                                "[class*='SearchResult'], "
+                                "table tbody tr, "
+                                "[class*='no-results'], "
+                                "[class*='NoResults']",
+                                timeout=20_000,
+                            )
+                        except Exception:
+                            pass
+                        # Then wait for network to settle.
+                        try:
+                            await page.wait_for_load_state(
+                                "networkidle", timeout=15_000)
+                        except Exception:
+                            pass
+                        # Final settle.
+                        await page.wait_for_timeout(1200)
                     await with_retries_async(_go, attempts=3, base_delay=2.0)
                 except Exception as exc:
                     log.error("failed to load clerk page for q=%r: %s", q, exc)
                     continue
 
-                # Try JSON-on-the-wire first.
-                rows = _extract_rows_from_payloads(captured_payloads)
+                # Only consider payloads captured AFTER nav started — this
+                # filters out caches/initial-page-load data from prior queries.
+                fresh = [p for p in captured_payloads if p["ts"] >= t_nav_start]
 
-                # Fallback: scrape DOM table.
+                # Save diagnostics for the first query so the operator can see
+                # what the portal actually returned (and how to adapt).
+                if not diagnostics_saved:
+                    try:
+                        html = await page.content()
+                        (debug_dir / "first_query.html").write_text(
+                            html, encoding="utf-8")
+                        with (debug_dir / "first_query_payloads.json").open(
+                                "w", encoding="utf-8") as fh:
+                            json.dump(
+                                [{"url": p["url"],
+                                  "preview": str(p["body"])[:2000]}
+                                 for p in fresh],
+                                fh, indent=2, default=str,
+                            )
+                        log.info("diagnostics saved to debug/ (%d payloads)",
+                                 len(fresh))
+                        diagnostics_saved = True
+                    except Exception as exc:
+                        log.debug("could not save diagnostics: %s", exc)
+
+                # Pick the most plausible "results" payload(s) — those whose
+                # URL contains the search term we just queried.
+                q_token = q.split()[0].lower()
+                preferred = [p for p in fresh
+                             if q_token in p["url"].lower()
+                             or "searchvalue" in p["url"].lower()]
+                source_payloads = preferred if preferred else fresh
+
+                rows = _extract_rows_from_payloads(source_payloads)
+
+                # DOM fallback.
                 if not rows:
                     try:
                         html = await page.content()
@@ -421,21 +481,29 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                         log.warning("DOM fallback failed for q=%r: %s", q, exc)
                         rows = []
 
-                log.info("  → %d raw rows (q=%r)", len(rows), q)
+                log.info("  → %d raw rows from %d payload(s) (q=%r)",
+                         len(rows), len(source_payloads), q)
 
+                kept = 0
                 for raw in rows:
                     try:
                         rec = _normalize_clerk_row(raw, default_cat=cat_def["cat"])
                         if rec is None:
                             continue
-                        # Date filter — the API can occasionally return rows
-                        # outside the requested window; trim them client-side.
-                        if rec.filed and (rec.filed < start_iso or rec.filed > end_iso):
-                            continue
+                        # Date filter — but only if the row HAS a parseable
+                        # filed date. Drop rows older than the window. Don't
+                        # drop rows with empty `filed` (some payloads omit it).
+                        if rec.filed:
+                            if rec.filed < start_iso or rec.filed > end_iso:
+                                continue
                         seen[rec.doc_num] = rec  # dedupe by doc_num
+                        kept += 1
                     except Exception as exc:
-                        log.warning("bad row skipped: %s\n%s", exc, raw)
+                        log.warning("bad row skipped: %s", exc)
                         continue
+                if rows and kept == 0:
+                    log.info("    (all %d rows fell outside date window or "
+                             "failed to normalize)", len(rows))
 
         await context.close()
         await browser.close()
@@ -449,22 +517,39 @@ def _extract_rows_from_payloads(payloads: List[Dict]) -> List[Dict]:
     """Walk every captured JSON body and yank anything that looks like a
     results array. Neumo wraps results under several different keys
     (`searchResults`, `results`, `documents`, `hits`) depending on version.
+
+    A row qualifies only if it has at least one document-specific field —
+    matching on a bare `id` was producing false positives where unrelated
+    config/menu data was being grabbed.
     """
+    # Strong identifiers that genuinely indicate "this is a recorded document".
+    DOC_KEYS = {
+        "docnumber", "documentnumber", "instrumentnumber", "doc_num",
+        "doc#", "instnumber",
+    }
+    # Supporting fields — at least one of these must accompany an id-like key.
+    DOC_HINTS = {
+        "doctype", "documenttype", "doc_type", "type", "instrumenttype",
+        "grantor", "grantee", "grantors", "grantees",
+        "recordeddate", "fileddate", "filedate", "recordingdate",
+        "consideration", "considerationamount", "legal", "legaldescription",
+    }
     rows: List[Dict] = []
     for entry in payloads:
         body = entry.get("body")
         if body is None:
             continue
         for hits in _walk_for_lists(body):
-            # Heuristic: a row is a dict with at least one of these keys.
             for item in hits:
                 if not isinstance(item, dict):
                     continue
                 keys = {k.lower() for k in item.keys()}
-                if keys & {
-                    "docnumber", "documentnumber", "instrumentnumber",
-                    "doc_num", "documentid", "id"
-                }:
+                has_doc_key = bool(keys & DOC_KEYS)
+                has_id = "id" in keys or "documentid" in keys
+                has_hint = bool(keys & DOC_HINTS)
+                # Accept if it has a doc-number-like key,
+                # OR if it has an id AND at least one supporting field.
+                if has_doc_key or (has_id and has_hint):
                     rows.append(item)
     return rows
 
@@ -763,10 +848,26 @@ def fetch_ncad_parcels() -> Dict[str, Dict[str, str]]:
 
 def _discover_ncad_export_url() -> str:
     """Scrape https://nuecescad.net/downloads-reports/ for the most
-    recent 'Public Export' ZIP link.
+    recent 'Public Export' ZIP link, with a known-good fallback if the
+    page can't be parsed (WAF, layout change, etc.).
     """
-    html = _http_get_text(NCAD_DOWNLOADS_PAGE)
-    soup = BeautifulSoup(html, "lxml")
+    # Last-known-good URL — used as a fallback if discovery fails. Update
+    # this once a year when NCAD posts the new preliminary roll.
+    KNOWN_GOOD = (
+        "https://nuecescad.net/wp-content/uploads/2026/04/"
+        "2026-Preliminary-Public-Export-20260402.zip"
+    )
+
+    try:
+        html = _http_get_text(NCAD_DOWNLOADS_PAGE)
+    except Exception as exc:
+        log.warning("NCAD page fetch failed (%s); using known-good URL", exc)
+        return KNOWN_GOOD
+
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
 
     candidates: List[Tuple[str, str]] = []  # (year-key, url)
     for a in soup.find_all("a", href=True):
@@ -774,12 +875,17 @@ def _discover_ncad_export_url() -> str:
         text = a.get_text(" ", strip=True).lower()
         if not href.lower().endswith(".zip"):
             continue
-        # We want the *appraisal roll* export, not GIS / shapefiles.
-        if "parcel" in href.lower() or "shapefile" in text:
+        # Skip GIS shapefiles and parcel-only exports — we want the full
+        # appraisal roll, which contains owner + situs + mailing addresses.
+        if "shapefile" in text or "ncad_parcels" in href.lower():
             continue
-        if not (("public-export" in href.lower())
-                or ("appraisal-roll" in href.lower())
-                or ("public_export" in href.lower())):
+        # Match anything that looks like an appraisal-roll export.
+        href_low = href.lower()
+        if not any(tok in href_low for tok in (
+            "public-export", "public_export", "publicexport",
+            "appraisal-roll", "appraisal_roll", "certified-roll",
+            "preliminary-public", "preliminary_public",
+        )):
             continue
         # Extract a year-ish sort key (prefer the most recent).
         m = re.search(r"(20\d{2})", href)
@@ -787,8 +893,9 @@ def _discover_ncad_export_url() -> str:
         candidates.append((year, href))
 
     if not candidates:
-        raise RuntimeError("no NCAD export link found on downloads page")
-    # Sort by year desc, then by URL (stable).
+        log.warning("no NCAD export link found on downloads page; "
+                    "using known-good URL")
+        return KNOWN_GOOD
     candidates.sort(key=lambda x: (x[0], x[1]), reverse=True)
     return candidates[0][1]
 
