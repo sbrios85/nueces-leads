@@ -431,33 +431,36 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                     async def _go():
                         await page.goto(url, wait_until="domcontentloaded",
                                         timeout=25_000)
-                        # Wait for the SPA to finish its data fetch. The
-                        # redux store holds documents at:
-                        #   window.__data.documents.workspaces.<id>
-                        # When `hasFetched` is true (or `isLoading` is false
-                        # AND data is populated), we know it's done.
+                        # The portal renders results as a server-rendered
+                        # HTML table. Wait for either: at least one row
+                        # in tbody, OR a "No Results Found" indicator.
+                        # The redux store stays `isLoading: true` even
+                        # after the table is populated, so we don't trust
+                        # it — we trust what we can see.
                         try:
                             await page.wait_for_function(
                                 """() => {
-                                    try {
-                                        const d = (window.__data || {}).documents;
-                                        if (!d || !d.workspaces) return false;
-                                        const ws = Object.values(d.workspaces)[0];
-                                        if (!ws) return false;
-                                        if (ws.hasFetched === true) return true;
-                                        if (ws.isLoading === false &&
-                                            ws.data && ws.data.byOrder) return true;
-                                        return false;
-                                    } catch (e) { return false; }
+                                    // Has results: tbody has at least one tr
+                                    // with a non-empty col-7 (doc number) cell.
+                                    const rows = document.querySelectorAll(
+                                        'table tbody tr');
+                                    for (const r of rows) {
+                                        const docCell = r.querySelector('.col-7');
+                                        if (docCell && docCell.textContent.trim())
+                                            return true;
+                                    }
+                                    // Or: explicitly says no results.
+                                    const txt = document.body.innerText || '';
+                                    if (txt.includes('No Results Found') ||
+                                        txt.includes('returned no results'))
+                                        return true;
+                                    return false;
                                 }""",
                                 timeout=15_000,
                             )
                         except Exception:
-                            # Either redux didn't hydrate or the SPA went
-                            # straight to a "no results" state. Either way,
-                            # fall through to whatever HTML we got.
                             pass
-                        await page.wait_for_timeout(500)
+                        await page.wait_for_timeout(400)
                     await _go()
                 except Exception as exc:
                     log.error("nav failed for q=%r: %s", q, exc)
@@ -467,31 +470,22 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                 # filters out caches/initial-page-load data from prior queries.
                 fresh = [p for p in captured_payloads if p["ts"] >= t_nav_start]
 
-                # Primary source: read the live redux store directly. This
-                # is more reliable than re-parsing the HTML or intercepting
-                # XHR (the portal often serves results from cache and skips
-                # the network call entirely on warm pages).
-                redux_rows: List[Dict] = []
+                # PRIMARY SOURCE: extract rows from the rendered HTML table.
+                # The Neumo portal server-renders search results into a
+                # standard <table> with column-class markers (col-3 = grantor,
+                # col-7 = doc number, etc.). The Redux state is unreliable
+                # here — `isLoading` stays true even after the table renders.
+                html = ""
                 try:
-                    redux_rows = await page.evaluate("""() => {
-                        try {
-                            const d = (window.__data || {}).documents;
-                            if (!d || !d.workspaces) return [];
-                            const ws = Object.values(d.workspaces)[0];
-                            if (!ws || !ws.data) return [];
-                            const byHash = ws.data.byHash || {};
-                            return Object.values(byHash);
-                        } catch (e) { return []; }
-                    }""")
+                    html = await page.content()
                 except Exception as exc:
-                    log.debug("redux eval failed: %s", exc)
-                    redux_rows = []
+                    log.warning("could not get page html: %s", exc)
 
-                # Save diagnostics for the first query so the operator can see
-                # what the portal actually returned.
+                rows = _extract_clerk_table_rows(html)
+
+                # Save diagnostics for the first query.
                 if not diagnostics_saved:
                     try:
-                        html = await page.content()
                         (debug_dir / "first_query.html").write_text(
                             html, encoding="utf-8")
                         with (debug_dir / "first_query_payloads.json").open(
@@ -502,41 +496,43 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                                  for p in fresh],
                                 fh, indent=2, default=str,
                             )
-                        with (debug_dir / "first_query_redux_rows.json").open(
+                        with (debug_dir / "first_query_table_rows.json").open(
                                 "w", encoding="utf-8") as fh:
-                            json.dump(redux_rows[:5], fh, indent=2, default=str)
+                            json.dump(rows[:5], fh, indent=2, default=str)
                         log.info(
-                            "diagnostics saved (%d xhr payloads, %d redux rows)",
-                            len(fresh), len(redux_rows),
+                            "diagnostics saved (%d xhr payloads, %d table rows)",
+                            len(fresh), len(rows),
                         )
                         diagnostics_saved = True
                     except Exception as exc:
                         log.debug("could not save diagnostics: %s", exc)
 
-                if redux_rows:
-                    rows = redux_rows
-                else:
-                    # Pick the most plausible "results" payload(s) — those whose
-                    # URL contains the search term we just queried.
-                    q_token = q.split()[0].lower()
-                    preferred = [p for p in fresh
-                                 if q_token in p["url"].lower()
-                                 or "searchvalue" in p["url"].lower()]
-                    source_payloads = preferred if preferred else fresh
+                # Fallback: redux state (covers any future portal versions
+                # that hydrate the store correctly).
+                if not rows:
+                    try:
+                        rows = await page.evaluate("""() => {
+                            try {
+                                const d = (window.__data || {}).documents;
+                                if (!d || !d.workspaces) return [];
+                                const ws = Object.values(d.workspaces)[0];
+                                if (!ws || !ws.data) return [];
+                                return Object.values(ws.data.byHash || {});
+                            } catch (e) { return []; }
+                        }""")
+                    except Exception:
+                        rows = []
 
-                    rows = _extract_rows_from_payloads(source_payloads)
+                # Last fallback: legacy XHR-based and generic-DOM scrapers.
+                if not rows:
+                    rows = _extract_rows_from_payloads(fresh)
+                    if not rows and html:
+                        rows = _extract_rows_from_html(html)
 
-                    # DOM fallback (also reads redux state from static HTML).
-                    if not rows:
-                        try:
-                            html = await page.content()
-                            rows = _extract_rows_from_html(html)
-                        except Exception as exc:
-                            log.warning("DOM fallback failed for q=%r: %s",
-                                        q, exc)
-                            rows = []
-
-                source_label = "redux" if redux_rows else "fallback"
+                source_label = (
+                    "table" if rows and "doc_number" in (rows[0] if rows else {})
+                    else ("redux" if rows else "none")
+                )
                 log.info("  → %d raw rows (source=%s, q=%r)",
                          len(rows), source_label, q)
 
@@ -726,6 +722,117 @@ def _parse_window_data(html: str) -> Optional[Dict]:
         return None
 
 
+def _extract_clerk_table_rows(html: str) -> List[Dict[str, str]]:
+    """Extract document rows from the Neumo portal's rendered HTML table.
+
+    The table uses class-based column markers — `col-3` through `col-11` —
+    that map to specific fields:
+
+        col-3  = Grantor
+        col-4  = Grantee
+        col-5  = Doc Type
+        col-6  = Recorded Date
+        col-7  = Doc Number
+        col-8  = Book/Volume/Page
+        col-9  = Legal Description
+        col-10 = Lot
+        col-11 = Block
+
+    These class names are stable across Neumo deployments because they're
+    used by the React SearchTable component for column-resize/sort behavior.
+    """
+    if not html:
+        return []
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
+
+    table = soup.find("table")
+    if not table:
+        return []
+
+    # Build a column-class → header-name map from <thead>. This is more
+    # robust than hardcoding indexes — if Neumo reorders columns, we
+    # still match correctly.
+    header_by_col: Dict[str, str] = {}
+    thead = table.find("thead")
+    if thead:
+        for th in thead.find_all("th"):
+            classes = th.get("class") or []
+            label = th.get_text(" ", strip=True)
+            for c in classes:
+                if c.startswith("col") and label:
+                    header_by_col[c.replace("-", "")] = label
+    # Fallback if headers aren't readable: hardcode known mappings.
+    if len(header_by_col) < 5:
+        header_by_col = {
+            "col0": "", "col1": "", "col2": "",
+            "col3": "Grantor", "col4": "Grantee", "col5": "Doc Type",
+            "col6": "Recorded Date", "col7": "Doc Number",
+            "col8": "Book/Volume/Page", "col9": "Legal Description",
+            "col10": "Lot", "col11": "Block",
+        }
+
+    # Map the human-readable header names to our normalized field names.
+    HEADER_TO_FIELD = {
+        "grantor": "grantor",
+        "grantors": "grantor",
+        "grantee": "grantee",
+        "grantees": "grantee",
+        "doc type": "doc_type",
+        "document type": "doc_type",
+        "recorded date": "recorded_date",
+        "filed date": "recorded_date",
+        "doc number": "doc_number",
+        "document number": "doc_number",
+        "instrument number": "doc_number",
+        "book/volume/page": "book_volume_page",
+        "legal description": "legal",
+        "lot": "lot",
+        "block": "block",
+    }
+
+    rows: List[Dict[str, str]] = []
+    tbody = table.find("tbody") or table
+    for tr in tbody.find_all("tr"):
+        # Skip the header row if it accidentally lives inside tbody.
+        if tr.find("th") and not tr.find("td"):
+            continue
+        record: Dict[str, str] = {}
+        link_href = ""
+        for td in tr.find_all("td"):
+            classes = td.get("class") or []
+            text = td.get_text(" ", strip=True)
+            if not text:
+                continue
+            # Capture any link to a /doc/<id> page for clerk_url.
+            a = td.find("a", href=True)
+            if a and "/doc/" in a["href"]:
+                link_href = a["href"]
+            # Find the col-N class.
+            col_class = next(
+                (c.replace("-", "") for c in classes if re.match(r"col-?\d+$", c)),
+                None,
+            )
+            if not col_class:
+                continue
+            header = (header_by_col.get(col_class) or "").strip().lower()
+            field = HEADER_TO_FIELD.get(header)
+            if not field:
+                continue
+            # Collapse "--/--/--" placeholders to empty.
+            if text in ("--/--/--", "N/A", "n/a", "-"):
+                text = ""
+            record[field] = text
+        # Only keep rows that have at least a doc number.
+        if record.get("doc_number"):
+            if link_href:
+                record["clerk_url"] = link_href
+            rows.append(record)
+    return rows
+
+
 def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[ClerkRecord]:
     """Convert a raw clerk JSON/HTML row into a ClerkRecord.
 
@@ -735,19 +842,19 @@ def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[Cler
     g = lambda *names: _first_present(raw, *names)
 
     doc_num = _stringy(g(
-        "docNumber", "documentNumber", "instrumentNumber", "doc_num",
-        "documentId", "id", "instrument number", "doc#", "doc #"
+        "docNumber", "doc_number", "documentNumber", "instrumentNumber",
+        "doc_num", "documentId", "id", "instrument number", "doc#", "doc #"
     ))
     if not doc_num:
         return None
 
     doc_type_raw = _stringy(g(
-        "docType", "documentType", "doc_type", "type", "document type"
+        "docType", "doc_type", "documentType", "type", "document type"
     ))
 
     filed = _coerce_date(g(
-        "recordedDate", "filedDate", "fileDate", "filed", "filedate",
-        "recorded date", "recorded"
+        "recordedDate", "recorded_date", "filedDate", "fileDate", "filed",
+        "filedate", "recorded date", "recorded"
     ))
 
     grantor = _stringy(g(
@@ -767,6 +874,16 @@ def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[Cler
         "legalDescription", "legal_description", "legal", "description"
     ))
 
+    # Lot/block fields from the rendered table — append to legal if present.
+    lot = _stringy(g("lot"))
+    block = _stringy(g("block"))
+    if lot or block:
+        suffix_parts = []
+        if lot:   suffix_parts.append(f"Lot {lot}")
+        if block: suffix_parts.append(f"Block {block}")
+        suffix = ", ".join(suffix_parts)
+        legal = f"{legal} ({suffix})" if legal else suffix
+
     amount_raw = g("considerationAmount", "amount", "amount_due",
                    "totalAmount", "total")
     amount = _coerce_amount(amount_raw) or _coerce_amount(legal) or _coerce_amount(doc_type_raw)
@@ -777,12 +894,21 @@ def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[Cler
 
     # Build the deep-link URL back to the document detail page.
     clerk_url = ""
-    doc_id = _stringy(g("documentId", "id", "docId"))
-    if doc_id:
-        clerk_url = f"{CLERK_DOC_URL}/{doc_id}"
-    else:
-        clerk_url = (f"{CLERK_BASE}/results?"
-                     + urlencode({"department": "RP", "searchValue": doc_num}))
+    # Clerk URL: prefer an explicit href captured from the row, then a doc-id
+    # link, then fall back to a search URL by document number.
+    clerk_url = _stringy(g("clerk_url", "url", "documentUrl"))
+    if clerk_url and not clerk_url.startswith("http"):
+        # Relative path like "/doc/abc" — make it absolute.
+        clerk_url = CLERK_BASE + (clerk_url if clerk_url.startswith("/")
+                                  else "/" + clerk_url)
+    if not clerk_url:
+        doc_id = _stringy(g("documentId", "id", "docId"))
+        if doc_id:
+            clerk_url = f"{CLERK_DOC_URL}/{doc_id}"
+        else:
+            clerk_url = (f"{CLERK_BASE}/results?"
+                         + urlencode({"department": "RP",
+                                      "searchValue": doc_num}))
 
     return ClerkRecord(
         doc_num=doc_num,
