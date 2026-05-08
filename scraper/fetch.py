@@ -939,10 +939,8 @@ def _iter_parcel_rows(zf: zipfile.ZipFile) -> Iterable[Dict[str, str]]:
                 log.warning("dbf parse failed for %s: %s", name, exc)
 
     # Pass 2: pipe-delimited or comma-delimited text/CSV files.
-    # Look for the "appraisal" / "property" / "parcel" / "owner" file —
     # NCAD's export ships ~30 files; we want the one that ties owners
-    # to addresses, which has names like "PROP.txt", "APPRAISAL_INFO.txt",
-    # or just "Property.csv" depending on the year.
+    # to addresses (typically APPRAISAL_INFO.TXT or PROPERTY_INFO.TXT).
     text_candidates = [
         n for n in names
         if n.lower().endswith((".txt", ".csv", ".tsv"))
@@ -954,15 +952,32 @@ def _iter_parcel_rows(zf: zipfile.ZipFile) -> Iterable[Dict[str, str]]:
         score = 0
         for kw, w in [
             ("appraisal_info", 100), ("appraisalinfo", 100),
+            ("property_info", 95),   ("propertyinfo", 95),
             ("property", 80), ("prop", 60),
             ("owner", 50), ("parcel", 40),
         ]:
             if kw in ln:
                 score = max(score, w)
+        # Skip files we know don't carry address/owner info.
+        for skip_kw in ("appraisal_agent", "deed_history", "land",
+                        "improvement", "exemption", "abatement",
+                        "entity", "arb_", "audit"):
+            if skip_kw in ln:
+                return -1
         return score
-    text_candidates.sort(key=rank, reverse=True)
+    text_candidates = [(n, rank(n)) for n in text_candidates]
+    text_candidates = [(n, r) for n, r in text_candidates if r >= 0]
+    text_candidates.sort(key=lambda nr: nr[1], reverse=True)
 
-    for name in text_candidates:
+    # Hard wall-clock budget for the parse phase — protects against
+    # pathological files. NCAD parsing should take < 2 minutes total.
+    parse_deadline = time.time() + 4 * 60   # 4 minutes
+    files_with_data = 0
+
+    for name, _ in text_candidates:
+        if time.time() > parse_deadline:
+            log.warning("NCAD parse time budget exhausted; stopping at %s", name)
+            break
         try:
             with zf.open(name) as fh:
                 raw = fh.read()
@@ -972,18 +987,39 @@ def _iter_parcel_rows(zf: zipfile.ZipFile) -> Iterable[Dict[str, str]]:
             delim = _sniff_delimiter(text)
             reader = csv.DictReader(io.StringIO(text), delimiter=delim)
             row_count = 0
+            owner_rows = 0
             for row in reader:
-                # Heuristic: skip files that obviously don't contain
-                # owner/address info.
                 row_count += 1
-                yield {(k or "").strip().upper(): (v or "").strip()
-                       for k, v in row.items()}
-            log.debug("parsed %s (%d rows, delim=%r)", name, row_count, delim)
-            if row_count > 1000:
-                # Found a populated file — most CAD exports ship the owner
-                # info in a single primary file. Yield from later files too,
-                # but cap total work by breaking after a couple of hits.
-                pass
+                # Be defensive: DictReader can return a list as a value when
+                # there are duplicate column headers (which Texas PTAD files
+                # sometimes have). Coerce everything to str safely.
+                clean = {}
+                for k, v in row.items():
+                    key = (str(k) if k is not None else "").strip().upper()
+                    if isinstance(v, list):
+                        v = " ".join(str(x) for x in v if x is not None)
+                    elif v is None:
+                        v = ""
+                    else:
+                        v = str(v)
+                    clean[key] = v.strip()
+                # Only yield rows that look like they contain owner/address
+                # data — otherwise we're mixing schemas from many files.
+                if any(c in clean for c in (
+                    "OWNER", "OWN1", "OWNER1", "OWNER_NAME",
+                    "PYOWNER", "PRIMARY_OWNER",
+                )):
+                    owner_rows += 1
+                    yield clean
+            log.info("  parsed %s: %d rows (%d with owner), delim=%r",
+                     name, row_count, owner_rows, delim)
+            if owner_rows > 0:
+                files_with_data += 1
+                # Once we've found owner data in a file, that's almost
+                # certainly the primary owner file. Don't keep parsing
+                # other files — they may have conflicting schemas.
+                if files_with_data >= 1 and owner_rows > 100:
+                    break
         except Exception as exc:
             log.warning("text parse failed for %s: %s", name, exc)
             continue
