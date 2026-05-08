@@ -1699,13 +1699,13 @@ def _load_search_cache() -> Dict[str, Optional[Dict[str, str]]]:
         return {}
 
     # Versioned envelope (current format).
-    if isinstance(raw, dict) and raw.get("_version") == "v2":
+    if isinstance(raw, dict) and raw.get("_version") == "v3":
         return raw.get("data", {})
 
-    # Legacy un-versioned cache — discard. Entries built with the old
-    # URL pattern were all `null` anyway (wrong format), so wiping the
-    # cache and re-querying is strictly an improvement.
-    log.info("legacy esearch cache detected — discarding (will rebuild)")
+    # Old-version cache → discard. Entries built with the old URL pattern
+    # or old result extractor are stale; re-querying is strictly better.
+    log.info("legacy esearch cache detected (version=%r) — discarding (will rebuild)",
+             raw.get("_version") if isinstance(raw, dict) else None)
     return {}
 
 
@@ -1713,7 +1713,7 @@ def _save_search_cache(cache: Dict[str, Optional[Dict[str, str]]]) -> None:
     path = ROOT_DIR / NCAD_SEARCH_CACHE
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        envelope = {"_version": "v2", "data": cache}
+        envelope = {"_version": "v3", "data": cache}
         path.write_text(json.dumps(envelope, indent=2), encoding="utf-8")
         log.info("esearch cache: %d entries written to %s",
                  len(cache), path)
@@ -1858,12 +1858,16 @@ async def _esearch_one(page, name: str, token: str,
     The `keywords=` value is a structured query language with key:value
     pairs separated by spaces. `OwnerName:` scopes the search to the
     owner-name field; `Year:` selects the tax roll year.
+
+    Returns the best matching real-property record's address. The result
+    list itself contains the situs address, so we usually don't need to
+    follow the link to the detail page — saves a request per match.
     """
     candidates = _esearch_query_variants(name)
+    debug_dir = ROOT_DIR / "debug"
+    debug_dir.mkdir(parents=True, exist_ok=True)
 
-    for candidate in candidates:
-        # Build the structured-keyword query string (with trailing space —
-        # observed in real portal URLs and may be required by the parser).
+    for candidate_idx, candidate in enumerate(candidates):
         keywords = f"OwnerName:{candidate} Year:{current_year} "
         params = {"keywords": keywords}
         if token:
@@ -1872,46 +1876,22 @@ async def _esearch_one(page, name: str, token: str,
 
         try:
             await page.goto(url, wait_until="domcontentloaded", timeout=20_000)
-            # Wait for either result rows or a "no results" indicator.
+            # Wait for results table OR "no results" message. We use a much
+            # broader selector than before because the previous
+            # `a[href*="/Property/View/"]` was too strict — BIS sometimes
+            # renders results without the View link visible until hovered.
             try:
                 await page.wait_for_selector(
-                    "a[href*='/Property/View/'], "
+                    "table tbody tr, "
                     "[class*='no-results'], "
-                    "[class*='NoResults'], "
-                    ".empty",
+                    "[class*='NoResults']",
                     timeout=8_000,
                 )
             except Exception:
                 pass
-            await page.wait_for_timeout(300)
+            await page.wait_for_timeout(400)
         except Exception as exc:
             log.debug("esearch nav failed for %r: %s", candidate, exc)
-            continue
-
-        # Look for the first result link to a property detail page.
-        try:
-            href = await page.evaluate("""() => {
-                const links = document.querySelectorAll('a[href*="/Property/View/"]');
-                if (links.length === 0) return null;
-                return links[0].getAttribute('href');
-            }""")
-        except Exception:
-            href = None
-
-        if not href:
-            continue   # no result for this query variant — try next
-
-        # Navigate to the detail page to harvest situs + mailing address.
-        if not href.startswith("http"):
-            detail_url = NCAD_ESEARCH_BASE + (href if href.startswith("/")
-                                              else "/" + href)
-        else:
-            detail_url = href
-        try:
-            await page.goto(detail_url, wait_until="domcontentloaded",
-                             timeout=20_000)
-            await page.wait_for_timeout(400)
-        except Exception:
             continue
 
         try:
@@ -1919,11 +1899,150 @@ async def _esearch_one(page, name: str, token: str,
         except Exception:
             continue
 
-        info = _parse_esearch_detail(html)
-        if info and (info.get("site_addr") or info.get("mail_addr")):
-            return info
+        # Save diagnostics for the first lookup overall, so we can see
+        # exactly what the portal returned.
+        if not hasattr(_esearch_one, "_diag_saved"):
+            try:
+                (debug_dir / f"esearch_first_result.html").write_text(
+                    html, encoding="utf-8")
+                _esearch_one._diag_saved = True
+                log.info("esearch diagnostics saved to "
+                         "debug/esearch_first_result.html")
+            except Exception:
+                pass
+
+        rows = _parse_esearch_result_list(html)
+        if not rows:
+            continue   # no results for this candidate, try next
+
+        # Pick the best row.
+        best = _pick_best_esearch_row(rows, candidate)
+        if best:
+            return best
 
     return None
+
+
+def _parse_esearch_result_list(html: str) -> List[Dict[str, str]]:
+    """Parse the BIS Consultants result-list table.
+
+    Returns a list of {owner, prop_id, type, situs_address, legal} dicts.
+    Empty list if no rows.
+    """
+    if not html:
+        return []
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
+
+    table = soup.find("table")
+    if not table:
+        return []
+
+    # Build column-name → index map from the header row.
+    header_row = table.find("thead") or table
+    headers = [th.get_text(" ", strip=True).lower()
+               for th in header_row.find_all("th")]
+    if not headers:
+        return []
+
+    def find_col(*tokens: str) -> int:
+        for i, h in enumerate(headers):
+            if all(t in h for t in tokens):
+                return i
+        return -1
+
+    i_owner   = find_col("owner", "name")
+    i_situs   = find_col("situs")
+    if i_situs < 0:
+        i_situs = find_col("address")
+    i_type    = find_col("type")
+    i_propid  = find_col("property", "id")
+    if i_propid < 0:
+        i_propid = find_col("prop", "id")
+    i_legal   = find_col("legal")
+
+    rows: List[Dict[str, str]] = []
+    tbody = table.find("tbody") or table
+    for tr in tbody.find_all("tr"):
+        cells = tr.find_all("td")
+        if len(cells) < 3:
+            continue
+        def cell(i: int) -> str:
+            if 0 <= i < len(cells):
+                return cells[i].get_text(" ", strip=True)
+            return ""
+        owner = cell(i_owner)
+        situs = cell(i_situs)
+        if not owner and not situs:
+            continue
+        rows.append({
+            "owner":   owner,
+            "situs":   situs,
+            "type":    cell(i_type),
+            "prop_id": cell(i_propid),
+            "legal":   cell(i_legal),
+        })
+    return rows
+
+
+def _pick_best_esearch_row(rows: List[Dict[str, str]],
+                            query_name: str) -> Optional[Dict[str, str]]:
+    """Choose the best result row for a given query name.
+
+    Preferences (in order):
+      1. Real property (Type='R') over personal property (Type='P')
+      2. Has a real situs address (not blank, not personal-property location)
+      3. Closest owner-name match (exact > startswith > contains)
+    Returns a normalized address dict or None if nothing usable.
+    """
+    if not rows:
+        return None
+
+    qn = query_name.upper().strip()
+
+    def score_row(r: Dict[str, str]) -> Tuple[int, int, int]:
+        type_score = 2 if r.get("type") == "R" else (1 if r.get("type") == "P" else 0)
+        situs = r.get("situs", "")
+        # Reject obvious personal-property "addresses" that aren't real
+        # mailing locations (they often mention BUSINESS, MALL, STE only).
+        situs_score = 1 if (situs and re.search(r"\b\d+\b", situs)) else 0
+        # Name match: prefer the owner that actually starts with the query.
+        owner = r.get("owner", "").upper()
+        if owner == qn:
+            name_score = 3
+        elif owner.startswith(qn):
+            name_score = 2
+        elif qn in owner:
+            name_score = 1
+        else:
+            name_score = 0
+        return (type_score, situs_score, name_score)
+
+    rows_sorted = sorted(rows, key=score_row, reverse=True)
+    top = rows_sorted[0]
+    if not top.get("situs"):
+        return None
+
+    # Parse the situs into structured fields.
+    site_addr, site_city, site_state, site_zip = _split_us_address(top["situs"])
+    if not site_addr:
+        return None
+
+    return {
+        "site_addr":  site_addr,
+        "site_city":  site_city or "CORPUS CHRISTI",
+        "site_state": site_state or "TX",
+        "site_zip":   site_zip,
+        # The result list doesn't expose the mailing address — leave blank.
+        # If the user wants mailing info we'd need to follow the detail
+        # link, but situs is what matters most for direct-mail.
+        "mail_addr":  "",
+        "mail_city":  "",
+        "mail_state": "",
+        "mail_zip":   "",
+    }
 
 
 def _esearch_query_variants(name: str) -> List[str]:
