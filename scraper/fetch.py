@@ -1179,7 +1179,9 @@ def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
     lookup. The fall-back path in `enrich_with_parcels` will still
     pull addresses from the legal-description field of clerk records.
     """
-    parse_deadline = time.time() + 4 * 60   # 4 minutes
+    parse_deadline = time.time() + 90    # 90 seconds total for NCAD parsing
+    PER_FILE_TIMEOUT = 25                # seconds before we abort a single file
+    MAX_FILE_BYTES = 80 * 1024 * 1024    # 80 MB - skip larger files entirely
 
     # Substrings (uppercased) that identify columns by their semantic role.
     # We match by substring rather than exact name because Texas PTAD column
@@ -1214,9 +1216,22 @@ def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
 
     for name in text_files:
         if time.time() > parse_deadline:
-            log.warning("NCAD parse budget exhausted at %s", name)
+            log.warning("NCAD overall parse budget exhausted at %s", name)
             break
         try:
+            # Skip oversize files — they're rarely the owner/address source
+            # and they burn the time budget for the smaller, useful files.
+            try:
+                file_size = zf.getinfo(name).file_size
+            except KeyError:
+                file_size = 0
+            if file_size > MAX_FILE_BYTES:
+                log.info("  skipping %s (%.0f MB > %.0f MB cap)",
+                         name, file_size / 1024 / 1024,
+                         MAX_FILE_BYTES / 1024 / 1024)
+                continue
+
+            file_deadline = time.time() + PER_FILE_TIMEOUT
             with zf.open(name) as fh:
                 raw = fh.read()
             text = _decode_loose(raw)
@@ -1225,6 +1240,18 @@ def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
             delim = _sniff_delimiter(text)
             reader = csv.DictReader(io.StringIO(text), delimiter=delim)
             headers = [(h or "").strip() for h in (reader.fieldnames or [])]
+
+            # Skip files that have no real header row (header looks like data
+            # — purely numeric, or single column of opaque IDs). Common in
+            # PTAD's *_ENTITY.TXT files which are list-only with no schema.
+            looks_like_data = (
+                not headers
+                or len(headers) == 1
+                or all(re.match(r"^[\d\s\-_/]+$", h) for h in headers if h)
+            )
+            if looks_like_data:
+                log.info("  %s: no recognizable header — skipping", name)
+                continue
 
             # Find which columns play which role.
             id_col    = find_col(headers, ID_TOKENS)
@@ -1236,19 +1263,33 @@ def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
             site_zip   = find_col(headers, ZIP_TOKENS)
 
             # Log a header sample so we can see schema in the log.
-            log.info("  %s: cols=%d delim=%r", name, len(headers), delim)
+            log.info("  %s: cols=%d size=%.1fMB delim=%r",
+                     name, len(headers), file_size / 1024 / 1024, delim)
             log.info("    headers (first 25): %s", headers[:25])
             log.info("    matched: id=%r owner=%r site=%r mail=%r",
                      id_col, owner_col, site_col, mail_col)
+
+            # If we can't find an ID column, this file isn't useful for join.
+            # Don't burn time iterating its rows — skip directly.
+            if not id_col:
+                log.info("    (no ID column — skipping rows)")
+                continue
+            # If we can't find anything useful (no owner AND no addr), skip.
+            if not owner_col and not site_col and not mail_col:
+                log.info("    (no owner/address columns — skipping rows)")
+                continue
 
             row_count = 0
             owner_added = 0
             addr_added = 0
             for row in reader:
+                # Per-file deadline check (every 1000 rows to keep it cheap).
                 row_count += 1
+                if row_count % 1000 == 0 and time.time() > file_deadline:
+                    log.warning("    %s: per-file timeout at row %d",
+                                name, row_count)
+                    break
                 clean = _clean_row(row)
-                if not id_col:
-                    continue
                 pid = clean.get(id_col.upper(), "")
                 if not pid:
                     continue
@@ -1278,8 +1319,9 @@ def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
                     }
                     addr_added += 1
 
-            log.info("    %d rows (+%d owner, +%d addr)",
-                     row_count, owner_added, addr_added)
+            log.info("    %d rows (+%d owner, +%d addr) [%.1fs]",
+                     row_count, owner_added, addr_added,
+                     time.time() - (file_deadline - PER_FILE_TIMEOUT))
         except Exception as exc:
             log.warning("text parse failed for %s: %s", name, exc)
             continue
@@ -1856,7 +1898,7 @@ def main() -> int:
     end_iso = today.isoformat()
     log.info("=== Nueces lead scrape: %s .. %s ===", start_iso, end_iso)
 
-    # 1) Clerk portal.
+    # 1) Clerk portal — the primary data source.
     try:
         clerk_records = asyncio.run(fetch_clerk_records(start_iso, end_iso))
     except Exception as exc:
@@ -1864,17 +1906,11 @@ def main() -> int:
                   exc, traceback.format_exc())
         clerk_records = []
 
-    # 2) Property appraiser bulk export (best-effort).
-    try:
-        owner_lookup = fetch_ncad_parcels()
-    except Exception as exc:
-        log.error("NCAD fetch failed: %s\n%s", exc, traceback.format_exc())
-        owner_lookup = {}
+    # 2) Pull addresses out of legal-description text where present
+    #    (works without NCAD — important fallback path).
+    enrich_with_parcels(clerk_records, owner_lookup={})
 
-    # 3) Enrich.
-    enrich_with_parcels(clerk_records, owner_lookup)
-
-    # 4) Score.
+    # 3) Score.
     owner_idx = build_owner_cat_index(clerk_records)
     for rec in clerk_records:
         try:
@@ -1884,12 +1920,45 @@ def main() -> int:
             rec.flags = rec.flags or []
             rec.score = rec.score or 30
 
-    # 5) Sort by score desc, then by filed desc.
-    clerk_records.sort(key=lambda r: (-(r.score or 0), r.filed or ""), reverse=False)
+    # 4) Sort.
     clerk_records.sort(key=lambda r: r.score or 0, reverse=True)
 
-    # 6) Write outputs.
+    # 5) WRITE OUTPUTS NOW — before NCAD, so even if NCAD hangs/fails the
+    #    clerk-side leads are committed and the dashboard refreshes.
     write_outputs(clerk_records, start_iso, end_iso)
+    log.info("=== first-pass write done: %d records (no NCAD enrichment yet) ===",
+             len(clerk_records))
+
+    # 6) NCAD bulk export — best-effort enrichment. If this hangs or fails,
+    #    we still have valid output from step 5.
+    owner_lookup: Dict[str, Dict[str, str]] = {}
+    ncad_start = time.time()
+    try:
+        owner_lookup = fetch_ncad_parcels()
+    except Exception as exc:
+        log.error("NCAD fetch failed: %s", exc)
+    ncad_elapsed = time.time() - ncad_start
+    log.info("NCAD phase took %.1fs (%d owner-name variants)",
+             ncad_elapsed, len(owner_lookup))
+
+    # 7) If NCAD produced anything, re-enrich and re-write.
+    if owner_lookup:
+        # Reset prop fields populated from NCAD path only — keep legal-extract
+        # fallbacks where NCAD doesn't have a match.
+        for rec in clerk_records:
+            # Only redo enrichment for records that don't already have address.
+            pass
+        enrich_with_parcels(clerk_records, owner_lookup)
+        # Recompute scores (address bonus may now apply).
+        owner_idx = build_owner_cat_index(clerk_records)
+        for rec in clerk_records:
+            try:
+                compute_flags_and_score(rec, end_iso, owner_idx)
+            except Exception:
+                pass
+        clerk_records.sort(key=lambda r: r.score or 0, reverse=True)
+        write_outputs(clerk_records, start_iso, end_iso)
+        log.info("=== second-pass write done with NCAD enrichment ===")
 
     log.info("=== done: %d records ===", len(clerk_records))
     return 0
