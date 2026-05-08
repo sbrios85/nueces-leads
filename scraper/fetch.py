@@ -80,7 +80,11 @@ CLERK_DOC_URL = f"{CLERK_BASE}/doc"
 # we discover the most-recent one by parsing the downloads page.
 NCAD_DOWNLOADS_PAGE = "https://nuecescad.net/downloads-reports/"
 
-LOOKBACK_DAYS = 7
+LOOKBACK_DAYS = 30   # Window covering recent filings. The clerk portal
+                     # is typically 5-10 days behind real-time as records
+                     # work through certification. 30 days gives us a
+                     # comfortable buffer; "New this week" is still
+                     # flagged in the scoring layer for fresh records.
 
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -427,27 +431,33 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                     async def _go():
                         await page.goto(url, wait_until="domcontentloaded",
                                         timeout=25_000)
-                        # Wait briefly for results OR a "no results" indicator.
-                        # Don't burn time here — most queries either resolve
-                        # in 2-3 seconds or aren't going to.
+                        # Wait for the SPA to finish its data fetch. The
+                        # redux store holds documents at:
+                        #   window.__data.documents.workspaces.<id>
+                        # When `hasFetched` is true (or `isLoading` is false
+                        # AND data is populated), we know it's done.
                         try:
-                            await page.wait_for_selector(
-                                "[data-testid='search-result'], "
-                                "[class*='result-row'], "
-                                "[class*='SearchResult'], "
-                                "table tbody tr, "
-                                "[class*='no-results'], "
-                                "[class*='NoResults'], "
-                                "[class*='empty']",
-                                timeout=8_000,
+                            await page.wait_for_function(
+                                """() => {
+                                    try {
+                                        const d = (window.__data || {}).documents;
+                                        if (!d || !d.workspaces) return false;
+                                        const ws = Object.values(d.workspaces)[0];
+                                        if (!ws) return false;
+                                        if (ws.hasFetched === true) return true;
+                                        if (ws.isLoading === false &&
+                                            ws.data && ws.data.byOrder) return true;
+                                        return false;
+                                    } catch (e) { return false; }
+                                }""",
+                                timeout=15_000,
                             )
                         except Exception:
+                            # Either redux didn't hydrate or the SPA went
+                            # straight to a "no results" state. Either way,
+                            # fall through to whatever HTML we got.
                             pass
-                        # Tiny settle for any final XHR.
-                        await page.wait_for_timeout(800)
-                    # Single attempt — retries here multiply the timeout.
-                    # If one nav fails we move on; total recall is more
-                    # important than perfect per-query reliability.
+                        await page.wait_for_timeout(500)
                     await _go()
                 except Exception as exc:
                     log.error("nav failed for q=%r: %s", q, exc)
@@ -457,8 +467,28 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                 # filters out caches/initial-page-load data from prior queries.
                 fresh = [p for p in captured_payloads if p["ts"] >= t_nav_start]
 
+                # Primary source: read the live redux store directly. This
+                # is more reliable than re-parsing the HTML or intercepting
+                # XHR (the portal often serves results from cache and skips
+                # the network call entirely on warm pages).
+                redux_rows: List[Dict] = []
+                try:
+                    redux_rows = await page.evaluate("""() => {
+                        try {
+                            const d = (window.__data || {}).documents;
+                            if (!d || !d.workspaces) return [];
+                            const ws = Object.values(d.workspaces)[0];
+                            if (!ws || !ws.data) return [];
+                            const byHash = ws.data.byHash || {};
+                            return Object.values(byHash);
+                        } catch (e) { return []; }
+                    }""")
+                except Exception as exc:
+                    log.debug("redux eval failed: %s", exc)
+                    redux_rows = []
+
                 # Save diagnostics for the first query so the operator can see
-                # what the portal actually returned (and how to adapt).
+                # what the portal actually returned.
                 if not diagnostics_saved:
                     try:
                         html = await page.content()
@@ -472,33 +502,43 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                                  for p in fresh],
                                 fh, indent=2, default=str,
                             )
-                        log.info("diagnostics saved to debug/ (%d payloads)",
-                                 len(fresh))
+                        with (debug_dir / "first_query_redux_rows.json").open(
+                                "w", encoding="utf-8") as fh:
+                            json.dump(redux_rows[:5], fh, indent=2, default=str)
+                        log.info(
+                            "diagnostics saved (%d xhr payloads, %d redux rows)",
+                            len(fresh), len(redux_rows),
+                        )
                         diagnostics_saved = True
                     except Exception as exc:
                         log.debug("could not save diagnostics: %s", exc)
 
-                # Pick the most plausible "results" payload(s) — those whose
-                # URL contains the search term we just queried.
-                q_token = q.split()[0].lower()
-                preferred = [p for p in fresh
-                             if q_token in p["url"].lower()
-                             or "searchvalue" in p["url"].lower()]
-                source_payloads = preferred if preferred else fresh
+                if redux_rows:
+                    rows = redux_rows
+                else:
+                    # Pick the most plausible "results" payload(s) — those whose
+                    # URL contains the search term we just queried.
+                    q_token = q.split()[0].lower()
+                    preferred = [p for p in fresh
+                                 if q_token in p["url"].lower()
+                                 or "searchvalue" in p["url"].lower()]
+                    source_payloads = preferred if preferred else fresh
 
-                rows = _extract_rows_from_payloads(source_payloads)
+                    rows = _extract_rows_from_payloads(source_payloads)
 
-                # DOM fallback.
-                if not rows:
-                    try:
-                        html = await page.content()
-                        rows = _extract_rows_from_html(html)
-                    except Exception as exc:
-                        log.warning("DOM fallback failed for q=%r: %s", q, exc)
-                        rows = []
+                    # DOM fallback (also reads redux state from static HTML).
+                    if not rows:
+                        try:
+                            html = await page.content()
+                            rows = _extract_rows_from_html(html)
+                        except Exception as exc:
+                            log.warning("DOM fallback failed for q=%r: %s",
+                                        q, exc)
+                            rows = []
 
-                log.info("  → %d raw rows from %d payload(s) (q=%r)",
-                         len(rows), len(source_payloads), q)
+                source_label = "redux" if redux_rows else "fallback"
+                log.info("  → %d raw rows (source=%s, q=%r)",
+                         len(rows), source_label, q)
 
                 kept = 0
                 for raw in rows:
@@ -552,6 +592,10 @@ def _extract_rows_from_payloads(payloads: List[Dict]) -> List[Dict]:
         "recordeddate", "fileddate", "filedate", "recordingdate",
         "consideration", "considerationamount", "legal", "legaldescription",
     }
+    # Reject configuration-style entries — table column definitions, menu
+    # items, etc. Real documents don't have a top-level 'label' field that
+    # describes them; column configs do.
+    CONFIG_TELLS = {"label", "key"}
     rows: List[Dict] = []
     for entry in payloads:
         body = entry.get("body")
@@ -562,12 +606,20 @@ def _extract_rows_from_payloads(payloads: List[Dict]) -> List[Dict]:
                 if not isinstance(item, dict):
                     continue
                 keys = {k.lower() for k in item.keys()}
+                # If it looks like a column/config descriptor, skip it.
+                # Heuristic: small dict (≤3 keys) AND contains both a
+                # 'key' and a 'label'/'name' but no doc-supporting fields.
+                if (len(keys) <= 3
+                    and "key" in keys
+                    and (keys & {"label", "name", "title"})
+                    and not (keys & DOC_HINTS)):
+                    continue
                 has_doc_key = bool(keys & DOC_KEYS)
                 has_id = "id" in keys or "documentid" in keys
                 has_hint = bool(keys & DOC_HINTS)
-                # Accept if it has a doc-number-like key,
-                # OR if it has an id AND at least one supporting field.
-                if has_doc_key or (has_id and has_hint):
+                # Accept if it has a doc-number-like key AND at least one
+                # supporting field, OR if it has an id AND a hint.
+                if (has_doc_key and has_hint) or (has_id and has_hint):
                     rows.append(item)
     return rows
 
@@ -592,20 +644,29 @@ def _extract_rows_from_html(html: str) -> List[Dict]:
     except Exception:
         soup = BeautifulSoup(html, "html.parser")
 
-    # Look for an embedded JSON blob first (common React-app pattern).
-    for script in soup.find_all("script"):
-        text = script.string or ""
-        if "searchResults" in text or '"docNumber"' in text:
-            for match in re.finditer(r"\{[^{}]*\"docNumber\"[^{}]*\}", text):
-                try:
-                    rows.append(json.loads(match.group(0)))
-                except Exception:
-                    pass
-
+    # Pass A: the Neumo SPA hydrates a `window.__data` Redux blob into the
+    # rendered HTML. Documents end up at:
+    #     window.__data.documents.workspaces.<id>.data.byHash
+    # That's the most authoritative source — read it directly.
+    redux = _parse_window_data(html)
+    if redux:
+        try:
+            ws = redux.get("documents", {}).get("workspaces", {}) or {}
+            for ws_id, ws_data in ws.items():
+                by_hash = (ws_data or {}).get("data", {}).get("byHash", {}) or {}
+                for k, doc in by_hash.items():
+                    if isinstance(doc, dict):
+                        rows.append(doc)
+                # byOrder is a list of IDs that point into byHash
+        except Exception as exc:
+            log.debug("redux state parse failed: %s", exc)
     if rows:
         return rows
 
-    # Plain table fallback.
+    # Pass B: plain table fallback (used when SPA hasn't hydrated, e.g.
+    # server-rendered preview pages). No regex-on-script-tags pass — that
+    # was firing on table column-definition objects that happen to contain
+    # `"docNumber"` as a string and producing junk rows.
     table = soup.find("table")
     if not table:
         return rows
@@ -616,6 +677,53 @@ def _extract_rows_from_html(html: str) -> List[Dict]:
             continue
         rows.append(dict(zip(headers, cells)))
     return rows
+
+
+def _parse_window_data(html: str) -> Optional[Dict]:
+    """Extract and parse the `window.__data` Redux blob from an SPA page.
+
+    Returns the parsed dict, or None if not found / unparseable. The blob
+    is JS-literal (not strict JSON — it can contain `undefined`), so we
+    do balanced-brace extraction and replace `undefined` with `null`.
+    """
+    m = re.search(r"window\.__data\s*=\s*\{", html)
+    if not m:
+        return None
+    start = m.end() - 1
+    depth = 0
+    in_str = False
+    quote = None
+    esc = False
+    end = -1
+    for i in range(start, len(html)):
+        c = html[i]
+        if in_str:
+            if esc:
+                esc = False
+            elif c == "\\":
+                esc = True
+            elif c == quote:
+                in_str = False
+        else:
+            if c in ('"', "'"):
+                in_str = True
+                quote = c
+            elif c == "{":
+                depth += 1
+            elif c == "}":
+                depth -= 1
+                if depth == 0:
+                    end = i + 1
+                    break
+    if end < 0:
+        return None
+    raw = html[start:end]
+    cleaned = re.sub(r":\s*undefined\b", ": null", raw)
+    cleaned = re.sub(r"\bundefined\b", "null", cleaned)
+    try:
+        return json.loads(cleaned)
+    except Exception:
+        return None
 
 
 def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[ClerkRecord]:
@@ -843,25 +951,139 @@ def fetch_ncad_parcels() -> Dict[str, Dict[str, str]]:
         log.error("NCAD download is not a valid zip: %s", exc)
         return {}
 
-    rows = list(_iter_parcel_rows(zf))
-    log.info("NCAD parsed: %d rows", len(rows))
+    # Log everything in the ZIP — invaluable for diagnosing schema layout.
+    all_names = zf.namelist()
+    log.info("NCAD ZIP contents: %d files", len(all_names))
+    for n in all_names:
+        log.info("  • %s", n)
 
-    lookup: Dict[str, Dict[str, str]] = {}
-    for row in rows:
-        try:
-            info = _normalize_parcel_row(row)
-            if not info:
-                continue
-            owner = info.pop("_owner_raw")
-            for variant in _owner_name_variants(owner):
-                if variant and variant not in lookup:
-                    lookup[variant] = info
-        except Exception as exc:
-            log.debug("bad parcel row skipped: %s", exc)
-            continue
-
+    # Texas PTAD layout typically splits owner data across multiple files,
+    # joined by an account/property ID. Build the lookup by joining the
+    # APPRAISAL_INFO file (which contains property addresses) with whichever
+    # file actually contains owner names.
+    lookup = _build_owner_lookup_from_zip(zf, all_names)
     log.info("NCAD owner-lookup: %d distinct name variants", len(lookup))
     return lookup
+
+
+def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
+                                  names: List[str]) -> Dict[str, Dict[str, str]]:
+    """Parse the NCAD export and build owner_name_variant → parcel_info.
+
+    Strategy: read every text file once, indexing rows by account/property
+    ID. Files that have OWNER fields contribute owner data; files that have
+    SITE/MAIL address fields contribute address data. We then join on the
+    shared ID columns to produce a single row per parcel.
+    """
+    parse_deadline = time.time() + 4 * 60   # 4 minutes
+
+    # Common ID column names used in Texas PTAD exports.
+    ID_COLS = ("PROP_ID", "PROPID", "PROPERTY_ID", "ACCOUNT_NUM", "ACCOUNTNUMBER",
+               "ACCT_NUM", "ACCOUNT", "PARCEL_ID", "PARCELID", "GEO_ID",
+               "QUICK_REF_ID")
+    OWNER_COLS = ("OWNER", "OWN1", "OWNER1", "OWNER_NAME", "PYOWNER",
+                  "PRIMARY_OWNER", "FILE_AS_NAME", "OWNER_FILE_AS_NAME")
+
+    owner_by_id: Dict[str, str] = {}
+    addr_by_id: Dict[str, Dict[str, str]] = {}
+
+    text_files = [n for n in names
+                  if n.lower().endswith((".txt", ".csv", ".tsv"))]
+
+    # Skip files that obviously aren't relevant (saves I/O and parse time).
+    SKIP = ("appraisal_agent", "deed_history", "improvement", "exemption",
+            "abatement", "entity", "arb_", "audit", "tax_deferral",
+            "lawsuit", "header", "country_code", "state_code",
+            "abstract_subdv", "mobile_home")
+    text_files = [n for n in text_files
+                  if not any(s in n.lower() for s in SKIP)]
+    log.info("NCAD: %d candidate text files after filtering", len(text_files))
+
+    for name in text_files:
+        if time.time() > parse_deadline:
+            log.warning("NCAD parse budget exhausted at %s", name)
+            break
+        try:
+            with zf.open(name) as fh:
+                raw = fh.read()
+            text = _decode_loose(raw)
+            if not text.strip():
+                continue
+            delim = _sniff_delimiter(text)
+            reader = csv.DictReader(io.StringIO(text), delimiter=delim)
+            row_count = 0
+            owner_added = 0
+            addr_added = 0
+            for row in reader:
+                row_count += 1
+                clean = _clean_row(row)
+                # Find the ID column for this row.
+                pid = ""
+                for c in ID_COLS:
+                    if c in clean and clean[c]:
+                        pid = clean[c]
+                        break
+                if not pid:
+                    continue
+
+                # Try owner.
+                for c in OWNER_COLS:
+                    if c in clean and clean[c]:
+                        if pid not in owner_by_id:
+                            owner_by_id[pid] = clean[c]
+                            owner_added += 1
+                        break
+
+                # Try address (site or mail).
+                addr_info = _normalize_parcel_row(clean)
+                if addr_info:
+                    addr_info.pop("_owner_raw", None)
+                    if addr_info.get("site_addr") or addr_info.get("mail_addr"):
+                        if pid not in addr_by_id:
+                            addr_by_id[pid] = addr_info
+                            addr_added += 1
+
+            log.info("  parsed %s: %d rows (+%d owner, +%d addr), delim=%r",
+                     name, row_count, owner_added, addr_added, delim)
+        except Exception as exc:
+            log.warning("text parse failed for %s: %s", name, exc)
+            continue
+
+    log.info("NCAD: %d unique owner records, %d unique address records",
+             len(owner_by_id), len(addr_by_id))
+
+    # Join owner ↔ address on the property ID.
+    lookup: Dict[str, Dict[str, str]] = {}
+    for pid, owner_name in owner_by_id.items():
+        info = addr_by_id.get(pid)
+        if not info:
+            # No address for this owner — register the owner anyway,
+            # so the clerk-side score can still bump for the LLC flag, etc.
+            info = {"site_addr": "", "site_city": "", "site_state": "TX",
+                    "site_zip": "", "mail_addr": "", "mail_city": "",
+                    "mail_state": "", "mail_zip": ""}
+        for variant in _owner_name_variants(owner_name):
+            if variant and variant not in lookup:
+                lookup[variant] = info
+    return lookup
+
+
+def _clean_row(row: Dict[str, Any]) -> Dict[str, str]:
+    """Coerce a csv.DictReader row to a clean upper-cased str→str dict.
+    Handles the case where DictReader returns a list value (overflow when
+    a row has more fields than the header — common in PTAD pipe files).
+    """
+    clean: Dict[str, str] = {}
+    for k, v in row.items():
+        key = (str(k) if k is not None else "").strip().upper()
+        if isinstance(v, list):
+            v = " ".join(str(x) for x in v if x is not None)
+        elif v is None:
+            v = ""
+        else:
+            v = str(v)
+        clean[key] = v.strip()
+    return clean
 
 
 def _discover_ncad_export_url() -> str:
