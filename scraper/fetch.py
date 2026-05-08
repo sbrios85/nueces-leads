@@ -884,13 +884,49 @@ def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[Cler
         suffix = ", ".join(suffix_parts)
         legal = f"{legal} ({suffix})" if legal else suffix
 
-    amount_raw = g("considerationAmount", "amount", "amount_due",
-                   "totalAmount", "total")
-    amount = _coerce_amount(amount_raw) or _coerce_amount(legal) or _coerce_amount(doc_type_raw)
-
     # Map to category code.
     cat = _classify(doc_type_raw) or default_cat
     cat_label = CAT_TO_LABEL.get(cat, default_cat)
+
+    # OWNER SEMANTICS: for most documents (deeds, mortgages, lis pendens),
+    # the grantor is the seller/property owner — that's who we want to
+    # market to. But for adversarial documents (tax liens, judgments,
+    # probate), the indexed-against party (defendant/debtor/decedent) is
+    # actually the *grantee* — the party "receiving" the lien/judgment.
+    # Examples from real Nueces data:
+    #   - "USA INTERNAL REVENUE → JOHN DOE" (we want JOHN DOE)
+    #   - "ABC BANK vs ROBERT SCHAFER" indexed grantor=ABC, grantee=ROBERT
+    #   - "ESTATE OF JANE SMITH" → grantee is the heir
+    # When that's the case, swap the names so `owner` always means
+    # "person we want to contact".
+    DEFENDANT_IS_GRANTEE_CATS = {"LNFED", "JUD", "MEDLN", "PRO", "LN"}
+    grantor_looks_institutional = bool(
+        grantor and re.search(
+            r"\b(USA|UNITED\s*STATES|INTERNAL\s*REVENUE|IRS|STATE\s*OF\s*\w+|"
+            r"COUNTY\s*OF|CITY\s*OF|DEPARTMENT\s*OF|"
+            r"DISTRICT\s*COURT|COMPTROLLER|MEDICAID|MEDICARE|"
+            r"BANK|CREDIT\s*UNION|MORTGAGE|FINANCIAL|HOA|"
+            r"ASSOCIATION|HOMEOWNERS)\b",
+            grantor, re.IGNORECASE,
+        )
+    )
+    if cat in DEFENDANT_IS_GRANTEE_CATS and grantor_looks_institutional and grantee:
+        grantor, grantee = grantee, grantor
+    # Mechanic liens: contractor (grantor) files against property owner
+    # (grantee). Same swap rule applies.
+    if cat == "LN" and re.search(r"MECH", doc_type_raw, re.I) and grantee:
+        grantor, grantee = grantee, grantor
+
+    amount_raw = g("considerationAmount", "amount", "amount_due",
+                   "totalAmount", "total")
+    # Try the explicit amount field first; only fall through to legal/doctype
+    # text if no explicit field was present. This avoids picking up doc
+    # numbers, account numbers, etc. that look big but aren't money.
+    amount = _coerce_amount(amount_raw)
+    if amount is None:
+        amount = _coerce_amount(legal)
+    if amount is None:
+        amount = _coerce_amount(doc_type_raw)
 
     # Build the deep-link URL back to the document detail page.
     clerk_url = ""
@@ -1003,6 +1039,13 @@ def _coerce_date(v: Any) -> str:
 
 
 def _coerce_amount(v: Any) -> Optional[float]:
+    """Pull a dollar-amount out of an arbitrary value.
+
+    Strict: requires an explicit money cue (`$`, decimal cents, "amount",
+    "due", "consideration") near the number — otherwise we'll pick up
+    doc numbers, account numbers, ZIP codes, cause numbers, etc. as
+    "amounts" and produce ridiculous values.
+    """
     if v is None or v == "":
         return None
     if isinstance(v, (int, float)):
@@ -1012,17 +1055,46 @@ def _coerce_amount(v: Any) -> Optional[float]:
         except Exception:
             return None
     s = str(v)
-    best: Optional[float] = None
-    for m in _AMOUNT_RE.finditer(s):
+    candidates: List[float] = []
+
+    # Pattern A: number prefixed by $ (with optional whitespace).
+    for m in re.finditer(r"\$\s*([0-9]{1,3}(?:,[0-9]{3})+(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)", s):
         try:
-            f = float(m.group(1).replace(",", ""))
+            candidates.append(float(m.group(1).replace(",", "")))
         except ValueError:
-            continue
-        # Skip obviously-not-money small values that are probably page numbers.
-        if f < 1.0:
-            continue
-        if best is None or f > best:
-            best = f
+            pass
+
+    # Pattern B: number with cents and thousands-separators (very money-shaped).
+    # E.g. "12,345.67" — but NOT bare integers like "2026011900".
+    for m in re.finditer(r"\b([0-9]{1,3}(?:,[0-9]{3})+\.[0-9]{2})\b", s):
+        try:
+            candidates.append(float(m.group(1).replace(",", "")))
+        except ValueError:
+            pass
+
+    # Pattern C: number preceded by a money keyword (within ~20 chars).
+    for m in re.finditer(
+        r"(?:amount|amt|due|consideration|principal|balance|debt|paid|owed|sum|"
+        r"total|judgment\s*for)\s*[:.]?\s*\$?\s*"
+        r"([0-9]{1,3}(?:,[0-9]{3})+(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)",
+        s, re.IGNORECASE,
+    ):
+        try:
+            candidates.append(float(m.group(1).replace(",", "")))
+        except ValueError:
+            pass
+
+    if not candidates:
+        return None
+    # Return the largest plausible value. We've already filtered by money
+    # cues, so this is safe — there's no way for a doc number to slip in.
+    best = max(candidates)
+    if best < 1.0:
+        return None
+    # Sanity cap: nothing in real-property documents is over $1B. Caps
+    # protect against any remaining edge cases (e.g. concatenated numbers).
+    if best > 1_000_000_000:
+        return None
     return best
 
 
