@@ -398,20 +398,38 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
 
         page.on("response", lambda r: asyncio.create_task(on_response(r)))
 
+        # Hard wall-clock budget — even with retries, we never spend more
+        # than this on the whole clerk-portal phase. Workflow timeout is
+        # set to 60 minutes; leaving a generous margin for NCAD download.
+        deadline = time.time() + 25 * 60   # 25 minutes max for clerk
+
         for cat_def in LEAD_CATEGORIES:
+            if time.time() > deadline:
+                log.warning("clerk-portal time budget exhausted; stopping early")
+                break
+            category_found_any = False
             for q in cat_def["queries"]:
+                if time.time() > deadline:
+                    break
+                # If this category already found rows under a previous query
+                # alias, skip the remaining aliases — they're fallbacks, not
+                # additive. Cuts ~50% of queries when the primary term works.
+                if category_found_any:
+                    log.info("  (skipping fallback q=%r — category already populated)", q)
+                    break
+
                 url = _build_clerk_search_url(q, start_iso, end_iso)
-                log.info("clerk search: cat=%s q=%r url=%s",
-                         cat_def["cat"], q, url)
+                log.info("clerk search: cat=%s q=%r", cat_def["cat"], q)
                 captured_payloads.clear()
                 t_nav_start = time.time()
 
                 try:
                     async def _go():
                         await page.goto(url, wait_until="domcontentloaded",
-                                        timeout=45_000)
-                        # The SPA loads results AFTER initial render. Wait for
-                        # either a result row to appear or a "no results" state.
+                                        timeout=25_000)
+                        # Wait briefly for results OR a "no results" indicator.
+                        # Don't burn time here — most queries either resolve
+                        # in 2-3 seconds or aren't going to.
                         try:
                             await page.wait_for_selector(
                                 "[data-testid='search-result'], "
@@ -419,22 +437,20 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                                 "[class*='SearchResult'], "
                                 "table tbody tr, "
                                 "[class*='no-results'], "
-                                "[class*='NoResults']",
-                                timeout=20_000,
+                                "[class*='NoResults'], "
+                                "[class*='empty']",
+                                timeout=8_000,
                             )
                         except Exception:
                             pass
-                        # Then wait for network to settle.
-                        try:
-                            await page.wait_for_load_state(
-                                "networkidle", timeout=15_000)
-                        except Exception:
-                            pass
-                        # Final settle.
-                        await page.wait_for_timeout(1200)
-                    await with_retries_async(_go, attempts=3, base_delay=2.0)
+                        # Tiny settle for any final XHR.
+                        await page.wait_for_timeout(800)
+                    # Single attempt — retries here multiply the timeout.
+                    # If one nav fails we move on; total recall is more
+                    # important than perfect per-query reliability.
+                    await _go()
                 except Exception as exc:
-                    log.error("failed to load clerk page for q=%r: %s", q, exc)
+                    log.error("nav failed for q=%r: %s", q, exc)
                     continue
 
                 # Only consider payloads captured AFTER nav started — this
@@ -504,6 +520,8 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                 if rows and kept == 0:
                     log.info("    (all %d rows fell outside date window or "
                              "failed to normalize)", len(rows))
+                if kept > 0:
+                    category_found_any = True
 
         await context.close()
         await browser.close()
