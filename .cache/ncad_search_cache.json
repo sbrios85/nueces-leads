@@ -345,6 +345,335 @@
     "DANGLADE FOODS INC": null,
     "BLUE SHORE PEDAL LOUNGE LLC": null,
     "LUMPIA HOUSE LLC": null,
-    "PROSPERITY BANK": null
+    "PROSPERITY BANK": null,
+    "LARA ALICIA HERNANDEZ": {
+      "site_addr": "2637 PRESA",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ESTATE OF SAMAN AMENDRA DE SILVA": {
+      "site_addr": "1101-1107 1/2 SAM RANKIN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78401",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CLARINGTON HOLDINGS LLC": {
+      "site_addr": "400 RETREAT ST",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "NEXT SPORTS COMPANY LLC": {
+      "site_addr": "5102 Old Brownsville Rd",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "RICHARDS COASTAL PROPERTIES LLC": {
+      "site_addr": "1419 11TH ST",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "U S BANK TRUST NATIONAL ASSOCIATION": null,
+    "LAKEVIEW LOAN SERVICING LLC": {
+      "site_addr": "512 E 2nd ST",
+      "site_city": "BISHOP",
+      "site_state": "TX",
+      "site_zip": "78343",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "GRANADO ESTATES LP": {
+      "site_addr": "130 E VANDERBILT DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "SELENE FINANCE LP": null,
+    "219 MARSHALL LLC": {
+      "site_addr": "104 US HWY 77 S BUS",
+      "site_city": "BISHOP",
+      "site_state": "TX",
+      "site_zip": "78343",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ALVARADO ROBERT LEE": {
+      "site_addr": "6111 COUNTY RD 97-A",
+      "site_city": "ROBSTOWN",
+      "site_state": "TX",
+      "site_zip": "78380",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "DRISCOLL": {
+      "site_addr": "FM RD 665 (WEST OSO) @",
+      "site_city": "ROBSTOWN",
+      "site_state": "TX",
+      "site_zip": "78380",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "FRANCO CHRISTINE": {
+      "site_addr": "13105 DEEPWATER CIR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "HOGAN NICHOLAS": {
+      "site_addr": "6745 SEACOMBER DR 308",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "RODRIGUEZ JESSICA": {
+      "site_addr": "3242 OLSEN DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ECHAVARRIA JAMES": {
+      "site_addr": "417 KNICKERBOCKER",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "RIDDLE CHARLES": {
+      "site_addr": "2255 SUSSEX DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "HERNANDEZ JANESSA": {
+      "site_addr": "LINCOLN AVE (NO RD)",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "PEREZ ADRIANNA NICOLE": {
+      "site_addr": "1006 19th ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "SALINAS JOSEPH ANTHONY": {
+      "site_addr": "1511 CRAIG ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CEVALLOS LEYDI": {
+      "site_addr": "322 MERRILL DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ZAPATA NATHAN": {
+      "site_addr": "1311 KANSAS ST",
+      "site_city": "ROBSTOWN",
+      "site_state": "TX",
+      "site_zip": "78380",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MUNGUIA JOHN": {
+      "site_addr": "1826 TRENTON DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "THOMAS MICHAEL": {
+      "site_addr": "1229 CARNABY ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "HERNANDEZ ALEX": {
+      "site_addr": "1625 TRIPLE CROWN DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78417",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ELIZALDE JAZMYN": {
+      "site_addr": "9402 HUNTINGTON DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ZAMORA NATALIE": {
+      "site_addr": "8117 BARROGATE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78409",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "OLIVAREZ MARIA": {
+      "site_addr": "2133 HUDSON",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MARTINEZ KRYSTAL": {
+      "site_addr": "2222 TORRENTE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MEDELLIN ANDREA": {
+      "site_addr": "7010 SAN BENITO DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "PALACIOS HERBERT BENJAMI": {
+      "site_addr": "13729 A La Entrada Calle",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "LEDESMA MATTHEW": {
+      "site_addr": "4506 HEBERT LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78413",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CENTENO AMANDA": {
+      "site_addr": "1114 19th ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CATES MARK": {
+      "site_addr": "COUNTY RD 105",
+      "site_city": "AGUA DULCE",
+      "site_state": "TX",
+      "site_zip": "78330",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "RODRIDUEZ HILDA": null,
+    "SPENCE BRODERICK": null,
+    "JACOBS JAMES JACKSON": null,
+    "HUMPHREY ROBERT": null,
+    "PERRONE ROBIN": null,
+    "IDAHO HOUSING AND FINANCE ASSOCIATION": null,
+    "ROJAS BENJAMIN": null
   }
 }
