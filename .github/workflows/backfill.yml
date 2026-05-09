@@ -1,0 +1,73 @@
+name: Backfill City of Corpus Christi liens (one-shot)
+
+# This workflow is intentionally manual-only. Run it ONCE to seed
+# `data/city_liens.json` with 24 months of historical CCLN records.
+# After that, the daily `scrape.yml` workflow keeps the file growing.
+#
+# To run: Actions tab → "Backfill City of Corpus Christi liens" →
+#   "Run workflow" (green button).
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "ccln-backfill"
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      - name: Install Playwright + Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run CCLN backfill
+        env:
+          LOG_LEVEL: INFO
+          PYTHONUNBUFFERED: "1"
+        run: python scraper/backfill_city_liens.py
+
+      - name: Upload debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backfill-debug
+          path: debug/
+          if-no-files-found: ignore
+
+      - name: Commit cumulative city liens file
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          mkdir -p .cache
+          git add \
+            data/city_liens.json dashboard/city_liens.json \
+            .cache/ncad_search_cache.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "chore: backfill city liens $(date -u +'%Y-%m-%dT%H:%MZ')"
+            git push
+          fi
