@@ -160,6 +160,15 @@ async def _scrape_all_pages(start_iso: str, end_iso: str
 
             kept = 0
             for raw in rows:
+                # CCLN-specific filter: only keep records where the
+                # CITY OF CORPUS CHRISTI is the GRANTOR (filing the lien).
+                # The homeowner is the grantee — the owner-swap in
+                # _normalize_clerk_row puts them in the owner field.
+                raw_grantor = (raw.get("grantor")
+                               or raw.get("Grantor") or "").upper()
+                if "CITY OF CORPUS CHRISTI" not in raw_grantor:
+                    continue
+
                 try:
                     rec = _normalize_clerk_row(raw, default_cat="CCLN")
                     if rec is None:
