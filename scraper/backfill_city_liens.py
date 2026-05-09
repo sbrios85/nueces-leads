@@ -51,6 +51,7 @@ from fetch import (  # noqa: E402  — local import after sys.path tweak
     ClerkRecord,
     _build_clerk_search_url,
     _extract_clerk_table_rows,
+    _extract_clerk_card_rows,
     _normalize_clerk_row,
     _extract_rows_from_html,
     enrich_with_parcels,
@@ -158,6 +159,48 @@ async def _scrape_all_pages(start_iso: str, end_iso: str
 
             log.info("  → %d raw rows", len(rows))
 
+            # Click into card view to harvest Consideration + Instrument
+            # Date (not exposed in list view). Failure is non-fatal.
+            if rows:
+                try:
+                    await page.evaluate("""() => {
+                        const btns = Array.from(document.querySelectorAll(
+                            'button[aria-label], button[title], [role=button]'));
+                        for (const b of btns) {
+                            const lbl = ((b.getAttribute('aria-label') || '') +
+                                         ' ' + (b.getAttribute('title') || '')
+                                         ).toLowerCase();
+                            if (lbl.includes('card') ||
+                                lbl.includes('grid')  ||
+                                lbl.includes('detail')) {
+                                b.click();
+                                return true;
+                            }
+                        }
+                        return false;
+                    }""")
+                    await page.wait_for_timeout(1500)
+                    card_html = await page.content()
+                    card_rows = _extract_clerk_card_rows(card_html)
+                    log.info("  card view: %d cards parsed", len(card_rows))
+                    by_doc = {r.get("doc_number"): r
+                              for r in rows if r.get("doc_number")}
+                    cons_added = 0
+                    for cr in card_rows:
+                        dn = cr.get("doc_number")
+                        if not dn or dn not in by_doc:
+                            continue
+                        for fld in ("consideration", "instrument_date",
+                                    "doc_status", "num_pages"):
+                            v = cr.get(fld)
+                            if v and not by_doc[dn].get(fld):
+                                by_doc[dn][fld] = v
+                                if fld == "consideration":
+                                    cons_added += 1
+                    log.info("  consideration merged into %d rows", cons_added)
+                except Exception as exc:
+                    log.warning("card-view scrape failed (continuing): %s", exc)
+
             kept = 0
             for raw in rows:
                 # CCLN-specific filter: only keep records where the
@@ -196,6 +239,19 @@ async def _scrape_all_pages(start_iso: str, end_iso: str
 
 
 def main() -> int:
+    # Backfill is a one-shot run with a 60-min workflow timeout. Override
+    # the module-level esearch budgets so we process every record (not
+    # just the first 100), at a slightly tighter polling cadence to fit
+    # the time window. Daily scraper still uses the conservative defaults.
+    import fetch as _fetch
+    _fetch.NCAD_SEARCH_MAX_LOOKUPS    = 5000   # effectively unlimited
+    _fetch.NCAD_SEARCH_DELAY_SEC      = 1.0    # was 1.5; still polite
+    _fetch.NCAD_SEARCH_PHASE_BUDGET_SEC = 55 * 60  # was 8 min
+    log.info("backfill esearch knobs: max=%d, delay=%.1fs, budget=%ds",
+             _fetch.NCAD_SEARCH_MAX_LOOKUPS,
+             _fetch.NCAD_SEARCH_DELAY_SEC,
+             _fetch.NCAD_SEARCH_PHASE_BUDGET_SEC)
+
     today = datetime.now(timezone.utc).date()
     # 24 months back ≈ today minus ~730 days
     start = today - timedelta(days=LOOKBACK_MONTHS * 30 + 15)
@@ -237,13 +293,14 @@ def main() -> int:
             pass
     records.sort(key=lambda r: r.score or 0, reverse=True)
 
-    # 5) Merge into existing city_liens.json (idempotent — re-running this
-    # script doesn't double-count) and write back.
-    existing = load_city_liens()
-    merged = merge_city_liens(existing, records)
-    save_city_liens(merged)
-    log.info("=== backfill done: %d total cumulative CCLN records ===",
-             len(merged))
+    # 5) Replace city_liens.json wholesale (NOT merge). The backfill is
+    # authoritative for the 24-month window; if a doc_num was previously
+    # there with stale/incomplete data (no consideration), the new
+    # version replaces it. Daily scrapes downstream use merge to preserve
+    # this richer data and just add new records.
+    save_city_liens([asdict(r) for r in records])
+    log.info("=== backfill done: %d cumulative CCLN records (replaced) ===",
+             len(records))
     return 0
 
 
