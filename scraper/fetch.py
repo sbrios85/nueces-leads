@@ -714,6 +714,19 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
             kept = 0
             for raw in rows:
                 try:
+                    # CCLN-specific filter: only keep records where the
+                    # CITY OF CORPUS CHRISTI is the GRANTOR (the entity
+                    # filing/creating the lien). The grantee is the
+                    # property owner being encumbered — that's our lead.
+                    # Records where the city is the grantee (e.g. some
+                    # OCR'd ones where it appears in the legal field) are
+                    # not real city-issued liens.
+                    if default_cat == "CCLN":
+                        raw_grantor = (raw.get("grantor")
+                                       or raw.get("Grantor") or "").upper()
+                        if "CITY OF CORPUS CHRISTI" not in raw_grantor:
+                            continue
+
                     rec = _normalize_clerk_row(raw, default_cat=default_cat)
                     if rec is None:
                         continue
@@ -1396,7 +1409,9 @@ def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[Cler
     #   - "ESTATE OF JANE SMITH" → grantee is the heir
     # When that's the case, swap the names so `owner` always means
     # "person we want to contact".
-    DEFENDANT_IS_GRANTEE_CATS = {"LNFED", "JUD", "MEDLN", "PRO", "LN"}
+    # When that's the case, swap the names so `owner` always means
+    # "person we want to contact".
+    DEFENDANT_IS_GRANTEE_CATS = {"LNFED", "JUD", "MEDLN", "PRO", "LN", "CCLN"}
     grantor_looks_institutional = _is_institutional_plaintiff(grantor)
     if cat in DEFENDANT_IS_GRANTEE_CATS and grantor_looks_institutional and grantee:
         grantor, grantee = grantee, grantor
