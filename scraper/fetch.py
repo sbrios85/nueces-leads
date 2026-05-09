@@ -128,52 +128,175 @@ BROWSER_HEADERS = {
 # `query` is the search term we send to the Neumo portal — it matches
 # both the doc-type code and the human-readable name. Multiple queries
 # are run per category to maximize recall, then deduplicated by doc_num.
-LEAD_CATEGORIES: List[Dict[str, Any]] = [
-    {"cat": "LP",        "label": "Lis Pendens",
-     "queries": ["LIS PENDENS", "LP"]},
-    {"cat": "NOFC",      "label": "Notice of Foreclosure",
-     "queries": ["NOTICE OF FORECLOSURE", "NOFC", "NOTICE OF SUBSTITUTE TRUSTEE SALE"]},
-    {"cat": "TAXDEED",   "label": "Tax Deed",
-     "queries": ["TAX DEED", "TAXDEED"]},
-    {"cat": "JUD",       "label": "Judgment",
-     "queries": ["JUDGMENT", "ABSTRACT OF JUDGMENT", "CCJ", "DRJUD"]},
-    {"cat": "LNFED",     "label": "Federal / IRS / Corp Tax Lien",
-     "queries": ["FEDERAL TAX LIEN", "IRS LIEN", "LNIRS", "LNFED", "LNCORPTX"]},
-    {"cat": "LN",        "label": "Lien",
-     "queries": ["LIEN", "MECHANICS LIEN", "LNMECH", "HOA LIEN", "LNHOA"]},
-    {"cat": "MEDLN",     "label": "Medicaid Lien",
-     "queries": ["MEDICAID LIEN", "MEDLN"]},
-    {"cat": "PRO",       "label": "Probate",
-     "queries": ["PROBATE", "LETTERS TESTAMENTARY", "AFFIDAVIT OF HEIRSHIP"]},
-    {"cat": "NOC",       "label": "Notice of Commencement",
-     "queries": ["NOTICE OF COMMENCEMENT", "NOC"]},
-    {"cat": "RELLP",     "label": "Release of Lis Pendens",
-     "queries": ["RELEASE OF LIS PENDENS", "RELLP"]},
+# --------------------------------------------------------------------------- #
+# Lead categories
+# --------------------------------------------------------------------------- #
+#
+# Each category is fetched independently with a precise URL filter rather
+# than keyword-matching the search box. The portal exposes:
+#
+#   * `department=RP` — Official Public Records (default).
+#   * `department=FC` — Foreclosures (separate tab, different schema).
+#   * `_docTypes=<code>` — sidebar filter for a specific document type.
+#   * `searchValue=<text>` — keyword scoped to grantor/grantee/legal.
+#
+# Foreclosure leads are pulled from the FC department and treated as a
+# separate output stream (dashboard/foreclosures.json) — they have a
+# fundamentally different schema (no grantor/grantee, has Sale Date).
+#
+# A few legacy categories (Tax Deed, IRS Lien, Probate, etc.) don't have
+# their own sidebar filter, so we still fall back to keyword search for
+# those. Per the user's instruction, keep them around for now.
+
+# Categories driven by the portal's built-in `_docTypes` filter.
+# These are precise: every record returned belongs to that doc type.
+PORTAL_FILTERED_CATEGORIES: List[Dict[str, Any]] = [
+    {"cat": "LP",      "label": "Lis Pendens",
+     "doc_types": "LP2"},
+    {"cat": "JUD",     "label": "Judgment",
+     "doc_types": "J"},
+    {"cat": "LN",      "label": "Lien",
+     "doc_types": "L3"},
+    {"cat": "HL",      "label": "Hospital Lien",
+     "doc_types": "HL"},
+    {"cat": "LNMECH",  "label": "Mechanics Lien",
+     "doc_types": "MECHL"},
+    {"cat": "MODIF",   "label": "Loan Modification",
+     "doc_types": "MODIF"},
+    {"cat": "APPNMT",  "label": "Appointment of Sub Trust",
+     "doc_types": "APPNMT"},
+    # City of Corpus Christi Lien — same Lien filter PLUS a keyword
+    # constraint on the grantor side. Records that match this AND the
+    # general Lien category are deduped (CCLN wins).
+    {"cat": "CCLN",    "label": "City of Corpus Christi Lien",
+     "doc_types": "L3", "search_value": "city of corpus christi"},
 ]
 
-# Map raw doc-type strings (from clerk results) to our category code.
+# Categories that don't have a corresponding sidebar filter — fall back
+# to keyword search of the grantor/grantee/legal index.
+KEYWORD_CATEGORIES: List[Dict[str, Any]] = [
+    {"cat": "TAXDEED", "label": "Tax Deed",
+     "queries": ["TAX DEED"]},
+    {"cat": "LNFED",   "label": "Federal / IRS / Corp Tax Lien",
+     "queries": ["FEDERAL TAX LIEN", "IRS LIEN"]},
+    {"cat": "MEDLN",   "label": "Medicaid Lien",
+     "queries": ["MEDICAID LIEN"]},
+    {"cat": "PRO",     "label": "Probate",
+     "queries": ["PROBATE", "LETTERS TESTAMENTARY", "AFFIDAVIT OF HEIRSHIP"]},
+    {"cat": "NOC",     "label": "Notice of Commencement",
+     "queries": ["NOTICE OF COMMENCEMENT"]},
+    {"cat": "RELLP",   "label": "Release of Lis Pendens",
+     "queries": ["RELEASE OF LIS PENDENS"]},
+]
+
+# Mortgage Foreclosure category — fetched separately from the FC tab.
+# Stored in its own output file, never mixed with the motivated-seller
+# leads. No score; flagged pre/post by sale date.
+FORECLOSURE_CAT = {"cat": "MFC", "label": "Mortgage Foreclosure"}
+FORECLOSURE_LOOKAHEAD_DAYS = 90  # window: today through today+90
+
+# Map raw doc-type strings (from clerk results) to our category code,
+# used as a fallback when a record's category isn't already known.
 DOC_TYPE_TO_CAT: List[Tuple[re.Pattern, str]] = [
     (re.compile(r"\bRELEASE\b.*\bLIS\s*PENDENS\b", re.I),  "RELLP"),
     (re.compile(r"\bLIS\s*PENDENS\b", re.I),               "LP"),
-    (re.compile(r"\bNOTICE\b.*\bFORECLOSURE\b", re.I),     "NOFC"),
-    (re.compile(r"\bSUBSTITUTE\s*TRUSTEE\b", re.I),        "NOFC"),
     (re.compile(r"\bTAX\s*DEED\b", re.I),                  "TAXDEED"),
     (re.compile(r"\bMEDICAID\s*LIEN\b", re.I),             "MEDLN"),
-    (re.compile(r"\bIRS\s*LIEN\b|\bFEDERAL\s*TAX\s*LIEN\b|\bLNIRS\b|\bLNFED\b|\bLNCORPTX\b", re.I),  "LNFED"),
-    (re.compile(r"\bMECHANIC", re.I),                      "LN"),
-    (re.compile(r"\bHOA\s*LIEN\b|\bLNHOA\b", re.I),        "LN"),
+    (re.compile(r"\bIRS\s*LIEN\b|\bFEDERAL\s*TAX\s*LIEN\b", re.I), "LNFED"),
+    (re.compile(r"\bHOSPITAL\s*LIEN\b", re.I),             "HL"),
+    (re.compile(r"\bMECHANIC", re.I),                      "LNMECH"),
+    (re.compile(r"\bMODIFICATION\b", re.I),                "MODIF"),
+    (re.compile(r"\bAPPOINTMENT\b", re.I),                 "APPNMT"),
     (re.compile(r"\bLIEN\b", re.I),                        "LN"),
-    (re.compile(r"\bABSTRACT\s*OF\s*JUDG", re.I),          "JUD"),
-    (re.compile(r"\bJUDG", re.I),                          "JUD"),
-    (re.compile(r"\bCCJ\b|\bDRJUD\b", re.I),               "JUD"),
+    (re.compile(r"\bABSTRACT\s*OF\s*JUDG|\bJUDG", re.I),   "JUD"),
     (re.compile(r"\bPROBATE\b|\bLETTERS\s*TESTAMENTARY\b|\bHEIRSHIP\b", re.I), "PRO"),
-    (re.compile(r"\bNOTICE\s*OF\s*COMMENCEMENT\b|\bNOC\b", re.I),  "NOC"),
+    (re.compile(r"\bNOTICE\s*OF\s*COMMENCEMENT\b", re.I),  "NOC"),
 ]
 
-CAT_TO_LABEL = {c["cat"]: c["label"] for c in LEAD_CATEGORIES}
+CAT_TO_LABEL = {c["cat"]: c["label"]
+                for c in (PORTAL_FILTERED_CATEGORIES + KEYWORD_CATEGORIES
+                          + [FORECLOSURE_CAT])}
 
 # Money regex — picks the largest-looking $-amount in a record.
 _AMOUNT_RE = re.compile(r"\$?\s*([0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)")
+
+# Pattern that identifies an institutional plaintiff/creditor/agency —
+# i.e. a name where the *real* property owner we want to market to is
+# the OTHER party in the recording (the grantee), not the grantor. Used
+# in two places:
+#
+#   1. _normalize_clerk_row — to flip grantor↔grantee on adversarial
+#      records (tax liens, judgments, etc.) so the dashboard shows the
+#      defendant/debtor as "owner" instead of the IRS/bank/debt collector.
+#
+#   2. _looks_institutional / esearch — to skip futile property-search
+#      lookups for entities that obviously don't own Nueces parcels.
+#
+# Order roughly by frequency in real Nueces filings — most common first.
+# Word boundaries (\b) prevent false positives like "BANK STREET LLC".
+INSTITUTIONAL_PLAINTIFF_RE = re.compile(
+    r"\b("
+    # Federal / state / local government
+    r"USA|UNITED\s*STATES(?:\s*OF\s*AMERICA)?|"
+    r"INTERNAL\s*REVENUE|IRS|U\.?S\.?\s*TREASURY|TREASURY|"
+    r"STATE\s*OF\s*\w+|TEXAS\s*COMPTROLLER|TEXAS\s*WORKFORCE|"
+    r"COUNTY\s*OF|CITY\s*OF|DEPARTMENT\s*OF|"
+    r"NUECES\s*COUNTY|NUECES\s*CO\b|"     # county acting as plaintiff
+    r"DISTRICT\s*COURT|MUNICIPAL\s*COURT|COMMISSIONERS?|"
+    r"MEDICAID|MEDICARE|HHS|"
+    r"ATTORNEY\s*GENERAL|"
+
+    # Government-sponsored mortgage entities
+    r"FREDDIE\s*MAC|FANNIE\s*MAE|GINNIE\s*MAE|"
+    r"HUD|HOUSING\s*AND\s*URBAN\s*DEVELOPMENT|"
+
+    # Banks (all the common Nueces ones, plus generic patterns)
+    r"BANK\s*(OF|N\.?\s*A\.?|NATIONAL)|"
+    r"\w+\s*BANK\s*(N\.?\s*A\.?|NA)?\s*$|"     # ends in "...BANK NA"
+    r"WELLS\s*FARGO|JPMORGAN|JP\s*MORGAN|CHASE\s*BANK|"
+    r"CITIBANK|CITIGROUP|CITI\s*N\.?\s*A\.?|"
+    r"BANK\s*OF\s*AMERICA|BOFA|"
+    r"PROSPERITY\s*BANK|FROST\s*BANK|"
+    r"DISCOVER\s*(BANK)?|AMERICAN\s*EXPRESS|AMEX|"
+    r"CAPITAL\s*ONE|U\.?S\.?\s*BANK|TD\s*BANK|"
+    r"SYNCHRONY\s*BANK|"
+
+    # Credit unions & similar
+    r"CREDIT\s*UNION|FEDERAL\s*CREDIT\s*UNION|FCU\b|"
+
+    # Mortgage / financing
+    r"MORTGAGE|FINANCIAL|FINANCE\s*(CORP|COMPANY|LLC)|"
+
+    # Debt collectors / tax-lien funds / receivable buyers
+    r"MIDLAND\s*CREDIT|MIDLAND\s*FUNDING|"
+    r"PORTFOLIO\s*RECOVERY|LVNV\s*FUNDING|"
+    r"CAVALRY\s*(SPV|PORTFOLIO)|UNIFIN|"
+    r"TAX\s*LIEN\s*FUND|PROPEL\s*TAX|"
+    r"(CREDIT|CAPITAL|RECEIVABLES?|RECOVERY|COLLECTION|FUNDING|FUND)\s*"
+        r"(MANAGEMENT|SERVICES?|GROUP|CORP|INC|LLC|LP|TRUST|SOLUTIONS)|"
+
+    # Hospital / medical billing entities (these file medical liens)
+    r"CHRISTUS\s+SPOHN|CORPUS\s*CHRISTI\s*MEDICAL|"
+    r"HOSPITAL|MEDICAL\s*CENTER|HEALTH\s*CARE\b|"
+    r"REVECORE|TPL\s*SPECIALIST|"
+
+    # HOAs / condo associations (file HOA liens; not motivated sellers)
+    r"HOA\b|HOMEOWNERS\s*ASSOCIATION|"
+    r"\w+\s*CONDOMINIUM(\s*OWNERS?)?\s*(ASSOCIATION|ASSN)?|"
+    r"COUNCIL\s*OF\s*(CO\s*[-]?\s*)?OWNERS|"
+    r"PROPERTY\s*OWNERS\s*ASSOCIATION|POA\b"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+def _is_institutional_plaintiff(name: str) -> bool:
+    """True if the name looks like an institutional plaintiff/creditor/
+    agency — used to swap grantor↔grantee on adversarial recordings.
+    """
+    if not name:
+        return False
+    return bool(INSTITUTIONAL_PLAINTIFF_RE.search(name))
 
 # Configure logging.
 logging.basicConfig(
@@ -209,6 +332,59 @@ class ClerkRecord:
     clerk_url: str = ""
     flags: List[str] = field(default_factory=list)
     score: int = 0
+
+
+@dataclass
+class ForeclosureRecord:
+    """Mortgage Foreclosure (FC tab) — separate output stream from the
+    motivated-seller leads. The FC tab returns different columns:
+    Doc Type, Recorded Date, Sale Date, Doc Number, Property Address.
+    No grantor/grantee. Status flips pre→post automatically based on
+    today vs sale_date.
+    """
+    doc_num: str
+    doc_type: str
+    recorded: str        # ISO date YYYY-MM-DD
+    sale_date: str       # ISO date YYYY-MM-DD
+    legal: str           # the "Property Address" cell — usually a legal
+                          # description like "LT 9 BK 2 DOUGLAS UNIT TWO"
+    clerk_url: str = ""
+    # Filled in only when (eventually) we read the actual PDF:
+    owner: str = ""
+    loan_amount: Optional[float] = None
+    prop_address: str = ""
+    prop_city: str = ""
+    prop_state: str = "TX"
+    prop_zip: str = ""
+    mail_address: str = ""
+    mail_city: str = ""
+    mail_state: str = ""
+    mail_zip: str = ""
+
+
+# Used by the dedup logic when a doc matches multiple categories — the
+# more specific category wins. Higher number = more specific.
+_CAT_SPECIFICITY = {
+    "CCLN":   100,   # most specific: City of Corpus Christi Lien
+    "HL":      80,   # Hospital Lien
+    "LNMECH":  80,   # Mechanics Lien
+    "MODIF":   70,   # Loan Modification
+    "APPNMT":  70,   # Appointment of Sub Trust
+    "TAXDEED": 60,
+    "LNFED":   60,
+    "MEDLN":   60,
+    "PRO":     60,
+    "RELLP":   60,
+    "NOC":     60,
+    "LP":      50,
+    "JUD":     50,
+    "LN":      40,   # generic Lien — least specific
+    "MFC":     90,   # Mortgage Foreclosure (its own tab anyway)
+}
+
+
+def _category_specificity(cat: str) -> int:
+    return _CAT_SPECIFICITY.get(cat, 0)
 
 
 # --------------------------------------------------------------------------- #
@@ -349,26 +525,52 @@ async def _pw_get_bytes(url: str, timeout: int = 300) -> bytes:
 ADVANCED_SEARCH_PATH = "/search/advanced"
 
 
-def _build_clerk_search_url(query: str, start_iso: str, end_iso: str) -> str:
+def _build_clerk_search_url(start_iso: str, end_iso: str,
+                             query: str = "",
+                             doc_types: str = "",
+                             department: str = "RP") -> str:
     """Build the deep-link URL for the advanced-search results page.
 
-    Neumo's URL format (observed in the wild) is roughly:
-        /results?department=RP&searchType=quickSearch&searchValue=<q>
-                &recordedDateRange=YYYYMMDD,YYYYMMDD
-    The exact parameter names have evolved over time; we send a superset
-    so that whichever version the backend currently expects will pick up
-    the right values.
+    Three modes:
+      1. Keyword-only:        query=X,    doc_types=""
+      2. DocType-filter only: query="",   doc_types="LP2"
+      3. Both:                query="city of corpus christi", doc_types="L3"
+
+    The portal accepts both at once, treating them as AND.
+    """
+    start_compact = start_iso.replace("-", "")
+    end_compact = end_iso.replace("-", "")
+    params: Dict[str, Any] = {
+        "department": department,
+        "limit": 50,
+        "offset": 0,
+        "keywordSearch": "false",
+        "searchOcrText": "false",
+        "searchType": "quickSearch",
+        "recordedDateRange": f"{start_compact},{end_compact}",
+    }
+    if query:
+        params["searchValue"] = query
+    if doc_types:
+        params["_docTypes"] = doc_types
+    return f"{CLERK_BASE}/results?{urlencode(params)}"
+
+
+def _build_foreclosure_url(start_iso: str, end_iso: str) -> str:
+    """Build the URL for the Foreclosures (FC) tab.
+
+    The FC tab uses `instrumentDateRange` (not `recordedDateRange`) and
+    the date range filters by Sale Date — so for motivated-seller leads
+    we want today through today+90 days (upcoming auctions).
     """
     start_compact = start_iso.replace("-", "")
     end_compact = end_iso.replace("-", "")
     params = {
-        "department": "RP",                      # Real Property
-        "limit": 50,
-        "offset": 0,
-        "recordedDateRange": f"{start_compact},{end_compact}",
-        "searchOcr": "false",
+        "department": "FC",
+        "instrumentDateRange": f"{start_compact},{end_compact}",
+        "keywordSearch": "false",
+        "searchOcrText": "false",
         "searchType": "quickSearch",
-        "searchValue": query,
     }
     return f"{CLERK_BASE}/results?{urlencode(params)}"
 
@@ -422,157 +624,162 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
         # set to 60 minutes; leaving a generous margin for NCAD download.
         deadline = time.time() + 25 * 60   # 25 minutes max for clerk
 
-        for cat_def in LEAD_CATEGORIES:
+        diagnostics = {"saved": False}    # closure-shared via dict (single ref)
+
+        async def _do_search(url: str, default_cat: str,
+                              date_window: Tuple[str, str]) -> int:
+            """Navigate to `url`, parse the rendered table, normalize rows
+            into ClerkRecord, dedupe by doc_num into `seen`. Returns the
+            number of rows newly added (kept) by this search."""
+            captured_payloads.clear()
+            t_nav_start = time.time()
+            try:
+                await page.goto(url, wait_until="domcontentloaded", timeout=25_000)
+                try:
+                    await page.wait_for_function(
+                        """() => {
+                            const rows = document.querySelectorAll('table tbody tr');
+                            for (const r of rows) {
+                                const docCell = r.querySelector('.col-7');
+                                if (docCell && docCell.textContent.trim())
+                                    return true;
+                            }
+                            const txt = document.body.innerText || '';
+                            if (txt.includes('No Results Found') ||
+                                txt.includes('returned no results'))
+                                return true;
+                            return false;
+                        }""",
+                        timeout=15_000,
+                    )
+                except Exception:
+                    pass
+                await page.wait_for_timeout(400)
+            except Exception as exc:
+                log.error("nav failed for url=%s: %s", url, exc)
+                return 0
+
+            fresh = [p for p in captured_payloads if p["ts"] >= t_nav_start]
+            try:
+                html = await page.content()
+            except Exception:
+                html = ""
+
+            rows = _extract_clerk_table_rows(html)
+
+            # First-query diagnostics dump.
+            if not diagnostics["saved"]:
+                try:
+                    (debug_dir / "first_query.html").write_text(
+                        html, encoding="utf-8")
+                    with (debug_dir / "first_query_payloads.json").open(
+                            "w", encoding="utf-8") as fh:
+                        json.dump(
+                            [{"url": p["url"], "preview": str(p["body"])[:2000]}
+                             for p in fresh], fh, indent=2, default=str)
+                    with (debug_dir / "first_query_table_rows.json").open(
+                            "w", encoding="utf-8") as fh:
+                        json.dump(rows[:5], fh, indent=2, default=str)
+                    log.info("diagnostics saved (%d table rows)", len(rows))
+                    diagnostics["saved"] = True
+                except Exception:
+                    pass
+
+            if not rows:
+                try:
+                    rows = await page.evaluate("""() => {
+                        try {
+                            const d = (window.__data || {}).documents;
+                            if (!d || !d.workspaces) return [];
+                            const ws = Object.values(d.workspaces)[0];
+                            if (!ws || !ws.data) return [];
+                            return Object.values(ws.data.byHash || {});
+                        } catch (e) { return []; }
+                    }""")
+                except Exception:
+                    rows = []
+            if not rows:
+                rows = _extract_rows_from_payloads(fresh)
+                if not rows and html:
+                    rows = _extract_rows_from_html(html)
+
+            source_label = (
+                "table" if rows and isinstance(rows[0], dict)
+                            and "doc_number" in rows[0]
+                else ("redux" if rows else "none")
+            )
+            log.info("  → %d raw rows (source=%s)", len(rows), source_label)
+
+            start_iso, end_iso = date_window
+            kept = 0
+            for raw in rows:
+                try:
+                    rec = _normalize_clerk_row(raw, default_cat=default_cat)
+                    if rec is None:
+                        continue
+                    if rec.filed:
+                        if rec.filed < start_iso or rec.filed > end_iso:
+                            continue
+                    # Always set cat to the search's intended category — the
+                    # portal filter guarantees the doc is of that type. The
+                    # keyword regex in _classify is used only as a last resort
+                    # in _normalize_clerk_row when default_cat is the catch-all.
+                    rec.cat = default_cat
+                    rec.cat_label = CAT_TO_LABEL.get(default_cat, rec.cat_label)
+                    # Dedupe by doc_num. If we already have this doc and the
+                    # new search is more specific (e.g. CCLN vs LN), prefer
+                    # the more-specific category.
+                    existing = seen.get(rec.doc_num)
+                    if existing is None:
+                        seen[rec.doc_num] = rec
+                        kept += 1
+                    elif _category_specificity(default_cat) > \
+                         _category_specificity(existing.cat):
+                        seen[rec.doc_num] = rec  # replace with more specific
+                except Exception as exc:
+                    log.warning("bad row skipped: %s", exc)
+                    continue
+            if rows and kept == 0:
+                log.info("    (all %d rows fell outside date window or "
+                         "failed to normalize)", len(rows))
+            return kept
+
+        # ---------- Pass A: portal-filtered categories ----------
+        # Each one is a single targeted search using `_docTypes=<code>`.
+        # Far more accurate than keyword matching.
+        for cat_def in PORTAL_FILTERED_CATEGORIES:
             if time.time() > deadline:
                 log.warning("clerk-portal time budget exhausted; stopping early")
                 break
-            category_found_any = False
+            url = _build_clerk_search_url(
+                start_iso, end_iso,
+                query=cat_def.get("search_value", ""),
+                doc_types=cat_def["doc_types"],
+            )
+            log.info("clerk filter-search: cat=%s docTypes=%s search=%r",
+                     cat_def["cat"], cat_def["doc_types"],
+                     cat_def.get("search_value", ""))
+            await _do_search(url, cat_def["cat"], (start_iso, end_iso))
+
+        # ---------- Pass B: keyword categories ----------
+        # Categories that don't have a sidebar filter — fall back to
+        # keyword search. Stop after the first query in each category
+        # finds rows (the rest are aliases, not additive).
+        for cat_def in KEYWORD_CATEGORIES:
+            if time.time() > deadline:
+                log.warning("clerk-portal time budget exhausted; stopping early")
+                break
             for q in cat_def["queries"]:
                 if time.time() > deadline:
                     break
-                # If this category already found rows under a previous query
-                # alias, skip the remaining aliases — they're fallbacks, not
-                # additive. Cuts ~50% of queries when the primary term works.
-                if category_found_any:
-                    log.info("  (skipping fallback q=%r — category already populated)", q)
-                    break
-
-                url = _build_clerk_search_url(q, start_iso, end_iso)
-                log.info("clerk search: cat=%s q=%r", cat_def["cat"], q)
-                captured_payloads.clear()
-                t_nav_start = time.time()
-
-                try:
-                    async def _go():
-                        await page.goto(url, wait_until="domcontentloaded",
-                                        timeout=25_000)
-                        # The portal renders results as a server-rendered
-                        # HTML table. Wait for either: at least one row
-                        # in tbody, OR a "No Results Found" indicator.
-                        # The redux store stays `isLoading: true` even
-                        # after the table is populated, so we don't trust
-                        # it — we trust what we can see.
-                        try:
-                            await page.wait_for_function(
-                                """() => {
-                                    // Has results: tbody has at least one tr
-                                    // with a non-empty col-7 (doc number) cell.
-                                    const rows = document.querySelectorAll(
-                                        'table tbody tr');
-                                    for (const r of rows) {
-                                        const docCell = r.querySelector('.col-7');
-                                        if (docCell && docCell.textContent.trim())
-                                            return true;
-                                    }
-                                    // Or: explicitly says no results.
-                                    const txt = document.body.innerText || '';
-                                    if (txt.includes('No Results Found') ||
-                                        txt.includes('returned no results'))
-                                        return true;
-                                    return false;
-                                }""",
-                                timeout=15_000,
-                            )
-                        except Exception:
-                            pass
-                        await page.wait_for_timeout(400)
-                    await _go()
-                except Exception as exc:
-                    log.error("nav failed for q=%r: %s", q, exc)
-                    continue
-
-                # Only consider payloads captured AFTER nav started — this
-                # filters out caches/initial-page-load data from prior queries.
-                fresh = [p for p in captured_payloads if p["ts"] >= t_nav_start]
-
-                # PRIMARY SOURCE: extract rows from the rendered HTML table.
-                # The Neumo portal server-renders search results into a
-                # standard <table> with column-class markers (col-3 = grantor,
-                # col-7 = doc number, etc.). The Redux state is unreliable
-                # here — `isLoading` stays true even after the table renders.
-                html = ""
-                try:
-                    html = await page.content()
-                except Exception as exc:
-                    log.warning("could not get page html: %s", exc)
-
-                rows = _extract_clerk_table_rows(html)
-
-                # Save diagnostics for the first query.
-                if not diagnostics_saved:
-                    try:
-                        (debug_dir / "first_query.html").write_text(
-                            html, encoding="utf-8")
-                        with (debug_dir / "first_query_payloads.json").open(
-                                "w", encoding="utf-8") as fh:
-                            json.dump(
-                                [{"url": p["url"],
-                                  "preview": str(p["body"])[:2000]}
-                                 for p in fresh],
-                                fh, indent=2, default=str,
-                            )
-                        with (debug_dir / "first_query_table_rows.json").open(
-                                "w", encoding="utf-8") as fh:
-                            json.dump(rows[:5], fh, indent=2, default=str)
-                        log.info(
-                            "diagnostics saved (%d xhr payloads, %d table rows)",
-                            len(fresh), len(rows),
-                        )
-                        diagnostics_saved = True
-                    except Exception as exc:
-                        log.debug("could not save diagnostics: %s", exc)
-
-                # Fallback: redux state (covers any future portal versions
-                # that hydrate the store correctly).
-                if not rows:
-                    try:
-                        rows = await page.evaluate("""() => {
-                            try {
-                                const d = (window.__data || {}).documents;
-                                if (!d || !d.workspaces) return [];
-                                const ws = Object.values(d.workspaces)[0];
-                                if (!ws || !ws.data) return [];
-                                return Object.values(ws.data.byHash || {});
-                            } catch (e) { return []; }
-                        }""")
-                    except Exception:
-                        rows = []
-
-                # Last fallback: legacy XHR-based and generic-DOM scrapers.
-                if not rows:
-                    rows = _extract_rows_from_payloads(fresh)
-                    if not rows and html:
-                        rows = _extract_rows_from_html(html)
-
-                source_label = (
-                    "table" if rows and "doc_number" in (rows[0] if rows else {})
-                    else ("redux" if rows else "none")
-                )
-                log.info("  → %d raw rows (source=%s, q=%r)",
-                         len(rows), source_label, q)
-
-                kept = 0
-                for raw in rows:
-                    try:
-                        rec = _normalize_clerk_row(raw, default_cat=cat_def["cat"])
-                        if rec is None:
-                            continue
-                        # Date filter — but only if the row HAS a parseable
-                        # filed date. Drop rows older than the window. Don't
-                        # drop rows with empty `filed` (some payloads omit it).
-                        if rec.filed:
-                            if rec.filed < start_iso or rec.filed > end_iso:
-                                continue
-                        seen[rec.doc_num] = rec  # dedupe by doc_num
-                        kept += 1
-                    except Exception as exc:
-                        log.warning("bad row skipped: %s", exc)
-                        continue
-                if rows and kept == 0:
-                    log.info("    (all %d rows fell outside date window or "
-                             "failed to normalize)", len(rows))
+                url = _build_clerk_search_url(start_iso, end_iso, query=q)
+                log.info("clerk keyword-search: cat=%s q=%r",
+                         cat_def["cat"], q)
+                kept = await _do_search(url, cat_def["cat"],
+                                         (start_iso, end_iso))
                 if kept > 0:
-                    category_found_any = True
+                    log.info("  (skipping fallback queries — got %d rows)", kept)
+                    break
 
         await context.close()
         await browser.close()
@@ -580,6 +787,281 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
     log.info("clerk: %d unique docs in window %s..%s",
              len(seen), start_iso, end_iso)
     return list(seen.values())
+
+
+# --------------------------------------------------------------------------- #
+# Foreclosures (FC department) — separate output stream
+# --------------------------------------------------------------------------- #
+
+async def fetch_foreclosures(today_iso: str,
+                              lookahead_days: int = FORECLOSURE_LOOKAHEAD_DAYS
+                              ) -> List[ForeclosureRecord]:
+    """Drive the clerk portal's Foreclosures (FC) tab to retrieve every
+    upcoming foreclosure with a sale date between `today` and
+    `today + lookahead_days`.
+
+    Distinct from the motivated-seller pipeline: FC rows have no
+    grantor/grantee, but they do have a Sale Date that we use as the
+    primary actionability signal. Owner enrichment via NCAD esearch is
+    skipped here because FC rows expose a legal description (e.g.
+    "LT 9 BK 2 DOUGLAS UNIT TWO") rather than a street address — that
+    requires the eventual PDF-reader work item.
+    """
+    try:
+        from playwright.async_api import async_playwright  # type: ignore
+    except ImportError:
+        log.error("playwright not installed; foreclosure tab skipped")
+        return []
+
+    today_dt = datetime.fromisoformat(today_iso).date()
+    end_dt = today_dt + timedelta(days=lookahead_days)
+    end_iso = end_dt.isoformat()
+
+    url = _build_foreclosure_url(today_iso, end_iso)
+    log.info("=== fetch_foreclosures: window=%s..%s ===", today_iso, end_iso)
+    log.info("  url=%s", url)
+
+    out: Dict[str, ForeclosureRecord] = {}
+
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(headless=True, args=["--no-sandbox"])
+        context = await browser.new_context(user_agent=USER_AGENT)
+        page = await context.new_page()
+
+        try:
+            await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
+            try:
+                await page.wait_for_function(
+                    """() => {
+                        const rows = document.querySelectorAll('table tbody tr');
+                        if (rows.length > 0) {
+                            for (const r of rows) {
+                                if (r.textContent && r.textContent.trim().length > 5)
+                                    return true;
+                            }
+                        }
+                        const txt = document.body.innerText || '';
+                        return txt.includes('No Results Found') ||
+                               txt.includes('returned no results');
+                    }""",
+                    timeout=20_000,
+                )
+            except Exception:
+                pass
+            await page.wait_for_timeout(800)
+            html = await page.content()
+        except Exception as exc:
+            log.error("foreclosure fetch failed: %s", exc)
+            await context.close()
+            await browser.close()
+            return []
+
+        # The FC tab can be paginated. Try to load all pages by clicking
+        # "Next" until disabled, but cap iterations for safety. For small
+        # result counts (typical: 50-100 within 90-day window) usually all
+        # results are on one page.
+        all_rows = _extract_foreclosure_table_rows(html)
+        log.info("  page 1: %d rows", len(all_rows))
+
+        # Save diagnostics (first page only).
+        debug_dir = ROOT_DIR / "debug"
+        debug_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            (debug_dir / "first_foreclosure.html").write_text(
+                html, encoding="utf-8")
+        except Exception:
+            pass
+
+        # Best-effort pagination — click any "Next" button up to 10 times.
+        for page_num in range(2, 11):
+            try:
+                clicked = await page.evaluate("""() => {
+                    const btns = Array.from(document.querySelectorAll(
+                        'button, a, [role=button]'));
+                    for (const b of btns) {
+                        const t = (b.textContent || '').trim().toLowerCase();
+                        if ((t === 'next' || t === '>' || t === 'next page' ||
+                             b.getAttribute('aria-label') === 'Next page')
+                            && !b.disabled
+                            && !(b.classList && b.classList.contains('disabled'))) {
+                            b.click();
+                            return true;
+                        }
+                    }
+                    return false;
+                }""")
+                if not clicked:
+                    break
+                await page.wait_for_timeout(1000)
+                html = await page.content()
+                page_rows = _extract_foreclosure_table_rows(html)
+                log.info("  page %d: %d rows", page_num, len(page_rows))
+                if not page_rows:
+                    break
+                all_rows.extend(page_rows)
+            except Exception as exc:
+                log.debug("pagination stopped at page %d: %s", page_num, exc)
+                break
+
+        await context.close()
+        await browser.close()
+
+    for raw in all_rows:
+        try:
+            rec = _normalize_foreclosure_row(raw)
+            if rec is None:
+                continue
+            # Filter to records whose sale date is within our window.
+            if rec.sale_date:
+                if rec.sale_date < today_iso or rec.sale_date > end_iso:
+                    continue
+            out[rec.doc_num] = rec
+        except Exception as exc:
+            log.warning("bad foreclosure row skipped: %s", exc)
+
+    log.info("=== fetch_foreclosures: %d unique upcoming foreclosures ===",
+             len(out))
+    return list(out.values())
+
+
+def _extract_foreclosure_table_rows(html: str) -> List[Dict[str, str]]:
+    """Parse the FC-tab results table.
+
+    Columns: Doc Type | Recorded Date | Sale Date | Doc Number | Property Address
+    The Neumo classes are col-3..col-7 (the table layout reuses the same
+    component as the RP tab; col-0..col-2 are checkbox/menu/cart).
+    """
+    if not html:
+        return []
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
+
+    table = soup.find("table")
+    if not table:
+        return []
+
+    # Map header text → col-class.
+    header_by_col: Dict[str, str] = {}
+    thead = table.find("thead")
+    if thead:
+        for th in thead.find_all("th"):
+            classes = th.get("class") or []
+            label = th.get_text(" ", strip=True)
+            for c in classes:
+                if c.startswith("col") and label:
+                    header_by_col[c.replace("-", "")] = label
+    if len(header_by_col) < 4:
+        # Fallback: assume the documented order.
+        header_by_col = {
+            "col0": "", "col1": "", "col2": "",
+            "col3": "Doc Type", "col4": "Recorded Date",
+            "col5": "Sale Date", "col6": "Doc Number",
+            "col7": "Property Address",
+        }
+
+    HEADER_TO_FIELD = {
+        "doc type":         "doc_type",
+        "document type":    "doc_type",
+        "recorded date":    "recorded",
+        "sale date":        "sale_date",
+        "doc number":       "doc_number",
+        "document number":  "doc_number",
+        "property address": "legal",      # FC tab labels its legal-desc
+                                            # column "Property Address"
+                                            # but the content is the legal
+                                            # description string, not a
+                                            # mailable address.
+    }
+
+    rows: List[Dict[str, str]] = []
+    tbody = table.find("tbody") or table
+    for tr in tbody.find_all("tr"):
+        if tr.find("th") and not tr.find("td"):
+            continue
+        record: Dict[str, str] = {}
+        link_href = ""
+        for td in tr.find_all("td"):
+            classes = td.get("class") or []
+            text = td.get_text(" ", strip=True)
+            if not text:
+                continue
+            a = td.find("a", href=True)
+            if a and "/doc/" in a["href"]:
+                link_href = a["href"]
+            col_class = next(
+                (c.replace("-", "") for c in classes
+                 if re.match(r"col-?\d+$", c)),
+                None,
+            )
+            if not col_class:
+                continue
+            header = (header_by_col.get(col_class) or "").strip().lower()
+            field = HEADER_TO_FIELD.get(header)
+            if not field:
+                continue
+            if text in ("--/--/--", "N/A", "n/a", "-"):
+                text = ""
+            record[field] = text
+        if record.get("doc_number"):
+            if link_href:
+                record["clerk_url"] = link_href
+            rows.append(record)
+    return rows
+
+
+def _normalize_foreclosure_row(raw: Dict[str, str]) -> Optional[ForeclosureRecord]:
+    doc_num = (raw.get("doc_number") or "").strip()
+    if not doc_num:
+        return None
+    doc_type = (raw.get("doc_type") or "FORECLOSURE NOTICE").strip()
+    recorded = _coerce_date(raw.get("recorded"))
+    sale_date = _coerce_date(raw.get("sale_date"))
+    legal = (raw.get("legal") or "").strip()
+
+    clerk_url = (raw.get("clerk_url") or "").strip()
+    if clerk_url and not clerk_url.startswith("http"):
+        clerk_url = CLERK_BASE + (clerk_url if clerk_url.startswith("/")
+                                  else "/" + clerk_url)
+    if not clerk_url:
+        clerk_url = (f"{CLERK_BASE}/results?"
+                     + urlencode({"department": "FC",
+                                  "searchValue": doc_num}))
+
+    # Best-effort extract of a real street address from the legal field
+    # (rare for foreclosures, but if the legal happens to be a street
+    # address we'll capture it; PDF reading will be the proper source).
+    addr = _extract_tx_address(legal)
+    prop_address = addr["street"] if addr else ""
+    prop_city    = addr["city"]   if addr else ""
+    prop_state   = addr["state"]  if addr else ""
+    prop_zip     = addr["zip"]    if addr else ""
+
+    return ForeclosureRecord(
+        doc_num=doc_num,
+        doc_type=doc_type,
+        recorded=recorded or "",
+        sale_date=sale_date or "",
+        legal=legal,
+        clerk_url=clerk_url,
+        prop_address=prop_address,
+        prop_city=prop_city,
+        prop_state=prop_state or "TX",
+        prop_zip=prop_zip,
+    )
+
+
+def _foreclosure_status(sale_date: str, today_iso: str) -> str:
+    """Return 'pre-foreclosure' if sale_date is in the future, else
+    'post-foreclosure'."""
+    if not sale_date:
+        return "pre-foreclosure"
+    try:
+        return ("pre-foreclosure" if sale_date >= today_iso
+                else "post-foreclosure")
+    except Exception:
+        return "pre-foreclosure"
 
 
 def _extract_rows_from_payloads(payloads: List[Dict]) -> List[Dict]:
@@ -915,16 +1397,7 @@ def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[Cler
     # When that's the case, swap the names so `owner` always means
     # "person we want to contact".
     DEFENDANT_IS_GRANTEE_CATS = {"LNFED", "JUD", "MEDLN", "PRO", "LN"}
-    grantor_looks_institutional = bool(
-        grantor and re.search(
-            r"\b(USA|UNITED\s*STATES|INTERNAL\s*REVENUE|IRS|STATE\s*OF\s*\w+|"
-            r"COUNTY\s*OF|CITY\s*OF|DEPARTMENT\s*OF|"
-            r"DISTRICT\s*COURT|COMPTROLLER|MEDICAID|MEDICARE|"
-            r"BANK|CREDIT\s*UNION|MORTGAGE|FINANCIAL|HOA|"
-            r"ASSOCIATION|HOMEOWNERS)\b",
-            grantor, re.IGNORECASE,
-        )
-    )
+    grantor_looks_institutional = _is_institutional_plaintiff(grantor)
     if cat in DEFENDANT_IS_GRANTEE_CATS and grantor_looks_institutional and grantee:
         grantor, grantee = grantee, grantor
     # Mechanic liens: contractor (grantor) files against property owner
@@ -1652,26 +2125,12 @@ def _owner_name_variants(name: str) -> List[str]:
 # looked up twice, and skip names that obviously won't have parcels
 # (banks, agencies, debt collectors).
 
-# Names we never bother looking up — they're not Nueces property owners,
-# they're institutional plaintiffs/creditors/agencies that file recordings.
-_INSTITUTIONAL_RE = re.compile(
-    r"\b("
-    r"USA|UNITED\s*STATES|UNITED\s*STATES\s*OF\s*AMERICA|"
-    r"INTERNAL\s*REVENUE|IRS|TREASURY|"
-    r"STATE\s*OF\s*TEXAS|TEXAS\s*COMPTROLLER|TEXAS\s*WORKFORCE|"
-    r"COUNTY\s*OF|CITY\s*OF|DEPARTMENT\s*OF|"
-    r"DISTRICT\s*COURT|MUNICIPAL\s*COURT|COMMISSIONERS?|"
-    r"MEDICAID|MEDICARE|HHS|"
-    r"FREDDIE\s*MAC|FANNIE\s*MAE|GINNIE\s*MAE|"
-    r"BANK\s*(OF|N\.?A\.?|NATIONAL)|WELLS\s*FARGO|"
-    r"CHASE\s*(BANK)?|JPMORGAN|CITIBANK|"
-    r"(CREDIT|CAPITAL|RECEIVABLES?|RECOVERY|FUND)\s*(MANAGEMENT|SERVICES?|CORP|INC|LLC|LP)|"
-    r"MIDLAND\s*CREDIT|PORTFOLIO\s*RECOVERY|LVNV\s*FUNDING|"
-    r"DISCOVER\s*BANK|AMERICAN\s*EXPRESS|CAPITAL\s*ONE|"
-    r"HOA|HOMEOWNERS\s*ASSOCIATION|CONDOMINIUM"
-    r")\b",
-    re.IGNORECASE,
-)
+# Names we never bother looking up in the property-search portal —
+# they're not Nueces property owners. We reuse the same pattern that
+# drives the grantor↔grantee swap (see INSTITUTIONAL_PLAINTIFF_RE near
+# the top of the module): if a name looks like an institutional
+# plaintiff/creditor, looking it up will not produce a useful match.
+_INSTITUTIONAL_RE = INSTITUTIONAL_PLAINTIFF_RE
 
 
 def _looks_institutional(name: str) -> bool:
@@ -2376,6 +2835,83 @@ def build_owner_cat_index(records: List[ClerkRecord]) -> Dict[str, set]:
 # Output: JSON + GHL CSV
 # --------------------------------------------------------------------------- #
 
+def write_foreclosure_outputs(records: List[ForeclosureRecord],
+                                today_iso: str, end_iso: str) -> None:
+    """Write the foreclosure stream to dashboard/foreclosures.json and a
+    matching CSV. Status (pre/post) is computed at write time using
+    today_iso vs each record's sale_date.
+    """
+    DASHBOARD_DIR.mkdir(parents=True, exist_ok=True)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    enriched = []
+    for r in records:
+        d = asdict(r)
+        d["status"] = _foreclosure_status(r.sale_date, today_iso)
+        # Days until sale (negative if sale is in the past).
+        try:
+            sd = datetime.fromisoformat(r.sale_date).date()
+            td = datetime.fromisoformat(today_iso).date()
+            d["days_until_sale"] = (sd - td).days
+        except Exception:
+            d["days_until_sale"] = None
+        enriched.append(d)
+
+    # Sort: pre-foreclosure first by closest sale date, then post.
+    def sort_key(d):
+        is_post = d["status"] == "post-foreclosure"
+        days = d.get("days_until_sale")
+        if days is None:
+            days = 9999
+        return (is_post, days)
+    enriched.sort(key=sort_key)
+
+    payload = {
+        "fetched_at": datetime.now(timezone.utc).isoformat(),
+        "source": "Nueces County Clerk (FC tab)",
+        "date_range": {"start": today_iso, "end": end_iso},
+        "total": len(enriched),
+        "pre_foreclosure": sum(1 for d in enriched
+                               if d["status"] == "pre-foreclosure"),
+        "post_foreclosure": sum(1 for d in enriched
+                                if d["status"] == "post-foreclosure"),
+        "records": enriched,
+    }
+
+    for path in (DASHBOARD_DIR / "foreclosures.json",
+                 DATA_DIR / "foreclosures.json"):
+        with path.open("w", encoding="utf-8") as fh:
+            json.dump(payload, fh, indent=2, default=str)
+        log.info("wrote %s (%d foreclosures)", path, len(enriched))
+
+    # Companion CSV — same columns as the lead CSV where applicable, plus
+    # foreclosure-specific fields. Useful for spreadsheet review.
+    csv_path = DATA_DIR / "foreclosures.csv"
+    with csv_path.open("w", encoding="utf-8", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow([
+            "Sale Date", "Days Until Sale", "Status",
+            "Doc Number", "Doc Type", "Recorded Date",
+            "Property Address (legal)",
+            "Owner (from PDF)", "Loan Amount (from PDF)",
+            "Public Records URL",
+        ])
+        for d in enriched:
+            w.writerow([
+                d.get("sale_date", ""),
+                d.get("days_until_sale", ""),
+                d.get("status", ""),
+                d.get("doc_num", ""),
+                d.get("doc_type", ""),
+                d.get("recorded", ""),
+                d.get("legal", ""),
+                d.get("owner", ""),
+                f"{d['loan_amount']:.2f}" if d.get("loan_amount") else "",
+                d.get("clerk_url", ""),
+            ])
+    log.info("wrote %s", csv_path)
+
+
 def write_outputs(records: List[ClerkRecord], start_iso: str, end_iso: str) -> None:
     DASHBOARD_DIR.mkdir(parents=True, exist_ok=True)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -2458,13 +2994,25 @@ def main() -> int:
     end_iso = today.isoformat()
     log.info("=== Nueces lead scrape: %s .. %s ===", start_iso, end_iso)
 
-    # 1) Clerk portal — the primary data source.
+    # 1) Clerk portal — the primary motivated-seller data source.
     try:
         clerk_records = asyncio.run(fetch_clerk_records(start_iso, end_iso))
     except Exception as exc:
         log.error("clerk fetch failed entirely: %s\n%s",
                   exc, traceback.format_exc())
         clerk_records = []
+
+    # 1b) Foreclosures — separate stream, separate output file. Runs
+    # independently of the motivated-seller pipeline. Failure here is
+    # non-fatal to the rest of the run.
+    try:
+        foreclosures = asyncio.run(fetch_foreclosures(end_iso))
+    except Exception as exc:
+        log.error("foreclosure fetch failed: %s\n%s",
+                  exc, traceback.format_exc())
+        foreclosures = []
+    foreclosure_end = (today + timedelta(days=FORECLOSURE_LOOKAHEAD_DAYS)).isoformat()
+    write_foreclosure_outputs(foreclosures, end_iso, foreclosure_end)
 
     # 2) Pull addresses out of legal-description text where present
     #    (works without NCAD — important fallback path).
