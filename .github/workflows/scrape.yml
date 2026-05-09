@@ -62,6 +62,7 @@ jobs:
           git add \
             dashboard/records.json data/records.json data/leads_for_ghl.csv \
             dashboard/foreclosures.json data/foreclosures.json data/foreclosures.csv \
+            data/city_liens.json dashboard/city_liens.json \
             .cache/ncad_search_cache.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no changes to commit"
