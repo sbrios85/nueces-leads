@@ -9,6 +9,9 @@
     --bg: #0f172a; --panel: #1e293b; --border: #334155;
     --fg: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
     --good: #22c55e; --warn: #f59e0b; --bad: #ef4444;
+    --status-new: #38bdf8; --status-contacted: #a78bfa;
+    --status-interested: #22c55e; --status-negotiating: #f59e0b;
+    --status-closed: #10b981; --status-dead: #64748b;
   }
   * { box-sizing: border-box; }
   body {
@@ -24,7 +27,8 @@
   header h1 { margin: 0; font-size: 20px; }
   header .meta { color: var(--muted); font-size: 13px; }
   .tabs { display: flex; gap: 4px; padding: 0 28px;
-          border-bottom: 1px solid var(--border); background: var(--panel); }
+          border-bottom: 1px solid var(--border); background: var(--panel);
+          flex-wrap: wrap; }
   .tab { padding: 12px 20px; cursor: pointer; user-select: none;
          border-bottom: 3px solid transparent; font-weight: 500;
          color: var(--muted); }
@@ -41,25 +45,43 @@
   .stat .k { color: var(--muted); font-size: 12px;
              text-transform: uppercase; letter-spacing: .04em; }
   .controls { padding: 12px 28px; display: flex; gap: 10px;
-              flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+              flex-wrap: wrap; border-bottom: 1px solid var(--border);
+              align-items: center; }
   .controls input, .controls select {
     background: var(--panel); border: 1px solid var(--border);
     color: var(--fg); padding: 6px 10px; border-radius: 4px; font: inherit;
   }
   .controls input { min-width: 220px; }
+  .controls .spacer { flex: 1; }
+  .controls button {
+    background: var(--panel); border: 1px solid var(--border);
+    color: var(--fg); padding: 6px 12px; border-radius: 4px;
+    font: inherit; cursor: pointer;
+  }
+  .controls button:hover { border-color: var(--accent); color: var(--accent); }
   table { width: 100%; border-collapse: collapse; }
   th, td { padding: 8px 10px; text-align: left;
            border-bottom: 1px solid var(--border); vertical-align: top; }
   th { background: var(--panel); cursor: pointer; user-select: none;
-       position: sticky; top: 0; }
+       position: sticky; top: 0; z-index: 1; }
   th:hover { color: var(--accent); }
   td.score, td.days { font-weight: 600; }
+  tr { cursor: default; }
+  tr.clickable { cursor: pointer; }
   tr:hover { background: rgba(56,189,248,.06); }
-  .pill { display: inline-block; padding: 1px 6px; margin: 1px 2px;
+  .pill { display: inline-block; padding: 1px 8px; margin: 1px 2px;
           border-radius: 10px; font-size: 11px; white-space: nowrap; }
   .pill.flag { background: rgba(245,158,11,.15); color: var(--warn); }
   .pill.pre { background: rgba(239,68,68,.18); color: var(--bad); }
   .pill.post { background: rgba(148,163,184,.18); color: var(--muted); }
+  .pill.status { font-weight: 600; }
+  .pill.status-new { background: rgba(56,189,248,.18); color: var(--status-new); }
+  .pill.status-contacted { background: rgba(167,139,250,.18); color: var(--status-contacted); }
+  .pill.status-interested { background: rgba(34,197,94,.18); color: var(--status-interested); }
+  .pill.status-negotiating { background: rgba(245,158,11,.18); color: var(--status-negotiating); }
+  .pill.status-closed { background: rgba(16,185,129,.20); color: var(--status-closed); }
+  .pill.status-dead { background: rgba(100,116,139,.20); color: var(--status-dead); }
+  tr.dead-lead td { opacity: 0.45; }
   .score-hi { color: var(--good); }
   .score-md { color: var(--warn); }
   .score-lo { color: var(--muted); }
@@ -72,6 +94,71 @@
   .legal { max-width: 280px; font-size: 12px; color: var(--muted); }
   .pane { display: none; }
   .pane.active { display: block; }
+
+  /* CRM side-panel drawer */
+  .drawer-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 100;
+  }
+  .drawer-backdrop.open { display: block; }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(540px, 100%); background: var(--bg);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%); transition: transform .15s ease;
+    z-index: 101; display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--panel); position: sticky; top: 0;
+  }
+  .drawer-header h2 { margin: 0; font-size: 15px; font-weight: 600; }
+  .drawer-close {
+    background: transparent; border: none; color: var(--fg);
+    font-size: 22px; cursor: pointer; padding: 0 4px;
+  }
+  .drawer-close:hover { color: var(--accent); }
+  .drawer-body { padding: 20px; flex: 1; }
+  .drawer-section { margin-bottom: 20px; }
+  .drawer-section h3 {
+    margin: 0 0 8px 0; font-size: 11px; font-weight: 600;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .field { margin-bottom: 10px; }
+  .field label {
+    display: block; font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px;
+  }
+  .field .value { font-size: 14px; word-break: break-word; }
+  .field .value.empty { color: var(--muted); font-style: italic; }
+  .status-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+  .status-buttons button {
+    background: var(--panel); border: 1px solid var(--border);
+    color: var(--fg); padding: 6px 12px; border-radius: 4px;
+    font: inherit; cursor: pointer;
+  }
+  .status-buttons button:hover { border-color: var(--accent); }
+  .status-buttons button.active {
+    border-color: var(--accent); background: rgba(56,189,248,.10);
+    color: var(--accent);
+  }
+  .notes-area {
+    width: 100%; min-height: 100px; padding: 8px;
+    background: var(--panel); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 4px; font: inherit;
+    resize: vertical;
+  }
+  .notes-area:focus { outline: none; border-color: var(--accent); }
+  .saved-indicator {
+    font-size: 11px; color: var(--good); padding: 4px 8px;
+    background: rgba(34,197,94,.10); border-radius: 4px;
+    display: inline-block; opacity: 0; transition: opacity .15s;
+  }
+  .saved-indicator.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -86,10 +173,13 @@
 <div class="tabs">
   <div class="tab active" data-pane="leads">Motivated Seller Leads
     <span class="tab-count" id="leads-count">—</span></div>
+  <div class="tab" data-pane="ccln">City of Corpus Christi Liens
+    <span class="tab-count" id="ccln-count">—</span></div>
   <div class="tab" data-pane="foreclosures">Foreclosures
     <span class="tab-count" id="fc-count">—</span></div>
 </div>
 
+<!-- ======== LEADS PANE ======== -->
 <div class="pane active" id="pane-leads">
   <div class="stats" id="leads-stats"></div>
   <div class="controls">
@@ -112,6 +202,44 @@
   <div id="leads-empty" class="empty" hidden>No matching records.</div>
 </div>
 
+<!-- ======== CCLN / CRM PANE ======== -->
+<div class="pane" id="pane-ccln">
+  <div class="stats" id="ccln-stats"></div>
+  <div class="controls">
+    <input id="ccln-q" placeholder="Search owner / address / doc# / legal…">
+    <select id="ccln-status-filter">
+      <option value="">All (except Dead)</option>
+      <option value="new">New only</option>
+      <option value="contacted">Contacted</option>
+      <option value="interested">Interested</option>
+      <option value="negotiating">Negotiating</option>
+      <option value="closed">Closed</option>
+      <option value="dead">Dead leads only</option>
+      <option value="all-incl-dead">All (including Dead)</option>
+    </select>
+    <select id="ccln-sort">
+      <option value="filed">Sort: Filed (newest first)</option>
+      <option value="status">Sort: Status</option>
+      <option value="last-contact">Sort: Last contact (most recent)</option>
+    </select>
+    <span class="spacer"></span>
+    <button id="ccln-export">Export CSV</button>
+  </div>
+  <table id="ccln-table">
+    <thead><tr>
+      <th>Status</th><th>Filed</th>
+      <th>Owner (Grantor)</th>
+      <th>Property Address</th><th>Mailing Address</th>
+      <th>Amount</th><th>Last Contact</th><th>Doc#</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div id="ccln-empty" class="empty" hidden>No City of Corpus Christi liens loaded yet.<br>
+    Run the <strong>Backfill City of Corpus Christi liens</strong> workflow once
+    in your repo's Actions tab to seed the past 24 months.</div>
+</div>
+
+<!-- ======== FORECLOSURES PANE ======== -->
 <div class="pane" id="pane-foreclosures">
   <div class="stats" id="fc-stats"></div>
   <div class="controls">
@@ -137,10 +265,56 @@
   <div id="fc-empty" class="empty" hidden>No upcoming foreclosures matching filters.</div>
 </div>
 
+<!-- ======== CRM Side Drawer ======== -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h2 id="drawer-title">Lead Detail</h2>
+    <button class="drawer-close" id="drawer-close" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</div>
+
 <script>
+// ============================================================
+// CRM state — persisted in localStorage, keyed by doc_num
+// ============================================================
+const CRM_KEY = "nueces_ccln_crm_v1";
+const STATUSES = ["new","contacted","interested","negotiating","closed","dead"];
+const STATUS_LABELS = {
+  "new":"New","contacted":"Contacted","interested":"Interested",
+  "negotiating":"Negotiating","closed":"Closed","dead":"Dead"
+};
+
+function loadCrm() {
+  try { return JSON.parse(localStorage.getItem(CRM_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveCrm(crm) {
+  localStorage.setItem(CRM_KEY, JSON.stringify(crm));
+}
+function getEntry(docNum) {
+  const crm = loadCrm();
+  return crm[docNum] || {status:"new", notes:"", last_contact:""};
+}
+function setEntry(docNum, patch) {
+  const crm = loadCrm();
+  const cur = crm[docNum] || {status:"new", notes:"", last_contact:""};
+  crm[docNum] = Object.assign({}, cur, patch);
+  saveCrm(crm);
+  return crm[docNum];
+}
+
+// ============================================================
+// Data caches
+// ============================================================
 let LEADS_RAW = [], LEADS_FILTERED = [];
+let CCLN_RAW = [], CCLN_FILTERED = [];
 let FC_RAW = [], FC_FILTERED = [];
 
+// ============================================================
+// Tab switching
+// ============================================================
 document.querySelectorAll(".tab").forEach(t => {
   t.onclick = () => {
     document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
@@ -150,10 +324,13 @@ document.querySelectorAll(".tab").forEach(t => {
   };
 });
 
+// ============================================================
+// Initial load
+// ============================================================
 async function loadAll() {
   let leadsMeta = "";
   try {
-    const r = await fetch("records.json", {cache: "no-store"});
+    const r = await fetch("records.json", {cache:"no-store"});
     const data = await r.json();
     LEADS_RAW = data.records || [];
     document.getElementById("leads-count").textContent = data.total || 0;
@@ -162,24 +339,31 @@ async function loadAll() {
       if (data.date_range && data.date_range.start)
         leadsMeta += " • Range: " + data.date_range.start + " → " + data.date_range.end;
     }
-    renderLeadsStats(data);
-    populateLeadsCats();
-    applyLeads();
+    renderLeadsStats(data); populateLeadsCats(); applyLeads();
   } catch (e) { document.getElementById("leads-empty").hidden = false; }
 
   try {
-    const r = await fetch("foreclosures.json", {cache: "no-store"});
+    const r = await fetch("city_liens.json", {cache:"no-store"});
+    const data = await r.json();
+    CCLN_RAW = data.records || [];
+    document.getElementById("ccln-count").textContent = data.total || 0;
+    renderCclnStats(); applyCcln();
+  } catch (e) { document.getElementById("ccln-empty").hidden = false; }
+
+  try {
+    const r = await fetch("foreclosures.json", {cache:"no-store"});
     const data = await r.json();
     FC_RAW = data.records || [];
     document.getElementById("fc-count").textContent = data.total || 0;
-    renderFcStats(data);
-    applyFc();
+    renderFcStats(data); applyFc();
   } catch (e) { document.getElementById("fc-empty").hidden = false; }
 
-  document.getElementById("meta").textContent =
-    leadsMeta || "Awaiting first scrape";
+  document.getElementById("meta").textContent = leadsMeta || "Awaiting first scrape";
 }
 
+// ============================================================
+// LEADS rendering
+// ============================================================
 function renderLeadsStats(data) {
   const hot = (data.records || []).filter(r => r.score >= 70).length;
   const lp = (data.records || []).filter(r => r.cat === "LP").length;
@@ -190,7 +374,6 @@ function renderLeadsStats(data) {
     <div class="stat"><div class="v">${lp}</div><div class="k">Lis pendens</div></div>
   `;
 }
-
 function populateLeadsCats() {
   const sel = document.getElementById("leads-cat");
   const seen = new Set();
@@ -203,7 +386,6 @@ function populateLeadsCats() {
     }
   }
 }
-
 function applyLeads() {
   const q = document.getElementById("leads-q").value.toLowerCase().trim();
   const cat = document.getElementById("leads-cat").value;
@@ -220,7 +402,6 @@ function applyLeads() {
   else if (sort === "amount") LEADS_FILTERED.sort((a,b) => (b.amount||0) - (a.amount||0));
   renderLeads();
 }
-
 function renderLeads() {
   const tb = document.querySelector("#leads-table tbody");
   tb.innerHTML = "";
@@ -245,6 +426,239 @@ function renderLeads() {
   }
 }
 
+// ============================================================
+// CCLN / CRM rendering
+// ============================================================
+function renderCclnStats() {
+  const crm = loadCrm();
+  const counts = {new:0, contacted:0, interested:0, negotiating:0, closed:0, dead:0};
+  for (const r of CCLN_RAW) {
+    const e = crm[r.doc_num] || {status:"new"};
+    counts[e.status] = (counts[e.status] || 0) + 1;
+  }
+  const totalLive = CCLN_RAW.length - counts.dead;
+  document.getElementById("ccln-stats").innerHTML = `
+    <div class="stat"><div class="v">${totalLive}</div><div class="k">Active leads</div></div>
+    <div class="stat"><div class="v">${counts.new}</div><div class="k">New</div></div>
+    <div class="stat"><div class="v">${counts.contacted}</div><div class="k">Contacted</div></div>
+    <div class="stat"><div class="v">${counts.interested}</div><div class="k">Interested</div></div>
+    <div class="stat"><div class="v">${counts.negotiating}</div><div class="k">Negotiating</div></div>
+    <div class="stat"><div class="v">${counts.closed}</div><div class="k">Closed</div></div>
+    <div class="stat"><div class="v">${counts.dead}</div><div class="k">Dead</div></div>
+  `;
+}
+function applyCcln() {
+  const q = document.getElementById("ccln-q").value.toLowerCase().trim();
+  const filter = document.getElementById("ccln-status-filter").value;
+  const sort = document.getElementById("ccln-sort").value;
+  const crm = loadCrm();
+  CCLN_FILTERED = CCLN_RAW.filter(r => {
+    const e = crm[r.doc_num] || {status:"new"};
+    if (filter === "" && e.status === "dead") return false;
+    if (filter !== "" && filter !== "all-incl-dead" && e.status !== filter) return false;
+    if (!q) return true;
+    return [r.owner, r.grantee, r.prop_address, r.mail_address,
+            r.doc_num, r.doc_type, r.legal,
+            (e.notes || "")]
+      .some(v => (v || "").toLowerCase().includes(q));
+  });
+  if (sort === "filed") CCLN_FILTERED.sort((a,b) => (b.filed||"").localeCompare(a.filed||""));
+  else if (sort === "status") CCLN_FILTERED.sort((a,b) => {
+    const sa = (crm[a.doc_num]||{status:"new"}).status;
+    const sb = (crm[b.doc_num]||{status:"new"}).status;
+    return STATUSES.indexOf(sa) - STATUSES.indexOf(sb);
+  });
+  else if (sort === "last-contact") CCLN_FILTERED.sort((a,b) => {
+    const la = (crm[a.doc_num]||{}).last_contact || "";
+    const lb = (crm[b.doc_num]||{}).last_contact || "";
+    return lb.localeCompare(la);
+  });
+  renderCcln();
+}
+function renderCcln() {
+  const tb = document.querySelector("#ccln-table tbody");
+  tb.innerHTML = "";
+  document.getElementById("ccln-empty").hidden = CCLN_FILTERED.length > 0;
+  const crm = loadCrm();
+  for (const r of CCLN_FILTERED) {
+    const e = crm[r.doc_num] || {status:"new", last_contact:""};
+    const tr = document.createElement("tr");
+    tr.classList.add("clickable");
+    if (e.status === "dead") tr.classList.add("dead-lead");
+    tr.dataset.doc = r.doc_num;
+    tr.innerHTML = `
+      <td><span class="pill status status-${e.status}">${esc(STATUS_LABELS[e.status]||e.status)}</span></td>
+      <td>${esc(r.filed || "")}</td>
+      <td>${esc(r.owner || "")}</td>
+      <td>${esc(r.prop_address || "")}${r.prop_city ? "<br><small>" + esc(r.prop_city + " " + (r.prop_zip||"")) + "</small>" : ""}</td>
+      <td>${esc(r.mail_address || "")}${r.mail_city ? "<br><small>" + esc(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||"")) + "</small>" : ""}</td>
+      <td>${r.amount ? "$" + Number(r.amount).toLocaleString() : ""}</td>
+      <td>${esc(e.last_contact || "—")}</td>
+      <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
+    `;
+    tr.onclick = () => openDrawer(r.doc_num);
+    tb.appendChild(tr);
+  }
+}
+
+// ============================================================
+// CRM drawer (per-record edit panel)
+// ============================================================
+function openDrawer(docNum) {
+  const r = CCLN_RAW.find(x => x.doc_num === docNum);
+  if (!r) return;
+  const e = getEntry(docNum);
+  document.getElementById("drawer-title").textContent =
+    (r.owner || "Lead") + " — " + (r.doc_num || "");
+  const body = document.getElementById("drawer-body");
+  body.innerHTML = `
+    <div class="drawer-section">
+      <h3>Status</h3>
+      <div class="status-buttons" id="status-buttons">
+        ${STATUSES.map(s => `
+          <button data-status="${s}" class="${e.status === s ? "active" : ""}">
+            ${STATUS_LABELS[s]}
+          </button>`).join("")}
+      </div>
+    </div>
+    <div class="drawer-section">
+      <h3>Last Contact Date</h3>
+      <input type="date" id="drawer-last-contact" value="${esc(e.last_contact || "")}"
+             style="background:var(--panel);border:1px solid var(--border);
+                    color:var(--fg);padding:6px 10px;border-radius:4px;font:inherit;">
+      <span class="saved-indicator" id="saved-lc">Saved</span>
+    </div>
+    <div class="drawer-section">
+      <h3>Notes</h3>
+      <textarea class="notes-area" id="drawer-notes"
+                placeholder="Click here and type any notes...">${esc(e.notes || "")}</textarea>
+      <span class="saved-indicator" id="saved-notes">Saved</span>
+    </div>
+    <div class="drawer-section">
+      <h3>Lead Details</h3>
+      ${field("Owner / Grantor", r.owner)}
+      ${field("Grantee", r.grantee)}
+      ${field("Filed", r.filed)}
+      ${field("Document Type", r.doc_type)}
+      ${field("Document Number", r.doc_num)}
+      ${field("Property Address",
+              [r.prop_address, [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ")]
+                .filter(Boolean).join(", "))}
+      ${field("Mailing Address",
+              [r.mail_address, [r.mail_city, r.mail_state, r.mail_zip].filter(Boolean).join(" ")]
+                .filter(Boolean).join(", "))}
+      ${field("Amount", r.amount ? "$" + Number(r.amount).toLocaleString() : "")}
+      ${field("Legal Description", r.legal)}
+      ${r.clerk_url ?
+        `<div class="field"><label>Public Records</label>
+         <div class="value"><a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">View on clerk portal →</a></div></div>` : ""}
+    </div>
+  `;
+
+  // wire status buttons
+  body.querySelectorAll("#status-buttons button").forEach(b => {
+    b.onclick = () => {
+      const status = b.dataset.status;
+      // Auto-set last_contact when status changes (except to/from "new").
+      const patch = {status: status};
+      if (status !== "new" && !getEntry(docNum).last_contact) {
+        patch.last_contact = new Date().toISOString().slice(0,10);
+        const lcInput = document.getElementById("drawer-last-contact");
+        if (lcInput) lcInput.value = patch.last_contact;
+      }
+      setEntry(docNum, patch);
+      body.querySelectorAll("#status-buttons button")
+          .forEach(x => x.classList.toggle("active", x.dataset.status === status));
+      flashSaved("saved-lc");
+      renderCcln(); renderCclnStats();
+    };
+  });
+
+  // wire notes (save on blur, debounce on input)
+  let notesTimer = null;
+  body.querySelector("#drawer-notes").oninput = (ev) => {
+    clearTimeout(notesTimer);
+    notesTimer = setTimeout(() => {
+      setEntry(docNum, {notes: ev.target.value});
+      flashSaved("saved-notes");
+      renderCcln();
+    }, 500);
+  };
+
+  // wire last-contact date
+  body.querySelector("#drawer-last-contact").onchange = (ev) => {
+    setEntry(docNum, {last_contact: ev.target.value});
+    flashSaved("saved-lc");
+    renderCcln();
+  };
+
+  document.getElementById("drawer").classList.add("open");
+  document.getElementById("drawer-backdrop").classList.add("open");
+}
+
+function field(label, val) {
+  if (val === null || val === undefined || val === "") {
+    return `<div class="field"><label>${esc(label)}</label>
+            <div class="value empty">—</div></div>`;
+  }
+  return `<div class="field"><label>${esc(label)}</label>
+          <div class="value">${esc(val)}</div></div>`;
+}
+function flashSaved(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 1200);
+}
+function closeDrawer() {
+  document.getElementById("drawer").classList.remove("open");
+  document.getElementById("drawer-backdrop").classList.remove("open");
+}
+document.getElementById("drawer-close").onclick = closeDrawer;
+document.getElementById("drawer-backdrop").onclick = closeDrawer;
+
+// ============================================================
+// CCLN export
+// ============================================================
+document.getElementById("ccln-export").onclick = () => {
+  const crm = loadCrm();
+  const headers = [
+    "Status","Last Contact","Notes",
+    "Filed","Owner","Grantee",
+    "Property Address","Property City","Property Zip",
+    "Mailing Address","Mailing City","Mailing State","Mailing Zip",
+    "Amount","Doc Number","Doc Type","Legal","Public Records URL"
+  ];
+  const lines = [headers.join(",")];
+  for (const r of CCLN_FILTERED) {
+    const e = crm[r.doc_num] || {status:"new",notes:"",last_contact:""};
+    lines.push([
+      STATUS_LABELS[e.status] || e.status, e.last_contact || "",
+      e.notes || "",
+      r.filed || "", r.owner || "", r.grantee || "",
+      r.prop_address || "", r.prop_city || "", r.prop_zip || "",
+      r.mail_address || "", r.mail_city || "", r.mail_state || "", r.mail_zip || "",
+      r.amount || "", r.doc_num || "", r.doc_type || "",
+      r.legal || "", r.clerk_url || ""
+    ].map(csv).join(","));
+  }
+  const blob = new Blob([lines.join("\n")], {type:"text/csv"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "ccln_crm_export.csv";
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+function csv(s) {
+  s = String(s == null ? "" : s);
+  if (s.indexOf(",") >= 0 || s.indexOf("\"") >= 0 || s.indexOf("\n") >= 0)
+    return "\"" + s.replace(/"/g, "\"\"") + "\"";
+  return s;
+}
+
+// ============================================================
+// Foreclosures rendering
+// ============================================================
 function renderFcStats(data) {
   document.getElementById("fc-stats").innerHTML = `
     <div class="stat"><div class="v">${data.total || 0}</div><div class="k">Total foreclosures</div></div>
@@ -252,7 +666,6 @@ function renderFcStats(data) {
     <div class="stat"><div class="v">${data.post_foreclosure || 0}</div><div class="k">Post-foreclosure</div></div>
   `;
 }
-
 function applyFc() {
   const q = document.getElementById("fc-q").value.toLowerCase().trim();
   const status = document.getElementById("fc-status").value;
@@ -269,7 +682,6 @@ function applyFc() {
     (b.recorded || "").localeCompare(a.recorded || ""));
   renderFc();
 }
-
 function renderFc() {
   const tb = document.querySelector("#fc-table tbody");
   tb.innerHTML = "";
@@ -299,16 +711,28 @@ function renderFc() {
 }
 
 function esc(s) {
-  return String(s).replace(/[&<>"]/g,
+  return String(s == null ? "" : s).replace(/[&<>"]/g,
     c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 }
 
+// ============================================================
+// Wiring
+// ============================================================
 document.getElementById("leads-q").oninput = applyLeads;
 document.getElementById("leads-cat").onchange = applyLeads;
 document.getElementById("leads-sort").onchange = applyLeads;
+document.getElementById("ccln-q").oninput = applyCcln;
+document.getElementById("ccln-status-filter").onchange = applyCcln;
+document.getElementById("ccln-sort").onchange = applyCcln;
 document.getElementById("fc-q").oninput = applyFc;
 document.getElementById("fc-status").onchange = applyFc;
 document.getElementById("fc-sort").onchange = applyFc;
+
+// ESC closes drawer
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeDrawer();
+});
+
 loadAll();
 </script>
 </body>
