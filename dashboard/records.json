@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-09T03:05:44.691574+00:00",
+  "fetched_at": "2026-05-09T07:07:54.587263+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
     "start": "2026-04-09",
@@ -734,30 +734,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026014407",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-04-27",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "WIMBERLY JEREMY",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NUMBER 538770126",
-      "prop_address": "5158 AYERS ST",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78415",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014407",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026013521",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-04-20",
@@ -776,6 +752,30 @@
       "mail_state": "TX",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013521",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026014407",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-04-27",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "WIMBERLY JEREMY",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NUMBER 538770126",
+      "prop_address": "5158 AYERS ST",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78415",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014407",
       "flags": [
         "Tax lien"
       ],
@@ -950,30 +950,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026013780",
-      "doc_type": "DEED",
-      "filed": "2026-04-21",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "TAX LIEN HOLDINGS LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: LYNWOOD PLACE Lot: 12 Block: 12 Unit or Part: 3 (Lot 12, Block 12)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013780",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026013779",
       "doc_type": "DEED",
       "filed": "2026-04-21",
@@ -992,6 +968,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013779",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026013780",
+      "doc_type": "DEED",
+      "filed": "2026-04-21",
+      "cat": "TAXDEED",
+      "cat_label": "Tax Deed",
+      "owner": "TAX LIEN FUND LP",
+      "grantee": "TAX LIEN HOLDINGS LLC",
+      "amount": null,
+      "legal": "Subdivision - Name: LYNWOOD PLACE Lot: 12 Block: 12 Unit or Part: 3 (Lot 12, Block 12)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013780",
       "flags": [
         "LLC / corp owner"
       ],
@@ -1070,30 +1070,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026013662",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-04-21",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "CHAPMAN SARA RENE",
-      "grantee": "UNITED STATES ATTORNEY",
-      "amount": null,
-      "legal": "SERIAL NUMBER 2024A58151",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013662",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026013520",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-04-20",
@@ -1112,6 +1088,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013520",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026013662",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-04-21",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "CHAPMAN SARA RENE",
+      "grantee": "UNITED STATES ATTORNEY",
+      "amount": null,
+      "legal": "SERIAL NUMBER 2024A58151",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013662",
       "flags": [
         "Tax lien"
       ],
@@ -1404,28 +1404,6 @@
       "score": 35
     },
     {
-      "doc_num": "2026014416",
-      "doc_type": "LIEN",
-      "filed": "2026-04-27",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "HOGAN NICHOLAS",
-      "grantee": "CHRISTUS SPOHN HOSPITAL SOUTH",
-      "amount": null,
-      "legal": "",
-      "prop_address": "6745 SEACOMBER DR 308",
-      "prop_city": "PORT ARANSAS",
-      "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014416",
-      "flags": [],
-      "score": 35
-    },
-    {
       "doc_num": "2026014413",
       "doc_type": "LIEN",
       "filed": "2026-04-27",
@@ -1444,6 +1422,28 @@
       "mail_state": "TX",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014413",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026014416",
+      "doc_type": "LIEN",
+      "filed": "2026-04-27",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "HOGAN NICHOLAS",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SOUTH",
+      "amount": null,
+      "legal": "",
+      "prop_address": "6745 SEACOMBER DR 308",
+      "prop_city": "PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014416",
       "flags": [],
       "score": 35
     },
@@ -1558,28 +1558,6 @@
       "score": 35
     },
     {
-      "doc_num": "2026013717",
-      "doc_type": "LIEN",
-      "filed": "2026-04-21",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "CEVALLOS LEYDI",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
-      "amount": null,
-      "legal": "",
-      "prop_address": "322 MERRILL DR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78408",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013717",
-      "flags": [],
-      "score": 35
-    },
-    {
       "doc_num": "2026013719",
       "doc_type": "LIEN",
       "filed": "2026-04-21",
@@ -1598,6 +1576,28 @@
       "mail_state": "TX",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013719",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026013717",
+      "doc_type": "LIEN",
+      "filed": "2026-04-21",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "CEVALLOS LEYDI",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
+      "amount": null,
+      "legal": "",
+      "prop_address": "322 MERRILL DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78408",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013717",
       "flags": [],
       "score": 35
     },
