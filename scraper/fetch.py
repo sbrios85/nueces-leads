@@ -542,7 +542,7 @@ def _build_clerk_search_url(start_iso: str, end_iso: str,
     end_compact = end_iso.replace("-", "")
     params: Dict[str, Any] = {
         "department": department,
-        "limit": 50,
+        "limit": 250,    # portal max — cuts pagination by 5x
         "offset": 0,
         "keywordSearch": "false",
         "searchOcrText": "false",
@@ -2912,6 +2912,72 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
     log.info("wrote %s", csv_path)
 
 
+CITY_LIENS_FILE = DATA_DIR / "city_liens.json"
+
+
+def load_city_liens() -> List[Dict[str, Any]]:
+    """Load the persistent cumulative City of Corpus Christi lien list.
+
+    This file is grown over time — each daily scrape merges new CCLN
+    records into it (deduped by doc_num). The 24-month backfill script
+    seeds it once. The CRM dashboard uses this as its data source so
+    leads from previous months remain visible after they fall out of
+    the 30-day daily-scrape window.
+    """
+    if not CITY_LIENS_FILE.exists():
+        return []
+    try:
+        raw = json.loads(CITY_LIENS_FILE.read_text(encoding="utf-8"))
+    except Exception as exc:
+        log.warning("could not load city_liens.json: %s", exc)
+        return []
+    if isinstance(raw, dict) and "records" in raw:
+        return raw["records"]
+    if isinstance(raw, list):
+        return raw
+    return []
+
+
+def save_city_liens(records: List[Dict[str, Any]]) -> None:
+    """Write the cumulative City of Corpus Christi lien list to both the
+    /data and /dashboard directories. The dashboard copy is what the
+    CRM tab fetches at runtime."""
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    DASHBOARD_DIR.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "fetched_at": datetime.now(timezone.utc).isoformat(),
+        "source": "Nueces County Clerk — CCLN cumulative",
+        "total": len(records),
+        "records": records,
+    }
+    body = json.dumps(payload, indent=2, default=str)
+    CITY_LIENS_FILE.write_text(body, encoding="utf-8")
+    (DASHBOARD_DIR / "city_liens.json").write_text(body, encoding="utf-8")
+    log.info("wrote city_liens.json (%d cumulative records)", len(records))
+
+
+def merge_city_liens(existing: List[Dict[str, Any]],
+                      new_records: List[ClerkRecord]) -> List[Dict[str, Any]]:
+    """Merge new CCLN records into the existing cumulative list.
+
+    Dedupes by doc_num. New records are added; existing records keep
+    whatever data they had (which may include CRM fields the dashboard
+    has written via Option B in the future). For now CRM state lives in
+    localStorage, so this is a simple union.
+    """
+    by_doc = {r.get("doc_num"): r for r in existing if r.get("doc_num")}
+    added = 0
+    for rec in new_records:
+        if not rec.doc_num:
+            continue
+        if rec.doc_num not in by_doc:
+            by_doc[rec.doc_num] = asdict(rec)
+            added += 1
+    log.info("city_liens merge: %d existing + %d new (kept %d added)",
+             len(existing), len(new_records), added)
+    return list(by_doc.values())
+
+
 def write_outputs(records: List[ClerkRecord], start_iso: str, end_iso: str) -> None:
     DASHBOARD_DIR.mkdir(parents=True, exist_ok=True)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -3031,6 +3097,17 @@ def main() -> int:
     # 4) Sort.
     clerk_records.sort(key=lambda r: r.score or 0, reverse=True)
 
+    # 4b) Split CCLN (City of Corpus Christi liens) off the main stream.
+    # CCLN records live in the persistent cumulative list (city_liens.json)
+    # and surface only on the CRM tab — not the Motivated Seller tab.
+    # The 24-month backfill seeds the file; daily scrape merges in any new.
+    ccln_today = [r for r in clerk_records if r.cat == "CCLN"]
+    clerk_records = [r for r in clerk_records if r.cat != "CCLN"]
+    if ccln_today:
+        log.info("CCLN: %d new candidates from today's scrape", len(ccln_today))
+    # Defer the city_liens.json write until AFTER esearch enrichment runs,
+    # so newly-merged CCLN records get owner addresses too. See step 9.
+
     # 5) WRITE OUTPUTS NOW — before NCAD, so even if NCAD hangs/fails the
     #    clerk-side leads are committed and the dashboard refreshes.
     write_outputs(clerk_records, start_iso, end_iso)
@@ -3086,7 +3163,27 @@ def main() -> int:
         log.info("=== final write done with esearch enrichment "
                  "(+%d addresses) ===", gained)
 
-    log.info("=== done: %d records ===", len(clerk_records))
+    # 10) Run esearch enrichment on the new CCLN records too, score them,
+    #     then merge into the persistent city_liens.json. We always write
+    #     the file (even if no new records) to refresh the dashboard copy.
+    if ccln_today:
+        try:
+            enrich_via_ncad_search(ccln_today)
+        except Exception as exc:
+            log.warning("CCLN esearch enrichment failed: %s", exc)
+        # Score CCLN records for the CRM tab's at-a-glance pill.
+        ccln_idx = build_owner_cat_index(ccln_today)
+        for rec in ccln_today:
+            try:
+                compute_flags_and_score(rec, end_iso, ccln_idx)
+            except Exception:
+                pass
+    existing = load_city_liens()
+    merged = merge_city_liens(existing, ccln_today) if ccln_today else existing
+    save_city_liens(merged)
+
+    log.info("=== done: %d records (+ %d CCLN cumulative) ===",
+             len(clerk_records), len(merged))
     return 0
 
 
