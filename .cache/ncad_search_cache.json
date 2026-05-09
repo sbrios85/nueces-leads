@@ -674,6 +674,638 @@
     "HUMPHREY ROBERT": null,
     "PERRONE ROBIN": null,
     "IDAHO HOUSING AND FINANCE ASSOCIATION": null,
-    "ROJAS BENJAMIN": null
+    "ROJAS BENJAMIN": null,
+    "PENA LIONEL": {
+      "site_addr": "604 DUNCAN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "GARCIA ESMERALDA": {
+      "site_addr": "1226 LOGAN AVE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "LOPEZ RAMON": {
+      "site_addr": "2601 NIMITZ",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "GALVAN SANTOS EST OF": {
+      "site_addr": "1219 ELGIN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MARKMAN BROTHERS INVESTMENTS CORPUS CHRI": {
+      "site_addr": "1318 17th ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CORPUS CHRISTI COMMUNITY IMPROVEMENT COR": {
+      "site_addr": "707 14th ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78401",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "THE CORPUS CHRISTI COMMUNITY IMPROVEMENT": {
+      "site_addr": "1704 COLEMAN AVE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78401",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CANTU HERMILA EST OF": {
+      "site_addr": "2813 NIAGARA",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "GALVAN SANOS EST OF": {
+      "site_addr": "425 ROBERT DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CHURCH OF GOD IN CHRIST": {
+      "site_addr": "1513 SAM RANKIN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78401",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "RIVERA MIKE": {
+      "site_addr": "4317 TEAK",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CRUZ HILDA": {
+      "site_addr": "1816 ELIZABETH",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "DEL BOSQUE EDDIE EST OF": {
+      "site_addr": "2813 SUMMERS",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78407",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "TREVINO ELVIRA M EST OF": {
+      "site_addr": "4109 RAMSEY",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CRISANTES LUIS W EST OF": {
+      "site_addr": "410 ROBERT DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CANTU MARIA H ESTATE OF": {
+      "site_addr": "938 MENDOZA ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "DIVINE TEMPLE OF GOD MISSION": {
+      "site_addr": "1504 BURNS ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78401",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ESTASTE OF SADIE ORCHANSKI LLP": null,
+    "ESTATE OF SADIE ORSHANSKI LLP": {
+      "site_addr": "1101-1107 1/2 SAM RANKIN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78401",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "HATCH STREET CHURCH OF GOD": {
+      "site_addr": "2314 HATCH",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78407",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MARTINEZ ALFRED G ET UX": {
+      "site_addr": "749 POST AVE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "OLMOS JESSICA": {
+      "site_addr": "1129 HORNE RD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "JOHNSON CYNTHIA P": {
+      "site_addr": "15501 DYNA ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "PETERS EARL": {
+      "site_addr": "813-817 ALAMEDA ST S",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "HENDERSON SYLVESTER SR": {
+      "site_addr": "472 CLAREMORE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CHANEY KIMBERLY": {
+      "site_addr": "1146 MANCHESTER AVE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78407",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "GUERRERO ELIZABETH L": {
+      "site_addr": "2237 BOLIVAR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "SAMFORD NINA M": {
+      "site_addr": "2213 SEGREST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MARTINEZ ROGELIO": {
+      "site_addr": "1938 YALE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ESQUIVEL DAVID C": {
+      "site_addr": "4720 BARRERA DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "PENA RICHARD": {
+      "site_addr": "522 SANTA MONICA PL",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "LIMERICK PATRICK E": {
+      "site_addr": "781 SHARON DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "PETERS ROBERT M": {
+      "site_addr": "1363 NORMANDY DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ROME MELODY D": {
+      "site_addr": "522 WEBB",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "DEVEREUX DAVID": {
+      "site_addr": "446 SKIPPER LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "GALVAN CARLOS": {
+      "site_addr": "638 AIRPORT RD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ORTEGA LINDA P": {
+      "site_addr": "3710 SUNNYVILLE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "LERMA FRED A": {
+      "site_addr": "2525 GOLLIHAR RD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MATA BENITO": {
+      "site_addr": "SHARPSBURG RD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MARCHAN SYLVIA CASANDRA ETALS": {
+      "site_addr": "2814 WILLARD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MARTINEZ PAULA M": {
+      "site_addr": "749 POST AVE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MCMILLAN ELIZABETH S TR": {
+      "site_addr": "3818 Colima St",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "SALINAS FLOR E": {
+      "site_addr": "1511 CRAIG ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "SANDOR MARGIE ET AL": {
+      "site_addr": "4005 ACUSHNET DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78413",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ABUSETTA SAMIR": {
+      "site_addr": "146 HEINSHOHN RD",
+      "site_city": "Corpus Christi",
+      "site_state": "TX",
+      "site_zip": "",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "TUNCHES GUADALUPE R": {
+      "site_addr": "205 PARR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "BRIDGES HORATIO O REVOCABLE LIVING TRUST": {
+      "site_addr": "2825 NOGALES ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "HARDEMAN LEWIS WILLARD": {
+      "site_addr": "1762 TRIPLE CROWN DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78417",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "APARICO CATRINA MORIN": null,
+    "ZUNDT EMILIO M": {
+      "site_addr": "2129 DAVID",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "REYES LEONARDA": {
+      "site_addr": "5505 BONNER DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ZAPATA RACHEL HERNANDEZ": {
+      "site_addr": "117 PARR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ESCOBAR KRISTEN M": {
+      "site_addr": "13144 OGLETHORPE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "STEEN LELA AGNES": {
+      "site_addr": "2717 LAWTON",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CANTU GUADALUPE PIZANA": {
+      "site_addr": "2006 PALM DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78407",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "RIOS ENRIQUETA P": {
+      "site_addr": "307 PARR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "TANCAHUA INVESTMENTS LLC": {
+      "site_addr": "801 S TANCAHUA ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78401",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "DAVIS ALMA LOUISE": {
+      "site_addr": "1626 HEMLOCK PL",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "ROBINSON GEORGALENE HAMILTON": {
+      "site_addr": "3218 ELGIN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "AVILA RODOLFO": {
+      "site_addr": "4642 HAKEL DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CHADDEN JAMES E SR": {
+      "site_addr": "1718 ARLINGTON DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "VILLAFUERTE ELIZABETH CATHY": {
+      "site_addr": "2221 BOLIVAR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "BONDS JAMES": {
+      "site_addr": "2735 SOLEDAD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "DUARTE ANDREW G": {
+      "site_addr": "1203 VAN LOAN AVE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78407",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "MARTINEZ FILIBERTO": null,
+    "PENG ZHANG": null,
+    "GUZMAN JESUS R SR": null,
+    "MURPHY YOLANDA": null,
+    "BREWER LAURA JUNE": null,
+    "HERNANDEZ JUAN B ET UX": null,
+    "KELLYS PHARMACY INC": null,
+    "HERREROS MARY H": null,
+    "PERALES AMY NIKOL": null,
+    "REUTHINGER JOHN": null
   }
 }
