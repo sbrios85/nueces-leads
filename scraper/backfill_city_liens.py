@@ -52,6 +52,7 @@ from fetch import (  # noqa: E402  — local import after sys.path tweak
     _build_clerk_search_url,
     _extract_clerk_table_rows,
     _extract_clerk_card_rows,
+    _extract_rows_from_payloads,
     _normalize_clerk_row,
     _extract_rows_from_html,
     enrich_with_parcels,
@@ -103,6 +104,32 @@ async def _scrape_all_pages(start_iso: str, end_iso: str
         context = await browser.new_context(user_agent=USER_AGENT)
         page = await context.new_page()
 
+        # Capture JSON XHR payloads from the portal — these contain the
+        # full document records including Consideration and Instrument
+        # Date, even though the rendered table doesn't show them.
+        captured_payloads: List[Dict[str, Any]] = []
+
+        async def on_response(resp):
+            try:
+                ctype = (resp.headers or {}).get("content-type", "")
+                if "json" not in ctype.lower():
+                    return
+                url_l = resp.url.lower()
+                if not any(tok in url_l for tok in
+                           ("/results", "/search", "/api/", "/document",
+                            "/record")):
+                    return
+                try:
+                    body = await resp.json()
+                except Exception:
+                    return
+                captured_payloads.append({"url": resp.url, "body": body,
+                                            "ts": time.time()})
+            except Exception as exc:
+                log.debug("response handler error: %s", exc)
+
+        page.on("response", lambda r: asyncio.create_task(on_response(r)))
+
         for page_num in range(MAX_PAGES):
             if time.time() > deadline:
                 log.warning("backfill time budget exhausted at page %d",
@@ -112,6 +139,8 @@ async def _scrape_all_pages(start_iso: str, end_iso: str
             url = _build_paginated_url(start_iso, end_iso, offset)
             log.info("page %d: offset=%d  url=%s",
                      page_num + 1, offset, url[:140])
+            captured_payloads.clear()
+            t_nav_start = time.time()
             try:
                 await page.goto(url, wait_until="domcontentloaded",
                                  timeout=30_000)
@@ -159,47 +188,46 @@ async def _scrape_all_pages(start_iso: str, end_iso: str
 
             log.info("  → %d raw rows", len(rows))
 
-            # Click into card view to harvest Consideration + Instrument
-            # Date (not exposed in list view). Failure is non-fatal.
+            # Merge consideration + instrument_date from JSON payloads
+            # into table rows (keyed by doc_number). The XHR responses
+            # include these fields even when the list-view table omits
+            # them.
             if rows:
-                try:
-                    await page.evaluate("""() => {
-                        const btns = Array.from(document.querySelectorAll(
-                            'button[aria-label], button[title], [role=button]'));
-                        for (const b of btns) {
-                            const lbl = ((b.getAttribute('aria-label') || '') +
-                                         ' ' + (b.getAttribute('title') || '')
-                                         ).toLowerCase();
-                            if (lbl.includes('card') ||
-                                lbl.includes('grid')  ||
-                                lbl.includes('detail')) {
-                                b.click();
-                                return true;
-                            }
-                        }
-                        return false;
-                    }""")
-                    await page.wait_for_timeout(1500)
-                    card_html = await page.content()
-                    card_rows = _extract_clerk_card_rows(card_html)
-                    log.info("  card view: %d cards parsed", len(card_rows))
+                fresh = [p for p in captured_payloads
+                         if p["ts"] >= t_nav_start]
+                payload_rows = _extract_rows_from_payloads(fresh)
+                if payload_rows:
                     by_doc = {r.get("doc_number"): r
                               for r in rows if r.get("doc_number")}
                     cons_added = 0
-                    for cr in card_rows:
-                        dn = cr.get("doc_number")
+                    for pr in payload_rows:
+                        keys_lower = {k.lower(): v for k, v in pr.items()
+                                      if isinstance(k, str)}
+                        dn = (keys_lower.get("docnumber")
+                              or keys_lower.get("documentnumber")
+                              or keys_lower.get("doc_number")
+                              or keys_lower.get("instrumentnumber")
+                              or "")
+                        if isinstance(dn, (int, float)):
+                            dn = str(int(dn))
+                        elif not isinstance(dn, str):
+                            dn = str(dn) if dn else ""
                         if not dn or dn not in by_doc:
                             continue
-                        for fld in ("consideration", "instrument_date",
-                                    "doc_status", "num_pages"):
-                            v = cr.get(fld)
-                            if v and not by_doc[dn].get(fld):
-                                by_doc[dn][fld] = v
-                                if fld == "consideration":
-                                    cons_added += 1
-                    log.info("  consideration merged into %d rows", cons_added)
-                except Exception as exc:
-                    log.warning("card-view scrape failed (continuing): %s", exc)
+                        cons = (keys_lower.get("consideration")
+                                or keys_lower.get("considerationamount")
+                                or "")
+                        inst = (keys_lower.get("instrumentdate")
+                                or keys_lower.get("instrument_date")
+                                or "")
+                        if cons and not by_doc[dn].get("consideration"):
+                            by_doc[dn]["consideration"] = str(cons)
+                            cons_added += 1
+                        if inst and not by_doc[dn].get("instrument_date"):
+                            by_doc[dn]["instrument_date"] = str(inst)
+                    log.info("  consideration merged into %d rows "
+                             "(from %d JSON records)",
+                             cons_added, len(payload_rows))
 
             kept = 0
             for raw in rows:
@@ -293,14 +321,33 @@ def main() -> int:
             pass
     records.sort(key=lambda r: r.score or 0, reverse=True)
 
-    # 5) Replace city_liens.json wholesale (NOT merge). The backfill is
-    # authoritative for the 24-month window; if a doc_num was previously
-    # there with stale/incomplete data (no consideration), the new
-    # version replaces it. Daily scrapes downstream use merge to preserve
-    # this richer data and just add new records.
-    save_city_liens([asdict(r) for r in records])
-    log.info("=== backfill done: %d cumulative CCLN records (replaced) ===",
-             len(records))
+    # 5) Merge into existing city_liens.json. Backfill is designed to
+    # be re-runnable: each run uses the persistent esearch cache to
+    # skip already-looked-up names and processes the remainder. The
+    # cumulative file gains addresses with each run until everything
+    # is covered.
+    existing = load_city_liens()
+    merged = merge_city_liens(existing, records)
+    # Also UPDATE existing entries with newly-enriched fields (so a
+    # previous-run record with no consideration gets it filled in this
+    # run). Since merge_city_liens preserves existing data on conflict,
+    # we explicitly upsert the freshly-pulled records on top.
+    by_doc = {r.get("doc_num"): r for r in merged if r.get("doc_num")}
+    for rec in records:
+        if rec.doc_num and rec.doc_num in by_doc:
+            new_dict = asdict(rec)
+            cur = by_doc[rec.doc_num]
+            # Only overwrite where the new value is non-empty AND different
+            # (so notes/CRM data on existing entries aren't disturbed —
+            # but note CRM lives in localStorage anyway, not here).
+            for k, v in new_dict.items():
+                if v in (None, "", 0, 0.0, []):
+                    continue
+                cur[k] = v
+    save_city_liens(list(by_doc.values()))
+    log.info("=== backfill done: %d cumulative CCLN records "
+             "(this run added/updated %d) ===",
+             len(by_doc), len(records))
     return 0
 
 
