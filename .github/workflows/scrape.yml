@@ -59,7 +59,10 @@ jobs:
           git config user.name  "nueces-leads-bot"
           git config user.email "actions@github.com"
           mkdir -p .cache
-          git add dashboard/records.json data/records.json data/leads_for_ghl.csv .cache/ncad_search_cache.json 2>/dev/null || true
+          git add \
+            dashboard/records.json data/records.json data/leads_for_ghl.csv \
+            dashboard/foreclosures.json data/foreclosures.json data/foreclosures.csv \
+            .cache/ncad_search_cache.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no changes to commit"
           else
