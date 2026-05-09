@@ -667,6 +667,61 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
 
             rows = _extract_clerk_table_rows(html)
 
+            # CCLN-specific enhancement: also harvest the card-view data
+            # (which includes Consideration and Instrument Date — fields
+            # that don't appear in list view). Click the card-view toggle,
+            # wait for re-render, parse, then merge into the table rows
+            # by doc_number. Failure here is non-fatal; rows still get
+            # saved with whatever the table contained.
+            if default_cat == "CCLN" and rows:
+                try:
+                    await page.evaluate("""() => {
+                        // Find the view-mode toggle button. The portal
+                        // uses a pair of icon buttons; the second one
+                        // (card view) is what we want. Identify by
+                        // aria-label or by the existence of a sibling
+                        // already-active list-view button.
+                        const btns = Array.from(document.querySelectorAll(
+                            'button[aria-label], button[title], [role=button]'));
+                        for (const b of btns) {
+                            const lbl = ((b.getAttribute('aria-label') || '') +
+                                         ' ' + (b.getAttribute('title') || '')
+                                         ).toLowerCase();
+                            if (lbl.includes('card') ||
+                                lbl.includes('grid')  ||
+                                lbl.includes('detail')) {
+                                b.click();
+                                return true;
+                            }
+                        }
+                        return false;
+                    }""")
+                    await page.wait_for_timeout(1500)
+                    card_html = await page.content()
+                    card_rows = _extract_clerk_card_rows(card_html)
+                    log.info("  CCLN card view: %d cards parsed", len(card_rows))
+                    # Merge consideration + instrument_date into table rows
+                    # (keyed by doc_number, which both views expose).
+                    by_doc = {r.get("doc_number"): r
+                              for r in rows if r.get("doc_number")}
+                    merged_count = 0
+                    for cr in card_rows:
+                        dn = cr.get("doc_number")
+                        if not dn or dn not in by_doc:
+                            continue
+                        for fld in ("consideration", "instrument_date",
+                                    "doc_status", "num_pages"):
+                            v = cr.get(fld)
+                            if v and not by_doc[dn].get(fld):
+                                by_doc[dn][fld] = v
+                                if fld == "consideration":
+                                    merged_count += 1
+                    log.info("  CCLN: merged consideration into %d rows",
+                             merged_count)
+                except Exception as exc:
+                    log.warning("CCLN card-view scrape failed (continuing "
+                                "with table data only): %s", exc)
+
             # First-query diagnostics dump.
             if not diagnostics["saved"]:
                 try:
@@ -1343,6 +1398,131 @@ def _extract_clerk_table_rows(html: str) -> List[Dict[str, str]]:
     return rows
 
 
+def _extract_clerk_card_rows(html: str) -> List[Dict[str, str]]:
+    """Parse the BIS/Neumo CARD-view variant of the search results page.
+
+    Card view exposes fields the list view's table doesn't have — most
+    importantly **Consideration** (the lien amount) and **Instrument Date**
+    — without requiring per-document detail-page fetches. We toggle into
+    card view by clicking the view-mode button before calling page.content().
+
+    Each card has the shape:
+      <... LIEN ...>              -- doc type label
+      <... 07/30/2025 ...>        -- date heading
+      Document Number:    2025027154
+      Number of Pages:    2
+      Recorded Date:      7/30/2025 12:43 PM
+      Consideration:      $324.00
+      Document Status:    Complete
+      Book/Volume/Page:   --/-- /--
+      Instrument Date:    07/28/2025
+      Grantor:            THE CITY OF CORPUS CHRISTI
+      Grantee:            BHS CRIMSON HOMES LLC
+      Legal Description:  Subdivision - Name: BOOTY AND ALLEN ...
+
+    The DOM uses pairs of label+value elements, so we walk by label text
+    rather than by class names (more resilient to portal version drift).
+    """
+    if not html:
+        return []
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
+
+    # Each card is a self-contained block. The portal's CSS classes
+    # change between versions, so identify cards by their structure:
+    # any element that contains the label "Document Number:" AND
+    # a doc-link `/doc/<id>` is a card.
+    LABELS = (
+        "document number", "number of pages", "recorded date",
+        "consideration", "document status", "book/volume/page",
+        "instrument date", "grantor", "grantee", "legal description",
+        "doc type", "document type",
+    )
+    LABEL_TO_FIELD = {
+        "document number": "doc_number",
+        "number of pages": "num_pages",
+        "recorded date":   "recorded_date",
+        "consideration":   "consideration",
+        "document status": "doc_status",
+        "book/volume/page":"book_volume_page",
+        "instrument date": "instrument_date",
+        "grantor":         "grantor",
+        "grantee":         "grantee",
+        "legal description":"legal",
+    }
+
+    rows: List[Dict[str, str]] = []
+
+    # Strategy: find every anchor `/doc/<id>` and walk up to the smallest
+    # enclosing card-like container. Then scan that container for label
+    # → value pairs. Empirically the BIS markup uses <dt>/<dd> or pairs
+    # of <span> / <div>, so we use a generic text-walk approach: find
+    # text nodes that match a known label, then take the next text node
+    # as the value.
+    seen_doc_ids = set()
+    for a in soup.find_all("a", href=True):
+        if "/doc/" not in a["href"]:
+            continue
+
+        # Walk upward to find a container that has all labels (or as many
+        # as exist on this card). Cap at 8 levels up.
+        node = a
+        container = None
+        for _ in range(8):
+            node = node.parent
+            if node is None:
+                break
+            txt = node.get_text(" ", strip=True).lower()
+            if "document number" in txt and "grantor" in txt:
+                container = node
+                break
+        if container is None:
+            continue
+
+        # Within the container, walk every "label:" string and grab the
+        # adjacent text. Use the document's text in document order.
+        record: Dict[str, str] = {"clerk_url": a["href"]}
+        text_chunks = list(container.stripped_strings)
+        i = 0
+        while i < len(text_chunks):
+            chunk = text_chunks[i]
+            chunk_l = chunk.lower().rstrip(":").strip()
+            if chunk_l in LABELS:
+                # Next non-empty chunk is the value.
+                val = ""
+                j = i + 1
+                # Skip pure-punctuation or label-suffix-colon noise.
+                while j < len(text_chunks):
+                    c = text_chunks[j].strip()
+                    if c and c not in (":", "-"):
+                        val = c
+                        break
+                    j += 1
+                fld = LABEL_TO_FIELD.get(chunk_l)
+                if fld and val and val.lower() not in (l.rstrip(":")
+                                                       for l in LABELS):
+                    # Don't capture another label as a value (happens when
+                    # the value is empty and the next chunk is a label).
+                    if val in ("--/--/--", "N/A", "n/a", "-"):
+                        val = ""
+                    record.setdefault(fld, val)
+                i = j
+            else:
+                i += 1
+
+        # Ensure we have the essentials; reject if not.
+        if not record.get("doc_number"):
+            continue
+        if record["doc_number"] in seen_doc_ids:
+            continue
+        seen_doc_ids.add(record["doc_number"])
+        rows.append(record)
+
+    return rows
+
+
 def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[ClerkRecord]:
     """Convert a raw clerk JSON/HTML row into a ClerkRecord.
 
@@ -1421,7 +1601,7 @@ def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[Cler
         grantor, grantee = grantee, grantor
 
     amount_raw = g("considerationAmount", "amount", "amount_due",
-                   "totalAmount", "total")
+                   "totalAmount", "total", "consideration")
     # Try the explicit amount field first; only fall through to legal/doctype
     # text if no explicit field was present. This avoids picking up doc
     # numbers, account numbers, etc. that look big but aren't money.
