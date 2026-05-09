@@ -667,60 +667,52 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
 
             rows = _extract_clerk_table_rows(html)
 
-            # CCLN-specific enhancement: also harvest the card-view data
-            # (which includes Consideration and Instrument Date — fields
-            # that don't appear in list view). Click the card-view toggle,
-            # wait for re-render, parse, then merge into the table rows
-            # by doc_number. Failure here is non-fatal; rows still get
-            # saved with whatever the table contained.
+            # CCLN-specific enhancement: harvest Consideration and
+            # Instrument Date from the captured JSON payloads (the
+            # portal's XHR response contains the full document records
+            # including these fields, even though the rendered table
+            # doesn't show them in list view). Merge by doc_number.
+            # This avoids needing card-view DOM scraping, which is
+            # fragile across portal versions.
             if default_cat == "CCLN" and rows:
-                try:
-                    await page.evaluate("""() => {
-                        // Find the view-mode toggle button. The portal
-                        // uses a pair of icon buttons; the second one
-                        // (card view) is what we want. Identify by
-                        // aria-label or by the existence of a sibling
-                        // already-active list-view button.
-                        const btns = Array.from(document.querySelectorAll(
-                            'button[aria-label], button[title], [role=button]'));
-                        for (const b of btns) {
-                            const lbl = ((b.getAttribute('aria-label') || '') +
-                                         ' ' + (b.getAttribute('title') || '')
-                                         ).toLowerCase();
-                            if (lbl.includes('card') ||
-                                lbl.includes('grid')  ||
-                                lbl.includes('detail')) {
-                                b.click();
-                                return true;
-                            }
-                        }
-                        return false;
-                    }""")
-                    await page.wait_for_timeout(1500)
-                    card_html = await page.content()
-                    card_rows = _extract_clerk_card_rows(card_html)
-                    log.info("  CCLN card view: %d cards parsed", len(card_rows))
-                    # Merge consideration + instrument_date into table rows
-                    # (keyed by doc_number, which both views expose).
+                payload_rows = _extract_rows_from_payloads(fresh)
+                if payload_rows:
                     by_doc = {r.get("doc_number"): r
                               for r in rows if r.get("doc_number")}
-                    merged_count = 0
-                    for cr in card_rows:
-                        dn = cr.get("doc_number")
+                    cons_added = 0
+                    for pr in payload_rows:
+                        # JSON payload uses camelCase or lowercase keys —
+                        # normalize lookups via lowercase tour.
+                        keys_lower = {k.lower(): v for k, v in pr.items()
+                                      if isinstance(k, str)}
+                        dn = (keys_lower.get("docnumber")
+                              or keys_lower.get("documentnumber")
+                              or keys_lower.get("doc_number")
+                              or keys_lower.get("instrumentnumber")
+                              or "")
+                        if isinstance(dn, (int, float)):
+                            dn = str(int(dn))
+                        elif not isinstance(dn, str):
+                            dn = str(dn) if dn else ""
                         if not dn or dn not in by_doc:
                             continue
-                        for fld in ("consideration", "instrument_date",
-                                    "doc_status", "num_pages"):
-                            v = cr.get(fld)
-                            if v and not by_doc[dn].get(fld):
-                                by_doc[dn][fld] = v
-                                if fld == "consideration":
-                                    merged_count += 1
-                    log.info("  CCLN: merged consideration into %d rows",
-                             merged_count)
-                except Exception as exc:
-                    log.warning("CCLN card-view scrape failed (continuing "
-                                "with table data only): %s", exc)
+                        cons = (keys_lower.get("consideration")
+                                or keys_lower.get("considerationamount")
+                                or "")
+                        inst = (keys_lower.get("instrumentdate")
+                                or keys_lower.get("instrument_date")
+                                or "")
+                        if cons and not by_doc[dn].get("consideration"):
+                            by_doc[dn]["consideration"] = str(cons)
+                            cons_added += 1
+                        if inst and not by_doc[dn].get("instrument_date"):
+                            by_doc[dn]["instrument_date"] = str(inst)
+                    log.info("  CCLN: merged consideration into %d rows "
+                             "(from %d JSON payload records)",
+                             cons_added, len(payload_rows))
+                else:
+                    log.info("  CCLN: no JSON payloads available for "
+                             "consideration merge")
 
             # First-query diagnostics dump.
             if not diagnostics["saved"]:
