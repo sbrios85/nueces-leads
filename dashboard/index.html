@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nueces County — Motivated Seller Leads</title>
+<title>Nueces County — Lead Pipeline</title>
 <style>
   :root {
     --bg: #0f172a; --panel: #1e293b; --border: #334155;
@@ -23,6 +23,17 @@
   }
   header h1 { margin: 0; font-size: 20px; }
   header .meta { color: var(--muted); font-size: 13px; }
+  .tabs { display: flex; gap: 4px; padding: 0 28px;
+          border-bottom: 1px solid var(--border); background: var(--panel); }
+  .tab { padding: 12px 20px; cursor: pointer; user-select: none;
+         border-bottom: 3px solid transparent; font-weight: 500;
+         color: var(--muted); }
+  .tab:hover { color: var(--fg); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent);
+                background: rgba(56,189,248,0.05); }
+  .tab-count { display: inline-block; margin-left: 6px;
+               background: rgba(56,189,248,0.2); color: var(--accent);
+               padding: 1px 8px; border-radius: 10px; font-size: 12px; }
   .stats { display: flex; gap: 24px; padding: 16px 28px;
            border-bottom: 1px solid var(--border); flex-wrap: wrap; }
   .stat { display: flex; flex-direction: column; gap: 2px; }
@@ -37,114 +48,153 @@
   }
   .controls input { min-width: 220px; }
   table { width: 100%; border-collapse: collapse; }
-  th, td {
-    padding: 8px 10px; text-align: left;
-    border-bottom: 1px solid var(--border); vertical-align: top;
-  }
+  th, td { padding: 8px 10px; text-align: left;
+           border-bottom: 1px solid var(--border); vertical-align: top; }
   th { background: var(--panel); cursor: pointer; user-select: none;
        position: sticky; top: 0; }
   th:hover { color: var(--accent); }
-  td.score { font-weight: 600; }
+  td.score, td.days { font-weight: 600; }
   tr:hover { background: rgba(56,189,248,.06); }
-  .pill {
-    display: inline-block; padding: 1px 6px; margin: 1px 2px;
-    border-radius: 10px; background: rgba(245,158,11,.15);
-    color: var(--warn); font-size: 11px; white-space: nowrap;
-  }
+  .pill { display: inline-block; padding: 1px 6px; margin: 1px 2px;
+          border-radius: 10px; font-size: 11px; white-space: nowrap; }
+  .pill.flag { background: rgba(245,158,11,.15); color: var(--warn); }
+  .pill.pre { background: rgba(239,68,68,.18); color: var(--bad); }
+  .pill.post { background: rgba(148,163,184,.18); color: var(--muted); }
   .score-hi { color: var(--good); }
   .score-md { color: var(--warn); }
   .score-lo { color: var(--muted); }
+  .days-soon { color: var(--bad); }
+  .days-medium { color: var(--warn); }
+  .days-far { color: var(--muted); }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .empty { padding: 60px 28px; text-align: center; color: var(--muted); }
   .legal { max-width: 280px; font-size: 12px; color: var(--muted); }
+  .pane { display: none; }
+  .pane.active { display: block; }
 </style>
 </head>
 <body>
 <header>
   <div>
-    <h1>Nueces County — Motivated Seller Leads</h1>
+    <h1>Nueces County — Lead Pipeline</h1>
     <div class="meta" id="meta">Loading…</div>
   </div>
-  <div class="meta">Source: Nueces County Clerk + NCAD bulk parcel data</div>
+  <div class="meta">Source: Nueces County Clerk + NCAD esearch</div>
 </header>
 
-<div class="stats" id="stats"></div>
-
-<div class="controls">
-  <input id="q" placeholder="Search owner / address / doc# / legal…">
-  <select id="cat">
-    <option value="">All categories</option>
-  </select>
-  <select id="sort">
-    <option value="score">Sort: Score (highest first)</option>
-    <option value="filed">Sort: Filed (newest first)</option>
-    <option value="amount">Sort: Amount (highest first)</option>
-  </select>
+<div class="tabs">
+  <div class="tab active" data-pane="leads">Motivated Seller Leads
+    <span class="tab-count" id="leads-count">—</span></div>
+  <div class="tab" data-pane="foreclosures">Foreclosures
+    <span class="tab-count" id="fc-count">—</span></div>
 </div>
 
-<table id="t">
-  <thead>
-    <tr>
-      <th data-k="score">Score</th>
-      <th data-k="filed">Filed</th>
-      <th data-k="cat_label">Category</th>
-      <th data-k="doc_type">Doc Type</th>
-      <th data-k="owner">Owner (Grantor)</th>
-      <th data-k="prop_address">Property Address</th>
-      <th data-k="mail_address">Mailing Address</th>
-      <th data-k="amount">Amount</th>
-      <th>Flags</th>
-      <th>Doc#</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<div class="pane active" id="pane-leads">
+  <div class="stats" id="leads-stats"></div>
+  <div class="controls">
+    <input id="leads-q" placeholder="Search owner / address / doc# / legal…">
+    <select id="leads-cat"><option value="">All categories</option></select>
+    <select id="leads-sort">
+      <option value="score">Sort: Score (highest first)</option>
+      <option value="filed">Sort: Filed (newest first)</option>
+      <option value="amount">Sort: Amount (highest first)</option>
+    </select>
+  </div>
+  <table id="leads-table">
+    <thead><tr>
+      <th>Score</th><th>Filed</th><th>Category</th><th>Doc Type</th>
+      <th>Owner (Grantor)</th><th>Property Address</th>
+      <th>Mailing Address</th><th>Amount</th><th>Flags</th><th>Doc#</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div id="leads-empty" class="empty" hidden>No matching records.</div>
+</div>
 
-<div id="empty" class="empty" hidden>
-  No records yet. The scraper runs daily at 07:00 UTC.
+<div class="pane" id="pane-foreclosures">
+  <div class="stats" id="fc-stats"></div>
+  <div class="controls">
+    <input id="fc-q" placeholder="Search doc# / legal description…">
+    <select id="fc-status">
+      <option value="">All</option>
+      <option value="pre-foreclosure">Pre-foreclosure only</option>
+      <option value="post-foreclosure">Post-foreclosure only</option>
+    </select>
+    <select id="fc-sort">
+      <option value="days">Sort: Soonest sale first</option>
+      <option value="recorded">Sort: Recorded date (newest)</option>
+    </select>
+  </div>
+  <table id="fc-table">
+    <thead><tr>
+      <th>Sale Date</th><th>Days Until Sale</th><th>Status</th>
+      <th>Recorded</th><th>Doc Type</th>
+      <th>Property (Legal Description)</th><th>Owner (PDF)</th><th>Doc#</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div id="fc-empty" class="empty" hidden>No upcoming foreclosures matching filters.</div>
 </div>
 
 <script>
-let RAW = [], FILTERED = [];
+let LEADS_RAW = [], LEADS_FILTERED = [];
+let FC_RAW = [], FC_FILTERED = [];
 
-async function load() {
+document.querySelectorAll(".tab").forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".pane").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    document.getElementById("pane-" + t.dataset.pane).classList.add("active");
+  };
+});
+
+async function loadAll() {
+  let leadsMeta = "";
   try {
     const r = await fetch("records.json", {cache: "no-store"});
     const data = await r.json();
-    RAW = data.records || [];
-    document.getElementById("meta").textContent =
-      data.fetched_at
-        ? `Last update: ${new Date(data.fetched_at).toLocaleString()}` +
-          (data.date_range && data.date_range.start
-            ? ` • Range: ${data.date_range.start} → ${data.date_range.end}` : "")
-        : "Awaiting first scrape";
-    renderStats(data);
-    populateCats();
-    apply();
-  } catch (e) {
-    document.getElementById("meta").textContent = "Failed to load records.json";
-  }
+    LEADS_RAW = data.records || [];
+    document.getElementById("leads-count").textContent = data.total || 0;
+    if (data.fetched_at) {
+      leadsMeta = "Last update: " + new Date(data.fetched_at).toLocaleString();
+      if (data.date_range && data.date_range.start)
+        leadsMeta += " • Range: " + data.date_range.start + " → " + data.date_range.end;
+    }
+    renderLeadsStats(data);
+    populateLeadsCats();
+    applyLeads();
+  } catch (e) { document.getElementById("leads-empty").hidden = false; }
+
+  try {
+    const r = await fetch("foreclosures.json", {cache: "no-store"});
+    const data = await r.json();
+    FC_RAW = data.records || [];
+    document.getElementById("fc-count").textContent = data.total || 0;
+    renderFcStats(data);
+    applyFc();
+  } catch (e) { document.getElementById("fc-empty").hidden = false; }
+
+  document.getElementById("meta").textContent =
+    leadsMeta || "Awaiting first scrape";
 }
 
-function renderStats(data) {
-  const el = document.getElementById("stats");
+function renderLeadsStats(data) {
   const hot = (data.records || []).filter(r => r.score >= 70).length;
-  const fc  = (data.records || []).filter(r => r.cat === "NOFC").length;
-  const lp  = (data.records || []).filter(r => r.cat === "LP").length;
-  el.innerHTML = `
+  const lp = (data.records || []).filter(r => r.cat === "LP").length;
+  document.getElementById("leads-stats").innerHTML = `
     <div class="stat"><div class="v">${data.total || 0}</div><div class="k">Total leads</div></div>
     <div class="stat"><div class="v">${data.with_address || 0}</div><div class="k">With property address</div></div>
     <div class="stat"><div class="v">${hot}</div><div class="k">Score ≥ 70</div></div>
     <div class="stat"><div class="v">${lp}</div><div class="k">Lis pendens</div></div>
-    <div class="stat"><div class="v">${fc}</div><div class="k">Foreclosures</div></div>
   `;
 }
 
-function populateCats() {
-  const sel = document.getElementById("cat");
+function populateLeadsCats() {
+  const sel = document.getElementById("leads-cat");
   const seen = new Set();
-  for (const r of RAW) {
+  for (const r of LEADS_RAW) {
     if (r.cat_label && !seen.has(r.cat_label)) {
       seen.add(r.cat_label);
       const o = document.createElement("option");
@@ -154,28 +204,28 @@ function populateCats() {
   }
 }
 
-function apply() {
-  const q = document.getElementById("q").value.toLowerCase().trim();
-  const cat = document.getElementById("cat").value;
-  const sort = document.getElementById("sort").value;
-  FILTERED = RAW.filter(r => {
+function applyLeads() {
+  const q = document.getElementById("leads-q").value.toLowerCase().trim();
+  const cat = document.getElementById("leads-cat").value;
+  const sort = document.getElementById("leads-sort").value;
+  LEADS_FILTERED = LEADS_RAW.filter(r => {
     if (cat && r.cat !== cat) return false;
     if (!q) return true;
     return [r.owner, r.grantee, r.prop_address, r.mail_address,
             r.doc_num, r.doc_type, r.legal]
       .some(v => (v || "").toLowerCase().includes(q));
   });
-  if (sort === "score") FILTERED.sort((a,b) => (b.score||0) - (a.score||0));
-  else if (sort === "filed") FILTERED.sort((a,b) => (b.filed||"").localeCompare(a.filed||""));
-  else if (sort === "amount") FILTERED.sort((a,b) => (b.amount||0) - (a.amount||0));
-  render();
+  if (sort === "score") LEADS_FILTERED.sort((a,b) => (b.score||0) - (a.score||0));
+  else if (sort === "filed") LEADS_FILTERED.sort((a,b) => (b.filed||"").localeCompare(a.filed||""));
+  else if (sort === "amount") LEADS_FILTERED.sort((a,b) => (b.amount||0) - (a.amount||0));
+  renderLeads();
 }
 
-function render() {
-  const tb = document.querySelector("#t tbody");
+function renderLeads() {
+  const tb = document.querySelector("#leads-table tbody");
   tb.innerHTML = "";
-  document.getElementById("empty").hidden = FILTERED.length > 0;
-  for (const r of FILTERED) {
+  document.getElementById("leads-empty").hidden = LEADS_FILTERED.length > 0;
+  for (const r of LEADS_FILTERED) {
     const tr = document.createElement("tr");
     const sc = r.score || 0;
     const scClass = sc >= 70 ? "score-hi" : sc >= 50 ? "score-md" : "score-lo";
@@ -188,7 +238,60 @@ function render() {
       <td>${esc(r.prop_address || "")}${r.prop_city ? "<br><small>" + esc(r.prop_city + " " + (r.prop_zip||"")) + "</small>" : ""}</td>
       <td>${esc(r.mail_address || "")}${r.mail_city ? "<br><small>" + esc(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||"")) + "</small>" : ""}</td>
       <td>${r.amount ? "$" + Number(r.amount).toLocaleString() : ""}</td>
-      <td>${(r.flags || []).map(f => `<span class="pill">${esc(f)}</span>`).join("")}</td>
+      <td>${(r.flags || []).map(f => `<span class="pill flag">${esc(f)}</span>`).join("")}</td>
+      <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
+    `;
+    tb.appendChild(tr);
+  }
+}
+
+function renderFcStats(data) {
+  document.getElementById("fc-stats").innerHTML = `
+    <div class="stat"><div class="v">${data.total || 0}</div><div class="k">Total foreclosures</div></div>
+    <div class="stat"><div class="v">${data.pre_foreclosure || 0}</div><div class="k">Pre-foreclosure</div></div>
+    <div class="stat"><div class="v">${data.post_foreclosure || 0}</div><div class="k">Post-foreclosure</div></div>
+  `;
+}
+
+function applyFc() {
+  const q = document.getElementById("fc-q").value.toLowerCase().trim();
+  const status = document.getElementById("fc-status").value;
+  const sort = document.getElementById("fc-sort").value;
+  FC_FILTERED = FC_RAW.filter(r => {
+    if (status && r.status !== status) return false;
+    if (!q) return true;
+    return [r.doc_num, r.legal, r.owner, r.doc_type]
+      .some(v => (v || "").toLowerCase().includes(q));
+  });
+  if (sort === "days") FC_FILTERED.sort((a,b) =>
+    (a.days_until_sale ?? 9999) - (b.days_until_sale ?? 9999));
+  else if (sort === "recorded") FC_FILTERED.sort((a,b) =>
+    (b.recorded || "").localeCompare(a.recorded || ""));
+  renderFc();
+}
+
+function renderFc() {
+  const tb = document.querySelector("#fc-table tbody");
+  tb.innerHTML = "";
+  document.getElementById("fc-empty").hidden = FC_FILTERED.length > 0;
+  for (const r of FC_FILTERED) {
+    const tr = document.createElement("tr");
+    const days = r.days_until_sale;
+    const daysClass = days === null || days === undefined ? "days-far" :
+                      days <= 14 ? "days-soon" :
+                      days <= 30 ? "days-medium" : "days-far";
+    const daysText = days === null || days === undefined ? "—" :
+                     days < 0 ? Math.abs(days) + " days ago" :
+                     days + " days";
+    const statusClass = r.status === "post-foreclosure" ? "post" : "pre";
+    tr.innerHTML = `
+      <td>${esc(r.sale_date || "")}</td>
+      <td class="days ${daysClass}">${esc(daysText)}</td>
+      <td><span class="pill ${statusClass}">${esc(r.status || "")}</span></td>
+      <td>${esc(r.recorded || "")}</td>
+      <td>${esc(r.doc_type || "")}</td>
+      <td class="legal">${esc(r.legal || "")}</td>
+      <td>${esc(r.owner || "—")}</td>
       <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
     `;
     tb.appendChild(tr);
@@ -200,10 +303,13 @@ function esc(s) {
     c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 }
 
-document.getElementById("q").oninput = apply;
-document.getElementById("cat").onchange = apply;
-document.getElementById("sort").onchange = apply;
-load();
+document.getElementById("leads-q").oninput = applyLeads;
+document.getElementById("leads-cat").onchange = applyLeads;
+document.getElementById("leads-sort").onchange = applyLeads;
+document.getElementById("fc-q").oninput = applyFc;
+document.getElementById("fc-status").onchange = applyFc;
+document.getElementById("fc-sort").onchange = applyFc;
+loadAll();
 </script>
 </body>
 </html>
