@@ -1,0 +1,87 @@
+name: Extract foreclosure PDFs (evening batch)
+
+# Runs at 4:00 PM Central (21:00 UTC during DST).
+# Downloads up to 10 more foreclosure PDFs (total 20/day with the
+# morning run), processes records skipped from the morning batch.
+#
+# Cache at .cache/pdf_extractions.json ensures we don't re-process
+# the same documents.
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_downloads:
+        description: "Max PDFs to download this run (default 10)"
+        required: false
+        default: "10"
+  schedule:
+    # 21:00 UTC = 4:00 PM CDT.
+    - cron: "0 21 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "pdf-extraction"
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 55
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      - name: Install Playwright + Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run foreclosure PDF extraction
+        env:
+          LOG_LEVEL: INFO
+          PYTHONUNBUFFERED: "1"
+          CLERK_USERNAME: ${{ secrets.CLERK_USERNAME }}
+          CLERK_PASSWORD: ${{ secrets.CLERK_PASSWORD }}
+          PDF_MAX_DOWNLOADS: ${{ github.event.inputs.max_downloads || '10' }}
+        run: python scraper/extract_foreclosure_pdfs.py
+
+      - name: Upload debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: foreclosure-pdf-debug-evening
+          path: |
+            debug/
+            .cache/pdf_extractions.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Commit enriched foreclosure data
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          mkdir -p .cache
+          git add \
+            data/foreclosures.json dashboard/foreclosures.json \
+            .cache/pdf_extractions.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "chore: foreclosure PDF extraction (evening) $(date -u +'%Y-%m-%dT%H:%MZ')"
+            git push
+          fi
