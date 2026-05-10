@@ -258,7 +258,9 @@
     <thead><tr>
       <th>Sale Date</th><th>Days Until Sale</th><th>Status</th>
       <th>Recorded</th><th>Doc Type</th>
-      <th>Property (Legal Description)</th><th>Owner (PDF)</th><th>Doc#</th>
+      <th>Owner</th><th>Property Address</th>
+      <th>Loan Amount</th><th>Lender</th>
+      <th>Legal Description</th><th>Doc#</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -696,14 +698,25 @@ function renderFc() {
                      days < 0 ? Math.abs(days) + " days ago" :
                      days + " days";
     const statusClass = r.status === "post-foreclosure" ? "post" : "pre";
+    // Build full property address from address + city + state + zip
+    const fullAddr = r.prop_address ?
+        [r.prop_address, r.prop_city, r.prop_state, r.prop_zip]
+            .filter(Boolean).join(" ") : "";
+    const loanAmt = r.loan_amount ?
+        "$" + Number(r.loan_amount).toLocaleString("en-US",
+                                                    {minimumFractionDigits: 2,
+                                                     maximumFractionDigits: 2}) : "—";
     tr.innerHTML = `
       <td>${esc(r.sale_date || "")}</td>
       <td class="days ${daysClass}">${esc(daysText)}</td>
       <td><span class="pill ${statusClass}">${esc(r.status || "")}</span></td>
       <td>${esc(r.recorded || "")}</td>
       <td>${esc(r.doc_type || "")}</td>
-      <td class="legal">${esc(r.legal || "")}</td>
       <td>${esc(r.owner || "—")}</td>
+      <td>${esc(fullAddr || "—")}</td>
+      <td>${loanAmt}</td>
+      <td>${esc(r.lender || "—")}</td>
+      <td class="legal">${esc(r.legal || "")}</td>
       <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
     `;
     tb.appendChild(tr);
