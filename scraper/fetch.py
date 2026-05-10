@@ -2345,11 +2345,23 @@ def _load_search_cache() -> Dict[str, Optional[Dict[str, str]]]:
         return {}
 
     # Versioned envelope (current format).
-    if isinstance(raw, dict) and raw.get("_version") == "v3":
+    if isinstance(raw, dict) and raw.get("_version") == "v4":
         return raw.get("data", {})
 
-    # Old-version cache → discard. Entries built with the old URL pattern
-    # or old result extractor are stale; re-querying is strictly better.
+    # v3 cache contains a mix of legitimate address hits AND false "no
+    # match" entries (token expiry caused ~300 false negatives). On
+    # upgrade, KEEP the hits (they're real) but DISCARD the misses
+    # (they need to be retried). v4+ uses the new token-refresh logic
+    # so future misses are reliable.
+    if isinstance(raw, dict) and raw.get("_version") == "v3":
+        v3_data = raw.get("data", {})
+        kept = {k: v for k, v in v3_data.items() if v is not None}
+        log.info("upgrading v3 → v4 cache: kept %d hits, "
+                 "discarded %d misses (will retry)",
+                 len(kept), len(v3_data) - len(kept))
+        return kept
+
+    # Older / un-versioned cache → discard wholesale.
     log.info("legacy esearch cache detected (version=%r) — discarding (will rebuild)",
              raw.get("_version") if isinstance(raw, dict) else None)
     return {}
@@ -2359,7 +2371,7 @@ def _save_search_cache(cache: Dict[str, Optional[Dict[str, str]]]) -> None:
     path = ROOT_DIR / NCAD_SEARCH_CACHE
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        envelope = {"_version": "v3", "data": cache}
+        envelope = {"_version": "v4", "data": cache}
         path.write_text(json.dumps(envelope, indent=2), encoding="utf-8")
         log.info("esearch cache: %d entries written to %s",
                  len(cache), path)
@@ -2465,9 +2477,47 @@ async def _run_ncad_searches(names: List[str],
             return cache
 
         # Detect the current tax year from the home page (defaults to current).
-        # The homepage <option selected> for tax year tells us which year
-        # the portal currently considers "current".
         current_year = str(datetime.now(timezone.utc).year)
+
+        # NCAD's esearch session token has a finite TTL (observed ~5 min).
+        # Every TOKEN_REFRESH_INTERVAL successful lookups, reload the
+        # homepage to mint a fresh token. This prevents a cache-poisoning
+        # failure mode where 50+ consecutive "no match" results accumulate
+        # because the token silently expired.
+        TOKEN_REFRESH_INTERVAL = 50
+
+        # If we see this many consecutive misses, suspect token expiry and
+        # try to refresh. If misses continue after a refresh, abort —
+        # something else is wrong, and writing more nulls to the cache
+        # would prevent retries on the next run.
+        MAX_CONSECUTIVE_MISSES_BEFORE_REFRESH = 8
+        MAX_CONSECUTIVE_MISSES_AFTER_REFRESH = 15
+
+        consecutive_misses = 0
+        post_refresh_misses = 0
+        in_refresh_grace = False
+        lookups_since_refresh = 0
+        lookups_done_this_run = 0
+
+        async def _refresh_token() -> str:
+            """Reload homepage to mint a new searchSessionToken."""
+            try:
+                await page.goto(NCAD_ESEARCH_BASE + "/",
+                                 wait_until="domcontentloaded", timeout=30_000)
+                await page.wait_for_timeout(500)
+                fresh = await page.evaluate("""() => {
+                    const m = document.querySelector('meta[name="search-token"]');
+                    return m ? m.getAttribute('content') : '';
+                }""") or ""
+                if fresh:
+                    log.info("esearch: refreshed session token "
+                             "(after %d lookups)", lookups_since_refresh)
+                else:
+                    log.warning("esearch: token refresh got empty token")
+                return fresh
+            except Exception as exc:
+                log.warning("esearch: token refresh failed: %s", exc)
+                return ""
 
         for i, name in enumerate(names, start=1):
             if name in cache:
@@ -2475,19 +2525,77 @@ async def _run_ncad_searches(names: List[str],
             if time.time() > deadline:
                 log.warning("esearch: time budget exhausted after %d names", i)
                 break
+
+            # Periodic token refresh — protects against silent TTL expiry.
+            if lookups_since_refresh >= TOKEN_REFRESH_INTERVAL:
+                new_token = await _refresh_token()
+                if new_token:
+                    token = new_token
+                lookups_since_refresh = 0
+
             try:
                 info = await _esearch_one(page, name, token, current_year)
             except Exception as exc:
                 log.warning("esearch lookup failed for %r: %s", name, exc)
                 info = None
-            cache[name] = info  # store None for misses so we don't retry
+
+            lookups_since_refresh += 1
+            lookups_done_this_run += 1
+
             if info and info.get("site_addr"):
+                # Success — reset miss counters.
+                cache[name] = info
+                consecutive_misses = 0
+                post_refresh_misses = 0
+                in_refresh_grace = False
                 log.info("  esearch[%d] %r → %s",
                          i, name, info.get("site_addr"))
             else:
-                log.info("  esearch[%d] %r → no match", i, name)
+                # Miss. Don't cache yet — see if it's a real miss or a
+                # token-expiry symptom.
+                consecutive_misses += 1
+                if in_refresh_grace:
+                    post_refresh_misses += 1
+                log.info("  esearch[%d] %r → no match%s", i, name,
+                         f" [streak={consecutive_misses}]"
+                         if consecutive_misses >= 5 else "")
+
+                if (not in_refresh_grace
+                        and consecutive_misses
+                            >= MAX_CONSECUTIVE_MISSES_BEFORE_REFRESH):
+                    # Possible token expiry — try a refresh and continue.
+                    log.warning("esearch: %d consecutive misses — "
+                                "attempting token refresh",
+                                consecutive_misses)
+                    new_token = await _refresh_token()
+                    if new_token:
+                        token = new_token
+                        lookups_since_refresh = 0
+                    in_refresh_grace = True
+                    post_refresh_misses = 0
+                    # Don't cache this miss; let it retry next run.
+                    continue
+
+                if (in_refresh_grace
+                        and post_refresh_misses
+                            >= MAX_CONSECUTIVE_MISSES_AFTER_REFRESH):
+                    # Even after refresh, still nothing — the portal is
+                    # likely down or rate-limiting us. Abort the run
+                    # WITHOUT caching these misses, so next run retries.
+                    log.error("esearch: %d misses after token refresh — "
+                              "portal likely down or rate-limited. "
+                              "Aborting run; uncached names will retry.",
+                              post_refresh_misses)
+                    break
+
+                # Cache this miss only if we're confident it's real
+                # (i.e. not in a streak that suggests systemic failure).
+                if consecutive_misses < MAX_CONSECUTIVE_MISSES_BEFORE_REFRESH:
+                    cache[name] = None
+
             await asyncio.sleep(NCAD_SEARCH_DELAY_SEC)
 
+        log.info("esearch: %d lookups in this run", lookups_done_this_run)
         await context.close()
         await browser.close()
     return cache
