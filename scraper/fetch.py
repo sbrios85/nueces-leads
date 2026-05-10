@@ -90,6 +90,13 @@ NCAD_ESEARCH_BASE = "https://esearch.nuecescad.net"
 # every day; results are valid until the parcel data shifts (months).
 NCAD_SEARCH_CACHE = ".cache/ncad_search_cache.json"
 
+# Cache file for clerk-portal document detail pages. Each entry is
+# keyed by doc_num and contains the fields exposed on the detail page
+# (consideration, instrument_date, doc_status, num_pages) that aren't
+# available in the list-view results table. Populated by the dedicated
+# backfill script and the daily incremental scrape; survives across runs.
+CLERK_DOC_DETAILS_CACHE = ".cache/clerk_doc_details.json"
+
 # Rate-limit knobs for the esearch lookup phase.
 NCAD_SEARCH_MAX_LOOKUPS = 100      # per run — protects against runaway loops
 NCAD_SEARCH_DELAY_SEC   = 1.5      # between requests, polite to the server
@@ -2377,6 +2384,249 @@ def _save_search_cache(cache: Dict[str, Optional[Dict[str, str]]]) -> None:
                  len(cache), path)
     except Exception as exc:
         log.warning("could not save esearch cache: %s", exc)
+
+
+# --------------------------------------------------------------------------- #
+# Clerk-portal document-detail fetcher
+# --------------------------------------------------------------------------- #
+#
+# The list-view search results don't include Consideration (lien amount)
+# or Instrument Date — those live only on the per-document detail page
+# (e.g. /doc/169217155). The detail page is JavaScript-rendered, so we
+# drive Playwright, wait for the DOM, and read the values via
+# page.evaluate() rather than parsing the initial HTML.
+#
+# Detail-fetching is slow (~2-3 sec per page including network + render),
+# so we cache aggressively at .cache/clerk_doc_details.json. The cache
+# survives across runs, making the operation resumable: each backfill
+# run processes as many uncached records as fit in its time budget,
+# and successive runs cover the rest.
+
+def _load_doc_details_cache() -> Dict[str, Dict[str, str]]:
+    """Load the persistent doc_num → detail-fields cache."""
+    path = ROOT_DIR / CLERK_DOC_DETAILS_CACHE
+    if not path.exists():
+        return {}
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        log.warning("could not load doc-details cache: %s", exc)
+        return {}
+    if isinstance(raw, dict) and raw.get("_version") == "v1":
+        return raw.get("data", {})
+    log.info("legacy doc-details cache (version=%r) — discarding",
+             raw.get("_version") if isinstance(raw, dict) else None)
+    return {}
+
+
+def _save_doc_details_cache(cache: Dict[str, Dict[str, str]]) -> None:
+    path = ROOT_DIR / CLERK_DOC_DETAILS_CACHE
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        envelope = {"_version": "v1", "data": cache}
+        path.write_text(json.dumps(envelope, indent=2), encoding="utf-8")
+        log.info("doc-details cache: %d entries written", len(cache))
+    except Exception as exc:
+        log.warning("could not save doc-details cache: %s", exc)
+
+
+async def _fetch_doc_details(page, doc_num: str) -> Optional[Dict[str, str]]:
+    """Navigate to /doc/<doc_num> and extract the right-side panel fields.
+
+    The detail page is a JS-rendered SPA: the right panel shows
+      Document Number   <doc_num>
+      Number of Pages   <n>
+      Recorded Date     <mm/dd/yyyy hh:mm AM/PM>
+      Consideration     $<amount>            ← what we want
+      Document Status   Complete
+      Book/Volume/Page  --/-- /--
+      Instrument Date   <mm/dd/yyyy>          ← what we want
+
+    We wait for the DOM to populate (specifically for "Consideration"
+    label to appear), then read all label/value pairs using
+    page.evaluate().
+
+    Returns dict with whatever fields we found (consideration may be
+    missing if the document genuinely has no consideration recorded —
+    that's fine, we still cache the result so we don't re-fetch).
+    """
+    if not doc_num:
+        return None
+    url = f"{CLERK_BASE}/doc/{doc_num}"
+    try:
+        await page.goto(url, wait_until="domcontentloaded", timeout=25_000)
+        # Wait for the detail panel to populate. We look for a label
+        # containing "Consideration" or "Document Number" — both signal
+        # that the right-panel has rendered.
+        try:
+            await page.wait_for_function(
+                """() => {
+                    const txt = document.body.innerText || '';
+                    return txt.includes('Consideration') ||
+                           txt.includes('Document Number');
+                }""",
+                timeout=12_000,
+            )
+        except Exception:
+            pass
+        await page.wait_for_timeout(400)
+    except Exception as exc:
+        log.debug("doc-details nav failed for %s: %s", doc_num, exc)
+        return None
+
+    try:
+        result = await page.evaluate("""() => {
+            // Walk every text node, find label-like strings ending in
+            // ":" (or known labels), and pair them with the next visible
+            // text node. The portal renders these as <dl>/<dd>, table
+            // rows, or sibling spans depending on layout — text-walk is
+            // the most resilient.
+            const LABELS = {
+                'document number':   'doc_number',
+                'number of pages':   'num_pages',
+                'recorded date':     'recorded_full',
+                'consideration':     'consideration',
+                'document status':   'doc_status',
+                'book/volume/page':  'book_volume_page',
+                'instrument date':   'instrument_date'
+            };
+            const out = {};
+            // Get every text-bearing element in document order.
+            const walker = document.createTreeWalker(
+                document.body,
+                NodeFilter.SHOW_TEXT,
+                null
+            );
+            const chunks = [];
+            let n;
+            while ((n = walker.nextNode())) {
+                const t = (n.textContent || '').trim();
+                if (t) chunks.push(t);
+            }
+            for (let i = 0; i < chunks.length; i++) {
+                const c = chunks[i].toLowerCase().replace(/:$/, '').trim();
+                const fld = LABELS[c];
+                if (!fld) continue;
+                // Next non-empty chunk that isn't a label is the value.
+                for (let j = i + 1; j < chunks.length; j++) {
+                    const nv = chunks[j].trim();
+                    if (!nv || nv === ':' || nv === '-') continue;
+                    const nl = nv.toLowerCase().replace(/:$/, '').trim();
+                    if (nl in LABELS) break;  // adjacent label → no value
+                    out[fld] = nv;
+                    break;
+                }
+            }
+            return out;
+        }""")
+    except Exception as exc:
+        log.debug("doc-details evaluate failed for %s: %s", doc_num, exc)
+        return None
+
+    if not isinstance(result, dict) or not result:
+        return None
+    # Drop placeholder values that the portal uses for missing data.
+    for k in list(result.keys()):
+        v = (result.get(k) or "").strip()
+        if v in ("--/--/--", "--/--", "N/A", "n/a", "-", ""):
+            result[k] = ""
+    return result
+
+
+# How many doc-detail fetches per backfill run (resumable via cache).
+DOC_DETAILS_MAX_LOOKUPS    = 5000   # effectively unlimited; cache + budget gate
+DOC_DETAILS_DELAY_SEC      = 0.8
+DOC_DETAILS_BUDGET_SEC     = 55 * 60   # 55 min
+
+async def enrich_with_doc_details(records: List[Dict[str, Any]]) -> int:
+    """For each record without a `consideration`, fetch the detail page
+    from the clerk portal and fill in consideration + instrument_date.
+
+    Operates on dicts (not ClerkRecord) so it can be applied to records
+    loaded from the cumulative city_liens.json. Mutates dicts in place.
+    Returns the number of records newly enriched.
+    """
+    try:
+        from playwright.async_api import async_playwright  # type: ignore
+    except ImportError:
+        log.error("playwright not available — doc-details fetch skipped")
+        return 0
+
+    todo: List[Dict[str, Any]] = []
+    for rec in records:
+        if rec.get("consideration") or rec.get("amount"):
+            continue
+        if not rec.get("doc_num"):
+            continue
+        todo.append(rec)
+    if not todo:
+        log.info("doc-details: nothing to fetch (all records have consideration)")
+        return 0
+
+    log.info("doc-details: %d records eligible (capped at %d)",
+             len(todo), DOC_DETAILS_MAX_LOOKUPS)
+    todo = todo[:DOC_DETAILS_MAX_LOOKUPS]
+
+    cache = _load_doc_details_cache()
+    log.info("doc-details: %d cached entries loaded", len(cache))
+
+    deadline = time.time() + DOC_DETAILS_BUDGET_SEC
+    enriched = 0
+    fetched_this_run = 0
+
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(headless=True, args=["--no-sandbox"])
+        context = await browser.new_context(user_agent=USER_AGENT)
+        page = await context.new_page()
+
+        for i, rec in enumerate(todo, start=1):
+            dn = rec.get("doc_num")
+            if not dn:
+                continue
+            if dn in cache:
+                # Apply cached value to record (might have been fetched
+                # in a previous run but not yet applied to this list).
+                cv = cache[dn] or {}
+                if cv.get("consideration") and not rec.get("consideration"):
+                    rec["consideration"] = cv["consideration"]
+                    rec["amount"] = _coerce_amount(cv["consideration"])
+                    enriched += 1
+                if cv.get("instrument_date") and not rec.get("instrument_date"):
+                    rec["instrument_date"] = cv["instrument_date"]
+                continue
+
+            if time.time() > deadline:
+                log.warning("doc-details: time budget exhausted after %d",
+                            fetched_this_run)
+                break
+
+            details = await _fetch_doc_details(page, dn)
+            fetched_this_run += 1
+            if not details:
+                cache[dn] = {}   # remember the miss so we don't keep retrying
+                log.info("  doc-details[%d/%d] %s → no data",
+                         i, len(todo), dn)
+            else:
+                cache[dn] = details
+                cons = details.get("consideration")
+                inst = details.get("instrument_date")
+                if cons:
+                    rec["consideration"] = cons
+                    rec["amount"] = _coerce_amount(cons)
+                    enriched += 1
+                if inst and not rec.get("instrument_date"):
+                    rec["instrument_date"] = inst
+                log.info("  doc-details[%d/%d] %s → cons=%r inst=%r",
+                         i, len(todo), dn, cons, inst)
+            await asyncio.sleep(DOC_DETAILS_DELAY_SEC)
+
+        await context.close()
+        await browser.close()
+
+    _save_doc_details_cache(cache)
+    log.info("doc-details: fetched %d this run, %d records enriched",
+             fetched_this_run, enriched)
+    return enriched
 
 
 def enrich_via_ncad_search(records: List[ClerkRecord]) -> int:
