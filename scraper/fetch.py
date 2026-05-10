@@ -2434,109 +2434,149 @@ async def _fetch_doc_details(page, doc_num: str,
                               clerk_url: str = "") -> Optional[Dict[str, str]]:
     """Navigate to the document detail page and extract right-panel fields.
 
-    The clerk portal's true detail-page URL uses an internal database ID
-    (e.g. /doc/169217155), NOT the human-readable doc_num. The search-
-    results page exposes this internal ID via the result row's link.
-
     Strategy:
-      1. Land on a page that has the result for this doc_num. Three
-         possibilities depending on what `clerk_url` is:
-         - already a /doc/<id> URL → navigate directly
-         - a search URL (?searchValue=<doc_num>) → land there, then
-           follow the first result's /doc/<id> link
-         - empty → build a search URL ourselves and do the same
-      2. On the detail page, wait for the right-side panel to render
-         (look for the "Consideration" or "Document Number" labels).
-      3. Extract values via page.evaluate (JS-rendered, not in HTML).
+      1. Build a properly-formatted search URL (with searchType=quickSearch
+         AND a wide recordedDateRange) that filters the results to this
+         specific doc_num. The stored clerk_url is often malformed
+         (missing searchType=quickSearch) and falls back to a no-filter
+         search showing arbitrary recent records — we ignore it.
+      2. Wait for the SPA to render result rows. The rows initially have
+         no anchor tags; the /doc/<internal-id> link appears AFTER a
+         second hydration pass.
+      3. Find the row matching our doc_num and follow its link.
+      4. On the detail page, wait for the right-side panel and extract.
     """
     if not doc_num:
         return None
 
-    # Step 1: figure out the landing URL.
-    landing_url = ""
-    if clerk_url:
-        if clerk_url.startswith("http"):
-            landing_url = clerk_url
-        elif clerk_url.startswith("/"):
-            landing_url = CLERK_BASE + clerk_url
-        else:
-            landing_url = f"{CLERK_BASE}/{clerk_url}"
-    if not landing_url:
-        landing_url = (f"{CLERK_BASE}/results?"
-                       + urlencode({"department": "RP",
-                                     "searchType": "quickSearch",
-                                     "searchValue": doc_num,
-                                     "limit": 50,
-                                     "offset": 0,
-                                     "keywordSearch": "false",
-                                     "searchOcrText": "false"}))
+    # Always rebuild the search URL — stored clerk_urls are often missing
+    # parameters needed for the filter to take effect.
+    landing_url = (f"{CLERK_BASE}/results?"
+                   + urlencode({
+                       "department": "RP",
+                       "searchType": "quickSearch",
+                       "searchValue": doc_num,
+                       # Wide date range so historical docs aren't filtered
+                       # out by the portal's default "recent" window.
+                       "recordedDateRange": "18000101,20991231",
+                       "limit": 50,
+                       "offset": 0,
+                       "keywordSearch": "false",
+                       "searchOcrText": "false",
+                   }))
 
-    # Step 2: navigate to the landing URL.
     try:
         await page.goto(landing_url, wait_until="domcontentloaded",
                          timeout=25_000)
-        await page.wait_for_timeout(400)
     except Exception as exc:
         log.debug("doc-details landing nav failed for %s: %s", doc_num, exc)
         return None
 
-    # Step 3: figure out where we are.
-    # If we're already on a /doc/<id> page, the URL bar shows it. Otherwise
-    # we're on a /results?... page and need to find the doc link from
-    # whichever result row matches our doc_num.
+    # Wait for either result rows with /doc/ links to render, OR a
+    # "no results" message. The SPA's first paint is the table shell;
+    # row content + links are filled in by a subsequent JS pass.
     try:
-        current_url = page.url or ""
+        await page.wait_for_function(
+            """(docNum) => {
+                // Rows present with at least one /doc/ link?
+                const links = document.querySelectorAll(
+                    "table tbody tr a[href*='/doc/']");
+                if (links.length > 0) return true;
+                // Or has the table populated with our doc_num text?
+                const cells = document.querySelectorAll(
+                    "table tbody tr td");
+                for (const c of cells) {
+                    if ((c.textContent || '').trim() === docNum)
+                        return 'found-text-no-link';
+                }
+                // Or "no results"?
+                const txt = document.body.innerText || '';
+                if (txt.includes('No Results Found') ||
+                    txt.includes('returned no results'))
+                    return 'no-results';
+                return false;
+            }""",
+            arg=doc_num,
+            timeout=15_000,
+        )
     except Exception:
-        current_url = ""
+        pass
+    await page.wait_for_timeout(500)
 
-    if "/doc/" not in current_url:
-        # We're on a search-results page. Find the row whose Doc Number
-        # cell matches our doc_num, then follow that row's /doc/<id> link.
-        # (Searching by exact doc_num typically returns exactly 1 result,
-        # but we filter defensively in case a substring match returns more.)
+    # Now find the row matching our doc_num and grab its /doc/ link.
+    try:
+        href = await page.evaluate("""(docNum) => {
+            const rows = document.querySelectorAll('table tbody tr');
+            for (const r of rows) {
+                const cells = r.querySelectorAll('td');
+                let matches = false;
+                for (const c of cells) {
+                    if ((c.textContent || '').trim() === docNum) {
+                        matches = true;
+                        break;
+                    }
+                }
+                if (!matches) continue;
+                const a = r.querySelector("a[href*='/doc/']");
+                if (a) return a.getAttribute('href');
+                // Some portals attach click handlers to the row itself
+                // — pull the doc id from data-* attributes if present.
+                for (const attr of r.attributes) {
+                    if (attr.value && /^\\d{6,12}$/.test(attr.value))
+                        return '/doc/' + attr.value;
+                }
+                // Or check inner data attributes on cells.
+                for (const c of cells) {
+                    for (const attr of c.attributes) {
+                        if (attr.value && /^\\d{6,12}$/.test(attr.value))
+                            return '/doc/' + attr.value;
+                    }
+                }
+                return null;  // matched the row but no link found
+            }
+            return null;
+        }""", doc_num)
+    except Exception:
+        href = None
+
+    if not href:
+        # Last resort: try clicking the row (some SPAs only navigate via
+        # click handlers, not anchor tags). Wait for the URL to change
+        # to /doc/<id>.
         try:
-            await page.wait_for_function(
-                """() => {
-                    const rows = document.querySelectorAll('table tbody tr');
-                    return rows.length > 0 || (
-                        (document.body.innerText || '').includes(
-                            'No Results Found'));
-                }""",
-                timeout=15_000,
-            )
-        except Exception:
-            pass
-        try:
-            await page.wait_for_timeout(400)
-            href = await page.evaluate("""(docNum) => {
-                // Find every row's Doc Number cell. The table layout
-                // uses col-N classes; doc number lives in col-7.
+            clicked = await page.evaluate("""(docNum) => {
                 const rows = document.querySelectorAll('table tbody tr');
                 for (const r of rows) {
                     const cells = r.querySelectorAll('td');
-                    let matches = false;
                     for (const c of cells) {
-                        const txt = (c.textContent || '').trim();
-                        if (txt === docNum) { matches = true; break; }
+                        if ((c.textContent || '').trim() === docNum) {
+                            r.click();
+                            return true;
+                        }
                     }
-                    if (!matches) continue;
-                    // Found the right row — grab any /doc/<id> link in it.
-                    const a = r.querySelector("a[href*='/doc/']");
-                    if (a) return a.getAttribute('href');
                 }
-                // Fallback: just grab the first /doc/<id> link on page.
-                const fallback = document.querySelector("a[href*='/doc/']");
-                return fallback ? fallback.getAttribute('href') : null;
+                return false;
             }""", doc_num)
+            if clicked:
+                # Wait briefly for URL to change
+                for _ in range(20):
+                    await page.wait_for_timeout(250)
+                    cur = page.url or ""
+                    if "/doc/" in cur:
+                        href = cur
+                        break
         except Exception:
-            href = None
+            pass
 
-        if not href:
-            return None
+    if not href:
+        return None
 
-        detail_url = (CLERK_BASE + href if href.startswith("/")
-                      else (href if href.startswith("http")
-                            else CLERK_BASE + "/" + href))
+    detail_url = (CLERK_BASE + href if href.startswith("/")
+                  else (href if href.startswith("http")
+                        else CLERK_BASE + "/" + href))
+
+    # Already there if click navigation already happened.
+    if detail_url != (page.url or ""):
         try:
             await page.goto(detail_url, wait_until="domcontentloaded",
                              timeout=25_000)
@@ -2545,7 +2585,7 @@ async def _fetch_doc_details(page, doc_num: str,
                       doc_num, exc)
             return None
 
-    # Step 4: wait for the right-side panel to render.
+    # Wait for the right-side panel to render.
     try:
         await page.wait_for_function(
             """() => {
