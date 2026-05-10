@@ -2430,49 +2430,134 @@ def _save_doc_details_cache(cache: Dict[str, Dict[str, str]]) -> None:
         log.warning("could not save doc-details cache: %s", exc)
 
 
-async def _fetch_doc_details(page, doc_num: str) -> Optional[Dict[str, str]]:
-    """Navigate to /doc/<doc_num> and extract the right-side panel fields.
+async def _fetch_doc_details(page, doc_num: str,
+                              clerk_url: str = "") -> Optional[Dict[str, str]]:
+    """Navigate to the document detail page and extract right-panel fields.
 
-    The detail page is a JS-rendered SPA: the right panel shows
-      Document Number   <doc_num>
-      Number of Pages   <n>
-      Recorded Date     <mm/dd/yyyy hh:mm AM/PM>
-      Consideration     $<amount>            ← what we want
-      Document Status   Complete
-      Book/Volume/Page  --/-- /--
-      Instrument Date   <mm/dd/yyyy>          ← what we want
+    The clerk portal's true detail-page URL uses an internal database ID
+    (e.g. /doc/169217155), NOT the human-readable doc_num. The search-
+    results page exposes this internal ID via the result row's link.
 
-    We wait for the DOM to populate (specifically for "Consideration"
-    label to appear), then read all label/value pairs using
-    page.evaluate().
-
-    Returns dict with whatever fields we found (consideration may be
-    missing if the document genuinely has no consideration recorded —
-    that's fine, we still cache the result so we don't re-fetch).
+    Strategy:
+      1. Land on a page that has the result for this doc_num. Three
+         possibilities depending on what `clerk_url` is:
+         - already a /doc/<id> URL → navigate directly
+         - a search URL (?searchValue=<doc_num>) → land there, then
+           follow the first result's /doc/<id> link
+         - empty → build a search URL ourselves and do the same
+      2. On the detail page, wait for the right-side panel to render
+         (look for the "Consideration" or "Document Number" labels).
+      3. Extract values via page.evaluate (JS-rendered, not in HTML).
     """
     if not doc_num:
         return None
-    url = f"{CLERK_BASE}/doc/{doc_num}"
+
+    # Step 1: figure out the landing URL.
+    landing_url = ""
+    if clerk_url:
+        if clerk_url.startswith("http"):
+            landing_url = clerk_url
+        elif clerk_url.startswith("/"):
+            landing_url = CLERK_BASE + clerk_url
+        else:
+            landing_url = f"{CLERK_BASE}/{clerk_url}"
+    if not landing_url:
+        landing_url = (f"{CLERK_BASE}/results?"
+                       + urlencode({"department": "RP",
+                                     "searchType": "quickSearch",
+                                     "searchValue": doc_num,
+                                     "limit": 50,
+                                     "offset": 0,
+                                     "keywordSearch": "false",
+                                     "searchOcrText": "false"}))
+
+    # Step 2: navigate to the landing URL.
     try:
-        await page.goto(url, wait_until="domcontentloaded", timeout=25_000)
-        # Wait for the detail panel to populate. We look for a label
-        # containing "Consideration" or "Document Number" — both signal
-        # that the right-panel has rendered.
+        await page.goto(landing_url, wait_until="domcontentloaded",
+                         timeout=25_000)
+        await page.wait_for_timeout(400)
+    except Exception as exc:
+        log.debug("doc-details landing nav failed for %s: %s", doc_num, exc)
+        return None
+
+    # Step 3: figure out where we are.
+    # If we're already on a /doc/<id> page, the URL bar shows it. Otherwise
+    # we're on a /results?... page and need to find the doc link from
+    # whichever result row matches our doc_num.
+    try:
+        current_url = page.url or ""
+    except Exception:
+        current_url = ""
+
+    if "/doc/" not in current_url:
+        # We're on a search-results page. Find the row whose Doc Number
+        # cell matches our doc_num, then follow that row's /doc/<id> link.
+        # (Searching by exact doc_num typically returns exactly 1 result,
+        # but we filter defensively in case a substring match returns more.)
         try:
             await page.wait_for_function(
                 """() => {
-                    const txt = document.body.innerText || '';
-                    return txt.includes('Consideration') ||
-                           txt.includes('Document Number');
+                    const rows = document.querySelectorAll('table tbody tr');
+                    return rows.length > 0 || (
+                        (document.body.innerText || '').includes(
+                            'No Results Found'));
                 }""",
-                timeout=12_000,
+                timeout=15_000,
             )
         except Exception:
             pass
-        await page.wait_for_timeout(400)
-    except Exception as exc:
-        log.debug("doc-details nav failed for %s: %s", doc_num, exc)
-        return None
+        try:
+            await page.wait_for_timeout(400)
+            href = await page.evaluate("""(docNum) => {
+                // Find every row's Doc Number cell. The table layout
+                // uses col-N classes; doc number lives in col-7.
+                const rows = document.querySelectorAll('table tbody tr');
+                for (const r of rows) {
+                    const cells = r.querySelectorAll('td');
+                    let matches = false;
+                    for (const c of cells) {
+                        const txt = (c.textContent || '').trim();
+                        if (txt === docNum) { matches = true; break; }
+                    }
+                    if (!matches) continue;
+                    // Found the right row — grab any /doc/<id> link in it.
+                    const a = r.querySelector("a[href*='/doc/']");
+                    if (a) return a.getAttribute('href');
+                }
+                // Fallback: just grab the first /doc/<id> link on page.
+                const fallback = document.querySelector("a[href*='/doc/']");
+                return fallback ? fallback.getAttribute('href') : null;
+            }""", doc_num)
+        except Exception:
+            href = None
+
+        if not href:
+            return None
+
+        detail_url = (CLERK_BASE + href if href.startswith("/")
+                      else (href if href.startswith("http")
+                            else CLERK_BASE + "/" + href))
+        try:
+            await page.goto(detail_url, wait_until="domcontentloaded",
+                             timeout=25_000)
+        except Exception as exc:
+            log.debug("doc-details detail nav failed for %s: %s",
+                      doc_num, exc)
+            return None
+
+    # Step 4: wait for the right-side panel to render.
+    try:
+        await page.wait_for_function(
+            """() => {
+                const txt = document.body.innerText || '';
+                return txt.includes('Consideration') ||
+                       txt.includes('Document Number');
+            }""",
+            timeout=12_000,
+        )
+    except Exception:
+        pass
+    await page.wait_for_timeout(400)
 
     try:
         result = await page.evaluate("""() => {
@@ -2535,7 +2620,7 @@ async def _fetch_doc_details(page, doc_num: str) -> Optional[Dict[str, str]]:
 
 # How many doc-detail fetches per backfill run (resumable via cache).
 DOC_DETAILS_MAX_LOOKUPS    = 5000   # effectively unlimited; cache + budget gate
-DOC_DETAILS_DELAY_SEC      = 0.8
+DOC_DETAILS_DELAY_SEC      = 0.5
 DOC_DETAILS_BUDGET_SEC     = 55 * 60   # 55 min
 
 async def enrich_with_doc_details(records: List[Dict[str, Any]]) -> int:
@@ -2579,6 +2664,11 @@ async def enrich_with_doc_details(records: List[Dict[str, Any]]) -> int:
         context = await browser.new_context(user_agent=USER_AGENT)
         page = await context.new_page()
 
+        # Save diagnostic HTML for the first detail-page navigation so
+        # we can see what the portal actually rendered (in case of
+        # widespread failures).
+        diag_saved = False
+
         for i, rec in enumerate(todo, start=1):
             dn = rec.get("doc_num")
             if not dn:
@@ -2600,12 +2690,32 @@ async def enrich_with_doc_details(records: List[Dict[str, Any]]) -> int:
                             fetched_this_run)
                 break
 
-            details = await _fetch_doc_details(page, dn)
+            details = await _fetch_doc_details(
+                page, dn, clerk_url=rec.get("clerk_url", ""))
+
+            # On first failed fetch, save a diagnostic HTML dump so we
+            # can see what the portal returned (vs. what we expected).
+            if not details and not diag_saved:
+                try:
+                    dbg_dir = ROOT_DIR / "debug"
+                    dbg_dir.mkdir(parents=True, exist_ok=True)
+                    diag_html = await page.content()
+                    (dbg_dir / "doc_details_first_failure.html").write_text(
+                        diag_html, encoding="utf-8")
+                    log.info("doc-details diagnostics saved to "
+                             "debug/doc_details_first_failure.html "
+                             "(doc_num=%s, clerk_url=%r)",
+                             dn, rec.get("clerk_url"))
+                    diag_saved = True
+                except Exception:
+                    pass
+
             fetched_this_run += 1
             if not details:
                 cache[dn] = {}   # remember the miss so we don't keep retrying
-                log.info("  doc-details[%d/%d] %s → no data",
-                         i, len(todo), dn)
+                log.info("  doc-details[%d/%d] %s → no data (clerk_url=%r)",
+                         i, len(todo), dn,
+                         (rec.get("clerk_url") or "")[:60])
             else:
                 cache[dn] = details
                 cons = details.get("consideration")
