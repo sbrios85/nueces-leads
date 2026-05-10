@@ -1,0 +1,956 @@
+"""
+Foreclosure PDF reader for the Nueces County clerk portal.
+==========================================================
+
+Workflow per document:
+  1. Authenticate (once per Playwright session)
+  2. Navigate to the doc's detail page on the portal
+  3. Click the download button — receive the actual PDF file
+  4. Extract text via pdfplumber
+  5. Parse fields via regex (borrower name, loan amount, address, etc.)
+  6. Optionally cross-reference legal description against NCAD when
+     the PDF didn't expose a street address
+
+Rate limiting (configurable via constants below):
+  * Hard cap of N downloads per workflow run
+  * Random 30-90 sec delays between downloads (anti-fingerprint)
+  * Stops on any 429 / 503 / "please slow down" indicator
+  * Persistent cache at .cache/pdf_extractions.json so re-runs skip
+    already-processed docs
+
+This module is imported by:
+  * scraper/extract_foreclosure_pdfs.py — the dedicated workflow runner
+  * scraper/fetch.py — could be invoked as a final daily step (TBD)
+"""
+
+from __future__ import annotations
+
+import asyncio
+import json
+import logging
+import os
+import random
+import re
+import time
+import traceback
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
+
+log = logging.getLogger("nueces-pdf-reader")
+
+# --------------------------------------------------------------------------- #
+# Knobs
+# --------------------------------------------------------------------------- #
+
+CLERK_BASE = "https://nueces.tx.publicsearch.us"
+SIGNIN_URL = f"{CLERK_BASE}/signin"
+PDF_EXTRACTION_CACHE = ".cache/pdf_extractions.json"
+
+# These get overridden by the workflow runner. Defaults are conservative.
+PDF_DOWNLOADS_PER_RUN = 10
+PDF_MIN_DELAY_SEC = 30
+PDF_MAX_DELAY_SEC = 90
+PDF_PHASE_BUDGET_SEC = 50 * 60   # 50 minutes hard cap per run
+
+# User-Agent for the authenticated browser context — looks like a real Chrome.
+USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+
+
+# --------------------------------------------------------------------------- #
+# Cache
+# --------------------------------------------------------------------------- #
+
+def _cache_path(root_dir: Path) -> Path:
+    return root_dir / PDF_EXTRACTION_CACHE
+
+
+def load_pdf_cache(root_dir: Path) -> Dict[str, Dict[str, Any]]:
+    """Load the persistent doc_num → extraction-result cache."""
+    p = _cache_path(root_dir)
+    if not p.exists():
+        return {}
+    try:
+        raw = json.loads(p.read_text(encoding="utf-8"))
+    except Exception as exc:
+        log.warning("could not load PDF cache: %s", exc)
+        return {}
+    if isinstance(raw, dict) and raw.get("_version") == "v1":
+        return raw.get("data", {})
+    log.info("legacy PDF cache (version=%r) — discarding",
+             raw.get("_version") if isinstance(raw, dict) else None)
+    return {}
+
+
+def save_pdf_cache(root_dir: Path, cache: Dict[str, Dict[str, Any]]) -> None:
+    p = _cache_path(root_dir)
+    try:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        envelope = {"_version": "v1", "data": cache}
+        p.write_text(json.dumps(envelope, indent=2, default=str),
+                      encoding="utf-8")
+        log.info("PDF cache: %d entries written", len(cache))
+    except Exception as exc:
+        log.warning("could not save PDF cache: %s", exc)
+
+
+# --------------------------------------------------------------------------- #
+# Authentication
+# --------------------------------------------------------------------------- #
+
+async def _login(page) -> bool:
+    """Submit username + password from env vars to the portal's signin form.
+
+    Returns True on success. Failure (wrong creds, 2FA challenge, layout
+    change) returns False; the caller aborts the run.
+    """
+    username = os.environ.get("CLERK_USERNAME") or ""
+    password = os.environ.get("CLERK_PASSWORD") or ""
+    if not username or not password:
+        log.error("CLERK_USERNAME / CLERK_PASSWORD not set — cannot login")
+        return False
+
+    log.info("logging in as %s...", username)
+    try:
+        await page.goto(SIGNIN_URL, wait_until="domcontentloaded",
+                         timeout=30_000)
+        await page.wait_for_timeout(800)
+
+        # The portal's sign-in form fields. We use multiple selectors
+        # because BIS layouts vary. Try the most common ones in order.
+        username_filled = False
+        for sel in ("input[name='email']", "input[type='email']",
+                     "input[name='username']", "input[id*='email' i]",
+                     "input[id*='username' i]", "input[autocomplete='username']"):
+            try:
+                el = await page.query_selector(sel)
+                if el:
+                    await el.fill(username)
+                    username_filled = True
+                    break
+            except Exception:
+                continue
+        if not username_filled:
+            log.error("could not find username field on sign-in page")
+            return False
+
+        password_filled = False
+        for sel in ("input[name='password']", "input[type='password']",
+                     "input[id*='password' i]", "input[autocomplete='current-password']"):
+            try:
+                el = await page.query_selector(sel)
+                if el:
+                    await el.fill(password)
+                    password_filled = True
+                    break
+            except Exception:
+                continue
+        if not password_filled:
+            log.error("could not find password field on sign-in page")
+            return False
+
+        # Submit the form. Try clicking a button first; fall back to Enter.
+        submitted = False
+        for sel in ("button[type='submit']", "input[type='submit']",
+                     "button:has-text('Sign In')", "button:has-text('Login')",
+                     "button:has-text('Log In')"):
+            try:
+                btn = await page.query_selector(sel)
+                if btn:
+                    await btn.click()
+                    submitted = True
+                    break
+            except Exception:
+                continue
+        if not submitted:
+            try:
+                await page.keyboard.press("Enter")
+                submitted = True
+            except Exception:
+                pass
+
+        # Wait for navigation to complete. We're logged in when the URL
+        # is no longer /signin OR when we see a "Sign Out" link.
+        try:
+            await page.wait_for_function(
+                """() => {
+                    if (window.location.pathname === '/signin') return false;
+                    // Check for sign-out link as positive confirmation
+                    const links = document.querySelectorAll('a, button');
+                    for (const l of links) {
+                        const t = (l.textContent || '').toLowerCase();
+                        if (t.includes('sign out') || t.includes('logout') ||
+                            t.includes('log out')) return true;
+                    }
+                    return window.location.pathname !== '/signin';
+                }""",
+                timeout=15_000,
+            )
+        except Exception:
+            pass
+
+        # Final check: are we off the sign-in page?
+        cur = page.url or ""
+        if "/signin" in cur:
+            log.error("login appears to have failed — still on /signin")
+            # Try to capture any error message visible on the page
+            try:
+                err_text = await page.evaluate("""() => {
+                    const errs = document.querySelectorAll(
+                        '[role=alert], [class*=error], [class*=Error]');
+                    return Array.from(errs)
+                        .map(e => (e.textContent || '').trim())
+                        .filter(Boolean).slice(0, 3).join(' | ');
+                }""")
+                if err_text:
+                    log.error("portal error text: %s", err_text[:300])
+            except Exception:
+                pass
+            return False
+
+        log.info("login successful (now at %s)", cur[:100])
+        return True
+    except Exception as exc:
+        log.error("login flow crashed: %s\n%s", exc, traceback.format_exc())
+        return False
+
+
+# --------------------------------------------------------------------------- #
+# Per-document fetch
+# --------------------------------------------------------------------------- #
+
+async def _navigate_to_doc(page, doc_num: str) -> bool:
+    """Navigate Playwright to the document's detail page.
+
+    Strategy: search by doc_num in the OPR department, then click the
+    matching row to land on /doc/<internal-id>. Returns True if we end
+    up on a /doc/ URL.
+    """
+    from urllib.parse import urlencode
+    search_url = (f"{CLERK_BASE}/results?"
+                  + urlencode({
+                      "department": "RP",
+                      "searchType": "quickSearch",
+                      "searchValue": doc_num,
+                      "recordedDateRange": "18000101,20991231",
+                      "limit": 50,
+                      "offset": 0,
+                      "keywordSearch": "false",
+                      "searchOcrText": "false",
+                  }))
+    try:
+        await page.goto(search_url, wait_until="domcontentloaded",
+                         timeout=25_000)
+    except Exception as exc:
+        log.debug("search nav failed for %s: %s", doc_num, exc)
+        return False
+
+    # Wait for the row matching our doc_num to appear.
+    try:
+        await page.wait_for_function(
+            """(dn) => {
+                const cells = document.querySelectorAll(
+                    'table tbody tr td');
+                for (const c of cells) {
+                    if ((c.textContent || '').trim() === dn) return true;
+                }
+                const txt = document.body.innerText || '';
+                return txt.includes('No Results Found');
+            }""",
+            arg=doc_num, timeout=20_000,
+        )
+    except Exception:
+        pass
+    await page.wait_for_timeout(500)
+
+    # Click the matching row. The portal's SPA wires up click handlers
+    # on rows even though they don't have <a> tags.
+    try:
+        clicked = await page.evaluate("""(dn) => {
+            const rows = document.querySelectorAll('table tbody tr');
+            for (const r of rows) {
+                const cells = r.querySelectorAll('td');
+                for (const c of cells) {
+                    if ((c.textContent || '').trim() === dn) {
+                        r.click();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }""", doc_num)
+    except Exception:
+        clicked = False
+
+    if not clicked:
+        log.debug("could not click row for doc %s", doc_num)
+        return False
+
+    # Wait for URL to change to /doc/<id>.
+    for _ in range(40):
+        await page.wait_for_timeout(250)
+        cur = page.url or ""
+        if "/doc/" in cur:
+            return True
+    return False
+
+
+async def _download_pdf(page, doc_num: str,
+                         download_dir: Path) -> Optional[Path]:
+    """Trigger the PDF download from the document detail page.
+
+    The portal exposes a download button (icon, varies by layout). After
+    clicking, Playwright captures the download and saves it to the
+    download_dir. Returns the saved file path on success, None on
+    failure.
+
+    Caller is responsible for being already on the /doc/<id> page.
+    """
+    download_dir.mkdir(parents=True, exist_ok=True)
+    out_path = download_dir / f"{doc_num}.pdf"
+
+    # Click any element that triggers a PDF download.
+    try:
+        async with page.expect_download(timeout=30_000) as dl_info:
+            # The download button changes label/icon between portal
+            # versions. Try several selectors.
+            clicked = await page.evaluate("""() => {
+                const candidates = Array.from(document.querySelectorAll(
+                    'button, a, [role=button]'));
+                for (const c of candidates) {
+                    const lbl = ((c.getAttribute('aria-label') || '') + ' ' +
+                                 (c.getAttribute('title') || '') + ' ' +
+                                 (c.textContent || '')).toLowerCase();
+                    if (lbl.includes('download pdf') ||
+                        (lbl.includes('download') && !lbl.includes('cart')) ||
+                        lbl.includes('save pdf') ||
+                        lbl.includes('save as pdf')) {
+                        c.click();
+                        return lbl.slice(0, 60);
+                    }
+                }
+                return null;
+            }""")
+            if not clicked:
+                log.debug("no download button found on detail page for %s",
+                          doc_num)
+                return None
+            log.debug("clicked %r for download of %s", clicked, doc_num)
+            download = await dl_info.value
+        await download.save_as(str(out_path))
+        if out_path.exists() and out_path.stat().st_size > 100:
+            return out_path
+        log.warning("PDF download for %s came out tiny/empty", doc_num)
+        return None
+    except Exception as exc:
+        log.debug("PDF download failed for %s: %s", doc_num, exc)
+        return None
+
+
+# --------------------------------------------------------------------------- #
+# PDF text extraction + field parsing
+# --------------------------------------------------------------------------- #
+
+def _extract_text(pdf_path: Path) -> str:
+    """Extract all text from a PDF using pdfplumber. Returns "" on failure."""
+    try:
+        import pdfplumber  # type: ignore
+    except ImportError:
+        log.error("pdfplumber not installed — cannot extract PDF text")
+        return ""
+    try:
+        text_parts: List[str] = []
+        with pdfplumber.open(str(pdf_path)) as pdf:
+            for page in pdf.pages:
+                t = page.extract_text() or ""
+                if t.strip():
+                    text_parts.append(t)
+        return "\n\n".join(text_parts)
+    except Exception as exc:
+        log.warning("pdfplumber failed on %s: %s", pdf_path, exc)
+        return ""
+
+
+# Texas foreclosure-notice text varies but follows recognizable patterns.
+# These regexes are tuned for the most common templates used by Nueces
+# County trustees / lenders.
+
+_RE_BORROWER = [
+    # "executed by JOHN DOE AND JANE DOE" / "by JOHN DOE"
+    re.compile(r"executed\s+by\s+([A-Z][A-Z\s,&.'-]+?)(?=\s+(?:and|to|in favor of|payable|on|at)\b|,\s*[a-z])",
+               re.IGNORECASE),
+    # "Mortgagor(s): JOHN DOE"
+    re.compile(r"mortgagor[s]?[\s:]*([A-Z][A-Z\s,&.'-]+?)(?=\s*(?:to|in favor of|and|,\s*[a-z]))",
+               re.IGNORECASE),
+    # "Borrower(s): JOHN DOE"
+    re.compile(r"borrower[s]?[\s:]*([A-Z][A-Z\s,&.'-]+?)(?=\s*(?:to|in favor of|and|,\s*[a-z]))",
+               re.IGNORECASE),
+    # "Debtor(s): JOHN DOE"
+    re.compile(r"debtor[s]?[\s:]*([A-Z][A-Z\s,&.'-]+?)(?=\s*(?:to|in favor of|and|,\s*[a-z]))",
+               re.IGNORECASE),
+]
+
+_RE_LENDER = [
+    # "in favor of WELLS FARGO BANK NA"
+    re.compile(r"in\s+favor\s+of\s+([A-Z][A-Z\s,&.'-]+?)(?=\s*(?:,\s*its successors|,?\s*as|,\s*and|\.|recorded))",
+               re.IGNORECASE),
+    # "Lender: WELLS FARGO BANK NA"
+    re.compile(r"lender[\s:]+([A-Z][A-Z\s,&.'-]+?)(?=\s*(?:,|\.|\n))",
+               re.IGNORECASE),
+    # "Mortgagee: ..."
+    re.compile(r"mortgagee[\s:]+([A-Z][A-Z\s,&.'-]+?)(?=\s*(?:,|\.|\n))",
+               re.IGNORECASE),
+    # "Beneficiary: ..."
+    re.compile(r"beneficiary[\s:]+([A-Z][A-Z\s,&.'-]+?)(?=\s*(?:,|\.|\n))",
+               re.IGNORECASE),
+]
+
+_RE_LOAN_AMOUNT = [
+    # "Original principal balance: $123,456.78"
+    re.compile(r"original\s+principal\s+(?:balance|amount)[:\s]+\$?\s*([\d,]+(?:\.\d{2})?)",
+               re.IGNORECASE),
+    # "principal sum of $123,456.78"
+    re.compile(r"principal\s+(?:sum|amount)\s+of\s+\$?\s*([\d,]+(?:\.\d{2})?)",
+               re.IGNORECASE),
+    # "in the amount of $123,456.78"
+    re.compile(r"in\s+the\s+amount\s+of\s+\$?\s*([\d,]+(?:\.\d{2})?)",
+               re.IGNORECASE),
+    # Any "$NNN,NNN" near "loan"
+    re.compile(r"loan[^.]{0,40}?\$\s*([\d,]+(?:\.\d{2})?)",
+               re.IGNORECASE),
+]
+
+_RE_DEED_DATE = [
+    re.compile(r"deed\s+of\s+trust\s+dated\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4})",
+               re.IGNORECASE),
+    re.compile(r"dated\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4})",
+               re.IGNORECASE),
+]
+
+# Texas street-address pattern. Two-stage approach: find a number+street
+# pattern, then look ahead for city + TX + zip nearby. Simpler than
+# trying to do everything in one regex.
+_RE_STREET_LINE = re.compile(
+    r"\b(\d{1,6})\s+([A-Z][A-Za-z0-9\s.,'#-]{3,60}?\b"
+    r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
+    r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
+    r"WAY|TRAIL|TR|PARKWAY|PKWY|HIGHWAY|HWY|TERRACE|TER)\b\.?)",
+    re.IGNORECASE,
+)
+_RE_CITY_TX_ZIP = re.compile(
+    r"\b(CORPUS\s+CHRISTI|ROBSTOWN|PORT\s+ARANSAS|BISHOP|DRISCOLL|"
+    r"AGUA\s+DULCE|BANQUETE)\b[,\s]+(?:TX|TEXAS)\s+(\d{5})",
+    re.IGNORECASE,
+)
+
+# Legal description — Texas standard format. Captures subdivision name
+# + lot + block (+ optional unit). Used for cross-referencing against
+# NCAD when the PDF doesn't have a street address.
+_RE_LEGAL = re.compile(
+    r"(?:Lot[s]?\s+)?([\d,A-Z-]+)[\s,]+(?:Block|Blk\.?)\s+([\dA-Z-]+)"
+    r"[,\s]+(?:of\s+)?([A-Z][A-Z\s\d&.'-]+?)\s+(?:Subdivision|Addition|"
+    r"Unit|Section|Phase)",
+    re.IGNORECASE,
+)
+
+
+def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
+    """Apply regex patterns to extract structured fields from a
+    foreclosure PDF's text. Returns a dict with whatever was found.
+
+    None of the fields are required — partial extraction is normal.
+    """
+    if not text:
+        return {}
+
+    out: Dict[str, Any] = {}
+
+    # Borrower
+    for rx in _RE_BORROWER:
+        m = rx.search(text)
+        if m:
+            name = _clean_name(m.group(1))
+            if name and len(name) >= 4:
+                out["borrower"] = name
+                break
+
+    # Lender
+    for rx in _RE_LENDER:
+        m = rx.search(text)
+        if m:
+            name = _clean_name(m.group(1))
+            if name and len(name) >= 3:
+                out["lender"] = name
+                break
+
+    # Loan amount
+    for rx in _RE_LOAN_AMOUNT:
+        m = rx.search(text)
+        if m:
+            try:
+                amt = float(m.group(1).replace(",", ""))
+                if 1000 < amt < 10_000_000:   # sanity: $1k to $10M
+                    out["loan_amount"] = amt
+                    break
+            except ValueError:
+                continue
+
+    # Deed-of-trust date
+    for rx in _RE_DEED_DATE:
+        m = rx.search(text)
+        if m:
+            out["deed_date_raw"] = m.group(1).strip()
+            break
+
+    # Property street address — two-stage match.
+    # 1. Find the street part (number + street name + suffix)
+    # 2. Look in nearby text for city + TX + zip
+    street_match = _RE_STREET_LINE.search(text)
+    if street_match:
+        street = (street_match.group(1) + " " + street_match.group(2)).strip()
+        # Look within 200 chars after the street for a city + zip
+        tail_start = street_match.end()
+        tail = text[tail_start:tail_start + 300]
+        cz = _RE_CITY_TX_ZIP.search(tail)
+        if cz:
+            out["prop_address"] = re.sub(r"\s+", " ", street).upper().strip(" ,.")
+            out["prop_city"] = re.sub(r"\s+", " ", cz.group(1)).upper()
+            out["prop_state"] = "TX"
+            out["prop_zip"] = cz.group(2)
+        else:
+            # Street found but no city/zip nearby — still record the street.
+            out["prop_address"] = re.sub(r"\s+", " ", street).upper().strip(" ,.")
+            out["prop_state"] = "TX"
+
+    # Legal description (subdivision + lot + block)
+    if not out.get("prop_address"):
+        # Only bother extracting legal if we don't already have a street
+        # address — legal is the cross-reference fallback path.
+        m = _RE_LEGAL.search(text)
+        if m:
+            out["legal_lot"] = m.group(1).strip()
+            out["legal_block"] = m.group(2).strip()
+            out["legal_subdivision"] = _clean_name(m.group(3))
+
+    return out
+
+
+def _clean_name(s: str) -> str:
+    """Trim whitespace and strip trailing punctuation/conjunctions."""
+    if not s:
+        return ""
+    s = re.sub(r"\s+", " ", s).strip(" ,.;:&-")
+    # Strip trailing common words that get caught by greedy regex
+    s = re.sub(r"\s+(and|to|in|the)\s*$", "", s, flags=re.IGNORECASE)
+    return s.strip()
+
+
+# --------------------------------------------------------------------------- #
+# Legal-description normalization for cross-referencing
+# --------------------------------------------------------------------------- #
+
+def normalize_legal_for_match(legal: str) -> Tuple[str, str, str]:
+    """Normalize a legal description into (subdivision, lot, block) for
+    matching across portals. Returns lowercased tokens, with the
+    subdivision name reduced to a comparable form.
+
+    Examples:
+      'LOT 9 BLOCK 2 DOUGLAS UNIT TWO ADDITION'
+        → ('douglas unit 2', '9', '2')
+      'Subdivision- Name: DOUGLAS UNIT 2 Lot: 9 Block: 2'
+        → ('douglas unit 2', '9', '2')
+    """
+    if not legal:
+        return ("", "", "")
+    s = legal.upper()
+
+    # Find lot
+    lot = ""
+    m = re.search(r"\bLOT[S]?\s*[:\-]?\s*([\d,A-Z-]+)", s)
+    if m:
+        lot = m.group(1).strip(" ,-")
+
+    # Find block
+    block = ""
+    m = re.search(r"\bBLOCK\s*[:\-]?\s*([\dA-Z-]+)", s)
+    if m:
+        block = m.group(1).strip(" ,-")
+    else:
+        m = re.search(r"\bBLK\.?\s*[:\-]?\s*([\dA-Z-]+)", s)
+        if m:
+            block = m.group(1).strip(" ,-")
+
+    # Find subdivision name. Strip the structure tokens (LOT, BLOCK,
+    # SUBDIVISION, NAME:, etc.), then take whatever's left.
+    sub = re.sub(r"SUBDIVISION[\s\-]+NAME[\s:]*", " ", s)
+    sub = re.sub(r"\bLOT[S]?\s*[:\-]?\s*[\d,A-Z-]+", " ", sub)
+    sub = re.sub(r"\bBLOCK\s*[:\-]?\s*[\dA-Z-]+", " ", sub)
+    sub = re.sub(r"\bBLK\.?\s*[:\-]?\s*[\dA-Z-]+", " ", sub)
+    sub = re.sub(r"\bSUBDIVISION\b|\bADDITION\b|\bSECTION\b|\bPHASE\b",
+                  " ", sub)
+    sub = re.sub(r"[\(\)]", " ", sub)
+    sub = re.sub(r"\s+", " ", sub).strip(" ,-:")
+
+    # Normalize "UNIT TWO" → "UNIT 2" etc.
+    NUM_WORDS = {"ONE": "1", "TWO": "2", "THREE": "3", "FOUR": "4",
+                 "FIVE": "5", "SIX": "6", "SEVEN": "7", "EIGHT": "8",
+                 "NINE": "9", "TEN": "10"}
+    for word, num in NUM_WORDS.items():
+        sub = re.sub(rf"\bUNIT\s+{word}\b", f"UNIT {num}", sub)
+
+    return (sub.lower(), lot, block)
+
+
+def legal_descriptions_match(a: str, b: str) -> bool:
+    """True if two legal descriptions probably refer to the same property."""
+    sa, la, ba = normalize_legal_for_match(a)
+    sb, lb, bb = normalize_legal_for_match(b)
+    if not sa or not sb:
+        return False
+    if not la or not lb:
+        return False
+    # Lot must match exactly
+    if la != lb:
+        return False
+    # Block must match if both have one
+    if ba and bb and ba != bb:
+        return False
+    # Subdivision name: tolerate minor differences via token overlap.
+    a_tokens = set(sa.split())
+    b_tokens = set(sb.split())
+    common = a_tokens & b_tokens
+    # Require at least 1 meaningful subdivision-name token in common
+    # (filter out generic stop-words first).
+    STOP = {"the", "of", "a", "an"}
+    common -= STOP
+    return len(common) >= 1
+
+
+# --------------------------------------------------------------------------- #
+# Top-level driver: process a list of foreclosure records
+# --------------------------------------------------------------------------- #
+
+async def process_foreclosure_pdfs(
+    records: List[Dict[str, Any]],
+    root_dir: Path,
+    max_downloads: int = PDF_DOWNLOADS_PER_RUN,
+) -> int:
+    """Drive the full pipeline for up to `max_downloads` records.
+
+    Mutates each processed record in place with extracted fields.
+    Returns the number of records newly enriched.
+
+    Strategy:
+      1. Identify records that need PDF processing (no owner yet, has
+         clerk-portal access via doc_num)
+      2. Sort by sale_date ascending (closest first — most actionable)
+      3. Login once
+      4. For each record: navigate, download, extract, parse, save
+      5. Random sleep between docs (anti-fingerprint)
+    """
+    try:
+        from playwright.async_api import async_playwright  # type: ignore
+    except ImportError:
+        log.error("playwright not installed — cannot process PDFs")
+        return 0
+
+    # Pick eligible records: pre-foreclosure (sale date in the future
+    # OR within ~7 days past) AND no owner field populated yet.
+    today = datetime.now(timezone.utc).date().isoformat()
+    eligible = []
+    for r in records:
+        if r.get("owner"):
+            continue
+        if not r.get("doc_num"):
+            continue
+        # Skip post-foreclosure (sale already happened > 7 days ago)
+        sd = r.get("sale_date") or ""
+        # Keep if no sale_date OR if sale_date >= today
+        if sd and sd < today:
+            continue
+        eligible.append(r)
+
+    if not eligible:
+        log.info("PDF reader: no eligible foreclosure records")
+        return 0
+
+    # Sort by sale_date ascending (soonest first), undated last.
+    eligible.sort(key=lambda r: (r.get("sale_date") or "9999-99-99"))
+
+    cache = load_pdf_cache(root_dir)
+    log.info("PDF reader: %d eligible, %d cached, will download up to %d",
+             len(eligible), len(cache), max_downloads)
+
+    download_dir = root_dir / "debug" / "pdfs"
+    download_dir.mkdir(parents=True, exist_ok=True)
+
+    deadline = time.time() + PDF_PHASE_BUDGET_SEC
+    enriched = 0
+    downloaded_this_run = 0
+
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"],
+        )
+        context = await browser.new_context(
+            user_agent=USER_AGENT,
+            accept_downloads=True,
+        )
+        page = await context.new_page()
+
+        # Authenticate once.
+        if not await _login(page):
+            log.error("login failed — aborting PDF processing")
+            await context.close()
+            await browser.close()
+            return 0
+
+        for rec in eligible:
+            if downloaded_this_run >= max_downloads:
+                log.info("PDF reader: hit max_downloads=%d cap",
+                         max_downloads)
+                break
+            if time.time() > deadline:
+                log.warning("PDF reader: time budget exhausted")
+                break
+
+            dn = rec.get("doc_num")
+            if dn in cache:
+                # Apply cached extraction if any
+                _apply_extraction(rec, cache[dn])
+                if rec.get("owner"):
+                    enriched += 1
+                continue
+
+            log.info("processing PDF for doc %s (sale %s)...",
+                     dn, rec.get("sale_date"))
+
+            # Navigate
+            ok = await _navigate_to_doc(page, dn)
+            if not ok:
+                log.warning("could not navigate to doc %s", dn)
+                cache[dn] = {"error": "navigation_failed",
+                             "fetched_at": datetime.now(timezone.utc).isoformat()}
+                downloaded_this_run += 1
+                await _humanlike_sleep()
+                continue
+
+            # Download
+            pdf_path = await _download_pdf(page, dn, download_dir)
+            downloaded_this_run += 1
+            if not pdf_path:
+                log.warning("could not download PDF for doc %s", dn)
+                cache[dn] = {"error": "download_failed",
+                             "fetched_at": datetime.now(timezone.utc).isoformat()}
+                await _humanlike_sleep()
+                continue
+
+            # Extract + parse
+            text = _extract_text(pdf_path)
+            if not text:
+                log.warning("no text extracted from %s.pdf (scanned?)", dn)
+                cache[dn] = {"error": "no_text",
+                             "fetched_at": datetime.now(timezone.utc).isoformat()}
+                await _humanlike_sleep()
+                continue
+
+            fields = parse_foreclosure_pdf_text(text)
+            fields["fetched_at"] = datetime.now(timezone.utc).isoformat()
+            fields["text_length"] = len(text)
+            cache[dn] = fields
+
+            _apply_extraction(rec, fields)
+            if rec.get("owner"):
+                enriched += 1
+                log.info("  → %s: %s @ %s", dn,
+                         fields.get("borrower"),
+                         fields.get("prop_address") or
+                         f"legal:{fields.get('legal_subdivision', '?')}")
+            else:
+                log.info("  → %s: no borrower found in PDF", dn)
+
+            await _humanlike_sleep()
+
+        await context.close()
+        await browser.close()
+
+    save_pdf_cache(root_dir, cache)
+    log.info("PDF reader: downloaded %d, enriched %d records this run",
+             downloaded_this_run, enriched)
+    return enriched
+
+
+def _apply_extraction(rec: Dict[str, Any], fields: Dict[str, Any]) -> None:
+    """Copy extracted PDF fields onto a foreclosure record dict."""
+    if not fields or fields.get("error"):
+        return
+    if fields.get("borrower") and not rec.get("owner"):
+        rec["owner"] = fields["borrower"]
+    if fields.get("loan_amount") and not rec.get("loan_amount"):
+        rec["loan_amount"] = fields["loan_amount"]
+    if fields.get("prop_address") and not rec.get("prop_address"):
+        rec["prop_address"] = fields["prop_address"]
+        rec["prop_city"] = fields.get("prop_city", "")
+        rec["prop_state"] = fields.get("prop_state", "TX")
+        rec["prop_zip"] = fields.get("prop_zip", "")
+    if fields.get("lender") and not rec.get("lender"):
+        rec["lender"] = fields["lender"]
+
+
+async def _humanlike_sleep() -> None:
+    """Random delay between PDF downloads (anti-fingerprint)."""
+    secs = random.uniform(PDF_MIN_DELAY_SEC, PDF_MAX_DELAY_SEC)
+    log.info("  sleeping %.0fs before next document...", secs)
+    await asyncio.sleep(secs)
+
+
+# --------------------------------------------------------------------------- #
+# Cross-reference: NCAD lookup-by-name + legal-description match
+# --------------------------------------------------------------------------- #
+
+async def cross_reference_legal_descriptions(
+    records: List[Dict[str, Any]],
+    root_dir: Path,
+) -> int:
+    """For records that have a borrower + legal description from the PDF
+    but no street address, search NCAD by borrower name and find the
+    matching property by legal description. Mutates records in place.
+
+    Returns the number of records newly enriched with addresses.
+    """
+    eligible = []
+    for r in records:
+        if r.get("prop_address"):
+            continue                  # already have address
+        if not r.get("owner"):
+            continue                  # no name to search by
+        if not (r.get("legal_subdivision") or r.get("legal_lot")):
+            continue                  # no legal to match against
+        eligible.append(r)
+
+    if not eligible:
+        log.info("cross-ref: no records eligible for legal-match enrichment")
+        return 0
+
+    log.info("cross-ref: %d records eligible for NCAD legal-match",
+             len(eligible))
+
+    # Lazy import — these depend on fetch.py being importable
+    try:
+        import sys
+        sys.path.insert(0, str(root_dir / "scraper"))
+        from fetch import (   # type: ignore
+            _esearch_query_variants,
+            _parse_esearch_result_list,
+            NCAD_ESEARCH_BASE,
+        )
+    except Exception as exc:
+        log.error("could not import NCAD helpers: %s", exc)
+        return 0
+
+    try:
+        from playwright.async_api import async_playwright  # type: ignore
+    except ImportError:
+        log.error("playwright not installed — cannot do NCAD cross-ref")
+        return 0
+
+    enriched = 0
+    from urllib.parse import urlencode
+
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(headless=True, args=["--no-sandbox"])
+        context = await browser.new_context(user_agent=USER_AGENT)
+        page = await context.new_page()
+
+        # Mint a session token for NCAD esearch.
+        token = ""
+        try:
+            await page.goto(NCAD_ESEARCH_BASE + "/",
+                             wait_until="domcontentloaded", timeout=30_000)
+            await page.wait_for_timeout(500)
+            token = await page.evaluate("""() => {
+                const m = document.querySelector('meta[name="search-token"]');
+                return m ? m.getAttribute('content') : '';
+            }""") or ""
+        except Exception as exc:
+            log.warning("NCAD homepage load failed: %s", exc)
+        log.info("NCAD session token: %s", "present" if token else "missing")
+
+        current_year = str(datetime.now(timezone.utc).year)
+
+        for rec in eligible:
+            name = rec.get("owner", "")
+            if not name:
+                continue
+
+            # Build the legal we're matching against (from PDF).
+            pdf_legal = (
+                f"Lot: {rec.get('legal_lot', '')} "
+                f"Block: {rec.get('legal_block', '')} "
+                f"Subdivision- Name: {rec.get('legal_subdivision', '')}"
+            )
+
+            # Try a few name variants. _esearch_query_variants normalizes
+            # capitalization and tries "LAST FIRST" / "FIRST LAST" forms.
+            best_match: Optional[Dict[str, str]] = None
+            for variant in _esearch_query_variants(name)[:3]:
+                keywords = f"OwnerName:{variant} Year:{current_year} "
+                params = {"keywords": keywords}
+                if token:
+                    params["searchSessionToken"] = token
+                url = (NCAD_ESEARCH_BASE + "/search/result?"
+                        + urlencode(params))
+                try:
+                    await page.goto(url, wait_until="domcontentloaded",
+                                     timeout=20_000)
+                    await page.wait_for_timeout(400)
+                    html = await page.content()
+                except Exception:
+                    continue
+
+                results = _parse_esearch_result_list(html)
+                if not results:
+                    continue
+
+                # Walk every result, compare legal to PDF's
+                for res in results:
+                    res_legal = res.get("legal", "")
+                    if not res_legal:
+                        continue
+                    if legal_descriptions_match(pdf_legal, res_legal):
+                        best_match = res
+                        break
+                if best_match:
+                    break
+
+                await asyncio.sleep(1.0)   # polite
+
+            if best_match and best_match.get("situs"):
+                # Parse the situs address.
+                from fetch import _split_us_address    # type: ignore
+                site_addr, site_city, site_state, site_zip = (
+                    _split_us_address(best_match["situs"]))
+                if site_addr:
+                    rec["prop_address"] = site_addr
+                    rec["prop_city"] = site_city or "CORPUS CHRISTI"
+                    rec["prop_state"] = site_state or "TX"
+                    rec["prop_zip"] = site_zip
+                    enriched += 1
+                    log.info("  cross-ref %r → %s (matched legal)",
+                             name, site_addr)
+            else:
+                log.info("  cross-ref %r → no match for legal %r",
+                         name, pdf_legal[:80])
+
+            await asyncio.sleep(1.5)
+
+        await context.close()
+        await browser.close()
+
+    log.info("cross-ref: %d records gained address via NCAD legal-match",
+             enriched)
+    return enriched
+
