@@ -225,23 +225,24 @@ async def _navigate_to_doc(page, doc_num: str,
                             debug_dir: Optional[Path] = None) -> bool:
     """Navigate Playwright to the document's detail page.
 
-    Strategy:
-      1. Search by doc_num with a wide date range
-      2. Wait for the result row to render
-      3. Try multiple ways to navigate to the detail page:
-         (a) anchor tag in row (if present)
-         (b) Playwright native click on the row (handles JS click handlers)
-         (c) click specific clickable elements within the row
-         (d) inspect the Redux state for the document ID and navigate directly
+    The clerk portal is an SPA where the search-results table is rendered
+    server-side with placeholder data but the actual document records
+    (including the internal doc_id needed for /doc/<id> URLs) are loaded
+    asynchronously into Redux state via XHR. We must wait for that XHR
+    to complete before we can extract the doc_id.
 
-    On first failure, saves a diagnostic HTML so we can see the row's
-    actual DOM structure.
+    Strategy:
+      1. Navigate to a properly-formed search URL
+      2. WAIT for the Redux workspace to finish loading (hasFetched=true,
+         isLoading=false, AND byHash is non-empty)
+      3. Read the internal doc_id from byHash by matching docNumber
+      4. Navigate to /doc/<doc_id> directly
+
+    Falls back to clicking the row if Redux extraction fails. On total
+    failure, saves a diagnostic HTML for inspection.
     """
     from urllib.parse import urlencode
-    # Foreclosure notices live in the FC (Foreclosures) department,
-    # not the RP (Real Property / Official Public Records) department.
-    # The two use different date-range parameter names — foreclosures
-    # use `instrumentDateRange`, RP uses `recordedDateRange`.
+    # Foreclosure notices live in the FC (Foreclosures) department.
     search_url = (f"{CLERK_BASE}/results?"
                   + urlencode({
                       "department": "FC",
@@ -257,118 +258,89 @@ async def _navigate_to_doc(page, doc_num: str,
         await page.goto(search_url, wait_until="domcontentloaded",
                          timeout=25_000)
     except Exception as exc:
-        log.debug("search nav failed for %s: %s", doc_num, exc)
+        log.warning("search nav failed for %s: %s", doc_num, exc)
         return False
 
-    # Wait for the result row to render.
+    # Step 2: wait for the Redux workspace to finish loading. The portal
+    # populates window.__data.documents.workspaces.<id>.data.byHash
+    # AFTER an XHR completes — this can take 2-5 seconds beyond DOM ready.
     try:
         await page.wait_for_function(
-            """(dn) => {
-                const cells = document.querySelectorAll(
-                    'table tbody tr td');
-                for (const c of cells) {
-                    if ((c.textContent || '').trim() === dn) return true;
-                }
-                const txt = document.body.innerText || '';
-                return txt.includes('No Results Found');
-            }""",
-            arg=doc_num, timeout=20_000,
-        )
-    except Exception:
-        pass
-    await page.wait_for_timeout(800)
-
-    # Strategy A: anchor tag in the matching row
-    try:
-        href = await page.evaluate("""(dn) => {
-            const rows = document.querySelectorAll('table tbody tr');
-            for (const r of rows) {
-                const cells = r.querySelectorAll('td');
-                for (const c of cells) {
-                    if ((c.textContent || '').trim() === dn) {
-                        const a = r.querySelector("a[href*='/doc/']");
-                        return a ? a.getAttribute('href') : null;
+            """() => {
+                try {
+                    const d = (window.__data || {}).documents;
+                    if (!d || !d.workspaces) return false;
+                    for (const ws of Object.values(d.workspaces)) {
+                        if (!ws) continue;
+                        // Workspace must have finished loading
+                        if (ws.isLoading) continue;
+                        if (ws.hasFetched !== true) continue;
+                        // And have at least 1 document in byHash
+                        const bh = (ws.data || {}).byHash || {};
+                        if (Object.keys(bh).length > 0) return true;
                     }
-                }
-            }
-            return null;
-        }""", doc_num)
-        if href:
-            full_url = (CLERK_BASE + href if href.startswith("/")
-                        else href)
-            log.debug("navigate via anchor: %s", full_url[:80])
-            await page.goto(full_url, wait_until="domcontentloaded",
-                             timeout=25_000)
-            await page.wait_for_timeout(400)
-            if "/doc/" in (page.url or ""):
-                return True
+                    return false;
+                } catch (e) { return false; }
+            }""",
+            timeout=20_000,
+        )
     except Exception as exc:
-        log.debug("anchor strategy failed: %s", exc)
+        log.warning("workspace load timeout for %s: %s", doc_num, exc)
+        # Continue anyway — the data might still appear in another way
 
-    # Strategy B: Playwright native click on the matching row (handles
-    # JS click handlers, including bubble-up from child elements).
-    try:
-        # Use Playwright's text= selector to find the cell containing
-        # our doc_num, then click the row it lives in.
-        row = page.locator("table tbody tr",
-                            has=page.locator(f"td:text-is('{doc_num}')"))
-        count = await row.count()
-        if count > 0:
-            log.debug("navigate via row.click (found %d matching rows)",
-                      count)
-            await row.first.click(timeout=10_000)
-            # Wait for URL to change.
-            for _ in range(40):
-                await page.wait_for_timeout(250)
-                cur = page.url or ""
-                if "/doc/" in cur:
-                    return True
-    except Exception as exc:
-        log.debug("native row.click failed: %s", exc)
-
-    # Strategy C: click on the doc_num cell directly (some SPAs only
-    # handle clicks on specific child elements).
-    try:
-        cell = page.locator(f"table tbody tr td:text-is('{doc_num}')")
-        if await cell.count() > 0:
-            log.debug("navigate via cell.click")
-            await cell.first.click(timeout=10_000)
-            for _ in range(40):
-                await page.wait_for_timeout(250)
-                cur = page.url or ""
-                if "/doc/" in cur:
-                    return True
-    except Exception as exc:
-        log.debug("cell.click failed: %s", exc)
-
-    # Strategy D: dig into the Redux state for the document ID.
+    # Step 3: extract the internal doc_id by matching docNumber in byHash.
     try:
         doc_id = await page.evaluate("""(dn) => {
             try {
                 const d = (window.__data || {}).documents;
                 if (!d || !d.workspaces) return null;
                 for (const ws of Object.values(d.workspaces)) {
-                    if (!ws || !ws.data || !ws.data.byHash) continue;
-                    for (const rec of Object.values(ws.data.byHash)) {
-                        if (rec && rec.docNumber === dn) {
-                            return rec.id || rec.docId || rec.documentId;
+                    if (!ws || !ws.data) continue;
+                    const bh = ws.data.byHash || {};
+                    for (const rec of Object.values(bh)) {
+                        if (!rec) continue;
+                        // Match by any reasonable field name
+                        if (rec.docNumber === dn ||
+                            rec.doc_number === dn ||
+                            rec.instrumentNumber === dn) {
+                            return rec.id || rec.docId || rec.documentId ||
+                                   rec._id || null;
                         }
                     }
                 }
             } catch (e) {}
             return null;
         }""", doc_num)
-        if doc_id:
-            log.debug("found doc_id %s via Redux", doc_id)
+    except Exception:
+        doc_id = None
+
+    if doc_id:
+        log.debug("got doc_id=%s for %s via Redux", doc_id, doc_num)
+        try:
             await page.goto(f"{CLERK_BASE}/doc/{doc_id}",
                              wait_until="domcontentloaded", timeout=25_000)
-            await page.wait_for_timeout(400)
+            await page.wait_for_timeout(800)
             if "/doc/" in (page.url or ""):
                 return True
-    except Exception as exc:
-        log.debug("Redux strategy failed: %s", exc)
+        except Exception as exc:
+            log.warning("doc nav failed for %s (id=%s): %s",
+                        doc_num, doc_id, exc)
 
-    # All strategies failed. Save diagnostic HTML for inspection.
+    # Fallback: try Playwright native click on the row.
+    try:
+        row = page.locator("table tbody tr",
+                            has=page.locator(f"td:text-is('{doc_num}')"))
+        if await row.count() > 0:
+            log.debug("trying row.click() fallback for %s", doc_num)
+            await row.first.click(timeout=10_000)
+            for _ in range(40):
+                await page.wait_for_timeout(250)
+                if "/doc/" in (page.url or ""):
+                    return True
+    except Exception as exc:
+        log.debug("row click fallback failed: %s", exc)
+
+    # All strategies failed. Save diagnostic.
     if debug_dir is not None:
         try:
             debug_dir.mkdir(parents=True, exist_ok=True)
