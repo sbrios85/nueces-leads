@@ -1,14 +1,54 @@
 {
-  "fetched_at": "2026-05-11T04:52:46.220094+00:00",
+  "fetched_at": "2026-05-11T16:51:44.603280+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
-    "start": "2026-05-10",
-    "end": "2026-08-08"
+    "start": "2026-05-11",
+    "end": "2026-08-09"
   },
   "total": 50,
   "pre_foreclosure": 50,
   "post_foreclosure": 0,
   "records": [
+    {
+      "doc_num": "2026000267",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "APT NO 134 BUILDING D PUERTO DEL PADRE CONDOMINIUM",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000267",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 22
+    },
+    {
+      "doc_num": "2026000266",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "GEORGE H PAUL SUBDIVISION OF THE FAMOUS DRISCOLL LAND  TRACT 38, RANCHOS ROBSTOWN TRACT #4",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000266",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 22
+    },
     {
       "doc_num": "2026000263",
       "doc_type": "FORECLOSURE NOTICE",
@@ -27,7 +67,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000261",
@@ -47,7 +87,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000260",
@@ -67,7 +107,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000259",
@@ -87,7 +127,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000258",
@@ -107,7 +147,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000252",
@@ -127,7 +167,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000254",
@@ -147,7 +187,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000255",
@@ -167,7 +207,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000249",
@@ -187,7 +227,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000248",
@@ -207,7 +247,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000236",
@@ -227,7 +267,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000241",
@@ -247,7 +287,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000234",
@@ -267,7 +307,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000243",
@@ -287,7 +327,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000245",
@@ -307,7 +347,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000235",
@@ -327,7 +367,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000246",
@@ -347,7 +387,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000238",
@@ -367,7 +407,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000244",
@@ -387,7 +427,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000237",
@@ -407,7 +447,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000240",
@@ -427,7 +467,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000232",
@@ -447,7 +487,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000226",
@@ -467,7 +507,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000231",
@@ -487,7 +527,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000230",
@@ -507,7 +547,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000222",
@@ -527,7 +567,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000219",
@@ -547,7 +587,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000214",
@@ -567,7 +607,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000215",
@@ -587,7 +627,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000212",
@@ -607,7 +647,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000210",
@@ -627,7 +667,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000205",
@@ -647,47 +687,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 23
-    },
-    {
-      "doc_num": "2026000203",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-04-09",
-      "sale_date": "2026-06-02",
-      "legal": "KING ESTATES- LOT 7, BLOCK 1, UNIT 4",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000203",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 23
-    },
-    {
-      "doc_num": "2026000204",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-04-09",
-      "sale_date": "2026-06-02",
-      "legal": "DEL MAR- LOT 15, BLOCK 41",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000204",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 23
+      "days_until_sale": 22
     },
     {
       "doc_num": "2026000265",
@@ -707,7 +707,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000262",
@@ -727,7 +727,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000264",
@@ -747,7 +747,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000257",
@@ -767,7 +767,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000251",
@@ -787,7 +787,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000256",
@@ -807,7 +807,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000250",
@@ -827,7 +827,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000253",
@@ -847,7 +847,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000242",
@@ -867,7 +867,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000247",
@@ -887,7 +887,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000233",
@@ -907,7 +907,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000239",
@@ -927,7 +927,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000227",
@@ -947,7 +947,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000228",
@@ -967,7 +967,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000229",
@@ -987,7 +987,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     },
     {
       "doc_num": "2026000211",
@@ -1007,7 +1007,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 58
+      "days_until_sale": 57
     }
   ]
 }
