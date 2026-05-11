@@ -266,6 +266,43 @@ async def _navigate_to_doc(page, doc_num: str,
             log.warning("search nav failed for %s: %s", doc_num, exc2)
             return False
 
+    # Diagnostic: capture XHR traffic so we can see what data calls
+    # the SPA is making (and whether they're failing). Only logs API-ish
+    # URLs to avoid spam from analytics + static resources.
+    xhr_log: List[Dict[str, Any]] = []
+
+    async def _on_response(resp):
+        try:
+            url_l = resp.url.lower()
+            if not any(tok in url_l for tok in
+                       ("/api/", "/document", "/results", "/search",
+                        "/workspaces", "/record", "/instrument", "graphql")):
+                return
+            status = resp.status
+            ct = resp.headers.get("content-type", "")
+            body_preview = ""
+            if "json" in ct.lower() and status < 400:
+                try:
+                    body = await resp.json()
+                    body_preview = json.dumps(body, default=str)[:300]
+                except Exception:
+                    body_preview = "(unparseable JSON)"
+            elif status >= 400:
+                try:
+                    body_preview = (await resp.text())[:300]
+                except Exception:
+                    body_preview = "(unreadable body)"
+            xhr_log.append({
+                "url": resp.url,
+                "status": status,
+                "content_type": ct,
+                "body_preview": body_preview,
+            })
+        except Exception:
+            pass
+
+    page.on("response", lambda r: asyncio.create_task(_on_response(r)))
+
     # Simulate human interaction to coax lazy data-loading.
     # Some SPAs only fire data XHRs after a user-event like mousemove.
     try:
@@ -403,6 +440,8 @@ async def _navigate_to_doc(page, doc_num: str,
                     }
                     return out;
                 }""")
+                # Include the captured XHR log
+                state_snapshot["xhr_log"] = xhr_log
                 state_path.write_text(
                     json.dumps(state_snapshot, indent=2, default=str),
                     encoding="utf-8")
