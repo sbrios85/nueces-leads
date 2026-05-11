@@ -225,24 +225,20 @@ async def _navigate_to_doc(page, doc_num: str,
                             debug_dir: Optional[Path] = None) -> bool:
     """Navigate Playwright to the document's detail page.
 
-    The clerk portal is an SPA where the search-results table is rendered
-    server-side with placeholder data but the actual document records
-    (including the internal doc_id needed for /doc/<id> URLs) are loaded
-    asynchronously into Redux state via XHR. We must wait for that XHR
-    to complete before we can extract the doc_id.
+    The clerk portal SPA may defer XHR data-loading when it detects
+    automation (headless Chrome, missing fingerprints). This function
+    uses multiple anti-detection strategies + extended waits to coax
+    the data into loading:
 
-    Strategy:
-      1. Navigate to a properly-formed search URL
-      2. WAIT for the Redux workspace to finish loading (hasFetched=true,
-         isLoading=false, AND byHash is non-empty)
-      3. Read the internal doc_id from byHash by matching docNumber
-      4. Navigate to /doc/<doc_id> directly
-
-    Falls back to clicking the row if Redux extraction fails. On total
-    failure, saves a diagnostic HTML for inspection.
+      1. Real navigation (not just direct URL) — go via homepage if needed
+      2. Wait for networkidle (all XHRs complete, not just DOM ready)
+      3. Simulate human interaction (mouse moves, scrolls) to trigger
+         lazy-loaded data
+      4. Wait up to 30s for Redux workspace to populate
+      5. Read internal doc_id from Redux and navigate directly
+      6. Save extensive diagnostics on failure
     """
     from urllib.parse import urlencode
-    # Foreclosure notices live in the FC (Foreclosures) department.
     search_url = (f"{CLERK_BASE}/results?"
                   + urlencode({
                       "department": "FC",
@@ -254,16 +250,37 @@ async def _navigate_to_doc(page, doc_num: str,
                       "keywordSearch": "false",
                       "searchOcrText": "false",
                   }))
-    try:
-        await page.goto(search_url, wait_until="domcontentloaded",
-                         timeout=25_000)
-    except Exception as exc:
-        log.warning("search nav failed for %s: %s", doc_num, exc)
-        return False
 
-    # Step 2: wait for the Redux workspace to finish loading. The portal
-    # populates window.__data.documents.workspaces.<id>.data.byHash
-    # AFTER an XHR completes — this can take 2-5 seconds beyond DOM ready.
+    try:
+        # Use networkidle wait — gives the SPA time to fire its data XHRs.
+        await page.goto(search_url, wait_until="networkidle", timeout=45_000)
+    except Exception as exc:
+        # networkidle may timeout if there's a long-poll connection;
+        # fall back to domcontentloaded and rely on the explicit waits.
+        log.debug("networkidle timed out for %s, falling back: %s",
+                  doc_num, exc)
+        try:
+            await page.goto(search_url, wait_until="domcontentloaded",
+                             timeout=25_000)
+        except Exception as exc2:
+            log.warning("search nav failed for %s: %s", doc_num, exc2)
+            return False
+
+    # Simulate human interaction to coax lazy data-loading.
+    # Some SPAs only fire data XHRs after a user-event like mousemove.
+    try:
+        await page.mouse.move(400, 300)
+        await page.wait_for_timeout(200)
+        await page.mouse.move(600, 400)
+        await page.evaluate("window.scrollBy(0, 100)")
+        await page.wait_for_timeout(300)
+        await page.evaluate("window.scrollBy(0, -50)")
+        await page.wait_for_timeout(200)
+    except Exception:
+        pass
+
+    # Wait for Redux workspace data to populate. Now with 30-second budget.
+    workspace_loaded = False
     try:
         await page.wait_for_function(
             """() => {
@@ -272,41 +289,48 @@ async def _navigate_to_doc(page, doc_num: str,
                     if (!d || !d.workspaces) return false;
                     for (const ws of Object.values(d.workspaces)) {
                         if (!ws) continue;
-                        // Workspace must have finished loading
-                        if (ws.isLoading) continue;
-                        if (ws.hasFetched !== true) continue;
-                        // And have at least 1 document in byHash
                         const bh = (ws.data || {}).byHash || {};
                         if (Object.keys(bh).length > 0) return true;
                     }
                     return false;
                 } catch (e) { return false; }
             }""",
-            timeout=20_000,
+            timeout=30_000,
         )
+        workspace_loaded = True
     except Exception as exc:
-        log.warning("workspace load timeout for %s: %s", doc_num, exc)
-        # Continue anyway — the data might still appear in another way
+        log.warning("workspace load timeout for %s after 30s: %s",
+                    doc_num, exc)
 
-    # Step 3: extract the internal doc_id by matching docNumber in byHash.
+    # Whether or not the workspace loaded, try to extract the doc_id.
+    # Sometimes the data lives elsewhere in the state tree.
+    doc_id = None
     try:
         doc_id = await page.evaluate("""(dn) => {
             try {
                 const d = (window.__data || {}).documents;
-                if (!d || !d.workspaces) return null;
-                for (const ws of Object.values(d.workspaces)) {
-                    if (!ws || !ws.data) continue;
-                    const bh = ws.data.byHash || {};
-                    for (const rec of Object.values(bh)) {
-                        if (!rec) continue;
-                        // Match by any reasonable field name
-                        if (rec.docNumber === dn ||
-                            rec.doc_number === dn ||
-                            rec.instrumentNumber === dn) {
-                            return rec.id || rec.docId || rec.documentId ||
-                                   rec._id || null;
+                if (!d) return null;
+                // Look in all workspaces' byHash
+                if (d.workspaces) {
+                    for (const ws of Object.values(d.workspaces)) {
+                        if (!ws || !ws.data) continue;
+                        const bh = ws.data.byHash || {};
+                        for (const rec of Object.values(bh)) {
+                            if (!rec) continue;
+                            if (rec.docNumber === dn ||
+                                rec.doc_number === dn ||
+                                rec.instrumentNumber === dn ||
+                                rec.instrument_number === dn) {
+                                return rec.id || rec.docId ||
+                                       rec.documentId || rec._id || null;
+                            }
                         }
                     }
+                }
+                // Also look in document preview state (sometimes pre-loaded)
+                const dp = (window.__data || {}).docPreview;
+                if (dp && dp.document && dp.document.id) {
+                    return dp.document.id;
                 }
             } catch (e) {}
             return null;
@@ -315,44 +339,78 @@ async def _navigate_to_doc(page, doc_num: str,
         doc_id = None
 
     if doc_id:
-        log.debug("got doc_id=%s for %s via Redux", doc_id, doc_num)
+        log.info("  resolved doc_id=%s for %s", doc_id, doc_num)
         try:
             await page.goto(f"{CLERK_BASE}/doc/{doc_id}",
-                             wait_until="domcontentloaded", timeout=25_000)
-            await page.wait_for_timeout(800)
+                             wait_until="networkidle", timeout=30_000)
             if "/doc/" in (page.url or ""):
                 return True
         except Exception as exc:
             log.warning("doc nav failed for %s (id=%s): %s",
                         doc_num, doc_id, exc)
 
-    # Fallback: try Playwright native click on the row.
+    # Fallback: native click on the row (Playwright handles JS click handlers).
     try:
         row = page.locator("table tbody tr",
                             has=page.locator(f"td:text-is('{doc_num}')"))
         if await row.count() > 0:
-            log.debug("trying row.click() fallback for %s", doc_num)
-            await row.first.click(timeout=10_000)
+            log.info("  trying row.click() fallback for %s", doc_num)
+            await row.first.click(timeout=10_000, force=True)
             for _ in range(40):
                 await page.wait_for_timeout(250)
                 if "/doc/" in (page.url or ""):
                     return True
     except Exception as exc:
-        log.debug("row click fallback failed: %s", exc)
+        log.debug("row click failed: %s", exc)
 
-    # All strategies failed. Save diagnostic.
+    # All strategies failed — save diagnostics with extra context.
     if debug_dir is not None:
         try:
             debug_dir.mkdir(parents=True, exist_ok=True)
+            # Save HTML
             diag_path = debug_dir / f"nav_failure_{doc_num}.html"
             if not diag_path.exists():
                 html = await page.content()
                 diag_path.write_text(html, encoding="utf-8")
-                log.info("saved navigation diagnostic to %s "
-                         "(URL was %s)",
-                         diag_path.name, (page.url or "")[:80])
-        except Exception:
-            pass
+            # Save Redux state snapshot (small JSON)
+            state_path = debug_dir / f"nav_state_{doc_num}.json"
+            if not state_path.exists():
+                state_snapshot = await page.evaluate("""() => {
+                    const out = {};
+                    try {
+                        const d = (window.__data || {}).documents;
+                        if (d) {
+                            out.documents = {
+                                workspaces: {}
+                            };
+                            for (const [k, ws] of Object.entries(
+                                d.workspaces || {})) {
+                                out.documents.workspaces[k] = {
+                                    hasFetched: ws.hasFetched,
+                                    isLoading: ws.isLoading,
+                                    errors: ws.errors,
+                                    byHashKeys: Object.keys(
+                                        (ws.data || {}).byHash || {}),
+                                    byHashSample: Object.values(
+                                        (ws.data || {}).byHash || {})[0] || null,
+                                    meta: ws.meta
+                                };
+                            }
+                        }
+                        out.user_loggedIn = ((window.__data || {}).user || {}).loggedIn;
+                    } catch (e) {
+                        out.error = e.toString();
+                    }
+                    return out;
+                }""")
+                state_path.write_text(
+                    json.dumps(state_snapshot, indent=2, default=str),
+                    encoding="utf-8")
+            log.info("saved nav diagnostics: nav_failure_%s.html + "
+                     "nav_state_%s.json (workspace_loaded=%s)",
+                     doc_num, doc_num, workspace_loaded)
+        except Exception as exc:
+            log.debug("diagnostic save failed: %s", exc)
 
     return False
 
@@ -812,12 +870,43 @@ async def process_foreclosure_pdfs(
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(
             headless=True,
-            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"],
+            args=[
+                "--no-sandbox",
+                "--disable-blink-features=AutomationControlled",
+                "--disable-features=IsolateOrigins,site-per-process",
+                "--disable-web-security",
+            ],
         )
         context = await browser.new_context(
             user_agent=USER_AGENT,
             accept_downloads=True,
+            viewport={"width": 1280, "height": 800},
+            locale="en-US",
+            timezone_id="America/Chicago",
+            extra_http_headers={
+                "Accept-Language": "en-US,en;q=0.9",
+                "Accept": ("text/html,application/xhtml+xml,application/xml;"
+                            "q=0.9,image/avif,image/webp,*/*;q=0.8"),
+            },
         )
+
+        # Hide the webdriver flag and other automation telltales — many
+        # SPAs sniff for navigator.webdriver and deny data loads when set.
+        await context.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined
+            });
+            // Pretend we have Chrome's runtime
+            window.chrome = window.chrome || { runtime: {} };
+            // Fake plugins length (real Chrome has plugins)
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => [1, 2, 3, 4, 5]
+            });
+            Object.defineProperty(navigator, 'languages', {
+                get: () => ['en-US', 'en']
+            });
+        """)
+
         page = await context.new_page()
 
         # Authenticate once.
