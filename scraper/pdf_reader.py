@@ -221,20 +221,33 @@ async def _login(page) -> bool:
 # Per-document fetch
 # --------------------------------------------------------------------------- #
 
-async def _navigate_to_doc(page, doc_num: str) -> bool:
+async def _navigate_to_doc(page, doc_num: str,
+                            debug_dir: Optional[Path] = None) -> bool:
     """Navigate Playwright to the document's detail page.
 
-    Strategy: search by doc_num in the OPR department, then click the
-    matching row to land on /doc/<internal-id>. Returns True if we end
-    up on a /doc/ URL.
+    Strategy:
+      1. Search by doc_num with a wide date range
+      2. Wait for the result row to render
+      3. Try multiple ways to navigate to the detail page:
+         (a) anchor tag in row (if present)
+         (b) Playwright native click on the row (handles JS click handlers)
+         (c) click specific clickable elements within the row
+         (d) inspect the Redux state for the document ID and navigate directly
+
+    On first failure, saves a diagnostic HTML so we can see the row's
+    actual DOM structure.
     """
     from urllib.parse import urlencode
+    # Foreclosure notices live in the FC (Foreclosures) department,
+    # not the RP (Real Property / Official Public Records) department.
+    # The two use different date-range parameter names — foreclosures
+    # use `instrumentDateRange`, RP uses `recordedDateRange`.
     search_url = (f"{CLERK_BASE}/results?"
                   + urlencode({
-                      "department": "RP",
+                      "department": "FC",
                       "searchType": "quickSearch",
                       "searchValue": doc_num,
-                      "recordedDateRange": "18000101,20991231",
+                      "instrumentDateRange": "18000101,20991231",
                       "limit": 50,
                       "offset": 0,
                       "keywordSearch": "false",
@@ -247,7 +260,7 @@ async def _navigate_to_doc(page, doc_num: str) -> bool:
         log.debug("search nav failed for %s: %s", doc_num, exc)
         return False
 
-    # Wait for the row matching our doc_num to appear.
+    # Wait for the result row to render.
     try:
         await page.wait_for_function(
             """(dn) => {
@@ -263,37 +276,112 @@ async def _navigate_to_doc(page, doc_num: str) -> bool:
         )
     except Exception:
         pass
-    await page.wait_for_timeout(500)
+    await page.wait_for_timeout(800)
 
-    # Click the matching row. The portal's SPA wires up click handlers
-    # on rows even though they don't have <a> tags.
+    # Strategy A: anchor tag in the matching row
     try:
-        clicked = await page.evaluate("""(dn) => {
+        href = await page.evaluate("""(dn) => {
             const rows = document.querySelectorAll('table tbody tr');
             for (const r of rows) {
                 const cells = r.querySelectorAll('td');
                 for (const c of cells) {
                     if ((c.textContent || '').trim() === dn) {
-                        r.click();
-                        return true;
+                        const a = r.querySelector("a[href*='/doc/']");
+                        return a ? a.getAttribute('href') : null;
                     }
                 }
             }
-            return false;
+            return null;
         }""", doc_num)
-    except Exception:
-        clicked = False
+        if href:
+            full_url = (CLERK_BASE + href if href.startswith("/")
+                        else href)
+            log.debug("navigate via anchor: %s", full_url[:80])
+            await page.goto(full_url, wait_until="domcontentloaded",
+                             timeout=25_000)
+            await page.wait_for_timeout(400)
+            if "/doc/" in (page.url or ""):
+                return True
+    except Exception as exc:
+        log.debug("anchor strategy failed: %s", exc)
 
-    if not clicked:
-        log.debug("could not click row for doc %s", doc_num)
-        return False
+    # Strategy B: Playwright native click on the matching row (handles
+    # JS click handlers, including bubble-up from child elements).
+    try:
+        # Use Playwright's text= selector to find the cell containing
+        # our doc_num, then click the row it lives in.
+        row = page.locator("table tbody tr",
+                            has=page.locator(f"td:text-is('{doc_num}')"))
+        count = await row.count()
+        if count > 0:
+            log.debug("navigate via row.click (found %d matching rows)",
+                      count)
+            await row.first.click(timeout=10_000)
+            # Wait for URL to change.
+            for _ in range(40):
+                await page.wait_for_timeout(250)
+                cur = page.url or ""
+                if "/doc/" in cur:
+                    return True
+    except Exception as exc:
+        log.debug("native row.click failed: %s", exc)
 
-    # Wait for URL to change to /doc/<id>.
-    for _ in range(40):
-        await page.wait_for_timeout(250)
-        cur = page.url or ""
-        if "/doc/" in cur:
-            return True
+    # Strategy C: click on the doc_num cell directly (some SPAs only
+    # handle clicks on specific child elements).
+    try:
+        cell = page.locator(f"table tbody tr td:text-is('{doc_num}')")
+        if await cell.count() > 0:
+            log.debug("navigate via cell.click")
+            await cell.first.click(timeout=10_000)
+            for _ in range(40):
+                await page.wait_for_timeout(250)
+                cur = page.url or ""
+                if "/doc/" in cur:
+                    return True
+    except Exception as exc:
+        log.debug("cell.click failed: %s", exc)
+
+    # Strategy D: dig into the Redux state for the document ID.
+    try:
+        doc_id = await page.evaluate("""(dn) => {
+            try {
+                const d = (window.__data || {}).documents;
+                if (!d || !d.workspaces) return null;
+                for (const ws of Object.values(d.workspaces)) {
+                    if (!ws || !ws.data || !ws.data.byHash) continue;
+                    for (const rec of Object.values(ws.data.byHash)) {
+                        if (rec && rec.docNumber === dn) {
+                            return rec.id || rec.docId || rec.documentId;
+                        }
+                    }
+                }
+            } catch (e) {}
+            return null;
+        }""", doc_num)
+        if doc_id:
+            log.debug("found doc_id %s via Redux", doc_id)
+            await page.goto(f"{CLERK_BASE}/doc/{doc_id}",
+                             wait_until="domcontentloaded", timeout=25_000)
+            await page.wait_for_timeout(400)
+            if "/doc/" in (page.url or ""):
+                return True
+    except Exception as exc:
+        log.debug("Redux strategy failed: %s", exc)
+
+    # All strategies failed. Save diagnostic HTML for inspection.
+    if debug_dir is not None:
+        try:
+            debug_dir.mkdir(parents=True, exist_ok=True)
+            diag_path = debug_dir / f"nav_failure_{doc_num}.html"
+            if not diag_path.exists():
+                html = await page.content()
+                diag_path.write_text(html, encoding="utf-8")
+                log.info("saved navigation diagnostic to %s "
+                         "(URL was %s)",
+                         diag_path.name, (page.url or "")[:80])
+        except Exception:
+            pass
+
     return False
 
 
@@ -718,9 +806,11 @@ async def process_foreclosure_pdfs(
                 break
 
             dn = rec.get("doc_num")
-            if dn in cache:
-                # Apply cached extraction if any
-                _apply_extraction(rec, cache[dn])
+            cached = cache.get(dn) if dn else None
+            # Only honor SUCCESSFUL cache entries — retry errors so a
+            # later run after a code fix can succeed.
+            if cached and not cached.get("error"):
+                _apply_extraction(rec, cached)
                 if rec.get("owner"):
                     enriched += 1
                 continue
@@ -729,7 +819,8 @@ async def process_foreclosure_pdfs(
                      dn, rec.get("sale_date"))
 
             # Navigate
-            ok = await _navigate_to_doc(page, dn)
+            ok = await _navigate_to_doc(page, dn,
+                                          debug_dir=root_dir / "debug")
             if not ok:
                 log.warning("could not navigate to doc %s", dn)
                 cache[dn] = {"error": "navigation_failed",
@@ -801,8 +892,14 @@ def _apply_extraction(rec: Dict[str, Any], fields: Dict[str, Any]) -> None:
 
 
 async def _humanlike_sleep() -> None:
-    """Random delay between PDF downloads (anti-fingerprint)."""
-    secs = random.uniform(PDF_MIN_DELAY_SEC, PDF_MAX_DELAY_SEC)
+    """Random delay between PDF downloads (anti-fingerprint).
+
+    Default 30-90 seconds. Override via env vars PDF_MIN_DELAY_SEC and
+    PDF_MAX_DELAY_SEC — useful during smoke-testing.
+    """
+    min_s = float(os.environ.get("PDF_MIN_DELAY_SEC", PDF_MIN_DELAY_SEC))
+    max_s = float(os.environ.get("PDF_MAX_DELAY_SEC", PDF_MAX_DELAY_SEC))
+    secs = random.uniform(min_s, max_s)
     log.info("  sleeping %.0fs before next document...", secs)
     await asyncio.sleep(secs)
 
