@@ -387,53 +387,112 @@ async def _navigate_to_doc(page, doc_num: str,
 
 async def _download_pdf(page, doc_num: str,
                          download_dir: Path) -> Optional[Path]:
-    """Trigger the PDF download from the document detail page.
+    """Trigger PDF download via the portal's 5-step purchase flow.
 
-    The portal exposes a download button (icon, varies by layout). After
-    clicking, Playwright captures the download and saves it to the
-    download_dir. Returns the saved file path on success, None on
-    failure.
+    The clerk portal doesn't offer direct PDF downloads — instead, every
+    document must go through the cart. For foreclosure notices the total
+    is always $0.00 (free), but the flow is the same as a paid order:
 
-    Caller is responsible for being already on the /doc/<id> page.
+      1. On the document detail page, click "Add to Cart"
+      2. A modal pops up — keep "All pages" selected and click "Add"
+      3. Navigate to the cart (URL = /cart/contents)
+      4. Click "Place Your Order"
+      5. On the checkout-complete page, click "Download PDF" — this
+         triggers the actual file download captured by expect_download
+
+    Caller must already be on the /doc/<id> page when this is invoked.
     """
     download_dir.mkdir(parents=True, exist_ok=True)
     out_path = download_dir / f"{doc_num}.pdf"
 
-    # Click any element that triggers a PDF download.
+    # Step 1: click "Add to Cart" on the document detail page.
+    try:
+        await page.locator("button:has-text('Add to Cart')").first.click(
+            timeout=10_000)
+    except Exception as exc:
+        log.warning("step 1 (Add to Cart click) failed for %s: %s", doc_num, exc)
+        return None
+
+    # Step 2: in the "Add to Cart" modal, click the "Add" button.
+    # "All pages" is the default radio so we leave it. Wait for modal
+    # to render first.
+    try:
+        await page.wait_for_selector("button:has-text('Add')",
+                                      timeout=8_000)
+        # Filter to the modal's Add button (avoid hitting "Add to Cart"
+        # which has "Add" in it too).
+        await page.evaluate("""() => {
+            const btns = Array.from(document.querySelectorAll('button'));
+            for (const b of btns) {
+                const t = (b.textContent || '').trim().toLowerCase();
+                if (t === 'add') { b.click(); return true; }
+            }
+            return false;
+        }""")
+        await page.wait_for_timeout(800)
+    except Exception as exc:
+        log.warning("step 2 (modal Add click) failed for %s: %s", doc_num, exc)
+        return None
+
+    # Step 3: navigate to the cart.
+    try:
+        await page.goto(f"{CLERK_BASE}/cart/contents",
+                         wait_until="domcontentloaded", timeout=20_000)
+        await page.wait_for_timeout(800)
+    except Exception as exc:
+        log.warning("step 3 (cart nav) failed for %s: %s", doc_num, exc)
+        return None
+
+    # Verify our doc is actually in the cart (the Add might have silently
+    # failed for some reason).
+    try:
+        in_cart = await page.evaluate("""(dn) => {
+            return (document.body.innerText || '').includes(dn);
+        }""", doc_num)
+    except Exception:
+        in_cart = False
+    if not in_cart:
+        log.warning("step 3 — doc %s not in cart after Add", doc_num)
+        return None
+
+    # Step 4: click "Place Your Order".
+    try:
+        await page.wait_for_selector("button:has-text('Place Your Order')",
+                                      timeout=8_000)
+        await page.locator("button:has-text('Place Your Order')").first.click(
+            timeout=10_000)
+        # Wait for redirect to checkout-complete page.
+        completed = False
+        for _ in range(40):
+            await page.wait_for_timeout(250)
+            if "checkout-complete" in (page.url or ""):
+                completed = True
+                break
+        if not completed:
+            log.warning("step 4 — never redirected to checkout-complete "
+                        "for %s (still at %s)",
+                        doc_num, (page.url or "")[:80])
+            return None
+    except Exception as exc:
+        log.warning("step 4 (Place Your Order) failed for %s: %s", doc_num, exc)
+        return None
+
+    # Step 5: click "Download PDF" — this triggers the actual file
+    # download. Use Playwright's expect_download to capture it.
     try:
         async with page.expect_download(timeout=30_000) as dl_info:
-            # The download button changes label/icon between portal
-            # versions. Try several selectors.
-            clicked = await page.evaluate("""() => {
-                const candidates = Array.from(document.querySelectorAll(
-                    'button, a, [role=button]'));
-                for (const c of candidates) {
-                    const lbl = ((c.getAttribute('aria-label') || '') + ' ' +
-                                 (c.getAttribute('title') || '') + ' ' +
-                                 (c.textContent || '')).toLowerCase();
-                    if (lbl.includes('download pdf') ||
-                        (lbl.includes('download') && !lbl.includes('cart')) ||
-                        lbl.includes('save pdf') ||
-                        lbl.includes('save as pdf')) {
-                        c.click();
-                        return lbl.slice(0, 60);
-                    }
-                }
-                return null;
-            }""")
-            if not clicked:
-                log.debug("no download button found on detail page for %s",
-                          doc_num)
-                return None
-            log.debug("clicked %r for download of %s", clicked, doc_num)
+            await page.locator("button:has-text('Download PDF')").first.click(
+                timeout=10_000)
             download = await dl_info.value
         await download.save_as(str(out_path))
         if out_path.exists() and out_path.stat().st_size > 100:
+            log.info("  ✓ downloaded PDF for %s (%d bytes)", doc_num, out_path.stat().st_size)
             return out_path
-        log.warning("PDF download for %s came out tiny/empty", doc_num)
+        log.warning("PDF download for %s came out tiny/empty (%d bytes)",
+                    doc_num, out_path.stat().st_size if out_path.exists() else 0)
         return None
     except Exception as exc:
-        log.debug("PDF download failed for %s: %s", doc_num, exc)
+        log.warning("step 5 (Download PDF) failed for %s: %s", doc_num, exc)
         return None
 
 
