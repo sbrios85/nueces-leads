@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-12T21:45:29.230231+00:00",
+  "fetched_at": "2026-05-12T22:10:20.844059+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-12",
@@ -936,12 +936,12 @@
       "sale_date": "2026-07-07",
       "legal": "COUNTRY CLUB ESTATES LOT 18 BLOCK 1 UNIT 30",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000256",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
+      "owner": "MIGUEL PENA III AND CLAIRE O. GUERRA",
+      "loan_amount": 155944.0,
+      "prop_address": "4114 NICKLAUS LANE",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78413",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
@@ -950,7 +950,10 @@
       "days_until_sale": 56,
       "lender": "of the note and deed of",
       "deed_date": "06/13/2012",
-      "pdf_parsed_at": "2026-05-12T21:45:29.229799+00:00"
+      "pdf_parsed_at": "2026-05-12T22:10:20.843586+00:00",
+      "legal_lot": "18",
+      "legal_block": "1",
+      "legal_subdivision": "COUNTRY CLUB ESTATES"
     },
     {
       "doc_num": "2026000250",
