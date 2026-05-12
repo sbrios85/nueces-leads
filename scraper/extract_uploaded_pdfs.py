@@ -76,27 +76,46 @@ def _save_foreclosures(payload: dict) -> None:
                   len(payload.get("records", [])))
 
 
+def _looks_like_garbage(text: str) -> bool:
+    """Heuristic: is this string clearly junk from a page header/footer
+    that the regex grabbed by mistake?"""
+    if not text:
+        return True
+    upper = text.upper()
+    # Tokens that strongly indicate header/footer garbage, not real data
+    junk_tokens = ("PAGE ", " OF ", "KARA SANDS", "CLERK OF",
+                    "COUNTY COURT", "COUNTY OF", "RECORDED", "RECEIVED",
+                    "UNOFFICIAL", "AM ", "PM ")
+    hits = sum(1 for tok in junk_tokens if tok in upper)
+    return hits >= 2
+
+
 def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any]) -> bool:
     """Copy parsed PDF fields onto a foreclosure record. Returns True if
     any field was newly populated (i.e. the record changed).
+
+    Applies sanity filters to reject obvious page-header garbage from OCR.
     """
     if not fields:
         return False
     changed = False
-    if fields.get("borrower") and not rec.get("owner"):
-        rec["owner"] = fields["borrower"]
+    borrower = fields.get("borrower", "")
+    if borrower and not rec.get("owner") and not _looks_like_garbage(borrower):
+        rec["owner"] = borrower
         changed = True
     if fields.get("loan_amount") and not rec.get("loan_amount"):
         rec["loan_amount"] = fields["loan_amount"]
         changed = True
-    if fields.get("lender") and not rec.get("lender"):
-        rec["lender"] = fields["lender"]
+    lender = fields.get("lender", "")
+    if lender and not rec.get("lender") and not _looks_like_garbage(lender):
+        rec["lender"] = lender
         changed = True
     if fields.get("deed_date") and not rec.get("deed_date"):
         rec["deed_date"] = fields["deed_date"]
         changed = True
-    if fields.get("prop_address") and not rec.get("prop_address"):
-        rec["prop_address"] = fields["prop_address"]
+    addr = fields.get("prop_address", "")
+    if addr and not rec.get("prop_address") and not _looks_like_garbage(addr):
+        rec["prop_address"] = addr
         rec["prop_city"] = fields.get("prop_city", "")
         rec["prop_state"] = fields.get("prop_state", "TX")
         rec["prop_zip"] = fields.get("prop_zip", "")
@@ -104,8 +123,9 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any]) -> bool:
     # Always remember the legal description from the PDF (for later
     # cross-reference even if we already have an address).
     for fld in ("legal_lot", "legal_block", "legal_subdivision"):
-        if fields.get(fld) and not rec.get(fld):
-            rec[fld] = fields[fld]
+        val = fields.get(fld, "")
+        if val and not rec.get(fld) and not _looks_like_garbage(val):
+            rec[fld] = val
             changed = True
     rec["pdf_parsed_at"] = datetime.now(timezone.utc).isoformat()
     return changed
@@ -158,6 +178,20 @@ def main() -> int:
                             "%s in place", pdf_path.name)
                 skipped_count += 1
                 continue
+
+            # Save the OCR'd text to a debug folder so we can tune regex
+            # patterns against real output. The folder is gitignored so
+            # this stays local to the workflow run (visible in artifacts).
+            try:
+                debug_dir = ROOT_DIR / "debug"
+                debug_dir.mkdir(parents=True, exist_ok=True)
+                debug_path = debug_dir / f"{pdf_path.stem}.txt"
+                debug_path.write_text(text, encoding="utf-8")
+                log.info("  saved extracted text to debug/%s "
+                         "(%d chars) for regex tuning",
+                         debug_path.name, len(text))
+            except Exception:
+                pass
 
             fields = parse_foreclosure_pdf_text(text)
             dn = fields.get("doc_number")
