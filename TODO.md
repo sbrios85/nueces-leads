@@ -1,72 +1,16 @@
-[TODO.md](https://github.com/user-attachments/files/27570301/TODO.md)
+[TODO.md](https://github.com/user-attachments/files/27653434/TODO.md)
 # TODO
 
 ## Open Items
 
-### 1. PDF reader for document files (foreclosures + city liens)
-**Priority: high — biggest remaining unlock**
-
-This is the next milestone. Reading the actual PDF documents linked
-from clerk records gives us several fields we can't get any other way.
-
-For **foreclosures** (high-value):
-- Owner name (currently "—" on the dashboard — required for marketing)
-- Real street address (currently we only have the legal subdivision
-  description like `LT 9 BK 2 DOUGLAS UNIT TWO`)
-- Loan amount
-- Once we have a street address, run NCAD reverse-lookup-by-address
-  to fill in mailing address (where different)
-
-For **city liens** (medium-value bonus):
-- **Consideration / lien amount** — the dollar amount the city is
-  charging the homeowner. Visible on each detail page in the portal,
-  but the detail-page URL uses an internal ID we can't map to
-  doc_num without authentication. CSV export would solve it but is
-  login-gated. PDF reading bypasses both — the AFFIDAVIT OF LIEN
-  document itself contains the amount, owner, real address, and
-  fuller legal description.
-
-#### Implementation plan
-
-1. For each pre-foreclosure / CCLN record, follow `clerk_url` (the
-   doc-link in our captured data) to the document detail page on the
-   clerk portal
-2. Download the PDF (the portal exposes a download button or PDF URL
-   when authenticated; for unauthenticated access, OCR the page-image
-   that's rendered in the document viewer)
-3. Run OCR (`pytesseract` is the simplest open-source option, but
-   accuracy varies on scanned forms — consider AWS Textract or a
-   similar paid API if quality matters)
-4. Extract owner name, loan amount, real street address, consideration
-   via regex / template matching on the OCR'd text
-5. Populate `ForeclosureRecord.owner`, `loan_amount`, `prop_address`,
-   `prop_city`, `prop_zip` (foreclosures) or
-   `ClerkRecord.amount` for CCLN
-6. Run NCAD reverse-lookup-by-address to fill in mailing address
-
-#### Open design questions for the implementer
-
-- Document detail URLs use an internal database ID (e.g.
-  `/doc/169217155`), not the human-readable doc_num. The search-
-  results page exposes this internal ID via a result row's link —
-  but rows currently don't render anchor tags in the static HTML
-  (likely added via JS click handlers). Will need to either find
-  the internal ID via Redux state inspection, click rows
-  programmatically and capture the resulting URL, or use the
-  authenticated CSV-export endpoint to get URLs for all docs at once.
-
-- The portal's PDF viewer renders images, not raw PDFs. Two options:
-  (a) reconstruct the PDF from the page images, (b) OCR each image
-  directly. (b) is simpler.
-
-### 2. Migrate CRM data from localStorage to GitHub-backed storage
+### 1. Migrate CRM data from localStorage to GitHub-backed storage
 **Priority: high — required for mobile / multi-device access**
 
 The CCLN CRM tab currently stores status, notes, and last-contact date
 in the browser's localStorage. That works fine on a single computer
 but won't sync to a phone or another laptop.
 
-Two paths forward (decide one):
+Two paths forward:
 
 **Path A: Direct GitHub commit from the dashboard**
 - User generates a GitHub Personal Access Token (PAT) once
@@ -74,7 +18,7 @@ Two paths forward (decide one):
   authenticated calls to the GitHub API to commit `data/crm_state.json`
   whenever the user changes a status / saves notes
 - Pros: works from any device, no backend
-- Cons: PAT management; users have to be admins of the repo; rate limits
+- Cons: PAT management; users have to be admins of the repo
 
 **Path B: Tiny backend (e.g. Cloudflare Worker + KV)**
 - Deploy a small worker that exposes GET/PUT for `crm_state.json`
@@ -83,58 +27,78 @@ Two paths forward (decide one):
 - Pros: clean UX, no PAT prompts, syncs across all users immediately
 - Cons: requires a Cloudflare account, slight ongoing cost
 
-Recommend **Path B** for production use — UX matters when the user is in
-the field on a phone. Path A is fine for a personal-use tool.
+Recommend **Path B** for production use.
 
-### 3. Build out the full CRM
-**Priority: medium — current CRM is intentionally minimal**
+### 2. Build out the full CRM
+**Priority: medium**
 
-The CCLN CRM tab is a v1 — it has status, notes, last-contact-date.
-The full vision includes:
+- **Apply CRM features to all lead types**, not just CCLN
+- **Scheduled follow-ups / callbacks** with reminders
+- **Call-log / activity timeline** in the side drawer
+- **Pipeline value calculation** (estimated deal value per lead)
+- **Email / SMS integration** (Twilio + SendGrid/SES)
+- **Kanban view** — alternative to the table
+- **Multi-user / sharing** — requires GitHub-backed or worker storage
 
-- **Apply CRM features to all lead types**, not just CCLN. Right now
-  only the City of Corpus Christi tab has the side-drawer + status
-  workflow. Eventually every record (judgments, liens, foreclosures,
-  etc.) should support per-lead status tracking.
-- **Scheduled follow-ups / callbacks** — when a status is set to
-  "Contacted" or "Negotiating", let the user pick a date+time for a
-  follow-up reminder. Surface upcoming follow-ups on a dedicated tab.
-- **Call-log / activity timeline** — every status change, every note
-  save, every follow-up completion gets logged with a timestamp.
-  Visible in the side drawer as a chronological timeline.
-- **Pipeline value calculation** — for each lead in "Negotiating" or
-  "Closed" status, capture estimated deal value. Sum across the
-  pipeline for a forecast number on the stats bar.
-- **Email / SMS integration** — one-click outreach. Probably via
-  Twilio (SMS) and SendGrid or AWS SES (email). Templates per status.
-- **Kanban view** — alternative to the table: cards grouped by status,
-  drag-and-drop to change status. Better for visual pipeline review.
-- **Multi-user / sharing** — if more than one person works the leads,
-  attribute notes/status changes to a user. Requires the GitHub-backed
-  or Cloudflare-backed storage from item 2.
-
-### 4. Eventually clean up legacy categories
+### 3. Eventually clean up legacy categories
 The user noted they'll review the kept-but-unused legacy categories
 (Tax Deed, Federal/IRS Tax Lien, Medicaid Lien, Probate, Notice of
-Commencement, Release of Lis Pendens) and decide which to drop. These
-currently still run as keyword searches in `KEYWORD_CATEGORIES`.
+Commencement, Release of Lis Pendens) and decide which to drop.
 
-### 5. Show grantee column in dashboard
-When the grantor/grantee swap doesn't fire (because the grantor isn't
-recognized as institutional), the user can't see who's on the other
-side of the recording. Adding a Grantee column to the leads table —
-or showing both fields — would make uncaught swaps recoverable
-manually.
+### 4. Show grantee column in dashboard
+When the grantor/grantee swap doesn't fire, the user can't see who's
+on the other side. Adding a Grantee column to the leads table would
+make uncaught swaps recoverable manually.
+
+### 5. Tune PDF parser regex based on real PDFs
+The borrower/lender regex patterns were written from typical Texas
+foreclosure-notice templates but haven't been validated against real
+Nueces County PDFs yet. After the first few real PDFs are processed,
+review the extracted fields and tune the patterns for any consistent
+misses (e.g. unusual borrower-name phrasings, atypical lender labels).
+
+### 6. Foreclosure recurrence tracking (deferred per user decision)
+Some properties show up on the foreclosure list multiple times because
+the foreclosure gets cancelled and then re-filed months later (e.g.
+March 2026 → cancelled → April 2026 → cancelled → May 2026). A
+recurrence-count column would help identify these chronic situations,
+which often signal serial loan-modification rather than a genuinely
+motivated seller.
+
+User explicitly deferred this for v1. If revisiting:
+- Persistent `data/foreclosure_history.json` accumulates every record
+  we've ever seen
+- Fingerprint = normalized borrower name + subdivision + lot + block
+- New column `recurrence_count` on the foreclosure record
+- Dashboard column on the Foreclosures tab with tooltip showing prior dates
+
+## In Progress
+
+### Foreclosure PDF reader v1 — manual upload model (built, awaiting validation)
+
+User manually downloads PDFs from the clerk portal and uploads them to
+`pdfs/foreclosures/` via GitHub's web UI. A manual-trigger workflow
+parses each PDF (extracting borrower, loan amount, deed date, address,
+lender) and updates `foreclosures.json`. Successfully-processed PDFs
+are deleted from the folder; unprocessed ones stay for manual review.
+
+For records that got a borrower + legal description from the PDF but
+no street address, the workflow runs NCAD reverse-lookup-by-name and
+matches the legal description to recover the property's situs address.
+
+**Pending validation:**
+1. Upload 2-3 real foreclosure PDFs to `pdfs/foreclosures/`
+2. Run the "Parse uploaded foreclosure PDFs" workflow
+3. Verify that records get enriched with borrower/loan/address
+4. Tune regex patterns if any fields aren't extracting well
 
 ## Done
 
 - Initial pipeline (clerk portal scraping, NCAD bulk attempt, scoring)
 - 30-day lookback window
 - Legal-description address extraction for clerk records
-- NCAD esearch (per-name property lookup) integration
-- Persistent JSON cache for esearch results, with token-refresh logic
-  to prevent silent expiry
-- Owner-swap logic for IRS, banks, courts, debt collectors, etc.
+- NCAD esearch (per-name property lookup) integration with token refresh
+- Owner-swap logic for IRS, banks, courts, debt collectors
 - Dashboard with leads table, search, filters, sort
 - Mortgage Foreclosure separate stream + tab
 - Per-portal-filter category fetches (`_docTypes=L3` etc.)
@@ -142,15 +106,49 @@ manually.
 - 24-month one-shot backfill script for CCLN
 - Basic CRM v1: status, notes, last-contact, dead-lead filter, CSV export
 - Page size bumped to 250 (portal max) — 5x faster pagination
+- Foreclosure PDF reader v1 framework (manual upload + auto-parse) — see above
+
+## Archived (kept for possible future revisit)
+
+### Headless-Chrome foreclosure PDF automation
+**Archived 2026-05-11 in `archive/failed-headless-automation-2026-05-11.zip`.**
+
+Attempted to automate the clerk portal cart-flow PDF download via
+Playwright in headless mode inside GitHub Actions. After 8 iterations
+the conclusion was that the portal (BIS Consultants / Neumo) detects
+headless Chrome and silently refuses to fire its data-loading XHR.
+Login succeeded; navigation to search-results pages succeeded; but the
+SPA workspace state stayed `isLoading: true` indefinitely with zero
+XHRs firing, so we could never extract document IDs or click through
+to detail pages.
+
+The README inside the archive zip explains:
+- Which parts of the code are reusable (the PDF text parsing and the
+  NCAD legal-match cross-reference are solid — and have been moved
+  into the active `scraper/pdf_text_extractor.py` and
+  `scraper/extract_uploaded_pdfs.py`)
+- Three different strategies to try (non-headless local Playwright,
+  paid stealth services like ScrapingBee/Browserless, or a browser
+  extension that runs in the user's real Chrome)
+- That a public scraper exists for `bexar.tx.publicsearch.us` (same
+  portal family) using non-headless Selenium, suggesting the
+  non-headless approach is the most promising retry path
+
+**Future revisit:** if manual uploads become tedious (e.g. 50+/day
+when broadening to other counties), consider:
+1. Non-headless local Playwright script (~60-75% success likelihood
+   per prior research)
+2. Paid stealth service (~$50-100/month, professionally maintained)
+3. Browser extension (works inside user's real Chrome, no detection)
 
 ## Investigated and parked
 
-- **Consideration / lien amount on CCLN tab**: investigated three paths
-  — (a) parse from search-results JSON XHR (data not in payload),
-  (b) parse from card-view DOM (toggle button selector unstable),
-  (c) per-document detail page fetch (URLs use internal IDs not
-  exposed in static HTML; SPA hydration timing makes scraping
-  unreliable). CSV export of all results works but requires login.
-  Decision: defer until item (1) PDF reader is built — the AFFIDAVIT
-  OF LIEN PDF contains the amount and is parseable as part of that
-  work item.
+- **Consideration / lien amount on CCLN tab via clerk portal**:
+  investigated three paths — (a) JSON XHR payloads don't include it,
+  (b) card-view DOM toggle selector unstable, (c) per-document detail
+  page fetch (URLs use internal IDs not exposed in static HTML, SPA
+  hydration makes scraping unreliable). CSV export of all results
+  works but requires login. The CCLN AFFIDAVIT OF LIEN PDF itself
+  contains the amount — if the foreclosure PDF reader proves out,
+  extending it to CCLN PDFs would solve this too. Volume is much
+  larger (~1900 CCLN records) so consider rate-limiting carefully.
