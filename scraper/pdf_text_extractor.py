@@ -34,15 +34,39 @@ log = logging.getLogger("nueces-pdf-text")
 # --------------------------------------------------------------------------- #
 
 def extract_text(pdf_path: Path) -> str:
-    """Extract all text from a PDF using pdfplumber.
+    """Extract all text from a PDF.
 
-    Returns the concatenated text of every page, or "" if extraction fails
-    (e.g. the PDF is a scanned image with no embedded text).
+    Tries pdfplumber first (fast, works for text-based PDFs). If that
+    returns nothing — i.e. the PDF is a scanned image — falls back to
+    OCR via pytesseract + pdf2image.
+
+    Returns the concatenated text or "" if both extraction methods fail.
+    """
+    # First try: pdfplumber for text-based PDFs (fast).
+    text = _extract_text_pdfplumber(pdf_path)
+    if text and len(text.strip()) > 50:
+        log.debug("pdfplumber extracted %d chars from %s",
+                  len(text), pdf_path.name)
+        return text
+
+    # Fallback: OCR via tesseract for image-based PDFs.
+    log.info("  pdfplumber found no text in %s — falling back to OCR...",
+             pdf_path.name)
+    text = _extract_text_ocr(pdf_path)
+    if text:
+        log.info("  OCR extracted %d chars from %s",
+                 len(text), pdf_path.name)
+    return text
+
+
+def _extract_text_pdfplumber(pdf_path: Path) -> str:
+    """Extract embedded text via pdfplumber. Fast but only works for
+    text-based PDFs (not scanned images).
     """
     try:
         import pdfplumber  # type: ignore
     except ImportError:
-        log.error("pdfplumber not installed — cannot extract PDF text")
+        log.warning("pdfplumber not installed")
         return ""
     try:
         parts: List[str] = []
@@ -53,8 +77,56 @@ def extract_text(pdf_path: Path) -> str:
                     parts.append(t)
         return "\n\n".join(parts)
     except Exception as exc:
-        log.warning("pdfplumber failed on %s: %s", pdf_path, exc)
+        log.debug("pdfplumber failed on %s: %s", pdf_path, exc)
         return ""
+
+
+def _extract_text_ocr(pdf_path: Path) -> str:
+    """Render PDF pages to images and OCR them via Tesseract.
+
+    Requires `tesseract-ocr` and `poppler-utils` system packages, plus
+    `pytesseract` and `pdf2image` Python packages.
+
+    Only OCRs the FIRST PAGE by default — all the fields we need on a
+    foreclosure notice (borrower, lender, loan amount, deed date,
+    address, legal) are on page 1. Pages 2+ are boilerplate.
+    Override with env var PDF_OCR_MAX_PAGES.
+    """
+    try:
+        import pytesseract  # type: ignore
+        from pdf2image import convert_from_path  # type: ignore
+    except ImportError as exc:
+        log.error("OCR dependencies not installed: %s — install "
+                  "pytesseract + pdf2image, plus tesseract-ocr and "
+                  "poppler-utils system packages", exc)
+        return ""
+
+    import os
+    max_pages = int(os.environ.get("PDF_OCR_MAX_PAGES", "1"))
+    try:
+        # 200 DPI is the sweet spot for OCR accuracy vs. speed/memory.
+        # Higher DPI = better quality but exponentially slower.
+        images = convert_from_path(
+            str(pdf_path), dpi=200, first_page=1, last_page=max_pages)
+    except Exception as exc:
+        log.warning("pdf2image failed on %s: %s", pdf_path, exc)
+        return ""
+
+    parts: List[str] = []
+    for i, img in enumerate(images, start=1):
+        try:
+            # PSM 6 = "Assume a single uniform block of text". Works
+            # better than the default for documents with mixed columns.
+            text = pytesseract.image_to_string(img, config="--psm 6")
+            if text.strip():
+                parts.append(text)
+                log.debug("  OCR page %d: %d chars", i, len(text))
+        except Exception as exc:
+            log.warning("tesseract failed on %s page %d: %s",
+                        pdf_path.name, i, exc)
+            continue
+
+    return "\n\n".join(parts)
 
 
 # --------------------------------------------------------------------------- #
