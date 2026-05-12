@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+.cache/*
+!.cache/ncad_search_cache.json
+*.zip
+.pytest_cache/
+.DS_Store
+debug/
