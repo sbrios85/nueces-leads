@@ -146,38 +146,52 @@ _RE_DOC_NUM = [
 ]
 
 # Borrower name. Foreclosure notices in Texas typically use one of
-# these phrasings near the start:
-#   "Deed of Trust ... executed by JOHN DOE AND JANE DOE"
+# these phrasings:
+#   "Deed of Trust executed by JOHN DOE AND JANE DOE, provides..."
 #   "Deed of Trust executed by MELANIE SANDERS, AN UNMARRIED WOMAN ..."
 #   "Mortgagor: JOHN DOE"
 #   "Obligor: JOHN DOE"
 #   "Grantor(s): JOHN DOE"
-# We accept a stop at: a comma (preserves descriptors as a separate field),
-# the word "and recorded/filed", "to <party>", "in favor of", "dated".
+#
+# The character class is permissive to handle OCR artifacts:
+#   - Square brackets [] (OCR misreads III as II])
+#   - Parens (suffix like JR/SR sometimes appears in parens)
+#   - Apostrophes (O'BRIEN), periods (middle initials), ampersands (& sons)
+#
+# Stop conditions are anchored to phrases that follow the name in real
+# foreclosure notices: ", provides", "dated", "to <party>", etc.
 _RE_BORROWER = [
-    re.compile(r"executed\s+by\s+([A-Z][A-Z\s&'.-]{3,80}?)"
-                r"(?=\s*,|\s+(?:and\s+(?:recorded|filed)|to\s+\w+|"
-                r"in\s+favor\s+of|dated))",
+    re.compile(r"executed\s+by\s+([A-Z][A-Z0-9\s&'.\[\]()-]+?)"
+                r"\s*,\s*(?:provides|as\s+(?:a|the|his|her)|whose|"
+                r"a\s+(?:single|married)|husband|wife|"
+                r"an?\s+(?:unmarried|single|married))",
                re.IGNORECASE),
-    re.compile(r"mortgagor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z\s&'.-]{3,80}?)"
-                r"(?=\s*,|\s+(?:to|in\s+favor|and|dated))",
+    re.compile(r"executed\s+by\s+([A-Z][A-Z0-9\s&'.\[\]()-]+?)"
+                r"(?=\s+(?:dated|to\s+\w+|in\s+favor\s+of|"
+                r"and\s+(?:recorded|filed)))",
                re.IGNORECASE),
-    re.compile(r"obligor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z\s&'.-]{3,80}?)"
-                r"(?=\s*,|\s+(?:to|in\s+favor|and|dated))",
+    re.compile(r"mortgagor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)"
+                r"(?=\s*,|\s+(?:to|in\s+favor|and|dated|provides))",
                re.IGNORECASE),
-    re.compile(r"grantor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z\s&'.-]{3,80}?)"
-                r"(?=\s*,|\s+(?:to|in\s+favor|and|dated))",
+    re.compile(r"obligor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)"
+                r"(?=\s*,|\s+(?:to|in\s+favor|and|dated|provides))",
                re.IGNORECASE),
-    re.compile(r"debtor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z\s&'.-]{3,80}?)"
-                r"(?=\s*,|\s+(?:to|in\s+favor|and|dated))",
+    re.compile(r"grantor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)"
+                r"(?=\s*,|\s+(?:to|in\s+favor|and|dated|provides))",
+               re.IGNORECASE),
+    re.compile(r"debtor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)"
+                r"(?=\s*,|\s+(?:to|in\s+favor|and|dated|provides))",
                re.IGNORECASE),
     re.compile(r"(?:property\s+of|record\s+owner)[s]?[\s:]+"
-                r"([A-Z][A-Z\s&'.-]{3,80}?)(?=\s*,|\n)",
+                r"([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)(?=\s*,|\n)",
                re.IGNORECASE),
 ]
 
 # Lender / mortgagee / beneficiary.
 _RE_LENDER = [
+    # "MIDFIRST BANK is the current mortgagee" (Texas foreclosure notice
+    # standard phrasing — usually the most reliable lender source)
+    re.compile(r"([A-Z][A-Z0-9\s&,.'-]+?)\s+is\s+the\s+current\s+mortgagee"),
     re.compile(r"in\s+favor\s+of\s+([A-Z][A-Za-z\s,&.'-]{3,80}?)"
                 r"(?=\s*,\s*(?:its|a\s+\w+|as\s+|whose|located)|\.|\n|recorded)"),
     re.compile(r"lender[\s:]+([A-Z][A-Za-z\s,&.'-]{3,80}?)(?=\s*[,.\n])",
@@ -186,7 +200,6 @@ _RE_LENDER = [
                re.IGNORECASE),
     re.compile(r"beneficiary[\s:]+([A-Z][A-Za-z\s,&.'-]{3,80}?)(?=\s*[,.\n])",
                re.IGNORECASE),
-    # "current mortgagee" or "noteholder"
     re.compile(r"(?:current\s+(?:mortgagee|noteholder)|noteholder)[\s:]+"
                 r"([A-Z][A-Za-z\s,&.'-]{3,80}?)(?=\s*[,.\n])",
                re.IGNORECASE),
@@ -222,24 +235,41 @@ _RE_DEED_DATE = [
                re.IGNORECASE),
 ]
 
-# Property street address — split into two stages to handle multi-line PDFs.
-# Stage 1: number + street + suffix
-_RE_STREET_LINE = re.compile(
-    r"\b(\d{1,6})\s+([A-Z][A-Za-z0-9\s.,'#-]{3,60}?\b"
+# Property street address — full address pattern: number + street + suffix
+# + city + TX + zip in one shot. Allows OCR slop in the city name (e.g.
+# OCR turns "CHRISTI" into "CHRIST!" or "CORPUSCHRISTI").
+_RE_FULL_ADDRESS = re.compile(
+    r"(\d{1,5}[A-Z]?\s+[A-Z][A-Z0-9\s.]{3,60}?\b"
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
     r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
-    r"WAY|TRAIL|TR|PARKWAY|PKWY|HIGHWAY|HWY|TERRACE|TER)\b\.?)",
-    re.IGNORECASE,
-)
-# Stage 2: city + TX + zip nearby
-_RE_CITY_TX_ZIP = re.compile(
-    r"\b(CORPUS\s+CHRISTI|ROBSTOWN|PORT\s+ARANSAS|BISHOP|DRISCOLL|"
-    r"AGUA\s+DULCE|BANQUETE)\b[,\s]+(?:TX|TEXAS)\.?\s+(\d{5})",
+    r"WAY|TRAIL|TR|PARKWAY|PKWY|HIGHWAY|HWY|TERRACE|TER)\.?)"
+    r"[,\s]+([A-Z][A-Z\s!?]+?)[,\s]+(?:TX|TEXAS)[\s.]+(\d{5})",
     re.IGNORECASE,
 )
 
-# Legal description — Texas standard format (subdivision + lot + block).
-_RE_LEGAL = re.compile(
+# Cities served by the Nueces County Clerk. Used to prefer the property
+# address over any other addresses on the page (e.g. law firm in Dallas,
+# Houston trustee, etc.).
+_NUECES_CITIES = ("CORPUS CHRISTI", "ROBSTOWN", "PORT ARANSAS", "BISHOP",
+                  "DRISCOLL", "AGUA DULCE", "BANQUETE",
+                  # OCR slop forms
+                  "CORPUS CHRIST", "CORPUSCHRISTI", "CORPUS")
+
+# Legal description — Texas foreclosure notices spell out lot/block as
+# words AND digits: "LOT EIGHTEEN (18), BLOCK ONE (1), COUNTRY CLUB
+# ESTATES, UNIT 30, A SUBDIVISION..."
+# Prefer the parenthesized digit form for parsing.
+_RE_LEGAL_PARENS = re.compile(
+    r"LOT[S]?\s+\w+[\w\s]*\((\d+)\)[,\s]+"
+    r"BLOCK\s+\w+\s*\((\d+)\)[,\s]+"
+    r"([A-Z][A-Z\s.,&'-]+?)"
+    r"(?:[,.]?\s+UNIT\s+(\d+))?"
+    r"\s*,?\s*(?:A\s+)?(?:SUBDIVISION|ADDITION|ACCORDING\s+TO)",
+    re.IGNORECASE | re.DOTALL,
+)
+
+# Fallback legal description — digit-only form: "Lot 5, Block 12, BAY OAKS..."
+_RE_LEGAL_DIGITS = re.compile(
     r"(?:Lot[s]?\s+)?([\d,A-Z-]+)[\s,]+(?:Block|Blk\.?)\s+([\dA-Z-]+)"
     r"[,\s]+(?:of\s+)?([A-Z][A-Z\s\d&.'-]+?)\s+(?:Subdivision|Addition|"
     r"Unit|Section|Phase)",
@@ -272,7 +302,7 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
     for rx in _RE_BORROWER:
         m = rx.search(text)
         if m:
-            name = _clean_name(m.group(1))
+            name = _clean_name_ocr(m.group(1))
             if name and len(name) >= 4 and not _looks_like_lender(name):
                 out["borrower"] = name
                 break
@@ -305,26 +335,55 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
             out["deed_date"] = m.group(1).strip()
             break
 
-    # --- Property street address (two-stage) ---
-    street_match = _RE_STREET_LINE.search(text)
-    if street_match:
-        street = (street_match.group(1) + " " + street_match.group(2)).strip()
-        # Look within 200 chars after the street for city/zip
-        tail = text[street_match.end():street_match.end() + 300]
-        cz = _RE_CITY_TX_ZIP.search(tail)
-        out["prop_address"] = re.sub(r"\s+", " ", street).upper().strip(" ,.")
+    # --- Property street address ---
+    # Find ALL addresses in the document; prefer ones in Nueces County
+    # cities (the law firm / trustee addresses appear too, in Dallas or
+    # Houston, so we don't want to grab those).
+    all_addrs = list(_RE_FULL_ADDRESS.finditer(text))
+    chosen_addr = None
+    # First pass: look for a Nueces-area city
+    for m in all_addrs:
+        city_upper = m.group(2).upper().strip()
+        if any(c in city_upper for c in _NUECES_CITIES):
+            chosen_addr = m
+            break
+    # Fallback: if nothing in Nueces, take the LAST address on the page
+    # (foreclosure notices typically put the property address at the end).
+    if chosen_addr is None and all_addrs:
+        chosen_addr = all_addrs[-1]
+
+    if chosen_addr:
+        street = re.sub(r"\s+", " ",
+                         chosen_addr.group(1)).upper().strip(" ,.")
+        city = re.sub(r"[!?]", "I", chosen_addr.group(2)).upper().strip()
+        # Normalize "CORPUS CHRIST" → "CORPUS CHRISTI"
+        if city in ("CORPUS CHRIST", "CORPUSCHRISTI", "CORPUS"):
+            city = "CORPUS CHRISTI"
+        city = re.sub(r"\s+", " ", city)
+        out["prop_address"] = street
+        out["prop_city"] = city
         out["prop_state"] = "TX"
-        if cz:
-            out["prop_city"] = re.sub(r"\s+", " ", cz.group(1)).upper()
-            out["prop_zip"] = cz.group(2)
+        out["prop_zip"] = chosen_addr.group(3)
 
     # --- Legal description ---
-    # Always extract (useful for cross-reference even if we have an address).
-    m = _RE_LEGAL.search(text)
+    # Try the parenthesized form first (LOT EIGHTEEN (18), BLOCK ONE (1)…),
+    # then fall back to digit-only ("Lot 18, Block 1…").
+    m = _RE_LEGAL_PARENS.search(text)
+    if not m:
+        m = _RE_LEGAL_DIGITS.search(text)
     if m:
         out["legal_lot"] = m.group(1).strip()
         out["legal_block"] = m.group(2).strip()
-        out["legal_subdivision"] = _clean_name(m.group(3))
+        sub = _clean_name(m.group(3))
+        # Collapse newlines/whitespace and remove stray periods from
+        # OCR-introduced line breaks within multi-word subdivision names
+        # (e.g. "COUNTRY CLUB.\nESTATES" → "COUNTRY CLUB ESTATES").
+        sub = re.sub(r"\s+", " ", sub).strip(" .,")
+        sub = re.sub(r"\.\s+", " ", sub).strip()
+        out["legal_subdivision"] = sub
+        # Some patterns capture a unit group; preserve it if matched
+        if m.lastindex and m.lastindex >= 4 and m.group(4):
+            out["legal_unit"] = m.group(4).strip()
 
     return out
 
@@ -338,16 +397,51 @@ def _clean_name(s: str) -> str:
     return s.strip()
 
 
+def _clean_name_ocr(s: str) -> str:
+    """Like _clean_name() but additionally fixes common OCR artifacts that
+    appear in borrower names from scanned foreclosure notices:
+
+      - "II]"   → "III"     (OCR misreads the third I as ])
+      - "[II"   → "III"
+      - "[V"    → "IV"
+      - Bracket-only segments → "I"
+
+    Then runs the standard _clean_name() pass.
+    """
+    if not s:
+        return ""
+    # Fix Roman-numeral OCR errors (the most common in suffixes).
+    # Order matters: longer patterns first.
+    s = re.sub(r"\bII\]", "III", s)
+    s = re.sub(r"\[II\b", "III", s)
+    s = re.sub(r"\bI\]", "II", s)
+    s = re.sub(r"\[V\b", "IV", s)
+    # Remove any remaining stray brackets (rare).
+    s = re.sub(r"[\[\]]", "I", s)
+    return _clean_name(s)
+
+
 def _looks_like_lender(name: str) -> bool:
     """Crude heuristic: does this name look like a bank/financial institution
     rather than an individual? Used to reject false-positive borrower matches.
+
+    Uses word-boundary matching to avoid false positives like "PENA" being
+    flagged because it contains "NA".
     """
     upper = name.upper()
-    lender_tokens = ("BANK", "NA", "N.A.", "FEDERAL", "MORTGAGE", "FINANCIAL",
-                     "CAPITAL", "TRUST COMPANY", "SAVINGS", "ASSOCIATION",
-                     "FANNIE MAE", "FREDDIE MAC", "WELLS FARGO", "CHASE",
-                     "CITIBANK", "BANK OF AMERICA")
-    return any(tok in upper for tok in lender_tokens)
+    # Word-boundary patterns — avoid substring matches inside person names.
+    lender_patterns = [
+        r"\bBANK\b", r"\bN\.?A\.?\b", r"\bFEDERAL\b", r"\bMORTGAGE\b",
+        r"\bFINANCIAL\b", r"\bCAPITAL\b", r"\bTRUST\s+COMPANY\b",
+        r"\bSAVINGS\b", r"\bASSOCIATION\b", r"\bFANNIE\s+MAE\b",
+        r"\bFREDDIE\s+MAC\b", r"\bWELLS\s+FARGO\b", r"\bCHASE\b",
+        r"\bCITIBANK\b", r"\bBANK\s+OF\s+AMERICA\b", r"\bLLC\b",
+        r"\bCORP(?:ORATION)?\b", r"\bCOMPANY\b", r"\bINC\.?\b",
+    ]
+    for pat in lender_patterns:
+        if re.search(pat, upper):
+            return True
+    return False
 
 
 # --------------------------------------------------------------------------- #
