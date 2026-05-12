@@ -7936,6 +7936,66 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "HALDAR MOUSSA N": null
+    "HALDAR MOUSSA N": null,
+    "247 ON SITE LLC": {
+      "site_addr": "247 LAKESHORE ST",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "BADALICH CARL": {
+      "site_addr": "WEST PALM BEACH RD",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "CUNNINGHAM ROMA": {
+      "site_addr": "716 E 4th ST",
+      "site_city": "BISHOP",
+      "site_state": "TX",
+      "site_zip": "78343",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "VALENCIA RICARDA": {
+      "site_addr": "432 GLENMORE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "UZOIGWE STANISLAUS NWAFOR": {
+      "site_addr": "7314 THE MANSIONS DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "BARRERA FILIBERTO G JR": {
+      "site_addr": "2908 RHODES CT",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    }
   }
 }
