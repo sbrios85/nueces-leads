@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-12T19:14:15.004793+00:00",
+  "fetched_at": "2026-05-12T19:35:03.911360+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-12",
@@ -937,8 +937,8 @@
       "legal": "COUNTRY CLUB ESTATES LOT 18 BLOCK 1 UNIT 30",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000256",
       "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
+      "loan_amount": 155944.0,
+      "prop_address": "56 AM PAGE 1 OF 2 E KARA SANDS CLERK OF THE COUNTY COURT",
       "prop_city": "",
       "prop_state": "TX",
       "prop_zip": "",
@@ -947,7 +947,10 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 56
+      "days_until_sale": 56,
+      "lender": "of the note and deed of",
+      "deed_date": "06/13/2012",
+      "pdf_parsed_at": "2026-05-12T19:35:03.910947+00:00"
     },
     {
       "doc_num": "2026000250",
