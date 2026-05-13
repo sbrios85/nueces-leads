@@ -65,6 +65,11 @@ jobs:
           LOG_LEVEL: INFO
           PYTHONUNBUFFERED: "1"
           PDF_OVERWRITE: ${{ inputs.overwrite }}
+          # OCR up to 3 pages per PDF. Most foreclosure notices put the
+          # critical fields (borrower, lender, address, legal description)
+          # on page 1, but some templates split details across pages 1-3.
+          # Increasing the page count adds ~10s per page per PDF.
+          PDF_OCR_MAX_PAGES: "3"
         run: python scraper/extract_uploaded_pdfs.py
 
       - name: Upload OCR debug output
