@@ -6,7 +6,16 @@ name: Parse uploaded foreclosure PDFs
 # with a log warning explaining why.
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      overwrite:
+        description: 'Overwrite existing fields (use after parser bug fixes)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 permissions:
   contents: write
@@ -50,6 +59,7 @@ jobs:
         env:
           LOG_LEVEL: INFO
           PYTHONUNBUFFERED: "1"
+          PDF_OVERWRITE: ${{ inputs.overwrite }}
         run: python scraper/extract_uploaded_pdfs.py
 
       - name: Upload OCR debug output
