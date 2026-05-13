@@ -90,43 +90,59 @@ def _looks_like_garbage(text: str) -> bool:
     return hits >= 2
 
 
-def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any]) -> bool:
+def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
+                   overwrite: bool = False) -> bool:
     """Copy parsed PDF fields onto a foreclosure record. Returns True if
     any field was newly populated (i.e. the record changed).
 
     Applies sanity filters to reject obvious page-header garbage from OCR.
+
+    overwrite: if True, also overwrites EXISTING values on the record
+        (useful for re-processing a PDF after a parser fix). Default
+        False — only fills empty fields.
     """
     if not fields:
         return False
     changed = False
     borrower = fields.get("borrower", "")
-    if borrower and not rec.get("owner") and not _looks_like_garbage(borrower):
-        rec["owner"] = borrower
-        changed = True
-    if fields.get("loan_amount") and not rec.get("loan_amount"):
-        rec["loan_amount"] = fields["loan_amount"]
-        changed = True
+    if borrower and not _looks_like_garbage(borrower):
+        if not rec.get("owner") or overwrite:
+            if rec.get("owner") != borrower:
+                rec["owner"] = borrower
+                changed = True
+    if fields.get("loan_amount"):
+        if not rec.get("loan_amount") or overwrite:
+            if rec.get("loan_amount") != fields["loan_amount"]:
+                rec["loan_amount"] = fields["loan_amount"]
+                changed = True
     lender = fields.get("lender", "")
-    if lender and not rec.get("lender") and not _looks_like_garbage(lender):
-        rec["lender"] = lender
-        changed = True
-    if fields.get("deed_date") and not rec.get("deed_date"):
-        rec["deed_date"] = fields["deed_date"]
-        changed = True
+    if lender and not _looks_like_garbage(lender):
+        if not rec.get("lender") or overwrite:
+            if rec.get("lender") != lender:
+                rec["lender"] = lender
+                changed = True
+    if fields.get("deed_date"):
+        if not rec.get("deed_date") or overwrite:
+            if rec.get("deed_date") != fields["deed_date"]:
+                rec["deed_date"] = fields["deed_date"]
+                changed = True
     addr = fields.get("prop_address", "")
-    if addr and not rec.get("prop_address") and not _looks_like_garbage(addr):
-        rec["prop_address"] = addr
-        rec["prop_city"] = fields.get("prop_city", "")
-        rec["prop_state"] = fields.get("prop_state", "TX")
-        rec["prop_zip"] = fields.get("prop_zip", "")
-        changed = True
-    # Always remember the legal description from the PDF (for later
-    # cross-reference even if we already have an address).
+    if addr and not _looks_like_garbage(addr):
+        if not rec.get("prop_address") or overwrite:
+            if rec.get("prop_address") != addr:
+                rec["prop_address"] = addr
+                rec["prop_city"] = fields.get("prop_city", "")
+                rec["prop_state"] = fields.get("prop_state", "TX")
+                rec["prop_zip"] = fields.get("prop_zip", "")
+                changed = True
+    # Always remember the legal description from the PDF
     for fld in ("legal_lot", "legal_block", "legal_subdivision"):
         val = fields.get(fld, "")
-        if val and not rec.get(fld) and not _looks_like_garbage(val):
-            rec[fld] = val
-            changed = True
+        if val and not _looks_like_garbage(val):
+            if not rec.get(fld) or overwrite:
+                if rec.get(fld) != val:
+                    rec[fld] = val
+                    changed = True
     rec["pdf_parsed_at"] = datetime.now(timezone.utc).isoformat()
     return changed
 
@@ -137,6 +153,14 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any]) -> bool:
 
 def main() -> int:
     log.info("=== Manual-upload PDF processor ===")
+
+    # OVERWRITE mode: re-process even records that already have fields.
+    # Useful after fixing a regex bug — re-upload the same PDF with this
+    # flag set and the stale data gets replaced.
+    overwrite = os.environ.get("PDF_OVERWRITE", "").lower() in (
+        "1", "true", "yes", "y")
+    if overwrite:
+        log.info("OVERWRITE mode is ON — existing fields will be replaced")
 
     if not PDFS_DIR.exists():
         log.info("no pdfs/foreclosures/ folder yet — nothing to do")
@@ -211,7 +235,7 @@ def main() -> int:
                 skipped_count += 1
                 continue
 
-            changed = _apply_fields(rec, fields)
+            changed = _apply_fields(rec, fields, overwrite=overwrite)
             if changed:
                 enriched_count += 1
                 log.info("  → enriched record %s: owner=%r, addr=%r, "
