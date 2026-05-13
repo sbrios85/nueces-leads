@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-12T22:10:20.844059+00:00",
+  "fetched_at": "2026-05-13T02:45:57.602597+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-12",
@@ -948,9 +948,9 @@
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 56,
-      "lender": "of the note and deed of",
+      "lender": "MIDFIRST BANK",
       "deed_date": "06/13/2012",
-      "pdf_parsed_at": "2026-05-12T22:10:20.843586+00:00",
+      "pdf_parsed_at": "2026-05-13T02:45:57.602299+00:00",
       "legal_lot": "18",
       "legal_block": "1",
       "legal_subdivision": "COUNTRY CLUB ESTATES"
