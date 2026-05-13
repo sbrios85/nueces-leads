@@ -291,17 +291,20 @@ _RE_DEED_DATE = [
 
 # Property street address — multiple strategies.
 #
-# Strategy 1: explicit label like "Commonly known as: ADDRESS"
-# This is the most reliable when present. Used by Nestor (Freedom Mortgage)
-# template. Anchor on the street suffix so the street/city split is correct.
+# Strategy 1: explicit label like "Commonly known as: ADDRESS",
+# "Property Address: ADDRESS", or "(Address: ADDRESS)" — most reliable
+# when present. Different law firms use different label phrases.
 _RE_LABELED_ADDRESS = re.compile(
-    r"(?:Commonly\s+known\s+as|Property\s+Address|Property\s+is\s+located\s+at)"
+    r"\(?\s*(?:Commonly\s+known\s+as|Property\s+Address|"
+    r"Property\s+is\s+located\s+at|Address)"
     r"[\s:]+"
-    r"(\d{1,5}[A-Z]?\s+[A-Z][A-Z0-9\s.]{2,60}?\b"
+    r"(\d{1,5}[A-Z]?\s+[A-Z][A-Za-z0-9\s.]{2,60}?\b"
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
     r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
     r"WAY|TRAIL|TR|PARKWAY|PKWY|HIGHWAY|HWY|TERRACE|TER)\.?)"
-    r"[,\s]+([A-Z][A-Z\s!?]+?)[,\s]+(?:TX|TEXAS)[\s.]+(\d{5})",
+    r"[,\s]+([A-Z][a-zA-Z\s!?]+?)"
+    r"(?:,\s+Nueces\s+County)?"
+    r"[,\s]+(?:TX|TEXAS)[\s.]+(\d{5})\)?",
     re.IGNORECASE,
 )
 
@@ -334,10 +337,10 @@ _BLACKLIST_ADDRESSES = (
 # Legal description — Texas foreclosure notices spell out lot/block as
 # words AND digits: "LOT EIGHTEEN (18), BLOCK ONE (1), COUNTRY CLUB
 # ESTATES, UNIT 30, A SUBDIVISION..."
-# Prefer the parenthesized digit form for parsing.
+# Spelled-out numbers can include hyphens (FORTY-SIX) and multiple words.
 _RE_LEGAL_PARENS = re.compile(
-    r"LOT[S]?\s+\w+[\w\s]*\((\d+)\)[,\s]+"
-    r"BLOCK\s+\w+\s*\((\d+)\)[,\s]+"
+    r"LOT[S]?\s+[\w-]+(?:\s+[\w-]+)*?\s*\((\d+)\)[,\s]+"
+    r"BLOCK\s+[\w-]+(?:\s+[\w-]+)*?\s*\((\d+)\)[,\s]+"
     r"([A-Z][A-Z\s.,&'-]+?)"
     r"(?:[,.]?\s+UNIT\s+(\d+))?"
     r"\s*,?\s*(?:A\s+)?(?:SUBDIVISION|ADDITION|ACCORDING\s+TO)",
