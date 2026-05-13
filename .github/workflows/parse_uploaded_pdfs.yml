@@ -4,6 +4,9 @@ name: Parse uploaded foreclosure PDFs
 # GitHub's web UI, run this workflow to parse them. Successfully-parsed
 # PDFs are deleted from the folder; unprocessed PDFs are left in place
 # with a log warning explaining why.
+#
+# After parsing, this workflow also triggers a GitHub Pages redeploy
+# so the dashboard reflects the new data immediately.
 
 on:
   workflow_dispatch:
@@ -18,7 +21,9 @@ on:
           - 'true'
 
 permissions:
-  contents: write
+  contents: write   # for committing parsed data back to the repo
+  pages: write      # for the Pages deploy
+  id-token: write   # for the Pages deploy
 
 concurrency:
   group: "pdf-parsing"
@@ -84,3 +89,19 @@ jobs:
             git commit -m "chore: parse foreclosure PDFs $(date -u +'%Y-%m-%dT%H:%MZ')"
             git push
           fi
+
+      - name: Upload dashboard artifact for Pages deploy
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    needs: parse
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
