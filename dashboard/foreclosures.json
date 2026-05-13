@@ -1,14 +1,94 @@
 {
-  "fetched_at": "2026-05-13T03:31:32.034777+00:00",
+  "fetched_at": "2026-05-13T16:13:38.194228+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
-    "start": "2026-05-12",
-    "end": "2026-08-10"
+    "start": "2026-05-13",
+    "end": "2026-08-11"
   },
   "total": 50,
   "pre_foreclosure": 50,
   "post_foreclosure": 0,
   "records": [
+    {
+      "doc_num": "2026000295",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-12",
+      "sale_date": "2026-06-02",
+      "legal": "LEEWARD ISLES PHASE I UNIT 803 BUILDING H",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000295",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 20
+    },
+    {
+      "doc_num": "2026000294",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-12",
+      "sale_date": "2026-06-02",
+      "legal": "SAND DOLLAR II STUDIO CONDOMINIUM APT 13 BLDG A",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000294",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 20
+    },
+    {
+      "doc_num": "2026000292",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-12",
+      "sale_date": "2026-06-02",
+      "legal": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000292",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 20
+    },
+    {
+      "doc_num": "2026000293",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-12",
+      "sale_date": "2026-06-02",
+      "legal": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000293",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 20
+    },
     {
       "doc_num": "2026000276",
       "doc_type": "FORECLOSURE NOTICE",
@@ -27,7 +107,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000271",
@@ -47,7 +127,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000270",
@@ -67,7 +147,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000286",
@@ -87,7 +167,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000284",
@@ -107,7 +187,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000285",
@@ -127,7 +207,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000279",
@@ -147,7 +227,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000287",
@@ -167,7 +247,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000269",
@@ -187,7 +267,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000274",
@@ -207,7 +287,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000288",
@@ -227,7 +307,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000273",
@@ -247,7 +327,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000277",
@@ -267,7 +347,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000281",
@@ -287,7 +367,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000278",
@@ -307,7 +387,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000289",
@@ -327,7 +407,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000272",
@@ -347,7 +427,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000275",
@@ -367,7 +447,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000282",
@@ -387,7 +467,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000283",
@@ -407,7 +487,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000290",
@@ -427,7 +507,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000280",
@@ -447,7 +527,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000291",
@@ -467,7 +547,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000267",
@@ -487,7 +567,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000266",
@@ -507,7 +587,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000263",
@@ -527,7 +607,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000261",
@@ -547,7 +627,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000260",
@@ -567,7 +647,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000259",
@@ -576,8 +656,8 @@
       "sale_date": "2026-06-02",
       "legal": "GRANADO ESTATES LOT 34 BLOCK 1",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000259",
-      "owner": "JOHN BRUNO AMARO AND WIFE, SANDRA ANN AMARO",
-      "loan_amount": 43750.0,
+      "owner": "",
+      "loan_amount": null,
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -587,13 +667,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21,
-      "lender": "GRANADO ESTATES, L.P., a Texas limited partnership",
-      "deed_date": "May 16, 2019",
-      "legal_lot": "34",
-      "legal_block": "1",
-      "legal_subdivision": "GRANADO ESTATES",
-      "pdf_parsed_at": "2026-05-13T03:31:23.202585+00:00"
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000258",
@@ -602,8 +676,8 @@
       "sale_date": "2026-06-02",
       "legal": "WOODLAWN LOT 2 BLOCK 2, 2007063008",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000258",
-      "owner": "Jenny Sanchez",
-      "loan_amount": 39400.0,
+      "owner": "",
+      "loan_amount": null,
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -613,13 +687,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21,
-      "lender": "Nextlots Now, LLC, a Texas limited liability company",
-      "deed_date": "November 19, 2025",
-      "legal_lot": "5",
-      "legal_block": "2",
-      "legal_subdivision": "Woodlawn",
-      "pdf_parsed_at": "2026-05-13T03:31:19.706313+00:00"
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000252",
@@ -639,7 +707,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000254",
@@ -659,7 +727,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000255",
@@ -679,7 +747,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000249",
@@ -699,7 +767,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000248",
@@ -719,7 +787,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000236",
@@ -739,7 +807,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000241",
@@ -759,67 +827,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 21
-    },
-    {
-      "doc_num": "2026000234",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-04-23",
-      "sale_date": "2026-06-02",
-      "legal": "CALLICOATTE ESTATES LOT 1 BLOCK 4 UNIT 5 PHASE II",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000234",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 21
-    },
-    {
-      "doc_num": "2026000243",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-04-23",
-      "sale_date": "2026-06-02",
-      "legal": "LINDALE PARK SECTION 2-A LOT 22,23 BLOCK 29",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000243",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 21
-    },
-    {
-      "doc_num": "2026000245",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-04-23",
-      "sale_date": "2026-06-02",
-      "legal": "CASA LINDA ESTATES LOT 15 BLOCK 9 UNIT 6",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000245",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 21
+      "days_until_sale": 20
     },
     {
       "doc_num": "2026000268",
@@ -839,7 +847,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 56
+      "days_until_sale": 55
     },
     {
       "doc_num": "2026000265",
@@ -859,7 +867,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 56
+      "days_until_sale": 55
     },
     {
       "doc_num": "2026000262",
@@ -879,7 +887,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 56
+      "days_until_sale": 55
     },
     {
       "doc_num": "2026000264",
@@ -899,7 +907,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 56
+      "days_until_sale": 55
     },
     {
       "doc_num": "2026000257",
@@ -908,33 +916,7 @@
       "sale_date": "2026-07-07",
       "legal": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000257",
-      "owner": "Brandon C Cordell and Arlene Madali Cordell husband and wife",
-      "loan_amount": 240366.0,
-      "prop_address": "1305 TATES CREEK RD",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78418",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 56,
-      "lender": "Freedom Mortgage Corporation",
-      "deed_date": "9/15/2014",
-      "legal_lot": "7",
-      "legal_block": "1",
-      "legal_subdivision": "BLUE GRASS ESTATES",
-      "pdf_parsed_at": "2026-05-13T03:31:15.054250+00:00"
-    },
-    {
-      "doc_num": "2026000251",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-04-30",
-      "sale_date": "2026-07-07",
-      "legal": "BARCELONA ESTATES LOT 46 BLOCK 3 UNIT 4",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000251",
-      "owner": "ELAINE SALAZAR",
+      "owner": "",
       "loan_amount": null,
       "prop_address": "",
       "prop_city": "",
@@ -945,9 +927,27 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 56,
-      "lender": "Freedom Mortgage Corporation",
-      "pdf_parsed_at": "2026-05-13T03:31:08.872336+00:00"
+      "days_until_sale": 55
+    },
+    {
+      "doc_num": "2026000251",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-04-30",
+      "sale_date": "2026-07-07",
+      "legal": "BARCELONA ESTATES LOT 46 BLOCK 3 UNIT 4",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000251",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 55
     },
     {
       "doc_num": "2026000256",
@@ -956,24 +956,18 @@
       "sale_date": "2026-07-07",
       "legal": "COUNTRY CLUB ESTATES LOT 18 BLOCK 1 UNIT 30",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000256",
-      "owner": "MIGUEL PENA III AND CLAIRE O. GUERRA",
-      "loan_amount": 155944.0,
-      "prop_address": "4114 NICKLAUS LANE",
-      "prop_city": "CORPUS CHRISTI",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
       "prop_state": "TX",
-      "prop_zip": "78413",
+      "prop_zip": "",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 56,
-      "lender": "MIDFIRST BANK",
-      "deed_date": "06/13/2012",
-      "pdf_parsed_at": "2026-05-13T02:45:57.602299+00:00",
-      "legal_lot": "18",
-      "legal_block": "1",
-      "legal_subdivision": "COUNTRY CLUB ESTATES"
+      "days_until_sale": 55
     },
     {
       "doc_num": "2026000250",
@@ -993,7 +987,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 56
+      "days_until_sale": 55
     },
     {
       "doc_num": "2026000253",
@@ -1013,27 +1007,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 56
-    },
-    {
-      "doc_num": "2026000242",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-04-23",
-      "sale_date": "2026-07-07",
-      "legal": "WOODBEND LOT 11 BLOCK 2",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000242",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 56
+      "days_until_sale": 55
     }
   ]
 }
