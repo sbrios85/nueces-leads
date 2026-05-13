@@ -133,50 +133,72 @@ def _extract_text_ocr(pdf_path: Path) -> str:
 # Field regex patterns
 # --------------------------------------------------------------------------- #
 
-# Document number — Nueces foreclosures use a 10-digit YYYYNNNNNN format.
-# May appear as "Document No. 2026000263" or in a header banner.
+# Document number — Nueces foreclosures stamp the header line at the
+# top of every PDF in this exact format:
+#   "2026 - 2026000256 04/30/2026 10:56 AM Page 1 of 2"
+# This is the ONLY reliable way to identify the foreclosure-notice doc
+# number — the body of the notice references OTHER doc numbers (the
+# original deed of trust instrument, modifications, etc.) and matching
+# those would corrupt the record matching.
 _RE_DOC_NUM = [
-    re.compile(r"(?:document|instrument|doc)\s*(?:no|number|#)\.?[\s:]*(\d{10})",
-               re.IGNORECASE),
-    # Header banner format: "2026 - 2026000264 05/07/2026"
+    # The clerk header line — unambiguous.
     re.compile(r"^\s*\d{4}\s*[-–]\s*(\d{10})\s+\d{1,2}/\d{1,2}/\d{2,4}",
                re.MULTILINE),
-    # Just any standalone 10-digit number starting with year — fallback
-    re.compile(r"\b(202\d{7})\b"),
 ]
 
-# Borrower name. Foreclosure notices in Texas typically use one of
-# these phrasings:
-#   "Deed of Trust executed by JOHN DOE AND JANE DOE, provides..."
-#   "Deed of Trust executed by MELANIE SANDERS, AN UNMARRIED WOMAN ..."
-#   "Mortgagor: JOHN DOE"
-#   "Obligor: JOHN DOE"
-#   "Grantor(s): JOHN DOE"
+# Borrower name. Texas foreclosure notices come from different law
+# firms with different templates. We've seen these patterns:
 #
-# The character class is permissive to handle OCR artifacts:
+#   Mackie Wolf:    "Deed of Trust executed by JOHN DOE, provides..."
+#   McCarthy:       "10/17/2011 ELAINE SALAZAR, AN UNMARRIED WOMAN,"
+#                   (header line: date<space>name<comma>)
+#   Nestor:         "Grantor(s): NAME and NAME husband and wife"
+#                   (key:value table format)
+#   Schmitt:        "NAME ("Borrower"), executed and delivered"
+#                   (parenthesized role label)
+#   Granado:        "Grantor: NAME AND WIFE, NAME"
+#                   (key:value table format, lowercase variant)
+#
+# The character class accepts OCR artifacts:
 #   - Square brackets [] (OCR misreads III as II])
-#   - Parens (suffix like JR/SR sometimes appears in parens)
-#   - Apostrophes (O'BRIEN), periods (middle initials), ampersands (& sons)
-#
-# Stop conditions are anchored to phrases that follow the name in real
-# foreclosure notices: ", provides", "dated", "to <party>", etc.
+#   - Periods (middle initials, name suffixes)
+#   - Apostrophes (O'BRIEN), ampersands (& sons)
 _RE_BORROWER = [
+    # "executed by NAME, provides" — original Mackie Wolf template
     re.compile(r"executed\s+by\s+([A-Z][A-Z0-9\s&'.\[\]()-]+?)"
                 r"\s*,\s*(?:provides|as\s+(?:a|the|his|her)|whose|"
                 r"a\s+(?:single|married)|husband|wife|"
                 r"an?\s+(?:unmarried|single|married))",
                re.IGNORECASE),
+    # "executed by NAME (without comma)" — fallback for Mackie Wolf
     re.compile(r"executed\s+by\s+([A-Z][A-Z0-9\s&'.\[\]()-]+?)"
                 r"(?=\s+(?:dated|to\s+\w+|in\s+favor\s+of|"
                 r"and\s+(?:recorded|filed)))",
                re.IGNORECASE),
+    # 'NAME ("Borrower"), executed and delivered' — Schmitt template
+    re.compile(r"([A-Z][a-zA-Z\s&'.\[\]()-]{4,80}?)\s*"
+                r"\(['\"]?Borrower['\"]?\)"),
+    # "Grantor(s): NAMES" or "Grantor: NAMES" — table-format templates.
+    # Allow commas in the captured name (e.g. "AND WIFE, SANDRA").
+    # Stop at "Original Trustee" / "Original Mortgagee" / newline.
+    re.compile(r"Grantor\(?s?\)?[\s:]+([A-Z][a-zA-Z0-9\s,&'.\[\]()-]{4,120}?)"
+                r"(?=\s*\n|\s+Original\s+(?:Trustee|Mortgagee|Lender)|"
+                r"\s+Current\s+(?:Mortgagee|Beneficiary)|"
+                r"\s+Lender:|\s+Mortgage\s+Servicer:)",
+               re.IGNORECASE),
+    # Header-line form: "MM/DD/YYYY NAME, MORE_DESCRIPTORS,"
+    # Used by McCarthy & Holthus (template 251 in our test set).
+    # Anchor to start of line + date pattern + name + comma.
+    re.compile(r"^\s*\d{1,2}/\d{1,2}/\d{4}\s+"
+                r"([A-Z][A-Z\s&'.\[\]()-]{4,80}?)"
+                r"(?=,\s*(?:AN?|HUSBAND|WIFE|A\s+(?:SINGLE|MARRIED))"
+                r"|,\s*$)",
+               re.MULTILINE),
+    # Generic Mortgagor/Obligor/Debtor labels
     re.compile(r"mortgagor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)"
                 r"(?=\s*,|\s+(?:to|in\s+favor|and|dated|provides))",
                re.IGNORECASE),
     re.compile(r"obligor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)"
-                r"(?=\s*,|\s+(?:to|in\s+favor|and|dated|provides))",
-               re.IGNORECASE),
-    re.compile(r"grantor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)"
                 r"(?=\s*,|\s+(?:to|in\s+favor|and|dated|provides))",
                re.IGNORECASE),
     re.compile(r"debtor[s]?(?:\(s\))?[\s:]+([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)"
@@ -188,24 +210,50 @@ _RE_BORROWER = [
 ]
 
 # Lender / mortgagee / beneficiary.
+# Different templates use different labels. Anchor each pattern to a
+# specific label so we don't accidentally grab body text.
 _RE_LENDER = [
-    # "MIDFIRST BANK is the current mortgagee" (Texas foreclosure notice
-    # standard phrasing — usually the most reliable lender source)
-    re.compile(r"([A-Z][A-Z0-9\s&,.'-]+?)\s+is\s+the\s+current\s+mortgagee"),
-    re.compile(r"in\s+favor\s+of\s+([A-Z][A-Za-z\s,&.'-]{3,80}?)"
+    # 'for the benefit of NAME ("Lender")' — Schmitt template
+    re.compile(r"for\s+the\s+benefit\s+of\s+([A-Z][A-Za-z0-9\s,&.'-]+?)"
+                r"\s*\(['\"]?Lender['\"]?\)"),
+    # "Current Mortgagee: NAME" — Nestor template (Freedom Mortgage)
+    re.compile(r"Current\s+Mortgagee[\s:]+([A-Z][A-Za-z0-9\s&,.'-]{3,80}?)"
+                r"(?=\s*\n|\s+(?:Mortgage\s+Servicer|TS\.\s*#|Original))",
+               re.IGNORECASE),
+    # "Current Beneficiary/Mortgagee: ... ACTUAL_LENDER" — McCarthy template
+    # The text typically has the structure:
+    #   "Current Beneficiary/Mortgagee:\n
+    #    MORTGAGE ELECTRONIC REGISTRATION SYSTEMS, INC. Freedom Mortgage Corporation\n"
+    # MERS is a nominee — the REAL lender is the part AFTER the MERS line.
+    # Match by skipping the MERS prefix entirely and capturing whatever
+    # name immediately follows on the same line (up to newline).
+    re.compile(r"Current\s+Beneficiary/?Mortgagee[\s:]*\s*"
+                r"MORTGAGE\s+ELECTRONIC\s+REGISTRATION\s+SYSTEMS,?\s*INC\.?\s+"
+                r"([A-Z][A-Za-z0-9\s&,.'-]+?)"
+                r"(?=\s*\n|\s*\([\"']MERS[\"']\))",
+               re.IGNORECASE),
+    # "Lender: NAME" — Granado-style table format. Stop at newline or
+    # known following labels.
+    # NOTE: don't allow the word "hereby" to bleed in (Schmitt template has
+    # "Lender hereby appoints..." in body text — anchored by the colon and
+    # following whitespace, plus a stop at "hereby" handles that.)
+    re.compile(r"\bLender:\s+([A-Z][A-Za-z0-9\s&,.'-]{3,80}?)"
+                r"(?=\s*\n|\s+(?:Note|Substitute\s+Trustee|hereby|has))",
+               re.IGNORECASE),
+    # "NAME is the current mortgagee" — Mackie Wolf pattern.
+    # Anchor to start with capital letter sequence, restrict length.
+    re.compile(r"\b([A-Z][A-Z0-9\s&,.'-]{2,60}?)\s+is\s+the\s+current\s+mortgagee"),
+    # "Beneficiary: NAME" — fallback
+    re.compile(r"\bBeneficiary:\s+([A-Z][A-Za-z0-9\s&,.'-]{3,80}?)"
+                r"(?=\s*\n|\s+(?:Note|Trustee))",
+               re.IGNORECASE),
+    # "in favor of NAME" — used by Mackie Wolf in body text
+    re.compile(r"in\s+favor\s+of\s+([A-Z][A-Za-z0-9\s,&.'-]{3,80}?)"
                 r"(?=\s*,\s*(?:its|a\s+\w+|as\s+|whose|located)|\.|\n|recorded)"),
-    re.compile(r"lender[\s:]+([A-Z][A-Za-z\s,&.'-]{3,80}?)(?=\s*[,.\n])",
-               re.IGNORECASE),
-    re.compile(r"mortgagee[\s:]+([A-Z][A-Za-z\s,&.'-]{3,80}?)(?=\s*[,.\n])",
-               re.IGNORECASE),
-    re.compile(r"beneficiary[\s:]+([A-Z][A-Za-z\s,&.'-]{3,80}?)(?=\s*[,.\n])",
-               re.IGNORECASE),
-    re.compile(r"(?:current\s+(?:mortgagee|noteholder)|noteholder)[\s:]+"
-                r"([A-Z][A-Za-z\s,&.'-]{3,80}?)(?=\s*[,.\n])",
-               re.IGNORECASE),
 ]
 
 # Loan amount — original principal.
+# Templates vary widely. Patterns ordered by specificity (most specific first).
 _RE_LOAN_AMOUNT = [
     re.compile(r"original\s+principal\s+(?:balance|amount|sum)?[:\s]+"
                 r"\$\s*([\d,]+(?:\.\d{2})?)",
@@ -215,11 +263,17 @@ _RE_LOAN_AMOUNT = [
     re.compile(r"in\s+the\s+(?:original\s+)?(?:principal\s+)?amount\s+of\s+"
                 r"\$\s*([\d,]+(?:\.\d{2})?)",
                re.IGNORECASE),
-    # "Note in the amount of $XXX" — generic
+    # "Note: WORDS WORDS ($43,750.00)" — Granado / Schmitt format.
+    # Allow up to ~200 chars between "Note:" and the parenthesized amount
+    # since lenders spell out the amount in words first.
+    re.compile(r"Note[\s:][\s\S]{1,200}?\(\s*\$\s*([\d,]+(?:\.\d{2})?)\s*\)",
+               re.IGNORECASE),
+    # "principal amount of $XXX" generic
+    re.compile(r"principal\s+amount\s+of\s+\$\s*([\d,]+(?:\.\d{2})?)",
+               re.IGNORECASE),
+    # "Note in the amount of $XXX"
     re.compile(r"note[^.]{0,40}?\$\s*([\d,]+(?:\.\d{2})?)",
                re.IGNORECASE),
-    # As a last resort, the largest dollar amount on the doc is often the loan
-    # (we filter for $-prefixed numbers >= $10,000)
 ]
 
 # Deed of trust date — when the original loan was executed.
@@ -235,9 +289,24 @@ _RE_DEED_DATE = [
                re.IGNORECASE),
 ]
 
-# Property street address — full address pattern: number + street + suffix
-# + city + TX + zip in one shot. Allows OCR slop in the city name (e.g.
-# OCR turns "CHRISTI" into "CHRIST!" or "CORPUSCHRISTI").
+# Property street address — multiple strategies.
+#
+# Strategy 1: explicit label like "Commonly known as: ADDRESS"
+# This is the most reliable when present. Used by Nestor (Freedom Mortgage)
+# template. Anchor on the street suffix so the street/city split is correct.
+_RE_LABELED_ADDRESS = re.compile(
+    r"(?:Commonly\s+known\s+as|Property\s+Address|Property\s+is\s+located\s+at)"
+    r"[\s:]+"
+    r"(\d{1,5}[A-Z]?\s+[A-Z][A-Z0-9\s.]{2,60}?\b"
+    r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
+    r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
+    r"WAY|TRAIL|TR|PARKWAY|PKWY|HIGHWAY|HWY|TERRACE|TER)\.?)"
+    r"[,\s]+([A-Z][A-Z\s!?]+?)[,\s]+(?:TX|TEXAS)[\s.]+(\d{5})",
+    re.IGNORECASE,
+)
+
+# Strategy 2: full address pattern — number + street + suffix + city + TX + zip
+# in one shot. Allows OCR slop in city names.
 _RE_FULL_ADDRESS = re.compile(
     r"(\d{1,5}[A-Z]?\s+[A-Z][A-Z0-9\s.]{3,60}?\b"
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
@@ -254,6 +323,13 @@ _NUECES_CITIES = ("CORPUS CHRISTI", "ROBSTOWN", "PORT ARANSAS", "BISHOP",
                   "DRISCOLL", "AGUA DULCE", "BANQUETE",
                   # OCR slop forms
                   "CORPUS CHRIST", "CORPUSCHRISTI", "CORPUS")
+
+# Known non-property addresses to blacklist. The Nueces County courthouse
+# at 901 LEOPARD STREET is mentioned in nearly every foreclosure notice
+# as the "Place of Sale" — we must NOT pick it up as the property address.
+_BLACKLIST_ADDRESSES = (
+    "901 LEOPARD STREET", "901 LEOPARD ST", "901 LEOPARD",
+)
 
 # Legal description — Texas foreclosure notices spell out lot/block as
 # words AND digits: "LOT EIGHTEEN (18), BLOCK ONE (1), COUNTRY CLUB
@@ -332,38 +408,59 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
     for rx in _RE_DEED_DATE:
         m = rx.search(text)
         if m:
-            out["deed_date"] = m.group(1).strip()
+            # Collapse whitespace including OCR-introduced newlines
+            # (e.g. "May 16,\n2019" → "May 16, 2019")
+            d = re.sub(r"\s+", " ", m.group(1)).strip()
+            out["deed_date"] = d
             break
 
     # --- Property street address ---
-    # Find ALL addresses in the document; prefer ones in Nueces County
-    # cities (the law firm / trustee addresses appear too, in Dallas or
-    # Houston, so we don't want to grab those).
-    all_addrs = list(_RE_FULL_ADDRESS.finditer(text))
-    chosen_addr = None
-    # First pass: look for a Nueces-area city
-    for m in all_addrs:
-        city_upper = m.group(2).upper().strip()
-        if any(c in city_upper for c in _NUECES_CITIES):
-            chosen_addr = m
-            break
-    # Fallback: if nothing in Nueces, take the LAST address on the page
-    # (foreclosure notices typically put the property address at the end).
-    if chosen_addr is None and all_addrs:
-        chosen_addr = all_addrs[-1]
+    # Strategy: prefer addresses preceded by explicit labels like
+    # "Commonly known as:" or "Property Address:". Fall back to scanning
+    # all street-shaped strings, preferring Nueces-area cities and
+    # skipping the Nueces County courthouse (which is mentioned in every
+    # foreclosure notice as the place of sale).
+    chosen_street = None
+    chosen_city = None
+    chosen_zip = None
 
-    if chosen_addr:
-        street = re.sub(r"\s+", " ",
-                         chosen_addr.group(1)).upper().strip(" ,.")
-        city = re.sub(r"[!?]", "I", chosen_addr.group(2)).upper().strip()
-        # Normalize "CORPUS CHRIST" → "CORPUS CHRISTI"
+    # First try: explicit label
+    m_lbl = _RE_LABELED_ADDRESS.search(text)
+    if m_lbl:
+        chosen_street = m_lbl.group(1)
+        chosen_city = m_lbl.group(2)
+        chosen_zip = m_lbl.group(3)
+
+    # Second try: scan all addresses and skip blacklisted ones
+    if not chosen_street:
+        all_addrs = list(_RE_FULL_ADDRESS.finditer(text))
+        candidates = []
+        for m in all_addrs:
+            street_upper = re.sub(r"\s+", " ",
+                                    m.group(1)).upper().strip(" ,.")
+            if any(bl in street_upper for bl in _BLACKLIST_ADDRESSES):
+                continue
+            city_upper = m.group(2).upper().strip()
+            is_local = any(c in city_upper for c in _NUECES_CITIES)
+            candidates.append((m, is_local))
+        local_addr = next((m for m, is_local in candidates if is_local), None)
+        if local_addr is None and candidates:
+            local_addr = candidates[-1][0]
+        if local_addr:
+            chosen_street = local_addr.group(1)
+            chosen_city = local_addr.group(2)
+            chosen_zip = local_addr.group(3)
+
+    if chosen_street:
+        street = re.sub(r"\s+", " ", chosen_street).upper().strip(" ,.")
+        city = re.sub(r"[!?]", "I", chosen_city).upper().strip()
         if city in ("CORPUS CHRIST", "CORPUSCHRISTI", "CORPUS"):
             city = "CORPUS CHRISTI"
         city = re.sub(r"\s+", " ", city)
         out["prop_address"] = street
         out["prop_city"] = city
         out["prop_state"] = "TX"
-        out["prop_zip"] = chosen_addr.group(3)
+        out["prop_zip"] = chosen_zip
 
     # --- Legal description ---
     # Try the parenthesized form first (LOT EIGHTEEN (18), BLOCK ONE (1)…),
@@ -372,8 +469,8 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
     if not m:
         m = _RE_LEGAL_DIGITS.search(text)
     if m:
-        out["legal_lot"] = m.group(1).strip()
-        out["legal_block"] = m.group(2).strip()
+        out["legal_lot"] = m.group(1).strip(" ,.")
+        out["legal_block"] = m.group(2).strip(" ,.")
         sub = _clean_name(m.group(3))
         # Collapse newlines/whitespace and remove stray periods from
         # OCR-introduced line breaks within multi-word subdivision names
