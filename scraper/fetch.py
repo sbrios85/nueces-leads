@@ -41,7 +41,7 @@ import zipfile
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from urllib.parse import quote, urlencode
 
 import requests
@@ -566,9 +566,11 @@ def _build_clerk_search_url(start_iso: str, end_iso: str,
 def _build_foreclosure_url(start_iso: str, end_iso: str) -> str:
     """Build the URL for the Foreclosures (FC) tab.
 
-    The FC tab uses `instrumentDateRange` (not `recordedDateRange`) and
-    the date range filters by Sale Date — so for motivated-seller leads
-    we want today through today+90 days (upcoming auctions).
+    Uses `instrumentDateRange` (which filters by RECORDED date, not sale
+    date — confirmed empirically). Sorts by RECORDED date descending so
+    the newest filings come first. This makes daily incremental runs
+    efficient: page 1 will contain the day's new records plus enough
+    older records to detect via the duplicate-page early stop.
     """
     start_compact = start_iso.replace("-", "")
     end_compact = end_iso.replace("-", "")
@@ -578,6 +580,10 @@ def _build_foreclosure_url(start_iso: str, end_iso: str) -> str:
         "keywordSearch": "false",
         "searchOcrText": "false",
         "searchType": "quickSearch",
+        # Try common publicsearch sort params. Unknown ones are ignored
+        # by the portal so it's safe to include all.
+        "sortBy": "instrumentDate",
+        "sortOrder": "desc",
     }
     return f"{CLERK_BASE}/results?{urlencode(params)}"
 
@@ -863,6 +869,7 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
 async def fetch_foreclosures(today_iso: str,
                               lookback_days: int = FORECLOSURE_LOOKBACK_DAYS,
                               lookahead_days: int = FORECLOSURE_LOOKAHEAD_DAYS,
+                              known_doc_nums: Optional[Set[str]] = None,
                               ) -> List[ForeclosureRecord]:
     """Drive the clerk portal's Foreclosures (FC) tab to retrieve every
     foreclosure notice recorded in the past `lookback_days` days
@@ -871,7 +878,14 @@ async def fetch_foreclosures(today_iso: str,
 
     The portal's date range filter uses RECORDED date, not sale date.
     So we cast a wide net on the recorded side and filter sales
-    client-side. Walks all pages by appending page= URL parameter.
+    client-side. Results are sorted by recorded date desc so newest
+    appear first.
+
+    known_doc_nums: optional set of doc_nums already captured in
+        foreclosures.json. When provided, pagination stops as soon as a
+        page contains exclusively records we already have — making
+        daily incremental runs much faster (typically only fetches
+        page 1, since daily volume is 1-20 new records).
 
     Distinct from the motivated-seller pipeline: FC rows have no
     grantor/grantee, but they do have a Sale Date that we use as the
@@ -914,13 +928,20 @@ async def fetch_foreclosures(today_iso: str,
         debug_dir = ROOT_DIR / "debug"
         debug_dir.mkdir(parents=True, exist_ok=True)
 
-        # Walk pages 1..30 (publicsearch sites typically cap somewhere
-        # under that). Stop when a page returns 0 rows or fewer than the
-        # expected per-page count.
+        # Walk pages with offset-based pagination (publicsearch uses
+        # `offset=N` + `limit=50`). Stop early when:
+        #   - a page returns 0 rows
+        #   - a page returns fewer than 50 rows (last page)
+        #   - all rows on a page are doc_nums we've already seen this run
+        #   - all rows on a page are doc_nums already in our database
+        #     (efficient daily-incremental short-circuit)
         MAX_PAGES = 30
+        seen_doc_ids: Set[str] = set()
+        known = known_doc_nums or set()
         for page_num in range(1, MAX_PAGES + 1):
+            offset = (page_num - 1) * 50
             sep = "&" if "?" in base_url else "?"
-            url = f"{base_url}{sep}page={page_num}"
+            url = f"{base_url}{sep}limit=50&offset={offset}"
             try:
                 await page.goto(url, wait_until="domcontentloaded",
                                   timeout=30_000)
@@ -947,8 +968,8 @@ async def fetch_foreclosures(today_iso: str,
                 await page.wait_for_timeout(600)
                 html = await page.content()
             except Exception as exc:
-                log.warning("foreclosure page %d fetch failed: %s",
-                              page_num, exc)
+                log.warning("foreclosure page %d (offset=%d) fetch failed: %s",
+                              page_num, offset, exc)
                 break
 
             if page_num == 1:
@@ -959,9 +980,35 @@ async def fetch_foreclosures(today_iso: str,
                     pass
 
             page_rows = _extract_foreclosure_table_rows(html)
-            log.info("  page %d: %d rows", page_num, len(page_rows))
+            log.info("  page %d (offset=%d): %d rows",
+                      page_num, offset, len(page_rows))
             if not page_rows:
                 break
+
+            page_doc_ids: Set[str] = set()
+            for raw in page_rows:
+                doc_num = raw.get("doc_num") or raw.get("doc_number") or ""
+                if doc_num:
+                    page_doc_ids.add(doc_num)
+
+            # Duplicate-page detection (within this run)
+            if page_doc_ids and page_doc_ids.issubset(seen_doc_ids):
+                log.info("    duplicate page detected — pagination "
+                          "exhausted, stopping")
+                break
+
+            # Daily-incremental short-circuit: if the portal sort is
+            # working AND every doc_num on this page is already in our
+            # database, we've caught up with the historical baseline.
+            # Daily runs typically stop at page 1 thanks to this.
+            if known and page_doc_ids and page_doc_ids.issubset(known):
+                log.info("    all %d records on page %d already in DB "
+                          "— stopping (incremental short-circuit)",
+                          len(page_doc_ids), page_num)
+                all_rows.extend(page_rows)
+                break
+
+            seen_doc_ids.update(page_doc_ids)
             all_rows.extend(page_rows)
             # Heuristic stop: if we got <50 rows it's the last page.
             if len(page_rows) < 50:
@@ -3531,8 +3578,28 @@ def main() -> int:
     # 1b) Foreclosures — separate stream, separate output file. Runs
     # independently of the motivated-seller pipeline. Failure here is
     # non-fatal to the rest of the run.
+    #
+    # Pass the existing doc_nums so fetch_foreclosures can short-circuit
+    # pagination when it hits a page of records we already have.
+    # On daily runs this typically means pagination stops at page 1.
+    known_doc_nums: Set[str] = set()
+    foreclosures_path = ROOT_DIR / "data" / "foreclosures.json"
+    if foreclosures_path.exists():
+        try:
+            existing = json.loads(foreclosures_path.read_text("utf-8"))
+            for rec in existing.get("records", []):
+                dn = rec.get("doc_num", "")
+                if dn:
+                    known_doc_nums.add(dn)
+            log.info("loaded %d existing foreclosure doc_nums for "
+                     "incremental short-circuit", len(known_doc_nums))
+        except Exception as exc:
+            log.warning("could not read existing foreclosures.json: %s",
+                          exc)
+
     try:
-        foreclosures = asyncio.run(fetch_foreclosures(end_iso))
+        foreclosures = asyncio.run(fetch_foreclosures(
+            end_iso, known_doc_nums=known_doc_nums))
     except Exception as exc:
         log.error("foreclosure fetch failed: %s\n%s",
                   exc, traceback.format_exc())
