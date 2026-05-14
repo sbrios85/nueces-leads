@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-14T06:07:36.310292+00:00",
+  "fetched_at": "2026-05-14T06:32:29.383842+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-13",
@@ -598,10 +598,10 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000263",
       "owner": "LEO RODRIGUEZ and MONICA RODRIGUEZ",
       "loan_amount": 190400.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "2218 ONYX DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78412",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
@@ -612,7 +612,7 @@
       "legal_lot": "15",
       "legal_block": "10",
       "legal_subdivision": "WOODLAND CREEK UNIT V",
-      "pdf_parsed_at": "2026-05-14T06:07:06.370511+00:00",
+      "pdf_parsed_at": "2026-05-14T06:31:56.778471+00:00",
       "deed_date": "September 25, 2024"
     },
     {
@@ -638,7 +638,7 @@
       "legal_lot": "13",
       "legal_block": "2",
       "legal_subdivision": "KINGS POINT",
-      "pdf_parsed_at": "2026-05-14T06:06:56.922074+00:00",
+      "pdf_parsed_at": "2026-05-14T06:31:47.670196+00:00",
       "lender": "ESTATE OF FLORENCE SELINA GONZALEZ, DECEASED"
     },
     {
@@ -661,7 +661,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 20,
       "deed_date": "July 27, 2022",
-      "pdf_parsed_at": "2026-05-14T06:06:51.443039+00:00",
+      "pdf_parsed_at": "2026-05-14T06:31:42.410043+00:00",
       "lender": "Joseph J. Chavez"
     },
     {
@@ -915,7 +915,7 @@
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 55,
-      "pdf_parsed_at": "2026-05-14T06:07:01.878107+00:00",
+      "pdf_parsed_at": "2026-05-14T06:31:52.420120+00:00",
       "lender": "U.S. BANK TRUST COMPANY, NATIONAL ASSOCIATION, NOT IN ITS INDIVIDUAL",
       "legal_lot": "9",
       "legal_block": "9",
@@ -941,7 +941,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 55,
       "lender": "U.S. Bank Trust National Association, not in its individual capacity, but solely in its capacity as Owner Trustee of Citigroup Mortgage Loan Trast 2025-RP2",
-      "pdf_parsed_at": "2026-05-14T06:07:11.943938+00:00",
+      "pdf_parsed_at": "2026-05-14T06:32:02.265309+00:00",
       "deed_date": "12/19/2016"
     },
     {
