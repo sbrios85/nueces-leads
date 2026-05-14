@@ -606,7 +606,7 @@ def normalize_legal_for_match(legal: str) -> Tuple[str, str, str]:
     s = legal.upper()
 
     lot = ""
-    m = re.search(r"\bLOT[S]?\s*[:\-]?\s*([\d,A-Z-]+)", s)
+    m = re.search(r"\b(?:LOT[S]?|LTS?)\s*[:\-]?\s*([\d,A-Z-]+)", s)
     if m:
         lot = m.group(1).strip(" ,-")
 
@@ -615,15 +615,16 @@ def normalize_legal_for_match(legal: str) -> Tuple[str, str, str]:
     if m:
         block = m.group(1).strip(" ,-")
     else:
-        m = re.search(r"\bBLK\.?\s*[:\-]?\s*([\dA-Z-]+)", s)
+        # NCAD abbreviates "Block" as either BLK or BK
+        m = re.search(r"\b(?:BLK|BK)\.?\s*[:\-]?\s*([\dA-Z-]+)", s)
         if m:
             block = m.group(1).strip(" ,-")
 
-    # Subdivision: strip the structural tokens (LOT, BLOCK, SUBDIVISION:, etc.)
+    # Subdivision: strip the structural tokens.
     sub = re.sub(r"SUBDIVISION[\s\-]+NAME[\s:]*", " ", s)
-    sub = re.sub(r"\bLOT[S]?\s*[:\-]?\s*[\d,A-Z-]+", " ", sub)
+    sub = re.sub(r"\b(?:LOT[S]?|LTS?)\s*[:\-]?\s*[\d,A-Z-]+", " ", sub)
     sub = re.sub(r"\bBLOCK\s*[:\-]?\s*[\dA-Z-]+", " ", sub)
-    sub = re.sub(r"\bBLK\.?\s*[:\-]?\s*[\dA-Z-]+", " ", sub)
+    sub = re.sub(r"\b(?:BLK|BK)\.?\s*[:\-]?\s*[\dA-Z-]+", " ", sub)
     sub = re.sub(r"\bSUBDIVISION\b|\bADDITION\b|\bSECTION\b|\bPHASE\b",
                   " ", sub)
     sub = re.sub(r"[\(\)]", " ", sub)
