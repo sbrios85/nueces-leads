@@ -2801,49 +2801,130 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
 
 
 def _esearch_query_variants(name: str) -> List[str]:
-    """Generate up to 5 query strings to try for a given owner name.
+    """Generate query strings to try for a given owner name.
 
-    For "JOHN BRUNO AMARO":
+    For a single name "JOHN BRUNO AMARO":
       1. "JOHN BRUNO AMARO" — full name as-is
       2. "AMARO JOHN BRUNO" — last-first format (NCAD's preferred index)
       3. "AMARO" — last name only (broad fallback)
       4. "AMARO, JOHN BRUNO" — last-comma-first format
       5. "JOHN AMARO" — first+last (drops middle)
+
+    NCAD records JOINT ownership as "LAST FIRST AND WF" (wife) /
+    "AND HUSBAND" / "AND SPOUSE". When the input borrower name already
+    indicates joint ownership ("AND WIFE", "AND HUSBAND", or two
+    Cordell-style co-borrowers), generate those joint-owner forms too:
+      6. "AMARO JOHN AND WF"
+      7. "AMARO JOHN BRUNO AND WF"
     """
     n = re.sub(r"\s+", " ", name.upper().strip())
     n = re.sub(r"[^A-Z0-9 ,&-]", " ", n)
     n = re.sub(r"\s+", " ", n).strip(" ,")
     if not n:
         return []
-    out = [n]                                # 1. try as-is first
-    # If the input already has a comma, also try without it
+
+    # Detect joint-ownership indicator. The input may already say
+    # "... AND WIFE ..." or "... AND HUSBAND ..." or be a Cordell-style
+    # two-full-name string. We strip these for the primary name extraction
+    # but remember the indicator to generate joint-owner suffix variants.
+    has_joint_indicator = bool(re.search(
+        r"\bAND\s+(WIFE|HUSBAND|SPOUSE|WF)\b|"
+        r"\bHUSBAND\s+AND\s+WIFE\b|\b&\s+(WIFE|HUSBAND|WF)\b",
+        n, re.IGNORECASE))
+    # Also detect Cordell-style: two complete names joined by AND
+    parts_full = re.split(r"\s+AND\s+", n, maxsplit=1)
+    cordell_style = (len(parts_full) == 2 and len(parts_full[0].split()) >= 2
+                       and len(parts_full[1].split()) >= 2
+                       and not re.match(r"^WIFE|^HUSBAND|^SPOUSE",
+                                          parts_full[1], re.IGNORECASE))
+
+    # For variant generation, strip everything after the first AND etc.
+    # so we work with just the primary borrower's name.
+    n_primary = re.sub(r"\s+AND\s+.*$", "", n, flags=re.IGNORECASE).strip(" ,")
+    if "," in n_primary:
+        n_primary = n_primary.split(",")[0].strip()
+
+    out = [n]                                # 1. as-is first
+    if n != n_primary and n_primary:
+        out.append(n_primary)                # also try just the primary
+
     if "," in n:
         out.append(n.replace(",", "").strip())
-    parts = n.replace(",", "").split()
+
+    parts = n_primary.replace(",", "").split()
     if len(parts) >= 2:
-        # NCAD indexes owners by LAST name, not first. The LAST word
-        # in a typical "FIRST MIDDLE LAST" string is the last name.
-        # (This is the opposite of what the original code did, which
-        # was a bug.)
-        last = parts[-1]
-        first = parts[0]
+        # If the LAST word is a Roman numeral suffix or JR/SR, treat the
+        # previous word as the actual last name. E.g. "MIGUEL PENA III"
+        # → last="PENA", suffix="III", first="MIGUEL"
+        SUFFIXES = {"JR", "SR", "II", "III", "IV", "V"}
+        suffix = ""
+        if parts[-1].upper() in SUFFIXES and len(parts) >= 3:
+            suffix = parts[-1]
+            last = parts[-2]
+            middle_first = parts[:-2]
+        else:
+            last = parts[-1]
+            middle_first = parts[:-1]
+        first = middle_first[0] if middle_first else ""
         if len(last) >= 3:
-            # 2. Last-first format: "AMARO JOHN BRUNO"
-            reordered = last + " " + " ".join(parts[:-1])
+            # 2. Last-first: "PENA MIGUEL III" or "AMARO JOHN BRUNO"
+            reordered = last + " " + " ".join(middle_first)
+            if suffix:
+                reordered += " " + suffix
+            reordered = reordered.strip()
             if reordered not in out:
                 out.append(reordered)
-            # 3. Last-name only: "AMARO"
+            # 3. Last-name only: "PENA"
             if last not in out:
                 out.append(last)
-            # 4. Last-comma-first: "AMARO, JOHN BRUNO"
-            comma_form = last + ", " + " ".join(parts[:-1])
+            # 4. Last-comma-first: "PENA, MIGUEL III"
+            comma_form = last + ", " + " ".join(middle_first)
+            if suffix:
+                comma_form += " " + suffix
+            comma_form = comma_form.strip(" ,")
             if comma_form not in out:
                 out.append(comma_form)
-            # 5. First+last only (drops middle): "JOHN AMARO"
-            if len(parts) >= 3:
+            # 5. First+last only: "MIGUEL PENA" (drops middle and suffix)
+            if first and len(middle_first) >= 2:
                 first_last = first + " " + last
                 if first_last not in out:
                     out.append(first_last)
+            # 6 + 7. Joint-owner forms (only when input indicates joint
+            # ownership). NCAD records joint deeds two ways:
+            #   Short: "LAST FIRST AND WF"           (e.g. "RODRIGUEZ LEO AND WF")
+            #   Long:  "LAST FIRST AND WF SPOUSE_FULL_NAME"
+            #          (e.g. "GUERRERO ANTHONY AND WF ERICA NICOLE DAVIS GUERRERO")
+            if (has_joint_indicator or cordell_style) and first:
+                # 6. "RODRIGUEZ LEO AND WF" — short form
+                joint_short = last + " " + first + " AND WF"
+                if joint_short not in out:
+                    out.append(joint_short)
+                # 7. Full middle-name version: "AMARO JOHN BRUNO AND WF"
+                if len(middle_first) >= 2:
+                    joint_full = (last + " " + " ".join(middle_first)
+                                    + " AND WF")
+                    if joint_full not in out:
+                        out.append(joint_full)
+                # 8. Long form: also append the secondary borrower's name.
+                # The secondary name comes from the part after AND in the
+                # original input.
+                if len(parts_full) == 2:
+                    secondary = parts_full[1]
+                    # Strip "WIFE,"/"HUSBAND," prefix if present.
+                    secondary = re.sub(
+                        r"^(?:WIFE|HUSBAND|SPOUSE)\s*,?\s*", "",
+                        secondary, flags=re.IGNORECASE)
+                    secondary = re.sub(
+                        r"\s+(?:HUSBAND\s+AND\s+WIFE|HIS\s+WIFE|"
+                        r"HER\s+HUSBAND)\s*$", "",
+                        secondary, flags=re.IGNORECASE).strip(" ,")
+                    if secondary and len(secondary) > 3:
+                        # "GUERRERO ANTHONY AND WF ERICA NICOLE DAVIES GUERRERO"
+                        long_form = (last + " " + first + " AND WF "
+                                       + secondary)
+                        if long_form not in out:
+                            out.append(long_form)
+
     # Dedup while preserving order.
     seen = set()
     uniq = []
@@ -2851,7 +2932,7 @@ def _esearch_query_variants(name: str) -> List[str]:
         if q not in seen:
             seen.add(q)
             uniq.append(q)
-    return uniq[:5]
+    return uniq[:8]
 
 
 def _parse_esearch_detail(html: str) -> Optional[Dict[str, str]]:
