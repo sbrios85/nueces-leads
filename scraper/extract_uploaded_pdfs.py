@@ -24,6 +24,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import sys
 import traceback
 from datetime import datetime, timezone
@@ -74,6 +75,40 @@ def _save_foreclosures(payload: dict) -> None:
                          encoding="utf-8")
         log.info("wrote %s (%d records)", path,
                   len(payload.get("records", [])))
+
+
+def _normalize_name_for_ncad(raw: str) -> str:
+    """Extract just the primary borrower name for an NCAD lookup.
+
+    The PDF parser captures the full borrower clause which often
+    includes a spouse / co-borrower:
+       "JOHN BRUNO AMARO AND WIFE, SANDRA ANN AMARO"
+       "Brandon C Cordell and Arlene Madali Cordell husband and wife"
+       "MIGUEL PENA III AND CLAIRE O. GUERRA"
+    NCAD's esearch indexes by individual person, so we want just the
+    first name. We split on common connectors (AND/and/&) and take
+    the left half.
+
+    Returns "" if the result is too short to be useful.
+    """
+    if not raw:
+        return ""
+    # Drop trailing descriptors like ", AN UNMARRIED WOMAN" — anything
+    # after a comma followed by a generic descriptor.
+    s = re.sub(r"\s*,\s*(?:AN?\s|UNMARRIED|SINGLE|MARRIED|A\s+SINGLE|"
+                r"HUSBAND|WIFE|HIS\s+SPOUSE|HER\s+SPOUSE).*$",
+                "", raw, flags=re.IGNORECASE)
+    # Split on the first "AND"/"and"/"&" between full names. Use
+    # word boundaries to avoid splitting inside a name like "ANDERSON".
+    parts = re.split(r"\s+(?:AND|and|&)\s+", s, maxsplit=1)
+    primary = parts[0].strip(" ,.").strip()
+    # Remove trailing single-letter words (titles, initials that lost
+    # their period during OCR — e.g. "JOHN A" → "JOHN").
+    primary = re.sub(r"\s+[A-Z]\.?$", "", primary).strip()
+    # Sanity check: needs at least 4 chars
+    if len(primary) < 4:
+        return ""
+    return primary
 
 
 def _looks_like_garbage(text: str) -> bool:
@@ -374,9 +409,21 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
         current_year = str(datetime.now(timezone.utc).year)
 
         for rec in eligible:
-            name = rec.get("owner", "")
-            if not name:
+            raw_name = rec.get("owner", "")
+            if not raw_name:
                 continue
+
+            # Try lookup with TWO name forms:
+            #   1. The full borrower line as captured from PDF
+            #      ("JOHN BRUNO AMARO AND WIFE, SANDRA ANN AMARO")
+            #      — NCAD sometimes indexes joint owners this way
+            #   2. The normalized primary name only
+            #      ("JOHN BRUNO AMARO")
+            #      — fallback for when NCAD only has the primary borrower
+            name_variants = [raw_name]
+            normalized = _normalize_name_for_ncad(raw_name)
+            if normalized and normalized != raw_name:
+                name_variants.append(normalized)
 
             pdf_legal = (
                 f"Lot: {rec.get('legal_lot', '')} "
@@ -385,33 +432,39 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
             )
 
             best_match: Optional[Dict[str, str]] = None
-            for variant in _esearch_query_variants(name)[:3]:
-                keywords = f"OwnerName:{variant} Year:{current_year} "
-                params = {"keywords": keywords}
-                if token:
-                    params["searchSessionToken"] = token
-                url = (NCAD_ESEARCH_BASE + "/search/result?"
-                        + urlencode(params))
-                try:
-                    await page.goto(url, wait_until="domcontentloaded",
-                                     timeout=20_000)
-                    await page.wait_for_timeout(400)
-                    html = await page.content()
-                except Exception:
-                    continue
+            for name_idx, name in enumerate(name_variants):
+                log.info("  cross-ref attempt %d/%d: %r",
+                          name_idx + 1, len(name_variants), name)
+                for variant in _esearch_query_variants(name)[:3]:
+                    keywords = f"OwnerName:{variant} Year:{current_year} "
+                    params = {"keywords": keywords}
+                    if token:
+                        params["searchSessionToken"] = token
+                    url = (NCAD_ESEARCH_BASE + "/search/result?"
+                            + urlencode(params))
+                    try:
+                        await page.goto(url, wait_until="domcontentloaded",
+                                         timeout=20_000)
+                        await page.wait_for_timeout(400)
+                        html = await page.content()
+                    except Exception:
+                        continue
 
-                results = _parse_esearch_result_list(html)
-                if not results:
-                    continue
+                    results = _parse_esearch_result_list(html)
+                    if not results:
+                        continue
 
-                for res in results:
-                    if legal_descriptions_match(
-                            pdf_legal, res.get("legal", "")):
-                        best_match = res
+                    for res in results:
+                        if legal_descriptions_match(
+                                pdf_legal, res.get("legal", "")):
+                            best_match = res
+                            break
+                    if best_match:
                         break
+                    await asyncio.sleep(1.0)
+                # Found a match on this name variant — stop trying other variants
                 if best_match:
                     break
-                await asyncio.sleep(1.0)
 
             if best_match and best_match.get("situs"):
                 site_addr, site_city, site_state, site_zip = (
@@ -422,9 +475,11 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
                     rec["prop_state"] = site_state or "TX"
                     rec["prop_zip"] = site_zip
                     enriched += 1
-                    log.info("  cross-ref %r → %s", name, site_addr)
+                    log.info("  cross-ref %r → %s", raw_name, site_addr)
             else:
-                log.info("  cross-ref %r → no match", name)
+                log.info("  cross-ref %r → no match (tried %d name "
+                         "variant(s))",
+                         raw_name, len(name_variants))
 
             await asyncio.sleep(1.5)
 
