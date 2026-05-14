@@ -476,11 +476,34 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
                 f"Subdivision- Name: {rec.get('legal_subdivision', '')}"
             )
 
+            # === STAGE 1: name-based search with legal-description filter ===
+            #
+            # Three match tiers:
+            #   STRONG: name search returns rows + legal descriptions match
+            #   WEAK:   name search returns rows BUT no legal-description match;
+            #           if there's a unique-enough name hit, take it anyway with a warning
+            #   NONE:   name search returns 0 rows or only obviously-wrong rows
+            #
+            # We accumulate ALL rows returned across all name variants
+            # so we can find a strong match even if the first variant
+            # only returned weak hits.
+
             best_match: Optional[Dict[str, str]] = None
+            weak_candidates: List[Dict[str, str]] = []   # rows whose legal mismatches
+            primary_last_name = ""
+            # Derive the primary last name for weak-match scoring
+            if primary := _normalize_name_for_ncad(raw_name):
+                # Skip suffixes JR/SR/II/III when picking last name
+                SUFFIXES = {"JR", "SR", "II", "III", "IV", "V"}
+                tokens = [t for t in primary.upper().split()
+                           if t not in SUFFIXES]
+                if tokens:
+                    primary_last_name = tokens[-1]
+
             for name_idx, name in enumerate(name_variants):
                 log.info("  cross-ref attempt %d/%d: %r",
                           name_idx + 1, len(name_variants), name)
-                for variant in _esearch_query_variants(name)[:5]:
+                for variant in _esearch_query_variants(name)[:8]:
                     keywords = f"OwnerName:{variant} Year:{current_year} "
                     params = {"keywords": keywords}
                     if token:
@@ -499,17 +522,111 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
                     if not results:
                         continue
 
+                    # Pass 1: strong matches (legal descriptions agree)
                     for res in results:
                         if legal_descriptions_match(
                                 pdf_legal, res.get("legal", "")):
                             best_match = res
+                            log.info("    STRONG match found "
+                                     "(legal descriptions agree)")
                             break
                     if best_match:
                         break
+                    # Pass 2: stash any rows where the owner's last name
+                    # matches our borrower's last name. These are candidates
+                    # for "WEAK" matching if no strong match emerges.
+                    if primary_last_name:
+                        for res in results:
+                            owner_upper = res.get("owner", "").upper()
+                            if primary_last_name in owner_upper:
+                                weak_candidates.append(res)
                     await asyncio.sleep(1.0)
-                # Found a match on this name variant — stop trying other variants
                 if best_match:
                     break
+
+            # === STAGE 2 (only if no strong match): WEAK fallback ===
+            #
+            # Use a result row whose owner's last name matches the
+            # borrower's, even if the legal descriptions don't agree.
+            # This handles cases where NCAD's record has a slightly
+            # different legal-description format that the matcher
+            # can't reconcile, but the name itself is a clear hit.
+            if not best_match and weak_candidates:
+                # Prefer the candidate with a non-empty situs address.
+                with_addr = [c for c in weak_candidates
+                              if c.get("situs", "").strip()]
+                if with_addr:
+                    # If there are multiple, pick the one whose legal
+                    # description shares the most tokens with the PDF
+                    # legal (best partial match wins).
+                    def score(c: Dict[str, str]) -> int:
+                        pdf_tokens = set(
+                            re.findall(r"[A-Z0-9]+",
+                                        pdf_legal.upper()))
+                        ncad_tokens = set(
+                            re.findall(r"[A-Z0-9]+",
+                                        c.get("legal", "").upper()))
+                        return len(pdf_tokens & ncad_tokens)
+                    with_addr.sort(key=score, reverse=True)
+                    best_match = with_addr[0]
+                    log.warning("    WEAK match: owner name matched "
+                                "but legal description differs "
+                                "(pdf: %r ncad: %r) — using anyway",
+                                pdf_legal[:60],
+                                best_match.get("legal", "")[:60])
+
+            # === STAGE 3 (only if still no match): legal-description search ===
+            #
+            # No name variant returned anything useful. As a last resort,
+            # use the legal description itself as a search query. NCAD
+            # indexes legal descriptions in the OwnerName field too for
+            # entity-owned properties, but they ARE searchable via the
+            # general keyword search. Try a few subdivision-based queries
+            # and filter results by approximate name match.
+            if not best_match:
+                subdivision = rec.get("legal_subdivision", "").strip()
+                lot = rec.get("legal_lot", "").strip()
+                if subdivision and lot:
+                    # Build candidate queries from the legal description.
+                    # NCAD search appears to do prefix/keyword matching,
+                    # so "BARCELONA ESTATES" should find all properties
+                    # in that subdivision.
+                    legal_queries = [subdivision]
+                    log.info("    STAGE 3: legal-description search "
+                              "with subdivision=%r lot=%r",
+                              subdivision, lot)
+                    for query in legal_queries:
+                        keywords = (f"OwnerName:{query} "
+                                     f"Year:{current_year} ")
+                        params = {"keywords": keywords}
+                        if token:
+                            params["searchSessionToken"] = token
+                        url = (NCAD_ESEARCH_BASE + "/search/result?"
+                                + urlencode(params))
+                        try:
+                            await page.goto(url,
+                                             wait_until="domcontentloaded",
+                                             timeout=20_000)
+                            await page.wait_for_timeout(400)
+                            html = await page.content()
+                        except Exception:
+                            continue
+
+                        results = _parse_esearch_result_list(html)
+                        if not results:
+                            continue
+                        # Filter by exact legal match — only consider rows
+                        # whose legal description agrees with our PDF.
+                        for res in results:
+                            if legal_descriptions_match(
+                                    pdf_legal, res.get("legal", "")):
+                                best_match = res
+                                log.info("    STAGE 3 match found via "
+                                         "legal-description search")
+                                break
+                        if best_match:
+                            break
+                        await asyncio.sleep(1.0)
 
             if best_match and best_match.get("situs"):
                 site_addr, site_city, site_state, site_zip = (
@@ -520,11 +637,14 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
                     rec["prop_state"] = site_state or "TX"
                     rec["prop_zip"] = site_zip
                     enriched += 1
-                    log.info("  cross-ref %r → %s", raw_name, site_addr)
+                    log.info("  cross-ref %r → %s",
+                              raw_name, site_addr)
             else:
-                log.info("  cross-ref %r → no match (tried %d name "
-                         "variant(s))",
-                         raw_name, len(name_variants))
+                log.info("  cross-ref %r → no match "
+                         "(tried %d name variant(s), "
+                         "%d weak candidate(s), legal fallback)",
+                         raw_name, len(name_variants),
+                         len(weak_candidates))
 
             await asyncio.sleep(1.5)
 
