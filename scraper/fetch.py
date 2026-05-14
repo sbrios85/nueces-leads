@@ -2801,23 +2801,49 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
 
 
 def _esearch_query_variants(name: str) -> List[str]:
-    """Generate up to 3 query strings to try for a given owner name."""
+    """Generate up to 5 query strings to try for a given owner name.
+
+    For "JOHN BRUNO AMARO":
+      1. "JOHN BRUNO AMARO" — full name as-is
+      2. "AMARO JOHN BRUNO" — last-first format (NCAD's preferred index)
+      3. "AMARO" — last name only (broad fallback)
+      4. "AMARO, JOHN BRUNO" — last-comma-first format
+      5. "JOHN AMARO" — first+last (drops middle)
+    """
     n = re.sub(r"\s+", " ", name.upper().strip())
     n = re.sub(r"[^A-Z0-9 ,&-]", " ", n)
     n = re.sub(r"\s+", " ", n).strip(" ,")
     if not n:
         return []
-    out = [n]                                # try as-is first
+    out = [n]                                # 1. try as-is first
+    # If the input already has a comma, also try without it
     if "," in n:
-        # "SCHAFER, ROBERT" → "SCHAFER ROBERT"
         out.append(n.replace(",", "").strip())
     parts = n.replace(",", "").split()
     if len(parts) >= 2:
-        # Last-name-only fallback (limits results, but at least catches
-        # individuals when the first/middle names diverge).
-        last = parts[0]
-        if len(last) >= 3 and last not in out:
-            out.append(last)
+        # NCAD indexes owners by LAST name, not first. The LAST word
+        # in a typical "FIRST MIDDLE LAST" string is the last name.
+        # (This is the opposite of what the original code did, which
+        # was a bug.)
+        last = parts[-1]
+        first = parts[0]
+        if len(last) >= 3:
+            # 2. Last-first format: "AMARO JOHN BRUNO"
+            reordered = last + " " + " ".join(parts[:-1])
+            if reordered not in out:
+                out.append(reordered)
+            # 3. Last-name only: "AMARO"
+            if last not in out:
+                out.append(last)
+            # 4. Last-comma-first: "AMARO, JOHN BRUNO"
+            comma_form = last + ", " + " ".join(parts[:-1])
+            if comma_form not in out:
+                out.append(comma_form)
+            # 5. First+last only (drops middle): "JOHN AMARO"
+            if len(parts) >= 3:
+                first_last = first + " " + last
+                if first_last not in out:
+                    out.append(first_last)
     # Dedup while preserving order.
     seen = set()
     uniq = []
@@ -2825,7 +2851,7 @@ def _esearch_query_variants(name: str) -> List[str]:
         if q not in seen:
             seen.add(q)
             uniq.append(q)
-    return uniq[:3]
+    return uniq[:5]
 
 
 def _parse_esearch_detail(html: str) -> Optional[Dict[str, str]]:
