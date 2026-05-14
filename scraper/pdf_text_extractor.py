@@ -178,17 +178,28 @@ _RE_BORROWER = [
     # 'NAME ("Borrower"), executed and delivered' — Schmitt template
     re.compile(r"([A-Z][a-zA-Z\s&'.\[\]()-]{4,80}?)\s*"
                 r"\(['\"]?Borrower['\"]?\)"),
-    # "Grantor(s): NAMES" or "Grantor: NAMES" — table-format templates.
-    # Allow commas in the captured name (e.g. "AND WIFE, SANDRA").
-    # Stop at "Original Trustee" / "Original Mortgagee" / newline.
-    re.compile(r"Grantor\(?s?\)?[\s:]+([A-Z][a-zA-Z0-9\s,&'.\[\]()-]{4,120}?)"
+    # "WHEREAS, NAMES, executed and delivered to" — Avots template (260)
+    # Capture all borrowers from start of WHEREAS clause.
+    re.compile(r"WHEREAS,\s+([A-Z][A-Z\s.,&'-]+?)"
+                r"[,\s]+executed\s+and\s+delivered\s+to",
+               re.IGNORECASE),
+    # "NAMES conveyed to <trustee>" — Arnold Gonzales template (261)
+    # The borrowers conveyed the property to the trustee.
+    re.compile(r"\b([A-Z][A-Z\s,&'.-]{4,100}?)\s+conveyed\s+to\s+\w",
+               re.IGNORECASE),
+    # "NAMES, as Grantor(s)" — Hughes Watters / SPS template (262)
+    re.compile(r"\b([A-Z][A-Z\s.,&'-]{4,100}?)[,\s]+as\s+Grantor\(?s?\)?",
+               re.IGNORECASE),
+    # "Grantor(s): NAMES" or "Grantor(s):; NAMES" — table-format
+    # templates (Nestor, Hughes Watters/Rally CU). OCR sometimes
+    # introduces a semicolon between the colon and the name.
+    re.compile(r"Grantor\(?s?\)?[\s:;]+([A-Z][a-zA-Z0-9\s,&'.\[\]()-]{4,120}?)"
                 r"(?=\s*\n|\s+Original\s+(?:Trustee|Mortgagee|Lender)|"
                 r"\s+Current\s+(?:Mortgagee|Beneficiary)|"
                 r"\s+Lender:|\s+Mortgage\s+Servicer:)",
                re.IGNORECASE),
     # Header-line form: "MM/DD/YYYY NAME, MORE_DESCRIPTORS,"
-    # Used by McCarthy & Holthus (template 251 in our test set).
-    # Anchor to start of line + date pattern + name + comma.
+    # Used by McCarthy & Holthus (template 251).
     re.compile(r"^\s*\d{1,2}/\d{1,2}/\d{4}\s+"
                 r"([A-Z][A-Z\s&'.\[\]()-]{4,80}?)"
                 r"(?=,\s*(?:AN?|HUSBAND|WIFE|A\s+(?:SINGLE|MARRIED))"
@@ -216,38 +227,61 @@ _RE_LENDER = [
     # 'for the benefit of NAME ("Lender")' — Schmitt template
     re.compile(r"for\s+the\s+benefit\s+of\s+([A-Z][A-Za-z0-9\s,&.'-]+?)"
                 r"\s*\(['\"]?Lender['\"]?\)"),
-    # "Current Mortgagee: NAME" — Nestor template (Freedom Mortgage)
-    re.compile(r"Current\s+Mortgagee[\s:]+([A-Z][A-Za-z0-9\s&,.'-]{3,80}?)"
-                r"(?=\s*\n|\s+(?:Mortgage\s+Servicer|TS\.\s*#|Original))",
-               re.IGNORECASE),
-    # "Current Beneficiary/Mortgagee: ... ACTUAL_LENDER" — McCarthy template
-    # The text typically has the structure:
-    #   "Current Beneficiary/Mortgagee:\n
-    #    MORTGAGE ELECTRONIC REGISTRATION SYSTEMS, INC. Freedom Mortgage Corporation\n"
-    # MERS is a nominee — the REAL lender is the part AFTER the MERS line.
-    # Match by skipping the MERS prefix entirely and capturing whatever
-    # name immediately follows on the same line (up to newline).
+    # "Current Beneficiary/Mortgagee: ... ACTUAL_LENDER" — McCarthy template.
+    # MUST come before the generic "Mortgagee:" pattern below — McCarthy's
+    # text starts with "Current Beneficiary/Mortgagee:" on its own line
+    # then "MORTGAGE ELECTRONIC..." plus the real lender on the next.
+    # MERS is a nominee — the REAL lender is the part AFTER MERS.
     re.compile(r"Current\s+Beneficiary/?Mortgagee[\s:]*\s*"
                 r"MORTGAGE\s+ELECTRONIC\s+REGISTRATION\s+SYSTEMS,?\s*INC\.?\s+"
                 r"([A-Z][A-Za-z0-9\s&,.'-]+?)"
                 r"(?=\s*\n|\s*\([\"']MERS[\"']\))",
                re.IGNORECASE),
+    # "Current Mortgagee: NAME" — Nestor/Hughes Watters table format.
+    # Requires literal colon so body text like "is the current mortgagee
+    # of the note" doesn't match.
+    re.compile(r"Current\s+Mortgagee:\s+([A-Z][A-Za-z0-9\s&,.'-]{3,80}?)"
+                r"(?=\s*\n|\s+(?:Mortgage\s+Servicer|TS\.\s*#|Original|Mortgagees))",
+               re.IGNORECASE),
+    # "Mortgagee: NAME" — Hughes Watters / SPS template (262).
+    # Capture up to a newline OR a specific stop marker.
+    # Comes AFTER McCarthy MERS pattern above so that template's text
+    # ("Current Beneficiary/Mortgagee:\nMORTGAGE ELECTRONIC...")
+    # doesn't accidentally match here.
+    re.compile(r"(?<!Beneficiary/)(?<!Current\s)\bMortgagee:\s+"
+                r"([A-Z][A-Za-z0-9\s,&.'-]+?)"
+                r"(?=\n|\d{4}\s|SUBSTITUTE\s+TRUSTEE|"
+                r"Mortgage\s+Servicer)",
+               re.IGNORECASE),
     # "Lender: NAME" — Granado-style table format. Stop at newline or
     # known following labels.
-    # NOTE: don't allow the word "hereby" to bleed in (Schmitt template has
-    # "Lender hereby appoints..." in body text — anchored by the colon and
-    # following whitespace, plus a stop at "hereby" handles that.)
     re.compile(r"\bLender:\s+([A-Z][A-Za-z0-9\s&,.'-]{3,80}?)"
                 r"(?=\s*\n|\s+(?:Note|Substitute\s+Trustee|hereby|has))",
                re.IGNORECASE),
-    # "NAME is the current mortgagee" — Mackie Wolf pattern.
-    # Anchor to start with capital letter sequence, restrict length.
-    re.compile(r"\b([A-Z][A-Z0-9\s&,.'-]{2,60}?)\s+is\s+the\s+current\s+mortgagee"),
+    # "NAME is the present owner and holder" — Avots template (260).
+    # The real lender is the person/entity who owns the note.
+    # Capture just the last 1-4 capitalized words (avoids backtracking
+    # all the way to the preceding clause).
+    re.compile(r"\b((?:[A-Z][a-zA-Z]*\.?\s+){1,4}[A-Z][a-zA-Z]+)"
+                r"\s+is\s+the\s+present\s+(?:owner|beneficiary|holder)",
+               re.IGNORECASE),
+    # "for the benefit of [the] NAME-WITH-TRUSTY-SUFFIX" — Arnold Gonzales
+    # template (261) where the lender is an ESTATE/TRUST.
+    re.compile(r"for\s+the\s+benefit\s+of\s+(?:the\s+)?"
+                r"([A-Z][A-Z\s,'.-]+?(?:DECEASED|TRUST|FOUNDATION|"
+                r"ASSOCIATION|CORPORATION|COMPANY|INC|LLC|N\.A\.|BANK))",
+               re.IGNORECASE),
+    # "NAME is the current mortgagee" — Mackie Wolf / Power Default
+    # templates. Anchor to start of sentence (period or newline) so we
+    # capture the FULL lender name (not just the last few words).
+    re.compile(r"(?:^|\.|\n)\s*([A-Z][\w\s.,&'-]{4,200}?)\s+is\s+the\s+"
+                r"current\s+mortgagee",
+               re.MULTILINE),
     # "Beneficiary: NAME" — fallback
     re.compile(r"\bBeneficiary:\s+([A-Z][A-Za-z0-9\s&,.'-]{3,80}?)"
                 r"(?=\s*\n|\s+(?:Note|Trustee))",
                re.IGNORECASE),
-    # "in favor of NAME" — used by Mackie Wolf in body text
+    # "in favor of NAME" — Mackie Wolf body text
     re.compile(r"in\s+favor\s+of\s+([A-Z][A-Za-z0-9\s,&.'-]{3,80}?)"
                 r"(?=\s*,\s*(?:its|a\s+\w+|as\s+|whose|located)|\.|\n|recorded)"),
 ]
@@ -268,6 +302,11 @@ _RE_LOAN_AMOUNT = [
     # since lenders spell out the amount in words first.
     re.compile(r"Note[\s:][\s\S]{1,200}?\(\s*\$\s*([\d,]+(?:\.\d{2})?)\s*\)",
                re.IGNORECASE),
+    # "Amount: $190,400.00" — Hughes Watters table-format template (263).
+    # Anchor to start-of-line or whitespace so we don't match the
+    # word "amount" inside other phrases.
+    re.compile(r"(?:^|\n)\s*Amount:\s+\$\s*([\d,]+(?:\.\d{2})?)",
+               re.IGNORECASE),
     # "principal amount of $XXX" generic
     re.compile(r"principal\s+amount\s+of\s+\$\s*([\d,]+(?:\.\d{2})?)",
                re.IGNORECASE),
@@ -278,14 +317,18 @@ _RE_LOAN_AMOUNT = [
 
 # Deed of trust date — when the original loan was executed.
 _RE_DEED_DATE = [
-    re.compile(r"deed\s+of\s+trust\s+(?:dated|executed\s+on)\s+"
+    # "Deed of Trust dated MM/DD/YYYY" or "Deed of Trust Dated MM/DD/YYYY"
+    # (case-insensitive)
+    re.compile(r"deed\s+of\s+trust\s+(?:dated|executed\s+on)[\s:]+"
                 r"([A-Za-z]+\s+\d{1,2},?\s+\d{4})",
                re.IGNORECASE),
-    re.compile(r"(?:dated|executed)\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4})",
+    # "Deed of Trust or Contract Lien dated MM/DD/YYYY" — Power Default
+    # template (264).
+    re.compile(r"deed\s+of\s+trust(?:\s+or\s+contract\s+lien)?\s+"
+                r"(?:dated|executed)\s+(\d{1,2}/\d{1,2}/\d{2,4})",
                re.IGNORECASE),
-    # MM/DD/YYYY format
-    re.compile(r"deed\s+of\s+trust\s+(?:dated|executed)\s+"
-                r"(\d{1,2}/\d{1,2}/\d{2,4})",
+    # Generic "dated <date>" — fallback.
+    re.compile(r"(?:dated|executed)\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4})",
                re.IGNORECASE),
 ]
 
@@ -302,9 +345,9 @@ _RE_LABELED_ADDRESS = re.compile(
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
     r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
     r"WAY|TRAIL|TR|PARKWAY|PKWY|HIGHWAY|HWY|TERRACE|TER)\.?)"
-    r"[,\s]+([A-Z][a-zA-Z\s!?]+?)"
-    r"(?:,\s+Nueces\s+County)?"
-    r"[,\s]+(?:TX|TEXAS)[\s.]+(\d{5})\)?",
+    r"[.,\s]+([A-Z][a-zA-Z\s!?]+?)"
+    r"(?:[.,]\s+Nueces\s+County)?"
+    r"[.,\s]+(?:TX|TEXAS)[.\s]+(\d{5})\)?",
     re.IGNORECASE,
 )
 
@@ -315,7 +358,7 @@ _RE_FULL_ADDRESS = re.compile(
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
     r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
     r"WAY|TRAIL|TR|PARKWAY|PKWY|HIGHWAY|HWY|TERRACE|TER)\.?)"
-    r"[,\s]+([A-Z][A-Z\s!?]+?)[,\s]+(?:TX|TEXAS)[\s.]+(\d{5})",
+    r"[.,\s]+([A-Z][A-Z\s!?]+?)[.,\s]+(?:TX|TEXAS)[.\s]+(\d{5})",
     re.IGNORECASE,
 )
 
@@ -343,7 +386,7 @@ _RE_LEGAL_PARENS = re.compile(
     r"BLOCK\s+[\w-]+(?:\s+[\w-]+)*?\s*\((\d+)\)[,\s]+"
     r"([A-Z][A-Z\s.,&'-]+?)"
     r"(?:[,.]?\s+UNIT\s+(\d+))?"
-    r"\s*,?\s*(?:A\s+)?(?:SUBDIVISION|ADDITION|ACCORDING\s+TO)",
+    r"\s*,?\s*(?:AN?\s+)?(?:SUBDIVISION|ADDITION|ACCORDING\s+TO)",
     re.IGNORECASE | re.DOTALL,
 )
 
