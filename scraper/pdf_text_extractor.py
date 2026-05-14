@@ -178,28 +178,73 @@ _RE_BORROWER = [
     # 'NAME ("Borrower"), executed and delivered' — Schmitt template
     re.compile(r"([A-Z][a-zA-Z\s&'.\[\]()-]{4,80}?)\s*"
                 r"\(['\"]?Borrower['\"]?\)"),
+    # 'ENTITY (hereinafter called the "Mortgagor")' — Plutus / Diann Bartek
+    # template. The borrower is often an LLC or trust. Anchor to
+    # "purposes," which precedes the borrower name in this template.
+    # Allow curly quotes and a newline between "the" and "Mortgagor".
+    re.compile(r"purposes,?\s+([A-Z][\w\s.,&'-]+?)\s+"
+                r"\(hereinafter\s+called\s+the[\s\n]+"
+                r"[\"'\u2018\u2019\u201C\u201D]?Mortgagor",
+               re.IGNORECASE),
+    # "Grantor: ENTITY, LLC, A ... LIABILITY COMPANY" — Jack O'Boyle
+    # template (270). Captures the entity name + corporate suffix.
+    re.compile(r"\bGrantor:\s+([A-Z][\w\s,.&'-]+?"
+                r"(?:LIMITED\s+LIABILITY\s+COMPANY|LLC|INC|LP|CORP\.?))",
+               re.IGNORECASE),
+    # "Deed conveying title into NAME ("Obligor")" — Mark Gilbreath HOA
+    # template (294).
+    re.compile(r"\bDeed\s+conveying\s+title\s+into\s+"
+                r"([A-Z][a-zA-Z\s.'-]+?)\s+"
+                r"\([\"\u201C]?Obligor[\"\u201D]?\)",
+               re.IGNORECASE),
+    # "conveying the property described below to NAME" — Steptoe & Johnson
+    # HOA template (295).
+    re.compile(r"\bconveying\s+the\s+property\s+described\s+below\s+to\s+"
+                r"([A-Z][a-zA-Z\s.'-]+?)[;,]"),
+    # 'NAME, Trustee of ENTITY TRUST' — HOA assessment template (267)
+    # Captures both the individual trustee and the trust entity name.
+    re.compile(r"\bWHEREAS,\s+([A-Z][A-Z\s.]{3,40}?),?\s+Trustee\s+of\s+"
+                r"([A-Z][A-Z\s\d.]+?\bTRUST\b)",
+               re.IGNORECASE),
     # "WHEREAS, NAMES, executed and delivered to" — Avots template (260)
-    # Capture all borrowers from start of WHEREAS clause.
     re.compile(r"WHEREAS,\s+([A-Z][A-Z\s.,&'-]+?)"
                 r"[,\s]+executed\s+and\s+delivered\s+to",
                re.IGNORECASE),
     # "NAMES conveyed to <trustee>" — Arnold Gonzales template (261)
-    # The borrowers conveyed the property to the trustee.
     re.compile(r"\b([A-Z][A-Z\s,&'.-]{4,100}?)\s+conveyed\s+to\s+\w",
                re.IGNORECASE),
     # "NAMES, as Grantor(s)" — Hughes Watters / SPS template (262)
     re.compile(r"\b([A-Z][A-Z\s.,&'-]{4,100}?)[,\s]+as\s+Grantor\(?s?\)?",
                re.IGNORECASE),
-    # "Grantor(s): NAMES" or "Grantor(s):; NAMES" — table-format
-    # templates (Nestor, Hughes Watters/Rally CU). OCR sometimes
-    # introduces a semicolon between the colon and the name.
+    # "executed by NAMES dated ..." — Schlanger / SCF Jake LP template (291)
+    # Catches "executed by STEPHEN M. GARRETT and DENISE GARRETT dated"
+    re.compile(r"\bexecuted\s+by\s+"
+                r"([A-Z][A-Z0-9\s&'.,-]+?)\s+dated\s+"
+                r"[A-Z][a-z]+\s+\d{1,2},?\s+\d{4}",
+               re.IGNORECASE),
+    # "executed by NAMES, provides" — Mackie Wolf template (292)
+    # MUST come BEFORE the generic "Original Mortgagor/Grantor:" so we
+    # match the borrower in the Mackie Wolf paragraph.
+    re.compile(r"\bexecuted\s+by\s+"
+                r"([A-Z][A-Z\s,&'.-]+?),\s+provides",
+               re.IGNORECASE),
+    # "Original Mortgagor/Grantor: NAMES" — Robertson Anschutz template (269)
+    # Allow newlines inside the name (OCR sometimes wraps long names).
+    re.compile(r"Original\s+Mortgagor/Grantor:\s+"
+                r"([A-Z][A-Z\s.,\-]+?)"
+                r"(?=\s*(?:Original|Current)\s+(?:Beneficiary|Mortgagee)|"
+                r"\s*Recorded\s+in)",
+               re.IGNORECASE),
+    # "Grantor(s): NAMES" or "Grantor(s):; NAMES"  — table-format templates
     re.compile(r"Grantor\(?s?\)?[\s:;]+([A-Z][a-zA-Z0-9\s,&'.\[\]()-]{4,120}?)"
                 r"(?=\s*\n|\s+Original\s+(?:Trustee|Mortgagee|Lender)|"
                 r"\s+Current\s+(?:Mortgagee|Beneficiary)|"
                 r"\s+Lender:|\s+Mortgage\s+Servicer:)",
                re.IGNORECASE),
+    # "Grantor: NAME" (single-line, simpler form) — McAllen attorney template (266)
+    re.compile(r"^\s*Grantor:\s+([A-Z][a-zA-Z\s.'-]{3,60}?)\s*$",
+               re.MULTILINE),
     # Header-line form: "MM/DD/YYYY NAME, MORE_DESCRIPTORS,"
-    # Used by McCarthy & Holthus (template 251).
     re.compile(r"^\s*\d{1,2}/\d{1,2}/\d{4}\s+"
                 r"([A-Z][A-Z\s&'.\[\]()-]{4,80}?)"
                 r"(?=,\s*(?:AN?|HUSBAND|WIFE|A\s+(?:SINGLE|MARRIED))"
@@ -224,9 +269,52 @@ _RE_BORROWER = [
 # Different templates use different labels. Anchor each pattern to a
 # specific label so we don't accidentally grab body text.
 _RE_LENDER = [
+    # "WHEREAS, NAME Association, Inc. (the "Association")" — HOA
+    # assessment foreclosure template (267 Keller). Handles both straight
+    # and curly quotes/apostrophes from OCR.
+    re.compile(r"(?:^|\n)\s*WHEREAS,\s+"
+                r"([A-Z][\w\s.&,'\u2019-]+?Association,?\s+Inc\.?)\s+"
+                r"\(the\s+[\u201C\"']?Association[\u201D\"']?\)",
+               re.IGNORECASE),
+    # "The NAME Council of Co-Owners, Inc. (the "Council")" — Sand Dollar
+    # II HOA template (294 Mark Gilbreath).
+    re.compile(r"^The\s+([A-Z][\w\s.&,'\u2019-]+?Council\s+of\s+Co-Owners,?"
+                r"\s+Inc\.?)\s+\(the\s+[\u201C\"']?Council[\u201D\"']?\)",
+               re.MULTILINE | re.IGNORECASE),
+    # "in favor of NAME Council of Co-Owners" — Leeward Isles HOA
+    # template (295 Steptoe & Johnson).
+    re.compile(r"in\s+favor\s+of\s+"
+                r"([A-Z][\w\s.&,'\u2019-]+?Council\s+of\s+Co-Owners)",
+               re.IGNORECASE),
+    # "WHEREAS, NAME, a TEXAS limited partnership, is the legal owner"
+    # — Schlanger / SCF Jake LP template (291)
+    re.compile(r"WHEREAS,\s+"
+                r"([A-Z][\w\s.,&'-]+?(?:LP|L\.?P\.?|LLC|INC|CORP)\.?,?\s+"
+                r"a\s+\w+\s+"
+                r"(?:limited\s+partnership|limited\s+liability\s+company|"
+                r"company|corporation))",
+               re.IGNORECASE),
+    # "Lender: NAME" — Jack O'Boyle template (270) Closing Capital
+    re.compile(r"^\s*Lender:\s+([A-Z][\w\s.,&'-]+?)\s*$",
+               re.MULTILINE),
     # 'for the benefit of NAME ("Lender")' — Schmitt template
     re.compile(r"for\s+the\s+benefit\s+of\s+([A-Z][A-Za-z0-9\s,&.'-]+?)"
                 r"\s*\(['\"]?Lender['\"]?\)"),
+    # 'NAME (hereinafter called "Beneficiary")' — Plutus / Diann Bartek
+    # template. Anchor STRICTLY to start of line via MULTILINE so we don't
+    # pick up trailing words from the prior sentence ("Deed of Trust.\nSimmons Bank").
+    # Strict char class excludes the period to refuse "Deed of Trust." prefix.
+    # Supports both straight and curly quotes for "Beneficiary".
+    re.compile(r"^([A-Z][a-zA-Z0-9\s&,'-]{2,40}?)\s+"
+                r"\(hereinafter\s+called\s+"
+                r"[\"'\u2018\u2019\u201C\u201D]?Beneficiary",
+               re.MULTILINE | re.IGNORECASE),
+    # "Because of that default, NAME, the owner and holder of the Note"
+    # — Robertson Anschutz template (269)
+    re.compile(r"Because\s+of\s+that\s+default,\s+"
+                r"([A-Z][\w\s,&.'-]{3,60}?),\s+the\s*\n?\s*"
+                r"owner\s+and\s+holder\s+of\s+the\s+Note",
+               re.IGNORECASE),
     # "Current Beneficiary/Mortgagee: ... ACTUAL_LENDER" — McCarthy template.
     # MUST come before the generic "Mortgagee:" pattern below — McCarthy's
     # text starts with "Current Beneficiary/Mortgagee:" on its own line
@@ -322,6 +410,15 @@ _RE_DEED_DATE = [
     re.compile(r"deed\s+of\s+trust\s+(?:dated|executed\s+on)[\s:]+"
                 r"([A-Za-z]+\s+\d{1,2},?\s+\d{4})",
                re.IGNORECASE),
+    # "Deed of Trust\nDate: MM/DD/YYYY" — table format, McAllen
+    # attorney template (266).
+    re.compile(r"deed\s+of\s+trust\s*\n+\s*Date:\s+"
+                r"([A-Za-z]+\s+\d{1,2},?\s+\d{4})",
+               re.IGNORECASE),
+    # "Deed of Trust Date: MM/DD/YYYY" — Robertson Anschutz (269)
+    re.compile(r"deed\s+of\s+trust\s+Date:\s+"
+                r"([A-Za-z]+\s+\d{1,2},?\s+\d{4})",
+               re.IGNORECASE),
     # "Deed of Trust or Contract Lien dated MM/DD/YYYY" — Power Default
     # template (264).
     re.compile(r"deed\s+of\s+trust(?:\s+or\s+contract\s+lien)?\s+"
@@ -338,13 +435,14 @@ _RE_DEED_DATE = [
 # "Property Address: ADDRESS", or "(Address: ADDRESS)" — most reliable
 # when present. Different law firms use different label phrases.
 _RE_LABELED_ADDRESS = re.compile(
-    r"\(?\s*(?:Commonly\s+known\s+as|Property\s+Address|"
+    r"\(?\s*(?:(?:more\s+)?commonly\s+known\s+as|Property\s+Address|"
     r"Property\s+is\s+located\s+at|Address)"
-    r"[\s:]+"
+    r"[\s:;]+"
     r"(\d{1,5}[A-Z]?\s+[A-Z][A-Za-z0-9\s.]{2,60}?\b"
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
     r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
-    r"WAY|TRAIL|TR|PARKWAY|PKWY|HIGHWAY|HWY|TERRACE|TER)\.?)"
+    r"WAY|TRAIL|TR|PARKWAY|PKWY|LOOP|HIGHWAY|HWY|TERRACE|TER)\.?"
+    r"(?:\s+\d+|,?\s+(?:Unit|Apt|Suite|Ste|#)\s*\d+)?)"
     r"[.,\s]+([A-Z][a-zA-Z\s!?]+?)"
     r"(?:[.,]\s+Nueces\s+County)?"
     r"[.,\s]+(?:TX|TEXAS)[.\s]+(\d{5})\)?",
@@ -357,7 +455,7 @@ _RE_FULL_ADDRESS = re.compile(
     r"(\d{1,5}[A-Z]?\s+[A-Z][A-Z0-9\s.]{3,60}?\b"
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
     r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
-    r"WAY|TRAIL|TR|PARKWAY|PKWY|HIGHWAY|HWY|TERRACE|TER)\.?)"
+    r"WAY|TRAIL|TR|PARKWAY|PKWY|LOOP|HIGHWAY|HWY|TERRACE|TER)\.?)"
     r"[.,\s]+([A-Z][A-Z\s!?]+?)[.,\s]+(?:TX|TEXAS)[.\s]+(\d{5})",
     re.IGNORECASE,
 )
@@ -421,13 +519,22 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
                 break
 
     # --- Borrower ---
-    for rx in _RE_BORROWER:
+    # Some patterns explicitly capture entity borrowers (LLCs, trusts).
+    # For those we skip the "_looks_like_lender" check, since the entity
+    # is legitimately the borrower (e.g. Plutus Properties, LLC, or the
+    # Adam Keller 2016 Trust).
+    ENTITY_BORROWER_PATTERN_INDICES = {3, 4, 7}  # Mortgagor / Grantor:LLC / Trustee-of-Trust
+    for idx, rx in enumerate(_RE_BORROWER):
         m = rx.search(text)
         if m:
             name = _clean_name_ocr(m.group(1))
-            if name and len(name) >= 4 and not _looks_like_lender(name):
-                out["borrower"] = name
-                break
+            if not name or len(name) < 4:
+                continue
+            if (idx not in ENTITY_BORROWER_PATTERN_INDICES
+                    and _looks_like_lender(name)):
+                continue
+            out["borrower"] = name
+            break
 
     # --- Lender ---
     for rx in _RE_LENDER:
@@ -470,32 +577,35 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
     chosen_city = None
     chosen_zip = None
 
-    # First try: explicit label
+    # First try: explicit label like "Property Address:" or "Commonly
+    # known as:" or "(Address: ...)". These are unambiguous when present.
+    # Still verify the city is in Nueces County — labels sometimes
+    # refer to the trustee's mailing address.
     m_lbl = _RE_LABELED_ADDRESS.search(text)
     if m_lbl:
-        chosen_street = m_lbl.group(1)
-        chosen_city = m_lbl.group(2)
-        chosen_zip = m_lbl.group(3)
+        labeled_city = m_lbl.group(2).upper().strip()
+        if any(c in labeled_city for c in _NUECES_CITIES):
+            chosen_street = m_lbl.group(1)
+            chosen_city = m_lbl.group(2)
+            chosen_zip = m_lbl.group(3)
 
-    # Second try: scan all addresses and skip blacklisted ones
+    # Second try: scan all addresses, accept ONLY those in Nueces-area cities.
+    # We do NOT fall back to any other city — the property is by definition
+    # in Nueces County, and any non-Nueces address found in the PDF is
+    # a law-firm/trustee/courthouse address that must NOT be picked up.
     if not chosen_street:
         all_addrs = list(_RE_FULL_ADDRESS.finditer(text))
-        candidates = []
         for m in all_addrs:
             street_upper = re.sub(r"\s+", " ",
                                     m.group(1)).upper().strip(" ,.")
             if any(bl in street_upper for bl in _BLACKLIST_ADDRESSES):
                 continue
             city_upper = m.group(2).upper().strip()
-            is_local = any(c in city_upper for c in _NUECES_CITIES)
-            candidates.append((m, is_local))
-        local_addr = next((m for m, is_local in candidates if is_local), None)
-        if local_addr is None and candidates:
-            local_addr = candidates[-1][0]
-        if local_addr:
-            chosen_street = local_addr.group(1)
-            chosen_city = local_addr.group(2)
-            chosen_zip = local_addr.group(3)
+            if any(c in city_upper for c in _NUECES_CITIES):
+                chosen_street = m.group(1)
+                chosen_city = m.group(2)
+                chosen_zip = m.group(3)
+                break
 
     if chosen_street:
         street = re.sub(r"\s+", " ", chosen_street).upper().strip(" ,.")
