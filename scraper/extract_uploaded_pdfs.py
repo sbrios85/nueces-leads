@@ -111,6 +111,45 @@ def _normalize_name_for_ncad(raw: str) -> str:
     return primary
 
 
+def _extract_secondary_name(raw: str) -> str:
+    """Extract the spouse / co-borrower name from a joint borrower clause.
+
+    Examples:
+       "JOHN BRUNO AMARO AND WIFE, SANDRA ANN AMARO"
+           → "SANDRA ANN AMARO"
+       "Brandon C Cordell and Arlene Madali Cordell husband and wife"
+           → "Arlene Madali Cordell"
+       "MIGUEL PENA III AND CLAIRE O. GUERRA"
+           → "CLAIRE O. GUERRA"
+       "ELAINE SALAZAR" (no spouse)
+           → ""
+
+    The secondary name is everything after the FIRST connector
+    ("AND"/"and"/"&"), with stop words removed.
+    """
+    if not raw:
+        return ""
+    # Split on the first connector to get the right-hand side.
+    parts = re.split(r"\s+(?:AND|and|&)\s+", raw, maxsplit=1)
+    if len(parts) < 2:
+        return ""
+    secondary = parts[1].strip()
+    # Strip leading "WIFE,"/"HUSBAND," and similar role labels.
+    secondary = re.sub(r"^(?:WIFE|HUSBAND|SPOUSE)\s*,?\s*",
+                        "", secondary, flags=re.IGNORECASE)
+    # Strip trailing "husband and wife"/"his wife"/"her husband" etc.
+    secondary = re.sub(r"\s+(?:husband\s+and\s+wife|wife\s+and\s+husband|"
+                        r"his\s+(?:wife|spouse)|her\s+(?:husband|spouse))"
+                        r"\s*$", "", secondary, flags=re.IGNORECASE)
+    secondary = secondary.strip(" ,.").strip()
+    # Strip trailing single-letter words
+    secondary = re.sub(r"\s+[A-Z]\.?$", "", secondary).strip()
+    # Need at least 4 chars to be useful
+    if len(secondary) < 4:
+        return ""
+    return secondary
+
+
 def _looks_like_garbage(text: str) -> bool:
     """Heuristic: is this string clearly junk from a page header/footer
     that the regex grabbed by mistake?"""
@@ -413,17 +452,23 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
             if not raw_name:
                 continue
 
-            # Try lookup with TWO name forms:
+            # Try lookup with up to THREE name forms:
             #   1. The full borrower line as captured from PDF
             #      ("JOHN BRUNO AMARO AND WIFE, SANDRA ANN AMARO")
             #      — NCAD sometimes indexes joint owners this way
-            #   2. The normalized primary name only
+            #   2. The primary borrower name only
             #      ("JOHN BRUNO AMARO")
-            #      — fallback for when NCAD only has the primary borrower
-            name_variants = [raw_name]
-            normalized = _normalize_name_for_ncad(raw_name)
-            if normalized and normalized != raw_name:
-                name_variants.append(normalized)
+            #      — most common NCAD owner-name form
+            #   3. The secondary borrower (spouse/co-borrower)
+            #      ("SANDRA ANN AMARO")
+            #      — for cases where the property is in spouse's name
+            name_variants: List[str] = [raw_name]
+            primary = _normalize_name_for_ncad(raw_name)
+            if primary and primary != raw_name:
+                name_variants.append(primary)
+            secondary = _extract_secondary_name(raw_name)
+            if secondary and secondary not in name_variants:
+                name_variants.append(secondary)
 
             pdf_legal = (
                 f"Lot: {rec.get('legal_lot', '')} "
