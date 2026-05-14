@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-14T01:28:16.538537+00:00",
+  "fetched_at": "2026-05-14T01:42:57.393223+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-13",
@@ -607,7 +607,12 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 20,
+      "lender": "RALLY CREDIT UNION",
+      "legal_lot": "15",
+      "legal_block": "10",
+      "legal_subdivision": "WOODLAND CREEK UNIT V",
+      "pdf_parsed_at": "2026-05-14T01:42:43.189993+00:00"
     },
     {
       "doc_num": "2026000261",
@@ -616,8 +621,8 @@
       "sale_date": "2026-06-02",
       "legal": "KINGS POINT- LOT 13, BLOCK 2, UNIT 4 ADDITION",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000261",
-      "owner": "",
-      "loan_amount": null,
+      "owner": "Nueces",
+      "loan_amount": 155000.0,
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -627,7 +632,12 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 20,
+      "deed_date": "September 15, 2017",
+      "legal_lot": "13",
+      "legal_block": "2",
+      "legal_subdivision": "KINGS POINT",
+      "pdf_parsed_at": "2026-05-14T01:42:33.746399+00:00"
     },
     {
       "doc_num": "2026000260",
@@ -647,7 +657,9 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 20,
+      "deed_date": "July 27, 2022",
+      "pdf_parsed_at": "2026-05-14T01:42:28.247891+00:00"
     },
     {
       "doc_num": "2026000259",
@@ -890,16 +902,17 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000262",
       "owner": "",
       "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "3717 WOODSTONE DRIVE",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78415",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 55,
+      "pdf_parsed_at": "2026-05-14T01:42:38.577322+00:00"
     },
     {
       "doc_num": "2026000264",
@@ -908,8 +921,8 @@
       "sale_date": "2026-07-07",
       "legal": "SARAH A ROBERTS SURVEY NO 6 LOTS 7,8 BLOCK 2",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000264",
-      "owner": "",
-      "loan_amount": null,
+      "owner": "MELANIE SANDERS",
+      "loan_amount": 417000.0,
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -919,7 +932,9 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 55,
+      "lender": "of the note and deed of trust or",
+      "pdf_parsed_at": "2026-05-14T01:42:48.788004+00:00"
     },
     {
       "doc_num": "2026000257",
