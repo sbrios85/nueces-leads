@@ -922,49 +922,56 @@ async def fetch_foreclosures(today_iso: str,
         debug_dir = ROOT_DIR / "debug"
         debug_dir.mkdir(parents=True, exist_ok=True)
 
-        # Walk pages with offset-based pagination (publicsearch uses
-        # `offset=N` + `limit=50`). Stop early when:
+        # Pagination strategy: this portal is a React SPA where URL-based
+        # pagination (page=N or offset=N) doesn't work — the React app
+        # only fetches page 1 on a direct URL load. So we load page 1
+        # once, then CLICK the numbered page buttons (1, 2, 3, ...) at
+        # the bottom of the results to navigate. This is what a human
+        # user does and works reliably.
+        #
+        # Stop early when:
+        #   - clicking the next page button fails / no more buttons
         #   - a page returns 0 rows
         #   - a page returns fewer than 50 rows (last page)
         #   - all rows on a page are doc_nums we've already seen this run
         #   - all rows on a page are doc_nums already in our database
-        #     (efficient daily-incremental short-circuit)
         MAX_PAGES = 30
         seen_doc_ids: Set[str] = set()
         known = known_doc_nums or set()
-        for page_num in range(1, MAX_PAGES + 1):
-            offset = (page_num - 1) * 50
-            sep = "&" if "?" in base_url else "?"
-            url = f"{base_url}{sep}limit=50&offset={offset}"
+
+        # Load page 1 (the initial URL load).
+        try:
+            await page.goto(base_url, wait_until="domcontentloaded",
+                              timeout=30_000)
             try:
-                await page.goto(url, wait_until="domcontentloaded",
-                                  timeout=30_000)
-                try:
-                    await page.wait_for_function(
-                        """() => {
-                            const rows = document.querySelectorAll(
-                                'table tbody tr');
-                            if (rows.length > 0) {
-                                for (const r of rows) {
-                                    if (r.textContent &&
-                                        r.textContent.trim().length > 5)
-                                        return true;
-                                }
+                await page.wait_for_function(
+                    """() => {
+                        const rows = document.querySelectorAll(
+                            'table tbody tr');
+                        if (rows.length > 0) {
+                            for (const r of rows) {
+                                if (r.textContent &&
+                                    r.textContent.trim().length > 5)
+                                    return true;
                             }
-                            const txt = document.body.innerText || '';
-                            return txt.includes('No Results Found') ||
-                                   txt.includes('returned no results');
-                        }""",
-                        timeout=20_000,
-                    )
-                except Exception:
-                    pass
-                await page.wait_for_timeout(600)
-                html = await page.content()
-            except Exception as exc:
-                log.warning("foreclosure page %d (offset=%d) fetch failed: %s",
-                              page_num, offset, exc)
-                break
+                        }
+                        const txt = document.body.innerText || '';
+                        return txt.includes('No Results Found') ||
+                               txt.includes('returned no results');
+                    }""",
+                    timeout=20_000,
+                )
+            except Exception:
+                pass
+            await page.wait_for_timeout(800)
+        except Exception as exc:
+            log.warning("foreclosure page 1 initial load failed: %s", exc)
+            await context.close()
+            await browser.close()
+            return []
+
+        for page_num in range(1, MAX_PAGES + 1):
+            html = await page.content()
 
             if page_num == 1:
                 try:
@@ -974,8 +981,7 @@ async def fetch_foreclosures(today_iso: str,
                     pass
 
             page_rows = _extract_foreclosure_table_rows(html)
-            log.info("  page %d (offset=%d): %d rows",
-                      page_num, offset, len(page_rows))
+            log.info("  page %d: %d rows", page_num, len(page_rows))
             if not page_rows:
                 break
 
@@ -1006,6 +1012,47 @@ async def fetch_foreclosures(today_iso: str,
             all_rows.extend(page_rows)
             # Heuristic stop: if we got <50 rows it's the last page.
             if len(page_rows) < 50:
+                break
+
+            # Click the page (page_num + 1) button to navigate. The page
+            # numbers appear as buttons/links at the bottom of the
+            # results — they contain just the number as text.
+            target_page = page_num + 1
+            try:
+                clicked = await page.evaluate(f"""() => {{
+                    const target = '{target_page}';
+                    // Find clickable elements whose text is exactly the
+                    // page number we want. Prioritize elements that look
+                    // like pagination controls (buttons or anchors in a
+                    // pagination container).
+                    const candidates = Array.from(document.querySelectorAll(
+                        'button, a, [role=button], li'));
+                    for (const el of candidates) {{
+                        const txt = (el.textContent || '').trim();
+                        if (txt === target) {{
+                            // Skip if disabled
+                            if (el.disabled) continue;
+                            if (el.classList &&
+                                el.classList.contains('disabled')) continue;
+                            // Try to find a child button/anchor to click
+                            const inner = el.querySelector('button, a');
+                            (inner || el).click();
+                            return true;
+                        }}
+                    }}
+                    return false;
+                }}""")
+                if not clicked:
+                    log.info("    no page %d button found — pagination done",
+                              target_page)
+                    break
+                # Wait for the new page's table data to render. The React
+                # app updates the DOM in place, so we just wait for the
+                # first row's content to differ from before.
+                await page.wait_for_timeout(1500)
+            except Exception as exc:
+                log.warning("    click page %d failed: %s — stopping",
+                              target_page, exc)
                 break
 
         await context.close()
