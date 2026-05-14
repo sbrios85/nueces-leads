@@ -567,10 +567,8 @@ def _build_foreclosure_url(start_iso: str, end_iso: str) -> str:
     """Build the URL for the Foreclosures (FC) tab.
 
     Uses `instrumentDateRange` (which filters by RECORDED date, not sale
-    date — confirmed empirically). Sorts by RECORDED date descending so
-    the newest filings come first. This makes daily incremental runs
-    efficient: page 1 will contain the day's new records plus enough
-    older records to detect via the duplicate-page early stop.
+    date — confirmed empirically). The portal sorts results by recorded
+    date desc by default, which is what we want for incremental runs.
     """
     start_compact = start_iso.replace("-", "")
     end_compact = end_iso.replace("-", "")
@@ -580,10 +578,6 @@ def _build_foreclosure_url(start_iso: str, end_iso: str) -> str:
         "keywordSearch": "false",
         "searchOcrText": "false",
         "searchType": "quickSearch",
-        # Try common publicsearch sort params. Unknown ones are ignored
-        # by the portal so it's safe to include all.
-        "sortBy": "instrumentDate",
-        "sortOrder": "desc",
     }
     return f"{CLERK_BASE}/results?{urlencode(params)}"
 
@@ -3307,9 +3301,32 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
     prop_address, etc.) survive the merge even though the daily portal
     scrape doesn't produce them. Without this merge, every daily run
     would wipe out the manual PDF enrichment.
+
+    SAFETY: if the new run produced 0 records but the existing file has
+    records, REFUSE to overwrite. This guards against the portal
+    returning empty results due to transient errors, rate limiting, or
+    bad URL params silently wiping out good data.
     """
     DASHBOARD_DIR.mkdir(parents=True, exist_ok=True)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    # SAFETY CHECK: never overwrite a non-empty file with 0 records.
+    if not records:
+        existing_path = DASHBOARD_DIR / "foreclosures.json"
+        if existing_path.exists():
+            try:
+                existing = json.loads(existing_path.read_text(encoding="utf-8"))
+                existing_count = len(existing.get("records", []))
+                if existing_count > 0:
+                    log.warning(
+                        "REFUSING to overwrite foreclosures.json: new run "
+                        "returned 0 records but existing file has %d. This "
+                        "usually means the portal request failed or returned "
+                        "empty. Existing data is PRESERVED.",
+                        existing_count)
+                    return
+            except Exception:
+                pass
 
     # Step 1: load any existing PDF-enriched fields from the prior JSON.
     # We key by doc_num, which is stable across portal refreshes.
