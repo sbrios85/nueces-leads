@@ -7996,6 +7996,26 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": ""
+    },
+    "CHATHAM MELBA WELSH": {
+      "site_addr": "134 ALTA PLAZA ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
+    },
+    "EYSTER AGNES WELSH": {
+      "site_addr": "134 ALTA PLAZA ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411",
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": ""
     }
   }
 }
