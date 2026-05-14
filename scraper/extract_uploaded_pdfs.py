@@ -480,7 +480,7 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
             for name_idx, name in enumerate(name_variants):
                 log.info("  cross-ref attempt %d/%d: %r",
                           name_idx + 1, len(name_variants), name)
-                for variant in _esearch_query_variants(name)[:3]:
+                for variant in _esearch_query_variants(name)[:5]:
                     keywords = f"OwnerName:{variant} Year:{current_year} "
                     params = {"keywords": keywords}
                     if token:
