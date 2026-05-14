@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-13T18:55:06.475781+00:00",
+  "fetched_at": "2026-05-14T01:02:20.773823+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-13",
@@ -673,7 +673,7 @@
       "legal_lot": "34",
       "legal_block": "1",
       "legal_subdivision": "GRANADO ESTATES",
-      "pdf_parsed_at": "2026-05-13T18:54:56.804441+00:00"
+      "pdf_parsed_at": "2026-05-14T01:02:10.978986+00:00"
     },
     {
       "doc_num": "2026000258",
@@ -699,7 +699,7 @@
       "legal_lot": "5",
       "legal_block": "2",
       "legal_subdivision": "Woodlawn",
-      "pdf_parsed_at": "2026-05-13T18:54:53.385860+00:00"
+      "pdf_parsed_at": "2026-05-14T01:02:07.526737+00:00"
     },
     {
       "doc_num": "2026000252",
@@ -945,7 +945,7 @@
       "legal_lot": "7",
       "legal_block": "1",
       "legal_subdivision": "BLUE GRASS ESTATES",
-      "pdf_parsed_at": "2026-05-13T18:54:48.915156+00:00"
+      "pdf_parsed_at": "2026-05-14T01:02:03.070914+00:00"
     },
     {
       "doc_num": "2026000251",
@@ -970,7 +970,7 @@
       "legal_lot": "46",
       "legal_block": "3",
       "legal_subdivision": "BARCELONA ESTATES",
-      "pdf_parsed_at": "2026-05-13T18:54:42.830512+00:00"
+      "pdf_parsed_at": "2026-05-14T01:01:57.014844+00:00"
     },
     {
       "doc_num": "2026000256",
@@ -979,18 +979,24 @@
       "sale_date": "2026-07-07",
       "legal": "COUNTRY CLUB ESTATES LOT 18 BLOCK 1 UNIT 30",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000256",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
+      "owner": "MIGUEL PENA III AND CLAIRE O. GUERRA",
+      "loan_amount": 155944.0,
+      "prop_address": "4114 NICKLAUS LANE",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78413",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 55,
+      "lender": "of the note and deed of",
+      "deed_date": "06/13/2012",
+      "legal_lot": "18",
+      "legal_block": "1",
+      "legal_subdivision": "COUNTRY CLUB ESTATES",
+      "pdf_parsed_at": "2026-05-14T01:01:52.360292+00:00"
     },
     {
       "doc_num": "2026000250",
