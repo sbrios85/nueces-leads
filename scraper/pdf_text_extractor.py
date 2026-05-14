@@ -141,8 +141,12 @@ def _extract_text_ocr(pdf_path: Path) -> str:
 # original deed of trust instrument, modifications, etc.) and matching
 # those would corrupt the record matching.
 _RE_DOC_NUM = [
-    # The clerk header line — unambiguous.
-    re.compile(r"^\s*\d{4}\s*[-–]\s*(\d{10})\s+\d{1,2}/\d{1,2}/\d{2,4}",
+    # The clerk header line — unambiguous. Format:
+    #   "2026 - 2026000183 03/26/2026 10:03 AM Page 1 of 3"
+    # Some OCR runs prepend noise like ". ." or ". '" before the year,
+    # so we allow any non-digit, non-newline characters before the
+    # 4-digit year (instead of just whitespace).
+    re.compile(r"^[^\d\n]*\d{4}\s*[-–]\s*(\d{10})\s+\d{1,2}/\d{1,2}/\d{2,4}",
                re.MULTILINE),
 ]
 
@@ -268,9 +272,17 @@ _RE_BORROWER = [
     re.compile(r"^\s*Grantor:\s+([A-Z][a-zA-Z\s.'-]{3,60}?)\s*$",
                re.MULTILINE),
     # Header-line form: "MM/DD/YYYY NAME, MORE_DESCRIPTORS,"
+    # Used by McCarthy & Holthus table format. Stops at the comma
+    # before descriptors like "AN UNMARRIED WOMAN", "HUSBAND AND
+    # WIFE", "UNMARRIED MAN", "A SINGLE PERSON" etc. The bare forms
+    # (UNMARRIED|SINGLE|MARRIED without preceding AN/A) handle OCR
+    # that dropped the article.
     re.compile(r"^\s*\d{1,2}/\d{1,2}/\d{4}\s+"
                 r"([A-Z][A-Z\s&'.\[\]()-]{4,80}?)"
-                r"(?=,\s*(?:AN?|HUSBAND|WIFE|A\s+(?:SINGLE|MARRIED))"
+                r"(?=,\s*(?:AN?\s+|"
+                r"HUSBAND|WIFE|"
+                r"A\s+(?:SINGLE|MARRIED)|"
+                r"UNMARRIED|SINGLE|MARRIED)"
                 r"|,\s*$)",
                re.MULTILINE),
     # Generic Mortgagor/Obligor/Debtor labels
