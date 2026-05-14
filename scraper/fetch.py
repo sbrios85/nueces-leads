@@ -3582,20 +3582,30 @@ def main() -> int:
     # Pass the existing doc_nums so fetch_foreclosures can short-circuit
     # pagination when it hits a page of records we already have.
     # On daily runs this typically means pagination stops at page 1.
+    #
+    # FORECLOSURE_FULL_BACKFILL=1 disables the short-circuit, forcing
+    # the scraper to walk ALL pages. Use this on a one-time historical
+    # backfill run when the existing foreclosures.json is incomplete.
+    full_backfill = os.environ.get("FORECLOSURE_FULL_BACKFILL", "").lower() in (
+        "1", "true", "yes", "y")
     known_doc_nums: Set[str] = set()
-    foreclosures_path = ROOT_DIR / "data" / "foreclosures.json"
-    if foreclosures_path.exists():
-        try:
-            existing = json.loads(foreclosures_path.read_text("utf-8"))
-            for rec in existing.get("records", []):
-                dn = rec.get("doc_num", "")
-                if dn:
-                    known_doc_nums.add(dn)
-            log.info("loaded %d existing foreclosure doc_nums for "
-                     "incremental short-circuit", len(known_doc_nums))
-        except Exception as exc:
-            log.warning("could not read existing foreclosures.json: %s",
-                          exc)
+    if full_backfill:
+        log.info("FORECLOSURE_FULL_BACKFILL=1 — short-circuit DISABLED, "
+                 "will walk all pages")
+    else:
+        foreclosures_path = ROOT_DIR / "data" / "foreclosures.json"
+        if foreclosures_path.exists():
+            try:
+                existing = json.loads(foreclosures_path.read_text("utf-8"))
+                for rec in existing.get("records", []):
+                    dn = rec.get("doc_num", "")
+                    if dn:
+                        known_doc_nums.add(dn)
+                log.info("loaded %d existing foreclosure doc_nums for "
+                         "incremental short-circuit", len(known_doc_nums))
+            except Exception as exc:
+                log.warning("could not read existing foreclosures.json: %s",
+                              exc)
 
     try:
         foreclosures = asyncio.run(fetch_foreclosures(
