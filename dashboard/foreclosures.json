@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-14T01:42:57.393223+00:00",
+  "fetched_at": "2026-05-14T06:07:36.310292+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-13",
@@ -596,8 +596,8 @@
       "sale_date": "2026-06-02",
       "legal": "WOODLAND CREEK LOT 15 BLOCK 10 UNIT V",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000263",
-      "owner": "",
-      "loan_amount": null,
+      "owner": "LEO RODRIGUEZ and MONICA RODRIGUEZ",
+      "loan_amount": 190400.0,
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -612,7 +612,8 @@
       "legal_lot": "15",
       "legal_block": "10",
       "legal_subdivision": "WOODLAND CREEK UNIT V",
-      "pdf_parsed_at": "2026-05-14T01:42:43.189993+00:00"
+      "pdf_parsed_at": "2026-05-14T06:07:06.370511+00:00",
+      "deed_date": "September 25, 2024"
     },
     {
       "doc_num": "2026000261",
@@ -621,7 +622,7 @@
       "sale_date": "2026-06-02",
       "legal": "KINGS POINT- LOT 13, BLOCK 2, UNIT 4 ADDITION",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000261",
-      "owner": "Nueces",
+      "owner": "ANTHONY GUERRERO AND WIFE, ERICA NICOLE DAVIES GUERRERO",
       "loan_amount": 155000.0,
       "prop_address": "",
       "prop_city": "",
@@ -637,7 +638,8 @@
       "legal_lot": "13",
       "legal_block": "2",
       "legal_subdivision": "KINGS POINT",
-      "pdf_parsed_at": "2026-05-14T01:42:33.746399+00:00"
+      "pdf_parsed_at": "2026-05-14T06:06:56.922074+00:00",
+      "lender": "ESTATE OF FLORENCE SELINA GONZALEZ, DECEASED"
     },
     {
       "doc_num": "2026000260",
@@ -646,7 +648,7 @@
       "sale_date": "2026-06-02",
       "legal": "VILLA  DEL SOL CONDOMINIUMS PHASE III UNIT 3218 BLDG C",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000260",
-      "owner": "",
+      "owner": "REED HORTON and TANNER LASTELICK",
       "loan_amount": null,
       "prop_address": "",
       "prop_city": "",
@@ -659,7 +661,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 20,
       "deed_date": "July 27, 2022",
-      "pdf_parsed_at": "2026-05-14T01:42:28.247891+00:00"
+      "pdf_parsed_at": "2026-05-14T06:06:51.443039+00:00",
+      "lender": "Joseph J. Chavez"
     },
     {
       "doc_num": "2026000259",
@@ -900,7 +903,7 @@
       "sale_date": "2026-07-07",
       "legal": "SCHANEN ESTATES WEST LOT 9 BLOCK 9 UNIT 10",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000262",
-      "owner": "",
+      "owner": "PHILANDER SALONE AND ROBERT A. SALONE HUSBAND AND WIFE",
       "loan_amount": null,
       "prop_address": "3717 WOODSTONE DRIVE",
       "prop_city": "CORPUS CHRISTI",
@@ -912,7 +915,11 @@
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 55,
-      "pdf_parsed_at": "2026-05-14T01:42:38.577322+00:00"
+      "pdf_parsed_at": "2026-05-14T06:07:01.878107+00:00",
+      "lender": "U.S. BANK TRUST COMPANY, NATIONAL ASSOCIATION, NOT IN ITS INDIVIDUAL",
+      "legal_lot": "9",
+      "legal_block": "9",
+      "legal_subdivision": "SCHANEN ESTATES WEST"
     },
     {
       "doc_num": "2026000264",
@@ -923,18 +930,19 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000264",
       "owner": "MELANIE SANDERS",
       "loan_amount": 417000.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "211 W OAKES AVE",
+      "prop_city": "PORT ARANSAS",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78373",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 55,
-      "lender": "of the note and deed of trust or",
-      "pdf_parsed_at": "2026-05-14T01:42:48.788004+00:00"
+      "lender": "U.S. Bank Trust National Association, not in its individual capacity, but solely in its capacity as Owner Trustee of Citigroup Mortgage Loan Trast 2025-RP2",
+      "pdf_parsed_at": "2026-05-14T06:07:11.943938+00:00",
+      "deed_date": "12/19/2016"
     },
     {
       "doc_num": "2026000257",
