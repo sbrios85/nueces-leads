@@ -3136,9 +3136,48 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
     """Write the foreclosure stream to dashboard/foreclosures.json and a
     matching CSV. Status (pre/post) is computed at write time using
     today_iso vs each record's sale_date.
+
+    IMPORTANT: this function MERGES with the existing JSON file. Fields
+    set by the PDF parser (owner, loan_amount, deed_date, lender,
+    prop_address, etc.) survive the merge even though the daily portal
+    scrape doesn't produce them. Without this merge, every daily run
+    would wipe out the manual PDF enrichment.
     """
     DASHBOARD_DIR.mkdir(parents=True, exist_ok=True)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Step 1: load any existing PDF-enriched fields from the prior JSON.
+    # We key by doc_num, which is stable across portal refreshes.
+    existing_enrichment: Dict[str, Dict[str, Any]] = {}
+    PDF_FIELDS = ("owner", "loan_amount", "deed_date", "lender",
+                  "prop_address", "prop_city", "prop_state", "prop_zip",
+                  "mail_address", "mail_city", "mail_state", "mail_zip",
+                  "legal_lot", "legal_block", "legal_subdivision",
+                  "legal_unit", "pdf_parsed_at")
+    existing_path = DASHBOARD_DIR / "foreclosures.json"
+    if existing_path.exists():
+        try:
+            old = json.loads(existing_path.read_text(encoding="utf-8"))
+            for rec in old.get("records", []):
+                dn = rec.get("doc_num")
+                if not dn:
+                    continue
+                # Only carry forward fields that are populated (non-empty,
+                # non-null) so we don't overwrite a fresh portal value
+                # with a stale empty string.
+                preserved = {}
+                for fld in PDF_FIELDS:
+                    val = rec.get(fld)
+                    if val not in (None, "", 0):
+                        preserved[fld] = val
+                if preserved:
+                    existing_enrichment[dn] = preserved
+            if existing_enrichment:
+                log.info("merging PDF enrichment for %d existing records",
+                          len(existing_enrichment))
+        except Exception as exc:
+            log.warning("could not load existing foreclosures.json for "
+                        "merge: %s", exc)
 
     enriched = []
     for r in records:
@@ -3151,6 +3190,13 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
             d["days_until_sale"] = (sd - td).days
         except Exception:
             d["days_until_sale"] = None
+        # Merge in preserved PDF-parsed fields if we have any.
+        preserved = existing_enrichment.get(r.doc_num)
+        if preserved:
+            for fld, val in preserved.items():
+                # Only fill if the new portal data is blank/missing.
+                if not d.get(fld):
+                    d[fld] = val
         enriched.append(d)
 
     # Sort: pre-foreclosure first by closest sale date, then post.
