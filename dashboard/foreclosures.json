@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-05-14T19:15:27.982894+00:00",
+  "fetched_at": "2026-05-14T19:41:24.086256+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-14",
-    "end": "2026-08-12"
+    "end": "2026-09-11"
   },
   "total": 50,
   "pre_foreclosure": 50,
@@ -51,8 +51,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "October 3, 1984",
-      "pdf_parsed_at": "2026-05-14T19:00:38.156583+00:00",
-      "lender": "Sand Dollar Il Studio Condominium Council of Co-Owners, Inc"
+      "lender": "Sand Dollar Il Studio Condominium Council of Co-Owners, Inc",
+      "pdf_parsed_at": "2026-05-14T19:00:38.156583+00:00"
     },
     {
       "doc_num": "2026000292",
@@ -73,8 +73,8 @@
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 19,
-      "lender": "WILMINGTON SAVINGS FUND SOCIETY, FSB, AS INDENTURE TRUSTEE WITH RESPECT TO CIM TRUST 2023-R 1",
       "deed_date": "05/24/2010",
+      "lender": "WILMINGTON SAVINGS FUND SOCIETY, FSB, AS INDENTURE TRUSTEE WITH RESPECT TO CIM TRUST 2023-R 1",
       "pdf_parsed_at": "2026-05-14T19:00:28.282180+00:00"
     },
     {
@@ -96,9 +96,9 @@
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 19,
+      "deed_date": "June 15, 2012",
       "lender": "U.S. BANK TRUST",
-      "pdf_parsed_at": "2026-05-14T19:00:33.873119+00:00",
-      "deed_date": "June 15, 2012"
+      "pdf_parsed_at": "2026-05-14T19:00:33.873119+00:00"
     },
     {
       "doc_num": "2026000276",
@@ -120,8 +120,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 19, 2025",
-      "pdf_parsed_at": "2026-05-14T18:58:34.611137+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:58:34.611137+00:00"
     },
     {
       "doc_num": "2026000271",
@@ -143,8 +143,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "May 30, 2024",
-      "pdf_parsed_at": "2026-05-14T18:58:55.447309+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:58:55.447309+00:00"
     },
     {
       "doc_num": "2026000270",
@@ -191,8 +191,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "July 5, 2024",
-      "pdf_parsed_at": "2026-05-14T18:59:21.329806+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:21.329806+00:00"
     },
     {
       "doc_num": "2026000284",
@@ -214,8 +214,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "November 21, 2024",
-      "pdf_parsed_at": "2026-05-14T18:59:31.456050+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:31.456050+00:00"
     },
     {
       "doc_num": "2026000285",
@@ -237,8 +237,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "November 21, 2024",
-      "pdf_parsed_at": "2026-05-14T18:59:41.588478+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:41.588478+00:00"
     },
     {
       "doc_num": "2026000279",
@@ -260,8 +260,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "August 13, 2025",
-      "pdf_parsed_at": "2026-05-14T19:00:12.686579+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T19:00:12.686579+00:00"
     },
     {
       "doc_num": "2026000287",
@@ -283,8 +283,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "June 26, 2024",
-      "pdf_parsed_at": "2026-05-14T18:59:26.325366+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:26.325366+00:00"
     },
     {
       "doc_num": "2026000269",
@@ -305,32 +305,9 @@
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 19,
+      "deed_date": "January 15, 2021",
       "lender": "SELENE FINANCE, LP",
-      "pdf_parsed_at": "2026-05-14T18:58:24.200702+00:00",
-      "deed_date": "January 15, 2021"
-    },
-    {
-      "doc_num": "2026000274",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-05-11",
-      "sale_date": "2026-06-02",
-      "legal": "CLUB ESTATES- LOT 5, BLOCK 6, UNIT 3",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000274",
-      "owner": "Plutus Properties, LLC",
-      "loan_amount": 240000.0,
-      "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
-      "prop_city": "SAN ANTONIO",
-      "prop_state": "TX",
-      "prop_zip": "78209",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 19,
-      "deed_date": "November 4, 2025",
-      "pdf_parsed_at": "2026-05-14T18:59:00.626767+00:00",
-      "lender": "Simmons Bank"
+      "pdf_parsed_at": "2026-05-14T18:58:24.200702+00:00"
     },
     {
       "doc_num": "2026000288",
@@ -352,8 +329,31 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "December 29, 2023",
-      "pdf_parsed_at": "2026-05-14T18:59:52.045875+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:52.045875+00:00"
+    },
+    {
+      "doc_num": "2026000274",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "CLUB ESTATES- LOT 5, BLOCK 6, UNIT 3",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000274",
+      "owner": "Plutus Properties, LLC",
+      "loan_amount": 240000.0,
+      "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
+      "prop_city": "SAN ANTONIO",
+      "prop_state": "TX",
+      "prop_zip": "78209",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 19,
+      "deed_date": "November 4, 2025",
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:00.626767+00:00"
     },
     {
       "doc_num": "2026000273",
@@ -375,8 +375,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 19, 2025",
-      "pdf_parsed_at": "2026-05-14T18:58:39.660191+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:58:39.660191+00:00"
     },
     {
       "doc_num": "2026000277",
@@ -398,8 +398,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 29, 2025",
-      "pdf_parsed_at": "2026-05-14T18:58:45.129320+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:58:45.129320+00:00"
     },
     {
       "doc_num": "2026000281",
@@ -421,8 +421,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "January 17, 2025",
-      "pdf_parsed_at": "2026-05-14T19:00:17.948585+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T19:00:17.948585+00:00"
     },
     {
       "doc_num": "2026000278",
@@ -444,31 +444,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 9, 2025",
-      "pdf_parsed_at": "2026-05-14T19:00:23.237635+00:00",
-      "lender": "Simmons Bank"
-    },
-    {
-      "doc_num": "2026000289",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-05-11",
-      "sale_date": "2026-06-02",
-      "legal": "HOPPER ADDITION- LOT 1, BLOCK 9, UNIT 2",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000289",
-      "owner": "Plutus Properties, LLC",
-      "loan_amount": 52000.0,
-      "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
-      "prop_city": "SAN ANTONIO",
-      "prop_state": "TX",
-      "prop_zip": "78209",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 19,
-      "deed_date": "April 4, 2024",
-      "pdf_parsed_at": "2026-05-14T18:59:57.219350+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T19:00:23.237635+00:00"
     },
     {
       "doc_num": "2026000272",
@@ -490,8 +467,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "June 11, 2024",
-      "pdf_parsed_at": "2026-05-14T18:59:05.836952+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:05.836952+00:00"
     },
     {
       "doc_num": "2026000275",
@@ -513,8 +490,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 23, 2025",
-      "pdf_parsed_at": "2026-05-14T18:58:50.348187+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:58:50.348187+00:00"
     },
     {
       "doc_num": "2026000282",
@@ -536,31 +513,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "December 27, 2024",
-      "pdf_parsed_at": "2026-05-14T18:59:46.705210+00:00",
-      "lender": "Simmons Bank"
-    },
-    {
-      "doc_num": "2026000283",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-05-11",
-      "sale_date": "2026-06-02",
-      "legal": "HAMLIN PLACE- LOT 3, BLOCK 8, UNIT 1",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000283",
-      "owner": "Plutus Properties, LLC",
-      "loan_amount": 197000.0,
-      "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
-      "prop_city": "SAN ANTONIO",
-      "prop_state": "TX",
-      "prop_zip": "78209",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 19,
-      "deed_date": "December 12, 2024",
-      "pdf_parsed_at": "2026-05-14T19:00:02.498621+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:46.705210+00:00"
     },
     {
       "doc_num": "2026000290",
@@ -582,8 +536,54 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "April 12, 2024",
-      "pdf_parsed_at": "2026-05-14T18:59:16.038523+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:16.038523+00:00"
+    },
+    {
+      "doc_num": "2026000289",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "HOPPER ADDITION- LOT 1, BLOCK 9, UNIT 2",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000289",
+      "owner": "Plutus Properties, LLC",
+      "loan_amount": 52000.0,
+      "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
+      "prop_city": "SAN ANTONIO",
+      "prop_state": "TX",
+      "prop_zip": "78209",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 19,
+      "deed_date": "April 4, 2024",
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T18:59:57.219350+00:00"
+    },
+    {
+      "doc_num": "2026000283",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "HAMLIN PLACE- LOT 3, BLOCK 8, UNIT 1",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000283",
+      "owner": "Plutus Properties, LLC",
+      "loan_amount": 197000.0,
+      "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
+      "prop_city": "SAN ANTONIO",
+      "prop_state": "TX",
+      "prop_zip": "78209",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 19,
+      "deed_date": "December 12, 2024",
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T19:00:02.498621+00:00"
     },
     {
       "doc_num": "2026000280",
@@ -605,8 +605,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "May 21, 2025",
-      "pdf_parsed_at": "2026-05-14T19:00:07.618315+00:00",
-      "lender": "Simmons Bank"
+      "lender": "Simmons Bank",
+      "pdf_parsed_at": "2026-05-14T19:00:07.618315+00:00"
     },
     {
       "doc_num": "2026000291",
@@ -628,8 +628,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "February 28, 2025",
-      "pdf_parsed_at": "2026-05-14T18:59:36.624454+00:00",
-      "lender": "SCF Jake, LP., a Texas limited partnership"
+      "lender": "SCF Jake, LP., a Texas limited partnership",
+      "pdf_parsed_at": "2026-05-14T18:59:36.624454+00:00"
     },
     {
       "doc_num": "2026000267",
@@ -651,8 +651,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "May 10, 1974",
-      "pdf_parsed_at": "2026-05-14T18:58:19.151393+00:00",
-      "lender": "Anchor Resort Co-Owner\u2019s Association, Inc"
+      "lender": "Anchor Resort Co-Owner\u2019s Association, Inc",
+      "pdf_parsed_at": "2026-05-14T18:58:19.151393+00:00"
     },
     {
       "doc_num": "2026000266",
@@ -673,8 +673,8 @@
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 19,
-      "pdf_parsed_at": "2026-05-14T18:58:13.675364+00:00",
-      "deed_date": "December 19, 2019"
+      "deed_date": "December 19, 2019",
+      "pdf_parsed_at": "2026-05-14T18:58:13.675364+00:00"
     },
     {
       "doc_num": "2026000263",
@@ -924,12 +924,12 @@
       "days_until_sale": 19
     },
     {
-      "doc_num": "2026000241",
+      "doc_num": "2026000296",
       "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-04-23",
-      "sale_date": "2026-06-02",
-      "legal": "COTTAGE PARK LOT 5 BLOCK 2",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000241",
+      "recorded": "2026-05-14",
+      "sale_date": "2026-07-07",
+      "legal": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000296",
       "owner": "",
       "loan_amount": null,
       "prop_address": "",
@@ -941,7 +941,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 19
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000268",
