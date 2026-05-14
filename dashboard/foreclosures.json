@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-14T17:35:07.971980+00:00",
+  "fetched_at": "2026-05-14T18:42:19.958611+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-14",
@@ -16,20 +16,20 @@
       "sale_date": "2026-06-02",
       "legal": "LEEWARD ISLES PHASE I UNIT 803 BUILDING H",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000295",
-      "owner": "Nueces County",
+      "owner": "Martina M. Rodriguez",
       "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "15010 LEEWARD DR. 803",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78418",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 19,
-      "lender": "Leeward Isles Condominium Council of",
-      "pdf_parsed_at": "2026-05-14T17:34:59.733388+00:00"
+      "lender": "Leeward Isles Condominium Council of Co-Owners",
+      "pdf_parsed_at": "2026-05-14T18:42:11.764519+00:00"
     },
     {
       "doc_num": "2026000294",
@@ -38,12 +38,12 @@
       "sale_date": "2026-06-02",
       "legal": "SAND DOLLAR II STUDIO CONDOMINIUM APT 13 BLDG A",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000294",
-      "owner": "",
+      "owner": "Lacey Davis",
       "loan_amount": null,
-      "prop_address": "5306 HOLLY ROAD",
-      "prop_city": "STE A CORPUS CHRISTI",
+      "prop_address": "14898 GRANADA DRIVE, UNIT 13",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "78411",
+      "prop_zip": "78418",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
@@ -51,7 +51,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "October 3, 1984",
-      "pdf_parsed_at": "2026-05-14T17:34:53.644432+00:00"
+      "pdf_parsed_at": "2026-05-14T18:42:05.742826+00:00",
+      "lender": "Sand Dollar Il Studio Condominium Council of Co-Owners, Inc"
     },
     {
       "doc_num": "2026000292",
@@ -74,7 +75,7 @@
       "days_until_sale": 19,
       "lender": "WILMINGTON SAVINGS FUND SOCIETY, FSB, AS INDENTURE TRUSTEE WITH RESPECT TO CIM TRUST 2023-R 1",
       "deed_date": "05/24/2010",
-      "pdf_parsed_at": "2026-05-14T17:34:43.252377+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:55.581296+00:00"
     },
     {
       "doc_num": "2026000293",
@@ -96,7 +97,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "lender": "U.S. BANK TRUST",
-      "pdf_parsed_at": "2026-05-14T17:34:49.136110+00:00"
+      "pdf_parsed_at": "2026-05-14T18:42:01.376997+00:00",
+      "deed_date": "June 15, 2012"
     },
     {
       "doc_num": "2026000276",
@@ -105,7 +107,7 @@
       "sale_date": "2026-06-02",
       "legal": "COUNTRY CLUB ESTATES- LOT 7, BLOCK 1, UNIT 27",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000276",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 249600.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -118,7 +120,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 19, 2025",
-      "pdf_parsed_at": "2026-05-14T17:32:43.951783+00:00"
+      "pdf_parsed_at": "2026-05-14T18:39:58.284151+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000271",
@@ -127,7 +130,7 @@
       "sale_date": "2026-06-02",
       "legal": "CASA LINDA ESTATES- LOT 3, BLOCK 7, UNIT 2",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000271",
-      "owner": "granted, sald",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 190400.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -140,7 +143,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "May 30, 2024",
-      "pdf_parsed_at": "2026-05-14T17:33:05.828493+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:19.786759+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000270",
@@ -149,7 +153,7 @@
       "sale_date": "2026-06-02",
       "legal": "PHARAOH VALLEY NORTH- LOT 2, BLOCK 22, UNIT 2",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000270",
-      "owner": "",
+      "owner": "DUAL ACTION ENTERPRISE, LLC",
       "loan_amount": 174000.0,
       "prop_address": "6633 SAHARA DRIVE",
       "prop_city": "CORPUS CHRISTI",
@@ -165,7 +169,7 @@
       "legal_lot": "2",
       "legal_block": "22",
       "legal_subdivision": "PHARAOH VALLEY NORTH",
-      "pdf_parsed_at": "2026-05-14T17:33:21.995546+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:35.749975+00:00"
     },
     {
       "doc_num": "2026000286",
@@ -174,7 +178,7 @@
       "sale_date": "2026-06-02",
       "legal": "CARIBBEAN PLACE- LOT 33, BLOCK 9, UNIT 3",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000286",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 196800.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -187,7 +191,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "July 5, 2024",
-      "pdf_parsed_at": "2026-05-14T17:33:32.778803+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:46.415018+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000284",
@@ -196,7 +201,7 @@
       "sale_date": "2026-06-02",
       "legal": "CULLEN PLACE- LOT 13, BLOCK 32, UNIT 3",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000284",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 193000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -209,7 +214,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "November 21, 2024",
-      "pdf_parsed_at": "2026-05-14T17:33:43.344953+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:56.900454+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000285",
@@ -218,7 +224,7 @@
       "sale_date": "2026-06-02",
       "legal": "CRESTMONT- LOT 8, BLOCK 14, UNIT 6",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000285",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 185600.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -231,7 +237,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "November 21, 2024",
-      "pdf_parsed_at": "2026-05-14T17:33:54.147814+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:07.267308+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000279",
@@ -240,7 +247,7 @@
       "sale_date": "2026-06-02",
       "legal": "WOOLDRIDGE CREEK- LOT 28, BLOCK 1, UNIT 12",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000279",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 256000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -253,7 +260,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "August 13, 2025",
-      "pdf_parsed_at": "2026-05-14T17:34:26.847493+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:39.392067+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000287",
@@ -262,7 +270,7 @@
       "sale_date": "2026-06-02",
       "legal": "BERVONNE TERRACE- LOT 12, BLOCK 2",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000287",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 196000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -275,7 +283,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "June 26, 2024",
-      "pdf_parsed_at": "2026-05-14T17:33:37.990663+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:51.630943+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000269",
@@ -286,18 +295,19 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000269",
       "owner": "MARY THERESA ANNE-ALEXANDRIA REYNOLDS and payable",
       "loan_amount": 382500.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "14916 PACKERY VIEW LOOP",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78418",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 19,
-      "lender": "SELENE",
-      "pdf_parsed_at": "2026-05-14T17:32:32.777086+00:00"
+      "lender": "SELENE FINANCE, LP",
+      "pdf_parsed_at": "2026-05-14T18:39:47.358633+00:00",
+      "deed_date": "January 15, 2021"
     },
     {
       "doc_num": "2026000274",
@@ -306,7 +316,7 @@
       "sale_date": "2026-06-02",
       "legal": "CLUB ESTATES- LOT 5, BLOCK 6, UNIT 3",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000274",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 240000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -319,7 +329,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "November 4, 2025",
-      "pdf_parsed_at": "2026-05-14T17:33:11.255104+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:25.159159+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000288",
@@ -328,7 +339,7 @@
       "sale_date": "2026-06-02",
       "legal": "WOOLDRIDGE CREEK- LORT 28, BLOCK 1, UNIT 12",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000288",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 200000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -341,7 +352,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "December 29, 2023",
-      "pdf_parsed_at": "2026-05-14T17:34:05.284933+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:18.029084+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000273",
@@ -350,7 +362,7 @@
       "sale_date": "2026-06-02",
       "legal": "CIMARRON CROSSING- LOT 1, BLOCK 12, UNIT 3",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000273",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 200000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -363,7 +375,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 19, 2025",
-      "pdf_parsed_at": "2026-05-14T17:32:49.184081+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:03.466860+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000277",
@@ -372,7 +385,7 @@
       "sale_date": "2026-06-02",
       "legal": "CLUB ESTATES - LOT 12, BLOCK 2, UNIT 3",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000277",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 235200.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -385,7 +398,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 29, 2025",
-      "pdf_parsed_at": "2026-05-14T17:32:55.017117+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:09.175552+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000281",
@@ -394,7 +408,7 @@
       "sale_date": "2026-06-02",
       "legal": "PRESCOTT PARK- LOT 1, BLOCK 6, UNIT 1",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000281",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 154400.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -407,7 +421,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "January 17, 2025",
-      "pdf_parsed_at": "2026-05-14T17:34:32.406626+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:44.848098+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000278",
@@ -416,7 +431,7 @@
       "sale_date": "2026-06-02",
       "legal": "HOPPER ADDITION- LOT 1, BLOCK 9, UNIT 2",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000278",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 208000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -429,7 +444,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 9, 2025",
-      "pdf_parsed_at": "2026-05-14T17:34:37.962641+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:50.313444+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000289",
@@ -438,7 +454,7 @@
       "sale_date": "2026-06-02",
       "legal": "HOPPER ADDITION- LOT 1, BLOCK 9, UNIT 2",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000289",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 52000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -451,7 +467,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "April 4, 2024",
-      "pdf_parsed_at": "2026-05-14T17:34:10.693468+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:23.389503+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000272",
@@ -460,7 +477,7 @@
       "sale_date": "2026-06-02",
       "legal": "LYNNWOOD PLACE- LOT 14, BLOCK 13, UNIT 3",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000272",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 194400.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -473,7 +490,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "June 11, 2024",
-      "pdf_parsed_at": "2026-05-14T17:33:16.694656+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:30.516621+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000275",
@@ -482,7 +500,7 @@
       "sale_date": "2026-06-02",
       "legal": "THE MEADOWS- LOT 18, BLOCK 3, UNIT 2",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000275",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 200000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -495,7 +513,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 23, 2025",
-      "pdf_parsed_at": "2026-05-14T17:33:00.465891+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:14.497735+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000282",
@@ -504,7 +523,7 @@
       "sale_date": "2026-06-02",
       "legal": "SCHANEN ESTATES- LOT 6, BLOCK 13, UNIT 2",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000282",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 180000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -517,7 +536,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "December 27, 2024",
-      "pdf_parsed_at": "2026-05-14T17:33:59.689711+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:12.540038+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000283",
@@ -526,7 +546,7 @@
       "sale_date": "2026-06-02",
       "legal": "HAMLIN PLACE- LOT 3, BLOCK 8, UNIT 1",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000283",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 197000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -539,7 +559,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "December 12, 2024",
-      "pdf_parsed_at": "2026-05-14T17:34:16.235623+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:28.870456+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000290",
@@ -548,7 +569,7 @@
       "sale_date": "2026-06-02",
       "legal": "PARK TERRACE- LOT 7, BLOCK 6, UNIT 1",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000290",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 172800.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -561,7 +582,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "April 12, 2024",
-      "pdf_parsed_at": "2026-05-14T17:33:27.275986+00:00"
+      "pdf_parsed_at": "2026-05-14T18:40:40.992417+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000280",
@@ -570,7 +592,7 @@
       "sale_date": "2026-06-02",
       "legal": "OCEAN TERRACE- LOT 9, BLOCK 3",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000280",
-      "owner": "granted, sold",
+      "owner": "Plutus Properties, LLC",
       "loan_amount": 276000.0,
       "prop_address": "6700 N. NEW BRAUNFELS AVENUE",
       "prop_city": "SAN ANTONIO",
@@ -583,7 +605,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "May 21, 2025",
-      "pdf_parsed_at": "2026-05-14T17:34:21.569466+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:34.169775+00:00",
+      "lender": "Simmons Bank"
     },
     {
       "doc_num": "2026000291",
@@ -605,7 +628,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "February 28, 2025",
-      "pdf_parsed_at": "2026-05-14T17:33:48.719841+00:00"
+      "pdf_parsed_at": "2026-05-14T18:41:02.184524+00:00",
+      "lender": "SCF Jake, LP., a Texas limited partnership"
     },
     {
       "doc_num": "2026000267",
@@ -614,7 +638,7 @@
       "sale_date": "2026-06-02",
       "legal": "APT NO 134 BUILDING D PUERTO DEL PADRE CONDOMINIUM",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000267",
-      "owner": "",
+      "owner": "ADAM KELLER",
       "loan_amount": null,
       "prop_address": "",
       "prop_city": "",
@@ -627,7 +651,8 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "May 10, 1974",
-      "pdf_parsed_at": "2026-05-14T17:32:27.551288+00:00"
+      "pdf_parsed_at": "2026-05-14T18:39:42.133132+00:00",
+      "lender": "Anchor Resort Co-Owner\u2019s Association, Inc"
     },
     {
       "doc_num": "2026000266",
@@ -648,7 +673,8 @@
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 19,
-      "pdf_parsed_at": "2026-05-14T17:32:21.765883+00:00"
+      "pdf_parsed_at": "2026-05-14T18:39:36.388502+00:00",
+      "deed_date": "December 19, 2019"
     },
     {
       "doc_num": "2026000263",
@@ -938,7 +964,7 @@
       "days_until_sale": 54,
       "deed_date": "November 19, 2005",
       "lender": "U.S. BANK NATIONAL ASSOCIATION, AS TRUSTEE, ON BEHALF OF THE HOLDERS OF",
-      "pdf_parsed_at": "2026-05-14T17:32:38.144268+00:00"
+      "pdf_parsed_at": "2026-05-14T18:39:52.650803+00:00"
     },
     {
       "doc_num": "2026000265",
