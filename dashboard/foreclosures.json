@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-14T18:42:19.958611+00:00",
+  "fetched_at": "2026-05-14T19:00:52.450324+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-14",
@@ -29,7 +29,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "lender": "Leeward Isles Condominium Council of Co-Owners",
-      "pdf_parsed_at": "2026-05-14T18:42:11.764519+00:00"
+      "pdf_parsed_at": "2026-05-14T19:00:44.111118+00:00"
     },
     {
       "doc_num": "2026000294",
@@ -51,7 +51,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "October 3, 1984",
-      "pdf_parsed_at": "2026-05-14T18:42:05.742826+00:00",
+      "pdf_parsed_at": "2026-05-14T19:00:38.156583+00:00",
       "lender": "Sand Dollar Il Studio Condominium Council of Co-Owners, Inc"
     },
     {
@@ -75,7 +75,7 @@
       "days_until_sale": 19,
       "lender": "WILMINGTON SAVINGS FUND SOCIETY, FSB, AS INDENTURE TRUSTEE WITH RESPECT TO CIM TRUST 2023-R 1",
       "deed_date": "05/24/2010",
-      "pdf_parsed_at": "2026-05-14T18:41:55.581296+00:00"
+      "pdf_parsed_at": "2026-05-14T19:00:28.282180+00:00"
     },
     {
       "doc_num": "2026000293",
@@ -84,7 +84,7 @@
       "sale_date": "2026-06-02",
       "legal": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000293",
-      "owner": "RAUL M. MIRELES AND BERTA MIRELES and payable",
+      "owner": "RAUL M. MIRELES AND BERTA MIRELES",
       "loan_amount": 165000.0,
       "prop_address": "3710 MENDENHALL DR",
       "prop_city": "CORPUS CHRISTI",
@@ -97,7 +97,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "lender": "U.S. BANK TRUST",
-      "pdf_parsed_at": "2026-05-14T18:42:01.376997+00:00",
+      "pdf_parsed_at": "2026-05-14T19:00:33.873119+00:00",
       "deed_date": "June 15, 2012"
     },
     {
@@ -120,7 +120,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 19, 2025",
-      "pdf_parsed_at": "2026-05-14T18:39:58.284151+00:00",
+      "pdf_parsed_at": "2026-05-14T18:58:34.611137+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -143,7 +143,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "May 30, 2024",
-      "pdf_parsed_at": "2026-05-14T18:40:19.786759+00:00",
+      "pdf_parsed_at": "2026-05-14T18:58:55.447309+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -169,7 +169,7 @@
       "legal_lot": "2",
       "legal_block": "22",
       "legal_subdivision": "PHARAOH VALLEY NORTH",
-      "pdf_parsed_at": "2026-05-14T18:40:35.749975+00:00"
+      "pdf_parsed_at": "2026-05-14T18:59:10.946017+00:00"
     },
     {
       "doc_num": "2026000286",
@@ -191,7 +191,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "July 5, 2024",
-      "pdf_parsed_at": "2026-05-14T18:40:46.415018+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:21.329806+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -214,7 +214,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "November 21, 2024",
-      "pdf_parsed_at": "2026-05-14T18:40:56.900454+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:31.456050+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -237,7 +237,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "November 21, 2024",
-      "pdf_parsed_at": "2026-05-14T18:41:07.267308+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:41.588478+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -260,7 +260,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "August 13, 2025",
-      "pdf_parsed_at": "2026-05-14T18:41:39.392067+00:00",
+      "pdf_parsed_at": "2026-05-14T19:00:12.686579+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -283,7 +283,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "June 26, 2024",
-      "pdf_parsed_at": "2026-05-14T18:40:51.630943+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:26.325366+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -293,7 +293,7 @@
       "sale_date": "2026-06-02",
       "legal": "VILLAGE BY THE BEACH P U D -LOT 69, BLOCK 1",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000269",
-      "owner": "MARY THERESA ANNE-ALEXANDRIA REYNOLDS and payable",
+      "owner": "MARY THERESA ANNE-ALEXANDRIA REYNOLDS",
       "loan_amount": 382500.0,
       "prop_address": "14916 PACKERY VIEW LOOP",
       "prop_city": "CORPUS CHRISTI",
@@ -306,7 +306,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "lender": "SELENE FINANCE, LP",
-      "pdf_parsed_at": "2026-05-14T18:39:47.358633+00:00",
+      "pdf_parsed_at": "2026-05-14T18:58:24.200702+00:00",
       "deed_date": "January 15, 2021"
     },
     {
@@ -329,7 +329,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "November 4, 2025",
-      "pdf_parsed_at": "2026-05-14T18:40:25.159159+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:00.626767+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -352,7 +352,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "December 29, 2023",
-      "pdf_parsed_at": "2026-05-14T18:41:18.029084+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:52.045875+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -375,7 +375,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 19, 2025",
-      "pdf_parsed_at": "2026-05-14T18:40:03.466860+00:00",
+      "pdf_parsed_at": "2026-05-14T18:58:39.660191+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -398,7 +398,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 29, 2025",
-      "pdf_parsed_at": "2026-05-14T18:40:09.175552+00:00",
+      "pdf_parsed_at": "2026-05-14T18:58:45.129320+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -421,7 +421,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "January 17, 2025",
-      "pdf_parsed_at": "2026-05-14T18:41:44.848098+00:00",
+      "pdf_parsed_at": "2026-05-14T19:00:17.948585+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -444,7 +444,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 9, 2025",
-      "pdf_parsed_at": "2026-05-14T18:41:50.313444+00:00",
+      "pdf_parsed_at": "2026-05-14T19:00:23.237635+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -467,7 +467,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "April 4, 2024",
-      "pdf_parsed_at": "2026-05-14T18:41:23.389503+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:57.219350+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -490,7 +490,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "June 11, 2024",
-      "pdf_parsed_at": "2026-05-14T18:40:30.516621+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:05.836952+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -513,7 +513,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "September 23, 2025",
-      "pdf_parsed_at": "2026-05-14T18:40:14.497735+00:00",
+      "pdf_parsed_at": "2026-05-14T18:58:50.348187+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -536,7 +536,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "December 27, 2024",
-      "pdf_parsed_at": "2026-05-14T18:41:12.540038+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:46.705210+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -559,7 +559,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "December 12, 2024",
-      "pdf_parsed_at": "2026-05-14T18:41:28.870456+00:00",
+      "pdf_parsed_at": "2026-05-14T19:00:02.498621+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -582,7 +582,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "April 12, 2024",
-      "pdf_parsed_at": "2026-05-14T18:40:40.992417+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:16.038523+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -605,7 +605,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "May 21, 2025",
-      "pdf_parsed_at": "2026-05-14T18:41:34.169775+00:00",
+      "pdf_parsed_at": "2026-05-14T19:00:07.618315+00:00",
       "lender": "Simmons Bank"
     },
     {
@@ -628,7 +628,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "February 28, 2025",
-      "pdf_parsed_at": "2026-05-14T18:41:02.184524+00:00",
+      "pdf_parsed_at": "2026-05-14T18:59:36.624454+00:00",
       "lender": "SCF Jake, LP., a Texas limited partnership"
     },
     {
@@ -651,7 +651,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 19,
       "deed_date": "May 10, 1974",
-      "pdf_parsed_at": "2026-05-14T18:39:42.133132+00:00",
+      "pdf_parsed_at": "2026-05-14T18:58:19.151393+00:00",
       "lender": "Anchor Resort Co-Owner\u2019s Association, Inc"
     },
     {
@@ -673,7 +673,7 @@
       "mail_zip": "",
       "status": "pre-foreclosure",
       "days_until_sale": 19,
-      "pdf_parsed_at": "2026-05-14T18:39:36.388502+00:00",
+      "pdf_parsed_at": "2026-05-14T18:58:13.675364+00:00",
       "deed_date": "December 19, 2019"
     },
     {
@@ -964,7 +964,7 @@
       "days_until_sale": 54,
       "deed_date": "November 19, 2005",
       "lender": "U.S. BANK NATIONAL ASSOCIATION, AS TRUSTEE, ON BEHALF OF THE HOLDERS OF",
-      "pdf_parsed_at": "2026-05-14T18:39:52.650803+00:00"
+      "pdf_parsed_at": "2026-05-14T18:58:29.210294+00:00"
     },
     {
       "doc_num": "2026000265",
