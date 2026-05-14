@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-14T01:09:51.653660+00:00",
+  "fetched_at": "2026-05-14T01:28:16.538537+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-13",
@@ -658,10 +658,10 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000259",
       "owner": "JOHN BRUNO AMARO AND WIFE, SANDRA ANN AMARO",
       "loan_amount": 43750.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "4610 E GRANADO DR",
+      "prop_city": "ROBSTOWN",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78380",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
@@ -673,7 +673,7 @@
       "legal_lot": "34",
       "legal_block": "1",
       "legal_subdivision": "GRANADO ESTATES",
-      "pdf_parsed_at": "2026-05-14T01:09:37.089140+00:00"
+      "pdf_parsed_at": "2026-05-14T01:28:05.973389+00:00"
     },
     {
       "doc_num": "2026000258",
@@ -699,7 +699,7 @@
       "legal_lot": "5",
       "legal_block": "2",
       "legal_subdivision": "Woodlawn",
-      "pdf_parsed_at": "2026-05-14T01:09:33.546710+00:00"
+      "pdf_parsed_at": "2026-05-14T01:28:02.462790+00:00"
     },
     {
       "doc_num": "2026000252",
@@ -945,7 +945,7 @@
       "legal_lot": "7",
       "legal_block": "1",
       "legal_subdivision": "BLUE GRASS ESTATES",
-      "pdf_parsed_at": "2026-05-14T01:09:29.122574+00:00"
+      "pdf_parsed_at": "2026-05-14T01:27:57.827943+00:00"
     },
     {
       "doc_num": "2026000251",
@@ -970,7 +970,7 @@
       "legal_lot": "46",
       "legal_block": "3",
       "legal_subdivision": "BARCELONA ESTATES",
-      "pdf_parsed_at": "2026-05-14T01:09:23.131060+00:00"
+      "pdf_parsed_at": "2026-05-14T01:27:51.675288+00:00"
     },
     {
       "doc_num": "2026000256",
@@ -996,7 +996,7 @@
       "legal_lot": "18",
       "legal_block": "1",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
-      "pdf_parsed_at": "2026-05-14T01:09:18.469163+00:00"
+      "pdf_parsed_at": "2026-05-14T01:27:46.876775+00:00"
     },
     {
       "doc_num": "2026000250",
