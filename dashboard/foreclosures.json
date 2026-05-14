@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-14T01:02:20.773823+00:00",
+  "fetched_at": "2026-05-14T01:09:51.653660+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-13",
@@ -673,7 +673,7 @@
       "legal_lot": "34",
       "legal_block": "1",
       "legal_subdivision": "GRANADO ESTATES",
-      "pdf_parsed_at": "2026-05-14T01:02:10.978986+00:00"
+      "pdf_parsed_at": "2026-05-14T01:09:37.089140+00:00"
     },
     {
       "doc_num": "2026000258",
@@ -699,7 +699,7 @@
       "legal_lot": "5",
       "legal_block": "2",
       "legal_subdivision": "Woodlawn",
-      "pdf_parsed_at": "2026-05-14T01:02:07.526737+00:00"
+      "pdf_parsed_at": "2026-05-14T01:09:33.546710+00:00"
     },
     {
       "doc_num": "2026000252",
@@ -945,7 +945,7 @@
       "legal_lot": "7",
       "legal_block": "1",
       "legal_subdivision": "BLUE GRASS ESTATES",
-      "pdf_parsed_at": "2026-05-14T01:02:03.070914+00:00"
+      "pdf_parsed_at": "2026-05-14T01:09:29.122574+00:00"
     },
     {
       "doc_num": "2026000251",
@@ -970,7 +970,7 @@
       "legal_lot": "46",
       "legal_block": "3",
       "legal_subdivision": "BARCELONA ESTATES",
-      "pdf_parsed_at": "2026-05-14T01:01:57.014844+00:00"
+      "pdf_parsed_at": "2026-05-14T01:09:23.131060+00:00"
     },
     {
       "doc_num": "2026000256",
@@ -996,7 +996,7 @@
       "legal_lot": "18",
       "legal_block": "1",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
-      "pdf_parsed_at": "2026-05-14T01:01:52.360292+00:00"
+      "pdf_parsed_at": "2026-05-14T01:09:18.469163+00:00"
     },
     {
       "doc_num": "2026000250",
