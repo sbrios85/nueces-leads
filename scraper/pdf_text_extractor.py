@@ -171,12 +171,19 @@ _RE_BORROWER = [
                 r"an?\s+(?:unmarried|single|married))",
                re.IGNORECASE),
     # "executed by NAME (without comma)" — fallback for Mackie Wolf.
-    # Stops at "dated|to|in favor of|and (recorded|filed|payable)" so
-    # the Robertson Anschutz pattern "executed by NAMES and payable to
-    # the order of Lender" doesn't include "and payable".
-    re.compile(r"executed\s+by\s+([A-Z][A-Z0-9\s&'.\[\]()-]+?)"
+    # Stops at "dated|to|in favor of|and (recorded|filed|payable)|
+    # secures|securing" so templates like Robertson Anschutz ("executed
+    # by NAMES and payable to the order of Lender"), Tromberg/De Cubas
+    # ("executed by NAMES secures the repayment of a Note"), and Power
+    # Default ("executed by) NAMES, securing the payment") all stop
+    # cleanly. The `[\s)]+` after "executed by" tolerates OCR garbage
+    # like a misplaced `)`. The char class allows commas and colons
+    # so OCR slop like "NAME, : NAME" doesn't break the match.
+    re.compile(r"executed\s+by[\s)]+([A-Z][A-Z0-9\s,&'.\[\]():-]+?)"
                 r"(?=\s+(?:dated|to\s+\w+|in\s+favor\s+of|"
-                r"and\s+(?:recorded|filed|payable)))",
+                r"and\s+(?:recorded|filed|payable)|"
+                r"secures?\s+|securing\s+)|"
+                r"\s*,\s*securing\s+)",
                re.IGNORECASE),
     # 'NAME ("Borrower"), executed and delivered' — Schmitt template
     re.compile(r"([A-Z][a-zA-Z\s&'.\[\]()-]{4,80}?)\s*"
@@ -209,6 +216,16 @@ _RE_BORROWER = [
     re.compile(r"\bWHEREAS,\s+([A-Z][A-Z\s.]{3,40}?),?\s+Trustee\s+of\s+"
                 r"([A-Z][A-Z\s\d.]+?\bTRUST\b)",
                re.IGNORECASE),
+    # "WHEREAS, on DATE, BORROWERS, as Grantor(s)" — Robertson Anschutz
+    # template (e.g. 291646802 RODRIGUEZ). Stops at the first comma
+    # after the all-caps name list so "HUSBAND AND WIFE, WITH HER
+    # JOINING HEREIN..." doesn't get appended.
+    re.compile(r"WHEREAS,?\s+on\s+\w+\s+\d+,?\s+\d{4},?\s+"
+                r"([A-Z][A-Z\s.&']+?)"
+                r"(?=,\s+(?:as\s+Grantor|HUSBAND\s+AND\s+WIFE|"
+                r"WIFE\s+AND\s+HUSBAND|AN?\s+(?:SINGLE|UNMARRIED|"
+                r"MARRIED)|A\s+SINGLE\s+(?:MAN|WOMAN|PERSON)))",
+               re.IGNORECASE),
     # "WHEREAS, NAMES, executed and delivered to" — Avots template (260)
     re.compile(r"WHEREAS,\s+([A-Z][A-Z\s.,&'-]+?)"
                 r"[,\s]+executed\s+and\s+delivered\s+to",
@@ -238,12 +255,15 @@ _RE_BORROWER = [
                 r"(?=\s*(?:Original|Current)\s+(?:Beneficiary|Mortgagee)|"
                 r"\s*Recorded\s+in)",
                re.IGNORECASE),
-    # "Grantor(s): NAMES" or "Grantor(s):; NAMES"  — table-format templates
-    re.compile(r"Grantor\(?s?\)?[\s:;]+([A-Z][a-zA-Z0-9\s,&'.\[\]()-]{4,120}?)"
+    # "Grantor(s): NAMES" — explicit labeled form. Requires a colon
+    # (or pipe from OCR garbage like "Grantor(s): | NAME") right after
+    # the label, to avoid matching lowercase prose like "...as
+    # grantor(s) and..." which would otherwise capture trailing junk.
+    re.compile(r"\bGrantor\(?s?\)?\s*[:;|]+\s*\|?\s*"
+                r"([A-Z][a-zA-Z0-9\s,&'.\[\]()-]{4,120}?)"
                 r"(?=\s*\n|\s+Original\s+(?:Trustee|Mortgagee|Lender)|"
                 r"\s+Current\s+(?:Mortgagee|Beneficiary)|"
-                r"\s+Lender:|\s+Mortgage\s+Servicer:)",
-               re.IGNORECASE),
+                r"\s+Lender:|\s+Mortgage\s+Servicer:)"),
     # "Grantor: NAME" (single-line, simpler form) — McAllen attorney template (266)
     re.compile(r"^\s*Grantor:\s+([A-Z][a-zA-Z\s.'-]{3,60}?)\s*$",
                re.MULTILINE),
@@ -439,7 +459,7 @@ _RE_DEED_DATE = [
 # when present. Different law firms use different label phrases.
 _RE_LABELED_ADDRESS = re.compile(
     r"\(?\s*(?:(?:more\s+)?commonly\s+known\s+as|Property\s+Address|"
-    r"Property\s+is\s+located\s+at|Address)"
+    r"Property\s+is\s+located\s+at|Reported\s+Address|Address)"
     r"[\s:;]+"
     r"(\d{1,5}[A-Z]?\s+[A-Z][A-Za-z0-9\s.]{2,60}?\b"
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
@@ -450,6 +470,38 @@ _RE_LABELED_ADDRESS = re.compile(
     r"(?:[.,]\s+Nueces\s+County)?"
     r"[.,\s]+(?:TX|TEXAS)[.\s]+(\d{5})\)?",
     re.IGNORECASE,
+)
+
+# Strategy 1b: header-style address — many BDF/Barrett Daffin templates
+# put the address at the very top of page 1 in this format:
+#   "1737 GALLOP TRAIL                    00000010585446"
+#   "CORPUS CHRISTI, TX 78410"
+# The street and city are on separate lines, with a 6+ digit loan
+# number between them on the street line. There's no comma between
+# street and city. Plain _RE_FULL_ADDRESS won't match this.
+_RE_HEADER_ADDRESS = re.compile(
+    r"^\s*(\d{1,5}[A-Z]?\s+[A-Z][A-Z0-9 .'-]{2,60}?\b"
+    r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
+    r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
+    r"WAY|TRAIL|TR|PARKWAY|PKWY|LOOP|HIGHWAY|HWY|TERRACE|TER)\.?)"
+    r"(?:\s+(?:UNIT|APT|SUITE|STE|#)\s*[A-Z0-9-]+)?"
+    r"\s+\d{6,}\s*\r?\n+\s*"
+    r"([A-Z][A-Z\s!?]+?)[,\s]+(?:TX|TEXAS)\s+(\d{5})",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+# Strategy 1c: bare-line address — some templates have a free-floating
+# line "STREET, CORPUS CHRISTI, TX ZIP" near the top with no label
+# (e.g. Tromberg/De Cubas). _RE_FULL_ADDRESS would match this too, but
+# this pattern is anchored to start-of-line which lets us prioritize it
+# over any street that appears elsewhere in the document body.
+_RE_LINE_ADDRESS = re.compile(
+    r"^\s*(\d{1,5}[A-Z]?\s+[A-Z][A-Z0-9 .'-]{2,60}?\b"
+    r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
+    r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
+    r"WAY|TRAIL|TR|PARKWAY|PKWY|LOOP|HIGHWAY|HWY|TERRACE|TER)\.?)"
+    r"\s*,\s*([A-Z][A-Z\s!?]+?)\s*,\s*(?:TX|TEXAS)\s+(\d{5})",
+    re.IGNORECASE | re.MULTILINE,
 )
 
 # Strategy 2: full address pattern — number + street + suffix + city + TX + zip
@@ -531,6 +583,10 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
         m = rx.search(text)
         if m:
             name = _clean_name_ocr(m.group(1))
+            # Strip trailing descriptors like ", AN UNMARRIED MAN" etc.
+            # (but not for entity borrowers — they keep their suffix)
+            if idx not in ENTITY_BORROWER_PATTERN_INDICES:
+                name = _strip_borrower_descriptors(name)
             if not name or len(name) < 4:
                 continue
             if (idx not in ENTITY_BORROWER_PATTERN_INDICES
@@ -581,9 +637,9 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
     chosen_zip = None
 
     # First try: explicit label like "Property Address:" or "Commonly
-    # known as:" or "(Address: ...)". These are unambiguous when present.
-    # Still verify the city is in Nueces County — labels sometimes
-    # refer to the trustee's mailing address.
+    # known as:" or "Reported Address:" or "(Address: ...)". These are
+    # unambiguous when present. Still verify the city is in Nueces
+    # County — labels sometimes refer to the trustee's mailing address.
     m_lbl = _RE_LABELED_ADDRESS.search(text)
     if m_lbl:
         labeled_city = m_lbl.group(2).upper().strip()
@@ -592,7 +648,33 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
             chosen_city = m_lbl.group(2)
             chosen_zip = m_lbl.group(3)
 
-    # Second try: scan all addresses, accept ONLY those in Nueces-area cities.
+    # Second try: header-style — address at top of page with the loan
+    # number on the street line and the city on the next line. Common
+    # in Barrett Daffin / BDF templates. Anchored to ^ via MULTILINE so
+    # this only matches start-of-line, where headers live.
+    if not chosen_street:
+        m_hdr = _RE_HEADER_ADDRESS.search(text)
+        if m_hdr:
+            hdr_city = m_hdr.group(2).upper().strip()
+            if any(c in hdr_city for c in _NUECES_CITIES):
+                chosen_street = m_hdr.group(1)
+                chosen_city = m_hdr.group(2)
+                chosen_zip = m_hdr.group(3)
+
+    # Third try: bare-line address — free-floating "STREET, CITY, TX
+    # ZIP" line near the top of the doc (Tromberg/De Cubas templates).
+    # Higher priority than the generic body-scan since these address
+    # lines tend to be the property address.
+    if not chosen_street:
+        m_line = _RE_LINE_ADDRESS.search(text)
+        if m_line:
+            line_city = m_line.group(2).upper().strip()
+            if any(c in line_city for c in _NUECES_CITIES):
+                chosen_street = m_line.group(1)
+                chosen_city = m_line.group(2)
+                chosen_zip = m_line.group(3)
+
+    # Fourth try: scan all addresses, accept ONLY those in Nueces-area cities.
     # We do NOT fall back to any other city — the property is by definition
     # in Nueces County, and any non-Nueces address found in the PDF is
     # a law-firm/trustee/courthouse address that must NOT be picked up.
@@ -651,6 +733,43 @@ def _clean_name(s: str) -> str:
     s = re.sub(r"\s+", " ", s).strip(" ,.;:&-")
     s = re.sub(r"\s+(and|to|in|the)\s*$", "", s, flags=re.IGNORECASE)
     return s.strip()
+
+
+# Suffix descriptors that frequently follow a borrower's name in
+# foreclosure notices but aren't part of the name itself. The match is
+# case-insensitive and anchored to a trailing comma + descriptor pattern
+# so we don't accidentally strip parts of the actual name.
+_BORROWER_DESCRIPTOR_SUFFIXES = re.compile(
+    r"[,\s]+(?:"
+    r"an?\s+unmarried\s+(?:man|woman|person)|"
+    r"an?\s+(?:single|married)\s+(?:man|woman|person)|"
+    r"unmarried\s+(?:man|woman|person)|"
+    r"husband\s+and\s+wife|wife\s+and\s+husband|"
+    r"his\s+wife|her\s+husband|a\s+married\s+couple|"
+    r"as\s+community\s+property|as\s+(?:tenants|joint\s+tenants)|"
+    r"a\s+single\s+(?:man|woman|person)|"
+    r"an?\s+unmarried\s+(?:man|woman)"
+    r")\s*$",
+    re.IGNORECASE,
+)
+
+
+def _strip_borrower_descriptors(s: str) -> str:
+    """Strip trailing descriptors like ", AN UNMARRIED MAN", ",
+    HUSBAND AND WIFE", ", A SINGLE PERSON", ", AS COMMUNITY PROPERTY"
+    that some templates append to the borrower name. Applied
+    iteratively in case there are stacked descriptors. Returns the
+    cleaned name; if everything got stripped, returns the original.
+    """
+    if not s:
+        return s
+    original = s
+    for _ in range(3):  # at most a few iterations
+        new_s = _BORROWER_DESCRIPTOR_SUFFIXES.sub("", s).strip(" ,.;:&-")
+        if new_s == s:
+            break
+        s = new_s
+    return s if len(s) >= 3 else original
 
 
 def _clean_name_ocr(s: str) -> str:
