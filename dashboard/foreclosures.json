@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-05-14T06:54:10.169091+00:00",
+  "fetched_at": "2026-05-14T12:23:03.093614+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
-    "start": "2026-05-13",
-    "end": "2026-08-11"
+    "start": "2026-05-14",
+    "end": "2026-08-12"
   },
   "total": 50,
   "pre_foreclosure": 50,
@@ -27,7 +27,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000294",
@@ -47,7 +47,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000292",
@@ -67,7 +67,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000293",
@@ -87,7 +87,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000276",
@@ -107,7 +107,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "deed_date": "September 19, 2025",
       "pdf_parsed_at": "2026-05-14T06:53:36.793942+00:00"
     },
@@ -129,7 +129,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "deed_date": "May 30, 2024",
       "pdf_parsed_at": "2026-05-14T06:53:57.223789+00:00"
     },
@@ -151,7 +151,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000286",
@@ -171,7 +171,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000284",
@@ -191,7 +191,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000285",
@@ -211,7 +211,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000279",
@@ -231,7 +231,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000287",
@@ -251,7 +251,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000269",
@@ -271,7 +271,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "lender": "SELENE",
       "pdf_parsed_at": "2026-05-14T06:53:26.512484+00:00"
     },
@@ -293,7 +293,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "deed_date": "November 4, 2025",
       "pdf_parsed_at": "2026-05-14T06:54:02.303715+00:00"
     },
@@ -315,7 +315,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000273",
@@ -335,7 +335,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "deed_date": "September 19, 2025",
       "pdf_parsed_at": "2026-05-14T06:53:41.724168+00:00"
     },
@@ -357,7 +357,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "deed_date": "September 29, 2025",
       "pdf_parsed_at": "2026-05-14T06:53:47.136976+00:00"
     },
@@ -379,7 +379,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000278",
@@ -399,7 +399,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000289",
@@ -419,7 +419,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000272",
@@ -439,7 +439,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000275",
@@ -459,7 +459,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "deed_date": "September 23, 2025",
       "pdf_parsed_at": "2026-05-14T06:53:52.212936+00:00"
     },
@@ -481,7 +481,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000283",
@@ -501,7 +501,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000290",
@@ -521,7 +521,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000280",
@@ -541,7 +541,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000291",
@@ -561,7 +561,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000267",
@@ -581,7 +581,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "deed_date": "May 10, 1974",
       "pdf_parsed_at": "2026-05-14T06:53:21.621417+00:00"
     },
@@ -603,7 +603,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "pdf_parsed_at": "2026-05-14T06:53:16.287088+00:00"
     },
     {
@@ -624,13 +624,13 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
+      "deed_date": "September 25, 2024",
       "lender": "RALLY CREDIT UNION",
       "legal_lot": "15",
       "legal_block": "10",
       "legal_subdivision": "WOODLAND CREEK UNIT V",
-      "pdf_parsed_at": "2026-05-14T06:46:25.851815+00:00",
-      "deed_date": "September 25, 2024"
+      "pdf_parsed_at": "2026-05-14T06:46:25.851815+00:00"
     },
     {
       "doc_num": "2026000261",
@@ -650,13 +650,13 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "deed_date": "September 15, 2017",
+      "lender": "ESTATE OF FLORENCE SELINA GONZALEZ, DECEASED",
       "legal_lot": "13",
       "legal_block": "2",
       "legal_subdivision": "KINGS POINT",
-      "pdf_parsed_at": "2026-05-14T06:46:16.727371+00:00",
-      "lender": "ESTATE OF FLORENCE SELINA GONZALEZ, DECEASED"
+      "pdf_parsed_at": "2026-05-14T06:46:16.727371+00:00"
     },
     {
       "doc_num": "2026000260",
@@ -676,10 +676,10 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
+      "days_until_sale": 19,
       "deed_date": "July 27, 2022",
-      "pdf_parsed_at": "2026-05-14T06:46:11.431217+00:00",
-      "lender": "Joseph J. Chavez"
+      "lender": "Joseph J. Chavez",
+      "pdf_parsed_at": "2026-05-14T06:46:11.431217+00:00"
     },
     {
       "doc_num": "2026000259",
@@ -699,9 +699,9 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
-      "lender": "GRANADO ESTATES, L.P., a Texas limited partnership",
+      "days_until_sale": 19,
       "deed_date": "May 16, 2019",
+      "lender": "GRANADO ESTATES, L.P., a Texas limited partnership",
       "legal_lot": "34",
       "legal_block": "1",
       "legal_subdivision": "GRANADO ESTATES",
@@ -725,9 +725,9 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20,
-      "lender": "Nextlots Now, LLC, a Texas limited liability company",
+      "days_until_sale": 19,
       "deed_date": "November 19, 2025",
+      "lender": "Nextlots Now, LLC, a Texas limited liability company",
       "legal_lot": "5",
       "legal_block": "2",
       "legal_subdivision": "Woodlawn",
@@ -751,7 +751,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000254",
@@ -771,7 +771,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000255",
@@ -791,7 +791,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000249",
@@ -811,7 +811,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000248",
@@ -831,7 +831,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000236",
@@ -851,7 +851,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000241",
@@ -871,7 +871,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 20
+      "days_until_sale": 19
     },
     {
       "doc_num": "2026000268",
@@ -891,9 +891,9 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55,
-      "lender": "U.S. BANK NATIONAL ASSOCIATION, AS TRUSTEE, ON BEHALF OF THE HOLDERS OF",
+      "days_until_sale": 54,
       "deed_date": "November 19, 2005",
+      "lender": "U.S. BANK NATIONAL ASSOCIATION, AS TRUSTEE, ON BEHALF OF THE HOLDERS OF",
       "pdf_parsed_at": "2026-05-14T06:53:31.473478+00:00"
     },
     {
@@ -914,7 +914,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000262",
@@ -934,12 +934,12 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55,
-      "pdf_parsed_at": "2026-05-14T06:46:21.441576+00:00",
+      "days_until_sale": 54,
       "lender": "U.S. BANK TRUST COMPANY, NATIONAL ASSOCIATION, NOT IN ITS INDIVIDUAL",
       "legal_lot": "9",
       "legal_block": "9",
-      "legal_subdivision": "SCHANEN ESTATES WEST"
+      "legal_subdivision": "SCHANEN ESTATES WEST",
+      "pdf_parsed_at": "2026-05-14T06:46:21.441576+00:00"
     },
     {
       "doc_num": "2026000264",
@@ -959,10 +959,10 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55,
+      "days_until_sale": 54,
+      "deed_date": "12/19/2016",
       "lender": "U.S. Bank Trust National Association, not in its individual capacity, but solely in its capacity as Owner Trustee of Citigroup Mortgage Loan Trast 2025-RP2",
-      "pdf_parsed_at": "2026-05-14T06:46:31.272574+00:00",
-      "deed_date": "12/19/2016"
+      "pdf_parsed_at": "2026-05-14T06:46:31.272574+00:00"
     },
     {
       "doc_num": "2026000257",
@@ -982,9 +982,9 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55,
-      "lender": "Freedom Mortgage Corporation",
+      "days_until_sale": 54,
       "deed_date": "9/15/2014",
+      "lender": "Freedom Mortgage Corporation",
       "legal_lot": "7",
       "legal_block": "1",
       "legal_subdivision": "BLUE GRASS ESTATES",
@@ -1008,7 +1008,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55,
+      "days_until_sale": 54,
       "lender": "Freedom Mortgage Corporation",
       "legal_lot": "46",
       "legal_block": "3",
@@ -1033,9 +1033,9 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55,
-      "lender": "of the note and deed of",
+      "days_until_sale": 54,
       "deed_date": "06/13/2012",
+      "lender": "of the note and deed of",
       "legal_lot": "18",
       "legal_block": "1",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
@@ -1059,7 +1059,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000253",
@@ -1079,7 +1079,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     }
   ]
 }
