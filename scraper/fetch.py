@@ -193,7 +193,14 @@ KEYWORD_CATEGORIES: List[Dict[str, Any]] = [
 # Stored in its own output file, never mixed with the motivated-seller
 # leads. No score; flagged pre/post by sale date.
 FORECLOSURE_CAT = {"cat": "MFC", "label": "Mortgage Foreclosure"}
-FORECLOSURE_LOOKAHEAD_DAYS = 90  # window: today through today+90
+# We need both a lookback (catches notices filed weeks ago with sale
+# dates still in future) AND lookahead (sale dates).
+# The clerk portal's "instrumentDateRange" actually filters by RECORDED
+# date, not sale date — so a 90-day forward window misses notices
+# recorded a month ago for sales 2 months out. Use 365 lookback + 120
+# forward to capture everything potentially relevant.
+FORECLOSURE_LOOKBACK_DAYS = 365   # how far back to look at recorded dates
+FORECLOSURE_LOOKAHEAD_DAYS = 120  # how far forward (sale-date safety margin)
 
 # Map raw doc-type strings (from clerk results) to our category code,
 # used as a fallback when a record's category isn't already known.
@@ -854,11 +861,17 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
 # --------------------------------------------------------------------------- #
 
 async def fetch_foreclosures(today_iso: str,
-                              lookahead_days: int = FORECLOSURE_LOOKAHEAD_DAYS
+                              lookback_days: int = FORECLOSURE_LOOKBACK_DAYS,
+                              lookahead_days: int = FORECLOSURE_LOOKAHEAD_DAYS,
                               ) -> List[ForeclosureRecord]:
     """Drive the clerk portal's Foreclosures (FC) tab to retrieve every
-    upcoming foreclosure with a sale date between `today` and
-    `today + lookahead_days`.
+    foreclosure notice recorded in the past `lookback_days` days
+    (default 365), then client-side filter to those whose sale date is
+    between today and today + `lookahead_days` (default 120).
+
+    The portal's date range filter uses RECORDED date, not sale date.
+    So we cast a wide net on the recorded side and filter sales
+    client-side. Walks all pages by appending page= URL parameter.
 
     Distinct from the motivated-seller pipeline: FC rows have no
     grantor/grantee, but they do have a Sale Date that we use as the
@@ -874,12 +887,21 @@ async def fetch_foreclosures(today_iso: str,
         return []
 
     today_dt = datetime.fromisoformat(today_iso).date()
-    end_dt = today_dt + timedelta(days=lookahead_days)
-    end_iso = end_dt.isoformat()
+    # Recorded-date window: lookback to lookahead from today.
+    rec_start_dt = today_dt - timedelta(days=lookback_days)
+    rec_end_dt = today_dt + timedelta(days=lookahead_days)
+    rec_start_iso = rec_start_dt.isoformat()
+    rec_end_iso = rec_end_dt.isoformat()
+    # Sale-date filter: only keep records whose sale date is in the
+    # forward window (today through today + lookahead).
+    sale_end_dt = today_dt + timedelta(days=lookahead_days)
+    sale_end_iso = sale_end_dt.isoformat()
 
-    url = _build_foreclosure_url(today_iso, end_iso)
-    log.info("=== fetch_foreclosures: window=%s..%s ===", today_iso, end_iso)
-    log.info("  url=%s", url)
+    base_url = _build_foreclosure_url(rec_start_iso, rec_end_iso)
+    log.info("=== fetch_foreclosures: recorded-date window=%s..%s, "
+              "filtering sale-date <= %s ===",
+              rec_start_iso, rec_end_iso, sale_end_iso)
+    log.info("  base_url=%s", base_url)
 
     out: Dict[str, ForeclosureRecord] = {}
 
@@ -888,99 +910,88 @@ async def fetch_foreclosures(today_iso: str,
         context = await browser.new_context(user_agent=USER_AGENT)
         page = await context.new_page()
 
-        try:
-            await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
-            try:
-                await page.wait_for_function(
-                    """() => {
-                        const rows = document.querySelectorAll('table tbody tr');
-                        if (rows.length > 0) {
-                            for (const r of rows) {
-                                if (r.textContent && r.textContent.trim().length > 5)
-                                    return true;
-                            }
-                        }
-                        const txt = document.body.innerText || '';
-                        return txt.includes('No Results Found') ||
-                               txt.includes('returned no results');
-                    }""",
-                    timeout=20_000,
-                )
-            except Exception:
-                pass
-            await page.wait_for_timeout(800)
-            html = await page.content()
-        except Exception as exc:
-            log.error("foreclosure fetch failed: %s", exc)
-            await context.close()
-            await browser.close()
-            return []
-
-        # The FC tab can be paginated. Try to load all pages by clicking
-        # "Next" until disabled, but cap iterations for safety. For small
-        # result counts (typical: 50-100 within 90-day window) usually all
-        # results are on one page.
-        all_rows = _extract_foreclosure_table_rows(html)
-        log.info("  page 1: %d rows", len(all_rows))
-
-        # Save diagnostics (first page only).
+        all_rows: List[Dict] = []
         debug_dir = ROOT_DIR / "debug"
         debug_dir.mkdir(parents=True, exist_ok=True)
-        try:
-            (debug_dir / "first_foreclosure.html").write_text(
-                html, encoding="utf-8")
-        except Exception:
-            pass
 
-        # Best-effort pagination — click any "Next" button up to 10 times.
-        for page_num in range(2, 11):
+        # Walk pages 1..30 (publicsearch sites typically cap somewhere
+        # under that). Stop when a page returns 0 rows or fewer than the
+        # expected per-page count.
+        MAX_PAGES = 30
+        for page_num in range(1, MAX_PAGES + 1):
+            sep = "&" if "?" in base_url else "?"
+            url = f"{base_url}{sep}page={page_num}"
             try:
-                clicked = await page.evaluate("""() => {
-                    const btns = Array.from(document.querySelectorAll(
-                        'button, a, [role=button]'));
-                    for (const b of btns) {
-                        const t = (b.textContent || '').trim().toLowerCase();
-                        if ((t === 'next' || t === '>' || t === 'next page' ||
-                             b.getAttribute('aria-label') === 'Next page')
-                            && !b.disabled
-                            && !(b.classList && b.classList.contains('disabled'))) {
-                            b.click();
-                            return true;
-                        }
-                    }
-                    return false;
-                }""")
-                if not clicked:
-                    break
-                await page.wait_for_timeout(1000)
+                await page.goto(url, wait_until="domcontentloaded",
+                                  timeout=30_000)
+                try:
+                    await page.wait_for_function(
+                        """() => {
+                            const rows = document.querySelectorAll(
+                                'table tbody tr');
+                            if (rows.length > 0) {
+                                for (const r of rows) {
+                                    if (r.textContent &&
+                                        r.textContent.trim().length > 5)
+                                        return true;
+                                }
+                            }
+                            const txt = document.body.innerText || '';
+                            return txt.includes('No Results Found') ||
+                                   txt.includes('returned no results');
+                        }""",
+                        timeout=20_000,
+                    )
+                except Exception:
+                    pass
+                await page.wait_for_timeout(600)
                 html = await page.content()
-                page_rows = _extract_foreclosure_table_rows(html)
-                log.info("  page %d: %d rows", page_num, len(page_rows))
-                if not page_rows:
-                    break
-                all_rows.extend(page_rows)
             except Exception as exc:
-                log.debug("pagination stopped at page %d: %s", page_num, exc)
+                log.warning("foreclosure page %d fetch failed: %s",
+                              page_num, exc)
+                break
+
+            if page_num == 1:
+                try:
+                    (debug_dir / "first_foreclosure.html").write_text(
+                        html, encoding="utf-8")
+                except Exception:
+                    pass
+
+            page_rows = _extract_foreclosure_table_rows(html)
+            log.info("  page %d: %d rows", page_num, len(page_rows))
+            if not page_rows:
+                break
+            all_rows.extend(page_rows)
+            # Heuristic stop: if we got <50 rows it's the last page.
+            if len(page_rows) < 50:
                 break
 
         await context.close()
         await browser.close()
 
+    log.info("  total raw rows across pages: %d", len(all_rows))
+
+    skipped_past_sale = 0
     for raw in all_rows:
         try:
             rec = _normalize_foreclosure_row(raw)
             if rec is None:
                 continue
-            # Filter to records whose sale date is within our window.
+            # Filter to records whose sale date is in the future window.
             if rec.sale_date:
-                if rec.sale_date < today_iso or rec.sale_date > end_iso:
+                if rec.sale_date < today_iso:
+                    skipped_past_sale += 1
+                    continue
+                if rec.sale_date > sale_end_iso:
                     continue
             out[rec.doc_num] = rec
         except Exception as exc:
             log.warning("bad foreclosure row skipped: %s", exc)
 
-    log.info("=== fetch_foreclosures: %d unique upcoming foreclosures ===",
-             len(out))
+    log.info("=== fetch_foreclosures: %d unique upcoming foreclosures "
+              "(skipped %d past-sale-date) ===",
+              len(out), skipped_past_sale)
     return list(out.values())
 
 
