@@ -170,10 +170,13 @@ _RE_BORROWER = [
                 r"a\s+(?:single|married)|husband|wife|"
                 r"an?\s+(?:unmarried|single|married))",
                re.IGNORECASE),
-    # "executed by NAME (without comma)" — fallback for Mackie Wolf
+    # "executed by NAME (without comma)" — fallback for Mackie Wolf.
+    # Stops at "dated|to|in favor of|and (recorded|filed|payable)" so
+    # the Robertson Anschutz pattern "executed by NAMES and payable to
+    # the order of Lender" doesn't include "and payable".
     re.compile(r"executed\s+by\s+([A-Z][A-Z0-9\s&'.\[\]()-]+?)"
                 r"(?=\s+(?:dated|to\s+\w+|in\s+favor\s+of|"
-                r"and\s+(?:recorded|filed)))",
+                r"and\s+(?:recorded|filed|payable)))",
                re.IGNORECASE),
     # 'NAME ("Borrower"), executed and delivered' — Schmitt template
     re.compile(r"([A-Z][a-zA-Z\s&'.\[\]()-]{4,80}?)\s*"
