@@ -3,7 +3,12 @@ name: Scrape Nueces leads
 on:
   schedule:
     - cron: "0 7 * * *"      # daily at 07:00 UTC
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      full_backfill:
+        description: "One-time full backfill (walk every page, ignore short-circuit). Leave OFF for normal daily runs."
+        type: boolean
+        default: false
 
 permissions:
   contents: write             # to commit records.json back to the repo
@@ -44,6 +49,7 @@ jobs:
         env:
           LOG_LEVEL: INFO
           PYTHONUNBUFFERED: "1"
+          FORECLOSURE_FULL_BACKFILL: ${{ inputs.full_backfill && '1' || '' }}
         run: python scraper/fetch.py
 
       - name: Upload debug artifacts
