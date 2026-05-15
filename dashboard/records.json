@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-05-15T21:23:26.904817+00:00",
+  "fetched_at": "2026-05-15T22:26:08.119057+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
     "start": "2026-04-15",
     "end": "2026-05-15"
   },
-  "total": 100,
-  "with_address": 55,
+  "total": 95,
+  "with_address": 57,
   "records": [
     {
       "doc_num": "2026013701",
@@ -57,6 +57,31 @@
         "LLC / corp owner"
       ],
       "score": 55
+    },
+    {
+      "doc_num": "2026014531",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-04-27",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "THE PORT ROYAL BY THE SEA CONDOMINIUM OWNERS ASSOCIATION INC",
+      "grantee": "ARTALE ELSA",
+      "amount": null,
+      "legal": "CAUSE NO 2026DCV-1040-A",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014531",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner"
+      ],
+      "score": 50
     },
     {
       "doc_num": "2026016065",
@@ -204,6 +229,30 @@
         "New this week"
       ],
       "score": 50
+    },
+    {
+      "doc_num": "2026014493",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-04-27",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "SCHAFER ROBERT",
+      "grantee": "AMARO JOHN",
+      "amount": null,
+      "legal": "226 BUSHICK PL CORPUS CHRISTI TX 78402 (Lot 181, Block VIII)",
+      "prop_address": "226 BUSHICK PL",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78402",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014493",
+      "flags": [
+        "Lis pendens"
+      ],
+      "score": 45
     },
     {
       "doc_num": "2026014328",
@@ -590,6 +639,30 @@
       "score": 45
     },
     {
+      "doc_num": "2026014809",
+      "doc_type": "MECHANICS LIEN",
+      "filed": "2026-04-29",
+      "cat": "LNMECH",
+      "cat_label": "Mechanics Lien",
+      "owner": "CLARINGTON HOLDINGS LLC",
+      "grantee": "SEVEN CUSTOM HOMES INC",
+      "amount": null,
+      "legal": "Subdivision - Name: CINNAMON SHORE SOUTH Lot: 19 Block: 4 Unit or Part: 5 Reference - 70/16 (Lot 19, Block 4)",
+      "prop_address": "400 RETREAT ST",
+      "prop_city": "PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "2804 Warren St Austin",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78703",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014809",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 45
+    },
+    {
       "doc_num": "2026014130",
       "doc_type": "MODIFICATION",
       "filed": "2026-04-23",
@@ -872,174 +945,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013056",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026015477",
-      "doc_type": "DEED",
-      "filed": "2026-05-04",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "TAX LIEN HOLDINGS LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: BLUE BONNET Lot: 16,17 Block: 4 (Lot 16,17, Block 4)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026015477",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013781",
-      "doc_type": "DEED",
-      "filed": "2026-04-21",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "TAX LIEN HOLDINGS LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: PORT ARANSAS CLIFFS Lot: 9,10,11 Block: 716 (Lot 9,10,11, Block 716)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013781",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013780",
-      "doc_type": "DEED",
-      "filed": "2026-04-21",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "TAX LIEN HOLDINGS LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: LYNWOOD PLACE Lot: 12 Block: 12 Unit or Part: 3 (Lot 12, Block 12)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013780",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013779",
-      "doc_type": "DEED",
-      "filed": "2026-04-21",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "TAX LIEN HOLDINGS LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: ROLLING ACRES NO 2 Lot: 6 Block: 2 (Lot 6, Block 2)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013779",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013925",
-      "doc_type": "DEED",
-      "filed": "2026-04-22",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "MOUNT NORTH CAPITAL 4 LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: ORIGINAL TOWN OF BISHOP Lot: 8 Block: 32 (Lot 8, Block 32)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013925",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013926",
-      "doc_type": "DEED",
-      "filed": "2026-04-22",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "MOUNT NORTH CAPITAL 4 LLC",
-      "amount": null,
-      "legal": "TRACT D OF THE CORRINE J ELLIFF ESTATE (Lot 60)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013926",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013924",
-      "doc_type": "DEED",
-      "filed": "2026-04-22",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "MOUNT NORTH CAPITAL 4 LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: HIGH TERRACE ADDITION Lot: 50 Block: 4 (Lot 50, Block 4)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013924",
       "flags": [
         "LLC / corp owner"
       ],
@@ -1566,28 +1471,6 @@
       "score": 35
     },
     {
-      "doc_num": "2026014416",
-      "doc_type": "LIEN",
-      "filed": "2026-04-27",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "HOGAN NICHOLAS",
-      "grantee": "CHRISTUS SPOHN HOSPITAL SOUTH",
-      "amount": null,
-      "legal": "",
-      "prop_address": "2830 AUSTIN ST",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78404",
-      "mail_address": "PO Box 4154 Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78469",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014416",
-      "flags": [],
-      "score": 35
-    },
-    {
       "doc_num": "2026014413",
       "doc_type": "LIEN",
       "filed": "2026-04-27",
@@ -1606,6 +1489,28 @@
       "mail_state": "TX",
       "mail_zip": "78411",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014413",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026014416",
+      "doc_type": "LIEN",
+      "filed": "2026-04-27",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "HOGAN NICHOLAS",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SOUTH",
+      "amount": null,
+      "legal": "",
+      "prop_address": "2830 AUSTIN ST",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78404",
+      "mail_address": "PO Box 4154 Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78469",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014416",
       "flags": [],
       "score": 35
     },
@@ -2288,28 +2193,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013141",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026014526",
-      "doc_type": "DEED",
-      "filed": "2026-04-27",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "NUECES COUNTY",
-      "grantee": "TAX LIEN DEED ASSET BUYER LLC",
-      "amount": null,
-      "legal": "SUIT NO 2015DCV-2903-E (Lot 9, Block 3)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014526",
       "flags": [],
       "score": 30
     }
