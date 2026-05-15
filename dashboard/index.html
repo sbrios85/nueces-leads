@@ -244,11 +244,6 @@
   <div class="stats" id="fc-stats"></div>
   <div class="controls">
     <input id="fc-q" placeholder="Search doc# / legal description…">
-    <select id="fc-status">
-      <option value="">All</option>
-      <option value="pre-foreclosure">Pre-foreclosure only</option>
-      <option value="post-foreclosure">Post-foreclosure only</option>
-    </select>
     <select id="fc-sort">
       <option value="days">Sort: Soonest sale first</option>
       <option value="recorded">Sort: Recorded date (newest)</option>
@@ -256,8 +251,8 @@
   </div>
   <table id="fc-table">
     <thead><tr>
-      <th>Sale Date</th><th>Days Until Sale</th><th>Status</th>
-      <th>Recorded</th><th>Doc Type</th>
+      <th>Sale Date</th><th>Days Until Sale</th>
+      <th>Recorded</th>
       <th>Owner</th><th>Property Address</th>
       <th>Loan Amount</th><th>Deed Date</th><th>Lender</th>
       <th>Legal Description</th><th>Doc#</th>
@@ -670,12 +665,10 @@ function renderFcStats(data) {
 }
 function applyFc() {
   const q = document.getElementById("fc-q").value.toLowerCase().trim();
-  const status = document.getElementById("fc-status").value;
   const sort = document.getElementById("fc-sort").value;
   FC_FILTERED = FC_RAW.filter(r => {
-    if (status && r.status !== status) return false;
     if (!q) return true;
-    return [r.doc_num, r.legal, r.owner, r.doc_type]
+    return [r.doc_num, r.legal, r.owner]
       .some(v => (v || "").toLowerCase().includes(q));
   });
   if (sort === "days") FC_FILTERED.sort((a,b) =>
@@ -697,7 +690,6 @@ function renderFc() {
     const daysText = days === null || days === undefined ? "—" :
                      days < 0 ? Math.abs(days) + " days ago" :
                      days + " days";
-    const statusClass = r.status === "post-foreclosure" ? "post" : "pre";
     // Build full property address from address + city + state + zip
     const fullAddr = r.prop_address ?
         [r.prop_address, r.prop_city, r.prop_state, r.prop_zip]
@@ -709,9 +701,7 @@ function renderFc() {
     tr.innerHTML = `
       <td>${esc(r.sale_date || "")}</td>
       <td class="days ${daysClass}">${esc(daysText)}</td>
-      <td><span class="pill ${statusClass}">${esc(r.status || "")}</span></td>
       <td>${esc(r.recorded || "")}</td>
-      <td>${esc(r.doc_type || "")}</td>
       <td>${esc(r.owner || "—")}</td>
       <td>${esc(fullAddr || "—")}</td>
       <td>${loanAmt}</td>
@@ -739,7 +729,6 @@ document.getElementById("ccln-q").oninput = applyCcln;
 document.getElementById("ccln-status-filter").onchange = applyCcln;
 document.getElementById("ccln-sort").onchange = applyCcln;
 document.getElementById("fc-q").oninput = applyFc;
-document.getElementById("fc-status").onchange = applyFc;
 document.getElementById("fc-sort").onchange = applyFc;
 
 // ESC closes drawer
