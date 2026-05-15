@@ -3357,60 +3357,73 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
     DASHBOARD_DIR.mkdir(parents=True, exist_ok=True)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    # SAFETY CHECK: never overwrite a non-empty file with 0 records.
-    if not records:
-        existing_path = DASHBOARD_DIR / "foreclosures.json"
-        if existing_path.exists():
-            try:
-                existing = json.loads(existing_path.read_text(encoding="utf-8"))
-                existing_count = len(existing.get("records", []))
-                if existing_count > 0:
-                    log.warning(
-                        "REFUSING to overwrite foreclosures.json: new run "
-                        "returned 0 records but existing file has %d. This "
-                        "usually means the portal request failed or returned "
-                        "empty. Existing data is PRESERVED.",
-                        existing_count)
-                    return
-            except Exception:
-                pass
+    # Load the existing file once for both safety check + merge logic.
+    existing_path = DASHBOARD_DIR / "foreclosures.json"
+    existing_records: List[Dict[str, Any]] = []
+    if existing_path.exists():
+        try:
+            existing_doc = json.loads(existing_path.read_text(encoding="utf-8"))
+            existing_records = existing_doc.get("records", []) or []
+        except Exception as exc:
+            log.warning("could not read existing foreclosures.json: %s", exc)
+            existing_records = []
+    existing_count = len(existing_records)
+
+    # SAFETY CHECK 1: never overwrite a non-empty file with 0 records.
+    if not records and existing_count > 0:
+        log.warning(
+            "REFUSING to overwrite foreclosures.json: new run returned 0 "
+            "records but existing file has %d. This usually means the portal "
+            "request failed or returned empty. Existing data is PRESERVED.",
+            existing_count)
+        return
+
+    # SAFETY CHECK 2: refuse to drop more than 25% of records in one run.
+    # Daily portal scrapes should be roughly stable in size. A sudden drop
+    # usually means pagination is broken (only page 1 returned). We log a
+    # warning but still proceed by UNION-MERGING with existing records
+    # (see below) so no data is lost.
+    if existing_count >= 20 and len(records) < existing_count * 0.75:
+        log.warning(
+            "WARNING: new scrape returned only %d records vs %d in existing "
+            "file. Likely pagination problem. Existing records NOT in the "
+            "new scrape will be preserved via union-merge.",
+            len(records), existing_count)
 
     # Step 1: load any existing PDF-enriched fields from the prior JSON.
     # We key by doc_num, which is stable across portal refreshes.
     existing_enrichment: Dict[str, Dict[str, Any]] = {}
+    existing_full_records: Dict[str, Dict[str, Any]] = {}
     PDF_FIELDS = ("owner", "loan_amount", "deed_date", "lender",
                   "prop_address", "prop_city", "prop_state", "prop_zip",
                   "mail_address", "mail_city", "mail_state", "mail_zip",
                   "legal_lot", "legal_block", "legal_subdivision",
                   "legal_unit", "pdf_parsed_at")
-    existing_path = DASHBOARD_DIR / "foreclosures.json"
-    if existing_path.exists():
-        try:
-            old = json.loads(existing_path.read_text(encoding="utf-8"))
-            for rec in old.get("records", []):
-                dn = rec.get("doc_num")
-                if not dn:
-                    continue
-                # Only carry forward fields that are populated (non-empty,
-                # non-null) so we don't overwrite a fresh portal value
-                # with a stale empty string.
-                preserved = {}
-                for fld in PDF_FIELDS:
-                    val = rec.get(fld)
-                    if val not in (None, "", 0):
-                        preserved[fld] = val
-                if preserved:
-                    existing_enrichment[dn] = preserved
-            if existing_enrichment:
-                log.info("merging PDF enrichment for %d existing records",
-                          len(existing_enrichment))
-        except Exception as exc:
-            log.warning("could not load existing foreclosures.json for "
-                        "merge: %s", exc)
+    for rec in existing_records:
+        dn = rec.get("doc_num")
+        if not dn:
+            continue
+        # Keep full copy in case we need to carry the record forward.
+        existing_full_records[dn] = rec
+        # Only carry forward fields that are populated (non-empty,
+        # non-null) so we don't overwrite a fresh portal value
+        # with a stale empty string.
+        preserved = {}
+        for fld in PDF_FIELDS:
+            val = rec.get(fld)
+            if val not in (None, "", 0):
+                preserved[fld] = val
+        if preserved:
+            existing_enrichment[dn] = preserved
+    if existing_enrichment:
+        log.info("merging PDF enrichment for %d existing records",
+                  len(existing_enrichment))
 
     enriched = []
+    new_doc_nums = set()
     for r in records:
         d = asdict(r)
+        new_doc_nums.add(r.doc_num)
         d["status"] = _foreclosure_status(r.sale_date, today_iso)
         # Days until sale (negative if sale is in the past).
         try:
@@ -3427,6 +3440,44 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
                 if not d.get(fld):
                     d[fld] = val
         enriched.append(d)
+
+    # UNION-MERGE: carry forward existing records that this scrape DID NOT
+    # return. This protects against data loss when pagination breaks (only
+    # page 1 of N returns) or any other transient scrape regression.
+    # A record only disappears when it's been explicitly absent from
+    # multiple consecutive scrapes (future enhancement: TTL-based
+    # garbage collection). For now, never drop.
+    carried_over = 0
+    today_dt = None
+    try:
+        today_dt = datetime.fromisoformat(today_iso).date()
+    except Exception:
+        pass
+    for dn, rec in existing_full_records.items():
+        if dn in new_doc_nums:
+            continue
+        sd_iso = rec.get("sale_date") or ""
+        # Drop records whose sale date is past — they're no longer
+        # actionable leads. This is the only legitimate reason to remove
+        # a record from foreclosures.json.
+        if sd_iso and sd_iso < today_iso:
+            continue
+        # Refresh status + days_until_sale based on TODAY (sale_date in
+        # the existing record may have rolled past).
+        rec_copy = dict(rec)
+        rec_copy["status"] = _foreclosure_status(sd_iso, today_iso)
+        if today_dt and sd_iso:
+            try:
+                sd = datetime.fromisoformat(sd_iso).date()
+                rec_copy["days_until_sale"] = (sd - today_dt).days
+            except Exception:
+                pass
+        enriched.append(rec_copy)
+        carried_over += 1
+    if carried_over:
+        log.info("union-merge: carried %d existing records not returned by "
+                  "this scrape (protects against pagination regressions)",
+                  carried_over)
 
     # Sort: pre-foreclosure first by closest sale date, then post.
     def sort_key(d):
