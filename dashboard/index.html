@@ -754,7 +754,7 @@ function renderFc() {
             }
         }
 
-        if (!sameLocation && r.mail_city) {
+        if (!sameLocation && (r.mail_zip || r.mail_city)) {
             absenteeBadge = ` <span class="pill absentee" ` +
                 `title="Owner's mailing address differs from property — ` +
                 `likely rented or abandoned">NON-OWNER-OCCUPIED</span>`;
