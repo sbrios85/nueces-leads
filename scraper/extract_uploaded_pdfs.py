@@ -173,35 +173,45 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
 
     overwrite: if True, also overwrites EXISTING values on the record
         (useful for re-processing a PDF after a parser fix). Default
-        False — only fills empty fields.
+        False — only fills empty fields. In overwrite mode, when the
+        new parse returns an empty value for a field, the existing
+        value is also CLEARED — this is essential for fixing records
+        whose old wrong values (e.g. a law firm address that was
+        mis-extracted) need to be removed by a newer parser version.
     """
     if not fields:
         return False
     changed = False
+    # --- Borrower (owner) ---
     borrower = fields.get("borrower", "")
     if borrower and not _looks_like_garbage(borrower):
         if not rec.get("owner") or overwrite:
             if rec.get("owner") != borrower:
                 rec["owner"] = borrower
                 changed = True
+    # --- Loan amount ---
     if fields.get("loan_amount"):
         if not rec.get("loan_amount") or overwrite:
             if rec.get("loan_amount") != fields["loan_amount"]:
                 rec["loan_amount"] = fields["loan_amount"]
                 changed = True
+    # --- Lender ---
     lender = fields.get("lender", "")
     if lender and not _looks_like_garbage(lender):
         if not rec.get("lender") or overwrite:
             if rec.get("lender") != lender:
                 rec["lender"] = lender
                 changed = True
+    # --- Deed date ---
     if fields.get("deed_date"):
         if not rec.get("deed_date") or overwrite:
             if rec.get("deed_date") != fields["deed_date"]:
                 rec["deed_date"] = fields["deed_date"]
                 changed = True
+    # --- Property address ---
     addr = fields.get("prop_address", "")
     if addr and not _looks_like_garbage(addr):
+        # New parse has a valid address — overwrite or fill empty.
         if not rec.get("prop_address") or overwrite:
             if rec.get("prop_address") != addr:
                 rec["prop_address"] = addr
@@ -209,7 +219,16 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
                 rec["prop_state"] = fields.get("prop_state", "TX")
                 rec["prop_zip"] = fields.get("prop_zip", "")
                 changed = True
-    # Always remember the legal description from the PDF
+    elif overwrite and rec.get("prop_address"):
+        # New parse legitimately returned no address (e.g. Plutus
+        # records where the only address in the PDF is the San Antonio
+        # law firm). In overwrite mode, clear the stale wrong value.
+        rec["prop_address"] = ""
+        rec["prop_city"] = ""
+        rec["prop_state"] = "TX"
+        rec["prop_zip"] = ""
+        changed = True
+    # --- Legal description fields ---
     for fld in ("legal_lot", "legal_block", "legal_subdivision"):
         val = fields.get(fld, "")
         if val and not _looks_like_garbage(val):
@@ -582,6 +601,34 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
                     enriched += 1
                     log.info("  cross-ref %r → %s",
                               raw_name, site_addr)
+
+                # Follow detail link to grab appraised value (best-effort).
+                detail_href = best_match.get("detail_href", "")
+                if detail_href:
+                    try:
+                        from fetch import _parse_esearch_detail  # type: ignore
+                    except Exception:
+                        _parse_esearch_detail = None
+                    if _parse_esearch_detail:
+                        detail_url = detail_href
+                        if detail_url.startswith("/"):
+                            detail_url = NCAD_ESEARCH_BASE + detail_url
+                        elif not detail_url.startswith("http"):
+                            detail_url = NCAD_ESEARCH_BASE + "/" + detail_url
+                        try:
+                            await page.goto(detail_url,
+                                             wait_until="domcontentloaded",
+                                             timeout=15_000)
+                            await page.wait_for_timeout(400)
+                            detail_html = await page.content()
+                            detail_info = _parse_esearch_detail(detail_html)
+                            if detail_info and detail_info.get("appraised_value"):
+                                rec["appraised_value"] = detail_info[
+                                    "appraised_value"]
+                                log.info("    appraised value: $%s",
+                                         f"{detail_info['appraised_value']:,.0f}")
+                        except Exception as exc:
+                            log.debug("detail nav failed: %s", exc)
             else:
                 log.info("  cross-ref %r → no match "
                          "(tried %d name variant(s) + legal fallback)",
