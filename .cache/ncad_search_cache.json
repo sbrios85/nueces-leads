@@ -89,7 +89,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 294474.0
     },
     "JOHN CHAPMAN FARMS LTD": {
       "site_addr": "FM RD 70 BTWN CR 53 & CR 55",
@@ -99,7 +100,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 270566.0
     },
     "HEALTH COM MANAGEMENT LLC": null,
     "VAIZ RAUL JR": {
@@ -282,7 +284,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 137675.0
     },
     "RUNNELS MADELINE M": {
       "site_addr": "710 E AVENUE F",
@@ -292,7 +295,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 153053.0
     },
     "SANDOVAL BENITO JR": {
       "site_addr": "910 BLOOMINGTON ST",
@@ -312,17 +316,19 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 99460.0
     },
     "ESTATE OF SAMAN AMENDRA DE SILVA": {
-      "site_addr": "1329 WHITAKER DR",
+      "site_addr": "2942 NIAGARA",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78412",
+      "site_zip": "78405",
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 101286.0
     },
     "CLARINGTON HOLDINGS LLC": {
       "site_addr": "400 RETREAT ST",
@@ -332,7 +338,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 528126.0
     },
     "NEXT SPORTS COMPANY LLC": {
       "site_addr": "5102 Old Brownsville Rd",
@@ -342,7 +349,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 1297513.0
     },
     "RICHARDS COASTAL PROPERTIES LLC": {
       "site_addr": "1419 11TH ST",
@@ -352,7 +360,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 283393.0
     },
     "LAKEVIEW LOAN SERVICING LLC": {
       "site_addr": "512 E 2nd ST",
@@ -362,7 +371,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 220022.0
     },
     "GRANADO ESTATES LP": null,
     "219 MARSHALL LLC": {
@@ -373,7 +383,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 19410.0
     },
     "ALVARADO ROBERT LEE": null,
     "DRISCOLL": {
@@ -384,27 +395,30 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 211867.0
     },
     "FRANCO CHRISTINE": {
-      "site_addr": "13105 DEEPWATER CIR",
+      "site_addr": "4639 CORONA DR STE 6",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78410",
+      "site_zip": "78412",
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 46845.0
     },
     "HOGAN NICHOLAS": {
-      "site_addr": "6745 SEACOMBER DR 308",
-      "site_city": "PORT ARANSAS",
+      "site_addr": "2830 AUSTIN ST",
+      "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78373",
+      "site_zip": "78404",
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 119428.0
     },
     "RODRIGUEZ JESSICA": {
       "site_addr": "3242 OLSEN DR",
@@ -414,58 +428,14 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 105769.0
     },
-    "ECHAVARRIA JAMES": {
-      "site_addr": "417 KNICKERBOCKER",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78418",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
-    "RIDDLE CHARLES": {
-      "site_addr": "2255 SUSSEX DR",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78418",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
-    "HERNANDEZ JANESSA": {
-      "site_addr": "LINCOLN AVE (NO RD)",
-      "site_city": "PORT ARANSAS",
-      "site_state": "TX",
-      "site_zip": "78373",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
-    "PEREZ ADRIANNA NICOLE": {
-      "site_addr": "1006 19th ST",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78405",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
-    "SALINAS JOSEPH ANTHONY": {
-      "site_addr": "1511 CRAIG ST",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78404",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "ECHAVARRIA JAMES": null,
+    "RIDDLE CHARLES": null,
+    "HERNANDEZ JANESSA": null,
+    "PEREZ ADRIANNA NICOLE": null,
+    "SALINAS JOSEPH ANTHONY": null,
     "CEVALLOS LEYDI": {
       "site_addr": "322 MERRILL DR",
       "site_city": "CORPUS CHRISTI",
@@ -7791,39 +7761,33 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 137513.0
     },
     "VALDEZ ASHLEY": null,
     "DELEON SEBASTIAN LEON": {
-      "site_addr": "1102 GREENLANE DR",
-      "site_city": "CORPUS CHRISTI",
+      "site_addr": "709 IOWA ST",
+      "site_city": "ROBSTOWN",
       "site_state": "TX",
-      "site_zip": "78405",
+      "site_zip": "78380",
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 19531.0
     },
     "CARRILLO MARSHA": {
-      "site_addr": "4517 BLUEBELLE LN",
+      "site_addr": "1814 DARCEY DR",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78416",
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 191350.0
     },
-    "VALDEZ ALEXUS MELAINA": {
-      "site_addr": "12034 HEARN RD",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78410",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "VALDEZ ALEXUS MELAINA": null,
     "MENDEZ DELIA": {
       "site_addr": "1021 WHITAKER DR",
       "site_city": "CORPUS CHRISTI",
@@ -7832,28 +7796,21 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 100764.0
     },
     "MCJUNKINS JAMES": {
-      "site_addr": "4901 SHADOWBEND DR",
+      "site_addr": "1706 ARCHDALE DR",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78413",
+      "site_zip": "78416",
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 137993.0
     },
-    "RODRIGUEZ CIERRA": {
-      "site_addr": "2214 CARDINALES LN",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78414",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "RODRIGUEZ CIERRA": null,
     "JONES KAYTLIN": {
       "site_addr": "1341 CALLE SAN MARCOS",
       "site_city": "CORPUS CHRISTI",
@@ -7862,7 +7819,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 200812.0
     },
     "HALDAR MOUSSA N": null,
     "247 ON SITE LLC": null,
@@ -7874,7 +7832,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 342316.0
     },
     "CUNNINGHAM ROMA": {
       "site_addr": "6418 BIRMINGHAM ST",
@@ -7884,7 +7843,8 @@
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
-      "mail_zip": ""
+      "mail_zip": "",
+      "appraised_value": 96352.0
     },
     "VALENCIA RICARDA": null,
     "UZOIGWE STANISLAUS NWAFOR": null,
