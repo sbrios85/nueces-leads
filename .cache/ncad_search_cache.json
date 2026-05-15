@@ -8045,6 +8045,94 @@
     "Jesus A. Balli and Brijida Escobedo": null,
     "SETH GARRETT SMITH": null,
     "RUBY BENAVIDEZ": null,
-    "JOSE ALBERTO LANDEROS JR AND LAURA LANDEROS": null
+    "JOSE ALBERTO LANDEROS JR AND LAURA LANDEROS": null,
+    "IRENE P HERNANDEZ": {
+      "site_addr": "LINCOLN AVE (NO RD)",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373",
+      "mail_addr": "AURORA HERNANDEZ 2628 HEWLITT INGLESIDE",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78362",
+      "appraised_value": 13.0
+    },
+    "STEPHEN M GONZALES AND REYNALDO GONZALES AND OFELIA GONZALES": {
+      "site_addr": "6526 HIGH ARCH CT",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412",
+      "mail_addr": "6526 HIGH ARCH CT CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78412",
+      "appraised_value": 346587.0
+    },
+    "XAVIER D ESTRADA": {
+      "site_addr": "361 BARTLETT DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408",
+      "mail_addr": "361 Bartlett Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78408",
+      "appraised_value": 249615.0
+    },
+    "Jared Call and Kimberly Dugdale": {
+      "site_addr": "10321 HILL COUNTRY LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "10321 Hill Country Ln Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "appraised_value": 314079.0
+    },
+    "PATRICK ALLMAN, UNMARRIED MAN": {
+      "site_addr": "4326 CHERRY",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411",
+      "mail_addr": "4326 Cherry St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "appraised_value": 132336.0
+    },
+    "Marissa Jacquelyn Montoya, an unmarried woman": {
+      "site_addr": "241 NORTON",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "EDNA A ROMERO WF 241 NORTON ST CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "appraised_value": 251706.0
+    },
+    "and Everett": {
+      "site_addr": "3937 NAPLES",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "3937 Naples St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "appraised_value": 154156.0
+    },
+    "Jacob Perez, Unmarried Man": {
+      "site_addr": "11830 HEARN RD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "11830 Hearn Rd Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "appraised_value": 195826.0
+    }
   }
 }
