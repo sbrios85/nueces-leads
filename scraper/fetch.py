@@ -367,6 +367,10 @@ class ForeclosureRecord:
     mail_city: str = ""
     mail_state: str = ""
     mail_zip: str = ""
+    # NCAD appraised value (Total Market Value from county appraisal district).
+    # Populated by NCAD esearch lookup. Used on the dashboard to assess
+    # potential equity vs. the outstanding loan amount.
+    appraised_value: Optional[float] = None
 
 
 # Used by the dedup logic when a doc matches multiple categories — the
@@ -2479,17 +2483,24 @@ def _save_search_cache(cache: Dict[str, Optional[Dict[str, str]]]) -> None:
 
 
 
-def enrich_via_ncad_search(records: List[ClerkRecord]) -> int:
-    """For each record without an address, query NCAD's esearch portal
-    for the owner's name and fill in property + mailing address.
+def enrich_via_ncad_search(records: List[ClerkRecord],
+                            always_lookup: bool = False) -> int:
+    """For each record (or each without an address, if ``always_lookup`` is
+    False), query NCAD's esearch portal for the owner's name and fill in
+    property + mailing address AND appraised value.
 
-    Returns the number of records newly enriched.
+    Returns the number of records that gained an address from this run.
+    Note that appraised_value may be populated on records that already had
+    an address — those aren't counted in the return value but the field is
+    still set.
     """
     # Pick names we want to look up.
     todo: List[ClerkRecord] = []
     for rec in records:
-        if rec.prop_address:
-            continue                  # already have an address
+        if not always_lookup and rec.prop_address:
+            # Already have an address from PDF/legal extraction. Skip
+            # esearch unless caller wants appraised value too.
+            continue
         if not rec.owner:
             continue
         if _looks_institutional(rec.owner):
@@ -2516,21 +2527,30 @@ def enrich_via_ncad_search(records: List[ClerkRecord]) -> int:
     _save_search_cache(cache)
 
     matched = 0
+    appraised_set = 0
     for rec in todo:
         info = results.get(rec.owner) or cache.get(rec.owner)
         if not info:
             continue
-        rec.prop_address = info.get("site_addr", "")
-        rec.prop_city    = info.get("site_city", "") or "CORPUS CHRISTI"
-        rec.prop_state   = info.get("site_state", "") or "TX"
-        rec.prop_zip     = info.get("site_zip", "")
-        rec.mail_address = info.get("mail_addr", "")
-        rec.mail_city    = info.get("mail_city", "")
-        rec.mail_state   = info.get("mail_state", "") or "TX"
-        rec.mail_zip     = info.get("mail_zip", "")
-        if rec.prop_address:
-            matched += 1
-    log.info("esearch: %d / %d records enriched", matched, len(todo))
+        # Only overwrite address fields if record didn't already have one.
+        if not rec.prop_address:
+            rec.prop_address = info.get("site_addr", "")
+            rec.prop_city    = info.get("site_city", "") or "CORPUS CHRISTI"
+            rec.prop_state   = info.get("site_state", "") or "TX"
+            rec.prop_zip     = info.get("site_zip", "")
+            rec.mail_address = info.get("mail_addr", "")
+            rec.mail_city    = info.get("mail_city", "")
+            rec.mail_state   = info.get("mail_state", "") or "TX"
+            rec.mail_zip     = info.get("mail_zip", "")
+            if rec.prop_address:
+                matched += 1
+        # Always set appraised_value (it's purely additive).
+        appr = info.get("appraised_value")
+        if appr and hasattr(rec, "appraised_value"):
+            rec.appraised_value = appr
+            appraised_set += 1
+    log.info("esearch: %d / %d records enriched (+%d appraised values)",
+             matched, len(todo), appraised_set)
     return matched
 
 
@@ -2771,8 +2791,41 @@ async def _esearch_one(page, name: str, token: str,
 
         # Pick the best row.
         best = _pick_best_esearch_row(rows, candidate)
-        if best:
-            return best
+        if not best:
+            continue
+
+        # Follow the detail link to extract appraised value.
+        # If the detail page navigation fails or the value can't be
+        # parsed, we still return the address info — appraised value is
+        # nice-to-have, not required.
+        detail_href = best.pop("detail_href", "") or ""
+        if detail_href:
+            detail_url = detail_href
+            if detail_url.startswith("/"):
+                detail_url = NCAD_ESEARCH_BASE + detail_url
+            elif not detail_url.startswith("http"):
+                detail_url = NCAD_ESEARCH_BASE + "/" + detail_url
+            try:
+                await page.goto(detail_url,
+                                 wait_until="domcontentloaded",
+                                 timeout=15_000)
+                await page.wait_for_timeout(400)
+                detail_html = await page.content()
+                detail_info = _parse_esearch_detail(detail_html)
+                if detail_info:
+                    # Merge in mailing address (the detail page has it)
+                    # and the appraised value.
+                    if not best.get("mail_addr") and detail_info.get("mail_addr"):
+                        best["mail_addr"]  = detail_info["mail_addr"]
+                        best["mail_city"]  = detail_info.get("mail_city", "")
+                        best["mail_state"] = detail_info.get("mail_state", "")
+                        best["mail_zip"]   = detail_info.get("mail_zip", "")
+                    if detail_info.get("appraised_value"):
+                        best["appraised_value"] = detail_info["appraised_value"]
+            except Exception as exc:
+                log.debug("esearch detail nav failed: %s", exc)
+                # Best is still usable for the address fields.
+        return best
 
     return None
 
@@ -2831,12 +2884,30 @@ def _parse_esearch_result_list(html: str) -> List[Dict[str, str]]:
         situs = cell(i_situs)
         if not owner and not situs:
             continue
+        # Find the property detail link in any cell, so we can drill into
+        # the detail page to extract appraised value.
+        detail_href = ""
+        for c in cells:
+            for a in c.find_all("a"):
+                href = a.get("href", "")
+                # BIS Consultants detail URLs typically contain /Property/View/
+                # or similar. Accept anything that looks like a property link.
+                if href and (
+                    "/property/view" in href.lower()
+                    or "/property/" in href.lower()
+                    or "/parcels/" in href.lower()
+                ):
+                    detail_href = href
+                    break
+            if detail_href:
+                break
         rows.append({
-            "owner":   owner,
-            "situs":   situs,
-            "type":    cell(i_type),
-            "prop_id": cell(i_propid),
-            "legal":   cell(i_legal),
+            "owner":       owner,
+            "situs":       situs,
+            "type":        cell(i_type),
+            "prop_id":     cell(i_propid),
+            "legal":       cell(i_legal),
+            "detail_href": detail_href,
         })
     return rows
 
@@ -2896,6 +2967,9 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
         "mail_city":  "",
         "mail_state": "",
         "mail_zip":   "",
+        # The detail-page URL — _esearch_one() can follow this to extract
+        # appraised value (which isn't on the result-list page).
+        "detail_href": top.get("detail_href", ""),
     }
 
 
@@ -3100,8 +3174,60 @@ def _parse_esearch_detail(html: str) -> Optional[Dict[str, str]]:
     site_addr, site_city, site_state, site_zip = _split_us_address(site_full)
     mail_addr, mail_city, mail_state, mail_zip = _split_us_address(mail_full)
 
+    # --- Appraised value extraction ---
+    # NCAD property detail pages display appraised value in several layouts:
+    #  A) A row in a values table labeled "Market Value", "Total Market",
+    #     "Appraised Value", or similar
+    #  B) A summary section near the top with the same labels
+    #  C) Sometimes a "Total Value" or "Assessed Value" fallback
+    # We try the most authoritative first (Market Value), then fall back.
+    #
+    # Year-specific labels like "2025 Market Value" are normalized by
+    # stripping leading digits from the label before matching.
+    appraised_value: Optional[float] = None
+
+    def _parse_money(s: str) -> Optional[float]:
+        """Extract a dollar amount from a string like '$245,000' or '245,000.00'."""
+        if not s:
+            return None
+        m = re.search(r"\$?\s*([\d,]+(?:\.\d{1,2})?)", s)
+        if not m:
+            return None
+        try:
+            return float(m.group(1).replace(",", ""))
+        except ValueError:
+            return None
+
+    # Try in priority order. Higher items are preferred over lower.
+    # NCAD's BIS Consultants layout labels the canonical value as
+    # "Market Value" — this is the open-market valuation BEFORE any
+    # homestead-exemption cap or agricultural deferral, which is what
+    # matters for equity analysis vs an outstanding loan balance.
+    # "Appraised Value" on capped homesteads can be lower (artificial
+    # tax-accounting number) so we prefer Market Value.
+    VALUE_LABEL_PRIORITY = [
+        ("market", "value"),                # "Market Value" (preferred)
+        ("appraised", "value"),             # "Appraised Value" (tax-capped)
+        ("assessed", "value"),              # "Assessed Value" (post-exemption)
+        ("total", "value"),                 # "Total Value" (last resort)
+    ]
+    for tokens in VALUE_LABEL_PRIORITY:
+        for label, value in text_pairs.items():
+            # Strip leading year prefix like "2025 " from the label.
+            label_norm = re.sub(r"^\s*\d{4}\s+", "", label)
+            if all(t in label_norm for t in tokens):
+                parsed = _parse_money(value)
+                if parsed and parsed > 0:
+                    appraised_value = parsed
+                    break
+        if appraised_value is not None:
+            break
+
     if not (site_addr or mail_addr):
-        return None
+        # No address found, but we might still have appraised value.
+        # If we have NEITHER, return None as before.
+        if appraised_value is None:
+            return None
 
     return {
         "site_addr":  site_addr,
@@ -3112,6 +3238,7 @@ def _parse_esearch_detail(html: str) -> Optional[Dict[str, str]]:
         "mail_city":  mail_city,
         "mail_state": mail_state,
         "mail_zip":   mail_zip,
+        "appraised_value": appraised_value,
     }
 
 
@@ -3398,7 +3525,8 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
                   "prop_address", "prop_city", "prop_state", "prop_zip",
                   "mail_address", "mail_city", "mail_state", "mail_zip",
                   "legal_lot", "legal_block", "legal_subdivision",
-                  "legal_unit", "pdf_parsed_at")
+                  "legal_unit", "pdf_parsed_at",
+                  "appraised_value")
     for rec in existing_records:
         dn = rec.get("doc_num")
         if not dn:
@@ -3814,6 +3942,21 @@ def main() -> int:
         write_outputs(clerk_records, start_iso, end_iso)
         log.info("=== final write done with esearch enrichment "
                  "(+%d addresses) ===", gained)
+
+    # 9b) NCAD esearch for FORECLOSURE records — pulls appraised value
+    #     for every foreclosure where we can find the owner on NCAD. We
+    #     use always_lookup=True so that records that already have an
+    #     address (from PDF parsing) still get appraised value populated.
+    if foreclosures:
+        try:
+            enrich_via_ncad_search(foreclosures, always_lookup=True)
+            # Rewrite foreclosure outputs so the dashboard picks up
+            # the new appraised_value field.
+            write_foreclosure_outputs(foreclosures, end_iso, foreclosure_end)
+            log.info("=== foreclosure esearch done — outputs rewritten ===")
+        except Exception as exc:
+            log.error("foreclosure esearch failed: %s\n%s",
+                      exc, traceback.format_exc())
 
     # 10) Run esearch enrichment on the new CCLN records too, score them,
     #     then merge into the persistent city_liens.json. We always write
