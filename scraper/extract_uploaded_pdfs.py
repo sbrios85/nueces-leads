@@ -602,33 +602,13 @@ async def _async_cross_reference(eligible, _esearch_query_variants,
                     log.info("  cross-ref %r → %s",
                               raw_name, site_addr)
 
-                # Follow detail link to grab appraised value (best-effort).
-                detail_href = best_match.get("detail_href", "")
-                if detail_href:
-                    try:
-                        from fetch import _parse_esearch_detail  # type: ignore
-                    except Exception:
-                        _parse_esearch_detail = None
-                    if _parse_esearch_detail:
-                        detail_url = detail_href
-                        if detail_url.startswith("/"):
-                            detail_url = NCAD_ESEARCH_BASE + detail_url
-                        elif not detail_url.startswith("http"):
-                            detail_url = NCAD_ESEARCH_BASE + "/" + detail_url
-                        try:
-                            await page.goto(detail_url,
-                                             wait_until="domcontentloaded",
-                                             timeout=15_000)
-                            await page.wait_for_timeout(400)
-                            detail_html = await page.content()
-                            detail_info = _parse_esearch_detail(detail_html)
-                            if detail_info and detail_info.get("appraised_value"):
-                                rec["appraised_value"] = detail_info[
-                                    "appraised_value"]
-                                log.info("    appraised value: $%s",
-                                         f"{detail_info['appraised_value']:,.0f}")
-                        except Exception as exc:
-                            log.debug("detail nav failed: %s", exc)
+                # Appraised value comes directly from the result-list row
+                # (the BIS result-list parser pulls it from the
+                # `_appraisedValueDisplay` cell).
+                if best_match.get("appraised_value"):
+                    rec["appraised_value"] = best_match["appraised_value"]
+                    log.info("    appraised value: $%s",
+                             f"{best_match['appraised_value']:,.0f}")
             else:
                 log.info("  cross-ref %r → no match "
                          "(tried %d name variant(s) + legal fallback)",
