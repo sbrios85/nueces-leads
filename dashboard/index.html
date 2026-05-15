@@ -84,6 +84,103 @@
   .pill.absentee { background: rgba(245,158,11,.20); color: var(--warn);
                    font-weight: 600; }
   tr.dead-lead td { opacity: 0.45; }
+
+  /* Mark-dead button (lives in Status column) */
+  .mark-dead-btn {
+    background: transparent;
+    border: 1px solid rgba(148,163,184,.35);
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .mark-dead-btn:hover {
+    border-color: var(--bad);
+    color: var(--bad);
+    background: rgba(239,68,68,.08);
+  }
+  .restore-btn {
+    background: transparent;
+    border: 1px solid rgba(148,163,184,.35);
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .restore-btn:hover {
+    border-color: var(--good);
+    color: var(--good);
+    background: rgba(34,197,94,.08);
+  }
+
+  /* Dead-leads collapsible section in tfoot */
+  .dead-toggle-row td {
+    padding: 12px 14px !important;
+    background: rgba(56,189,248,.04);
+    border-top: 1px solid rgba(56,189,248,.15);
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .dead-toggle-row td:hover { background: rgba(56,189,248,.08); }
+  .dead-toggle-row .chev { display: inline-block; transition: transform 0.15s;
+                           margin-right: 8px; font-size: 10px; color: var(--muted); }
+  .dead-toggle-row.expanded .chev { transform: rotate(90deg); }
+  .dead-reason-cell { font-size: 11px; color: var(--muted); font-style: italic;
+                       white-space: nowrap; }
+
+  /* Reason-picker modal */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(2,8,23,.7);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 100;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 340px;
+    max-width: 90vw;
+  }
+  .modal h3 { margin: 0 0 6px; font-size: 15px; font-weight: 500; }
+  .modal .target { color: var(--accent); font-weight: 600; }
+  .modal p.sub { margin: 0 0 16px; font-size: 12px; color: var(--muted); }
+  .modal .reasons { display: flex; flex-direction: column; gap: 6px; }
+  .modal .reasons button {
+    text-align: left;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+  .modal .reasons button:hover {
+    border-color: var(--accent);
+    background: rgba(56,189,248,.08);
+  }
+  .modal .cancel {
+    width: 100%; margin-top: 14px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 8px;
+    cursor: pointer;
+  }
+  .modal .cancel:hover { color: var(--fg); }
   .score-hi { color: var(--good); }
   .score-md { color: var(--warn); }
   .score-lo { color: var(--muted); }
@@ -253,6 +350,7 @@
   </div>
   <table id="fc-table">
     <thead><tr>
+      <th style="width: 80px;">Status</th>
       <th>Sale Date</th><th>Days Until Sale</th>
       <th>Recorded</th>
       <th>Owner</th><th>Property Address</th><th>Mailing Address</th>
@@ -260,6 +358,7 @@
       <th>Legal Description</th><th>Doc#</th>
     </tr></thead>
     <tbody></tbody>
+    <tfoot id="fc-dead-foot"></tfoot>
   </table>
   <div id="fc-empty" class="empty" hidden>No upcoming foreclosures matching filters.</div>
 </div>
@@ -272,6 +371,21 @@
     <button class="drawer-close" id="drawer-close" aria-label="Close">×</button>
   </div>
   <div class="drawer-body" id="drawer-body"></div>
+</div>
+
+<!-- ======== Mark-Dead Reason Picker Modal ======== -->
+<div class="modal-backdrop" id="fc-reason-backdrop">
+  <div class="modal" role="dialog" aria-labelledby="fc-reason-title">
+    <h3 id="fc-reason-title">Mark <span class="target" id="fc-reason-target">—</span> as dead?</h3>
+    <p class="sub">Why is this lead dead? You can restore it later.</p>
+    <div class="reasons" id="fc-reason-list">
+      <button data-reason="not_interested">Not interested</button>
+      <button data-reason="sold_cancelled">Already sold / cancelled</button>
+      <button data-reason="bad_address">Bad address / can't find</button>
+      <button data-reason="other">Other</button>
+    </div>
+    <button class="cancel" id="fc-reason-cancel">Cancel</button>
+  </div>
 </div>
 
 <script>
@@ -301,6 +415,41 @@ function setEntry(docNum, patch) {
   const cur = crm[docNum] || {status:"new", notes:"", last_contact:""};
   crm[docNum] = Object.assign({}, cur, patch);
   saveCrm(crm);
+  return crm[docNum];
+}
+
+// ============================================================
+// Foreclosure CRM (separate namespace from CCLN leads)
+// ============================================================
+// Why a separate key: although CCLN leads and foreclosures don't
+// typically share doc_nums, keeping them in separate stores prevents
+// accidental cross-contamination AND lets us evolve the FC schema
+// independently (e.g. adding a "dead_reason" field that CCLN doesn't
+// use). When we eventually move to a hosted backend, both stores
+// migrate cleanly as separate collections.
+const FC_CRM_KEY = "nueces_fc_crm_v1";
+const FC_DEAD_REASONS = {
+  "not_interested": "Not interested",
+  "sold_cancelled": "Already sold / cancelled",
+  "bad_address":    "Bad address / can't find",
+  "other":          "Other"
+};
+function loadFcCrm() {
+  try { return JSON.parse(localStorage.getItem(FC_CRM_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveFcCrm(crm) {
+  localStorage.setItem(FC_CRM_KEY, JSON.stringify(crm));
+}
+function getFcEntry(docNum) {
+  const crm = loadFcCrm();
+  return crm[docNum] || {status:"active"};
+}
+function setFcEntry(docNum, patch) {
+  const crm = loadFcCrm();
+  const cur = crm[docNum] || {status:"active"};
+  crm[docNum] = Object.assign({}, cur, patch);
+  saveFcCrm(crm);
   return crm[docNum];
 }
 
@@ -681,103 +830,221 @@ function applyFc() {
 }
 function renderFc() {
   const tb = document.querySelector("#fc-table tbody");
+  const tf = document.getElementById("fc-dead-foot");
   tb.innerHTML = "";
+  tf.innerHTML = "";
   document.getElementById("fc-empty").hidden = FC_FILTERED.length > 0;
+
+  // Split rendered records into active vs dead based on the FC CRM
+  // store. Dead records collapse into an expandable footer section.
+  const fcCrm = loadFcCrm();
+  const activeRecords = [];
+  const deadRecords = [];
   for (const r of FC_FILTERED) {
-    const tr = document.createElement("tr");
-    const days = r.days_until_sale;
-    const daysClass = days === null || days === undefined ? "days-far" :
-                      days <= 14 ? "days-soon" :
-                      days <= 30 ? "days-medium" : "days-far";
-    const daysText = days === null || days === undefined ? "—" :
-                     days < 0 ? Math.abs(days) + " days ago" :
-                     days + " days";
-    // Build full property address from address + city + state + zip
-    const fullAddr = r.prop_address ?
-        [r.prop_address, r.prop_city, r.prop_state, r.prop_zip]
-            .filter(Boolean).join(" ") : "";
-    const loanAmt = r.loan_amount ?
-        "$" + Number(r.loan_amount).toLocaleString("en-US",
-                                                    {minimumFractionDigits: 2,
-                                                     maximumFractionDigits: 2}) : "—";
-    // Appraised value comes from NCAD esearch (Total Market Value).
-    // We round to the nearest dollar — appraisal districts publish whole-
-    // dollar amounts and decimal cents look out of place.
-    const apprVal = r.appraised_value ?
-        "$" + Number(r.appraised_value).toLocaleString("en-US",
-                                                       {maximumFractionDigits: 0}) : "—";
+    const e = fcCrm[r.doc_num];
+    if (e && e.status === "dead") deadRecords.push(r);
+    else activeRecords.push(r);
+  }
 
-    // Build mailing address from the NCAD fields. If empty, show em dash.
-    const mailFull = r.mail_address ?
-        [r.mail_address, r.mail_city, r.mail_state, r.mail_zip]
-            .filter(Boolean).join(" ") : "";
+  // Render active records normally.
+  for (const r of activeRecords) {
+    tb.appendChild(buildFcRow(r, false));
+  }
 
-    // Non-owner-occupied detection: if the owner's mailing address
-    // differs from the property address, the owner doesn't live there.
-    // Strong signal for door-knocking: if absentee, the property is
-    // rented/abandoned and you should find the owner at the mailing
-    // address instead of knocking on the foreclosure house.
-    //
-    // We use a normalized fingerprint (street number + ZIP) for the
-    // comparison. ZIP is the most reliable city identifier — way more
-    // stable than city names (which vary in case/whitespace), and the
-    // street number lets us detect "same ZIP but different address"
-    // (e.g., owner lives across town in the same ZIP).
-    //
-    // If both addresses share the same ZIP AND the same leading
-    // street number, treat them as the same property — even if the
-    // rest of the street name differs (NCAD vs PDF formatting).
-    let absenteeBadge = "";
-    if (r.mail_address && r.prop_address) {
-        const propStreetNum = (r.prop_address.match(/^\s*(\d+)/) || [])[1] || "";
-        const mailStreetNum = (r.mail_address.match(/^\s*(\d+)/) || [])[1] || "";
-        const propZip = (r.prop_zip || "").trim();
-        const mailZip = (r.mail_zip || "").trim();
+  // If there are dead records, append the collapsible toggle row +
+  // hidden dead rows. State persists in localStorage so toggling
+  // doesn't reset on render.
+  if (deadRecords.length > 0) {
+    const expanded =
+        localStorage.getItem("fc_dead_expanded") === "true";
 
-        let sameLocation = false;
-        if (propZip && mailZip && propZip === mailZip) {
-            // Same ZIP — likely same property if street numbers match
-            // (or if one is missing, give benefit of the doubt).
-            if (!propStreetNum || !mailStreetNum ||
-                propStreetNum === mailStreetNum) {
-                sameLocation = true;
-            }
-        }
-        // Fallback when ZIPs aren't both populated: compare city.
-        if (!sameLocation && (!propZip || !mailZip)) {
-            const propCity = (r.prop_city || "").toUpperCase().trim();
-            const mailCity = (r.mail_city || "").toUpperCase().trim();
-            if (propCity && mailCity && propCity === mailCity &&
-                propStreetNum && mailStreetNum &&
-                propStreetNum === mailStreetNum) {
-                sameLocation = true;
-            }
-        }
-
-        if (!sameLocation && (r.mail_zip || r.mail_city)) {
-            absenteeBadge = ` <span class="pill absentee" ` +
-                `title="Owner's mailing address differs from property — ` +
-                `likely rented or abandoned">NON-OWNER-OCCUPIED</span>`;
-        }
-    }
-
-    tr.innerHTML = `
-      <td>${esc(r.sale_date || "")}</td>
-      <td class="days ${daysClass}">${esc(daysText)}</td>
-      <td>${esc(r.recorded || "")}</td>
-      <td>${esc(r.owner || "—")}</td>
-      <td>${esc(fullAddr || "—")}${absenteeBadge}</td>
-      <td>${esc(mailFull || "—")}</td>
-      <td>${loanAmt}</td>
-      <td>${apprVal}</td>
-      <td>${esc(r.deed_date || "—")}</td>
-      <td>${esc(r.lender || "—")}</td>
-      <td class="legal">${esc(r.legal || "")}</td>
-      <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
+    const toggleTr = document.createElement("tr");
+    toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
+    toggleTr.innerHTML = `
+      <td colspan="13">
+        <span class="chev">▶</span>
+        <span>${deadRecords.length} dead lead${deadRecords.length === 1 ? "" : "s"}</span>
+        <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
+          — click to ${expanded ? "collapse" : "expand"}
+        </span>
+      </td>
     `;
-    tb.appendChild(tr);
+    toggleTr.onclick = () => {
+      const nowExpanded = !toggleTr.classList.contains("expanded");
+      localStorage.setItem("fc_dead_expanded", nowExpanded ? "true" : "false");
+      renderFc();
+    };
+    tf.appendChild(toggleTr);
+
+    if (expanded) {
+      for (const r of deadRecords) {
+        tf.appendChild(buildFcRow(r, true));
+      }
+    }
   }
 }
+
+// Build a single foreclosure table row. `isDead` controls whether the
+// Status column shows "Mark Dead" or "Restore" + reason label, and
+// whether the row is dimmed.
+function buildFcRow(r, isDead) {
+  const tr = document.createElement("tr");
+  if (isDead) tr.classList.add("dead-lead");
+
+  const days = r.days_until_sale;
+  const daysClass = days === null || days === undefined ? "days-far" :
+                    days <= 14 ? "days-soon" :
+                    days <= 30 ? "days-medium" : "days-far";
+  const daysText = days === null || days === undefined ? "—" :
+                   days < 0 ? Math.abs(days) + " days ago" :
+                   days + " days";
+  const fullAddr = r.prop_address ?
+      [r.prop_address, r.prop_city, r.prop_state, r.prop_zip]
+          .filter(Boolean).join(" ") : "";
+  const loanAmt = r.loan_amount ?
+      "$" + Number(r.loan_amount).toLocaleString("en-US",
+                                                  {minimumFractionDigits: 2,
+                                                   maximumFractionDigits: 2}) : "—";
+  const apprVal = r.appraised_value ?
+      "$" + Number(r.appraised_value).toLocaleString("en-US",
+                                                     {maximumFractionDigits: 0}) : "—";
+  const mailFull = r.mail_address ?
+      [r.mail_address, r.mail_city, r.mail_state, r.mail_zip]
+          .filter(Boolean).join(" ") : "";
+
+  // Non-owner-occupied detection (same as before — ZIP+street-number
+  // fingerprint, falls back to city when ZIPs missing).
+  let absenteeBadge = "";
+  if (r.mail_address && r.prop_address) {
+    const propStreetNum = (r.prop_address.match(/^\s*(\d+)/) || [])[1] || "";
+    const mailStreetNum = (r.mail_address.match(/^\s*(\d+)/) || [])[1] || "";
+    const propZip = (r.prop_zip || "").trim();
+    const mailZip = (r.mail_zip || "").trim();
+
+    let sameLocation = false;
+    if (propZip && mailZip && propZip === mailZip) {
+      if (!propStreetNum || !mailStreetNum ||
+          propStreetNum === mailStreetNum) sameLocation = true;
+    }
+    if (!sameLocation && (!propZip || !mailZip)) {
+      const propCity = (r.prop_city || "").toUpperCase().trim();
+      const mailCity = (r.mail_city || "").toUpperCase().trim();
+      if (propCity && mailCity && propCity === mailCity &&
+          propStreetNum && mailStreetNum &&
+          propStreetNum === mailStreetNum) sameLocation = true;
+    }
+    if (!sameLocation && (r.mail_zip || r.mail_city)) {
+      absenteeBadge = ` <span class="pill absentee" ` +
+        `title="Owner's mailing address differs from property">` +
+        `NON-OWNER-OCCUPIED</span>`;
+    }
+  }
+
+  // Status cell content depends on dead/active. We use data-doc on
+  // the BUTTON (not the row) so clicking the button doesn't also
+  // trigger the row's own onclick (which could open a drawer in
+  // future tabs).
+  let statusCell;
+  if (isDead) {
+    const fcCrm = loadFcCrm();
+    const entry = fcCrm[r.doc_num] || {};
+    const reasonLabel = FC_DEAD_REASONS[entry.reason] || "Other";
+    statusCell = `
+      <button class="restore-btn" data-doc="${esc(r.doc_num)}"
+              title="Restore this lead to active"
+              onclick="restoreFcLead('${esc(r.doc_num)}'); event.stopPropagation();">
+        Restore
+      </button>
+      <div class="dead-reason-cell">${esc(reasonLabel)}</div>
+    `;
+  } else {
+    statusCell = `
+      <button class="mark-dead-btn" data-doc="${esc(r.doc_num)}"
+              title="Mark this lead as dead"
+              onclick="openMarkDeadModal('${esc(r.doc_num)}', this.closest('tr')); event.stopPropagation();">
+        Mark dead
+      </button>
+    `;
+  }
+
+  tr.innerHTML = `
+    <td>${statusCell}</td>
+    <td>${esc(r.sale_date || "")}</td>
+    <td class="days ${daysClass}">${esc(daysText)}</td>
+    <td>${esc(r.recorded || "")}</td>
+    <td>${esc(r.owner || "—")}</td>
+    <td>${esc(fullAddr || "—")}${absenteeBadge}</td>
+    <td>${esc(mailFull || "—")}</td>
+    <td>${loanAmt}</td>
+    <td>${apprVal}</td>
+    <td>${esc(r.deed_date || "—")}</td>
+    <td>${esc(r.lender || "—")}</td>
+    <td class="legal">${esc(r.legal || "")}</td>
+    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
+  `;
+  return tr;
+}
+
+// ============================================================
+// Mark-dead modal + flow
+// ============================================================
+// The modal stays in the DOM at all times — we just toggle its
+// .open class. We stash the pending doc_num on a module variable
+// because the user could in principle close+reopen the modal while
+// data is mid-flight; this avoids re-reading from the DOM.
+let _pendingDeadDoc = null;
+
+function openMarkDeadModal(docNum, rowEl) {
+  _pendingDeadDoc = docNum;
+  // Show the owner name (or doc num as fallback) in the dialog
+  // header so the user can verify they're marking the right lead.
+  const owner = rowEl && rowEl.cells[4] ?
+      (rowEl.cells[4].textContent || "").trim() : docNum;
+  document.getElementById("fc-reason-target").textContent =
+      owner || docNum;
+  document.getElementById("fc-reason-backdrop").classList.add("open");
+}
+
+function closeMarkDeadModal() {
+  _pendingDeadDoc = null;
+  document.getElementById("fc-reason-backdrop").classList.remove("open");
+}
+
+function confirmMarkDead(reason) {
+  if (!_pendingDeadDoc) return;
+  setFcEntry(_pendingDeadDoc, {
+    status: "dead",
+    reason: reason,
+    marked_dead_at: new Date().toISOString()
+  });
+  closeMarkDeadModal();
+  renderFc();
+}
+
+function restoreFcLead(docNum) {
+  // Reset to active; we keep the previous reason in the entry as
+  // history, but flipping status back to "active" hides it from the
+  // dead-leads section.
+  setFcEntry(docNum, {
+    status: "active",
+    restored_at: new Date().toISOString()
+  });
+  renderFc();
+}
+
+// Wire up the reason picker buttons. We delegate from the parent so
+// the handler is set once at startup rather than on every render.
+document.getElementById("fc-reason-list").addEventListener("click",
+    (e) => {
+  const btn = e.target.closest("button[data-reason]");
+  if (!btn) return;
+  confirmMarkDead(btn.dataset.reason);
+});
+document.getElementById("fc-reason-cancel").onclick = closeMarkDeadModal;
+document.getElementById("fc-reason-backdrop").onclick = (e) => {
+  // Click outside the modal (on the backdrop itself) closes it.
+  if (e.target.id === "fc-reason-backdrop") closeMarkDeadModal();
+};
 
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g,
@@ -796,9 +1063,12 @@ document.getElementById("ccln-sort").onchange = applyCcln;
 document.getElementById("fc-q").oninput = applyFc;
 document.getElementById("fc-sort").onchange = applyFc;
 
-// ESC closes drawer
+// ESC closes drawer and mark-dead modal
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeDrawer();
+  if (e.key === "Escape") {
+    closeDrawer();
+    closeMarkDeadModal();
+  }
 });
 
 loadAll();
