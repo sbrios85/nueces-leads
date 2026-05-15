@@ -2801,43 +2801,12 @@ async def _esearch_one(page, name: str, token: str,
         if not rows:
             continue   # no results for this candidate, try next
 
-        # Pick the best row.
+        # Pick the best row. Appraised value comes from the result-list
+        # page directly via the `_appraisedValueDisplay` cell — no
+        # separate detail-page navigation needed.
         best = _pick_best_esearch_row(rows, candidate)
-        if not best:
-            continue
-
-        # Follow the detail link to extract appraised value.
-        # If the detail page navigation fails or the value can't be
-        # parsed, we still return the address info — appraised value is
-        # nice-to-have, not required.
-        detail_href = best.pop("detail_href", "") or ""
-        if detail_href:
-            detail_url = detail_href
-            if detail_url.startswith("/"):
-                detail_url = NCAD_ESEARCH_BASE + detail_url
-            elif not detail_url.startswith("http"):
-                detail_url = NCAD_ESEARCH_BASE + "/" + detail_url
-            try:
-                await page.goto(detail_url,
-                                 wait_until="domcontentloaded",
-                                 timeout=15_000)
-                await page.wait_for_timeout(400)
-                detail_html = await page.content()
-                detail_info = _parse_esearch_detail(detail_html)
-                if detail_info:
-                    # Merge in mailing address (the detail page has it)
-                    # and the appraised value.
-                    if not best.get("mail_addr") and detail_info.get("mail_addr"):
-                        best["mail_addr"]  = detail_info["mail_addr"]
-                        best["mail_city"]  = detail_info.get("mail_city", "")
-                        best["mail_state"] = detail_info.get("mail_state", "")
-                        best["mail_zip"]   = detail_info.get("mail_zip", "")
-                    if detail_info.get("appraised_value"):
-                        best["appraised_value"] = detail_info["appraised_value"]
-            except Exception as exc:
-                log.debug("esearch detail nav failed: %s", exc)
-                # Best is still usable for the address fields.
-        return best
+        if best:
+            return best
 
     return None
 
@@ -2845,8 +2814,15 @@ async def _esearch_one(page, name: str, token: str,
 def _parse_esearch_result_list(html: str) -> List[Dict[str, str]]:
     """Parse the BIS Consultants result-list table.
 
-    Returns a list of {owner, prop_id, type, situs_address, legal} dicts.
-    Empty list if no rows.
+    The BIS Consultants UI uses stable CSS classes on each cell:
+    `_ownerName`, `_address`, `_propertyType`, `_propertyId`,
+    `_legalDescription`, `_appraisedValueDisplay`. We use these
+    directly — much more reliable than positional column indexing
+    and (crucially) the appraised value is right here, so we don't
+    need to navigate to the detail page.
+
+    Returns a list of {owner, situs, type, prop_id, legal,
+    appraised_value} dicts. Empty list if no rows.
     """
     if not html:
         return []
@@ -2855,71 +2831,49 @@ def _parse_esearch_result_list(html: str) -> List[Dict[str, str]]:
     except Exception:
         soup = BeautifulSoup(html, "html.parser")
 
-    table = soup.find("table")
-    if not table:
-        return []
+    def _parse_money(s: str) -> Optional[float]:
+        """Extract dollars from a string like '$294,474' or '$1,234.50'."""
+        if not s:
+            return None
+        m = re.search(r"\$?\s*([\d,]+(?:\.\d{1,2})?)", s)
+        if not m:
+            return None
+        try:
+            return float(m.group(1).replace(",", ""))
+        except ValueError:
+            return None
 
-    # Build column-name → index map from the header row.
-    header_row = table.find("thead") or table
-    headers = [th.get_text(" ", strip=True).lower()
-               for th in header_row.find_all("th")]
-    if not headers:
-        return []
-
-    def find_col(*tokens: str) -> int:
-        for i, h in enumerate(headers):
-            if all(t in h for t in tokens):
-                return i
-        return -1
-
-    i_owner   = find_col("owner", "name")
-    i_situs   = find_col("situs")
-    if i_situs < 0:
-        i_situs = find_col("address")
-    i_type    = find_col("type")
-    i_propid  = find_col("property", "id")
-    if i_propid < 0:
-        i_propid = find_col("prop", "id")
-    i_legal   = find_col("legal")
-
-    rows: List[Dict[str, str]] = []
-    tbody = table.find("tbody") or table
-    for tr in tbody.find_all("tr"):
-        cells = tr.find_all("td")
-        if len(cells) < 3:
+    rows: List[Dict[str, Any]] = []
+    # Iterate over all <tr> elements; the ones we want are the data rows
+    # (header row is the first one and has <th> cells, not <td>).
+    for tr in soup.find_all("tr"):
+        # Skip header rows.
+        if not tr.find("td"):
             continue
-        def cell(i: int) -> str:
-            if 0 <= i < len(cells):
-                return cells[i].get_text(" ", strip=True)
-            return ""
-        owner = cell(i_owner)
-        situs = cell(i_situs)
+
+        def find_cell_text(cls: str) -> str:
+            cell = tr.find("td", class_=cls)
+            if not cell:
+                return ""
+            return cell.get_text(" ", strip=True)
+
+        owner   = find_cell_text("_ownerName")
+        situs   = find_cell_text("_address")
+        ptype   = find_cell_text("_propertyType")
+        prop_id = find_cell_text("_propertyId")
+        legal   = find_cell_text("_legalDescription")
+        appr_s  = find_cell_text("_appraisedValueDisplay")
+
         if not owner and not situs:
             continue
-        # Find the property detail link in any cell, so we can drill into
-        # the detail page to extract appraised value.
-        detail_href = ""
-        for c in cells:
-            for a in c.find_all("a"):
-                href = a.get("href", "")
-                # BIS Consultants detail URLs typically contain /Property/View/
-                # or similar. Accept anything that looks like a property link.
-                if href and (
-                    "/property/view" in href.lower()
-                    or "/property/" in href.lower()
-                    or "/parcels/" in href.lower()
-                ):
-                    detail_href = href
-                    break
-            if detail_href:
-                break
+
         rows.append({
-            "owner":       owner,
-            "situs":       situs,
-            "type":        cell(i_type),
-            "prop_id":     cell(i_propid),
-            "legal":       cell(i_legal),
-            "detail_href": detail_href,
+            "owner":           owner,
+            "situs":           situs,
+            "type":            ptype,
+            "prop_id":         prop_id,
+            "legal":           legal,
+            "appraised_value": _parse_money(appr_s),
         })
     return rows
 
@@ -2979,9 +2933,9 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
         "mail_city":  "",
         "mail_state": "",
         "mail_zip":   "",
-        # The detail-page URL — _esearch_one() can follow this to extract
-        # appraised value (which isn't on the result-list page).
-        "detail_href": top.get("detail_href", ""),
+        # Appraised value comes straight from the result list (no extra
+        # page load needed) via the `_appraisedValueDisplay` cell.
+        "appraised_value": top.get("appraised_value"),
     }
 
 
@@ -3970,6 +3924,44 @@ def main() -> int:
     #     use always_lookup=True so that records that already have an
     #     address (from PDF parsing) still get appraised value populated.
     if foreclosures:
+        # Diagnostic: how many foreclosure records have populated owners?
+        # If this is 0, the PDF-enrichment mutation in
+        # write_foreclosure_outputs didn't propagate (record-list identity
+        # mismatch, missing existing JSON, etc.). We pull the populated
+        # data straight from foreclosures.json as a fallback so this step
+        # doesn't silently no-op.
+        with_owner = sum(1 for r in foreclosures if r.owner)
+        log.info("foreclosure esearch step: %d/%d records have owners",
+                 with_owner, len(foreclosures))
+        if with_owner == 0:
+            # Fall back to re-reading the JSON file we just wrote.
+            try:
+                existing_path = DASHBOARD_DIR / "foreclosures.json"
+                if existing_path.exists():
+                    js = json.loads(existing_path.read_text(encoding="utf-8"))
+                    by_dn = {r.get("doc_num"): r for r in js.get("records", [])
+                              if r.get("doc_num")}
+                    refilled = 0
+                    for r in foreclosures:
+                        prior = by_dn.get(r.doc_num)
+                        if not prior:
+                            continue
+                        for fld in ("owner", "loan_amount", "deed_date",
+                                    "lender", "prop_address", "prop_city",
+                                    "prop_state", "prop_zip"):
+                            val = prior.get(fld)
+                            if val and hasattr(r, fld):
+                                try:
+                                    setattr(r, fld, val)
+                                except Exception:
+                                    pass
+                        if r.owner:
+                            refilled += 1
+                    log.info("foreclosure esearch step: refilled %d owners "
+                             "from JSON fallback", refilled)
+            except Exception as exc:
+                log.warning("foreclosure esearch fallback failed: %s", exc)
+
         try:
             enrich_via_ncad_search(foreclosures, always_lookup=True)
             # Rewrite foreclosure outputs so the dashboard picks up
