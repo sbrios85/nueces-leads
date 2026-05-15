@@ -101,16 +101,7 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "HEALTH COM MANAGEMENT LLC": {
-      "site_addr": "5205 EMBASSY STE A",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78411",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "HEALTH COM MANAGEMENT LLC": null,
     "VAIZ RAUL JR": {
       "site_addr": "500 IH-69 ACCESS RD STE 408",
       "site_city": "ROBSTOWN",
@@ -121,16 +112,7 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "TLC COMPLETE CARE": {
-      "site_addr": "927 N PADRE ISLAND DR",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78406",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "TLC COMPLETE CARE": null,
     "WYNN KENNETH J": {
       "site_addr": "5324 COUNTY RD 73A",
       "site_city": "ROBSTOWN",
@@ -251,16 +233,7 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "BAUTISTA RICARDO D": {
-      "site_addr": "4129 MONACO DR",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78411",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "BAUTISTA RICARDO D": null,
     "CARLSON JOE R": {
       "site_addr": "1533 DAYTONA DR",
       "site_city": "CORPUS CHRISTI",
@@ -342,10 +315,10 @@
       "mail_zip": ""
     },
     "ESTATE OF SAMAN AMENDRA DE SILVA": {
-      "site_addr": "1101-1107 1/2 SAM RANKIN",
+      "site_addr": "1329 WHITAKER DR",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78401",
+      "site_zip": "78412",
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
@@ -391,16 +364,7 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "GRANADO ESTATES LP": {
-      "site_addr": "130 E VANDERBILT DR",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78415",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "GRANADO ESTATES LP": null,
     "219 MARSHALL LLC": {
       "site_addr": "104 US HWY 77 S BUS",
       "site_city": "BISHOP",
@@ -411,16 +375,7 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "ALVARADO ROBERT LEE": {
-      "site_addr": "6111 COUNTY RD 97-A",
-      "site_city": "ROBSTOWN",
-      "site_state": "TX",
-      "site_zip": "78380",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "ALVARADO ROBERT LEE": null,
     "DRISCOLL": {
       "site_addr": "FM RD 665 (WEST OSO) @",
       "site_city": "ROBSTOWN",
@@ -7765,26 +7720,8 @@
     "SALANG AVIATION LLC": null,
     "U S BANK TRUST NATIONAL ASSOCIATION": null,
     "SELENE FINANCE LP": null,
-    "CHAPMAN SARA RENE": {
-      "site_addr": "4029 NICHOLS DR",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78410",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
-    "FARMER RANDALL L": {
-      "site_addr": "3317 CREEK SIDE DR",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78410",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "CHAPMAN SARA RENE": null,
+    "FARMER RANDALL L": null,
     "RODRIDUEZ HILDA": null,
     "SPENCE BRODERICK": {
       "site_addr": "6001 ORMS DR",
@@ -7856,16 +7793,7 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "VALDEZ ASHLEY": {
-      "site_addr": "3659 Staples ST S",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78411",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "VALDEZ ASHLEY": null,
     "DELEON SEBASTIAN LEON": {
       "site_addr": "1102 GREENLANE DR",
       "site_city": "CORPUS CHRISTI",
@@ -7937,48 +7865,19 @@
       "mail_zip": ""
     },
     "HALDAR MOUSSA N": null,
-    "247 ON SITE LLC": {
-      "site_addr": "247 LAKESHORE ST",
-      "site_city": "PORT ARANSAS",
-      "site_state": "TX",
-      "site_zip": "78373",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "247 ON SITE LLC": null,
     "BADALICH CARL": {
-      "site_addr": "WEST PALM BEACH RD",
-      "site_city": "PORT ARANSAS",
+      "site_addr": "15133 DASMARINAS DR",
+      "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78373",
+      "site_zip": "78418",
       "mail_addr": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": ""
     },
     "CUNNINGHAM ROMA": {
-      "site_addr": "716 E 4th ST",
-      "site_city": "BISHOP",
-      "site_state": "TX",
-      "site_zip": "78343",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
-    "VALENCIA RICARDA": {
-      "site_addr": "432 GLENMORE",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78412",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
-    "UZOIGWE STANISLAUS NWAFOR": {
-      "site_addr": "7314 THE MANSIONS DR",
+      "site_addr": "6418 BIRMINGHAM ST",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78414",
@@ -7987,16 +7886,9 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "BARRERA FILIBERTO G JR": {
-      "site_addr": "2908 RHODES CT",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78410",
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": ""
-    },
+    "VALENCIA RICARDA": null,
+    "UZOIGWE STANISLAUS NWAFOR": null,
+    "BARRERA FILIBERTO G JR": null,
     "CHATHAM MELBA WELSH": {
       "site_addr": "134 ALTA PLAZA ST",
       "site_city": "CORPUS CHRISTI",
