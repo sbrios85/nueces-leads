@@ -712,23 +712,49 @@ function renderFc() {
         [r.mail_address, r.mail_city, r.mail_state, r.mail_zip]
             .filter(Boolean).join(" ") : "";
 
-    // Non-owner-occupied detection: if the mailing address city is set
-    // and DIFFERENT from the property city, the owner doesn't live at
-    // the property. This is a strong motivated-seller signal — the
-    // property is either rented out or abandoned, and the owner is
-    // typically more flexible on price than an owner-occupant. For
-    // door-knocking purposes: don't bother going to the property if
-    // it's absentee, find the owner at the mailing address instead.
-    // We compare on city/state because street addresses differ even
-    // for owner-occupants (e.g., 123 Main vs 123 N Main due to
-    // postal-database canonicalization).
+    // Non-owner-occupied detection: if the owner's mailing address
+    // differs from the property address, the owner doesn't live there.
+    // Strong signal for door-knocking: if absentee, the property is
+    // rented/abandoned and you should find the owner at the mailing
+    // address instead of knocking on the foreclosure house.
+    //
+    // We use a normalized fingerprint (street number + ZIP) for the
+    // comparison. ZIP is the most reliable city identifier — way more
+    // stable than city names (which vary in case/whitespace), and the
+    // street number lets us detect "same ZIP but different address"
+    // (e.g., owner lives across town in the same ZIP).
+    //
+    // If both addresses share the same ZIP AND the same leading
+    // street number, treat them as the same property — even if the
+    // rest of the street name differs (NCAD vs PDF formatting).
     let absenteeBadge = "";
     if (r.mail_address && r.prop_address) {
-        const propLoc = ((r.prop_city || "") + " " +
-                          (r.prop_state || "")).toUpperCase().trim();
-        const mailLoc = ((r.mail_city || "") + " " +
-                          (r.mail_state || "")).toUpperCase().trim();
-        if (propLoc && mailLoc && propLoc !== mailLoc) {
+        const propStreetNum = (r.prop_address.match(/^\s*(\d+)/) || [])[1] || "";
+        const mailStreetNum = (r.mail_address.match(/^\s*(\d+)/) || [])[1] || "";
+        const propZip = (r.prop_zip || "").trim();
+        const mailZip = (r.mail_zip || "").trim();
+
+        let sameLocation = false;
+        if (propZip && mailZip && propZip === mailZip) {
+            // Same ZIP — likely same property if street numbers match
+            // (or if one is missing, give benefit of the doubt).
+            if (!propStreetNum || !mailStreetNum ||
+                propStreetNum === mailStreetNum) {
+                sameLocation = true;
+            }
+        }
+        // Fallback when ZIPs aren't both populated: compare city.
+        if (!sameLocation && (!propZip || !mailZip)) {
+            const propCity = (r.prop_city || "").toUpperCase().trim();
+            const mailCity = (r.mail_city || "").toUpperCase().trim();
+            if (propCity && mailCity && propCity === mailCity &&
+                propStreetNum && mailStreetNum &&
+                propStreetNum === mailStreetNum) {
+                sameLocation = true;
+            }
+        }
+
+        if (!sameLocation && r.mail_city) {
             absenteeBadge = ` <span class="pill absentee" ` +
                 `title="Owner's mailing address differs from property — ` +
                 `likely rented or abandoned">NON-OWNER-OCCUPIED</span>`;
