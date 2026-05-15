@@ -2641,7 +2641,19 @@ async def _run_ncad_searches(names: List[str],
 
         for i, name in enumerate(names, start=1):
             if name in cache:
-                continue                 # already looked up (hit OR miss)
+                cached = cache[name]
+                # Re-lookup if the cached entry is a successful match but
+                # was built BEFORE we started extracting appraised value
+                # from the detail page. This is a one-time migration —
+                # once the cache has appraised_value for everyone, this
+                # path stops triggering.
+                if cached and cached.get("site_addr") and (
+                        cached.get("appraised_value") in (None, "", 0)):
+                    log.info("  esearch: re-looking up %r (cache lacks "
+                             "appraised_value)", name)
+                    # Fall through and re-fetch.
+                else:
+                    continue                 # already looked up (hit OR miss)
             if time.time() > deadline:
                 log.warning("esearch: time budget exhausted after %d names", i)
                 break
@@ -3567,6 +3579,16 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
                 # Only fill if the new portal data is blank/missing.
                 if not d.get(fld):
                     d[fld] = val
+                    # ALSO mutate the original record so downstream
+                    # pipeline steps (e.g. NCAD esearch for appraised
+                    # value) can see the PDF-extracted owner names.
+                    # Without this, esearch would see empty owners and
+                    # skip every record as ineligible.
+                    if hasattr(r, fld):
+                        try:
+                            setattr(r, fld, val)
+                        except Exception:
+                            pass
         enriched.append(d)
 
     # UNION-MERGE: carry forward existing records that this scrape DID NOT
