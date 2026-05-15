@@ -2528,6 +2528,7 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
 
     matched = 0
     appraised_set = 0
+    mail_set = 0
     for rec in todo:
         info = results.get(rec.owner) or cache.get(rec.owner)
         if not info:
@@ -2538,19 +2539,26 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
             rec.prop_city    = info.get("site_city", "") or "CORPUS CHRISTI"
             rec.prop_state   = info.get("site_state", "") or "TX"
             rec.prop_zip     = info.get("site_zip", "")
-            rec.mail_address = info.get("mail_addr", "")
-            rec.mail_city    = info.get("mail_city", "")
-            rec.mail_state   = info.get("mail_state", "") or "TX"
-            rec.mail_zip     = info.get("mail_zip", "")
             if rec.prop_address:
                 matched += 1
+        # Mailing address: always update if NCAD returned one and we
+        # don't already have it (this is additive — we never overwrite
+        # an existing mailing address with a blank).
+        if info.get("mail_addr"):
+            if not rec.mail_address:
+                rec.mail_address = info.get("mail_addr", "")
+                rec.mail_city    = info.get("mail_city", "")
+                rec.mail_state   = info.get("mail_state", "") or "TX"
+                rec.mail_zip     = info.get("mail_zip", "")
+                mail_set += 1
         # Always set appraised_value (it's purely additive).
         appr = info.get("appraised_value")
         if appr and hasattr(rec, "appraised_value"):
             rec.appraised_value = appr
             appraised_set += 1
-    log.info("esearch: %d / %d records enriched (+%d appraised values)",
-             matched, len(todo), appraised_set)
+    log.info("esearch: %d / %d records enriched (+%d appraised values, "
+             "+%d mailing addresses)",
+             matched, len(todo), appraised_set, mail_set)
     return matched
 
 
@@ -2644,13 +2652,17 @@ async def _run_ncad_searches(names: List[str],
                 cached = cache[name]
                 # Re-lookup if the cached entry is a successful match but
                 # was built BEFORE we started extracting appraised value
-                # from the detail page. This is a one-time migration —
-                # once the cache has appraised_value for everyone, this
-                # path stops triggering.
-                if cached and cached.get("site_addr") and (
-                        cached.get("appraised_value") in (None, "", 0)):
+                # OR mailing address. This is a one-time migration —
+                # once the cache has both, this path stops triggering.
+                missing_appr = (cached and cached.get("site_addr") and
+                                cached.get("appraised_value") in (None, "", 0))
+                missing_mail = (cached and cached.get("site_addr") and
+                                not cached.get("mail_addr"))
+                if missing_appr or missing_mail:
+                    reason = ("appraised_value" if missing_appr
+                              else "mail_addr")
                     log.info("  esearch: re-looking up %r (cache lacks "
-                             "appraised_value)", name)
+                             "%s)", name, reason)
                     # Fall through and re-fetch.
                 else:
                     continue                 # already looked up (hit OR miss)
@@ -2802,11 +2814,44 @@ async def _esearch_one(page, name: str, token: str,
             continue   # no results for this candidate, try next
 
         # Pick the best row. Appraised value comes from the result-list
-        # page directly via the `_appraisedValueDisplay` cell — no
-        # separate detail-page navigation needed.
+        # page directly via the `_appraisedValueDisplay` cell.
         best = _pick_best_esearch_row(rows, candidate)
-        if best:
-            return best
+        if not best:
+            continue
+
+        # Navigate to the property detail page to extract the mailing
+        # address. The detail page URL pattern is:
+        #   /Property/View/{propId}?year={year}&ownerId={ownerId}
+        # The result-list page uses an onclick handler instead of a
+        # normal <a href>, so we build the URL ourselves from the
+        # components captured by _parse_esearch_result_list. Mailing
+        # address is nice-to-have — if the detail nav fails, we still
+        # return the address+appraised value we already have.
+        prop_id_d = best.pop("_detail_prop_id", "") or ""
+        year_d    = best.pop("_detail_year", "") or current_year
+        owner_id_d = best.pop("_detail_owner_id", "") or ""
+        if prop_id_d:
+            detail_url = (f"{NCAD_ESEARCH_BASE}/Property/View/{prop_id_d}"
+                          f"?year={year_d}")
+            if owner_id_d:
+                detail_url += f"&ownerId={owner_id_d}"
+            try:
+                await page.goto(detail_url,
+                                 wait_until="domcontentloaded",
+                                 timeout=15_000)
+                await page.wait_for_timeout(400)
+                detail_html = await page.content()
+                detail_info = _parse_esearch_detail(detail_html)
+                if detail_info:
+                    if detail_info.get("mail_addr"):
+                        best["mail_addr"]  = detail_info["mail_addr"]
+                        best["mail_city"]  = detail_info.get("mail_city", "")
+                        best["mail_state"] = detail_info.get("mail_state", "")
+                        best["mail_zip"]   = detail_info.get("mail_zip", "")
+            except Exception as exc:
+                log.debug("esearch detail nav failed for %s: %s",
+                          prop_id_d, exc)
+        return best
 
     return None
 
@@ -2863,6 +2908,28 @@ def _parse_esearch_result_list(html: str) -> List[Dict[str, str]]:
         prop_id = find_cell_text("_propertyId")
         legal   = find_cell_text("_legalDescription")
         appr_s  = find_cell_text("_appraisedValueDisplay")
+        owner_id = find_cell_text("_ownerId")
+
+        # Extract the detail-page URL components from the row's onclick
+        # handler. BIS Consultants uses a JS handler instead of a normal
+        # <a href>:
+        #   onclick="redirectToPropertyDetails('257256','2026','550713', 'false')"
+        # The real detail URL is:
+        #   /Property/View/{propId}?year={year}&ownerId={ownerId}
+        detail_year = ""
+        onclick = tr.get("onclick") or ""
+        if onclick:
+            m = re.search(
+                r"redirectToPropertyDetails\(\s*'([^']*)'\s*,"
+                r"\s*'([^']*)'\s*,\s*'([^']*)'",
+                onclick)
+            if m:
+                # m.group(1) is prop_id (already captured above),
+                # m.group(2) is year,
+                # m.group(3) is owner_id.
+                detail_year = m.group(2)
+                if not owner_id:
+                    owner_id = m.group(3)
 
         if not owner and not situs:
             continue
@@ -2872,6 +2939,8 @@ def _parse_esearch_result_list(html: str) -> List[Dict[str, str]]:
             "situs":           situs,
             "type":            ptype,
             "prop_id":         prop_id,
+            "owner_id":        owner_id,
+            "year":            detail_year,
             "legal":           legal,
             "appraised_value": _parse_money(appr_s),
         })
@@ -2926,9 +2995,8 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
         "site_city":  site_city or "CORPUS CHRISTI",
         "site_state": site_state or "TX",
         "site_zip":   site_zip,
-        # The result list doesn't expose the mailing address — leave blank.
-        # If the user wants mailing info we'd need to follow the detail
-        # link, but situs is what matters most for direct-mail.
+        # The result list doesn't expose the mailing address — we follow
+        # the detail-page link below to extract it.
         "mail_addr":  "",
         "mail_city":  "",
         "mail_state": "",
@@ -2936,6 +3004,11 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
         # Appraised value comes straight from the result list (no extra
         # page load needed) via the `_appraisedValueDisplay` cell.
         "appraised_value": top.get("appraised_value"),
+        # Stash detail-page URL components so the caller can fetch the
+        # property detail page to extract the mailing address.
+        "_detail_prop_id":  top.get("prop_id", ""),
+        "_detail_year":     top.get("year", ""),
+        "_detail_owner_id": top.get("owner_id", ""),
     }
 
 
@@ -3920,57 +3993,62 @@ def main() -> int:
                  "(+%d addresses) ===", gained)
 
     # 9b) NCAD esearch for FORECLOSURE records — pulls appraised value
-    #     for every foreclosure where we can find the owner on NCAD. We
-    #     use always_lookup=True so that records that already have an
-    #     address (from PDF parsing) still get appraised value populated.
-    if foreclosures:
-        # Diagnostic: how many foreclosure records have populated owners?
-        # If this is 0, the PDF-enrichment mutation in
-        # write_foreclosure_outputs didn't propagate (record-list identity
-        # mismatch, missing existing JSON, etc.). We pull the populated
-        # data straight from foreclosures.json as a fallback so this step
-        # doesn't silently no-op.
-        with_owner = sum(1 for r in foreclosures if r.owner)
-        log.info("foreclosure esearch step: %d/%d records have owners",
-                 with_owner, len(foreclosures))
-        if with_owner == 0:
-            # Fall back to re-reading the JSON file we just wrote.
-            try:
-                existing_path = DASHBOARD_DIR / "foreclosures.json"
-                if existing_path.exists():
-                    js = json.loads(existing_path.read_text(encoding="utf-8"))
-                    by_dn = {r.get("doc_num"): r for r in js.get("records", [])
-                              if r.get("doc_num")}
-                    refilled = 0
-                    for r in foreclosures:
-                        prior = by_dn.get(r.doc_num)
-                        if not prior:
-                            continue
-                        for fld in ("owner", "loan_amount", "deed_date",
-                                    "lender", "prop_address", "prop_city",
-                                    "prop_state", "prop_zip"):
-                            val = prior.get(fld)
-                            if val and hasattr(r, fld):
-                                try:
-                                    setattr(r, fld, val)
-                                except Exception:
-                                    pass
-                        if r.owner:
-                            refilled += 1
-                    log.info("foreclosure esearch step: refilled %d owners "
-                             "from JSON fallback", refilled)
-            except Exception as exc:
-                log.warning("foreclosure esearch fallback failed: %s", exc)
+    #     and mailing address for every foreclosure where we can find
+    #     the owner on NCAD. We work directly with the JSON file we
+    #     just wrote (rather than the in-memory `foreclosures` list)
+    #     because the carried-over union-merge records aren't in the
+    #     in-memory list — they only exist in the JSON.
+    try:
+        existing_path = DASHBOARD_DIR / "foreclosures.json"
+        if existing_path.exists():
+            js = json.loads(existing_path.read_text(encoding="utf-8"))
+            all_fc_records = js.get("records", []) or []
+            log.info("foreclosure esearch step: loaded %d records from JSON",
+                     len(all_fc_records))
 
-        try:
-            enrich_via_ncad_search(foreclosures, always_lookup=True)
-            # Rewrite foreclosure outputs so the dashboard picks up
-            # the new appraised_value field.
-            write_foreclosure_outputs(foreclosures, end_iso, foreclosure_end)
-            log.info("=== foreclosure esearch done — outputs rewritten ===")
-        except Exception as exc:
-            log.error("foreclosure esearch failed: %s\n%s",
-                      exc, traceback.format_exc())
+            # Build a list of lightweight wrapper objects that
+            # enrich_via_ncad_search can mutate. We can't pass plain
+            # dicts because enrich_via_ncad_search uses attribute
+            # access (rec.owner, rec.prop_address, etc.).
+            class _FCWrapper:
+                """Attribute-style proxy over a dict — so we can pass it
+                to enrich_via_ncad_search which expects ForeclosureRecord
+                objects."""
+                __slots__ = ("_d",)
+                def __init__(self, d): self._d = d
+                def __getattr__(self, name):
+                    if name == "_d":
+                        return object.__getattribute__(self, "_d")
+                    return self._d.get(name) or ""
+                def __setattr__(self, name, value):
+                    if name == "_d":
+                        object.__setattr__(self, name, value)
+                    else:
+                        self._d[name] = value
+
+            wrappers = [_FCWrapper(d) for d in all_fc_records]
+            owners_present = sum(1 for w in wrappers if w.owner)
+            log.info("foreclosure esearch step: %d/%d records have owners",
+                     owners_present, len(wrappers))
+
+            if owners_present > 0:
+                enrich_via_ncad_search(wrappers, always_lookup=True)
+                # Write the now-enriched JSON back. Note: we have to
+                # rebuild the payload top-level fields too.
+                js["records"] = all_fc_records  # already mutated in place
+                for path in (DASHBOARD_DIR / "foreclosures.json",
+                              DATA_DIR / "foreclosures.json"):
+                    with path.open("w", encoding="utf-8") as fh:
+                        json.dump(js, fh, indent=2, default=str)
+                    log.info("wrote %s (%d foreclosures, post-esearch)",
+                             path, len(all_fc_records))
+                log.info("=== foreclosure esearch done — outputs rewritten ===")
+            else:
+                log.info("foreclosure esearch step: no records have owners — "
+                         "skipping (need PDFs uploaded first)")
+    except Exception as exc:
+        log.error("foreclosure esearch failed: %s\n%s",
+                  exc, traceback.format_exc())
 
     # 10) Run esearch enrichment on the new CCLN records too, score them,
     #     then merge into the persistent city_liens.json. We always write
