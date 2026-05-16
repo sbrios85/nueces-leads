@@ -565,6 +565,114 @@ _RE_LEGAL_DIGITS = re.compile(
 
 
 # --------------------------------------------------------------------------- #
+# Date normalization
+# --------------------------------------------------------------------------- #
+# Foreclosure PDFs contain deed-of-trust dates in many formats:
+#   "December 16, 2024", "12/16/2024", "12-16-2024", "16th of December, 2024"
+# We capture whatever the PDF says verbatim, then run it through this
+# normalizer so the stored value is always ISO ("2024-12-16"). The
+# dashboard reformats for display; ISO sorts correctly, exports to CRMs
+# cleanly, and survives round-trips through JSON without ambiguity.
+#
+# If the input can't be confidently parsed, we return the original
+# string unchanged — better to keep imperfect data than to corrupt the
+# record by guessing wrong about an ambiguous date like "01/02/2024"
+# (Jan 2 vs Feb 1). All Texas legal documents use the US convention so
+# we resolve MM/DD/YYYY without warning, but anything that fails to
+# parse is preserved verbatim and the caller can log it.
+
+_MONTH_NAMES = {
+    "january":1, "february":2, "march":3, "april":4, "may":5, "june":6,
+    "july":7, "august":8, "september":9, "october":10, "november":11,
+    "december":12,
+    "jan":1, "feb":2, "mar":3, "apr":4, "jun":6, "jul":7, "aug":8,
+    "sept":9, "sep":9, "oct":10, "nov":11, "dec":12,
+}
+
+def normalize_date_string(raw: str) -> str:
+    """Convert a free-form date string to ISO (YYYY-MM-DD).
+
+    Returns the original string unchanged if parsing fails. Never
+    raises. Examples that should succeed:
+      "December 16, 2024"      → "2024-12-16"
+      "12/16/2024"             → "2024-12-16"
+      "12-16-2024"             → "2024-12-16"
+      "16th of December, 2024" → "2024-12-16"
+      "December 16th, 2024"    → "2024-12-16"
+      " 5/8/2018 "             → "2018-05-08"
+    Examples that should fail safely (return input unchanged):
+      "TBD", "see attached", "13/45/2024" (impossible date)
+    """
+    if not raw or not isinstance(raw, str):
+        return raw
+    s = raw.strip()
+    if not s:
+        return raw
+
+    # Already ISO? Validate and return as-is.
+    m = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", s)
+    if m:
+        y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        if 1900 <= y <= 2100 and 1 <= mo <= 12 and 1 <= d <= 31:
+            return s
+        return raw
+
+    # Pattern 1: numeric M/D/YYYY or MM/DD/YYYY (US convention — all
+    # Texas legal docs follow this). Also accept dashes as separators.
+    m = re.fullmatch(r"(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})", s)
+    if m:
+        mo, d, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        if y < 100:
+            y += 2000 if y < 50 else 1900   # 2-digit year handling
+        if 1900 <= y <= 2100 and 1 <= mo <= 12 and 1 <= d <= 31:
+            return f"{y:04d}-{mo:02d}-{d:02d}"
+        return raw
+
+    # Pattern 2: "Month DD, YYYY" or "Month DDth, YYYY" — the most
+    # common form in foreclosure-notice prose. Strip ordinal suffixes
+    # (st/nd/rd/th) so the day reads cleanly.
+    m = re.fullmatch(
+        r"([A-Za-z]+)\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})",
+        s, re.IGNORECASE)
+    if m:
+        mo_name = m.group(1).lower().rstrip(".")
+        d = int(m.group(2))
+        y = int(m.group(3))
+        mo = _MONTH_NAMES.get(mo_name)
+        if mo and 1 <= d <= 31 and 1900 <= y <= 2100:
+            return f"{y:04d}-{mo:02d}-{d:02d}"
+        return raw
+
+    # Pattern 3: "DDth of Month, YYYY" — occasionally seen in older
+    # title-company templates ("the 16th of December, 2024").
+    m = re.fullmatch(
+        r"(\d{1,2})(?:st|nd|rd|th)?\s+(?:day\s+)?of\s+([A-Za-z]+),?\s+(\d{4})",
+        s, re.IGNORECASE)
+    if m:
+        d = int(m.group(1))
+        mo_name = m.group(2).lower()
+        y = int(m.group(3))
+        mo = _MONTH_NAMES.get(mo_name)
+        if mo and 1 <= d <= 31 and 1900 <= y <= 2100:
+            return f"{y:04d}-{mo:02d}-{d:02d}"
+        return raw
+
+    # Pattern 4: "DD Month YYYY" (no comma) — rare but seen.
+    m = re.fullmatch(r"(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})", s)
+    if m:
+        d = int(m.group(1))
+        mo_name = m.group(2).lower()
+        y = int(m.group(3))
+        mo = _MONTH_NAMES.get(mo_name)
+        if mo and 1 <= d <= 31 and 1900 <= y <= 2100:
+            return f"{y:04d}-{mo:02d}-{d:02d}"
+        return raw
+
+    # Couldn't confidently parse — preserve original.
+    return raw
+
+
+# --------------------------------------------------------------------------- #
 # Top-level parser
 # --------------------------------------------------------------------------- #
 
@@ -635,7 +743,10 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
             # Collapse whitespace including OCR-introduced newlines
             # (e.g. "May 16,\n2019" → "May 16, 2019")
             d = re.sub(r"\s+", " ", m.group(1)).strip()
-            out["deed_date"] = d
+            # Normalize to ISO (YYYY-MM-DD) so storage is uniform.
+            # If parsing fails, normalize_date_string returns the input
+            # unchanged — we keep imperfect data over wrong data.
+            out["deed_date"] = normalize_date_string(d)
             break
 
     # --- Property street address ---
