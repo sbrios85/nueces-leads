@@ -371,6 +371,15 @@ class ForeclosureRecord:
     # Populated by NCAD esearch lookup. Used on the dashboard to assess
     # potential equity vs. the outstanding loan amount.
     appraised_value: Optional[float] = None
+    # NCAD detail-page identifiers — used by the dashboard to build a
+    # direct "NCAD" link to the property's detail page on the appraisal
+    # district website. URL pattern:
+    #   esearch.nuecescad.net/Property/View/{ncad_prop_id}?year={ncad_year}&ownerId={ncad_owner_id}
+    # Populated by NCAD esearch lookup. When empty, the dashboard falls
+    # back to a search-by-name link instead.
+    ncad_prop_id: str = ""
+    ncad_year: str = ""
+    ncad_owner_id: str = ""
 
 
 # Used by the dedup logic when a doc matches multiple categories — the
@@ -2556,6 +2565,13 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
         if appr and hasattr(rec, "appraised_value"):
             rec.appraised_value = appr
             appraised_set += 1
+        # Propagate NCAD detail-page IDs so the dashboard can build a
+        # direct property-page link. These are additive and never
+        # overwrite existing values with empty.
+        for fld in ("ncad_prop_id", "ncad_year", "ncad_owner_id"):
+            val = info.get(fld)
+            if val and hasattr(rec, fld) and not getattr(rec, fld, ""):
+                setattr(rec, fld, val)
     log.info("esearch: %d / %d records enriched (+%d appraised values, "
              "+%d mailing addresses)",
              matched, len(todo), appraised_set, mail_set)
@@ -2658,9 +2674,12 @@ async def _run_ncad_searches(names: List[str],
                                 cached.get("appraised_value") in (None, "", 0))
                 missing_mail = (cached and cached.get("site_addr") and
                                 not cached.get("mail_addr"))
-                if missing_appr or missing_mail:
+                missing_ncad = (cached and cached.get("site_addr") and
+                                not cached.get("ncad_prop_id"))
+                if missing_appr or missing_mail or missing_ncad:
                     reason = ("appraised_value" if missing_appr
-                              else "mail_addr")
+                              else "mail_addr" if missing_mail
+                              else "ncad_prop_id")
                     log.info("  esearch: re-looking up %r (cache lacks "
                              "%s)", name, reason)
                     # Fall through and re-fetch.
@@ -2827,9 +2846,20 @@ async def _esearch_one(page, name: str, token: str,
         # components captured by _parse_esearch_result_list. Mailing
         # address is nice-to-have — if the detail nav fails, we still
         # return the address+appraised value we already have.
-        prop_id_d = best.pop("_detail_prop_id", "") or ""
-        year_d    = best.pop("_detail_year", "") or current_year
-        owner_id_d = best.pop("_detail_owner_id", "") or ""
+        # Preserve the NCAD detail IDs in `best` so they get cached and
+        # propagate to the dashboard (where they're used to build a
+        # one-click "NCAD" link to the property page). We read them
+        # here but DON'T pop — they're persisted along with the address
+        # and appraised value.
+        prop_id_d = best.get("_detail_prop_id", "") or ""
+        year_d    = best.get("_detail_year", "") or current_year
+        owner_id_d = best.get("_detail_owner_id", "") or ""
+        # Rename to stable keys (without the leading underscore) so the
+        # cache/JSON keys are clean. The underscore-prefixed copies get
+        # removed below.
+        best["ncad_prop_id"]  = prop_id_d
+        best["ncad_year"]     = year_d
+        best["ncad_owner_id"] = owner_id_d
         if prop_id_d:
             detail_url = (f"{NCAD_ESEARCH_BASE}/Property/View/{prop_id_d}"
                           f"?year={year_d}")
@@ -2851,6 +2881,11 @@ async def _esearch_one(page, name: str, token: str,
             except Exception as exc:
                 log.debug("esearch detail nav failed for %s: %s",
                           prop_id_d, exc)
+        # Strip the leading-underscore copies before returning so the
+        # cache JSON stays clean.
+        best.pop("_detail_prop_id", None)
+        best.pop("_detail_year", None)
+        best.pop("_detail_owner_id", None)
         return best
 
     return None
