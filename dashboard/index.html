@@ -541,7 +541,50 @@ async function loadAll() {
     renderFcStats(data); applyFc();
   } catch (e) { document.getElementById("fc-empty").hidden = false; }
 
-  document.getElementById("meta").textContent = leadsMeta || "Awaiting first scrape";
+  // Compute "last PDF upload" timestamp: the max `pdf_parsed_at` across
+  // foreclosure records. This tells the user when they last uploaded
+  // a foreclosure-notice PDF batch (via the "Parse uploaded foreclosure
+  // PDFs" workflow), so they know whether they're current on PDFs or
+  // need to grab the latest batch from the clerk portal.
+  let lastPdfMeta = "";
+  let mostRecentPdf = null;
+  for (const r of FC_RAW) {
+    if (!r.pdf_parsed_at) continue;
+    const t = new Date(r.pdf_parsed_at);
+    if (isNaN(t.getTime())) continue;
+    if (!mostRecentPdf || t > mostRecentPdf) mostRecentPdf = t;
+  }
+  if (mostRecentPdf) {
+    // Compute "X days ago" suffix for at-a-glance staleness check.
+    // Days is computed in whole-day buckets relative to now.
+    const now = new Date();
+    const dayMs = 24 * 60 * 60 * 1000;
+    const daysAgo = Math.floor((now - mostRecentPdf) / dayMs);
+    let agoText;
+    if (daysAgo === 0) agoText = "today";
+    else if (daysAgo === 1) agoText = "1 day ago";
+    else agoText = daysAgo + " days ago";
+
+    // Color-code by staleness so it's obvious at a glance whether the
+    // user is current. The colors reuse the existing palette:
+    //   green = current (≤3 days)
+    //   amber = getting stale (4-7 days)
+    //   red   = overdue (8+ days)
+    let agoColor;
+    if (daysAgo <= 3) agoColor = "var(--good)";
+    else if (daysAgo <= 7) agoColor = "var(--warn)";
+    else agoColor = "var(--bad)";
+
+    lastPdfMeta = ` • Last PDF upload: ${mostRecentPdf.toLocaleString()} ` +
+                  `<span style="color: ${agoColor}; font-weight: 500;">` +
+                  `(${agoText})</span>`;
+  }
+
+  // Use innerHTML (not textContent) so the colored "X days ago" badge
+  // renders. The leadsMeta string is built from trusted data
+  // (server-generated ISO timestamps), so there's no XSS surface here.
+  document.getElementById("meta").innerHTML =
+      (leadsMeta || "Awaiting first scrape") + lastPdfMeta;
 }
 
 // ============================================================
