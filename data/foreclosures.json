@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-16T01:50:49.922113+00:00",
+  "fetched_at": "2026-05-16T02:32:00.139919+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-16",
@@ -1773,7 +1773,10 @@
       "days_until_sale": 17,
       "deed_date": "November 17, 2016",
       "lender": "U.S. BANK NATIONAL ASSOCIATION",
-      "pdf_parsed_at": "2026-05-14T21:17:43.991057+00:00"
+      "pdf_parsed_at": "2026-05-14T21:17:43.991057+00:00",
+      "ncad_prop_id": "200046983",
+      "ncad_year": "2026",
+      "ncad_owner_id": "715039"
     },
     {
       "doc_num": "2026000188",
@@ -1979,7 +1982,10 @@
       "legal_lot": "4",
       "legal_block": "5",
       "legal_subdivision": "NORTHWEST CROSSING",
-      "pdf_parsed_at": "2026-05-14T21:16:46.573854+00:00"
+      "pdf_parsed_at": "2026-05-14T21:16:46.573854+00:00",
+      "ncad_prop_id": "183783",
+      "ncad_year": "2026",
+      "ncad_owner_id": "120652"
     },
     {
       "doc_num": "2026000137",
@@ -2333,7 +2339,10 @@
       "legal_lot": "11",
       "legal_block": "2",
       "legal_subdivision": "WOODBEND",
-      "pdf_parsed_at": "2026-05-14T21:50:29.488238+00:00"
+      "pdf_parsed_at": "2026-05-14T21:50:29.488238+00:00",
+      "ncad_prop_id": "200118578",
+      "ncad_year": "2026",
+      "ncad_owner_id": "539881"
     },
     {
       "doc_num": "2026000247",
@@ -2356,7 +2365,10 @@
       "status": "pre-foreclosure",
       "days_until_sale": 52,
       "lender": "WELLS FARGO BANK, N.A",
-      "pdf_parsed_at": "2026-05-14T21:50:47.273198+00:00"
+      "pdf_parsed_at": "2026-05-14T21:50:47.273198+00:00",
+      "ncad_prop_id": "298471",
+      "ncad_year": "2026",
+      "ncad_owner_id": "688421"
     },
     {
       "doc_num": "2026000233",
@@ -2383,7 +2395,10 @@
       "legal_lot": "7",
       "legal_block": "1",
       "legal_subdivision": "HILL COUNTRY ESTATES",
-      "pdf_parsed_at": "2026-05-14T21:50:12.028284+00:00"
+      "pdf_parsed_at": "2026-05-14T21:50:12.028284+00:00",
+      "ncad_prop_id": "376373",
+      "ncad_year": "2026",
+      "ncad_owner_id": "806883"
     },
     {
       "doc_num": "2026000239",
@@ -2409,7 +2424,10 @@
       "legal_lot": "12",
       "legal_block": "5",
       "legal_subdivision": "WESTWOOD VILLAGE",
-      "pdf_parsed_at": "2026-05-14T21:20:59.730517+00:00"
+      "pdf_parsed_at": "2026-05-14T21:20:59.730517+00:00",
+      "ncad_prop_id": "200060600",
+      "ncad_year": "2026",
+      "ncad_owner_id": "792797"
     },
     {
       "doc_num": "2026000227",
@@ -2435,7 +2453,10 @@
       "legal_lot": "17",
       "legal_block": "20",
       "legal_subdivision": "London Towne",
-      "pdf_parsed_at": "2026-05-14T21:19:11.435710+00:00"
+      "pdf_parsed_at": "2026-05-14T21:19:11.435710+00:00",
+      "ncad_prop_id": "185310",
+      "ncad_year": "2026",
+      "ncad_owner_id": "595113"
     },
     {
       "doc_num": "2026000228",
@@ -2507,7 +2528,10 @@
       "days_until_sale": 52,
       "deed_date": "06/21/2022",
       "lender": "MORTGAGE CORPORATION",
-      "pdf_parsed_at": "2026-05-14T21:18:29.309931+00:00"
+      "pdf_parsed_at": "2026-05-14T21:18:29.309931+00:00",
+      "ncad_prop_id": "185197",
+      "ncad_year": "2026",
+      "ncad_owner_id": "784915"
     },
     {
       "doc_num": "2025000821",
@@ -2553,7 +2577,10 @@
       "legal_lot": "29",
       "legal_block": "10",
       "legal_subdivision": "NORTHWEST CROSSING",
-      "pdf_parsed_at": "2026-05-14T21:16:52.664974+00:00"
+      "pdf_parsed_at": "2026-05-14T21:16:52.664974+00:00",
+      "ncad_prop_id": "204081",
+      "ncad_year": "2026",
+      "ncad_owner_id": "752678"
     },
     {
       "doc_num": "2026000139",

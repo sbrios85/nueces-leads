@@ -7713,7 +7713,10 @@
       "mail_city": "",
       "mail_state": "ID",
       "mail_zip": "83702",
-      "appraised_value": 350799.0
+      "appraised_value": 350799.0,
+      "ncad_prop_id": "264691",
+      "ncad_year": "2026",
+      "ncad_owner_id": "830607"
     },
     "ROJAS BENJAMIN": {
       "site_addr": "125 AVALON DR",
@@ -8069,7 +8072,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78416",
-      "appraised_value": 107468.0
+      "appraised_value": 107468.0,
+      "ncad_prop_id": "200046983",
+      "ncad_year": "2026",
+      "ncad_owner_id": "715039"
     },
     "AND WIFE, WITH HER JOINING HEREIN TO PERFECT THE SECURITY INTEREST BUT NOT TO OTHERWISE BE LIABLE": null,
     "Jesus A. Balli and Brijida Escobedo": null,
@@ -8085,7 +8091,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78362",
-      "appraised_value": 13.0
+      "appraised_value": 13.0,
+      "ncad_prop_id": "183783",
+      "ncad_year": "2026",
+      "ncad_owner_id": "120652"
     },
     "STEPHEN M GONZALES AND REYNALDO GONZALES AND OFELIA GONZALES": {
       "site_addr": "6526 HIGH ARCH CT",
@@ -8096,7 +8105,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78412",
-      "appraised_value": 346587.0
+      "appraised_value": 346587.0,
+      "ncad_prop_id": "200118578",
+      "ncad_year": "2026",
+      "ncad_owner_id": "539881"
     },
     "XAVIER D ESTRADA": {
       "site_addr": "361 BARTLETT DR",
@@ -8107,7 +8119,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78408",
-      "appraised_value": 249615.0
+      "appraised_value": 249615.0,
+      "ncad_prop_id": "298471",
+      "ncad_year": "2026",
+      "ncad_owner_id": "688421"
     },
     "Jared Call and Kimberly Dugdale": {
       "site_addr": "10321 HILL COUNTRY LN",
@@ -8118,7 +8133,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78410",
-      "appraised_value": 314079.0
+      "appraised_value": 314079.0,
+      "ncad_prop_id": "376373",
+      "ncad_year": "2026",
+      "ncad_owner_id": "806883"
     },
     "PATRICK ALLMAN, UNMARRIED MAN": {
       "site_addr": "4326 CHERRY",
@@ -8129,7 +8147,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78411",
-      "appraised_value": 132336.0
+      "appraised_value": 132336.0,
+      "ncad_prop_id": "200060600",
+      "ncad_year": "2026",
+      "ncad_owner_id": "792797"
     },
     "Marissa Jacquelyn Montoya, an unmarried woman": {
       "site_addr": "241 NORTON",
@@ -8140,7 +8161,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78415",
-      "appraised_value": 251706.0
+      "appraised_value": 251706.0,
+      "ncad_prop_id": "185310",
+      "ncad_year": "2026",
+      "ncad_owner_id": "595113"
     },
     "and Everett": {
       "site_addr": "3937 NAPLES",
@@ -8151,7 +8175,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78415",
-      "appraised_value": 154156.0
+      "appraised_value": 154156.0,
+      "ncad_prop_id": "185197",
+      "ncad_year": "2026",
+      "ncad_owner_id": "784915"
     },
     "Jacob Perez, Unmarried Man": {
       "site_addr": "11830 HEARN RD",
@@ -8162,7 +8189,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78410",
-      "appraised_value": 195826.0
+      "appraised_value": 195826.0,
+      "ncad_prop_id": "204081",
+      "ncad_year": "2026",
+      "ncad_owner_id": "752678"
     }
   }
 }
