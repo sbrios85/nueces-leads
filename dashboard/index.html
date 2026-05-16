@@ -326,6 +326,75 @@
   .pane { display: none; padding: 24px 28px; }
   .pane.active { display: block; }
 
+  /* ===== Full-screen CRM view ===== */
+  #crm-view { padding: 0; }
+  #crm-view[hidden] { display: none; }
+  .crm-topbar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    position: sticky; top: 0; z-index: 5;
+  }
+  .crm-back-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--fg); border-radius: 6px;
+    padding: 7px 14px; font: inherit; cursor: pointer;
+  }
+  .crm-back-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .crm-title { font-size: 18px; font-weight: 600; }
+  .crm-body { padding: 24px 28px; max-width: 1100px; }
+  .crm-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 28px; align-items: start;
+  }
+  @media (max-width: 880px) { .crm-grid { grid-template-columns: 1fr; } }
+  .crm-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+  }
+  .crm-card h3 {
+    margin: 0 0 14px; font-size: 14px; font-weight: 600;
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .crm-field { margin-bottom: 14px; }
+  .crm-field:last-child { margin-bottom: 0; }
+  .crm-field label {
+    display: block; font-size: 12px; color: var(--muted);
+    margin-bottom: 5px; text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .crm-field input, .crm-field textarea, .crm-field select {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 6px;
+    padding: 9px 11px; font: inherit;
+  }
+  .crm-field input:focus, .crm-field textarea:focus,
+  .crm-field select:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .crm-field textarea { resize: vertical; min-height: 110px; }
+  .crm-readonly-row {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .crm-readonly-row:last-child { border-bottom: none; }
+  .crm-readonly-row .k { color: var(--muted); flex-shrink: 0; }
+  .crm-readonly-row .v { color: var(--fg); text-align: right;
+                          word-break: break-word; }
+  .crm-saved {
+    font-size: 12px; color: var(--good);
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .crm-saved.show { opacity: 1; }
+  .crm-stub-note {
+    font-size: 12px; color: var(--muted); font-style: italic;
+    margin-top: 4px;
+  }
+
   /* CRM side-panel drawer */
   .drawer-backdrop {
     display: none; position: fixed; inset: 0;
@@ -663,6 +732,18 @@
   </div>
 </div>
 
+<!-- ======== FULL-SCREEN CRM VIEW ========
+     Hidden by default. When a lead row is clicked, JS fills #crm-body
+     and shows this, hiding all .pane elements. The "Back" button
+     restores the previous pane with its sort + scroll intact. -->
+<div id="crm-view" hidden>
+  <div class="crm-topbar">
+    <button id="crm-back" class="crm-back-btn">← Back</button>
+    <div class="crm-title" id="crm-title">Lead</div>
+  </div>
+  <div class="crm-body" id="crm-body"></div>
+</div>
+
 </div><!-- /.main -->
 </div><!-- /.layout -->
 
@@ -801,6 +882,297 @@ function setCclnStatus(docNum, status) {
   });
   saveCclnStatus(s);
 }
+
+// ============================================================
+// Per-lead-type CRM system (full-screen in-page view)
+// ============================================================
+// Each lead type gets:
+//   - its own localStorage key (independent CRM data per type)
+//   - a config: which read-only context fields to show, and which
+//     editable fields to capture
+// The user will refine each type's `editable` list as they work
+// through them. The `readonly` list just mirrors useful lead data
+// for reference while on a call. Adding/removing a field is a
+// one-line change in CRM_CONFIG below — no other code changes needed.
+//
+// Shared editable core (all types): status, phone, email,
+// last_contact, next_followup, notes. Type-specific stub fields are
+// flagged with `stub:true` so the UI shows a "customize me" hint.
+
+const CRM_CONFIG = {
+  ccln: {
+    storeKey: "nueces_ccln_crm_v2",
+    label: "City of Corpus Christi Liens",
+    // readonly: [json field, display label]
+    readonly: [
+      ["owner", "Owner / Grantor"],
+      ["grantee", "Grantee"],
+      ["filed", "Filed"],
+      ["doc_type", "Document Type"],
+      ["doc_num", "Doc #"],
+      ["prop_address", "Property Address"],
+      ["prop_city", "Property City"],
+      ["prop_zip", "Property ZIP"],
+      ["mail_address", "Mailing Address"],
+      ["amount", "Lien Amount", "money"],
+      ["legal", "Legal Description"],
+    ],
+    // editable: [key, label, type, stub?]
+    editable: [
+      ["phone", "Phone", "text"],
+      ["email", "Email", "text"],
+      ["last_contact", "Last Contact", "date"],
+      ["next_followup", "Next Follow-up", "date"],
+      ["lien_payoff", "Lien payoff amount", "text", true],
+      ["owner_reached", "Owner reached?", "select-yn", true],
+      ["notes", "Notes", "textarea"],
+    ],
+  },
+  mfc: {
+    storeKey: "nueces_mfc_crm_v1",
+    label: "Mortgage Foreclosures",
+    readonly: [
+      ["owner", "Owner"],
+      ["sale_date", "Sale Date"],
+      ["days_until_sale", "Days Until Sale"],
+      ["recorded", "Recorded"],
+      ["doc_num", "Doc #"],
+      ["prop_address", "Property Address"],
+      ["prop_city", "Property City"],
+      ["prop_zip", "Property ZIP"],
+      ["mail_address", "Mailing Address"],
+      ["loan_amount", "Loan Amount", "money"],
+      ["appraised_value", "Appraised Value", "money"],
+      ["deed_date", "Loan Date"],
+      ["lender", "Lender"],
+      ["legal", "Legal Description"],
+    ],
+    editable: [
+      ["phone", "Phone", "text"],
+      ["email", "Email", "text"],
+      ["last_contact", "Last Contact", "date"],
+      ["next_followup", "Next Follow-up", "date"],
+      ["reinstatement_amount", "Reinstatement amount", "text", true],
+      ["sale_confirmed", "Sale date confirmed?", "select-yn", true],
+      ["occupancy", "Occupancy (owner/tenant/vacant)", "text", true],
+      ["notes", "Notes", "textarea"],
+    ],
+  },
+  tfc: {
+    storeKey: "nueces_tfc_crm_v1",
+    label: "Tax Foreclosures",
+    readonly: [
+      ["owner", "Owner"],
+      ["doc_num", "Doc #"],
+      ["prop_address", "Property Address"],
+    ],
+    editable: [
+      ["phone", "Phone", "text"],
+      ["email", "Email", "text"],
+      ["last_contact", "Last Contact", "date"],
+      ["next_followup", "Next Follow-up", "date"],
+      ["taxes_owed", "Taxes owed", "text", true],
+      ["redemption_deadline", "Redemption deadline", "date", true],
+      ["notes", "Notes", "textarea"],
+    ],
+  },
+  to: {
+    storeKey: "nueces_to_crm_v1",
+    label: "Tax Overages",
+    readonly: [
+      ["owner", "Former Owner"],
+      ["doc_num", "Doc #"],
+      ["prop_address", "Property Address"],
+    ],
+    editable: [
+      ["phone", "Phone", "text"],
+      ["email", "Email", "text"],
+      ["last_contact", "Last Contact", "date"],
+      ["next_followup", "Next Follow-up", "date"],
+      ["overage_amount", "Overage amount", "text", true],
+      ["claim_deadline", "Claim deadline", "date", true],
+      ["heir_research", "Heir research", "textarea", true],
+      ["notes", "Notes", "textarea"],
+    ],
+  },
+  mo: {
+    storeKey: "nueces_mo_crm_v1",
+    label: "Mortgage Overages",
+    readonly: [
+      ["owner", "Former Owner"],
+      ["doc_num", "Doc #"],
+      ["prop_address", "Property Address"],
+    ],
+    editable: [
+      ["phone", "Phone", "text"],
+      ["email", "Email", "text"],
+      ["last_contact", "Last Contact", "date"],
+      ["next_followup", "Next Follow-up", "date"],
+      ["overage_amount", "Overage amount", "text", true],
+      ["claim_deadline", "Claim deadline", "date", true],
+      ["heir_research", "Heir research", "textarea", true],
+      ["notes", "Notes", "textarea"],
+    ],
+  },
+};
+
+function loadCrmStore(type) {
+  const cfg = CRM_CONFIG[type];
+  if (!cfg) return {};
+  try { return JSON.parse(localStorage.getItem(cfg.storeKey) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveCrmStore(type, store) {
+  const cfg = CRM_CONFIG[type];
+  if (!cfg) return;
+  localStorage.setItem(cfg.storeKey, JSON.stringify(store));
+}
+function getCrmEntry(type, docNum) {
+  const store = loadCrmStore(type);
+  return store[docNum] || {};
+}
+function setCrmField(type, docNum, key, value) {
+  const store = loadCrmStore(type);
+  store[docNum] = Object.assign({}, store[docNum], {
+    [key]: value,
+    _updated_at: new Date().toISOString()
+  });
+  saveCrmStore(type, store);
+}
+
+// Tracks where to return when the user hits Back: which pane was
+// active, plus the scrollY at the moment they clicked into the CRM.
+let _crmReturn = { pane: null, scrollY: 0 };
+
+function moneyFmt(v) {
+  if (v == null || v === "") return "—";
+  const n = Number(v);
+  if (isNaN(n)) return String(v);
+  return "$" + n.toLocaleString("en-US", {maximumFractionDigits: 0});
+}
+
+function openCrm(type, docNum, sourceRecords) {
+  const cfg = CRM_CONFIG[type];
+  if (!cfg) return;
+  const rec = (sourceRecords || []).find(x => x.doc_num === docNum);
+  if (!rec) return;
+
+  // Remember where we came from so Back restores it exactly.
+  const activePane = document.querySelector(".pane.active");
+  _crmReturn = {
+    pane: activePane ? activePane.id : null,
+    scrollY: window.scrollY,
+  };
+
+  const entry = getCrmEntry(type, docNum);
+
+  // --- Read-only context card ---
+  const roRows = cfg.readonly.map(([key, lbl, kind]) => {
+    let val = rec[key];
+    if (kind === "money") val = moneyFmt(val);
+    else if (val == null || val === "") val = "—";
+    return `<div class="crm-readonly-row">
+      <span class="k">${esc(lbl)}</span>
+      <span class="v">${esc(String(val))}</span></div>`;
+  }).join("");
+
+  // --- Editable fields card ---
+  const edRows = cfg.editable.map(([key, lbl, ftype, isStub]) => {
+    const cur = entry[key] != null ? entry[key] : "";
+    let control;
+    if (ftype === "textarea") {
+      control = `<textarea data-crm-key="${esc(key)}"
+                  placeholder="Type here…">${esc(cur)}</textarea>`;
+    } else if (ftype === "date") {
+      control = `<input type="date" data-crm-key="${esc(key)}"
+                  value="${esc(cur)}">`;
+    } else if (ftype === "select-yn") {
+      control = `<select data-crm-key="${esc(key)}">
+          <option value=""${cur===""?" selected":""}>—</option>
+          <option value="yes"${cur==="yes"?" selected":""}>Yes</option>
+          <option value="no"${cur==="no"?" selected":""}>No</option>
+        </select>`;
+    } else {
+      control = `<input type="text" data-crm-key="${esc(key)}"
+                  value="${esc(cur)}">`;
+    }
+    return `<div class="crm-field">
+      <label>${esc(lbl)}</label>
+      ${control}
+      ${isStub ? `<div class="crm-stub-note">Type-specific field —
+         tell Claude how you want to refine this.</div>` : ""}
+    </div>`;
+  }).join("");
+
+  document.getElementById("crm-title").textContent =
+    (rec.owner || "Lead") + " — " + cfg.label;
+  document.getElementById("crm-body").innerHTML = `
+    <div class="crm-grid">
+      <div class="crm-card">
+        <h3>Lead Info (read-only)</h3>
+        ${roRows}
+      </div>
+      <div class="crm-card">
+        <h3>CRM <span class="crm-saved" id="crm-saved">Saved ✓</span></h3>
+        ${edRows}
+      </div>
+    </div>
+  `;
+
+  // Auto-save wiring: text/textarea debounce on input; date/select
+  // save immediately on change.
+  let saveTimer = null;
+  const flash = () => {
+    const s = document.getElementById("crm-saved");
+    if (!s) return;
+    s.classList.add("show");
+    clearTimeout(s._t);
+    s._t = setTimeout(() => s.classList.remove("show"), 1200);
+  };
+  document.querySelectorAll("#crm-body [data-crm-key]").forEach(el => {
+    const key = el.dataset.crmKey;
+    const tag = el.tagName.toLowerCase();
+    if (tag === "input" && el.type === "text" || tag === "textarea") {
+      el.addEventListener("input", () => {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          setCrmField(type, docNum, key, el.value);
+          flash();
+        }, 400);
+      });
+    } else {
+      el.addEventListener("change", () => {
+        setCrmField(type, docNum, key, el.value);
+        flash();
+      });
+    }
+  });
+
+  // Swap views: hide all panes, show CRM full-screen.
+  document.querySelectorAll(".pane").forEach(p =>
+      p.classList.remove("active"));
+  const crm = document.getElementById("crm-view");
+  crm.hidden = false;
+  window.scrollTo(0, 0);
+}
+
+function closeCrm() {
+  document.getElementById("crm-view").hidden = true;
+  // Restore the pane we came from + scroll position.
+  if (_crmReturn.pane) {
+    const p = document.getElementById(_crmReturn.pane);
+    if (p) p.classList.add("active");
+  }
+  // Defer scroll until after layout reflows the restored table.
+  const y = _crmReturn.scrollY;
+  requestAnimationFrame(() => window.scrollTo(0, y));
+}
+
+document.getElementById("crm-back").onclick = closeCrm;
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" &&
+      !document.getElementById("crm-view").hidden) closeCrm();
+});
 
 // ============================================================
 // Data caches
@@ -1108,6 +1480,17 @@ function buildCclnRow(r, isDead) {
     <td class="legal">${esc(r.legal || "")}</td>
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
     <td style="text-align:center;">${ncadCell}</td>`;
+
+  // Whole-row click opens the CRM, EXCEPT when the click landed on an
+  // interactive element (status pill, links, buttons) which have their
+  // own behavior. We detect that by walking up from the click target.
+  tr.style.cursor = "pointer";
+  tr.addEventListener("click", (ev) => {
+    if (ev.target.closest(
+        "a, button, .pill.status, .ccln-status-menu, .ext-icon"))
+      return;
+    openCrm("ccln", r.doc_num, CCLN_RAW);
+  });
   return tr;
 }
 
@@ -1643,6 +2026,15 @@ function buildFcRow(r, isDead) {
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
     <td style="text-align: center;">${ncadCell}</td>
   `;
+
+  // Whole-row click opens the CRM, except on interactive elements.
+  tr.style.cursor = "pointer";
+  tr.addEventListener("click", (ev) => {
+    if (ev.target.closest(
+        "a, button, .pill.status, .ext-icon"))
+      return;
+    openCrm("mfc", r.doc_num, FC_RAW);
+  });
   return tr;
 }
 
