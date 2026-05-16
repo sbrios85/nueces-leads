@@ -101,6 +101,12 @@
   .ncad-search-link:hover .ext-icon { color: var(--accent); }
   .pill.absentee { background: rgba(245,158,11,.20); color: var(--warn);
                    font-weight: 600; }
+  /* Possible short sale: appraised value < loan amount AND deed < 1yr.
+     Stronger red than the pre-foreclosure pill so it stands out as a
+     buying signal — these owners are likely underwater on the loan,
+     making them especially motivated to deal. */
+  .pill.short-sale { background: rgba(239,68,68,.25); color: var(--bad);
+                     font-weight: 600; }
   tr.dead-lead td { opacity: 0.45; }
 
   /* Mark-dead button (lives in Status column) */
@@ -1018,6 +1024,65 @@ function buildFcRow(r, isDead) {
     }
   }
 
+  // Possible short sale: triggered if EITHER condition applies.
+  //
+  //   1. appraised_value < loan_amount  →  owner is underwater
+  //      (owes more than the property is worth)
+  //   2. deed_date within the last 1.5 years  →  recent loan, in
+  //      foreclosure already, so they've barely paid anything down —
+  //      original loan amount ≈ current balance, and being in
+  //      foreclosure this fast is itself a sign they're underwater
+  //      or otherwise distressed enough to need a short sale
+  //
+  // Either signal alone is a strong "this owner has no equity / no
+  // working capital" indicator. For door-knocking: short-sale
+  // candidates are especially motivated because selling at market
+  // price won't cover the loan. They need either lender approval
+  // (short sale) or a cash buyer willing to take the property as-is.
+  // Either way, they're highly likely to engage.
+  let shortSaleBadge = "";
+  let triggerReason = "";
+
+  // Condition 1: underwater (appraised < loan)
+  if (r.appraised_value && r.loan_amount) {
+    const appr = Number(r.appraised_value);
+    const loan = Number(r.loan_amount);
+    if (!isNaN(appr) && !isNaN(loan) && appr < loan) {
+      const apprStr = "$" + appr.toLocaleString("en-US",
+          {maximumFractionDigits: 0});
+      const loanStr = "$" + loan.toLocaleString("en-US",
+          {maximumFractionDigits: 0});
+      triggerReason = `Appraised ${apprStr} < Loan ${loanStr} (underwater)`;
+    }
+  }
+
+  // Condition 2: recent loan (deed < 1.5 years old). If both
+  // conditions hit, we prefer the underwater reason for the tooltip
+  // since it's the more direct signal. Otherwise, surface the
+  // recent-loan reason.
+  if (!triggerReason && r.deed_date) {
+    // Parse deed_date — comes in mixed formats from the PDF parser:
+    // "12/01/2003", "June 27, 2022", "5/18/2018", "November 19, 2015"
+    // JavaScript's Date() handles all of these natively. Bail out
+    // safely if parsing fails (NaN).
+    const deedTime = Date.parse(r.deed_date);
+    if (!isNaN(deedTime)) {
+      // 1.5 years = 547.5 days. We use the round number 548 days.
+      const eighteenMonthsMs = 548 * 24 * 60 * 60 * 1000;
+      const ageMs = Date.now() - deedTime;
+      if (ageMs >= 0 && ageMs <= eighteenMonthsMs) {
+        const months = Math.round(ageMs / (30 * 24 * 60 * 60 * 1000));
+        triggerReason = `Loan only ${months} month${months === 1 ? "" : "s"} ` +
+                         `old — likely barely paid down`;
+      }
+    }
+  }
+
+  if (triggerReason) {
+    shortSaleBadge = ` <span class="pill short-sale" ` +
+      `title="${esc(triggerReason)}">POSSIBLE SHORT SALE</span>`;
+  }
+
   // Status cell content depends on dead/active. Active rows show a
   // green "Active" pill — clicking it opens the reason picker to
   // mark the lead dead. Dead rows show a grey "Dead" pill with the
@@ -1088,11 +1153,11 @@ function buildFcRow(r, isDead) {
     <td class="days ${daysClass}">${esc(daysText)}</td>
     <td>${esc(r.recorded || "")}</td>
     <td>${esc(r.owner || "—")}</td>
-    <td>${esc(fullAddr || "—")}${absenteeBadge}</td>
+    <td>${esc(fullAddr || "—")}${absenteeBadge}${shortSaleBadge}</td>
     <td>${esc(mailFull || "—")}</td>
     <td>${loanAmt}</td>
     <td>${apprVal}</td>
-    <td>${esc(r.deed_date || "—")}</td>
+    <td>${esc(formatDate(r.deed_date))}</td>
     <td>${esc(r.lender || "—")}</td>
     <td class="legal">${esc(r.legal || "")}</td>
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
@@ -1165,6 +1230,21 @@ document.getElementById("fc-reason-backdrop").onclick = (e) => {
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g,
     c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+// Format an ISO date string (YYYY-MM-DD) as US-numeric (M/D/YYYY).
+// If the input isn't ISO — e.g. a record from before the date
+// normalization was deployed, or a deed_date that the parser
+// couldn't normalize — return the input unchanged so the user still
+// sees whatever was captured. Empty/null → "—".
+function formatDate(s) {
+  if (!s) return "—";
+  const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return s;       // not ISO, pass through as-is
+  const y = parseInt(m[1], 10);
+  const mo = parseInt(m[2], 10);
+  const d = parseInt(m[3], 10);
+  return `${mo}/${d}/${y}`;
 }
 
 // ============================================================
