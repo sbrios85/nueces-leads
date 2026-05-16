@@ -26,6 +26,33 @@
   }
   header h1 { margin: 0; font-size: 20px; }
   header .meta { color: var(--muted); font-size: 13px; }
+  /* Prominent meta stats — used for "Last scraper update" and
+     "Last PDF upload" so the user can see at a glance whether the
+     data is fresh. The label stays subtle (muted, smaller); the
+     date itself pops out in 15px bright text. The day-count badge
+     is colored by staleness (green/amber/red). */
+  header .meta-stats {
+    display: flex; flex-wrap: wrap; gap: 24px;
+    margin-top: 8px;
+    font-size: 15px;
+    color: var(--fg);
+    line-height: 1.4;
+  }
+  header .meta-stat .lbl {
+    color: var(--muted); font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    display: block; margin-bottom: 2px;
+  }
+  header .meta-stat .val {
+    color: var(--fg); font-weight: 500;
+  }
+  header .meta-stat .ago {
+    font-weight: 500; margin-left: 6px;
+  }
+  header .meta-range {
+    color: var(--muted); font-size: 12px;
+    margin-top: 6px;
+  }
   .tabs { display: flex; gap: 4px; padding: 0 28px;
           border-bottom: 1px solid var(--border); background: var(--panel);
           flex-wrap: wrap; }
@@ -380,7 +407,7 @@
       <th>Sale Date</th><th>Days Until Sale</th>
       <th>Recorded</th>
       <th>Owner</th><th>Property Address</th><th>Mailing Address</th>
-      <th>Loan Amount</th><th>Appraised Value</th><th>Deed Date</th><th>Lender</th>
+      <th>Loan Amount</th><th>Appraised Value</th><th>Loan Date</th><th>Lender</th>
       <th>Legal Description</th><th>Doc#</th><th style="width: 50px;">NCAD</th>
     </tr></thead>
     <tbody></tbody>
@@ -517,16 +544,21 @@ document.querySelectorAll(".tab").forEach(t => {
 // Initial load
 // ============================================================
 async function loadAll() {
-  let leadsMeta = "";
+  // Build up structured meta pieces (rather than one concatenated
+  // string). Each piece renders as its own block: a small uppercase
+  // label above and the value below. Makes scanning easier.
+  let scraperDateText = "";
+  let rangeText = "";
   try {
     const r = await fetch("records.json", {cache:"no-store"});
     const data = await r.json();
     LEADS_RAW = data.records || [];
     document.getElementById("leads-count").textContent = data.total || 0;
     if (data.fetched_at) {
-      leadsMeta = "Last update: " + new Date(data.fetched_at).toLocaleString();
-      if (data.date_range && data.date_range.start)
-        leadsMeta += " • Range: " + data.date_range.start + " → " + data.date_range.end;
+      scraperDateText = new Date(data.fetched_at).toLocaleString();
+      if (data.date_range && data.date_range.start) {
+        rangeText = data.date_range.start + " → " + data.date_range.end;
+      }
     }
     renderLeadsStats(data); populateLeadsCats(); applyLeads();
   } catch (e) { document.getElementById("leads-empty").hidden = false; }
@@ -549,10 +581,9 @@ async function loadAll() {
 
   // Compute "last PDF upload" timestamp: the max `pdf_parsed_at` across
   // foreclosure records. This tells the user when they last uploaded
-  // a foreclosure-notice PDF batch (via the "Parse uploaded foreclosure
-  // PDFs" workflow), so they know whether they're current on PDFs or
+  // a foreclosure-notice PDF batch via the "Parse uploaded foreclosure
+  // PDFs" workflow, so they know whether they're current on PDFs or
   // need to grab the latest batch from the clerk portal.
-  let lastPdfMeta = "";
   let mostRecentPdf = null;
   for (const r of FC_RAW) {
     if (!r.pdf_parsed_at) continue;
@@ -560,9 +591,11 @@ async function loadAll() {
     if (isNaN(t.getTime())) continue;
     if (!mostRecentPdf || t > mostRecentPdf) mostRecentPdf = t;
   }
+  let pdfDateText = "";
+  let pdfAgoHtml = "";
   if (mostRecentPdf) {
+    pdfDateText = mostRecentPdf.toLocaleString();
     // Compute "X days ago" suffix for at-a-glance staleness check.
-    // Days is computed in whole-day buckets relative to now.
     const now = new Date();
     const dayMs = 24 * 60 * 60 * 1000;
     const daysAgo = Math.floor((now - mostRecentPdf) / dayMs);
@@ -570,9 +603,7 @@ async function loadAll() {
     if (daysAgo === 0) agoText = "today";
     else if (daysAgo === 1) agoText = "1 day ago";
     else agoText = daysAgo + " days ago";
-
-    // Color-code by staleness so it's obvious at a glance whether the
-    // user is current. The colors reuse the existing palette:
+    // Color-code by staleness:
     //   green = current (≤3 days)
     //   amber = getting stale (4-7 days)
     //   red   = overdue (8+ days)
@@ -580,17 +611,37 @@ async function loadAll() {
     if (daysAgo <= 3) agoColor = "var(--good)";
     else if (daysAgo <= 7) agoColor = "var(--warn)";
     else agoColor = "var(--bad)";
-
-    lastPdfMeta = ` • Last PDF upload: ${mostRecentPdf.toLocaleString()} ` +
-                  `<span style="color: ${agoColor}; font-weight: 500;">` +
-                  `(${agoText})</span>`;
+    pdfAgoHtml = `<span class="ago" style="color: ${agoColor};">` +
+                 `(${agoText})</span>`;
   }
 
-  // Use innerHTML (not textContent) so the colored "X days ago" badge
-  // renders. The leadsMeta string is built from trusted data
-  // (server-generated ISO timestamps), so there's no XSS surface here.
-  document.getElementById("meta").innerHTML =
-      (leadsMeta || "Awaiting first scrape") + lastPdfMeta;
+  // Render the meta block. We use innerHTML (not textContent) so the
+  // colored "X days ago" badge renders. All inputs come from trusted
+  // server-generated data — no XSS surface.
+  const metaEl = document.getElementById("meta");
+  if (!scraperDateText && !pdfDateText) {
+    metaEl.innerHTML = "Awaiting first scrape";
+    return;
+  }
+  let html = `<div class="meta-stats">`;
+  if (scraperDateText) {
+    html += `<div class="meta-stat">` +
+            `<span class="lbl">Last scraper update</span>` +
+            `<span class="val">${scraperDateText}</span>` +
+            `</div>`;
+  }
+  if (pdfDateText) {
+    html += `<div class="meta-stat">` +
+            `<span class="lbl">Last PDF upload</span>` +
+            `<span class="val">${pdfDateText}</span>` +
+            ` ${pdfAgoHtml}` +
+            `</div>`;
+  }
+  html += `</div>`;
+  if (rangeText) {
+    html += `<div class="meta-range">Range: ${rangeText}</div>`;
+  }
+  metaEl.innerHTML = html;
 }
 
 // ============================================================
