@@ -90,7 +90,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78463",
-      "appraised_value": 294474.0
+      "appraised_value": 294474.0,
+      "ncad_prop_id": "257256",
+      "ncad_year": "2026",
+      "ncad_owner_id": "550713"
     },
     "JOHN CHAPMAN FARMS LTD": {
       "site_addr": "FM RD 70 BTWN CR 53 & CR 55",
@@ -101,7 +104,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78466",
-      "appraised_value": 270566.0
+      "appraised_value": 270566.0,
+      "ncad_prop_id": "257214",
+      "ncad_year": "2026",
+      "ncad_owner_id": "481909"
     },
     "HEALTH COM MANAGEMENT LLC": null,
     "VAIZ RAUL JR": {
@@ -285,7 +291,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78413",
-      "appraised_value": 137675.0
+      "appraised_value": 137675.0,
+      "ncad_prop_id": "258325",
+      "ncad_year": "2026",
+      "ncad_owner_id": "523672"
     },
     "RUNNELS MADELINE M": {
       "site_addr": "710 E AVENUE F",
@@ -296,7 +305,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78380",
-      "appraised_value": 153053.0
+      "appraised_value": 153053.0,
+      "ncad_prop_id": "293407",
+      "ncad_year": "2026",
+      "ncad_owner_id": "790914"
     },
     "SANDOVAL BENITO JR": {
       "site_addr": "910 BLOOMINGTON ST",
@@ -317,18 +329,24 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78416",
-      "appraised_value": 99460.0
+      "appraised_value": 99460.0,
+      "ncad_prop_id": "209835",
+      "ncad_year": "2026",
+      "ncad_owner_id": "422577"
     },
     "ESTATE OF SAMAN AMENDRA DE SILVA": {
-      "site_addr": "1329 WHITAKER DR",
+      "site_addr": "422 W VANDERBILT DR",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78412",
-      "mail_addr": "1329 Whitaker Dr Corpus Christi",
+      "site_zip": "78415",
+      "mail_addr": "422 W Vanderbilt Dr Corpus Christi",
       "mail_city": "",
       "mail_state": "TX",
-      "mail_zip": "78412",
-      "appraised_value": 151821.0
+      "mail_zip": "78415",
+      "appraised_value": 177572.0,
+      "ncad_prop_id": "185000",
+      "ncad_year": "2026",
+      "ncad_owner_id": "229020"
     },
     "CLARINGTON HOLDINGS LLC": {
       "site_addr": "400 RETREAT ST",
@@ -339,7 +357,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78703",
-      "appraised_value": 528126.0
+      "appraised_value": 528126.0,
+      "ncad_prop_id": "604467",
+      "ncad_year": "2026",
+      "ncad_owner_id": "806801"
     },
     "NEXT SPORTS COMPANY LLC": {
       "site_addr": "5102 Old Brownsville Rd",
@@ -350,7 +371,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78414",
-      "appraised_value": 1297513.0
+      "appraised_value": 1297513.0,
+      "ncad_prop_id": "240160",
+      "ncad_year": "2026",
+      "ncad_owner_id": "775428"
     },
     "RICHARDS COASTAL PROPERTIES LLC": {
       "site_addr": "1419 11TH ST",
@@ -361,7 +385,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "76033",
-      "appraised_value": 283393.0
+      "appraised_value": 283393.0,
+      "ncad_prop_id": "217254",
+      "ncad_year": "2026",
+      "ncad_owner_id": "775044"
     },
     "LAKEVIEW LOAN SERVICING LLC": {
       "site_addr": "512 E 2nd ST",
@@ -372,7 +399,10 @@
       "mail_city": "",
       "mail_state": "FL",
       "mail_zip": "33146",
-      "appraised_value": 220022.0
+      "appraised_value": 220022.0,
+      "ncad_prop_id": "195164",
+      "ncad_year": "2026",
+      "ncad_owner_id": "798797"
     },
     "GRANADO ESTATES LP": null,
     "219 MARSHALL LLC": {
@@ -384,19 +414,25 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "77274",
-      "appraised_value": 19410.0
+      "appraised_value": 19410.0,
+      "ncad_prop_id": "194880",
+      "ncad_year": "2026",
+      "ncad_owner_id": "803833"
     },
     "ALVARADO ROBERT LEE": null,
     "DRISCOLL": {
-      "site_addr": "FM RD 665 (WEST OSO) @",
-      "site_city": "ROBSTOWN",
+      "site_addr": "PACIFIC AVE",
+      "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78380",
-      "mail_addr": "C/O CHIEF FINANCIAL OFFICER 3533 S ALAMEDA CORPUS CHRISTI",
+      "site_zip": "78401",
+      "mail_addr": "319 Industrial Ave Robstown",
       "mail_city": "",
       "mail_state": "TX",
-      "mail_zip": "78411",
-      "appraised_value": 211867.0
+      "mail_zip": "78380",
+      "appraised_value": 298841.0,
+      "ncad_prop_id": "382157",
+      "ncad_year": "2026",
+      "ncad_owner_id": "131815"
     },
     "FRANCO CHRISTINE": {
       "site_addr": "4639 CORONA DR STE 6",
@@ -407,18 +443,24 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78411",
-      "appraised_value": 46845.0
+      "appraised_value": 46845.0,
+      "ncad_prop_id": "514377",
+      "ncad_year": "2026",
+      "ncad_owner_id": "665650"
     },
     "HOGAN NICHOLAS": {
-      "site_addr": "2830 AUSTIN ST",
+      "site_addr": "2314 QUIET DR",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78404",
-      "mail_addr": "PO Box 4154 Corpus Christi",
+      "site_zip": "78418",
+      "mail_addr": "2314 Quiet Ln Corpus Christi",
       "mail_city": "",
       "mail_state": "TX",
-      "mail_zip": "78469",
-      "appraised_value": 119428.0
+      "mail_zip": "78418",
+      "appraised_value": 276502.0,
+      "ncad_prop_id": "597623",
+      "ncad_year": "2026",
+      "ncad_owner_id": "793959"
     },
     "RODRIGUEZ JESSICA": {
       "site_addr": "3242 OLSEN DR",
@@ -429,7 +471,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78411",
-      "appraised_value": 105769.0
+      "appraised_value": 105769.0,
+      "ncad_prop_id": "225364",
+      "ncad_year": "2026",
+      "ncad_owner_id": "772313"
     },
     "ECHAVARRIA JAMES": null,
     "RIDDLE CHARLES": null,
@@ -446,18 +491,24 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78413",
-      "appraised_value": 3465.0
+      "appraised_value": 3465.0,
+      "ncad_prop_id": "198166",
+      "ncad_year": "2026",
+      "ncad_owner_id": "478160"
     },
     "MUNGUIA JOHN": {
-      "site_addr": "1708 PEABODY AVE",
+      "site_addr": "3909 DUNSTAIN",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78407",
-      "mail_addr": "1510 PALM CORPUS CHRISTI",
+      "site_zip": "78410",
+      "mail_addr": "3909 DUNSTAIN ST CORPUS CHRISTI",
       "mail_city": "",
       "mail_state": "TX",
-      "mail_zip": "78407",
-      "appraised_value": 87862.0
+      "mail_zip": "78410",
+      "appraised_value": 224907.0,
+      "ncad_prop_id": "204110",
+      "ncad_year": "2026",
+      "ncad_owner_id": "568791"
     },
     "THOMAS MICHAEL": {
       "site_addr": "1229 CARNABY ST",
@@ -468,7 +519,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78415",
-      "appraised_value": 287104.0
+      "appraised_value": 287104.0,
+      "ncad_prop_id": "598456",
+      "ncad_year": "2026",
+      "ncad_owner_id": "790468"
     },
     "HERNANDEZ ALEX": null,
     "ELIZALDE JAZMYN": null,
@@ -484,30 +538,13 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78412",
-      "appraised_value": 161730.0
+      "appraised_value": 161730.0,
+      "ncad_prop_id": "280301",
+      "ncad_year": "2026",
+      "ncad_owner_id": "672552"
     },
-    "PALACIOS HERBERT BENJAMI": {
-      "site_addr": "15110 BARATARIA DR",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78418",
-      "mail_addr": "15110 Barataria Dr Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78418",
-      "appraised_value": 372206.0
-    },
-    "LEDESMA MATTHEW": {
-      "site_addr": "215 S STATION ST",
-      "site_city": "PORT ARANSAS",
-      "site_state": "TX",
-      "site_zip": "78373",
-      "mail_addr": "P O BOX 524 PORT ARANSAS",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78373",
-      "appraised_value": 1196845.0
-    },
+    "PALACIOS HERBERT BENJAMI": null,
+    "LEDESMA MATTHEW": null,
     "CENTENO AMANDA": {
       "site_addr": "1114 19th ST",
       "site_city": "CORPUS CHRISTI",
@@ -7665,28 +7702,8 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "HUMPHREY ROBERT": {
-      "site_addr": "5497 STATE HWY 361 41",
-      "site_city": "PORT ARANSAS",
-      "site_state": "TX",
-      "site_zip": "78373",
-      "mail_addr": "383 Wandering Oaks Rd Woodway",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "76712",
-      "appraised_value": 632982.0
-    },
-    "PERRONE ROBIN": {
-      "site_addr": "7218 PINK CADILLAC DR",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78414",
-      "mail_addr": "7218 PINK CADILLAC DR CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78414",
-      "appraised_value": 461665.0
-    },
+    "HUMPHREY ROBERT": null,
+    "PERRONE ROBIN": null,
     "IDAHO HOUSING AND FINANCE ASSOCIATION": {
       "site_addr": "1704 RAND MORGAN RD",
       "site_city": "CORPUS CHRISTI",
@@ -7718,30 +7735,39 @@
       "mail_city": "",
       "mail_state": "NM",
       "mail_zip": "88345",
-      "appraised_value": 137513.0
+      "appraised_value": 137513.0,
+      "ncad_prop_id": "199134",
+      "ncad_year": "2026",
+      "ncad_owner_id": "813429"
     },
     "VALDEZ ASHLEY": null,
     "DELEON SEBASTIAN LEON": {
-      "site_addr": "709 IOWA ST",
-      "site_city": "ROBSTOWN",
-      "site_state": "TX",
-      "site_zip": "78380",
-      "mail_addr": "4365 FM 1694 ROBSTOWN",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78380",
-      "appraised_value": 19531.0
-    },
-    "CARRILLO MARSHA": {
-      "site_addr": "1814 DARCEY DR",
+      "site_addr": "5731 CREST PEBBLE DR",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78416",
-      "mail_addr": "1814 DARCEY DR CORPUS CHRISTI",
+      "site_zip": "78415",
+      "mail_addr": "5731 Crest Pebble Dr Corpus Christi",
       "mail_city": "",
       "mail_state": "TX",
-      "mail_zip": "78416",
-      "appraised_value": 191350.0
+      "mail_zip": "78415",
+      "appraised_value": 164471.0,
+      "ncad_prop_id": "221432",
+      "ncad_year": "2026",
+      "ncad_owner_id": "665550"
+    },
+    "CARRILLO MARSHA": {
+      "site_addr": "3833 SALLY LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414",
+      "mail_addr": "3833 Sally Ln Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "appraised_value": 397922.0,
+      "ncad_prop_id": "200106652",
+      "ncad_year": "2026",
+      "ncad_owner_id": "777570"
     },
     "VALDEZ ALEXUS MELAINA": null,
     "MENDEZ DELIA": {
@@ -7753,31 +7779,27 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78412",
-      "appraised_value": 100764.0
+      "appraised_value": 100764.0,
+      "ncad_prop_id": "275266",
+      "ncad_year": "2026",
+      "ncad_owner_id": "727173"
     },
     "MCJUNKINS JAMES": {
-      "site_addr": "14429 PENTRIDGE DR",
+      "site_addr": "1706 ARCHDALE DR",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78410",
-      "mail_addr": "c/o MARK A VELAZQUEZ 14429 Pentridge Dr Corpus Christi",
+      "site_zip": "78416",
+      "mail_addr": "1706 Archdale Dr Corpus Christi",
       "mail_city": "",
       "mail_state": "TX",
-      "mail_zip": "78410",
-      "appraised_value": 309382.0
+      "mail_zip": "78416",
+      "appraised_value": 137993.0,
+      "ncad_prop_id": "200059222",
+      "ncad_year": "2026",
+      "ncad_owner_id": "802104"
     },
     "RODRIGUEZ CIERRA": null,
-    "JONES KAYTLIN": {
-      "site_addr": "1341 CALLE SAN MARCOS",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78417",
-      "mail_addr": "1341 Calle San Marcos Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78417",
-      "appraised_value": 200812.0
-    },
+    "JONES KAYTLIN": null,
     "HALDAR MOUSSA N": null,
     "247 ON SITE LLC": null,
     "BADALICH CARL": {
@@ -7789,7 +7811,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "76040",
-      "appraised_value": 342316.0
+      "appraised_value": 342316.0,
+      "ncad_prop_id": "187997",
+      "ncad_year": "2026",
+      "ncad_owner_id": "736994"
     },
     "CUNNINGHAM ROMA": {
       "site_addr": "6418 BIRMINGHAM ST",
@@ -7800,7 +7825,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78414",
-      "appraised_value": 96352.0
+      "appraised_value": 96352.0,
+      "ncad_prop_id": "182295",
+      "ncad_year": "2026",
+      "ncad_owner_id": "787008"
     },
     "VALENCIA RICARDA": null,
     "UZOIGWE STANISLAUS NWAFOR": null,
@@ -7834,7 +7862,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78414",
-      "appraised_value": 119091.0
+      "appraised_value": 119091.0,
+      "ncad_prop_id": "217756",
+      "ncad_year": "2026",
+      "ncad_owner_id": "484853"
     },
     "GARRETT WAYNE JOHNSTON AND SUSANA JOHNSTON": {
       "site_addr": "3902 TARGARYEN WY",
@@ -7845,7 +7876,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78410",
-      "appraised_value": 282430.0
+      "appraised_value": 282430.0,
+      "ncad_prop_id": "597405",
+      "ncad_year": "2026",
+      "ncad_owner_id": "792083"
     },
     "ELIZABETH Z GUERRA": {
       "site_addr": "621 CHAMBERLAIN",
@@ -7856,18 +7890,24 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78404",
-      "appraised_value": 146049.0
+      "appraised_value": 146049.0,
+      "ncad_prop_id": "260479",
+      "ncad_year": "2026",
+      "ncad_owner_id": "732887"
     },
     "Higinia R Longoria": {
-      "site_addr": "1929 LORITTE DR",
+      "site_addr": "1510 7th ST",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78416",
-      "mail_addr": "15107 Oakmere San Antonio",
+      "site_zip": "78404",
+      "mail_addr": "5337 MEADOWGATE DR CORPUS CHRISTI",
       "mail_city": "",
       "mail_state": "TX",
-      "mail_zip": "78232",
-      "appraised_value": 130898.0
+      "mail_zip": "78413",
+      "appraised_value": 27928.0,
+      "ncad_prop_id": "274805",
+      "ncad_year": "2026",
+      "ncad_owner_id": "821562"
     },
     "JENNIFER MUSQUIEZ AND ADOLFO SANCHEZ": {
       "site_addr": "3405 DERBY DR",
@@ -7878,7 +7918,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78414",
-      "appraised_value": 316852.0
+      "appraised_value": 316852.0,
+      "ncad_prop_id": "200915",
+      "ncad_year": "2026",
+      "ncad_owner_id": "420412"
     },
     "BENJAMIN ROJAS, UNMARRIED MAN": {
       "site_addr": "125 AVALON DR",
@@ -7889,7 +7932,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78380",
-      "appraised_value": 197773.0
+      "appraised_value": 197773.0,
+      "ncad_prop_id": "200069858",
+      "ncad_year": "2026",
+      "ncad_owner_id": "759710"
     },
     "Geraldine R Brooks": {
       "site_addr": "4954 JO AN",
@@ -7900,7 +7946,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78415",
-      "appraised_value": 120431.0
+      "appraised_value": 120431.0,
+      "ncad_prop_id": "200025667",
+      "ncad_year": "2026",
+      "ncad_owner_id": "534412"
     },
     "ALFONSO CARDENAS, JR": {
       "site_addr": "3157 VICKSBURG",
@@ -7911,7 +7960,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78410",
-      "appraised_value": 279671.0
+      "appraised_value": 279671.0,
+      "ncad_prop_id": "248778",
+      "ncad_year": "2026",
+      "ncad_owner_id": "819359"
     },
     "ALMENIA GREFAL ODEAY": {
       "site_addr": "4217 MICHELLE LN",
@@ -7922,7 +7974,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78413",
-      "appraised_value": 223642.0
+      "appraised_value": 223642.0,
+      "ncad_prop_id": "550531",
+      "ncad_year": "2026",
+      "ncad_owner_id": "826194"
     },
     "DAVID BRIAN HALL AND NANCY MARIE RALL": {
       "site_addr": "7706 ARSHAN LN",
@@ -7933,7 +7988,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78413",
-      "appraised_value": 240877.0
+      "appraised_value": 240877.0,
+      "ncad_prop_id": "535283",
+      "ncad_year": "2026",
+      "ncad_owner_id": "793133"
     },
     "to warrant title": {
       "site_addr": "608 W 3rd ST",
@@ -7944,7 +8002,10 @@
       "mail_city": "",
       "mail_state": "MA",
       "mail_zip": "01803",
-      "appraised_value": 104620.0
+      "appraised_value": 104620.0,
+      "ncad_prop_id": "200057276",
+      "ncad_year": "2026",
+      "ncad_owner_id": "818528"
     },
     "Block C of the said Flour Bluff Estates Subdivision, as": null,
     "previously conveyed the above described property in trust to secure payment": null,
@@ -7961,7 +8022,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78410",
-      "appraised_value": 269747.0
+      "appraised_value": 269747.0,
+      "ncad_prop_id": "597441",
+      "ncad_year": "2026",
+      "ncad_owner_id": "798935"
     },
     "ROSE ANNA DIAZ secures the repayment of a Note": null,
     "JULIAN J. VERA": {
@@ -7973,63 +8037,29 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78414",
-      "appraised_value": 764227.0
+      "appraised_value": 764227.0,
+      "ncad_prop_id": "530217",
+      "ncad_year": "2026",
+      "ncad_owner_id": "704411"
     },
     "JOE ALONZO FLORES": {
-      "site_addr": "262 GIBSON LN",
+      "site_addr": "1717 ROBIN DR",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
-      "site_zip": "78406",
-      "mail_addr": "262 GIBSON LN CORPUS CHRISTI",
+      "site_zip": "78415",
+      "mail_addr": "P O BOX 7932 CORPUS CHRISTI",
       "mail_city": "",
       "mail_state": "TX",
-      "mail_zip": "78406",
-      "appraised_value": 86724.0
+      "mail_zip": "78467",
+      "appraised_value": 109632.0,
+      "ncad_prop_id": "201414",
+      "ncad_year": "2026",
+      "ncad_owner_id": "401510"
     },
-    "ASHTON DUDLEY AND BRYCE DUDLEY secures the repayment of a Note": {
-      "site_addr": "1126 3rd ST",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78404",
-      "mail_addr": "1122 3RD ST CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78404",
-      "appraised_value": 229091.0
-    },
-    "RICKY ROBERTS JR": {
-      "site_addr": "14014 HAWKSNEST BAY DR",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78418",
-      "mail_addr": "14014 Hawksnest Bay Dr Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78418",
-      "appraised_value": 532114.0
-    },
-    "JAMES P JONES": {
-      "site_addr": "2002 ORANGE",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78418",
-      "mail_addr": "2002 Orange St Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78418",
-      "appraised_value": 217550.0
-    },
-    "BENJAMIN G. BRULLOTHS": {
-      "site_addr": "10302 HILL COUNTRY LN",
-      "site_city": "CORPUS CHRISTI",
-      "site_state": "TX",
-      "site_zip": "78410",
-      "mail_addr": "10302 HILL COUNTRY LN CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78410",
-      "appraised_value": 333094.0
-    },
+    "ASHTON DUDLEY AND BRYCE DUDLEY secures the repayment of a Note": null,
+    "RICKY ROBERTS JR": null,
+    "JAMES P JONES": null,
+    "BENJAMIN G. BRULLOTHS": null,
     "KERRI PAYNE": {
       "site_addr": "4905 LAUREN DR",
       "site_city": "CORPUS CHRISTI",
