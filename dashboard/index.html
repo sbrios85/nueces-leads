@@ -25,6 +25,17 @@
     flex-wrap: wrap; gap: 12px;
   }
   header h1 { margin: 0; font-size: 20px; }
+  /* Title + meta sit side-by-side on one row. The meta block is
+     separated from the title by a divider and aligned to the title's
+     baseline-ish center. On narrow screens it wraps below. */
+  header .header-left {
+    display: flex; align-items: center;
+    flex-wrap: wrap; gap: 20px;
+  }
+  header .header-left h1 {
+    padding-right: 20px;
+    border-right: 1px solid var(--border);
+  }
   header .meta { color: var(--muted); font-size: 13px; }
   /* Prominent meta stats — used for "Last scraper update" and
      "Last PDF upload" so the user can see at a glance whether the
@@ -33,7 +44,6 @@
      is colored by staleness (green/amber/red). */
   header .meta-stats {
     display: flex; flex-wrap: wrap; gap: 24px;
-    margin-top: 8px;
     font-size: 15px;
     color: var(--fg);
     line-height: 1.4;
@@ -51,7 +61,7 @@
   }
   header .meta-range {
     color: var(--muted); font-size: 12px;
-    margin-top: 6px;
+    margin-top: 4px;
   }
   /* ===== Sidebar layout ===== */
   /* The page is a vertical stack: full-width header on top, then a
@@ -154,6 +164,31 @@
   .pill.status-negotiating { background: rgba(245,158,11,.18); color: var(--status-negotiating); }
   .pill.status-closed { background: rgba(16,185,129,.20); color: var(--status-closed); }
   .pill.status-dead { background: rgba(100,116,139,.20); color: var(--status-dead); }
+  .pill.status-working { background: rgba(245,158,11,.18); color: var(--warn); }
+  .pill.status-new:hover, .pill.status-working:hover { filter: brightness(1.25); }
+  /* CCLN status dropdown menu (appears on status-pill click) */
+  .ccln-status-menu {
+    position: fixed; z-index: 200;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px;
+    box-shadow: 0 6px 24px rgba(0,0,0,.4);
+    display: flex; flex-direction: column; gap: 2px;
+    min-width: 140px;
+  }
+  .ccln-status-menu button {
+    background: transparent; border: none; color: var(--fg);
+    text-align: left; padding: 8px 12px; border-radius: 4px;
+    font: inherit; cursor: pointer;
+  }
+  .ccln-status-menu button:hover { background: rgba(56,189,248,.12); }
+  .ccln-status-menu button.danger { color: var(--bad); }
+  .ccln-status-menu button.danger:hover { background: rgba(239,68,68,.12); }
+  .modal .reasons button.danger {
+    border-color: rgba(239,68,68,.4); color: var(--bad);
+  }
+  .modal .reasons button.danger:hover {
+    border-color: var(--bad); background: rgba(239,68,68,.1);
+  }
   .pill.status-active { background: rgba(34,197,94,.18); color: var(--good);
                         cursor: pointer; transition: all 0.15s; }
   .pill.status-active:hover {
@@ -359,7 +394,7 @@
 </head>
 <body>
 <header>
-  <div>
+  <div class="header-left">
     <h1>Nueces County — Lead Pipeline</h1>
     <div class="meta" id="meta">Loading…</div>
   </div>
@@ -417,34 +452,21 @@
 <!-- ======== CCLN / CRM PANE ======== -->
 <div class="pane active" id="pane-ccln">
   <div class="stats" id="ccln-stats"></div>
-  <div class="controls">
-    <input id="ccln-q" placeholder="Search owner / address / doc# / legal…">
-    <select id="ccln-status-filter">
-      <option value="">All (except Dead)</option>
-      <option value="new">New only</option>
-      <option value="contacted">Contacted</option>
-      <option value="interested">Interested</option>
-      <option value="negotiating">Negotiating</option>
-      <option value="closed">Closed</option>
-      <option value="dead">Dead leads only</option>
-      <option value="all-incl-dead">All (including Dead)</option>
-    </select>
-    <select id="ccln-sort">
-      <option value="filed">Sort: Filed (newest first)</option>
-      <option value="status">Sort: Status</option>
-      <option value="last-contact">Sort: Last contact (most recent)</option>
-    </select>
-    <span class="spacer"></span>
-    <button id="ccln-export">Export CSV</button>
-  </div>
   <table id="ccln-table">
     <thead><tr>
-      <th>Status</th><th>Filed</th>
-      <th>Owner (Grantor)</th>
-      <th>Property Address</th><th>Mailing Address</th>
-      <th>Amount</th><th>Last Contact</th><th>Doc#</th>
+      <th data-sort="status"      style="width: 90px;">Status</th>
+      <th data-sort="filed">Filed</th>
+      <th data-sort="owner">Owner (Grantor)</th>
+      <th data-sort="prop_address">Property Address</th>
+      <th data-sort="mail_address">Mailing Address</th>
+      <th data-sort="amount">Amount</th>
+      <th data-sort="appraised_value">Appraised Value</th>
+      <th data-sort="legal">Legal Description</th>
+      <th data-sort="doc_num">Doc#</th>
+      <th style="width: 50px;">NCAD</th>
     </tr></thead>
     <tbody></tbody>
+    <tfoot id="ccln-dead-foot"></tfoot>
   </table>
   <div id="ccln-empty" class="empty" hidden>No City of Corpus Christi liens loaded yet.<br>
     Run the <strong>Backfill City of Corpus Christi liens</strong> workflow once
@@ -669,6 +691,19 @@
   </div>
 </div>
 
+<!-- ======== CCLN "Are you sure?" Dead confirm ======== -->
+<div class="modal-backdrop" id="ccln-confirm-backdrop">
+  <div class="modal" role="dialog" aria-labelledby="ccln-confirm-title">
+    <h3 id="ccln-confirm-title">Mark this lead as dead?</h3>
+    <p class="sub">It will move to the Deleted section at the bottom.
+       You can restore it anytime.</p>
+    <div class="reasons">
+      <button class="danger" onclick="confirmCclnDead()">Yes, mark dead</button>
+    </div>
+    <button class="cancel" onclick="cancelCclnDead()">Cancel</button>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // CRM state — persisted in localStorage, keyed by doc_num
@@ -732,6 +767,39 @@ function setFcEntry(docNum, patch) {
   crm[docNum] = Object.assign({}, cur, patch);
   saveFcCrm(crm);
   return crm[docNum];
+}
+
+// ============================================================
+// CCLN status store (separate from the legacy 6-state CRM_KEY)
+// ============================================================
+// The CCLN Lead-Types tab uses a simple 3-state model:
+//   "new"     — default for every record on load
+//   "working" — user is actively pursuing it
+//   "dead"    — dismissed; moves to the collapsed "Deleted" footer
+// We keep this in its own localStorage key (not the legacy
+// nueces_ccln_crm_v1, which the future WORK/CRM views may reuse with
+// the richer notes/last-contact schema). Records absent from the
+// store are implicitly "new" — we only write an entry once the user
+// changes the status, keeping the store small.
+const CCLN_STATUS_KEY = "nueces_ccln_status_v1";
+function loadCclnStatus() {
+  try { return JSON.parse(localStorage.getItem(CCLN_STATUS_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveCclnStatus(s) {
+  localStorage.setItem(CCLN_STATUS_KEY, JSON.stringify(s));
+}
+function getCclnStatus(docNum) {
+  const s = loadCclnStatus();
+  return (s[docNum] && s[docNum].status) || "new";
+}
+function setCclnStatus(docNum, status) {
+  const s = loadCclnStatus();
+  s[docNum] = Object.assign({}, s[docNum], {
+    status: status,
+    updated_at: new Date().toISOString()
+  });
+  saveCclnStatus(s);
 }
 
 // ============================================================
@@ -880,58 +948,228 @@ function renderCclnStats() {
     <div class="stat"><div class="v">${counts.dead}</div><div class="k">Dead</div></div>
   `;
 }
+// ============================================================
+// CCLN sort state — defaults to Filed, newest first. Not persisted.
+// ============================================================
+let CCLN_SORT_KEY = "filed";
+let CCLN_SORT_DIR = "desc";
+const CCLN_SORT_TYPES = {
+  status:          "status",
+  filed:           "date",
+  owner:           "string",
+  prop_address:    "string",
+  mail_address:    "string",
+  amount:          "number",
+  appraised_value: "number",
+  legal:           "string",
+  doc_num:         "string",
+};
+function _cclnCompare(a, b, key, dir, type) {
+  if (type === "status") {
+    // Order: new(0) → working(1) → dead(2). Dead always still
+    // collected into the footer regardless of this ordering.
+    const rank = {new:0, working:1, dead:2};
+    const sa = rank[getCclnStatus(a.doc_num)] ?? 0;
+    const sb = rank[getCclnStatus(b.doc_num)] ?? 0;
+    return dir === "asc" ? sa - sb : sb - sa;
+  }
+  let va = a[key], vb = b[key];
+  const aE = va == null || va === "";
+  const bE = vb == null || vb === "";
+  if (aE && bE) return 0;
+  if (aE) return 1;
+  if (bE) return -1;
+  if (type === "number") {
+    const na = Number(va), nb = Number(vb);
+    if (isNaN(na) && isNaN(nb)) return 0;
+    if (isNaN(na)) return 1;
+    if (isNaN(nb)) return -1;
+    return dir === "asc" ? na - nb : nb - na;
+  }
+  if (type === "date") {
+    const ta = Date.parse(va), tb = Date.parse(vb);
+    if (isNaN(ta) && isNaN(tb))
+      return dir === "asc" ? String(va).localeCompare(String(vb))
+                            : String(vb).localeCompare(String(va));
+    if (isNaN(ta)) return 1;
+    if (isNaN(tb)) return -1;
+    return dir === "asc" ? ta - tb : tb - ta;
+  }
+  const sa = String(va).toLowerCase(), sb = String(vb).toLowerCase();
+  return dir === "asc" ? sa.localeCompare(sb) : sb.localeCompare(sa);
+}
 function applyCcln() {
-  const q = document.getElementById("ccln-q").value.toLowerCase().trim();
-  const filter = document.getElementById("ccln-status-filter").value;
-  const sort = document.getElementById("ccln-sort").value;
-  const crm = loadCrm();
-  CCLN_FILTERED = CCLN_RAW.filter(r => {
-    const e = crm[r.doc_num] || {status:"new"};
-    if (filter === "" && e.status === "dead") return false;
-    if (filter !== "" && filter !== "all-incl-dead" && e.status !== filter) return false;
-    if (!q) return true;
-    return [r.owner, r.grantee, r.prop_address, r.mail_address,
-            r.doc_num, r.doc_type, r.legal,
-            (e.notes || "")]
-      .some(v => (v || "").toLowerCase().includes(q));
-  });
-  if (sort === "filed") CCLN_FILTERED.sort((a,b) => (b.filed||"").localeCompare(a.filed||""));
-  else if (sort === "status") CCLN_FILTERED.sort((a,b) => {
-    const sa = (crm[a.doc_num]||{status:"new"}).status;
-    const sb = (crm[b.doc_num]||{status:"new"}).status;
-    return STATUSES.indexOf(sa) - STATUSES.indexOf(sb);
-  });
-  else if (sort === "last-contact") CCLN_FILTERED.sort((a,b) => {
-    const la = (crm[a.doc_num]||{}).last_contact || "";
-    const lb = (crm[b.doc_num]||{}).last_contact || "";
-    return lb.localeCompare(la);
-  });
+  // No search/filter controls anymore — show all, sorted by column.
+  CCLN_FILTERED = CCLN_RAW.slice();
+  const type = CCLN_SORT_TYPES[CCLN_SORT_KEY] || "string";
+  CCLN_FILTERED.sort((a,b) =>
+      _cclnCompare(a, b, CCLN_SORT_KEY, CCLN_SORT_DIR, type));
   renderCcln();
+  document.querySelectorAll("#ccln-table th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === CCLN_SORT_KEY)
+      th.classList.add(CCLN_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
+  });
 }
 function renderCcln() {
   const tb = document.querySelector("#ccln-table tbody");
+  const tf = document.getElementById("ccln-dead-foot");
   tb.innerHTML = "";
+  tf.innerHTML = "";
   document.getElementById("ccln-empty").hidden = CCLN_FILTERED.length > 0;
-  const crm = loadCrm();
+
+  // Split into active (new/working) vs dead.
+  const active = [], dead = [];
   for (const r of CCLN_FILTERED) {
-    const e = crm[r.doc_num] || {status:"new", last_contact:""};
-    const tr = document.createElement("tr");
-    tr.classList.add("clickable");
-    if (e.status === "dead") tr.classList.add("dead-lead");
-    tr.dataset.doc = r.doc_num;
-    tr.innerHTML = `
-      <td><span class="pill status status-${e.status}">${esc(STATUS_LABELS[e.status]||e.status)}</span></td>
-      <td>${esc(r.filed || "")}</td>
-      <td>${esc(r.owner || "")}</td>
-      <td>${esc(r.prop_address || "")}${r.prop_city ? "<br><small>" + esc(r.prop_city + " " + (r.prop_zip||"")) + "</small>" : ""}</td>
-      <td>${esc(r.mail_address || "")}${r.mail_city ? "<br><small>" + esc(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||"")) + "</small>" : ""}</td>
-      <td>${r.amount ? "$" + Number(r.amount).toLocaleString() : ""}</td>
-      <td>${esc(e.last_contact || "—")}</td>
-      <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
-    `;
-    tr.onclick = () => openDrawer(r.doc_num);
-    tb.appendChild(tr);
+    if (getCclnStatus(r.doc_num) === "dead") dead.push(r);
+    else active.push(r);
   }
+
+  for (const r of active) tb.appendChild(buildCclnRow(r, false));
+
+  if (dead.length > 0) {
+    const expanded =
+        localStorage.getItem("ccln_dead_expanded") === "true";
+    const toggleTr = document.createElement("tr");
+    toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
+    toggleTr.innerHTML = `
+      <td colspan="10">
+        <span class="chev">▶</span>
+        <span>${dead.length} deleted lead${dead.length === 1 ? "" : "s"}</span>
+        <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
+          — click to ${expanded ? "collapse" : "expand"}
+        </span>
+      </td>`;
+    toggleTr.onclick = () => {
+      localStorage.setItem("ccln_dead_expanded",
+          toggleTr.classList.contains("expanded") ? "false" : "true");
+      renderCcln();
+    };
+    tf.appendChild(toggleTr);
+    if (expanded) for (const r of dead) tf.appendChild(buildCclnRow(r, true));
+  }
+}
+
+// Build one CCLN row. isDead → dimmed + "Restore" instead of the
+// status menu.
+function buildCclnRow(r, isDead) {
+  const tr = document.createElement("tr");
+  if (isDead) tr.classList.add("dead-lead");
+
+  const apprVal = r.appraised_value ?
+      "$" + Number(r.appraised_value).toLocaleString("en-US",
+                                                     {maximumFractionDigits: 0}) : "—";
+
+  // NCAD: CCLN records have no ncad_prop_id (no esearch lookup runs
+  // for the CCLN pipeline yet), so we always use the search-by-owner
+  // fallback link. Direct property links will come once the CCLN
+  // download/NCAD-lookup backend is built (see to-do list).
+  let ncadCell = "—";
+  if (r.owner) {
+    const url = `https://esearch.nuecescad.net/Search/Result?` +
+                `searchType=Owner&keywords=${encodeURIComponent(r.owner)}`;
+    ncadCell = `<a href="${esc(url)}" target="_blank" rel="noopener"
+                   title="Search this owner on NCAD"
+                   class="ncad-search-link"
+                   onclick="event.stopPropagation()">
+                   <i class="ext-icon">🔍</i></a>`;
+  }
+
+  // Status cell. Active rows show a clickable pill that opens a small
+  // menu (Working / Dead Lead, or New / Dead Lead when already
+  // Working). Dead rows show a grey "Deleted" pill + Restore button.
+  let statusCell;
+  if (isDead) {
+    statusCell = `
+      <span class="pill status status-dead">Deleted</span>
+      <button class="restore-btn" style="margin-top:4px;"
+              title="Restore this lead"
+              onclick="restoreCclnLead('${esc(r.doc_num)}'); event.stopPropagation();">
+        Restore</button>`;
+  } else {
+    const st = getCclnStatus(r.doc_num);   // "new" or "working"
+    const pillClass = st === "working" ? "status-working" : "status-new";
+    const label = st === "working" ? "Working" : "New";
+    statusCell = `
+      <span class="pill status ${pillClass}" style="cursor:pointer;"
+            title="Click to change status"
+            onclick="openCclnStatusMenu(event, '${esc(r.doc_num)}', '${st}')">
+        ${label} ▾</span>`;
+  }
+
+  tr.innerHTML = `
+    <td>${statusCell}</td>
+    <td>${esc(r.filed || "")}</td>
+    <td>${esc(r.owner || "")}</td>
+    <td>${esc(r.prop_address || "")}${r.prop_city ? "<br><small>" + esc(r.prop_city + " " + (r.prop_zip||"")) + "</small>" : ""}</td>
+    <td>${esc(r.mail_address || "")}${r.mail_city ? "<br><small>" + esc(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||"")) + "</small>" : ""}</td>
+    <td>${r.amount ? "$" + Number(r.amount).toLocaleString() : ""}</td>
+    <td>${apprVal}</td>
+    <td class="legal">${esc(r.legal || "")}</td>
+    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
+    <td style="text-align:center;">${ncadCell}</td>`;
+  return tr;
+}
+
+// ---- CCLN status menu + dead flow ----
+let _cclnPendingDead = null;
+
+function openCclnStatusMenu(ev, docNum, currentStatus) {
+  ev.stopPropagation();
+  closeCclnStatusMenu();   // clear any open one
+  const menu = document.createElement("div");
+  menu.className = "ccln-status-menu";
+  menu.id = "ccln-status-menu";
+  // Offer the transitions: from "new" → Working/Dead;
+  // from "working" → New/Dead.
+  const opts = currentStatus === "working"
+      ? [["new", "New"], ["dead", "Dead Lead"]]
+      : [["working", "Working"], ["dead", "Dead Lead"]];
+  menu.innerHTML = opts.map(([val, lbl]) =>
+      `<button data-val="${val}" class="${val === "dead" ? "danger" : ""}">${lbl}</button>`
+  ).join("");
+  document.body.appendChild(menu);
+  // Position near the click.
+  const x = ev.clientX, y = ev.clientY;
+  menu.style.left = Math.min(x, window.innerWidth - 160) + "px";
+  menu.style.top  = (y + 6) + "px";
+  menu.querySelectorAll("button").forEach(b => {
+    b.onclick = (e) => {
+      e.stopPropagation();
+      const val = b.dataset.val;
+      closeCclnStatusMenu();
+      if (val === "dead") {
+        _cclnPendingDead = docNum;
+        document.getElementById("ccln-confirm-backdrop").classList.add("open");
+      } else {
+        setCclnStatus(docNum, val);
+        applyCcln(); renderCclnStats();
+      }
+    };
+  });
+  // Dismiss on outside click / Esc.
+  setTimeout(() => {
+    document.addEventListener("click", closeCclnStatusMenu, {once:true});
+  }, 0);
+}
+function closeCclnStatusMenu() {
+  const m = document.getElementById("ccln-status-menu");
+  if (m) m.remove();
+}
+function confirmCclnDead() {
+  if (!_cclnPendingDead) return;
+  setCclnStatus(_cclnPendingDead, "dead");
+  _cclnPendingDead = null;
+  document.getElementById("ccln-confirm-backdrop").classList.remove("open");
+  applyCcln(); renderCclnStats();
+}
+function cancelCclnDead() {
+  _cclnPendingDead = null;
+  document.getElementById("ccln-confirm-backdrop").classList.remove("open");
+}
+function restoreCclnLead(docNum) {
+  setCclnStatus(docNum, "new");
+  applyCcln(); renderCclnStats();
 }
 
 // ============================================================
@@ -1049,45 +1287,6 @@ function closeDrawer() {
 }
 document.getElementById("drawer-close").onclick = closeDrawer;
 document.getElementById("drawer-backdrop").onclick = closeDrawer;
-
-// ============================================================
-// CCLN export
-// ============================================================
-document.getElementById("ccln-export").onclick = () => {
-  const crm = loadCrm();
-  const headers = [
-    "Status","Last Contact","Notes",
-    "Filed","Owner","Grantee",
-    "Property Address","Property City","Property Zip",
-    "Mailing Address","Mailing City","Mailing State","Mailing Zip",
-    "Amount","Doc Number","Doc Type","Legal","Public Records URL"
-  ];
-  const lines = [headers.join(",")];
-  for (const r of CCLN_FILTERED) {
-    const e = crm[r.doc_num] || {status:"new",notes:"",last_contact:""};
-    lines.push([
-      STATUS_LABELS[e.status] || e.status, e.last_contact || "",
-      e.notes || "",
-      r.filed || "", r.owner || "", r.grantee || "",
-      r.prop_address || "", r.prop_city || "", r.prop_zip || "",
-      r.mail_address || "", r.mail_city || "", r.mail_state || "", r.mail_zip || "",
-      r.amount || "", r.doc_num || "", r.doc_type || "",
-      r.legal || "", r.clerk_url || ""
-    ].map(csv).join(","));
-  }
-  const blob = new Blob([lines.join("\n")], {type:"text/csv"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "ccln_crm_export.csv";
-  a.click();
-  URL.revokeObjectURL(a.href);
-};
-function csv(s) {
-  s = String(s == null ? "" : s);
-  if (s.indexOf(",") >= 0 || s.indexOf("\"") >= 0 || s.indexOf("\n") >= 0)
-    return "\"" + s.replace(/"/g, "\"\"") + "\"";
-  return s;
-}
 
 // ============================================================
 // Foreclosures rendering
@@ -1531,9 +1730,19 @@ function formatDate(s) {
 // ============================================================
 // Wiring
 // ============================================================
-document.getElementById("ccln-q").oninput = applyCcln;
-document.getElementById("ccln-status-filter").onchange = applyCcln;
-document.getElementById("ccln-sort").onchange = applyCcln;
+// CCLN column headers: click to sort (same UX as Mortgage Foreclosures).
+document.querySelectorAll("#ccln-table th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (CCLN_SORT_KEY === key) {
+      CCLN_SORT_DIR = CCLN_SORT_DIR === "asc" ? "desc" : "asc";
+    } else {
+      CCLN_SORT_KEY = key;
+      CCLN_SORT_DIR = "asc";
+    }
+    applyCcln();
+  });
+});
 // Foreclosure column headers: click to sort. First click on a new
 // column → ascending. Click the same column again → flip to
 // descending. The visual indicator (▲/▼) updates inside applyFc().
