@@ -92,6 +92,21 @@
   th { background: var(--panel); cursor: pointer; user-select: none;
        position: sticky; top: 0; z-index: 1; }
   th:hover { color: var(--accent); }
+  /* Sortable headers carry a data-sort attribute. Non-sortable headers
+     (like the NCAD link column) have no data-sort and shouldn't
+     respond to clicks — override the pointer cursor. */
+  th:not([data-sort]) { cursor: default; }
+  th:not([data-sort]):hover { color: inherit; }
+  /* Sort indicator: arrow appears after the column name on whichever
+     column is currently active. ▲ for ascending, ▼ for descending. */
+  th[data-sort]::after {
+    content: ""; font-size: 10px; opacity: 0.4;
+    margin-left: 4px; display: inline-block;
+  }
+  th[data-sort].sort-asc::after  { content: "▲"; opacity: 1;
+                                    color: var(--accent); }
+  th[data-sort].sort-desc::after { content: "▼"; opacity: 1;
+                                    color: var(--accent); }
   td.score, td.days { font-weight: 600; }
   tr { cursor: default; }
   tr.clickable { cursor: pointer; }
@@ -394,21 +409,22 @@
 <!-- ======== FORECLOSURES PANE ======== -->
 <div class="pane" id="pane-foreclosures">
   <div class="stats" id="fc-stats"></div>
-  <div class="controls">
-    <input id="fc-q" placeholder="Search doc# / legal description…">
-    <select id="fc-sort">
-      <option value="days">Sort: Soonest sale first</option>
-      <option value="recorded">Sort: Recorded date (newest)</option>
-    </select>
-  </div>
   <table id="fc-table">
     <thead><tr>
-      <th style="width: 80px;">Status</th>
-      <th>Sale Date</th><th>Days Until Sale</th>
-      <th>Recorded</th>
-      <th>Owner</th><th>Property Address</th><th>Mailing Address</th>
-      <th>Loan Amount</th><th>Appraised Value</th><th>Loan Date</th><th>Lender</th>
-      <th>Legal Description</th><th>Doc#</th><th style="width: 50px;">NCAD</th>
+      <th data-sort="status"      style="width: 80px;">Status</th>
+      <th data-sort="sale_date">Sale Date</th>
+      <th data-sort="days_until_sale">Days Until Sale</th>
+      <th data-sort="recorded">Recorded</th>
+      <th data-sort="owner">Owner</th>
+      <th data-sort="prop_address">Property Address</th>
+      <th data-sort="mail_address">Mailing Address</th>
+      <th data-sort="loan_amount">Loan Amount</th>
+      <th data-sort="appraised_value">Appraised Value</th>
+      <th data-sort="deed_date">Loan Date</th>
+      <th data-sort="lender">Lender</th>
+      <th data-sort="legal">Legal Description</th>
+      <th data-sort="doc_num">Doc#</th>
+      <th style="width: 50px;">NCAD</th>
     </tr></thead>
     <tbody></tbody>
     <tfoot id="fc-dead-foot"></tfoot>
@@ -949,19 +965,99 @@ function renderFcStats(data) {
     <div class="stat"><div class="v">${data.post_foreclosure || 0}</div><div class="k">Post-foreclosure</div></div>
   `;
 }
+// ============================================================
+// Foreclosure sort state — keyed by column name. Defaults to
+// "recorded" descending (newest first). Not persisted: a fresh page
+// load always starts from this default per the user's preference.
+// ============================================================
+let FC_SORT_KEY = "recorded";
+let FC_SORT_DIR = "desc";   // "asc" or "desc"
+
+// Which JSON field to read for each sortable column, plus how to
+// compare values. Type drives empty-value handling and direction.
+//   "string": locale-aware alphabetical
+//   "number": numeric, missing values sink to bottom
+//   "date":   ISO-style string, missing sinks to bottom
+//   "status": Active/Dead (Active first when asc; Dead always still
+//             ends up in the dead-leads footer regardless of sort)
+const FC_SORT_TYPES = {
+  status:           "status",
+  sale_date:        "date",
+  days_until_sale:  "number",
+  recorded:         "date",
+  owner:            "string",
+  prop_address:     "string",
+  mail_address:     "string",
+  loan_amount:      "number",
+  appraised_value:  "number",
+  deed_date:        "date",
+  lender:           "string",
+  legal:            "string",
+  doc_num:          "string",
+};
+
+// Sort helper. Empty values always sink to the bottom regardless of
+// direction — an empty cell is never the "right answer" for sorting.
+function _fcCompare(a, b, key, dir, type) {
+  let va, vb;
+  if (type === "status") {
+    // Active leads sorted by Active first when asc, Dead first when
+    // desc. We read CRM state here because it's not on the record.
+    const crm = loadFcCrm();
+    const sa = (crm[a.doc_num] && crm[a.doc_num].status === "dead") ? 1 : 0;
+    const sb = (crm[b.doc_num] && crm[b.doc_num].status === "dead") ? 1 : 0;
+    return dir === "asc" ? sa - sb : sb - sa;
+  }
+  va = a[key];
+  vb = b[key];
+
+  // Empty-value sink: always to the bottom.
+  const aEmpty = va == null || va === "";
+  const bEmpty = vb == null || vb === "";
+  if (aEmpty && bEmpty) return 0;
+  if (aEmpty) return 1;
+  if (bEmpty) return -1;
+
+  if (type === "number") {
+    const na = Number(va), nb = Number(vb);
+    if (isNaN(na) && isNaN(nb)) return 0;
+    if (isNaN(na)) return 1;
+    if (isNaN(nb)) return -1;
+    return dir === "asc" ? na - nb : nb - na;
+  }
+  if (type === "date") {
+    // Mixed-format dates: parse to timestamps. ISO strings parse
+    // reliably; legacy "June 27, 2022" entries also parse OK.
+    const ta = Date.parse(va), tb = Date.parse(vb);
+    if (isNaN(ta) && isNaN(tb)) {
+      return dir === "asc" ? String(va).localeCompare(String(vb))
+                            : String(vb).localeCompare(String(va));
+    }
+    if (isNaN(ta)) return 1;
+    if (isNaN(tb)) return -1;
+    return dir === "asc" ? ta - tb : tb - ta;
+  }
+  // string
+  const sa = String(va).toLowerCase();
+  const sb = String(vb).toLowerCase();
+  return dir === "asc" ? sa.localeCompare(sb) : sb.localeCompare(sa);
+}
+
 function applyFc() {
-  const q = document.getElementById("fc-q").value.toLowerCase().trim();
-  const sort = document.getElementById("fc-sort").value;
-  FC_FILTERED = FC_RAW.filter(r => {
-    if (!q) return true;
-    return [r.doc_num, r.legal, r.owner]
-      .some(v => (v || "").toLowerCase().includes(q));
-  });
-  if (sort === "days") FC_FILTERED.sort((a,b) =>
-    (a.days_until_sale ?? 9999) - (b.days_until_sale ?? 9999));
-  else if (sort === "recorded") FC_FILTERED.sort((a,b) =>
-    (b.recorded || "").localeCompare(a.recorded || ""));
+  // No filter input anymore — the search box was removed. All records
+  // pass through; sort by current column.
+  FC_FILTERED = FC_RAW.slice();
+  const type = FC_SORT_TYPES[FC_SORT_KEY] || "string";
+  FC_FILTERED.sort((a, b) =>
+      _fcCompare(a, b, FC_SORT_KEY, FC_SORT_DIR, type));
   renderFc();
+  // Refresh the visual indicator on the active header.
+  document.querySelectorAll("#fc-table th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === FC_SORT_KEY) {
+      th.classList.add(FC_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
+    }
+  });
 }
 function renderFc() {
   const tb = document.querySelector("#fc-table tbody");
@@ -1307,8 +1403,21 @@ document.getElementById("leads-sort").onchange = applyLeads;
 document.getElementById("ccln-q").oninput = applyCcln;
 document.getElementById("ccln-status-filter").onchange = applyCcln;
 document.getElementById("ccln-sort").onchange = applyCcln;
-document.getElementById("fc-q").oninput = applyFc;
-document.getElementById("fc-sort").onchange = applyFc;
+// Foreclosure column headers: click to sort. First click on a new
+// column → ascending. Click the same column again → flip to
+// descending. The visual indicator (▲/▼) updates inside applyFc().
+document.querySelectorAll("#fc-table th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (FC_SORT_KEY === key) {
+      FC_SORT_DIR = FC_SORT_DIR === "asc" ? "desc" : "asc";
+    } else {
+      FC_SORT_KEY = key;
+      FC_SORT_DIR = "asc";
+    }
+    applyFc();
+  });
+});
 
 // ESC closes drawer and mark-dead modal
 document.addEventListener("keydown", (e) => {
