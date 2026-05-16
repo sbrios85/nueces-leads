@@ -53,18 +53,49 @@
     color: var(--muted); font-size: 12px;
     margin-top: 6px;
   }
-  .tabs { display: flex; gap: 4px; padding: 0 28px;
-          border-bottom: 1px solid var(--border); background: var(--panel);
-          flex-wrap: wrap; }
-  .tab { padding: 12px 20px; cursor: pointer; user-select: none;
-         border-bottom: 3px solid transparent; font-weight: 500;
-         color: var(--muted); }
-  .tab:hover { color: var(--fg); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent);
-                background: rgba(56,189,248,0.05); }
-  .tab-count { display: inline-block; margin-left: 6px;
-               background: rgba(56,189,248,0.2); color: var(--accent);
-               padding: 1px 8px; border-radius: 10px; font-size: 12px; }
+  /* ===== Sidebar layout ===== */
+  /* The page is a vertical stack: full-width header on top, then a
+     horizontal flex row containing the fixed-width sidebar (left) and
+     the scrollable main content area (right). The sidebar groups
+     navigation into labeled sections (Lead Types / Work / Map). */
+  .layout {
+    display: flex;
+    align-items: stretch;
+    min-height: 70vh;
+  }
+  .sidebar {
+    width: 230px; flex-shrink: 0;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    overflow-y: auto;
+  }
+  .sidebar-section { margin-bottom: 20px; }
+  .sidebar-section-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted); font-weight: 600;
+    padding: 0 20px; margin-bottom: 6px;
+  }
+  .nav-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 20px; cursor: pointer; user-select: none;
+    color: var(--muted); font-weight: 500; font-size: 13px;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { color: var(--fg); background: rgba(56,189,248,0.04); }
+  .nav-item.active {
+    color: var(--accent); border-left-color: var(--accent);
+    background: rgba(56,189,248,0.08);
+  }
+  .nav-item .tab-count {
+    display: inline-block; margin-left: 6px;
+    background: rgba(56,189,248,0.2); color: var(--accent);
+    padding: 1px 8px; border-radius: 10px; font-size: 11px;
+  }
+  .main {
+    flex: 1; min-width: 0;
+    overflow-x: auto;
+  }
   .stats { display: flex; gap: 24px; padding: 16px 28px;
            border-bottom: 1px solid var(--border); flex-wrap: wrap; }
   .stat { display: flex; flex-direction: column; gap: 2px; }
@@ -257,7 +288,7 @@
   a:hover { text-decoration: underline; }
   .empty { padding: 60px 28px; text-align: center; color: var(--muted); }
   .legal { max-width: 280px; font-size: 12px; color: var(--muted); }
-  .pane { display: none; }
+  .pane { display: none; padding: 24px 28px; }
   .pane.active { display: block; }
 
   /* CRM side-panel drawer */
@@ -335,42 +366,56 @@
   <div class="meta">Source: Nueces County Clerk + NCAD esearch</div>
 </header>
 
-<div class="tabs">
-  <div class="tab active" data-pane="leads">Motivated Seller Leads
-    <span class="tab-count" id="leads-count">—</span></div>
-  <div class="tab" data-pane="ccln">City of Corpus Christi Liens
-    <span class="tab-count" id="ccln-count">—</span></div>
-  <div class="tab" data-pane="foreclosures">Mortgage Foreclosures
-    <span class="tab-count" id="fc-count">—</span></div>
-  <div class="tab" data-pane="taxforeclosures">Tax Foreclosures
-    <span class="tab-count" id="tfc-count">—</span></div>
-</div>
-
-<!-- ======== LEADS PANE ======== -->
-<div class="pane active" id="pane-leads">
-  <div class="stats" id="leads-stats"></div>
-  <div class="controls">
-    <input id="leads-q" placeholder="Search owner / address / doc# / legal…">
-    <select id="leads-cat"><option value="">All categories</option></select>
-    <select id="leads-sort">
-      <option value="score">Sort: Score (highest first)</option>
-      <option value="filed">Sort: Filed (newest first)</option>
-      <option value="amount">Sort: Amount (highest first)</option>
-    </select>
+<div class="layout">
+<nav class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Lead Types</div>
+    <div class="nav-item active" data-pane="ccln">
+      <span>City of Corpus Christi Liens</span>
+      <span class="tab-count" id="ccln-count">—</span></div>
+    <div class="nav-item" data-pane="foreclosures">
+      <span>Mortgage Foreclosures</span>
+      <span class="tab-count" id="fc-count">—</span></div>
+    <div class="nav-item" data-pane="taxforeclosures">
+      <span>Tax Foreclosures</span>
+      <span class="tab-count" id="tfc-count">—</span></div>
+    <div class="nav-item" data-pane="codeviolation">
+      <span>Code Violation</span></div>
+    <div class="nav-item" data-pane="vacanthouses">
+      <span>Vacant Houses</span></div>
+    <div class="nav-item" data-pane="taxoveragesraw">
+      <span>Tax Overages</span></div>
+    <div class="nav-item" data-pane="mortgageoveragesraw">
+      <span>Mortgage Overages</span></div>
+    <div class="nav-item" data-pane="delinquenttaxes">
+      <span>Delinquent Taxes</span></div>
+    <div class="nav-item" data-pane="stack">
+      <span>Stack</span></div>
   </div>
-  <table id="leads-table">
-    <thead><tr>
-      <th>Score</th><th>Filed</th><th>Category</th><th>Doc Type</th>
-      <th>Owner (Grantor)</th><th>Property Address</th>
-      <th>Mailing Address</th><th>Amount</th><th>Flags</th><th>Doc#</th>
-    </tr></thead>
-    <tbody></tbody>
-  </table>
-  <div id="leads-empty" class="empty" hidden>No matching records.</div>
-</div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Work</div>
+    <div class="nav-item" data-pane="foreclosureleads">
+      <span>Foreclosure Leads</span></div>
+    <div class="nav-item" data-pane="taxccvcvstack">
+      <span>Tax CC Lien Vacant CV Stack</span></div>
+    <div class="nav-item" data-pane="taxoverages">
+      <span>Tax Overages</span></div>
+    <div class="nav-item" data-pane="mortgageoverages">
+      <span>Mortgage Overages</span></div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Map</div>
+    <div class="nav-item" data-pane="map">
+      <span>Map</span></div>
+  </div>
+</nav>
+
+<div class="main">
 
 <!-- ======== CCLN / CRM PANE ======== -->
-<div class="pane" id="pane-ccln">
+<div class="pane active" id="pane-ccln">
   <div class="stats" id="ccln-stats"></div>
   <div class="controls">
     <input id="ccln-q" placeholder="Search owner / address / doc# / legal…">
@@ -446,6 +491,158 @@
     </div>
   </div>
 </div>
+
+<!-- ======== CODE VIOLATION PANE (raw) ======== -->
+<div class="pane" id="pane-codeviolation">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Code Violation coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      Raw list of properties with municipal code-enforcement violations.
+      Data source to be wired up later.
+    </div>
+  </div>
+</div>
+
+<!-- ======== VACANT HOUSES PANE (raw) ======== -->
+<div class="pane" id="pane-vacanthouses">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Vacant Houses coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      Raw list of properties identified as vacant or abandoned. Data
+      source to be wired up later.
+    </div>
+  </div>
+</div>
+
+<!-- ======== TAX OVERAGES PANE (raw) ======== -->
+<div class="pane" id="pane-taxoveragesraw">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Tax Overages coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      Raw list of surplus funds remaining after tax foreclosure sales.
+      Data source to be wired up later. (The CRM view of this lives
+      under Work → Tax Overages.)
+    </div>
+  </div>
+</div>
+
+<!-- ======== MORTGAGE OVERAGES PANE (raw) ======== -->
+<div class="pane" id="pane-mortgageoveragesraw">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Mortgage Overages coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      Raw list of surplus funds remaining after mortgage foreclosure
+      sales. Data source to be wired up later. (The CRM view of this
+      lives under Work → Mortgage Overages.)
+    </div>
+  </div>
+</div>
+
+<!-- ======== DELINQUENT TAXES PANE (raw) ======== -->
+<div class="pane" id="pane-delinquenttaxes">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Delinquent Taxes coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      Raw list of properties with delinquent property taxes. Data
+      source to be wired up later.
+    </div>
+  </div>
+</div>
+
+<!-- ======== STACK PANE (raw multi-list overlap) ======== -->
+<div class="pane" id="pane-stack">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Stack coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      Raw data view for properties appearing on multiple lead lists at
+      once — e.g. Delinquent Taxes + City of Corpus Christi Liens +
+      Vacant + Code Violation. This is the un-worked source list before
+      CRM data (contacts, notes, follow-ups) gets added.
+    </div>
+  </div>
+</div>
+
+<!-- ======== WORK: FORECLOSURE LEADS (CRM) ======== -->
+<div class="pane" id="pane-foreclosureleads">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Foreclosure Leads coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      CRM view combining Mortgage and Tax foreclosures you're actively
+      working — last contact, phone numbers, relatives, notes, and
+      follow-up status. Built on top of the raw foreclosure data.
+    </div>
+  </div>
+</div>
+
+<!-- ======== WORK: TAX CC LIEN VACANT CV STACK (CRM) ======== -->
+<div class="pane" id="pane-taxccvcvstack">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Tax CC Lien Vacant CV Stack coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      CRM view for properties combining Delinquent Taxes + City of
+      Corpus Christi Liens + Vacant + Code Violation. Worked leads with
+      contact info and follow-up tracking.
+    </div>
+  </div>
+</div>
+
+<!-- ======== WORK: TAX OVERAGES ======== -->
+<div class="pane" id="pane-taxoverages">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Tax Overages coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      Surplus funds left over after a tax foreclosure sale. Data source
+      to be wired up later.
+    </div>
+  </div>
+</div>
+
+<!-- ======== WORK: MORTGAGE OVERAGES ======== -->
+<div class="pane" id="pane-mortgageoverages">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Mortgage Overages coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      Surplus funds left over after a mortgage foreclosure sale. Data
+      source to be wired up later.
+    </div>
+  </div>
+</div>
+
+<!-- ======== MAP ======== -->
+<div class="pane" id="pane-map">
+  <div class="empty" style="padding: 80px 28px;">
+    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
+      Map coming soon
+    </div>
+    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
+      Geographic view of leads plotted on a map for route planning and
+      neighborhood analysis. To be built later.
+    </div>
+  </div>
+</div>
+
+</div><!-- /.main -->
+</div><!-- /.layout -->
 
 <!-- ======== CRM Side Drawer ======== -->
 <div class="drawer-backdrop" id="drawer-backdrop"></div>
@@ -540,16 +737,15 @@ function setFcEntry(docNum, patch) {
 // ============================================================
 // Data caches
 // ============================================================
-let LEADS_RAW = [], LEADS_FILTERED = [];
 let CCLN_RAW = [], CCLN_FILTERED = [];
 let FC_RAW = [], FC_FILTERED = [];
 
 // ============================================================
 // Tab switching
 // ============================================================
-document.querySelectorAll(".tab").forEach(t => {
+document.querySelectorAll(".nav-item").forEach(t => {
   t.onclick = () => {
-    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".nav-item").forEach(x => x.classList.remove("active"));
     document.querySelectorAll(".pane").forEach(x => x.classList.remove("active"));
     t.classList.add("active");
     document.getElementById("pane-" + t.dataset.pane).classList.add("active");
@@ -565,19 +761,22 @@ async function loadAll() {
   // label above and the value below. Makes scanning easier.
   let scraperDateText = "";
   let rangeText = "";
+  // The Motivated Seller Leads tab was removed, but records.json is
+  // still produced by the daily scraper and carries the freshest
+  // `fetched_at` + `date_range` — so we keep reading it purely for the
+  // header "Last scraper update" / "Range" line. No UI table renders
+  // from it anymore. (Archived frontend code lives in
+  // dashboard/_archived_motivated_seller_leads.txt for future revival.)
   try {
     const r = await fetch("records.json", {cache:"no-store"});
     const data = await r.json();
-    LEADS_RAW = data.records || [];
-    document.getElementById("leads-count").textContent = data.total || 0;
     if (data.fetched_at) {
       scraperDateText = new Date(data.fetched_at).toLocaleString();
       if (data.date_range && data.date_range.start) {
         rangeText = data.date_range.start + " → " + data.date_range.end;
       }
     }
-    renderLeadsStats(data); populateLeadsCats(); applyLeads();
-  } catch (e) { document.getElementById("leads-empty").hidden = false; }
+  } catch (e) { /* records.json optional — header just omits the date */ }
 
   try {
     const r = await fetch("city_liens.json", {cache:"no-store"});
@@ -658,71 +857,6 @@ async function loadAll() {
     html += `<div class="meta-range">Range: ${rangeText}</div>`;
   }
   metaEl.innerHTML = html;
-}
-
-// ============================================================
-// LEADS rendering
-// ============================================================
-function renderLeadsStats(data) {
-  const hot = (data.records || []).filter(r => r.score >= 70).length;
-  const lp = (data.records || []).filter(r => r.cat === "LP").length;
-  document.getElementById("leads-stats").innerHTML = `
-    <div class="stat"><div class="v">${data.total || 0}</div><div class="k">Total leads</div></div>
-    <div class="stat"><div class="v">${data.with_address || 0}</div><div class="k">With property address</div></div>
-    <div class="stat"><div class="v">${hot}</div><div class="k">Score ≥ 70</div></div>
-    <div class="stat"><div class="v">${lp}</div><div class="k">Lis pendens</div></div>
-  `;
-}
-function populateLeadsCats() {
-  const sel = document.getElementById("leads-cat");
-  const seen = new Set();
-  for (const r of LEADS_RAW) {
-    if (r.cat_label && !seen.has(r.cat_label)) {
-      seen.add(r.cat_label);
-      const o = document.createElement("option");
-      o.value = r.cat; o.textContent = r.cat_label;
-      sel.appendChild(o);
-    }
-  }
-}
-function applyLeads() {
-  const q = document.getElementById("leads-q").value.toLowerCase().trim();
-  const cat = document.getElementById("leads-cat").value;
-  const sort = document.getElementById("leads-sort").value;
-  LEADS_FILTERED = LEADS_RAW.filter(r => {
-    if (cat && r.cat !== cat) return false;
-    if (!q) return true;
-    return [r.owner, r.grantee, r.prop_address, r.mail_address,
-            r.doc_num, r.doc_type, r.legal]
-      .some(v => (v || "").toLowerCase().includes(q));
-  });
-  if (sort === "score") LEADS_FILTERED.sort((a,b) => (b.score||0) - (a.score||0));
-  else if (sort === "filed") LEADS_FILTERED.sort((a,b) => (b.filed||"").localeCompare(a.filed||""));
-  else if (sort === "amount") LEADS_FILTERED.sort((a,b) => (b.amount||0) - (a.amount||0));
-  renderLeads();
-}
-function renderLeads() {
-  const tb = document.querySelector("#leads-table tbody");
-  tb.innerHTML = "";
-  document.getElementById("leads-empty").hidden = LEADS_FILTERED.length > 0;
-  for (const r of LEADS_FILTERED) {
-    const tr = document.createElement("tr");
-    const sc = r.score || 0;
-    const scClass = sc >= 70 ? "score-hi" : sc >= 50 ? "score-md" : "score-lo";
-    tr.innerHTML = `
-      <td class="score ${scClass}">${sc}</td>
-      <td>${esc(r.filed || "")}</td>
-      <td>${esc(r.cat_label || r.cat || "")}</td>
-      <td>${esc(r.doc_type || "")}</td>
-      <td>${esc(r.owner || "")}</td>
-      <td>${esc(r.prop_address || "")}${r.prop_city ? "<br><small>" + esc(r.prop_city + " " + (r.prop_zip||"")) + "</small>" : ""}</td>
-      <td>${esc(r.mail_address || "")}${r.mail_city ? "<br><small>" + esc(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||"")) + "</small>" : ""}</td>
-      <td>${r.amount ? "$" + Number(r.amount).toLocaleString() : ""}</td>
-      <td>${(r.flags || []).map(f => `<span class="pill flag">${esc(f)}</span>`).join("")}</td>
-      <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
-    `;
-    tb.appendChild(tr);
-  }
 }
 
 // ============================================================
@@ -1397,9 +1531,6 @@ function formatDate(s) {
 // ============================================================
 // Wiring
 // ============================================================
-document.getElementById("leads-q").oninput = applyLeads;
-document.getElementById("leads-cat").onchange = applyLeads;
-document.getElementById("leads-sort").onchange = applyLeads;
 document.getElementById("ccln-q").oninput = applyCcln;
 document.getElementById("ccln-status-filter").onchange = applyCcln;
 document.getElementById("ccln-sort").onchange = applyCcln;
