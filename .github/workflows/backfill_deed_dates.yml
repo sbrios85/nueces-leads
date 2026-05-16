@@ -1,0 +1,67 @@
+name: Backfill deed_date → ISO
+
+# One-shot workflow: normalize the deed_date field in existing
+# foreclosure records to ISO format (YYYY-MM-DD). Idempotent —
+# running it again after everything is normalized is a no-op.
+#
+# After this runs once successfully, every future PDF parse writes
+# ISO directly via pdf_text_extractor's normalize_date_string(), so
+# this workflow can sit unused (or be deleted) after one successful
+# run.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "deed-date-backfill"
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run backfill
+        run: python scraper/backfill_deed_dates.py
+
+      - name: Commit normalized data
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          git add data/foreclosures.json dashboard/foreclosures.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "chore: backfill deed_date → ISO format"
+            git push
+          fi
+
+      - name: Upload dashboard artifact for Pages deploy
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    needs: backfill
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
