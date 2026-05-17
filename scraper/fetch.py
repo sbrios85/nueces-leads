@@ -3595,7 +3595,9 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
     # We key by doc_num, which is stable across portal refreshes.
     existing_enrichment: Dict[str, Dict[str, Any]] = {}
     existing_full_records: Dict[str, Dict[str, Any]] = {}
-    PDF_FIELDS = ("owner", "loan_amount", "deed_date", "lender",
+    PDF_FIELDS = ("owner", "loan_amount", "deed_date",
+                  "deed_date_original", "loan_doc",
+                  "has_loan_mod", "lender",
                   "prop_address", "prop_city", "prop_state", "prop_zip",
                   "mail_address", "mail_city", "mail_state", "mail_zip",
                   "legal_lot", "legal_block", "legal_subdivision",
