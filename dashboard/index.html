@@ -215,6 +215,50 @@
      making them especially motivated to deal. */
   .pill.short-sale { background: rgba(239,68,68,.25); color: var(--bad);
                      font-weight: 600; }
+  /* Loan modification flag: the PDF references a loan mod, so the
+     scraped loan amount is likely stale and needs manual lookup.
+     Clickable — clicking dismisses it (both copies) once the user
+     has manually verified/edited the amount. Amber like absentee
+     but with a dashed outline + pointer to signal it's actionable. */
+  .pill.loan-mod {
+    background: rgba(245,158,11,.18); color: var(--warn);
+    font-weight: 600; cursor: pointer;
+    border: 1px dashed rgba(245,158,11,.5);
+  }
+  .pill.loan-mod:hover {
+    background: rgba(245,158,11,.30);
+    border-color: var(--warn);
+  }
+  /* Updated/handled state: solid green, no dashes — visually distinct
+     from the amber "needs attention" state so handled records read at
+     a glance. Still clickable (toggles back to LOAN MOD). */
+  .pill.loan-mod.loan-mod-done {
+    background: rgba(34,197,94,.18); color: var(--good);
+    border: 1px solid rgba(34,197,94,.5);
+  }
+  .pill.loan-mod.loan-mod-done:hover {
+    background: rgba(34,197,94,.30);
+    border-color: var(--good);
+  }
+  /* Editable loan-amount cell: subtle affordance that it's editable;
+     a manually-overridden value gets a left accent bar. */
+  .loan-amt-edit {
+    background: transparent; border: 1px solid transparent;
+    color: inherit; font: inherit; width: 110px;
+    padding: 3px 5px; border-radius: 4px;
+  }
+  .loan-amt-edit:hover { border-color: var(--border); }
+  .loan-amt-edit:focus {
+    outline: none; border-color: var(--accent);
+    background: var(--bg);
+  }
+  td.loan-amt-overridden { border-left: 3px solid var(--accent); }
+  /* Small grey reference line showing the original (pre-mod /
+     pre-edit) value beneath the current one. */
+  .orig-ref {
+    font-size: 11px; color: var(--muted);
+    margin-top: 3px; white-space: nowrap;
+  }
   tr.dead-lead td { opacity: 0.45; }
 
   /* Mark-dead button (lives in Status column) */
@@ -557,6 +601,7 @@
       <th data-sort="loan_amount">Loan Amount</th>
       <th data-sort="appraised_value">Appraised Value</th>
       <th data-sort="deed_date">Loan Date</th>
+      <th data-sort="loan_doc">Loan Document</th>
       <th data-sort="lender">Lender</th>
       <th data-sort="legal">Legal Description</th>
       <th data-sort="doc_num">Doc#</th>
@@ -884,6 +929,40 @@ function setCclnStatus(docNum, status) {
 }
 
 // ============================================================
+// FC manual overrides (loan amount edits + LOAN MOD badge state)
+// ============================================================
+// When a foreclosure PDF references a loan modification, the scraped
+// loan_amount is usually stale. The user manually looks up the real
+// modified amount and types it in. That edit must:
+//   * win over the scraped value on display
+//   * survive the daily scrape (scraped JSON is never mutated by the
+//     browser; the override lives here and is applied at render time)
+//   * port cleanly to the future hosted backend (same shape as CRM)
+// We also track the LOAN MOD badge's two-state status per doc via
+// `mod_updated`: false/absent = "LOAN MOD" (needs verification),
+// true = "LOAN MOD INFO UPDATED" (handled). Toggled by the badge.
+// Keyed by doc_num. Shape: { "<doc>": { loan_amount: 123456.78,
+//   mod_updated: true } }
+const FC_OVERRIDE_KEY = "nueces_fc_overrides_v1";
+function loadFcOverrides() {
+  try { return JSON.parse(localStorage.getItem(FC_OVERRIDE_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveFcOverrides(o) {
+  localStorage.setItem(FC_OVERRIDE_KEY, JSON.stringify(o));
+}
+function getFcOverride(docNum) {
+  const o = loadFcOverrides();
+  return o[docNum] || {};
+}
+function setFcOverride(docNum, patch) {
+  const o = loadFcOverrides();
+  o[docNum] = Object.assign({}, o[docNum], patch,
+    {_updated_at: new Date().toISOString()});
+  saveFcOverrides(o);
+}
+
+// ============================================================
 // Per-lead-type CRM system (full-screen in-page view)
 // ============================================================
 // Each lead type gets:
@@ -944,6 +1023,8 @@ const CRM_CONFIG = {
       ["loan_amount", "Loan Amount", "money"],
       ["appraised_value", "Appraised Value", "money"],
       ["deed_date", "Loan Date"],
+      ["deed_date_original", "Original Loan Date"],
+      ["loan_doc", "Loan Document"],
       ["lender", "Lender"],
       ["legal", "Legal Description"],
     ],
@@ -1069,6 +1150,11 @@ function openCrm(type, docNum, sourceRecords) {
   // --- Read-only context card ---
   const roRows = cfg.readonly.map(([key, lbl, kind]) => {
     let val = rec[key];
+    // deed_date_original only exists when a loan mod replaced the
+    // displayed date. Omit the row entirely when absent (showing
+    // "Original Loan Date —" on every non-mod lead would be noise).
+    if (key === "deed_date_original" && (val == null || val === ""))
+      return "";
     if (kind === "money") val = moneyFmt(val);
     else if (val == null || val === "") val = "—";
     return `<div class="crm-readonly-row">
@@ -1707,6 +1793,7 @@ const FC_SORT_TYPES = {
   loan_amount:      "number",
   appraised_value:  "number",
   deed_date:        "date",
+  loan_doc:         "string",
   lender:           "string",
   legal:            "string",
   doc_num:          "string",
@@ -1726,6 +1813,17 @@ function _fcCompare(a, b, key, dir, type) {
   }
   va = a[key];
   vb = b[key];
+
+  // Loan amount sorts by the EFFECTIVE value (manual override wins),
+  // so the sort order matches what's actually displayed.
+  if (key === "loan_amount") {
+    const oa = getFcOverride(a.doc_num);
+    const ob = getFcOverride(b.doc_num);
+    if (oa.loan_amount != null && oa.loan_amount !== "")
+      va = oa.loan_amount;
+    if (ob.loan_amount != null && ob.loan_amount !== "")
+      vb = ob.loan_amount;
+  }
 
   // Empty-value sink: always to the bottom.
   const aEmpty = va == null || va === "";
@@ -1848,10 +1946,73 @@ function buildFcRow(r, isDead) {
   const fullAddr = r.prop_address ?
       [r.prop_address, r.prop_city, r.prop_state, r.prop_zip]
           .filter(Boolean).join(" ") : "";
-  const loanAmt = r.loan_amount ?
-      "$" + Number(r.loan_amount).toLocaleString("en-US",
-                                                  {minimumFractionDigits: 2,
-                                                   maximumFractionDigits: 2}) : "—";
+  // Loan amount: a manual override (entered by the user after a loan
+  // mod) wins over the scraped value. The override lives in
+  // localStorage and is applied only at render time — the scraped
+  // JSON is never mutated, so the daily scrape can't clobber the
+  // user's correction.
+  const _ov = getFcOverride(r.doc_num);
+  const _hasOverride = _ov.loan_amount != null && _ov.loan_amount !== "";
+  const _effectiveLoan = _hasOverride
+      ? Number(_ov.loan_amount)
+      : (r.loan_amount != null ? Number(r.loan_amount) : null);
+  const loanAmtStr = (_effectiveLoan != null && !isNaN(_effectiveLoan))
+      ? _effectiveLoan.toLocaleString("en-US",
+          {minimumFractionDigits: 2, maximumFractionDigits: 2})
+      : "";
+  // LOAN MOD badge — two-state, shown only when the parser flagged a
+  // modification. State lives in the override store as `mod_updated`:
+  //   false/absent → "LOAN MOD" (amber, needs manual verification)
+  //   true          → "LOAN MOD INFO UPDATED" (green, user has looked
+  //                     up the mod and corrected the amount)
+  // Clicking toggles between the two (reversible — handles accidental
+  // clicks / re-verification). Both copies (Loan Amount + Loan Date)
+  // read the same state so they always move together.
+  let modBadge = "";
+  if (r.has_loan_mod) {
+    const _updated = !!_ov.mod_updated;
+    const cls = _updated ? "loan-mod loan-mod-done" : "loan-mod";
+    const txt = _updated ? "LOAN MOD INFO UPDATED" : "LOAN MOD";
+    const tip = _updated
+      ? "You've marked this loan-mod info as updated. Click to revert "
+        + "to LOAN MOD if you need to re-verify."
+      : "A loan modification was referenced in the filing — the scraped "
+        + "loan amount may be stale. Look up the modification document, "
+        + "edit the Loan Amount, then click this badge to mark it updated.";
+    modBadge =
+      `<div><span class="pill ${cls}"
+         title="${esc(tip)}"
+         onclick="toggleLoanMod('${esc(r.doc_num)}'); event.stopPropagation();"
+         >${txt}</span></div>`;
+  }
+
+  // "orig:" reference sub-lines (Option B). Small grey lines shown
+  // ONLY when the original value differs from what's displayed, so
+  // there's no noise when current == original.
+  //
+  // Original loan DATE: present only when a loan mod replaced the
+  // displayed date. r.deed_date_original holds the pre-mod deed-of-
+  // trust date (set by the parser).
+  let origDateLine = "";
+  if (r.deed_date_original &&
+      r.deed_date_original !== r.deed_date) {
+    origDateLine =
+      `<div class="orig-ref" title="Original deed-of-trust date, before
+ the loan modification">orig: ${esc(formatDate(r.deed_date_original))}</div>`;
+  }
+  // Original loan AMOUNT: the scraped value is never mutated, so we
+  // can always show it. Only display the sub-line when the user has
+  // overridden it (so it differs from what's in the editable box).
+  let origAmtLine = "";
+  if (_hasOverride && r.loan_amount != null && r.loan_amount !== "") {
+    const _origNum = Number(r.loan_amount);
+    if (!isNaN(_origNum)) {
+      origAmtLine =
+        `<div class="orig-ref" title="Original scraped loan amount,
+ before your manual edit">orig: $${_origNum.toLocaleString("en-US",
+          {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>`;
+    }
+  }
   const apprVal = r.appraised_value ?
       "$" + Number(r.appraised_value).toLocaleString("en-US",
                                                      {maximumFractionDigits: 0}) : "—";
@@ -2018,9 +2179,18 @@ function buildFcRow(r, isDead) {
     <td>${esc(r.owner || "—")}</td>
     <td>${esc(fullAddr || "—")}${absenteeBadge}${shortSaleBadge}</td>
     <td>${esc(mailFull || "—")}</td>
-    <td>${loanAmt}</td>
+    <td class="${_hasOverride ? "loan-amt-overridden" : ""}">
+      <span style="opacity:.6;">$</span><input class="loan-amt-edit"
+        type="text" inputmode="decimal"
+        value="${esc(loanAmtStr)}"
+        data-doc="${esc(r.doc_num)}"
+        title="Click to edit. Manual edits override the scraped value
+ and survive the daily scrape."
+        onclick="event.stopPropagation();"
+        onchange="commitLoanAmount(this)">${modBadge}${origAmtLine}</td>
     <td>${apprVal}</td>
-    <td>${esc(formatDate(r.deed_date))}</td>
+    <td>${esc(formatDate(r.deed_date))}${modBadge}${origDateLine}</td>
+    <td>${esc(r.loan_doc || "—")}</td>
     <td>${esc(r.lender || "—")}</td>
     <td class="legal">${esc(r.legal || "")}</td>
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
@@ -2082,6 +2252,46 @@ function restoreFcLead(docNum) {
     status: "active",
     restored_at: new Date().toISOString()
   });
+  renderFc();
+}
+
+// Toggle the LOAN MOD badge state for a record between "LOAN MOD"
+// (needs verification) and "LOAN MOD INFO UPDATED" (user has handled
+// it). Reversible so an accidental click or a needed re-verification
+// can flip it back. State persists in localStorage per doc_num and
+// drives BOTH badge copies (Loan Amount + Loan Date) since they read
+// the same `mod_updated` flag.
+function toggleLoanMod(docNum) {
+  const cur = getFcOverride(docNum);
+  setFcOverride(docNum, {mod_updated: !cur.mod_updated});
+  renderFc();
+}
+
+// Commit a manual loan-amount edit. Stores the parsed number as an
+// override (wins over the scraped value at render time, survives the
+// daily scrape). Empty input clears the override, reverting to the
+// scraped value. We strip $ and commas so the user can paste
+// formatted figures.
+function commitLoanAmount(inputEl) {
+  const docNum = inputEl.dataset.doc;
+  const raw = String(inputEl.value || "").replace(/[$,\s]/g, "");
+  if (raw === "") {
+    // Clear override → revert to scraped value.
+    const o = loadFcOverrides();
+    if (o[docNum]) {
+      delete o[docNum].loan_amount;
+      saveFcOverrides(o);
+    }
+    renderFc();
+    return;
+  }
+  const num = Number(raw);
+  if (isNaN(num)) {
+    // Reject non-numeric; re-render to restore the prior display.
+    renderFc();
+    return;
+  }
+  setFcOverride(docNum, {loan_amount: num});
   renderFc();
 }
 
