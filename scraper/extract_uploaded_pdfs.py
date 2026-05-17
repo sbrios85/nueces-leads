@@ -53,6 +53,14 @@ log = logging.getLogger("nueces-pdf-uploader")
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 PDFS_DIR = ROOT_DIR / "pdfs" / "foreclosures"
+# Every successfully-parsed PDF's EXTRACTED TEXT is saved here (not
+# the PDF itself — text is ~50-100x smaller, so the repo stays tiny
+# for decades). This lets us re-run parser improvements over the full
+# history WITHOUT re-downloading notices from the clerk portal. The
+# normal daily flow never deletes from this archive. Re-OCR'ing a
+# scanned PDF is the only thing this can't do — rare, handled by
+# re-uploading those specific PDFs.
+TEXT_ARCHIVE_DIR = ROOT_DIR / "pdfs" / "text_archive"
 DASHBOARD_FILE = ROOT_DIR / "dashboard" / "foreclosures.json"
 DATA_FILE      = ROOT_DIR / "data" / "foreclosures.json"
 
@@ -272,25 +280,50 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
 def main() -> int:
     log.info("=== Manual-upload PDF processor ===")
 
+    # SOURCE selection.
+    #   inbox        (default) — parse PDFs in pdfs/foreclosures/, the
+    #                 normal manual-upload flow.
+    #   text_archive — re-parse the saved extracted TEXT in
+    #                 pdfs/text_archive/. Used after a parser
+    #                 improvement to refresh ALL historical records
+    #                 without re-downloading or re-OCR'ing anything.
+    source = os.environ.get("PDF_SOURCE", "inbox").strip().lower()
+    text_archive_mode = source in ("text_archive", "archive")
+
     # OVERWRITE mode: re-process even records that already have fields.
-    # Useful after fixing a regex bug — re-upload the same PDF with this
-    # flag set and the stale data gets replaced.
+    # Useful after fixing a regex bug. Text-archive mode ALWAYS
+    # overwrites (the entire point of re-parsing is to replace stale
+    # data produced by the old parser).
     overwrite = os.environ.get("PDF_OVERWRITE", "").lower() in (
         "1", "true", "yes", "y")
-    if overwrite:
+    if text_archive_mode:
+        overwrite = True
+        log.info("TEXT-ARCHIVE mode: re-parsing saved text in "
+                 "pdfs/text_archive/ (overwrite forced ON)")
+    elif overwrite:
         log.info("OVERWRITE mode is ON — existing fields will be replaced")
 
-    if not PDFS_DIR.exists():
-        log.info("no pdfs/foreclosures/ folder yet — nothing to do")
+    if text_archive_mode:
+        src_dir = TEXT_ARCHIVE_DIR
+        suffix = ".txt"
+    else:
+        src_dir = PDFS_DIR
+        suffix = ".pdf"
+
+    if not src_dir.exists():
+        log.info("no %s folder yet — nothing to do",
+                 src_dir.relative_to(ROOT_DIR))
         return 0
 
-    pdfs = sorted([p for p in PDFS_DIR.iterdir()
-                   if p.is_file() and p.suffix.lower() == ".pdf"])
+    pdfs = sorted([p for p in src_dir.iterdir()
+                   if p.is_file() and p.suffix.lower() == suffix])
     if not pdfs:
-        log.info("no PDFs in pdfs/foreclosures/ — nothing to do")
+        log.info("no %s files in %s — nothing to do",
+                 suffix, src_dir.relative_to(ROOT_DIR))
         return 0
 
-    log.info("found %d PDF(s) to process", len(pdfs))
+    log.info("found %d %s file(s) to process",
+             len(pdfs), suffix)
 
     payload = _load_foreclosures()
     records = payload.get("records", [])
@@ -314,7 +347,19 @@ def main() -> int:
     for pdf_path in pdfs:
         log.info("processing %s ...", pdf_path.name)
         try:
-            text = extract_text(pdf_path)
+            if text_archive_mode:
+                # Source IS already-extracted text — read it straight,
+                # no PDF/OCR step. This is what makes re-parsing the
+                # full history fast and dependency-free.
+                try:
+                    text = pdf_path.read_text(encoding="utf-8")
+                except Exception as exc:
+                    log.warning("  could not read %s: %s — skipping",
+                                pdf_path.name, exc)
+                    skipped_count += 1
+                    continue
+            else:
+                text = extract_text(pdf_path)
             if not text:
                 log.warning("  no text extracted (scanned PDF?) — leaving "
                             "%s in place", pdf_path.name)
@@ -346,10 +391,18 @@ def main() -> int:
 
             rec = by_doc.get(dn)
             if not rec:
-                log.warning("  doc %s parsed from %s but no matching record "
-                            "in foreclosures.json — leaving PDF in place "
-                            "(maybe daily scraper hasn't run yet?)",
-                            dn, pdf_path.name)
+                if text_archive_mode:
+                    # Expected: the foreclosure list is a rolling
+                    # window, so old archived notices naturally have no
+                    # matching live record anymore. Not a problem —
+                    # just nothing to update for this one.
+                    log.info("  doc %s not in current window — "
+                             "skipping (archived notice aged out)", dn)
+                else:
+                    log.warning("  doc %s parsed from %s but no matching "
+                                "record in foreclosures.json — leaving "
+                                "PDF in place (maybe daily scraper "
+                                "hasn't run yet?)", dn, pdf_path.name)
                 skipped_count += 1
                 continue
 
@@ -364,12 +417,33 @@ def main() -> int:
                 log.info("  → record %s already had all fields, no change",
                          dn)
 
-            # Delete the processed PDF
-            try:
-                pdf_path.unlink()
-                log.debug("  deleted %s", pdf_path.name)
-            except Exception as exc:
-                log.warning("  could not delete %s: %s", pdf_path.name, exc)
+            # In text-archive mode the source IS the archive — don't
+            # re-save or delete it; leave it for the next re-parse.
+            if not text_archive_mode:
+                # Save the extracted TEXT to the archive (keyed by doc
+                # number — stable, dedupes re-uploads of the same
+                # notice). Text is ~50-100x smaller than the PDF, so
+                # this keeps the repo tiny while still letting future
+                # parser improvements re-run over the full history.
+                try:
+                    TEXT_ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
+                    arch_name = (f"{dn}.txt" if dn
+                                 else f"{pdf_path.stem}.txt")
+                    (TEXT_ARCHIVE_DIR / arch_name).write_text(
+                        text, encoding="utf-8")
+                    log.debug("  archived text -> pdfs/text_archive/%s "
+                              "(%d chars)", arch_name, len(text))
+                except Exception as exc:
+                    log.warning("  could not archive text for %s: %s",
+                                pdf_path.name, exc)
+
+                # Delete the processed PDF from the inbox folder
+                try:
+                    pdf_path.unlink()
+                    log.debug("  deleted %s", pdf_path.name)
+                except Exception as exc:
+                    log.warning("  could not delete %s: %s",
+                                pdf_path.name, exc)
             processed_count += 1
 
         except Exception as exc:
