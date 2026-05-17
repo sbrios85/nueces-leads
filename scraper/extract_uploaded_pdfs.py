@@ -208,6 +208,31 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
             if rec.get("deed_date") != fields["deed_date"]:
                 rec["deed_date"] = fields["deed_date"]
                 changed = True
+    # --- Original deed date (only present when a loan mod replaced
+    # the displayed deed_date). Mirror the parser's view: set it when
+    # present, clear it when the latest parse no longer produces one
+    # (e.g. the mod language went away on a re-parse).
+    new_orig = fields.get("deed_date_original") or ""
+    if rec.get("deed_date_original", "") != new_orig:
+        if new_orig:
+            rec["deed_date_original"] = new_orig
+        elif "deed_date_original" in rec:
+            del rec["deed_date_original"]
+        changed = True
+    # --- Loan document (deed-of-trust recording / instrument number) ---
+    if fields.get("loan_doc"):
+        if not rec.get("loan_doc") or overwrite:
+            if rec.get("loan_doc") != fields["loan_doc"]:
+                rec["loan_doc"] = fields["loan_doc"]
+                changed = True
+    # --- Loan modification flag ---
+    # Always reflect the parser's current view (it's a derived boolean,
+    # not user data). If the latest parse no longer sees a mod, clear
+    # it; if it now sees one, set it.
+    new_mod = bool(fields.get("has_loan_mod"))
+    if rec.get("has_loan_mod") != new_mod:
+        rec["has_loan_mod"] = new_mod
+        changed = True
     # --- Property address ---
     addr = fields.get("prop_address", "")
     if addr and not _looks_like_garbage(addr):
