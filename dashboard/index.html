@@ -253,6 +253,43 @@
     background: var(--bg);
   }
   td.loan-amt-overridden { border-left: 3px solid var(--accent); }
+  /* Generic inline-editable text field (owner, address, lender, etc.).
+     Looks like plain text until hovered/focused so the table stays
+     clean, but is always click-to-edit. */
+  .cell-edit {
+    background: transparent; border: 1px solid transparent;
+    color: inherit; font: inherit; width: 100%;
+    box-sizing: border-box; padding: 3px 5px; border-radius: 4px;
+    min-width: 90px; resize: none;
+  }
+  .cell-edit:hover { border-color: var(--border); }
+  .cell-edit:focus {
+    outline: none; border-color: var(--accent);
+    background: var(--bg);
+  }
+  textarea.cell-edit { min-height: 38px; line-height: 1.3; }
+  /* Save column: empty until the row has unsaved edits, then a save
+     icon appears; on save it briefly flips to a green check. */
+  .save-cell { text-align: center; width: 44px; }
+  .save-btn {
+    background: rgba(245,158,11,.16); color: var(--warn);
+    border: 1px solid rgba(245,158,11,.5);
+    border-radius: 6px; cursor: pointer;
+    font-size: 15px; line-height: 1; padding: 5px 7px;
+    display: none;          /* hidden until row is dirty */
+  }
+  tr.row-dirty .save-btn { display: inline-block; }
+  .save-btn:hover { background: rgba(245,158,11,.30);
+                    border-color: var(--warn); }
+  .save-ok {
+    color: var(--good); font-size: 16px; font-weight: 700;
+    display: none;          /* shown briefly after a successful save */
+  }
+  tr.row-saved .save-ok { display: inline-block; }
+  tr.row-saved .save-btn { display: none; }
+  /* A row with unsaved edits gets a subtle left accent so it's easy
+     to spot what still needs saving while scrolling. */
+  tr.row-dirty td:first-child { box-shadow: inset 3px 0 0 var(--warn); }
   /* Small grey reference line showing the original (pre-mod /
      pre-edit) value beneath the current one. */
   .orig-ref {
@@ -591,6 +628,7 @@
   <div class="stats" id="fc-stats"></div>
   <table id="fc-table">
     <thead><tr>
+      <th style="width: 44px;" title="Save manual edits"></th>
       <th data-sort="status"      style="width: 80px;">Status</th>
       <th data-sort="sale_date">Sale Date</th>
       <th data-sort="days_until_sale">Days Until Sale</th>
@@ -959,6 +997,42 @@ function setFcOverride(docNum, patch) {
   const o = loadFcOverrides();
   o[docNum] = Object.assign({}, o[docNum], patch,
     {_updated_at: new Date().toISOString()});
+  saveFcOverrides(o);
+}
+
+// ---- Manual per-field edits (owner, address, lender, etc.) ----
+// Stored under the same per-doc override record, namespaced in a
+// `fields` object so they don't collide with loan_amount/mod_updated.
+// These WIN over the scraped value at render time and survive the
+// daily scrape (scraped JSON is never mutated by the browser). Same
+// shape ports cleanly to the future hosted backend.
+//
+// The list of fields the user may hand-edit on a foreclosure row.
+// loan_amount is handled by its own specialised cell (read-only when
+// captured & no mod), so it is NOT in this generic list.
+const FC_EDITABLE_FIELDS = [
+  "owner", "prop_address", "mail_address", "lender", "legal"
+];
+
+// Effective value for a field = manual edit if present, else scraped.
+function fcFieldValue(r, key) {
+  const o = getFcOverride(r.doc_num);
+  if (o.fields && o.fields[key] != null && o.fields[key] !== "")
+    return o.fields[key];
+  return r[key];
+}
+// Persist all pending field edits for a row (called by Save button).
+function commitFcFields(docNum, edits) {
+  const o = loadFcOverrides();
+  const cur = o[docNum] || {};
+  const fields = Object.assign({}, cur.fields || {});
+  for (const k in edits) {
+    const v = (edits[k] == null ? "" : String(edits[k])).trim();
+    if (v === "") delete fields[k];   // clearing reverts to scraped
+    else fields[k] = v;
+  }
+  o[docNum] = Object.assign({}, cur, {fields:fields,
+    _updated_at: new Date().toISOString()});
   saveFcOverrides(o);
 }
 
@@ -1906,7 +1980,7 @@ function renderFc() {
     const toggleTr = document.createElement("tr");
     toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
     toggleTr.innerHTML = `
-      <td colspan="14">
+      <td colspan="15">
         <span class="chev">▶</span>
         <span>${deadRecords.length} dead lead${deadRecords.length === 1 ? "" : "s"}</span>
         <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
@@ -1943,23 +2017,55 @@ function buildFcRow(r, isDead) {
   const daysText = days === null || days === undefined ? "—" :
                    days < 0 ? Math.abs(days) + " days ago" :
                    days + " days";
-  const fullAddr = r.prop_address ?
-      [r.prop_address, r.prop_city, r.prop_state, r.prop_zip]
+  // Effective values: a manual edit (saved via the Save button) wins
+  // over the scraped value. The street line is what's editable; city/
+  // state/zip stay from the scrape (rarely the missing piece).
+  const _ownerEff = fcFieldValue(r, "owner") || "";
+  const _propEff  = fcFieldValue(r, "prop_address") || "";
+  const _mailEff  = fcFieldValue(r, "mail_address") || "";
+  const _lenderEff = fcFieldValue(r, "lender") || "";
+  const _legalEff  = fcFieldValue(r, "legal") || "";
+  const fullAddr = _propEff ?
+      [_propEff, r.prop_city, r.prop_state, r.prop_zip]
           .filter(Boolean).join(" ") : "";
   // Loan amount: a manual override (entered by the user after a loan
   // mod) wins over the scraped value. The override lives in
   // localStorage and is applied only at render time — the scraped
   // JSON is never mutated, so the daily scrape can't clobber the
   // user's correction.
+  // ---- Loan Amount cell logic ----
+  // Editability rules:
+  //   * Loan-mod record            → ALWAYS editable. The editable
+  //       value is the MODIFIED amount (which the PDF never states),
+  //       so the box starts empty; the original PDF amount is shown
+  //       beneath as a read-only "orig:" reference so both numbers
+  //       are visible for sizing up the lead.
+  //   * No mod, amount NOT captured → editable (manually look it up).
+  //   * No mod, amount captured     → READ-ONLY plain text. This is
+  //       trustworthy original data; protect it from accidental edits.
   const _ov = getFcOverride(r.doc_num);
-  const _hasOverride = _ov.loan_amount != null && _ov.loan_amount !== "";
-  const _effectiveLoan = _hasOverride
-      ? Number(_ov.loan_amount)
-      : (r.loan_amount != null ? Number(r.loan_amount) : null);
-  const loanAmtStr = (_effectiveLoan != null && !isNaN(_effectiveLoan))
-      ? _effectiveLoan.toLocaleString("en-US",
-          {minimumFractionDigits: 2, maximumFractionDigits: 2})
-      : "";
+  const _scrapedLoan = (r.loan_amount != null && r.loan_amount !== "")
+      ? Number(r.loan_amount) : null;
+  const _hasScraped = _scrapedLoan != null && !isNaN(_scrapedLoan);
+  const _isMod = !!r.has_loan_mod;
+  // Override = the user's manually-entered figure. For mod records
+  // this is the modified amount; for blank non-mod records it's the
+  // looked-up original.
+  const _ovLoan = (_ov.loan_amount != null && _ov.loan_amount !== "")
+      ? Number(_ov.loan_amount) : null;
+  const _hasOverride = _ovLoan != null && !isNaN(_ovLoan);
+
+  const _editable = _isMod || !_hasScraped;
+
+  const _fmt = (n) => Number(n).toLocaleString("en-US",
+      {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+  // The value shown in the editable box (when editable).
+  //   mod record  → the override (mod amount); empty until entered
+  //   blank non-mod → the override (looked-up amount); empty until entered
+  const _editBoxStr = _hasOverride ? _fmt(_ovLoan) : "";
+  // Read-only display string (non-mod with scraped amount).
+  const _readOnlyStr = _hasScraped ? _fmt(_scrapedLoan) : "";
   // LOAN MOD badge — two-state, shown only when the parser flagged a
   // modification. State lives in the override store as `mod_updated`:
   //   false/absent → "LOAN MOD" (amber, needs manual verification)
@@ -2000,24 +2106,29 @@ function buildFcRow(r, isDead) {
       `<div class="orig-ref" title="Original deed-of-trust date, before
  the loan modification">orig: ${esc(formatDate(r.deed_date_original))}</div>`;
   }
-  // Original loan AMOUNT: the scraped value is never mutated, so we
-  // can always show it. Only display the sub-line when the user has
-  // overridden it (so it differs from what's in the editable box).
+  // Original loan AMOUNT reference line ("orig: $X"). Shows the
+  // PDF-captured original beneath the editable box so both numbers
+  // are visible together. Displayed when:
+  //   * loan-mod record AND we have a scraped original  → always show
+  //       it (the editable box holds the modified amount; this line
+  //       is the original for comparison/lead study), OR
+  //   * non-mod record the user has manually overridden → show what
+  //       it was before their edit.
   let origAmtLine = "";
-  if (_hasOverride && r.loan_amount != null && r.loan_amount !== "") {
-    const _origNum = Number(r.loan_amount);
-    if (!isNaN(_origNum)) {
-      origAmtLine =
-        `<div class="orig-ref" title="Original scraped loan amount,
- before your manual edit">orig: $${_origNum.toLocaleString("en-US",
-          {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>`;
-    }
+  if (_isMod && _hasScraped) {
+    origAmtLine =
+      `<div class="orig-ref" title="Original loan amount from the
+ foreclosure PDF (before the loan modification)">orig: $${_fmt(_scrapedLoan)}</div>`;
+  } else if (!_isMod && _hasOverride && _hasScraped) {
+    origAmtLine =
+      `<div class="orig-ref" title="Original scraped loan amount,
+ before your manual edit">orig: $${_fmt(_scrapedLoan)}</div>`;
   }
   const apprVal = r.appraised_value ?
       "$" + Number(r.appraised_value).toLocaleString("en-US",
                                                      {maximumFractionDigits: 0}) : "—";
-  const mailFull = r.mail_address ?
-      [r.mail_address, r.mail_city, r.mail_state, r.mail_zip]
+  const mailFull = _mailEff ?
+      [_mailEff, r.mail_city, r.mail_state, r.mail_zip]
           .filter(Boolean).join(" ") : "";
 
   // Non-owner-occupied detection (same as before — ZIP+street-number
@@ -2171,37 +2282,67 @@ function buildFcRow(r, isDead) {
                  </a>`;
   }
 
+  // Editable text cell helper. Renders an input pre-filled with the
+  // effective value; tags it with data-field so the Save button can
+  // collect all pending edits on the row. Legal uses a textarea
+  // (often long). These never auto-save — the row's Save button does.
+  const _ecell = (key, val, isLegal) => {
+    const common = `class="cell-edit" data-field="${key}"
+      data-doc="${esc(r.doc_num)}"
+      oninput="fcMarkDirty(this)"
+      onclick="event.stopPropagation();"`;
+    if (isLegal)
+      return `<textarea ${common} rows="2"
+              placeholder="—">${esc(val)}</textarea>`;
+    return `<input type="text" ${common}
+              value="${esc(val)}" placeholder="—">`;
+  };
+
   tr.innerHTML = `
+    <td class="save-cell">
+      <button class="save-btn" title="Save manual edits on this row"
+        onclick="fcSaveRow(this); event.stopPropagation();">💾</button>
+      <span class="save-ok" title="Saved">✓</span>
+    </td>
     <td>${statusCell}</td>
     <td>${esc(r.sale_date || "")}</td>
     <td class="days ${daysClass}">${esc(daysText)}</td>
     <td>${esc(r.recorded || "")}</td>
-    <td>${esc(r.owner || "—")}</td>
-    <td>${esc(fullAddr || "—")}${absenteeBadge}${shortSaleBadge}</td>
-    <td>${esc(mailFull || "—")}</td>
+    <td>${_ecell("owner", _ownerEff)}</td>
+    <td>${_ecell("prop_address", _propEff)}${absenteeBadge}${shortSaleBadge}</td>
+    <td>${_ecell("mail_address", _mailEff)}</td>
     <td class="${_hasOverride ? "loan-amt-overridden" : ""}">
+      ${_editable ? `
       <span style="opacity:.6;">$</span><input class="loan-amt-edit"
         type="text" inputmode="decimal"
-        value="${esc(loanAmtStr)}"
+        value="${esc(_editBoxStr)}"
         data-doc="${esc(r.doc_num)}"
-        title="Click to edit. Manual edits override the scraped value
- and survive the daily scrape."
-        onclick="event.stopPropagation();"
-        onchange="commitLoanAmount(this)">${modBadge}${origAmtLine}</td>
+        placeholder="${_isMod ? "enter mod amount" : "enter amount"}"
+        title="${_isMod
+            ? "Loan modification present — enter the modified loan amount you looked up. The original PDF amount is shown below for reference."
+            : "No amount captured from the PDF — enter it manually if you look it up."}"
+        oninput="fcMarkDirty(this)"
+        data-field="loan_amount"
+        onclick="event.stopPropagation();">`
+      : `<span title="Original loan amount captured from the foreclosure PDF (read-only)">$${esc(_readOnlyStr)}</span>`
+      }${modBadge}${origAmtLine}</td>
     <td>${apprVal}</td>
     <td>${esc(formatDate(r.deed_date))}${modBadge}${origDateLine}</td>
     <td>${esc(r.loan_doc || "—")}</td>
-    <td>${esc(r.lender || "—")}</td>
-    <td class="legal">${esc(r.legal || "")}</td>
+    <td>${_ecell("lender", _lenderEff)}</td>
+    <td class="legal">${_ecell("legal", _legalEff, true)}</td>
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
     <td style="text-align: center;">${ncadCell}</td>
   `;
 
-  // Whole-row click opens the CRM, except on interactive elements.
+  // Whole-row click opens the CRM, except on interactive elements
+  // (links, buttons, status pill, badges) and the inline edit fields /
+  // Save column — clicking those should edit/save, not open the CRM.
   tr.style.cursor = "pointer";
   tr.addEventListener("click", (ev) => {
     if (ev.target.closest(
-        "a, button, .pill.status, .ext-icon"))
+        "a, button, input, textarea, .pill.status, .ext-icon, "
+        + ".save-cell, .cell-edit"))
       return;
     openCrm("mfc", r.doc_num, FC_RAW);
   });
@@ -2267,32 +2408,64 @@ function toggleLoanMod(docNum) {
   renderFc();
 }
 
-// Commit a manual loan-amount edit. Stores the parsed number as an
-// override (wins over the scraped value at render time, survives the
-// daily scrape). Empty input clears the override, reverting to the
-// scraped value. We strip $ and commas so the user can paste
-// formatted figures.
-function commitLoanAmount(inputEl) {
-  const docNum = inputEl.dataset.doc;
-  const raw = String(inputEl.value || "").replace(/[$,\s]/g, "");
-  if (raw === "") {
-    // Clear override → revert to scraped value.
-    const o = loadFcOverrides();
-    if (o[docNum]) {
-      delete o[docNum].loan_amount;
-      saveFcOverrides(o);
+// ---- Manual-edit save flow ----
+// Fields don't auto-save. Editing any field marks the row "dirty"
+// (the Save button appears). Clicking Save persists every pending
+// edit on that row, flashes a green ✓, then the row goes clean.
+// Re-editing makes it dirty again — fields are always editable.
+
+function fcMarkDirty(el) {
+  const tr = el.closest("tr");
+  if (!tr) return;
+  tr.classList.add("row-dirty");
+  tr.classList.remove("row-saved");   // clear any lingering ✓
+}
+
+function fcSaveRow(btn) {
+  const tr = btn.closest("tr");
+  if (!tr) return;
+  const docNum = btn.closest("tr")
+      .querySelector("[data-doc]").dataset.doc;
+
+  // Collect every edit control on this row.
+  const edits = {};
+  let loanAmtRaw = null;
+  tr.querySelectorAll("[data-field]").forEach(el => {
+    const f = el.dataset.field;
+    if (f === "loan_amount") {
+      loanAmtRaw = String(el.value || "").replace(/[$,\s]/g, "");
+    } else {
+      edits[f] = el.value;
     }
-    renderFc();
-    return;
+  });
+
+  // Persist generic text fields (owner/address/lender/legal).
+  commitFcFields(docNum, edits);
+
+  // Persist loan amount (own override slot; numeric, blank clears it).
+  if (loanAmtRaw !== null) {
+    if (loanAmtRaw === "") {
+      const o = loadFcOverrides();
+      if (o[docNum] && "loan_amount" in o[docNum]) {
+        delete o[docNum].loan_amount;
+        saveFcOverrides(o);
+      }
+    } else {
+      const num = Number(loanAmtRaw);
+      if (!isNaN(num)) setFcOverride(docNum, {loan_amount: num});
+    }
   }
-  const num = Number(raw);
-  if (isNaN(num)) {
-    // Reject non-numeric; re-render to restore the prior display.
+
+  // Visual: swap Save button for the green ✓ for ~1.5s, then re-render
+  // so the row reflects saved values cleanly and goes back to clean.
+  tr.classList.remove("row-dirty");
+  tr.classList.add("row-saved");
+  setTimeout(() => {
+    // Re-render the whole table so effective values + read-only/edit
+    // states recompute (e.g. a filled-in owner now shows as the
+    // effective value). The saved row simply won't be dirty anymore.
     renderFc();
-    return;
-  }
-  setFcOverride(docNum, {loan_amount: num});
-  renderFc();
+  }, 1500);
 }
 
 // Wire up the reason picker buttons. We delegate from the parent so
