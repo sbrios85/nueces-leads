@@ -591,6 +591,52 @@ _RE_MOD_DATE = [
         re.IGNORECASE),
 ]
 
+# _RE_MOD_DOC: instrument / document numbers attached to a loan
+# modification. Real notices use several phrasings (all observed in
+# Nueces FC notices):
+#   "modified by Loan Modification recorded as Instrument no. 2018044065
+#       and further recorded ... in Instrument no. 2022041020 ..."
+#   "as modified by Modification of Deed of Trust dated ... recorded
+#       under Instrument No. 2025021606"
+#   "AS AFFECTED BY LOAN MODIFICATION AGREEMENTS INSTRUMENT NO(S)
+#       2023013999, 2023043047 AND 2024019039"
+#   "Loan Modification recorded as Instrument No. 2024033399 recorded
+#       on ... and Loan modification recorded as Instrument No. 2024033400"
+# Strategy: collect EVERY instrument number that sits in a modification
+# context, then keep the most recent (numerically largest — Nueces
+# instrument numbers are sequential by recording order, same basis we
+# use for picking the newest mod date). A Nueces instrument number is
+# a 9–12 digit run, often YYYY###### (e.g. 2024020964).
+_RE_MOD_DOC_NUM = re.compile(r"\b(\d{9,12})\b")
+# Anchor phrases that introduce a block of modification instrument
+# numbers. We search WITHIN the matched span for the numbers so an
+# unrelated instrument number elsewhere in the notice can't leak in.
+_RE_MOD_DOC_BLOCK = [
+    # "...modified by Loan Modification recorded as Instrument no. X
+    #   and (further) recorded ... in Instrument no. Y ..." — captures
+    #   the whole chained run up to the records clause.
+    re.compile(
+        r"modified\s+by\s+(?:that\s+certain\s+)?"
+        r"(?:loan\s+)?modification.*?"
+        r"(?:in\s+the\s+(?:real|official)\s+(?:property\s+)?"
+        r"(?:public\s+)?records|\bP\b|$)",
+        re.IGNORECASE | re.DOTALL),
+    # "AS AFFECTED BY LOAN MODIFICATION AGREEMENT(S) INSTRUMENT NO(S)
+    #   X, Y AND Z"
+    re.compile(
+        r"as\s+affected\s+by\s+loan\s+modification\s+agreement"
+        r"s?\s+instrument\s+no\(?s?\)?\.?\s*"
+        r"[\d,\s and]+",
+        re.IGNORECASE),
+    # "as modified by Modification of Deed of Trust dated ... recorded
+    #   under Instrument No. X"
+    re.compile(
+        r"as\s+modified\s+by\s+modification\s+of\s+deed\s+of\s+"
+        r"trust[^.]{0,120}?recorded\s+under\s+instrument\s+no\.?\s*"
+        r"\d{9,12}",
+        re.IGNORECASE),
+]
+
 # Property street address — multiple strategies.
 #
 # Strategy 1: explicit label like "Commonly known as: ADDRESS",
@@ -913,6 +959,27 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
             if orig and orig != newest:
                 out["deed_date_original"] = orig
             out["deed_date"] = newest
+
+        # Modification instrument number(s). Find every number that
+        # sits inside a modification-context block, keep the most
+        # recent (numerically largest). Stays absent if none found.
+        mod_doc_nums = []
+        _own = str(out.get("doc_number") or "").strip()
+        for brx in _RE_MOD_DOC_BLOCK:
+            for bm in brx.finditer(flat_text):
+                block = bm.group(0)
+                for nm in _RE_MOD_DOC_NUM.finditer(block):
+                    n = nm.group(1)
+                    # Guard: never let the foreclosure notice's own
+                    # doc number be mistaken for a modification doc.
+                    if _own and n == _own:
+                        continue
+                    mod_doc_nums.append(n)
+        if mod_doc_nums:
+            # Largest = most recently recorded (Nueces instrument
+            # numbers increase with recording order, same basis as
+            # picking the newest mod date).
+            out["loan_mod_doc"] = max(mod_doc_nums, key=lambda s: (len(s), s))
 
     # --- Loan document (deed-of-trust recording / instrument number) ---
     # We collapse whitespace first so OCR line breaks inside the
