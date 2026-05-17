@@ -464,6 +464,133 @@ _RE_DEED_DATE = [
                re.IGNORECASE),
 ]
 
+# Loan-document recording / instrument number — the doc number under
+# which the ORIGINAL deed of trust was recorded with the county clerk.
+# Sometimes labeled "Instrument No.", "Document No.", "Clerk's File
+# No.", or "County Clerk's File No.".
+#
+# IMPORTANT: a foreclosure PDF often cites SEVERAL recording numbers:
+# the original deed of trust (what we want), plus loan modifications
+# and assignments ("further recorded ... in Instrument no. XXXX").
+# To get the ORIGINAL, the anchored patterns below tie the number to
+# the deed-of-trust recording clause specifically. The looser
+# fallback is only used when no anchored match is found, and it takes
+# the FIRST match (modifications/assignments are described later in
+# the document, after the original).
+#
+# Modern Nueces numbers are 10 digits (YYYY######, e.g. 2012023281);
+# older records use 5-7 digit clerk's file numbers (e.g. 944313). We
+# accept 5-12 digits to cover both eras.
+_RE_LOAN_DOC = [
+    # Anchored: "Deed of Trust dated <date> and recorded in
+    # Document/Instrument/Clerk's File No. <num>". The date portion is
+    # skipped over with a non-greedy gap so we land on the recording
+    # number that belongs to the deed of trust itself.
+    re.compile(
+        r"deed\s+of\s+trust\b[^.]{0,120}?"
+        r"(?:recorded|filed|secorded|racorded)\b[^.]{0,60}?"
+        r"(?:document|instrument|clerk(?:'|\u2019)?s?\s+file"
+        r"|county\s+clerk(?:'|\u2019)?s?\s+(?:file|document))\s*"
+        r"(?:no\.?|number|#)?\s*:?\s*"
+        r"(\d{5,12})",
+        re.IGNORECASE),
+    # Table-template format (McAllen / Selene-style): the document is
+    # laid out as labeled rows. The deed-of-trust recording number
+    # sits in a "Recorded in: ... Instrument No: <num>" block that
+    # follows a "Deed of Trust Date:" label. The gap between the two
+    # labels can be ~400 chars of mortgagor/beneficiary text and may
+    # contain periods (e.g. "INC.,"), so we use a wide,
+    # period-tolerant but still bounded gap and require the
+    # "Recorded in:" field label to immediately precede the number.
+    re.compile(
+        r"deed\s+of\s+trust\s+date\s*:.{0,600}?"
+        r"recorded\s+in\s*:.{0,120}?"
+        r"\binstrument\s+no\.?\s*:?\s*"
+        r"(\d{5,12})",
+        re.IGNORECASE),
+    # Table field block: "Recorded in: ... Instrument No: <num>".
+    # This is the recording-info field present in McAllen/RAS/Selene
+    # table templates. Strong standalone signal — the only number that
+    # follows this exact field label is the deed-of-trust recording
+    # number. We DON'T require a nearby deed-of-trust-date label here
+    # because some templates phrase the date differently; the
+    # self-doc-number guard downstream still prevents grabbing the
+    # notice's own 2026###### number.
+    re.compile(
+        r"recorded\s+in\s*:.{0,150}?"
+        r"\binstrument\s+no\.?\s*:?\s*"
+        r"(\d{5,12})",
+        re.IGNORECASE),
+    # "Recording Information: Instrument <num>" (no "No." token) —
+    # First Community Bank / older RAS template.
+    re.compile(
+        r"recording\s+information\s*:?\s*"
+        r"(?:document|instrument|clerk(?:'|\u2019)?s?\s+file)\s*"
+        r"(?:no\.?|number|#)?\s*:?\s*"
+        r"(\d{5,12})",
+        re.IGNORECASE),
+    # Looser fallback: the first "recorded/filed under
+    # Document/Instrument/Clerk's File No. <num>" anywhere. First match
+    # wins (original precedes modifications in the document body).
+    re.compile(
+        r"(?:recorded|filed|secorded|racorded)\b[^.]{0,40}?"
+        r"(?:under|as|in|at)\s+"
+        r"(?:document|instrument|clerk(?:'|\u2019)?s?\s+file"
+        r"|county\s+clerk(?:'|\u2019)?s?\s+(?:file|document))\s*"
+        r"(?:no\.?|number|#)?\s*:?\s*"
+        r"(\d{5,12})",
+        re.IGNORECASE),
+]
+
+# Loan-modification detection.
+#
+# A foreclosure PDF sometimes references the original deed of trust
+# AND one or more subsequent loan modifications, e.g.:
+#   "...recorded ... under County Clerk's File No 2014036856 ...
+#    modified by Loan Modification recorded as Instrument no.
+#    2018044065 ... and further recorded on 08/30/2022 in Instrument
+#    no. 2022041020 ..."
+#
+# When a modification is present, the originally-scraped loan amount
+# is usually stale (the mod changed the terms but the notice rarely
+# restates the new balance). We flag these so the dashboard can show
+# a "LOAN MOD" badge prompting the user to verify the amount by hand,
+# and so the displayed "loan date" reflects the most-recent
+# modification rather than the original deed-of-trust date.
+#
+# _RE_LOAN_MOD_PRESENT: does the document mention a loan modification
+# at all? Deliberately specific phrases so unrelated uses of
+# "modified" don't trigger a false positive.
+_RE_LOAN_MOD_PRESENT = re.compile(
+    r"(?:modified\s+by\s+(?:a\s+)?loan\s+modification"
+    r"|loan\s+modification\s+(?:agreement\s+)?"
+    r"(?:recorded|dated|filed)"
+    r"|modified\s+by\s+(?:that\s+certain\s+)?modification"
+    r"|(?:and\s+)?further\s+(?:recorded|modified)"
+    r"|loan\s+modification\s+agreement)",
+    re.IGNORECASE)
+
+# _RE_MOD_DATE: dates attached to a modification event. We collect ALL
+# matches and keep the most recent. Two flavors: an explicit
+# "Loan Modification ... dated <date>" and the "further recorded on
+# <date>" continuation form seen in the chained example above.
+_RE_MOD_DATE = [
+    re.compile(
+        r"loan\s+modification[^.]{0,80}?"
+        r"(?:dated|recorded\s+on|effective)\s+"
+        r"(\d{1,2}/\d{1,2}/\d{2,4}|[A-Za-z]+\s+\d{1,2},?\s+\d{4})",
+        re.IGNORECASE),
+    re.compile(
+        r"(?:and\s+)?further\s+recorded\s+on\s+"
+        r"(\d{1,2}/\d{1,2}/\d{2,4}|[A-Za-z]+\s+\d{1,2},?\s+\d{4})",
+        re.IGNORECASE),
+    re.compile(
+        r"modification[^.]{0,60}?"
+        r"(?:dated|recorded\s+on|effective)\s+"
+        r"(\d{1,2}/\d{1,2}/\d{2,4}|[A-Za-z]+\s+\d{1,2},?\s+\d{4})",
+        re.IGNORECASE),
+]
+
 # Property street address — multiple strategies.
 #
 # Strategy 1: explicit label like "Commonly known as: ADDRESS",
@@ -747,6 +874,72 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
             # If parsing fails, normalize_date_string returns the input
             # unchanged — we keep imperfect data over wrong data.
             out["deed_date"] = normalize_date_string(d)
+            break
+
+    # --- Loan modification detection ---
+    # Only act when the document explicitly references a loan
+    # modification. When it does:
+    #   * set has_loan_mod = True (drives the dashboard "LOAN MOD"
+    #     badge + flags the scraped loan amount as needing manual
+    #     verification)
+    #   * if we can find modification date(s), replace the displayed
+    #     deed_date with the MOST RECENT one (newest mod). The
+    #     original deed date is still recoverable via loan_doc.
+    # When there's no modification language, behavior is unchanged.
+    flat_text = re.sub(r"\s+", " ", text)
+    if _RE_LOAN_MOD_PRESENT.search(flat_text):
+        out["has_loan_mod"] = True
+        # Gather every modification date we can find; keep the latest.
+        mod_iso_dates = []
+        for rx in _RE_MOD_DATE:
+            for mm in rx.finditer(flat_text):
+                raw = re.sub(r"\s+", " ", mm.group(1)).strip()
+                iso = normalize_date_string(raw)
+                # Only keep values that normalized to real ISO dates
+                # (YYYY-MM-DD). Unparseable strings are ignored for
+                # the "most recent" comparison so a junk capture can't
+                # win.
+                if re.fullmatch(r"\d{4}-\d{2}-\d{2}", iso):
+                    mod_iso_dates.append(iso)
+        if mod_iso_dates:
+            # Preserve the ORIGINAL deed-of-trust date before we swap
+            # in the newest modification date, so the dashboard can
+            # show "orig: <date>" as a reference line. Only set this
+            # when we actually have an original to preserve AND a mod
+            # date to replace it with — otherwise there's nothing to
+            # compare and the field stays absent.
+            orig = out.get("deed_date")
+            newest = max(mod_iso_dates)  # ISO sorts == chronological
+            if orig and orig != newest:
+                out["deed_date_original"] = orig
+            out["deed_date"] = newest
+
+    # --- Loan document (deed-of-trust recording / instrument number) ---
+    # We collapse whitespace first so OCR line breaks inside the
+    # phrase ("recorded in\nDocument\n2012023281") don't defeat the
+    # bounded-gap patterns. Try the deed-of-trust-anchored pattern
+    # first; only fall back to the loose first-match pattern if the
+    # anchored one misses. This keeps modifications/assignments from
+    # being mistaken for the original loan instrument.
+    #
+    # Guard: the foreclosure notice has its OWN instrument/document
+    # number (the 2026###### the clerk assigned when this notice was
+    # filed). That number also appears in the text ("Document Number:
+    # 2026000269 ... Record and Return To"). We must not capture it as
+    # the loan doc. If a candidate equals the record's own doc_num, or
+    # carries the current/next filing year prefix while a different
+    # older-looking instrument number is also present, skip it.
+    flat = re.sub(r"\s+", " ", text)
+    own_doc = str(out.get("doc_num") or "").strip()
+    for rx in _RE_LOAN_DOC:
+        for m in rx.finditer(flat):
+            cand = m.group(1).strip()
+            # Reject the notice's own recording number.
+            if own_doc and cand == own_doc:
+                continue
+            out["loan_doc"] = cand
+            break
+        if out.get("loan_doc"):
             break
 
     # --- Property street address ---
