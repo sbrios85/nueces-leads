@@ -233,6 +233,17 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
             if rec.get("loan_doc") != fields["loan_doc"]:
                 rec["loan_doc"] = fields["loan_doc"]
                 changed = True
+    # --- Loan modification instrument number ---
+    # Mirror the parser: set when present, clear when a re-parse no
+    # longer finds one (e.g. mod language changed). Only meaningful
+    # on loan-mod records; absent otherwise.
+    new_mod_doc = fields.get("loan_mod_doc") or ""
+    if rec.get("loan_mod_doc", "") != new_mod_doc:
+        if new_mod_doc:
+            rec["loan_mod_doc"] = new_mod_doc
+        elif "loan_mod_doc" in rec:
+            del rec["loan_mod_doc"]
+        changed = True
     # --- Loan modification flag ---
     # Always reflect the parser's current view (it's a derived boolean,
     # not user data). If the latest parse no longer sees a mod, clear
