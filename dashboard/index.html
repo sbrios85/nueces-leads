@@ -240,11 +240,17 @@
     background: rgba(34,197,94,.30);
     border-color: var(--good);
   }
-  /* Editable loan-amount cell: subtle affordance that it's editable;
-     a manually-overridden value gets a left accent bar. */
+  /* Editable loan-amount cell. The $ sign and the input sit on one
+     line via a flex wrapper so the value never drops below the $. */
+  .loan-amt-wrap {
+    display: flex; align-items: center; gap: 3px;
+    white-space: nowrap;
+  }
+  .loan-amt-wrap .dollar { opacity: .6; flex-shrink: 0; }
   .loan-amt-edit {
     background: transparent; border: 1px solid transparent;
-    color: inherit; font: inherit; width: 110px;
+    color: inherit; font: inherit; flex: 1; min-width: 0;
+    width: 100%; box-sizing: border-box;
     padding: 3px 5px; border-radius: 4px;
   }
   .loan-amt-edit:hover { border-color: var(--border); }
@@ -252,7 +258,9 @@
     outline: none; border-color: var(--accent);
     background: var(--bg);
   }
-  td.loan-amt-overridden { border-left: 3px solid var(--accent); }
+  /* (No left accent bar on overridden loan amounts — the user found
+     the blue line distracting. The "orig:" reference line already
+     signals an override.) */
   /* Generic inline-editable text field (owner, address, lender, etc.).
      Looks like plain text until hovered/focused so the table stays
      clean, but is always click-to-edit. */
@@ -2311,19 +2319,19 @@ function buildFcRow(r, isDead) {
     <td>${_ecell("owner", _ownerEff)}</td>
     <td>${_ecell("prop_address", _propEff)}${absenteeBadge}${shortSaleBadge}</td>
     <td>${_ecell("mail_address", _mailEff)}</td>
-    <td class="${_hasOverride ? "loan-amt-overridden" : ""}">
+    <td>
       ${_editable ? `
-      <span style="opacity:.6;">$</span><input class="loan-amt-edit"
+      <span class="loan-amt-wrap"><span class="dollar">$</span><input class="loan-amt-edit"
         type="text" inputmode="decimal"
         value="${esc(_editBoxStr)}"
         data-doc="${esc(r.doc_num)}"
-        placeholder="${_isMod ? "enter mod amount" : "enter amount"}"
+        placeholder="${_isMod ? "mod amount" : "enter amount"}"
         title="${_isMod
             ? "Loan modification present — enter the modified loan amount you looked up. The original PDF amount is shown below for reference."
             : "No amount captured from the PDF — enter it manually if you look it up."}"
         oninput="fcMarkDirty(this)"
         data-field="loan_amount"
-        onclick="event.stopPropagation();">`
+        onclick="event.stopPropagation();"></span>`
       : `<span title="Original loan amount captured from the foreclosure PDF (read-only)">$${esc(_readOnlyStr)}</span>`
       }${modBadge}${origAmtLine}</td>
     <td>${apprVal}</td>
