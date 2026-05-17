@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-05-16T10:50:33.880081+00:00",
+  "fetched_at": "2026-05-17T10:58:32.642754+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
-    "start": "2026-05-16",
-    "end": "2026-09-13"
+    "start": "2026-05-17",
+    "end": "2026-09-14"
   },
   "total": 103,
   "pre_foreclosure": 103,
@@ -31,7 +31,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000294",
@@ -55,7 +55,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000292",
@@ -79,7 +79,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000293",
@@ -103,7 +103,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000276",
@@ -127,7 +127,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000271",
@@ -151,7 +151,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000270",
@@ -175,7 +175,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000286",
@@ -199,7 +199,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000284",
@@ -223,7 +223,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000285",
@@ -247,7 +247,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000279",
@@ -271,7 +271,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000287",
@@ -295,7 +295,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000269",
@@ -319,31 +319,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
-    },
-    {
-      "doc_num": "2026000288",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-05-11",
-      "sale_date": "2026-06-02",
-      "legal": "WOOLDRIDGE CREEK- LORT 28, BLOCK 1, UNIT 12",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000288",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "appraised_value": null,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000274",
@@ -367,7 +343,31 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
+    },
+    {
+      "doc_num": "2026000288",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "WOOLDRIDGE CREEK- LORT 28, BLOCK 1, UNIT 12",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000288",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000273",
@@ -391,7 +391,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000277",
@@ -415,7 +415,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000281",
@@ -439,7 +439,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000278",
@@ -463,103 +463,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
-    },
-    {
-      "doc_num": "2026000272",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-05-11",
-      "sale_date": "2026-06-02",
-      "legal": "LYNNWOOD PLACE- LOT 14, BLOCK 13, UNIT 3",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000272",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "appraised_value": null,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 17
-    },
-    {
-      "doc_num": "2026000275",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-05-11",
-      "sale_date": "2026-06-02",
-      "legal": "THE MEADOWS- LOT 18, BLOCK 3, UNIT 2",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000275",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "appraised_value": null,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 17
-    },
-    {
-      "doc_num": "2026000282",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-05-11",
-      "sale_date": "2026-06-02",
-      "legal": "SCHANEN ESTATES- LOT 6, BLOCK 13, UNIT 2",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000282",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "appraised_value": null,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 17
-    },
-    {
-      "doc_num": "2026000290",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-05-11",
-      "sale_date": "2026-06-02",
-      "legal": "PARK TERRACE- LOT 7, BLOCK 6, UNIT 1",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000290",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "appraised_value": null,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000289",
@@ -583,7 +487,79 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
+    },
+    {
+      "doc_num": "2026000272",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "LYNNWOOD PLACE- LOT 14, BLOCK 13, UNIT 3",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000272",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 16
+    },
+    {
+      "doc_num": "2026000275",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "THE MEADOWS- LOT 18, BLOCK 3, UNIT 2",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000275",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 16
+    },
+    {
+      "doc_num": "2026000282",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "SCHANEN ESTATES- LOT 6, BLOCK 13, UNIT 2",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000282",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000283",
@@ -607,7 +583,31 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
+    },
+    {
+      "doc_num": "2026000290",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-11",
+      "sale_date": "2026-06-02",
+      "legal": "PARK TERRACE- LOT 7, BLOCK 6, UNIT 1",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000290",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000280",
@@ -631,7 +631,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000291",
@@ -655,7 +655,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000267",
@@ -679,7 +679,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000266",
@@ -703,7 +703,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000263",
@@ -727,7 +727,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000261",
@@ -751,7 +751,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000260",
@@ -775,7 +775,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000259",
@@ -799,7 +799,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000258",
@@ -823,7 +823,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000252",
@@ -847,7 +847,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000254",
@@ -871,7 +871,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000255",
@@ -895,7 +895,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000249",
@@ -919,7 +919,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000248",
@@ -943,7 +943,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000236",
@@ -964,7 +964,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000241",
@@ -985,7 +985,7 @@
       "mail_zip": "78414",
       "appraised_value": 119091.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2003-12-01",
       "lender": "Freddie Mac Seasoned Loans Structured Transaction Trust",
       "legal_lot": "5",
@@ -1015,7 +1015,7 @@
       "mail_zip": "78410",
       "appraised_value": 282430.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2022-06-27",
       "lender": "Carrington Mortgage Services, LLC, 500 N. State College Blvd. Suites 1030, 1300 and 1400, Orange, CA 92868",
       "pdf_parsed_at": "2026-05-14T21:49:59.131370+00:00",
@@ -1042,7 +1042,7 @@
       "mail_zip": "78404",
       "appraised_value": 146049.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2018-05-18",
       "lender": "Freedom Mortgage Corporation",
       "legal_lot": "23",
@@ -1072,7 +1072,7 @@
       "mail_zip": "78232",
       "appraised_value": 27928.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "Mortgage Electronic Registration Systems, Inc., as beneficiary, as nominee for PHH Mortgage",
       "pdf_parsed_at": "2026-05-14T21:50:05.452663+00:00",
       "ncad_prop_id": "274805",
@@ -1098,7 +1098,7 @@
       "mail_zip": "78414",
       "appraised_value": 316852.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2015-11-19",
       "lender": "State College Blvd. Suites 1030, 1300 and 1400, Orange, CA 92868",
       "legal_lot": "8",
@@ -1128,7 +1128,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "PENNYMAC LOAN SERVICES, LLC",
       "pdf_parsed_at": "2026-05-14T21:20:53.360693+00:00"
     },
@@ -1151,7 +1151,7 @@
       "mail_zip": "78380",
       "appraised_value": 197773.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "Idaho Housing and Finance Association",
       "pdf_parsed_at": "2026-05-14T21:21:06.387616+00:00",
       "ncad_prop_id": "200069858",
@@ -1177,7 +1177,7 @@
       "mail_zip": "78415",
       "appraised_value": 120431.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "Argent Mortgage Company, LLC",
       "legal_lot": "2",
       "legal_block": "7",
@@ -1206,7 +1206,7 @@
       "mail_zip": "78410",
       "appraised_value": 279671.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2016-12-09",
       "lender": "U.S. BANK NATIONAL ASSOCIATION",
       "legal_lot": "1",
@@ -1236,7 +1236,7 @@
       "mail_zip": "78413",
       "appraised_value": 223642.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2025-03-03",
       "lender": "LAKEVIEW LOAN SERVICING, LLC",
       "pdf_parsed_at": "2026-05-14T21:49:52.931625+00:00",
@@ -1263,7 +1263,7 @@
       "mail_zip": "78413",
       "appraised_value": 240877.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "REGISTRATION SYSTEMS, INC",
       "pdf_parsed_at": "2026-05-14T21:19:43.581316+00:00",
       "ncad_prop_id": "535283",
@@ -1289,7 +1289,7 @@
       "mail_zip": "01803",
       "appraised_value": 104620.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "RALLY CREDIT UNION",
       "legal_lot": "41",
       "legal_block": "18",
@@ -1318,7 +1318,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "FVX LLC in trust for Morgan Stanley Bank, N.A",
       "legal_lot": "11",
       "legal_block": "C",
@@ -1344,7 +1344,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "Idaho Housing and Finance Association",
       "legal_lot": "14",
       "legal_block": "5",
@@ -1370,7 +1370,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2016-06-29",
       "lender": "Freedom Mortgage Corporation",
       "legal_lot": "2",
@@ -1397,7 +1397,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "Hindsight Properties, LLC, a Texas limited liability company",
       "legal_lot": "23",
       "legal_block": "4",
@@ -1423,7 +1423,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2012-05-04",
       "lender": "PennyMac Loan Services, LLC",
       "legal_lot": "6",
@@ -1450,7 +1450,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2016-05-12",
       "legal_lot": "3",
       "legal_block": "5",
@@ -1476,7 +1476,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2019-06-23",
       "lender": "Mortgage Electronic Registration Systems Inc",
       "legal_lot": "15",
@@ -1503,7 +1503,7 @@
       "mail_zip": "78410",
       "appraised_value": 269747.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2023-01-27",
       "lender": "PENNYMAC LOAN SERVICES, LLC",
       "pdf_parsed_at": "2026-05-14T21:18:23.705639+00:00",
@@ -1530,7 +1530,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2022-10-05",
       "legal_lot": "1",
       "legal_block": "5",
@@ -1556,7 +1556,7 @@
       "mail_zip": "78414",
       "appraised_value": 764227.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2016-01-25",
       "lender": "PennyMac Loan Services, LLC",
       "pdf_parsed_at": "2026-05-14T21:17:49.275933+00:00",
@@ -1583,7 +1583,7 @@
       "mail_zip": "78406",
       "appraised_value": 109632.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2024-03-04",
       "lender": "CITIBANK, N.A., NOT IN ITS INDIVIDUAL CAPACITY BUT SOLELY",
       "legal_lot": "15",
@@ -1613,7 +1613,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "U.S. Bank National Association",
       "legal_lot": "3",
       "legal_block": "6",
@@ -1639,7 +1639,7 @@
       "mail_zip": "78404",
       "appraised_value": 229091.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2021-10-18",
       "lender": "Yamato Road, Suite 175, Boca Raton, FL 33431",
       "legal_lot": "10",
@@ -1666,7 +1666,7 @@
       "mail_zip": "78418",
       "appraised_value": 532114.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2021-06-21",
       "lender": "Freedom Mortgage Corporation",
       "legal_lot": "4",
@@ -1693,7 +1693,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2005-08-18",
       "lender": "U.S. BANK NATIONAL ASSOCIATION, AS TRUSTEE, FOR THE GSAMP TRUST 2006-NC1 MORTGAGE PASS-THROUGH CERTIFICATES, SERIES 2006-NC1",
       "legal_lot": "18",
@@ -1720,7 +1720,7 @@
       "mail_zip": "78418",
       "appraised_value": 217550.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "GUILD MORTGAGE COMPANY",
       "pdf_parsed_at": "2026-05-14T21:17:33.731820+00:00"
     },
@@ -1743,7 +1743,7 @@
       "mail_zip": "78410",
       "appraised_value": 333094.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2024-06-01",
       "lender": "Mutual of Omaha Mortgage Servicing. Inc",
       "legal_lot": "1",
@@ -1770,7 +1770,7 @@
       "mail_zip": "78416",
       "appraised_value": 107468.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2016-11-17",
       "lender": "U.S. BANK NATIONAL ASSOCIATION",
       "pdf_parsed_at": "2026-05-14T21:17:43.991057+00:00",
@@ -1797,7 +1797,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "lender": "PNC BANK, NATIONAL ASSOCIATION",
       "legal_lot": "15",
       "legal_block": "18",
@@ -1823,7 +1823,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2024-11-27",
       "lender": "Guild Mortgage Company, LLC",
       "legal_lot": "6",
@@ -1850,7 +1850,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2016-04-29",
       "lender": "MIDFIRST BANK",
       "legal_lot": "1",
@@ -1877,7 +1877,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2013-06-18",
       "lender": "Wilmington Savings Fund Society, FSB, not in its individual capacity but solely in its capacity as Owner Trustee for Cascade Funding Mortgage Trust HB4",
       "legal_lot": "15",
@@ -1904,7 +1904,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2018-10-24",
       "lender": "MIDFIRST BANK",
       "pdf_parsed_at": "2026-05-14T21:17:03.062335+00:00"
@@ -1928,7 +1928,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "1997-05-12",
       "lender": "CHASE MANHATTAN BANK, AS TRUSTEE FOR C-BASS MORTGAGE LOAN ASSET-BACKED CERTIFICATES, SERIES 1999-CB2",
       "legal_lot": "37",
@@ -1955,7 +1955,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000176",
@@ -1976,7 +1976,7 @@
       "mail_zip": "78362",
       "appraised_value": 13.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 17,
+      "days_until_sale": 16,
       "deed_date": "2010-06-04",
       "lender": "WELLS FARGO BANK, N.A",
       "legal_lot": "4",
@@ -2006,7 +2006,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000141",
@@ -2027,7 +2027,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000115",
@@ -2048,7 +2048,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 17
+      "days_until_sale": 16
     },
     {
       "doc_num": "2026000297",
@@ -2072,7 +2072,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000296",
@@ -2096,7 +2096,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000268",
@@ -2120,7 +2120,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000265",
@@ -2144,7 +2144,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000262",
@@ -2168,7 +2168,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000264",
@@ -2192,7 +2192,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000257",
@@ -2216,7 +2216,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000251",
@@ -2240,7 +2240,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000256",
@@ -2264,7 +2264,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000250",
@@ -2288,7 +2288,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000253",
@@ -2312,7 +2312,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000242",
@@ -2333,7 +2333,7 @@
       "mail_zip": "78412",
       "appraised_value": 346587.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 52,
+      "days_until_sale": 51,
       "deed_date": "2009-06-25",
       "lender": "CORPORATION",
       "legal_lot": "11",
@@ -2363,7 +2363,7 @@
       "mail_zip": "78408",
       "appraised_value": 249615.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 52,
+      "days_until_sale": 51,
       "lender": "WELLS FARGO BANK, N.A",
       "pdf_parsed_at": "2026-05-14T21:50:47.273198+00:00",
       "ncad_prop_id": "298471",
@@ -2389,7 +2389,7 @@
       "mail_zip": "78410",
       "appraised_value": 314079.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 52,
+      "days_until_sale": 51,
       "deed_date": "2024-06-14",
       "lender": "United Wholesale Mortgage, LLC",
       "legal_lot": "7",
@@ -2419,7 +2419,7 @@
       "mail_zip": "78411",
       "appraised_value": 132336.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 52,
+      "days_until_sale": 51,
       "lender": "Idaho Housing and Finance Association",
       "legal_lot": "12",
       "legal_block": "5",
@@ -2448,7 +2448,7 @@
       "mail_zip": "78415",
       "appraised_value": 251706.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 52,
+      "days_until_sale": 51,
       "lender": "Angela R",
       "legal_lot": "17",
       "legal_block": "20",
@@ -2477,7 +2477,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 52,
+      "days_until_sale": 51,
       "deed_date": "2022-08-12",
       "lender": "Carrington Mortgage Services, LLC",
       "pdf_parsed_at": "2026-05-14T21:19:04.419776+00:00"
@@ -2501,7 +2501,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 52,
+      "days_until_sale": 51,
       "deed_date": "2016-05-13",
       "lender": "Wells Fargo Bank, N.A",
       "pdf_parsed_at": "2026-05-14T21:19:17.517010+00:00"
@@ -2525,7 +2525,7 @@
       "mail_zip": "78415",
       "appraised_value": 154156.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 52,
+      "days_until_sale": 51,
       "deed_date": "2022-06-21",
       "lender": "MORTGAGE CORPORATION",
       "pdf_parsed_at": "2026-05-14T21:18:29.309931+00:00",
@@ -2551,7 +2551,7 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 52
+      "days_until_sale": 51
     },
     {
       "doc_num": "2026000178",
@@ -2572,7 +2572,7 @@
       "mail_zip": "78410",
       "appraised_value": 195826.0,
       "status": "pre-foreclosure",
-      "days_until_sale": 64,
+      "days_until_sale": 63,
       "lender": "New American Funding, LLC",
       "legal_lot": "29",
       "legal_block": "10",
@@ -2601,7 +2601,7 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 80
+      "days_until_sale": 79
     }
   ]
 }
