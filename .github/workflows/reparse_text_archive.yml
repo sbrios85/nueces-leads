@@ -1,0 +1,88 @@
+name: Re-parse text archive
+
+# Re-runs the CURRENT parser over every saved extracted-text file in
+# pdfs/text_archive/ and refreshes foreclosures.json. Use this after a
+# parser improvement (new regex, new field, bug fix) to apply it to
+# the FULL history without re-downloading or re-OCR'ing any PDFs.
+#
+# Only records still present in the current foreclosures.json get
+# updated — archived notices that have aged out of the rolling window
+# are parsed but harmlessly skipped (logged, not an error).
+#
+# Overwrite is forced ON inside the script for this mode, so stale
+# fields produced by the old parser get replaced.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pdf-parsing"        # shares the lock with the inbox parser
+  cancel-in-progress: false
+
+jobs:
+  reparse:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      # NOTE: no tesseract/poppler/Playwright install here — text-archive
+      # mode reads already-extracted text, so OCR and the browser are
+      # not needed. This makes the workflow much faster than the inbox
+      # parser.
+
+      - name: Re-parse text archive
+        env:
+          LOG_LEVEL: INFO
+          PYTHONUNBUFFERED: "1"
+          PDF_SOURCE: text_archive
+        run: python scraper/extract_uploaded_pdfs.py
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          git add data/foreclosures.json dashboard/foreclosures.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "chore: re-parse text archive $(date -u +'%Y-%m-%dT%H:%MZ')"
+            git push
+          fi
+
+      - name: Upload dashboard artifact for Pages deploy
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    needs: reparse
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
