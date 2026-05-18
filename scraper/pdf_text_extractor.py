@@ -168,6 +168,31 @@ _RE_DOC_NUM = [
 #   - Periods (middle initials, name suffixes)
 #   - Apostrophes (O'BRIEN), ampersands (& sons)
 _RE_BORROWER = [
+    # 'executed by NAMES, ("Mortgagor")' / 'executed by NAMES
+    # ("Borrower")' — Upton Mickits & Heymann template (248). The name
+    # list ends at an optional comma then a parenthesised
+    # "Mortgagor"/"Borrower"/"Grantor" role label. Allows multiple
+    # names joined by AND/&/commas. Must come before the looser
+    # "executed by" patterns so it wins on this phrasing.
+    re.compile(r"executed\s+by\s+([A-Z][A-Z0-9\s,&'.\[\]()-]+?)"
+                r"\s*,?\s*\(['\"\u2018\u2019\u201C\u201D]?"
+                r"(?:Mortgagor|Borrower|Grantor)s?"
+                r"['\"\u2018\u2019\u201C\u201D]?\)",
+               re.IGNORECASE),
+    # Two-column header table:  "Grantor(s)/Mortgagor(s):" on one line,
+    # the borrower name on the FOLLOWING line — McCarthy & Holthus /
+    # power-of-sale "table" template (254). The next line is often
+    # prefixed with the Deed-of-Trust date ("6/20/2008 KAREN CHAVEZ"),
+    # so skip an optional leading date. Capture the name, stopping
+    # before OCR-glued descriptors ("ASINGLE WOMAN" / "A SINGLE
+    # WOMAN" / "AN UNMARRIED MAN") or end of line.
+    re.compile(r"Grantor\(s\)\s*/?\s*Mortgagor\(s\)\s*:?[^\n]*\n"
+                r"\s*(?:\d{1,2}/\d{1,2}/\d{2,4}\s+)?"
+                r"([A-Z][A-Za-z.'\- ]+?)"
+                r"(?=\s+(?:A\s*SINGLE|ASINGLE|AN?\s*UNMARRIED|"
+                r"A\s*MARRIED|UNMARRIED|HUSBAND|WIFE|AND\s+(?:WIFE|"
+                r"HUSBAND)|,|\n)|\s*$)",
+               re.IGNORECASE | re.MULTILINE),
     # "executed by NAME, provides" — original Mackie Wolf template
     re.compile(r"executed\s+by\s+([A-Z][A-Z0-9\s&'.\[\]()-]+?)"
                 r"\s*,\s*(?:provides|as\s+(?:a|the|his|her)|whose|"
@@ -871,7 +896,11 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
     # For those we skip the "_looks_like_lender" check, since the entity
     # is legitimately the borrower (e.g. Plutus Properties, LLC, or the
     # Adam Keller 2016 Trust).
-    ENTITY_BORROWER_PATTERN_INDICES = {3, 4, 7}  # Mortgagor / Grantor:LLC / Trustee-of-Trust
+    # NOTE: indices shifted +2 when the Upton-Mickits "executed by
+    # NAMES (Mortgagor)" pattern and the McCarthy "Grantor(s)/
+    # Mortgagor(s):" table pattern were prepended to _RE_BORROWER.
+    # Old {3,4,7} -> {5,6,9}.
+    ENTITY_BORROWER_PATTERN_INDICES = {5, 6, 9}  # Mortgagor / Grantor:LLC / Trustee-of-Trust
     for idx, rx in enumerate(_RE_BORROWER):
         m = rx.search(text)
         if m:
