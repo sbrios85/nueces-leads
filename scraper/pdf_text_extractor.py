@@ -682,7 +682,7 @@ _RE_LABELED_ADDRESS = re.compile(
     r"(?:\s+\d+|,?\s+(?:Unit|Apt|Suite|Ste|#)\s*\d+)?)"
     r"[.,\s]+([A-Z][a-zA-Z\s!?]+?)"
     r"(?:[.,]\s+Nueces\s+County)?"
-    r"[.,\s]+(?:TX|TEXAS)[.\s]+(\d{5})\)?",
+    r"[.,\s]+(?:TX|TEXAS)[.,\s]+(\d{5})(?:-\d{4})?\)?",
     re.IGNORECASE,
 )
 
@@ -725,7 +725,7 @@ _RE_FULL_ADDRESS = re.compile(
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
     r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
     r"WAY|TRAIL|TR|PARKWAY|PKWY|LOOP|HIGHWAY|HWY|TERRACE|TER)\.?)"
-    r"[.,\s]+([A-Z][A-Z\s!?]+?)[.,\s]+(?:TX|TEXAS)[.\s]+(\d{5})",
+    r"[.,\s]+([A-Z][A-Z\s!?]+?)[.,\s]+(?:TX|TEXAS)[.,\s]+(\d{5})(?:-\d{4})?",
     re.IGNORECASE,
 )
 
