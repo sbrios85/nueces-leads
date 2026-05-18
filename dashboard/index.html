@@ -2629,6 +2629,37 @@ function esc(s) {
 //    the owner name to the clipboard and open NCAD's search FORM page
 //    (the form page is not session-gated; only the result URL is).
 //    The user pastes (Ctrl+V) and hits enter — paste-and-go.
+// Reformat an owner name into NCAD's "By Owner" expected format,
+// which is LAST-NAME FIRST-NAME (the form literally says
+// 'Ex: Smith John'). Pasting "First Last" returns no results, so we
+// flip it. Rules, tested against the real owner set:
+//  - Entities (LLC/LP/INC/TRUST/BANK/...) → leave verbatim; NCAD
+//    matches the entity name as-is, flipping would corrupt it.
+//  - "X AND/& Y" multi-party → take the FIRST party only (NCAD
+//    searches one name at a time).
+//  - Strip trailing marital/status descriptors ("UNMARRIED",
+//    "A SINGLE WOMAN", etc.) that some parses leak into the name.
+//  - Strip generation suffix (JR/SR/II/III/IV/I) — NCAD matches
+//    more reliably on "Last First" without it.
+//  - Drop middle initials/names: "Last First" is the most reliable
+//    NCAD query.
+function flipOwnerForNcad(raw) {
+  if (!raw) return "";
+  let s = String(raw).trim();
+  if (/\b(LLC|L\.L\.C|LP|L\.P|INC|CORP|COMPANY|PROPERTIES|HOLDINGS|TRUST|ASSOCIATION|BANK|ENTERPRISE|SERVICES|FUND|PARTNERS|GROUP)\b/i.test(s))
+    return s;
+  s = s.split(/\s+(?:AND|&)\s+/i)[0].trim();
+  s = s.replace(/[ ,]+(UNMARRIED|MARRIED|SINGLE|WIDOW(?:ED)?|DIVORCED|A\s+SINGLE\s+\w+|AN?\s+\w+\s+(?:MAN|WOMAN|PERSON))\.?$/i, "").trim();
+  s = s.replace(/,+$/, "").trim();
+  s = s.replace(/[ ,]+(JR|SR|II|III|IV|V|I)\.?$/i, "").trim();
+  s = s.replace(/,+$/, "").trim();
+  const parts = s.split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return s;
+  const last = parts[parts.length - 1].replace(/,+$/, "");
+  const first = parts[0];
+  return (last + " " + first).trim();
+}
+
 function ncadCellHtml(r) {
   if (r && r.ncad_prop_id) {
     const url = "https://esearch.nuecescad.net/Property/View/" +
@@ -2642,18 +2673,19 @@ function ncadCellHtml(r) {
                <i class="ext-icon">↗</i></a>`;
   }
   if (r && r.owner) {
-    const owner = String(r.owner);
-    // Copy owner to clipboard, then open the NCAD search form page.
+    // Copy owner (flipped to NCAD's Last-First format) to clipboard,
+    // then open the NCAD search form page. User pastes & hits Search.
+    const flipped = flipOwnerForNcad(r.owner);
     const handler =
       "event.stopPropagation();" +
       "try{navigator.clipboard&&navigator.clipboard.writeText(" +
-      JSON.stringify(owner) + ");}catch(e){}" +
+      JSON.stringify(flipped) + ");}catch(e){}" +
       "window.open('https://esearch.nuecescad.net/','_blank','noopener');" +
       "return false;";
     return `<a href="https://esearch.nuecescad.net/"
                target="_blank" rel="noopener"
                class="ncad-search-link"
-               title="Copy owner name &amp; open NCAD search (paste with Ctrl+V)"
+               title="Copy &quot;${esc(flipped)}&quot; &amp; open NCAD search (paste with Ctrl+V)"
                onclick="${esc(handler)}">
                <i class="ext-icon">🔍</i></a>`;
   }
