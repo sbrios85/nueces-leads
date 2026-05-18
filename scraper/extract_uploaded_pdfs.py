@@ -284,6 +284,26 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
                 if rec.get(fld) != val:
                     rec[fld] = val
                     changed = True
+    # The dashboard's "Legal Description" column reads rec["legal"],
+    # which is normally populated by the scraper from clerk data. When
+    # the clerk record has no legal but the PDF parser extracted the
+    # components, assemble a human-readable string so the column isn't
+    # blank (e.g. 2026000296 -> "GRANGE PARK LOT 9 BLOCK 1 UNIT 1").
+    # Only do this when rec["legal"] is empty (don't clobber the
+    # richer clerk-provided legal text even in overwrite mode).
+    if not (rec.get("legal") or "").strip():
+        sub = (rec.get("legal_subdivision") or "").strip()
+        lot = (rec.get("legal_lot") or "").strip()
+        blk = (rec.get("legal_block") or "").strip()
+        unit = (fields.get("legal_unit") or "").strip()
+        if sub and lot:
+            parts = [sub, f"LOT {lot}", f"BLOCK {blk}" if blk else ""]
+            if unit:
+                parts.append(f"UNIT {unit}")
+            assembled = " ".join(p for p in parts if p)
+            if not _looks_like_garbage(assembled):
+                rec["legal"] = assembled
+                changed = True
     rec["pdf_parsed_at"] = datetime.now(timezone.utc).isoformat()
     return changed
 
