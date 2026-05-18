@@ -65,11 +65,16 @@ jobs:
           LOG_LEVEL: INFO
           PYTHONUNBUFFERED: "1"
           PDF_OVERWRITE: ${{ inputs.overwrite }}
-          # OCR up to 3 pages per PDF. Most foreclosure notices put the
-          # critical fields (borrower, lender, address, legal description)
-          # on page 1, but some templates split details across pages 1-3.
-          # Increasing the page count adds ~10s per page per PDF.
-          PDF_OCR_MAX_PAGES: "3"
+          # OCR up to 6 pages per PDF. Most notices put the core fields
+          # (borrower, lender, loan amount, deed date) on page 1, but
+          # several templates — notably Plutus Properties / Diann Bartek
+          # — put the LEGAL DESCRIPTION and PROPERTY ADDRESS in an
+          # "Exhibit A" on pages 4-5. 3 pages missed those entirely
+          # (~22 records had blank legal/address as a result). 6 pages
+          # covers Exhibit A on essentially every notice template seen.
+          # Cost: ~10s per extra page per PDF only when the PDF is that
+          # long; short notices still finish fast.
+          PDF_OCR_MAX_PAGES: "6"
         run: python scraper/extract_uploaded_pdfs.py
 
       - name: Upload OCR debug output
