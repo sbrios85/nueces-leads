@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-18T22:40:29.087040+00:00",
+  "fetched_at": "2026-05-18T23:07:43.983148+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
     "start": "2026-04-18",
@@ -261,31 +261,6 @@
       "score": 60
     },
     {
-      "doc_num": "2026017104",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-18",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "PINEDA LORI A JONES",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "AMENDMENT TO CORRECT SERIAL NO 540414726 ON DOC  TO  SERIAL NO 489613924",
-      "prop_address": "1815 STATE HWY 361",
-      "prop_city": "PORT ARANSAS",
-      "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "C/O VITAMIN COTTAGE NATURAL FOOD MARKETS INC 12612 W Alameda Pkwy Lakewood",
-      "mail_city": "",
-      "mail_state": "CO",
-      "mail_zip": "80228",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017104",
-      "flags": [
-        "Tax lien",
-        "New this week"
-      ],
-      "score": 60
-    },
-    {
       "doc_num": "2026017108",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-18",
@@ -304,6 +279,31 @@
       "mail_state": "TX",
       "mail_zip": "78412",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017108",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 60
+    },
+    {
+      "doc_num": "2026017104",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "PINEDA LORI A JONES",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "AMENDMENT TO CORRECT SERIAL NO 540414726 ON DOC  TO  SERIAL NO 489613924",
+      "prop_address": "1815 STATE HWY 361",
+      "prop_city": "PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "C/O VITAMIN COTTAGE NATURAL FOOD MARKETS INC 12612 W Alameda Pkwy Lakewood",
+      "mail_city": "",
+      "mail_state": "CO",
+      "mail_zip": "80228",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017104",
       "flags": [
         "Tax lien",
         "New this week"
@@ -1302,30 +1302,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026014407",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-04-27",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "WIMBERLY JEREMY",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NUMBER 538770126",
-      "prop_address": "5158 AYERS ST",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78415",
-      "mail_address": "7425 LAKE SUPERIOR DR CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78413",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014407",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026013521",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-04-20",
@@ -1344,6 +1320,30 @@
       "mail_state": "TX",
       "mail_zip": "78380",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013521",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026014407",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-04-27",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "WIMBERLY JEREMY",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NUMBER 538770126",
+      "prop_address": "5158 AYERS ST",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78415",
+      "mail_address": "7425 LAKE SUPERIOR DR CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78413",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014407",
       "flags": [
         "Tax lien"
       ],
@@ -1494,30 +1494,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026013780",
-      "doc_type": "DEED",
-      "filed": "2026-04-21",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "TAX LIEN HOLDINGS LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: LYNWOOD PLACE Lot: 12 Block: 12 Unit or Part: 3 (Lot 12, Block 12)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013780",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026013779",
       "doc_type": "DEED",
       "filed": "2026-04-21",
@@ -1536,6 +1512,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013779",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026013780",
+      "doc_type": "DEED",
+      "filed": "2026-04-21",
+      "cat": "TAXDEED",
+      "cat_label": "Tax Deed",
+      "owner": "TAX LIEN FUND LP",
+      "grantee": "TAX LIEN HOLDINGS LLC",
+      "amount": null,
+      "legal": "Subdivision - Name: LYNWOOD PLACE Lot: 12 Block: 12 Unit or Part: 3 (Lot 12, Block 12)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013780",
       "flags": [
         "LLC / corp owner"
       ],
@@ -1686,6 +1686,30 @@
       "score": 40
     },
     {
+      "doc_num": "2026013520",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-04-20",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "FARMER RANDALL L",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 538144526",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013520",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
       "doc_num": "2026013662",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-04-21",
@@ -1728,30 +1752,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026015398",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013520",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-04-20",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "FARMER RANDALL L",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 538144526",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013520",
       "flags": [
         "Tax lien"
       ],
@@ -2156,28 +2156,6 @@
       "score": 35
     },
     {
-      "doc_num": "2026014413",
-      "doc_type": "LIEN",
-      "filed": "2026-04-27",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "RODRIGUEZ JESSICA",
-      "grantee": "CHRISTUS SPOHN HOSPITAL SHORELINE",
-      "amount": null,
-      "legal": "",
-      "prop_address": "3242 OLSEN DR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78411",
-      "mail_address": "3242 Olsen Dr Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78411",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014413",
-      "flags": [],
-      "score": 35
-    },
-    {
       "doc_num": "2026014416",
       "doc_type": "LIEN",
       "filed": "2026-04-27",
@@ -2196,6 +2174,28 @@
       "mail_state": "TX",
       "mail_zip": "78418",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014416",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026014413",
+      "doc_type": "LIEN",
+      "filed": "2026-04-27",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "RODRIGUEZ JESSICA",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SHORELINE",
+      "amount": null,
+      "legal": "",
+      "prop_address": "3242 OLSEN DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78411",
+      "mail_address": "3242 Olsen Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014413",
       "flags": [],
       "score": 35
     },
