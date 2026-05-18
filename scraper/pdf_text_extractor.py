@@ -288,15 +288,31 @@ _RE_BORROWER = [
                 r"(?=\s*(?:Original|Current)\s+(?:Beneficiary|Mortgagee)|"
                 r"\s*Recorded\s+in)",
                re.IGNORECASE),
-    # "Grantor(s): NAMES" — explicit labeled form. Requires a colon
-    # (or pipe from OCR garbage like "Grantor(s): | NAME") right after
-    # the label, to avoid matching lowercase prose like "...as
-    # grantor(s) and..." which would otherwise capture trailing junk.
-    re.compile(r"\bGrantor\(?s?\)?\s*[:;|]+\s*\|?\s*"
-                r"([A-Z][a-zA-Z0-9\s,&'.\[\]()-]{4,120}?)"
-                r"(?=\s*\n|\s+Original\s+(?:Trustee|Mortgagee|Lender)|"
+    # "Grantor(s): NAMES" — explicit labeled form. Requires a colon/
+    # semicolon right after the label, then tolerates OCR junk before
+    # the name: stray underscores, pipes, spaces (real scans produce
+    # "Grantor(s):_ | NAME"). The name terminates at a newline OR a
+    # marital descriptor ("Husband and Wife", "A SINGLE…", "UNMARRIED")
+    # OR an OCR-merged location tail ("NUECES COUNTY") OR the next
+    # labeled field. This handles three real OCR failure modes that
+    # previously fell through to boilerplate:
+    #   226: "Grantor(s): IRMA … SAENZ NUECES COUNTY, TEXAS"  (merged loc)
+    #   230: "Grantor(s):_ | JOHN … GRAY, HUSBAND AND WIFE"   (_| junk)
+    #   231: "Grantor(s): Englebert Devera …, Husband and Wife" (precedence)
+    # Keeps the colon requirement so lowercase prose ("…as grantor(s)
+    # and…") still can't match and over-capture.
+    re.compile(r"\bGrantor\(?s?\)?\s*[:;]+[\s_|]*"
+                r"([A-Z][a-zA-Z0-9\s,&'.\[\]()-]{4,120}?"
+                r"(?:\s+A/?K/?A\s+[A-Z][a-zA-Z\s.]+?)?)"
+                r"(?=\s*\n|"
+                r"\s*,?\s*(?:HUSBAND\s+AND\s+WIFE|Husband\s+and\s+Wife|"
+                r"husband\s+and\s+wife)|"
+                r"\s+NUECES\s+COUNTY|"
+                r"\s+Original\s+(?:Trustee|Mortgagee|Mortgage|Lender)|"
                 r"\s+Current\s+(?:Mortgagee|Beneficiary)|"
-                r"\s+Lender:|\s+Mortgage\s+Servicer:)"),
+                r"\s+Lender:|\s+Mortgage\s+Servicer:|"
+                r"\s*,?\s*(?:A\s+SINGLE|AN?\s+UNMARRIED|UNMARRIED|SINGLE))",
+                re.IGNORECASE),
     # "Grantor: NAME" (single-line, simpler form) — McAllen attorney template (266)
     re.compile(r"^\s*Grantor:\s+([A-Z][a-zA-Z\s.'-]{3,60}?)\s*$",
                re.MULTILINE),
