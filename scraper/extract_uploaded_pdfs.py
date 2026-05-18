@@ -173,7 +173,8 @@ def _looks_like_garbage(text: str) -> bool:
 
 
 def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
-                   overwrite: bool = False) -> bool:
+                   overwrite: bool = False,
+                   preserve_xref_addr: bool = False) -> bool:
     """Copy parsed PDF fields onto a foreclosure record. Returns True if
     any field was newly populated (i.e. the record changed).
 
@@ -263,10 +264,13 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
                 rec["prop_state"] = fields.get("prop_state", "TX")
                 rec["prop_zip"] = fields.get("prop_zip", "")
                 changed = True
-    elif overwrite and rec.get("prop_address"):
+    elif overwrite and rec.get("prop_address") and not preserve_xref_addr:
         # New parse legitimately returned no address (e.g. Plutus
         # records where the only address in the PDF is the San Antonio
-        # law firm). In overwrite mode, clear the stale wrong value.
+        # law firm). In overwrite mode, clear the stale wrong value —
+        # UNLESS we're in text-archive mode, where the existing address
+        # may have come from the NCAD cross-reference (which this fast
+        # path doesn't re-run); blanking it would silently lose it.
         rec["prop_address"] = ""
         rec["prop_city"] = ""
         rec["prop_state"] = "TX"
@@ -417,7 +421,8 @@ def main() -> int:
                 skipped_count += 1
                 continue
 
-            changed = _apply_fields(rec, fields, overwrite=overwrite)
+            changed = _apply_fields(rec, fields, overwrite=overwrite,
+                                     preserve_xref_addr=text_archive_mode)
             if changed:
                 enriched_count += 1
                 log.info("  → enriched record %s: owner=%r, addr=%r, "
@@ -464,13 +469,21 @@ def main() -> int:
 
     # Cross-reference: for records that NOW have a borrower + legal
     # description (but no street address from the PDF), run NCAD lookup
-    # to fill in the address.
+    # to fill in the address. SKIPPED in text-archive mode — that path
+    # deliberately omits the browser/Playwright install for speed, and
+    # re-parsing archived text doesn't change NCAD matchability anyway
+    # (NCAD lookup depends on owner+legal, which the PDF already gave
+    # us). Running it here would crash on the missing browser binary.
     xref_count = 0
-    try:
-        xref_count = _cross_reference_addresses(records)
-    except Exception as exc:
-        log.error("cross-reference phase failed: %s\n%s",
-                  exc, traceback.format_exc())
+    if text_archive_mode:
+        log.info("cross-ref: skipped (text-archive mode — no browser; "
+                 "existing NCAD-derived addresses are preserved)")
+    else:
+        try:
+            xref_count = _cross_reference_addresses(records)
+        except Exception as exc:
+            log.error("cross-reference phase failed: %s\n%s",
+                      exc, traceback.format_exc())
 
     # Stats after
     have_owner_after = sum(1 for r in records if r.get("owner"))
