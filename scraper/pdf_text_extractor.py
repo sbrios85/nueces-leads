@@ -752,16 +752,22 @@ _RE_LEGAL_PARENS = re.compile(
     r"LOT[S]?\s+[\w-]+(?:\s+[\w-]+)*?\s*\((\d+)\)[,\s]+"
     r"BLOCK\s+[\w-]+(?:\s+[\w-]+)*?\s*\((\d+)\)[,\s]+"
     r"([A-Z][A-Z\s.,&'-]+?)"
-    r"(?:[,.]?\s+UNIT\s+(\d+))?"
+    # UNIT is optional and may be digit form ("UNIT 7") OR word form
+    # with parenthesised digit ("UNIT SEVEN (7)"), matching how LOT
+    # and BLOCK are written. The (\d+) is captured when present.
+    r"(?:[,.]?\s+UNIT\s+(?:[\w-]+(?:\s+[\w-]+)*?\s*\((\d+)\)|(\d+)))?"
     r"\s*,?\s*(?:AN?\s+)?(?:SUBDIVISION|ADDITION|ACCORDING\s+TO)",
     re.IGNORECASE | re.DOTALL,
 )
 
 # Fallback legal description — digit-only form: "Lot 5, Block 12, BAY OAKS..."
+# Tolerates "NAME, A SUBDIVISION" / "NAME ADDITION" / "NAME UNIT 3"
+# (the optional ",? (a|an)?" before the keyword handles "GRANGE PARK,
+# A SUBDIVISION" which the stricter form missed -> doc 2026000296).
 _RE_LEGAL_DIGITS = re.compile(
     r"(?:Lot[s]?\s+)?([\d,A-Z-]+)[\s,]+(?:Block|Blk\.?)\s+([\dA-Z-]+)"
-    r"[,\s]+(?:of\s+)?([A-Z][A-Z\s\d&.'-]+?)\s+(?:Subdivision|Addition|"
-    r"Unit|Section|Phase)",
+    r"[,\s]+(?:of\s+)?([A-Z][A-Z\s\d&.'-]+?)\s*,?\s*(?:an?\s+)?"
+    r"(?:Subdivision|Addition|Unit|Section|Phase)",
     re.IGNORECASE,
 )
 
@@ -1140,9 +1146,18 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
         sub = re.sub(r"\s+", " ", sub).strip(" .,")
         sub = re.sub(r"\.\s+", " ", sub).strip()
         out["legal_subdivision"] = sub
-        # Some patterns capture a unit group; preserve it if matched
-        if m.lastindex and m.lastindex >= 4 and m.group(4):
-            out["legal_unit"] = m.group(4).strip()
+        # Some patterns capture a unit number. _RE_LEGAL_PARENS now has
+        # two possible unit groups (word-form "UNIT SEVEN (7)" -> g4,
+        # plain "UNIT 7" -> g5); _RE_LEGAL_DIGITS has no unit group.
+        # Pull whichever unit group actually matched, if any.
+        try:
+            unit = None
+            if m.re is _RE_LEGAL_PARENS:
+                unit = m.group(4) or m.group(5)
+            if unit:
+                out["legal_unit"] = unit.strip()
+        except (IndexError, re.error):
+            pass
 
     return out
 
