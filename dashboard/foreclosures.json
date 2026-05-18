@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-18T06:47:00.344747+00:00",
+  "fetched_at": "2026-05-18T06:57:30.906689+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-17",
@@ -2936,8 +2936,8 @@
       "sale_date": "2026-07-07",
       "legal": "BERVONNE TERRACE- LOT 32B, BLOCK 4",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2025000821",
-      "owner": "",
-      "loan_amount": null,
+      "owner": "GINGER S. WILLIAMS, UNMARRIED",
+      "loan_amount": 315000.0,
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -2947,7 +2947,11 @@
       "mail_state": "",
       "mail_zip": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 51
+      "days_until_sale": 51,
+      "lender": "TOMMY BASTIAN as Trustee, MORTGAGE",
+      "loan_doc": "2021001663",
+      "has_loan_mod": false,
+      "pdf_parsed_at": "2026-05-18T06:56:43.498443+00:00"
     },
     {
       "doc_num": "2026000178",
@@ -2986,8 +2990,8 @@
       "sale_date": "2026-08-04",
       "legal": "KINGS CROSSING- LOT 22, BLOCK 1, UNIT 13",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000139",
-      "owner": "",
-      "loan_amount": null,
+      "owner": "MIGUEL J BALDEARENA",
+      "loan_amount": 232221.0,
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -2998,7 +3002,15 @@
       "mail_zip": "",
       "appraised_value": null,
       "status": "pre-foreclosure",
-      "days_until_sale": 79
+      "days_until_sale": 79,
+      "lender": "State College Blvd. Suites 1030, 1300 and 1400, Orange, CA 92868",
+      "deed_date": "2020-12-21",
+      "loan_doc": "2020059019",
+      "has_loan_mod": false,
+      "legal_lot": "22",
+      "legal_block": "1",
+      "legal_subdivision": "KING'S CROSSING",
+      "pdf_parsed_at": "2026-05-18T06:56:49.051999+00:00"
     }
   ]
 }
