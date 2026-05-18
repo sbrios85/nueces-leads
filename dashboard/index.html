@@ -142,9 +142,17 @@
     font: inherit; cursor: pointer;
   }
   .controls button:hover { border-color: var(--accent); color: var(--accent); }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { padding: 8px 10px; text-align: left;
-           border-bottom: 1px solid var(--border); vertical-align: top; }
+  /* Fixed table layout: the browser respects the explicit column
+     widths below instead of auto-balancing all 16 columns evenly
+     (which starved Owner/Lender/Legal). Narrow date/status columns
+     get tight widths; the text-heavy columns get generous room. The
+     long free-text fields render as 2-row textareas (see _ecell) so
+     their values wrap onto a second line instead of being clipped.
+     Rows are moderately taller to fit the wrapped 2-line values. */
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th, td { padding: 11px 10px; text-align: left;
+           border-bottom: 1px solid var(--border); vertical-align: top;
+           overflow: hidden; }
   th { background: var(--panel); cursor: pointer; user-select: none;
        position: sticky; top: 0; z-index: 1; }
   th:hover { color: var(--accent); }
@@ -283,14 +291,16 @@
     background: transparent; border: 1px solid transparent;
     color: inherit; font: inherit; width: 100%;
     box-sizing: border-box; padding: 3px 5px; border-radius: 4px;
-    min-width: 90px; resize: none;
+    min-width: 0; resize: none;
   }
   .cell-edit:hover { border-color: var(--border); }
   .cell-edit:focus {
     outline: none; border-color: var(--accent);
     background: var(--bg);
   }
-  textarea.cell-edit { min-height: 38px; line-height: 1.3; }
+  textarea.cell-edit { min-height: 38px; line-height: 1.3;
+    white-space: pre-wrap; word-break: break-word;
+    overflow-wrap: anywhere; }
   /* Save column: empty until the row has unsaved edits, then a save
      icon appears; on save it briefly flips to a green check. */
   .save-cell { text-align: center; width: 44px; }
@@ -631,15 +641,15 @@
   <div class="stats" id="ccln-stats"></div>
   <table id="ccln-table">
     <thead><tr>
-      <th data-sort="status"      style="width: 72px;">Status</th>
-      <th data-sort="filed">Filed</th>
-      <th data-sort="owner">Owner (Grantor)</th>
-      <th data-sort="prop_address">Property Address</th>
-      <th data-sort="mail_address">Mailing Address</th>
-      <th data-sort="amount">Amount</th>
-      <th data-sort="appraised_value">Appraised Value</th>
-      <th data-sort="legal">Legal Description</th>
-      <th data-sort="doc_num">Doc#</th>
+      <th data-sort="status"        style="width: 74px;">Status</th>
+      <th data-sort="filed"         style="width: 90px;">Filed</th>
+      <th data-sort="owner"         style="width: 200px;">Owner (Grantor)</th>
+      <th data-sort="prop_address"  style="width: 210px;">Property Address</th>
+      <th data-sort="mail_address"  style="width: 200px;">Mailing Address</th>
+      <th data-sort="amount"        style="width: 110px;">Amount</th>
+      <th data-sort="appraised_value" style="width: 110px;">Appraised Value</th>
+      <th data-sort="legal"         style="width: 200px;">Legal Description</th>
+      <th data-sort="doc_num"       style="width: 100px;">Doc#</th>
       <th style="width: 50px;">NCAD</th>
     </tr></thead>
     <tbody></tbody>
@@ -655,22 +665,22 @@
   <div class="stats" id="fc-stats"></div>
   <table id="fc-table">
     <thead><tr>
-      <th style="width: 44px;" title="Save manual edits"></th>
-      <th data-sort="status"      style="width: 56px;">Status</th>
-      <th data-sort="sale_date">Sale Date</th>
-      <th data-sort="days_until_sale">Days Until Sale</th>
-      <th data-sort="recorded">Recorded</th>
-      <th data-sort="owner">Owner</th>
-      <th data-sort="prop_address">Property Address</th>
-      <th data-sort="mail_address">Mailing Address</th>
-      <th data-sort="loan_amount">Loan Amount</th>
-      <th data-sort="appraised_value">Appraised Value</th>
-      <th data-sort="deed_date">Loan Date</th>
-      <th data-sort="loan_doc">Loan Document</th>
-      <th data-sort="lender">Lender</th>
-      <th data-sort="legal">Legal Description</th>
-      <th data-sort="doc_num">Doc#</th>
-      <th style="width: 50px;">NCAD</th>
+      <th style="width: 40px;" title="Save manual edits"></th>
+      <th data-sort="status"         style="width: 58px;">Status</th>
+      <th data-sort="sale_date"      style="width: 80px;">Sale Date</th>
+      <th data-sort="days_until_sale" style="width: 66px;">Days Until Sale</th>
+      <th data-sort="recorded"       style="width: 80px;">Recorded</th>
+      <th data-sort="owner"          style="width: 155px;">Owner</th>
+      <th data-sort="prop_address"   style="width: 175px;">Property Address</th>
+      <th data-sort="mail_address"   style="width: 150px;">Mailing Address</th>
+      <th data-sort="loan_amount"    style="width: 112px;">Loan Amount</th>
+      <th data-sort="appraised_value" style="width: 92px;">Appraised Value</th>
+      <th data-sort="deed_date"      style="width: 90px;">Loan Date</th>
+      <th data-sort="loan_doc"       style="width: 108px;">Loan Document</th>
+      <th data-sort="lender"         style="width: 150px;">Lender</th>
+      <th data-sort="legal"          style="width: 170px;">Legal Description</th>
+      <th data-sort="doc_num"        style="width: 82px;">Doc#</th>
+      <th style="width: 44px;">NCAD</th>
     </tr></thead>
     <tbody></tbody>
     <tfoot id="fc-dead-foot"></tfoot>
@@ -2363,6 +2373,15 @@ function buildFcRow(r, isDead) {
       oninput="fcMarkDirty(this)"
       onclick="event.stopPropagation();"`;
     if (isLegal)
+      return `<textarea ${common} rows="2"
+              placeholder="—">${esc(val)}</textarea>`;
+    /* Owner / Property / Mailing / Lender are long free-text fields.
+       Render them as 2-row textareas so the value WRAPS onto a second
+       line instead of being clipped by the fixed column width. A
+       single-line <input> physically cannot wrap; a textarea can. */
+    const _wrapKeys = ["owner", "prop_address",
+                       "mail_address", "lender"];
+    if (_wrapKeys.includes(key))
       return `<textarea ${common} rows="2"
               placeholder="—">${esc(val)}</textarea>`;
     return `<input type="text" ${common}
