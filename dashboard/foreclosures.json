@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-18T07:08:25.887236+00:00",
+  "fetched_at": "2026-05-18T08:10:30.696402+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-17",
@@ -151,7 +151,10 @@
       "deed_date": "2025-09-19",
       "loan_doc": "2025034648",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.772201+00:00"
+      "pdf_parsed_at": "2026-05-18T08:06:17.755884+00:00",
+      "legal_lot": "7",
+      "legal_block": "1",
+      "legal_subdivision": "COUNTRY CLUB ESTATES"
     },
     {
       "doc_num": "2026000271",
@@ -162,15 +165,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000271",
       "owner": "Plutus Properties, LLC",
       "loan_amount": 190400.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "3210 CASA ROSA DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78411",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 198407.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -180,7 +183,10 @@
       "deed_date": "2024-05-30",
       "loan_doc": "2024018886",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.747385+00:00"
+      "pdf_parsed_at": "2026-05-18T08:06:47.626664+00:00",
+      "legal_lot": "3",
+      "legal_block": "7",
+      "legal_subdivision": "CASA LINDA ESTATES"
     },
     {
       "doc_num": "2026000270",
@@ -221,15 +227,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000286",
       "owner": "Plutus Properties, LLC",
       "loan_amount": 196800.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "3322 OTRANTO DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78418",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 190523.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -239,7 +245,10 @@
       "deed_date": "2024-07-05",
       "loan_doc": "2024023236",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.821607+00:00"
+      "pdf_parsed_at": "2026-05-18T08:07:17.166532+00:00",
+      "legal_lot": "33",
+      "legal_block": "9",
+      "legal_subdivision": "CARIBBEAN PLACE"
     },
     {
       "doc_num": "2026000284",
@@ -268,7 +277,10 @@
       "deed_date": "2024-11-21",
       "loan_doc": "2024040371",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.811665+00:00"
+      "pdf_parsed_at": "2026-05-18T08:07:31.994138+00:00",
+      "legal_lot": "13",
+      "legal_block": "32",
+      "legal_subdivision": "CULLEN PLACE"
     },
     {
       "doc_num": "2026000285",
@@ -297,7 +309,7 @@
       "deed_date": "2024-11-21",
       "loan_doc": "2024040376",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.816630+00:00"
+      "pdf_parsed_at": "2026-05-18T08:07:39.458595+00:00"
     },
     {
       "doc_num": "2026000279",
@@ -326,7 +338,10 @@
       "deed_date": "2025-08-13",
       "loan_doc": "2025029666",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.786910+00:00"
+      "pdf_parsed_at": "2026-05-18T08:08:24.740525+00:00",
+      "legal_lot": "28",
+      "legal_block": "1",
+      "legal_subdivision": "WOOLDRIDGE CREEK"
     },
     {
       "doc_num": "2026000287",
@@ -355,7 +370,10 @@
       "deed_date": "2024-06-26",
       "loan_doc": "2024021944",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.826521+00:00"
+      "pdf_parsed_at": "2026-05-18T08:07:24.650209+00:00",
+      "legal_lot": "12",
+      "legal_block": "2",
+      "legal_subdivision": "BERVONNE TERRACE"
     },
     {
       "doc_num": "2026000269",
@@ -395,15 +413,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000274",
       "owner": "Plutus Properties, LLC",
       "loan_amount": 240000.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "4914 CREEKBEND RD",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78413",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 296474.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -413,7 +431,10 @@
       "deed_date": "2025-11-04",
       "loan_doc": "2025040249",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.762468+00:00"
+      "pdf_parsed_at": "2026-05-18T08:06:55.005231+00:00",
+      "legal_lot": "5",
+      "legal_block": "6",
+      "legal_subdivision": "CLUB ESTATES"
     },
     {
       "doc_num": "2026000288",
@@ -444,7 +465,10 @@
       "loan_doc": "2024000416",
       "loan_mod_doc": "2025021606",
       "has_loan_mod": true,
-      "pdf_parsed_at": "2026-05-18T07:08:25.831721+00:00"
+      "pdf_parsed_at": "2026-05-18T08:07:54.613061+00:00",
+      "legal_lot": "28",
+      "legal_block": "1",
+      "legal_subdivision": "WOOLDRIDGE CREEK"
     },
     {
       "doc_num": "2026000273",
@@ -473,7 +497,7 @@
       "deed_date": "2025-09-19",
       "loan_doc": "2025034646",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.757461+00:00"
+      "pdf_parsed_at": "2026-05-18T08:06:24.916354+00:00"
     },
     {
       "doc_num": "2026000277",
@@ -484,15 +508,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000277",
       "owner": "Plutus Properties, LLC",
       "loan_amount": 235200.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "4910 ELM HURST LN",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78413",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 265672.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -502,7 +526,10 @@
       "deed_date": "2025-09-29",
       "loan_doc": "2025035408",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.777087+00:00"
+      "pdf_parsed_at": "2026-05-18T08:06:32.621211+00:00",
+      "legal_lot": "12",
+      "legal_block": "2",
+      "legal_subdivision": "CLUB ESTATES"
     },
     {
       "doc_num": "2026000281",
@@ -513,15 +540,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000281",
       "owner": "Plutus Properties, LLC",
       "loan_amount": 154400.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "4302 VESTAL",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78416",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 208630.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -531,7 +558,10 @@
       "deed_date": "2025-01-17",
       "loan_doc": "2025002709",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.796829+00:00"
+      "pdf_parsed_at": "2026-05-18T08:08:32.280987+00:00",
+      "legal_lot": "1",
+      "legal_block": "6",
+      "legal_subdivision": "PRESCOTT PARK"
     },
     {
       "doc_num": "2026000278",
@@ -542,15 +572,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000278",
       "owner": "Plutus Properties, LLC",
       "loan_amount": 208000.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "1041 BRAWNER PKWY",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78411",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 163215.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -560,7 +590,10 @@
       "deed_date": "2025-09-09",
       "loan_doc": "2025032640",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.782067+00:00"
+      "pdf_parsed_at": "2026-05-18T08:08:39.672695+00:00",
+      "legal_lot": "1",
+      "legal_block": "9",
+      "legal_subdivision": "HOPPER"
     },
     {
       "doc_num": "2026000289",
@@ -589,7 +622,10 @@
       "deed_date": "2024-04-04",
       "loan_doc": "2024011810",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.836679+00:00"
+      "pdf_parsed_at": "2026-05-18T08:08:02.078605+00:00",
+      "legal_lot": "1",
+      "legal_block": "9",
+      "legal_subdivision": "HOPPER"
     },
     {
       "doc_num": "2026000272",
@@ -618,7 +654,7 @@
       "deed_date": "2024-06-11",
       "loan_doc": "2024020235",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.752439+00:00"
+      "pdf_parsed_at": "2026-05-18T08:07:02.475368+00:00"
     },
     {
       "doc_num": "2026000275",
@@ -647,7 +683,10 @@
       "deed_date": "2025-09-23",
       "loan_doc": "2025034639",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.767274+00:00"
+      "pdf_parsed_at": "2026-05-18T08:06:40.100708+00:00",
+      "legal_lot": "18",
+      "legal_block": "3",
+      "legal_subdivision": "THE MEADOWS"
     },
     {
       "doc_num": "2026000282",
@@ -658,15 +697,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000282",
       "owner": "Plutus Properties, LLC",
       "loan_amount": 180000.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "5730 FLYNN PKWY",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78413",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 183443.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -676,7 +715,10 @@
       "deed_date": "2024-12-27",
       "loan_doc": "2025000020",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.801794+00:00"
+      "pdf_parsed_at": "2026-05-18T08:07:46.917493+00:00",
+      "legal_lot": "6",
+      "legal_block": "13",
+      "legal_subdivision": "SCHANEN ESTATES"
     },
     {
       "doc_num": "2026000283",
@@ -687,15 +729,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000283",
       "owner": "Plutus Properties, LLC",
       "loan_amount": 197000.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "4410 HAMLIN DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78411",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 232218.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -705,7 +747,10 @@
       "deed_date": "2024-12-12",
       "loan_doc": "2024043000",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.806797+00:00"
+      "pdf_parsed_at": "2026-05-18T08:08:09.959986+00:00",
+      "legal_lot": "3",
+      "legal_block": "8",
+      "legal_subdivision": "HAMLIN PLACE"
     },
     {
       "doc_num": "2026000290",
@@ -734,7 +779,7 @@
       "deed_date": "2024-04-12",
       "loan_doc": "2024012539",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.841627+00:00"
+      "pdf_parsed_at": "2026-05-18T08:07:09.734539+00:00"
     },
     {
       "doc_num": "2026000280",
@@ -745,15 +790,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000280",
       "owner": "Plutus Properties, LLC",
       "loan_amount": 276000.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "430 TROY DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78412",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 224851.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -763,7 +808,10 @@
       "deed_date": "2025-05-21",
       "loan_doc": "2025018680",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T07:08:25.791874+00:00"
+      "pdf_parsed_at": "2026-05-18T08:08:17.442427+00:00",
+      "legal_lot": "9",
+      "legal_block": "3",
+      "legal_subdivision": "OCEAN TERRACE"
     },
     {
       "doc_num": "2026000291",
@@ -2119,10 +2167,10 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000182",
       "owner": "SETH GARRETT SMITH",
       "loan_amount": 129609.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "6199 N SANDY HOLLOW",
+      "prop_city": "SANDIA",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78383",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
@@ -2992,15 +3040,15 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000139",
       "owner": "MIGUEL J BALDEARENA",
       "loan_amount": 232221.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "7530 BON SOIR DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78414",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 250347.0,
       "status": "pre-foreclosure",
       "days_until_sale": 79,
       "lender": "State College Blvd. Suites 1030, 1300 and 1400, Orange, CA 92868",
