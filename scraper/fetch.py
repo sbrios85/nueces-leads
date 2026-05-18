@@ -93,7 +93,16 @@ NCAD_SEARCH_CACHE = ".cache/ncad_search_cache.json"
 # Rate-limit knobs for the esearch lookup phase.
 NCAD_SEARCH_MAX_LOOKUPS = 100      # per run — protects against runaway loops
 NCAD_SEARCH_DELAY_SEC   = 1.5      # between requests, polite to the server
-NCAD_SEARCH_PHASE_BUDGET_SEC = 8 * 60   # hard wall-clock cap
+# Hard wall-clock cap for the esearch phase. The GitHub Actions job
+# timeout is 30 min; the clerk-scrape (~3 min) and NCAD bulk parse
+# (~2 min) run before this, so esearch realistically has ~20+ min of
+# headroom. The old 8-min cap meant only ~20 network lookups completed
+# per run (each lookup is ~15-30s with the polite delay), so records
+# late in the list (and any with broadened multi-variant searches that
+# fully miss) were perpetually starved. 18 min lets a full 100-record
+# pass complete in 1-2 runs while still leaving a safe margin under the
+# 30-min job timeout for the final commit/deploy steps.
+NCAD_SEARCH_PHASE_BUDGET_SEC = 18 * 60   # hard wall-clock cap
 
 LOOKBACK_DAYS = 30   # Window covering recent filings. The clerk portal
                      # is typically 5-10 days behind real-time as records
@@ -3103,7 +3112,12 @@ def _esearch_query_variants(name: str) -> List[str]:
         # If the LAST word is a Roman numeral suffix or JR/SR, treat the
         # previous word as the actual last name. E.g. "MIGUEL PENA III"
         # → last="PENA", suffix="III", first="MIGUEL"
-        SUFFIXES = {"JR", "SR", "II", "III", "IV", "V"}
+        # Generation suffixes. "I" is included (some deeds write
+        # "ANDREW E NICHOLS I"); the len(parts) >= 3 guard below
+        # prevents a 2-token "FIRST I" from being mis-parsed, and a
+        # bare "I" only counts as a suffix when it trails a real
+        # multi-token name.
+        SUFFIXES = {"JR", "SR", "I", "II", "III", "IV", "V"}
         suffix = ""
         if parts[-1].upper() in SUFFIXES and len(parts) >= 3:
             suffix = parts[-1]
@@ -3131,11 +3145,27 @@ def _esearch_query_variants(name: str) -> List[str]:
             comma_form = comma_form.strip(" ,")
             if comma_form not in out:
                 out.append(comma_form)
-            # 5. First+last only: "MIGUEL PENA" (drops middle and suffix)
-            if first and len(middle_first) >= 2:
+            # 5. Clean name variations WITHOUT the generational suffix.
+            # NCAD often lists owners without the Jr/Sr/I-V suffix, so
+            # always try the suffix-stripped forms (this is the broad
+            # net the user wants — first+last and first+middle+last —
+            # while keeping suffix DETECTION so `last` is the real
+            # surname, not the Roman numeral).
+            if first:
+                # 5a. First + last: "MIGUEL PENA"
                 first_last = first + " " + last
                 if first_last not in out:
                     out.append(first_last)
+                # 5b. Last-first, suffix stripped: "PENA MIGUEL"
+                lf_nosuffix = (last + " " + " ".join(middle_first)).strip()
+                if lf_nosuffix and lf_nosuffix not in out:
+                    out.append(lf_nosuffix)
+                # 5c. First + middle + last (suffix stripped), only
+                # when there is a middle token: "MIGUEL A PENA"
+                if len(middle_first) >= 2:
+                    fml = " ".join(middle_first) + " " + last
+                    if fml not in out:
+                        out.append(fml)
             # 6 + 7. Joint-owner forms (only when input indicates joint
             # ownership). NCAD records joint deeds two ways:
             #   Short: "LAST FIRST AND WF"           (e.g. "RODRIGUEZ LEO AND WF")
