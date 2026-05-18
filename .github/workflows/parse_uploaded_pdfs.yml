@@ -87,7 +87,7 @@ jobs:
           git config user.email "actions@github.com"
           git add \
             data/foreclosures.json dashboard/foreclosures.json \
-            pdfs/foreclosures/ 2>/dev/null || true
+            pdfs/foreclosures/ pdfs/text_archive/ 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no changes to commit"
           else
