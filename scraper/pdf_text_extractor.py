@@ -749,14 +749,20 @@ _BLACKLIST_ADDRESSES = (
 # ESTATES, UNIT 30, A SUBDIVISION..."
 # Spelled-out numbers can include hyphens (FORTY-SIX) and multiple words.
 _RE_LEGAL_PARENS = re.compile(
-    r"LOT[S]?\s+[\w-]+(?:\s+[\w-]+)*?\s*\((\d+)\)[,\s]+"
-    r"BLOCK\s+[\w-]+(?:\s+[\w-]+)*?\s*\((\d+)\)[,\s]+"
-    r"([A-Z][A-Z\s.,&'-]+?)"
-    # UNIT is optional and may be digit form ("UNIT 7") OR word form
-    # with parenthesised digit ("UNIT SEVEN (7)"), matching how LOT
-    # and BLOCK are written. The (\d+) is captured when present.
-    r"(?:[,.]?\s+UNIT\s+(?:[\w-]+(?:\s+[\w-]+)*?\s*\((\d+)\)|(\d+)))?"
-    r"\s*,?\s*(?:AN?\s+)?(?:SUBDIVISION|ADDITION|ACCORDING\s+TO)",
+    # LOT: word form with optional comma before the parenthesised digit
+    # ("LOT NINE (9)" OR "LOT NINE, (9)") OR plain digit ("LOT 9").
+    r"LOT[S]?\s+(?:[\w-]+(?:\s+[\w-]+)*?\s*,?\s*\((?P<lotw>\d+)\)"
+    r"|(?P<lotd>\d+))[,\s]+"
+    # BLOCK: same flexibility — word-paren OR plain digit. Notices mix
+    # these freely ("LOT NINE, (9), BLOCK 1" -> doc 2026000296).
+    r"(?:BLOCK|BLK\.?)\s+(?:[\w-]+(?:\s+[\w-]+)*?\s*,?\s*"
+    r"\((?P<blkw>\d+)\)|(?P<blkd>\d+))[,\s]+"
+    r"(?P<sub>[A-Z][A-Z0-9\s.&'-]+?)"
+    # UNIT optional: word-paren ("UNIT SEVEN (7)") OR plain ("UNIT 1").
+    r"(?:[,.]?\s+UNIT\s+(?:[\w-]+(?:\s+[\w-]+)*?\s*,?\s*"
+    r"\((?P<unitw>\d+)\)|(?P<unitd>\d+)))?"
+    r"\s*,?\s*(?:AN?\s+)?(?:SUBDIVISION|ADDITION|ACCORDING\s+TO"
+    r"|CITY\s+OF|,)",
     re.IGNORECASE | re.DOTALL,
 )
 
@@ -765,9 +771,9 @@ _RE_LEGAL_PARENS = re.compile(
 # (the optional ",? (a|an)?" before the keyword handles "GRANGE PARK,
 # A SUBDIVISION" which the stricter form missed -> doc 2026000296).
 _RE_LEGAL_DIGITS = re.compile(
-    r"(?:Lot[s]?\s+)?([\d,A-Z-]+)[\s,]+(?:Block|Blk\.?)\s+([\dA-Z-]+)"
-    r"[,\s]+(?:of\s+)?([A-Z][A-Z\s\d&.'-]+?)\s*,?\s*(?:an?\s+)?"
-    r"(?:Subdivision|Addition|Unit|Section|Phase)",
+    r"(?:Lot[s]?\s+)?(?P<lotd>[\d,A-Z-]+)[\s,]+(?:Block|Blk\.?)\s+"
+    r"(?P<blkd>[\dA-Z-]+)[,\s]+(?:of\s+)?(?P<sub>[A-Z][A-Z\s\d&.'-]+?)"
+    r"\s*,?\s*(?:an?\s+)?(?:Subdivision|Addition|Unit|Section|Phase)",
     re.IGNORECASE,
 )
 
@@ -1137,27 +1143,23 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
     if not m:
         m = _RE_LEGAL_DIGITS.search(text)
     if m:
-        out["legal_lot"] = m.group(1).strip(" ,.")
-        out["legal_block"] = m.group(2).strip(" ,.")
-        sub = _clean_name(m.group(3))
+        gd = m.groupdict()
+        lot = gd.get("lotw") or gd.get("lotd") or ""
+        blk = gd.get("blkw") or gd.get("blkd") or ""
+        out["legal_lot"] = lot.strip(" ,.")
+        out["legal_block"] = blk.strip(" ,.")
+        sub = _clean_name(gd.get("sub") or "")
         # Collapse newlines/whitespace and remove stray periods from
         # OCR-introduced line breaks within multi-word subdivision names
         # (e.g. "COUNTRY CLUB.\nESTATES" → "COUNTRY CLUB ESTATES").
         sub = re.sub(r"\s+", " ", sub).strip(" .,")
         sub = re.sub(r"\.\s+", " ", sub).strip()
         out["legal_subdivision"] = sub
-        # Some patterns capture a unit number. _RE_LEGAL_PARENS now has
-        # two possible unit groups (word-form "UNIT SEVEN (7)" -> g4,
-        # plain "UNIT 7" -> g5); _RE_LEGAL_DIGITS has no unit group.
-        # Pull whichever unit group actually matched, if any.
-        try:
-            unit = None
-            if m.re is _RE_LEGAL_PARENS:
-                unit = m.group(4) or m.group(5)
-            if unit:
-                out["legal_unit"] = unit.strip()
-        except (IndexError, re.error):
-            pass
+        # UNIT is optional; only _RE_LEGAL_PARENS has unit groups
+        # (word-form "UNIT SEVEN (7)" -> unitw, plain "UNIT 1" -> unitd).
+        unit = gd.get("unitw") or gd.get("unitd")
+        if unit:
+            out["legal_unit"] = unit.strip()
 
     return out
 
