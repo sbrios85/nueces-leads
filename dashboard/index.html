@@ -80,6 +80,21 @@
     padding: 16px 0;
     overflow-y: auto;
   }
+  /* Header toggle that fully hides the sidebar to give the table the
+     full window width. State persists in localStorage. */
+  .sidebar-toggle {
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 6px;
+    font-size: 16px; line-height: 1; cursor: pointer;
+    padding: 6px 9px; margin-right: 12px; flex-shrink: 0;
+  }
+  .sidebar-toggle:hover {
+    color: var(--fg); border-color: var(--muted);
+    background: var(--panel);
+  }
+  /* When the body carries .sidebar-collapsed the nav is removed from
+     the flow entirely and the main area expands to fill the width. */
+  body.sidebar-collapsed .sidebar { display: none; }
   .sidebar-section { margin-bottom: 20px; }
   .sidebar-section-title {
     font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
@@ -553,6 +568,10 @@
 <body>
 <header>
   <div class="header-left">
+    <button id="sidebar-toggle" class="sidebar-toggle"
+      title="Hide / show the navigation sidebar"
+      aria-label="Toggle navigation sidebar"
+      onclick="toggleSidebar()">☰</button>
     <h1>Nueces County — Lead Pipeline</h1>
     <div class="meta" id="meta">Loading…</div>
   </div>
@@ -612,7 +631,7 @@
   <div class="stats" id="ccln-stats"></div>
   <table id="ccln-table">
     <thead><tr>
-      <th data-sort="status"      style="width: 90px;">Status</th>
+      <th data-sort="status"      style="width: 72px;">Status</th>
       <th data-sort="filed">Filed</th>
       <th data-sort="owner">Owner (Grantor)</th>
       <th data-sort="prop_address">Property Address</th>
@@ -637,7 +656,7 @@
   <table id="fc-table">
     <thead><tr>
       <th style="width: 44px;" title="Save manual edits"></th>
-      <th data-sort="status"      style="width: 80px;">Status</th>
+      <th data-sort="status"      style="width: 56px;">Status</th>
       <th data-sort="sale_date">Sale Date</th>
       <th data-sort="days_until_sale">Days Until Sale</th>
       <th data-sort="recorded">Recorded</th>
@@ -2469,6 +2488,25 @@ function restoreFcLead(docNum) {
   renderFc();
 }
 
+// ---- Sidebar collapse ----
+// Fully hides the navigation sidebar so the data table gets the whole
+// window width. The choice persists across visits in localStorage.
+const SIDEBAR_KEY = "nueces_sidebar_collapsed_v1";
+function applySidebarState() {
+  const collapsed = localStorage.getItem(SIDEBAR_KEY) === "true";
+  document.body.classList.toggle("sidebar-collapsed", collapsed);
+  const btn = document.getElementById("sidebar-toggle");
+  if (btn) btn.title = collapsed
+    ? "Show the navigation sidebar"
+    : "Hide the navigation sidebar";
+}
+function toggleSidebar() {
+  const collapsed =
+    !document.body.classList.contains("sidebar-collapsed");
+  localStorage.setItem(SIDEBAR_KEY, collapsed ? "true" : "false");
+  applySidebarState();
+}
+
 // Toggle the LOAN MOD badge state for a record between "LOAN MOD"
 // (needs verification) and "LOAN MOD INFO UPDATED" (user has handled
 // it). Reversible so an accidental click or a needed re-verification
@@ -2615,6 +2653,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+applySidebarState();
 loadAll();
 </script>
 </body>
