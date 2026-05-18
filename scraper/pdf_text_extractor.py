@@ -880,6 +880,11 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
             # (but not for entity borrowers — they keep their suffix)
             if idx not in ENTITY_BORROWER_PATTERN_INDICES:
                 name = _strip_borrower_descriptors(name)
+            else:
+                # Entity borrower: keep the LLC/LP/INC suffix but trim
+                # trailing ", a Texas limited liability company" /
+                # bare ", a" boilerplate OCR dragged in.
+                name = _strip_entity_boilerplate(name)
             if not name or len(name) < 4:
                 continue
             if (idx not in ENTITY_BORROWER_PATTERN_INDICES
@@ -1153,6 +1158,44 @@ def _strip_borrower_descriptors(s: str) -> str:
             break
         s = new_s
     return s if len(s) >= 3 else original
+
+
+# Trailing legal-entity boilerplate that OCR drags into entity borrower
+# names: "Nextlots Now, LLC, a Texas limited [liability company]",
+# "GRANADO ESTATES, L.P., a", "... LLC, a". We keep the entity name +
+# its core suffix (LLC / L.P. / INC / CORP / LTD) but cut everything
+# from the dangling ", a [Texas] [limited] [liability company /
+# partnership]" onward, including a bare trailing ", a".
+_ENTITY_TRAILING_BOILERPLATE = re.compile(
+    r"(?P<core>.*?\b(?:L\.?L\.?C\.?|L\.?P\.?|INC\.?|CORP\.?|"
+    r"LTD\.?|LIMITED\s+LIABILITY\s+COMPANY|LIMITED\s+PARTNERSHIP))"
+    r"\s*,?\s*(?:a\b.*)?$",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _strip_entity_boilerplate(s: str) -> str:
+    """Trim trailing ', a Texas limited liability company/partnership'
+    and bare ', a' boilerplate from entity borrower names while
+    preserving the entity's core suffix (LLC, L.P., INC, etc.).
+    Returns the original if the trim would leave nothing useful."""
+    if not s:
+        return s
+    m = _ENTITY_TRAILING_BOILERPLATE.match(s.strip())
+    if not m:
+        return s.strip(" ,;:&-")
+    core = m.group("core").strip(" ,;:&-")
+    # The core regex may end right at the suffix and the .strip() above
+    # could have eaten a legitimate trailing period (L.P. -> L.P).
+    # Restore it only if the matched core in the ORIGINAL text was
+    # immediately followed by a period — never invent one (LLC stays
+    # LLC, not "LLC.").
+    end = m.end("core")
+    src = s.strip()
+    if (not core.endswith(".") and end < len(src)
+            and src[end:end + 1] == "."):
+        core = core + "."
+    return core if len(core) >= 3 else s.strip(" ,;:&-")
 
 
 def _clean_name_ocr(s: str) -> str:
