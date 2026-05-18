@@ -183,13 +183,17 @@ _RE_BORROWER = [
     # the borrower name on the FOLLOWING line — McCarthy & Holthus /
     # power-of-sale "table" template (254). The next line is often
     # prefixed with the Deed-of-Trust date ("6/20/2008 KAREN CHAVEZ"),
-    # so skip an optional leading date. Capture the name, stopping
-    # before OCR-glued descriptors ("ASINGLE WOMAN" / "A SINGLE
-    # WOMAN" / "AN UNMARRIED MAN") or end of line.
+    # so skip an optional leading date. OCR frequently mangles the
+    # name: a curly apostrophe (U+2019) replaces letters
+    # ("CHAVEZ" -> "CHA'") and the marital descriptor glues on
+    # ("ASINGLE WOMAN"). Capture letters/spaces plus straight AND
+    # curly apostrophes, stopping before the descriptor (with optional
+    # apostrophe/comma immediately before it) or end of line.
     re.compile(r"Grantor\(s\)\s*/?\s*Mortgagor\(s\)\s*:?[^\n]*\n"
                 r"\s*(?:\d{1,2}/\d{1,2}/\d{2,4}\s+)?"
-                r"([A-Z][A-Za-z.'\- ]+?)"
-                r"(?=\s+(?:A\s*SINGLE|ASINGLE|AN?\s*UNMARRIED|"
+                r"([A-Z][A-Za-z.'\u2018\u2019\u201C\u201D\- ]+?)"
+                r"[\u2018\u2019']?\s*"
+                r"(?=(?:A\s*SINGLE|ASINGLE|AN?\s*UNMARRIED|"
                 r"A\s*MARRIED|UNMARRIED|HUSBAND|WIFE|AND\s+(?:WIFE|"
                 r"HUSBAND)|,|\n)|\s*$)",
                re.IGNORECASE | re.MULTILINE),
