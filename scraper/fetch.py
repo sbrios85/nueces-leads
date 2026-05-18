@@ -2643,8 +2643,18 @@ async def _run_ncad_searches(names: List[str],
         # try to refresh. If misses continue after a refresh, abort —
         # something else is wrong, and writing more nulls to the cache
         # would prevent retries on the next run.
-        MAX_CONSECUTIVE_MISSES_BEFORE_REFRESH = 8
-        MAX_CONSECUTIVE_MISSES_AFTER_REFRESH = 15
+        #
+        # NOTE: these were 8/15, which tripped on NORMAL data — the
+        # foreclosure/lead owner lists legitimately contain long runs
+        # of people not in NCAD's residential rolls (investors,
+        # out-of-county owners, entities, name mismatches). 8 straight
+        # legit misses looked identical to "portal down" and aborted
+        # healthy runs before they reached matchable records (e.g.
+        # NICHOLS ANDREW, confirmed present in NCAD by manual search).
+        # Raised so only a genuine systemic failure (dozens of straight
+        # misses) trips the breaker.
+        MAX_CONSECUTIVE_MISSES_BEFORE_REFRESH = 25
+        MAX_CONSECUTIVE_MISSES_AFTER_REFRESH = 30
 
         consecutive_misses = 0
         post_refresh_misses = 0
@@ -2760,10 +2770,18 @@ async def _run_ncad_searches(names: List[str],
                               post_refresh_misses)
                     break
 
-                # Cache this miss only if we're confident it's real
-                # (i.e. not in a streak that suggests systemic failure).
-                if consecutive_misses < MAX_CONSECUTIVE_MISSES_BEFORE_REFRESH:
-                    cache[name] = None
+                # Cache this miss. By the time execution reaches here,
+                # the systemic-failure paths (token-refresh trigger and
+                # hard abort) have already `continue`/`break`'d above —
+                # so this is a normal, isolated "not found". Caching it
+                # is what lets successive runs make FORWARD PROGRESS:
+                # already-tried names (hit OR miss) are skipped via the
+                # cache-`continue` at the top of the loop, so each run
+                # advances to new records instead of perpetually
+                # re-grinding the same early dead cluster (the bug that
+                # kept the foreclosure run from ever reaching record
+                # ~83 / Andrew Nichols).
+                cache[name] = None
 
             await asyncio.sleep(NCAD_SEARCH_DELAY_SEC)
 
