@@ -238,6 +238,18 @@
      making them especially motivated to deal. */
   .pill.short-sale { background: rgba(239,68,68,.25); color: var(--bad);
                      font-weight: 600; }
+  /* "NO PDF" indicator: the scraper created this row but the
+     foreclosure PDF was never uploaded, so owner/loan/lender are
+     blank. Tells the user exactly which leads still need their PDF
+     pulled from the clerk portal. Distinct slate/blue so it reads as
+     "action needed" not "bad lead". */
+  .no-pdf-badge {
+    display: inline-block; margin-left: 6px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
+    padding: 1px 5px; border-radius: 4px; vertical-align: middle;
+    background: rgba(56,189,248,.18); color: var(--status-new);
+    white-space: nowrap;
+  }
   /* Loan modification flag: the PDF references a loan mod, so the
      scraped loan amount is likely stale and needs manual lookup.
      Clickable — clicking dismisses it (both copies) once the user
@@ -300,7 +312,18 @@
   }
   textarea.cell-edit { min-height: 38px; line-height: 1.3;
     white-space: pre-wrap; word-break: break-word;
-    overflow-wrap: anywhere; }
+    overflow-wrap: anywhere;
+    /* Hide the scrollbar / up-down arrows that appear when the 2-line
+       value slightly overflows. Content is still fully editable —
+       clicking into the field lets you scroll/see all of it. This
+       removes the visual "arrow bloat" across every text cell. */
+    overflow: hidden; resize: none;
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  textarea.cell-edit::-webkit-scrollbar { display: none; }
+  /* When focused, allow scrolling so long values are fully reachable
+     while editing — but still no visible scrollbar chrome. */
+  textarea.cell-edit:focus { overflow: auto; }
   /* Save column: empty until the row has unsaved edits, then a save
      icon appears; on save it briefly flips to a green check. */
   .save-cell { text-align: center; width: 44px; }
@@ -2081,6 +2104,13 @@ function buildFcRow(r, isDead) {
   const _mailEff  = fcFieldValue(r, "mail_address") || "";
   const _lenderEff = fcFieldValue(r, "lender") || "";
   const _legalEff  = fcFieldValue(r, "legal") || "";
+  // A record with no pdf_parsed_at has never had its foreclosure PDF
+  // uploaded + OCR'd — the scraper created the row (doc#, sale date)
+  // but the owner/loan/lender come from the PDF. Flag these so the
+  // user can see at a glance which leads still need their PDF pulled
+  // from the clerk portal. (A manual edit can also fill fields, so we
+  // only flag when there's genuinely no PDF AND no manual owner.)
+  const missingPdf = !r.pdf_parsed_at && !_ownerEff;
   const fullAddr = _propEff ?
       [_propEff, r.prop_city, r.prop_state, r.prop_zip]
           .filter(Boolean).join(" ") : "";
@@ -2421,7 +2451,7 @@ function buildFcRow(r, isDead) {
     <td>${loanDocCell}</td>
     <td>${_ecell("lender", _lenderEff)}</td>
     <td class="legal">${_ecell("legal", _legalEff, true)}</td>
-    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
+    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${missingPdf ? `<span class="no-pdf-badge" title="No foreclosure PDF has been uploaded for this lead yet. Download it from the clerk portal and add it via the normal upload workflow to fill in owner / loan / lender.">NO PDF</span>` : ""}</td>
     <td style="text-align: center;">${ncadCell}</td>
   `;
 
