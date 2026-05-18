@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-18T06:32:44.748621+00:00",
+  "fetched_at": "2026-05-18T06:47:00.344747+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-05-17",
@@ -35,7 +35,7 @@
       "lender": "Leeward Isles Condominium Council of Co-Owners",
       "loan_doc": "2000042822",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:51.819261+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.327000+00:00"
     },
     {
       "doc_num": "2026000294",
@@ -64,7 +64,7 @@
       "deed_date": "1984-10-03",
       "loan_doc": "401253",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:45.792946+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.320532+00:00"
     },
     {
       "doc_num": "2026000292",
@@ -93,7 +93,7 @@
       "deed_date": "2010-05-24",
       "loan_doc": "2010019496",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:35.585051+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.312306+00:00"
     },
     {
       "doc_num": "2026000293",
@@ -122,7 +122,7 @@
       "deed_date": "2012-06-15",
       "loan_doc": "2012024820",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:41.391488+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.316810+00:00"
     },
     {
       "doc_num": "2026000276",
@@ -151,7 +151,7 @@
       "deed_date": "2025-09-19",
       "loan_doc": "2025034648",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:29:37.331892+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.232866+00:00"
     },
     {
       "doc_num": "2026000271",
@@ -180,7 +180,7 @@
       "deed_date": "2024-05-30",
       "loan_doc": "2024018886",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:29:58.997494+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.209352+00:00"
     },
     {
       "doc_num": "2026000270",
@@ -210,7 +210,7 @@
       "legal_lot": "2",
       "legal_block": "22",
       "legal_subdivision": "PHARAOH VALLEY NORTH",
-      "pdf_parsed_at": "2026-05-18T06:30:15.134996+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.204688+00:00"
     },
     {
       "doc_num": "2026000286",
@@ -239,7 +239,7 @@
       "deed_date": "2024-07-05",
       "loan_doc": "2024023236",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:30:25.899747+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.280411+00:00"
     },
     {
       "doc_num": "2026000284",
@@ -268,7 +268,7 @@
       "deed_date": "2024-11-21",
       "loan_doc": "2024040371",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:30:36.473313+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.271094+00:00"
     },
     {
       "doc_num": "2026000285",
@@ -297,7 +297,7 @@
       "deed_date": "2024-11-21",
       "loan_doc": "2024040376",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:30:46.939613+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.275814+00:00"
     },
     {
       "doc_num": "2026000279",
@@ -326,7 +326,7 @@
       "deed_date": "2025-08-13",
       "loan_doc": "2025029666",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:19.276954+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.247230+00:00"
     },
     {
       "doc_num": "2026000287",
@@ -355,7 +355,7 @@
       "deed_date": "2024-06-26",
       "loan_doc": "2024021944",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:30:31.083897+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.285116+00:00"
     },
     {
       "doc_num": "2026000269",
@@ -384,7 +384,7 @@
       "deed_date": "2021-01-15",
       "loan_doc": "2021002946",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:29:26.217984+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.200651+00:00"
     },
     {
       "doc_num": "2026000274",
@@ -413,7 +413,7 @@
       "deed_date": "2025-11-04",
       "loan_doc": "2025040249",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:30:04.430246+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.223536+00:00"
     },
     {
       "doc_num": "2026000288",
@@ -444,7 +444,7 @@
       "loan_doc": "2024000416",
       "loan_mod_doc": "2025021606",
       "has_loan_mod": true,
-      "pdf_parsed_at": "2026-05-18T06:30:57.828773+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.290229+00:00"
     },
     {
       "doc_num": "2026000273",
@@ -473,7 +473,7 @@
       "deed_date": "2025-09-19",
       "loan_doc": "2025034646",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:29:42.509493+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.218820+00:00"
     },
     {
       "doc_num": "2026000277",
@@ -502,7 +502,7 @@
       "deed_date": "2025-09-29",
       "loan_doc": "2025035408",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:29:48.268452+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.237682+00:00"
     },
     {
       "doc_num": "2026000281",
@@ -531,7 +531,7 @@
       "deed_date": "2025-01-17",
       "loan_doc": "2025002709",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:24.754905+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.256915+00:00"
     },
     {
       "doc_num": "2026000278",
@@ -560,7 +560,7 @@
       "deed_date": "2025-09-09",
       "loan_doc": "2025032640",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:30.237438+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.242484+00:00"
     },
     {
       "doc_num": "2026000289",
@@ -589,7 +589,7 @@
       "deed_date": "2024-04-04",
       "loan_doc": "2024011810",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:03.210124+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.294886+00:00"
     },
     {
       "doc_num": "2026000272",
@@ -618,7 +618,7 @@
       "deed_date": "2024-06-11",
       "loan_doc": "2024020235",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:30:09.841472+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.214020+00:00"
     },
     {
       "doc_num": "2026000275",
@@ -647,7 +647,7 @@
       "deed_date": "2025-09-23",
       "loan_doc": "2025034639",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:29:53.670383+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.228140+00:00"
     },
     {
       "doc_num": "2026000282",
@@ -676,7 +676,7 @@
       "deed_date": "2024-12-27",
       "loan_doc": "2025000020",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:30:52.264110+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.261740+00:00"
     },
     {
       "doc_num": "2026000283",
@@ -705,7 +705,7 @@
       "deed_date": "2024-12-12",
       "loan_doc": "2024043000",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:08.683320+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.266389+00:00"
     },
     {
       "doc_num": "2026000290",
@@ -734,7 +734,7 @@
       "deed_date": "2024-04-12",
       "loan_doc": "2024012539",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:30:20.434850+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.299629+00:00"
     },
     {
       "doc_num": "2026000280",
@@ -763,7 +763,7 @@
       "deed_date": "2025-05-21",
       "loan_doc": "2025018680",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:31:13.994724+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.252046+00:00"
     },
     {
       "doc_num": "2026000291",
@@ -791,7 +791,7 @@
       "lender": "SCF Jake, LP., a Texas limited partnership",
       "deed_date": "2025-02-28",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:30:41.788453+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.305232+00:00"
     },
     {
       "doc_num": "2026000267",
@@ -820,7 +820,7 @@
       "deed_date": "1974-05-10",
       "loan_doc": "944313",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:29:20.971341+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.183369+00:00"
     },
     {
       "doc_num": "2026000266",
@@ -848,7 +848,7 @@
       "deed_date": "2019-12-19",
       "loan_doc": "2020000953",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:29:15.230271+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.176716+00:00"
     },
     {
       "doc_num": "2026000263",
@@ -879,7 +879,7 @@
       "legal_lot": "15",
       "legal_block": "10",
       "legal_subdivision": "WOODLAND CREEK UNIT V",
-      "pdf_parsed_at": "2026-05-18T06:20:50.700030+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.144597+00:00"
     },
     {
       "doc_num": "2026000261",
@@ -911,7 +911,7 @@
       "legal_lot": "13",
       "legal_block": "2",
       "legal_subdivision": "KINGS POINT",
-      "pdf_parsed_at": "2026-05-18T06:20:50.685449+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.129609+00:00"
     },
     {
       "doc_num": "2026000260",
@@ -940,7 +940,7 @@
       "deed_date": "2022-07-27",
       "loan_doc": "2022035945",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:20:50.677576+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.121558+00:00"
     },
     {
       "doc_num": "2026000259",
@@ -972,7 +972,7 @@
       "legal_lot": "34",
       "legal_block": "1",
       "legal_subdivision": "GRANADO ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.670737+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.114578+00:00"
     },
     {
       "doc_num": "2026000258",
@@ -1004,7 +1004,7 @@
       "legal_lot": "5",
       "legal_block": "2",
       "legal_subdivision": "Woodlawn",
-      "pdf_parsed_at": "2026-05-18T06:20:50.662646+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.107945+00:00"
     },
     {
       "doc_num": "2026000252",
@@ -1034,7 +1034,7 @@
       "legal_lot": "27",
       "legal_block": "5",
       "legal_subdivision": "MORNINGSTAR ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.621420+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.067680+00:00"
     },
     {
       "doc_num": "2026000254",
@@ -1064,7 +1064,7 @@
       "legal_lot": "10",
       "legal_block": "10",
       "legal_subdivision": "VISTA HERMOS",
-      "pdf_parsed_at": "2026-05-18T06:20:50.639938+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.086568+00:00"
     },
     {
       "doc_num": "2026000255",
@@ -1091,7 +1091,7 @@
       "days_until_sale": 16,
       "lender": "REGISTRATION SYSTEMS",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:20:50.648408+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.095240+00:00"
     },
     {
       "doc_num": "2026000249",
@@ -1122,7 +1122,7 @@
       "legal_lot": "15",
       "legal_block": "1",
       "legal_subdivision": "INDIAN TRAILS",
-      "pdf_parsed_at": "2026-05-18T06:20:50.592126+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.037236+00:00"
     },
     {
       "doc_num": "2026000248",
@@ -1154,7 +1154,7 @@
       "legal_lot": "18",
       "legal_block": "5",
       "legal_subdivision": "FOUR BLUFF PARK",
-      "pdf_parsed_at": "2026-05-18T06:20:50.586528+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.031409+00:00"
     },
     {
       "doc_num": "2026000236",
@@ -1183,7 +1183,7 @@
       "legal_lot": "32",
       "legal_block": "1",
       "legal_subdivision": "REFLECTIONS",
-      "pdf_parsed_at": "2026-05-18T06:20:50.482616+00:00"
+      "pdf_parsed_at": "2026-05-18T06:46:59.923572+00:00"
     },
     {
       "doc_num": "2026000241",
@@ -1210,7 +1210,7 @@
       "legal_lot": "5",
       "legal_block": "2",
       "legal_subdivision": "COTTAGE PARK",
-      "pdf_parsed_at": "2026-05-18T06:20:50.523412+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.965665+00:00",
       "ncad_prop_id": "217756",
       "ncad_year": "2026",
       "ncad_owner_id": "484853",
@@ -1239,7 +1239,7 @@
       "days_until_sale": 16,
       "deed_date": "2022-06-27",
       "lender": "Carrington Mortgage Services, LLC, 500 N. State College Blvd. Suites 1030, 1300 and 1400, Orange, CA 92868",
-      "pdf_parsed_at": "2026-05-18T06:20:50.474906+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.915645+00:00",
       "ncad_prop_id": "597405",
       "ncad_year": "2026",
       "ncad_owner_id": "792083",
@@ -1271,7 +1271,7 @@
       "legal_lot": "23",
       "legal_block": "29",
       "legal_subdivision": "LINDALE PARK",
-      "pdf_parsed_at": "2026-05-18T06:20:50.533004+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.975714+00:00",
       "ncad_prop_id": "260479",
       "ncad_year": "2026",
       "ncad_owner_id": "732887",
@@ -1300,7 +1300,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 16,
       "lender": "Mortgage Electronic Registration Systems, Inc., as beneficiary, as nominee for PHH Mortgage",
-      "pdf_parsed_at": "2026-05-18T06:20:50.559376+00:00",
+      "pdf_parsed_at": "2026-05-18T06:47:00.003059+00:00",
       "ncad_prop_id": "274805",
       "ncad_year": "2026",
       "ncad_owner_id": "821562",
@@ -1331,7 +1331,7 @@
       "legal_lot": "8",
       "legal_block": "6",
       "legal_subdivision": "INVERNESS UNIT B",
-      "pdf_parsed_at": "2026-05-18T06:20:50.479571+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.920430+00:00",
       "ncad_prop_id": "200915",
       "ncad_year": "2026",
       "ncad_owner_id": "420412",
@@ -1359,7 +1359,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 16,
       "lender": "PENNYMAC LOAN SERVICES, LLC",
-      "pdf_parsed_at": "2026-05-18T06:20:50.564662+00:00",
+      "pdf_parsed_at": "2026-05-18T06:47:00.008656+00:00",
       "loan_doc": "367579",
       "has_loan_mod": false
     },
@@ -1384,7 +1384,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 16,
       "lender": "Idaho Housing and Finance Association",
-      "pdf_parsed_at": "2026-05-18T06:20:50.500376+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.941775+00:00",
       "ncad_prop_id": "200069858",
       "ncad_year": "2026",
       "ncad_owner_id": "759710",
@@ -1415,7 +1415,7 @@
       "legal_lot": "2",
       "legal_block": "7",
       "legal_subdivision": "SOUTH PARK",
-      "pdf_parsed_at": "2026-05-18T06:20:50.545766+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.988801+00:00",
       "ncad_prop_id": "200025667",
       "ncad_year": "2026",
       "ncad_owner_id": "534412",
@@ -1446,7 +1446,7 @@
       "legal_lot": "1",
       "legal_block": "5",
       "legal_subdivision": "SCHANEN ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.486226+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.927219+00:00",
       "ncad_prop_id": "248778",
       "ncad_year": "2026",
       "ncad_owner_id": "819359",
@@ -1475,7 +1475,7 @@
       "days_until_sale": 16,
       "deed_date": "2025-03-03",
       "lender": "LAKEVIEW LOAN SERVICING, LLC",
-      "pdf_parsed_at": "2026-05-18T06:20:50.518903+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.960961+00:00",
       "ncad_prop_id": "550531",
       "ncad_year": "2026",
       "ncad_owner_id": "826194",
@@ -1503,7 +1503,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 16,
       "lender": "REGISTRATION SYSTEMS, INC",
-      "pdf_parsed_at": "2026-05-18T06:20:50.462668+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.902623+00:00",
       "ncad_prop_id": "535283",
       "ncad_year": "2026",
       "ncad_owner_id": "793133",
@@ -1533,7 +1533,7 @@
       "legal_lot": "41",
       "legal_block": "18",
       "legal_subdivision": "WOOD RIVER",
-      "pdf_parsed_at": "2026-05-18T06:20:50.403343+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.841147+00:00",
       "ncad_prop_id": "200057276",
       "ncad_year": "2026",
       "ncad_owner_id": "818528",
@@ -1564,7 +1564,7 @@
       "legal_lot": "11",
       "legal_block": "C",
       "legal_subdivision": "the said Flour Bluff Estates",
-      "pdf_parsed_at": "2026-05-18T06:20:50.454459+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.894166+00:00",
       "has_loan_mod": false
     },
     {
@@ -1591,7 +1591,7 @@
       "legal_lot": "14",
       "legal_block": "5",
       "legal_subdivision": "LA JOYA ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.445656+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.884985+00:00",
       "has_loan_mod": false
     },
     {
@@ -1619,7 +1619,7 @@
       "legal_lot": "2",
       "legal_block": "12",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.392315+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.829575+00:00",
       "deed_date_original": "2016-06-29",
       "loan_doc": "2016027697",
       "has_loan_mod": true,
@@ -1649,7 +1649,7 @@
       "legal_lot": "23",
       "legal_block": "4",
       "legal_subdivision": "Sandy Oaks",
-      "pdf_parsed_at": "2026-05-18T06:20:50.389189+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.826318+00:00",
       "loan_doc": "2025006967",
       "has_loan_mod": false
     },
@@ -1678,7 +1678,7 @@
       "legal_lot": "6",
       "legal_block": "7",
       "legal_subdivision": "PINEDA PARK",
-      "pdf_parsed_at": "2026-05-18T06:20:50.377685+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.814508+00:00",
       "loan_doc": "2012019409",
       "has_loan_mod": true
     },
@@ -1706,7 +1706,7 @@
       "legal_lot": "3",
       "legal_block": "5",
       "legal_subdivision": "BALDWIN PARK",
-      "pdf_parsed_at": "2026-05-18T06:20:50.382762+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.819692+00:00",
       "has_loan_mod": false
     },
     {
@@ -1734,7 +1734,7 @@
       "legal_lot": "15",
       "legal_block": "2",
       "legal_subdivision": "POPE PLACE",
-      "pdf_parsed_at": "2026-05-18T06:20:50.366504+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.802712+00:00",
       "loan_doc": "2012019565",
       "has_loan_mod": false
     },
@@ -1760,7 +1760,7 @@
       "days_until_sale": 16,
       "deed_date": "2023-01-27",
       "lender": "PENNYMAC LOAN SERVICES, LLC",
-      "pdf_parsed_at": "2026-05-18T06:20:50.351826+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.787526+00:00",
       "ncad_prop_id": "597441",
       "ncad_year": "2026",
       "ncad_owner_id": "798935",
@@ -1790,7 +1790,7 @@
       "legal_lot": "1",
       "legal_block": "5",
       "legal_subdivision": "WOOLDRIDGE CREEK",
-      "pdf_parsed_at": "2026-05-18T06:20:50.330091+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.765724+00:00",
       "loan_doc": "2022046751",
       "has_loan_mod": false
     },
@@ -1816,7 +1816,7 @@
       "days_until_sale": 16,
       "deed_date": "2016-01-25",
       "lender": "PennyMac Loan Services, LLC",
-      "pdf_parsed_at": "2026-05-18T06:20:50.313582+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.748431+00:00",
       "ncad_prop_id": "530217",
       "ncad_year": "2026",
       "ncad_owner_id": "704411",
@@ -1848,7 +1848,7 @@
       "legal_lot": "15",
       "legal_block": "41",
       "legal_subdivision": "DEL MAR",
-      "pdf_parsed_at": "2026-05-18T06:20:50.324694+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.760097+00:00",
       "ncad_prop_id": "201414",
       "ncad_year": "2026",
       "ncad_owner_id": "401510",
@@ -1879,7 +1879,7 @@
       "legal_lot": "3",
       "legal_block": "6",
       "legal_subdivision": "PEARY PLACE",
-      "pdf_parsed_at": "2026-05-18T06:20:50.346207+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.781973+00:00",
       "loan_doc": "2016037740",
       "has_loan_mod": false
     },
@@ -1908,7 +1908,7 @@
       "legal_lot": "10",
       "legal_block": "1",
       "legal_subdivision": "GRANGE PARK UNIT i",
-      "pdf_parsed_at": "2026-05-18T06:20:50.302729+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.737169+00:00",
       "loan_doc": "2021055950",
       "has_loan_mod": false
     },
@@ -1937,7 +1937,7 @@
       "legal_lot": "4",
       "legal_block": "10",
       "legal_subdivision": "PADRE ISLAND-CORPUS CHRISTI, PORTS O'CALL",
-      "pdf_parsed_at": "2026-05-18T06:20:50.333168+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.768882+00:00",
       "loan_doc": "2021036534",
       "has_loan_mod": false
     },
@@ -1966,7 +1966,7 @@
       "legal_lot": "18",
       "legal_block": "3",
       "legal_subdivision": "THE LAKES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.293225+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.727129+00:00",
       "loan_doc": "2005044427",
       "has_loan_mod": false
     },
@@ -1991,7 +1991,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 16,
       "lender": "GUILD MORTGAGE COMPANY",
-      "pdf_parsed_at": "2026-05-18T06:20:50.282427+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.715781+00:00",
       "loan_doc": "2021034957",
       "has_loan_mod": false
     },
@@ -2020,7 +2020,7 @@
       "legal_lot": "1",
       "legal_block": "2",
       "legal_subdivision": "HILL COUNTRY ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.287933+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.721539+00:00",
       "loan_doc": "2024024350",
       "has_loan_mod": false
     },
@@ -2046,7 +2046,7 @@
       "days_until_sale": 16,
       "deed_date": "2016-11-17",
       "lender": "U.S. BANK NATIONAL ASSOCIATION",
-      "pdf_parsed_at": "2026-05-18T06:20:50.298060+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.732207+00:00",
       "ncad_prop_id": "200046983",
       "ncad_year": "2026",
       "ncad_owner_id": "715039",
@@ -2077,7 +2077,7 @@
       "legal_lot": "15",
       "legal_block": "18",
       "legal_subdivision": "WOOD RIVER",
-      "pdf_parsed_at": "2026-05-18T06:20:50.270578+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.703544+00:00",
       "loan_doc": "2022053556",
       "has_loan_mod": false
     },
@@ -2106,7 +2106,7 @@
       "legal_lot": "6",
       "legal_block": "9",
       "legal_subdivision": "OF LOS VIENTOS AT TERRA MAR",
-      "pdf_parsed_at": "2026-05-18T06:20:50.254561+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.687550+00:00",
       "loan_doc": "2024041076",
       "has_loan_mod": false
     },
@@ -2135,7 +2135,7 @@
       "legal_lot": "1",
       "legal_block": "4",
       "legal_subdivision": "SANDY HOLLOW",
-      "pdf_parsed_at": "2026-05-18T06:20:50.248409+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.681253+00:00",
       "loan_doc": "2016018301",
       "has_loan_mod": false
     },
@@ -2164,7 +2164,7 @@
       "legal_lot": "15",
       "legal_block": "29",
       "legal_subdivision": "LINDALE PARK",
-      "pdf_parsed_at": "2026-05-18T06:20:50.242846+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.675613+00:00",
       "loan_doc": "2013025767",
       "has_loan_mod": false
     },
@@ -2190,7 +2190,7 @@
       "days_until_sale": 16,
       "deed_date": "2018-10-24",
       "lender": "MIDFIRST BANK",
-      "pdf_parsed_at": "2026-05-18T06:20:50.265430+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.698216+00:00",
       "loan_doc": "2018046372",
       "has_loan_mod": true,
       "loan_mod_doc": "2024019039"
@@ -2220,7 +2220,7 @@
       "legal_lot": "37",
       "legal_block": "5",
       "legal_subdivision": "CRESTMONT",
-      "pdf_parsed_at": "2026-05-18T06:20:50.259530+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.692588+00:00",
       "loan_doc": "1997018362",
       "has_loan_mod": false
     },
@@ -2249,7 +2249,7 @@
       "legal_lot": "69",
       "legal_block": "3",
       "legal_subdivision": "Candlewood",
-      "pdf_parsed_at": "2026-05-18T06:20:50.220272+00:00"
+      "pdf_parsed_at": "2026-05-18T06:46:59.652523+00:00"
     },
     {
       "doc_num": "2026000176",
@@ -2276,7 +2276,7 @@
       "legal_lot": "4",
       "legal_block": "5",
       "legal_subdivision": "NORTHWEST CROSSING",
-      "pdf_parsed_at": "2026-05-18T06:20:50.224220+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.656468+00:00",
       "ncad_prop_id": "183783",
       "ncad_year": "2026",
       "ncad_owner_id": "120652",
@@ -2305,7 +2305,7 @@
       "days_until_sale": 16,
       "lender": "Wes Hoskins",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:20:50.199825+00:00"
+      "pdf_parsed_at": "2026-05-18T06:46:59.632025+00:00"
     },
     {
       "doc_num": "2026000141",
@@ -2332,7 +2332,7 @@
       "legal_lot": "9",
       "legal_block": "39",
       "legal_subdivision": "DEL MAR",
-      "pdf_parsed_at": "2026-05-18T06:20:50.206859+00:00"
+      "pdf_parsed_at": "2026-05-18T06:46:59.638845+00:00"
     },
     {
       "doc_num": "2026000115",
@@ -2361,7 +2361,7 @@
       "legal_lot": "23",
       "legal_block": "4",
       "legal_subdivision": "CALLICOATTE ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.186107+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.617958+00:00",
       "loan_mod_doc": "2019001274"
     },
     {
@@ -2389,7 +2389,7 @@
       "days_until_sale": 51,
       "loan_doc": "414459",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:32:01.203433+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.344457+00:00"
     },
     {
       "doc_num": "2026000296",
@@ -2420,7 +2420,7 @@
       "has_loan_mod": false,
       "legal_block": "1",
       "legal_subdivision": "GRANGE PARK",
-      "pdf_parsed_at": "2026-05-18T06:31:56.803874+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.337368+00:00"
     },
     {
       "doc_num": "2026000268",
@@ -2449,7 +2449,7 @@
       "deed_date": "2005-11-19",
       "loan_doc": "2005062181",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:29:31.543962+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.196296+00:00"
     },
     {
       "doc_num": "2026000265",
@@ -2477,7 +2477,7 @@
       "lender": "PHH MORTGAGE CORPORATION",
       "deed_date": "2022-04-22",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:20:50.712476+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.157348+00:00"
     },
     {
       "doc_num": "2026000262",
@@ -2507,7 +2507,7 @@
       "legal_lot": "9",
       "legal_block": "9",
       "legal_subdivision": "SCHANEN ESTATES WEST",
-      "pdf_parsed_at": "2026-05-18T06:20:50.690657+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.134980+00:00"
     },
     {
       "doc_num": "2026000264",
@@ -2536,7 +2536,7 @@
       "deed_date": "2016-12-19",
       "loan_doc": "2016052992",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:20:50.705997+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.150573+00:00"
     },
     {
       "doc_num": "2026000257",
@@ -2569,7 +2569,7 @@
       "legal_lot": "7",
       "legal_block": "1",
       "legal_subdivision": "BLUE GRASS ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.657108+00:00",
+      "pdf_parsed_at": "2026-05-18T06:47:00.104062+00:00",
       "loan_mod_doc": "2024020964"
     },
     {
@@ -2601,7 +2601,7 @@
       "legal_lot": "46",
       "legal_block": "3",
       "legal_subdivision": "BARCELONA ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.607338+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.053088+00:00"
     },
     {
       "doc_num": "2026000256",
@@ -2633,7 +2633,7 @@
       "legal_lot": "18",
       "legal_block": "1",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.653904+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.100804+00:00"
     },
     {
       "doc_num": "2026000250",
@@ -2665,7 +2665,7 @@
       "legal_lot": "21",
       "legal_block": "8",
       "legal_subdivision": "RIDGEWOOD",
-      "pdf_parsed_at": "2026-05-18T06:20:50.596634+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.041938+00:00"
     },
     {
       "doc_num": "2026000253",
@@ -2694,7 +2694,7 @@
       "deed_date": "2024-01-03",
       "loan_doc": "2024000263",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-05-18T06:20:50.626182+00:00"
+      "pdf_parsed_at": "2026-05-18T06:47:00.072607+00:00"
     },
     {
       "doc_num": "2026000242",
@@ -2721,7 +2721,7 @@
       "legal_lot": "11",
       "legal_block": "2",
       "legal_subdivision": "WOODBEND",
-      "pdf_parsed_at": "2026-05-18T06:20:50.529524+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.972077+00:00",
       "ncad_prop_id": "200118578",
       "ncad_year": "2026",
       "ncad_owner_id": "539881",
@@ -2749,7 +2749,7 @@
       "status": "pre-foreclosure",
       "days_until_sale": 51,
       "lender": "WELLS FARGO BANK, N.A",
-      "pdf_parsed_at": "2026-05-18T06:20:50.575768+00:00",
+      "pdf_parsed_at": "2026-05-18T06:47:00.020201+00:00",
       "ncad_prop_id": "298471",
       "ncad_year": "2026",
       "ncad_owner_id": "688421",
@@ -2781,7 +2781,7 @@
       "legal_lot": "7",
       "legal_block": "1",
       "legal_subdivision": "HILL COUNTRY ESTATES",
-      "pdf_parsed_at": "2026-05-18T06:20:50.468987+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.909460+00:00",
       "ncad_prop_id": "376373",
       "ncad_year": "2026",
       "ncad_owner_id": "806883",
@@ -2812,7 +2812,7 @@
       "legal_lot": "12",
       "legal_block": "5",
       "legal_subdivision": "WESTWOOD VILLAGE",
-      "pdf_parsed_at": "2026-05-18T06:20:50.513826+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.955747+00:00",
       "ncad_prop_id": "200060600",
       "ncad_year": "2026",
       "ncad_owner_id": "792797",
@@ -2842,7 +2842,7 @@
       "legal_lot": "17",
       "legal_block": "20",
       "legal_subdivision": "London Towne",
-      "pdf_parsed_at": "2026-05-18T06:20:50.416770+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.855238+00:00",
       "ncad_prop_id": "185310",
       "ncad_year": "2026",
       "ncad_owner_id": "595113",
@@ -2870,7 +2870,7 @@
       "days_until_sale": 51,
       "deed_date": "2022-08-12",
       "lender": "Carrington Mortgage Services, LLC",
-      "pdf_parsed_at": "2026-05-18T06:20:50.424171+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.862986+00:00",
       "loan_doc": "2022038671",
       "has_loan_mod": false
     },
@@ -2896,7 +2896,7 @@
       "days_until_sale": 51,
       "deed_date": "2016-05-13",
       "lender": "Wells Fargo Bank, N.A",
-      "pdf_parsed_at": "2026-05-18T06:20:50.431534+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.870439+00:00",
       "loan_doc": "2016023986",
       "has_loan_mod": false
     },
@@ -2922,7 +2922,7 @@
       "days_until_sale": 51,
       "deed_date": "2022-06-21",
       "lender": "MORTGAGE CORPORATION",
-      "pdf_parsed_at": "2026-05-18T06:20:50.357889+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.793800+00:00",
       "ncad_prop_id": "185197",
       "ncad_year": "2026",
       "ncad_owner_id": "784915",
@@ -2973,7 +2973,7 @@
       "legal_lot": "29",
       "legal_block": "10",
       "legal_subdivision": "NORTHWEST CROSSING",
-      "pdf_parsed_at": "2026-05-18T06:20:50.236574+00:00",
+      "pdf_parsed_at": "2026-05-18T06:46:59.669136+00:00",
       "ncad_prop_id": "204081",
       "ncad_year": "2026",
       "ncad_owner_id": "752678",
