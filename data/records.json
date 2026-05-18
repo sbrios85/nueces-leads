@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-05-18T21:37:45.688690+00:00",
+  "fetched_at": "2026-05-18T22:40:29.087040+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
     "start": "2026-04-18",
     "end": "2026-05-18"
   },
-  "total": 110,
-  "with_address": 59,
+  "total": 123,
+  "with_address": 66,
   "records": [
     {
       "doc_num": "2026016583",
@@ -59,6 +59,31 @@
         "New this week"
       ],
       "score": 65
+    },
+    {
+      "doc_num": "2026017184",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-05-18",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "PORTBEHR LLC",
+      "grantee": "ALLIANCE BANK CENTRAL TEXAS",
+      "amount": null,
+      "legal": "514 CHANNEL VIEW DRIVE PORT ARANSAS TX 78373 (Lot 5, Block 3)",
+      "prop_address": "514 CHANNEL VIEW DRIVE",
+      "prop_city": "PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017184",
+      "flags": [
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 60
     },
     {
       "doc_num": "2026016243",
@@ -186,6 +211,106 @@
       "score": 60
     },
     {
+      "doc_num": "2026017106",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "GARCIA ARTURO",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 540661526",
+      "prop_address": "328 OHIO AVE",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78404",
+      "mail_address": "328 OHIO AVE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78404",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017106",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 60
+    },
+    {
+      "doc_num": "2026017109",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "RAMIREZ TERESA",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 54012726",
+      "prop_address": "1316 CAMBRIDGE DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78415",
+      "mail_address": "1316 Cambridge Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017109",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 60
+    },
+    {
+      "doc_num": "2026017104",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "PINEDA LORI A JONES",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "AMENDMENT TO CORRECT SERIAL NO 540414726 ON DOC  TO  SERIAL NO 489613924",
+      "prop_address": "1815 STATE HWY 361",
+      "prop_city": "PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "C/O VITAMIN COTTAGE NATURAL FOOD MARKETS INC 12612 W Alameda Pkwy Lakewood",
+      "mail_city": "",
+      "mail_state": "CO",
+      "mail_zip": "80228",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017104",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 60
+    },
+    {
+      "doc_num": "2026017108",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "CLEM ESMERALDA",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 540666326",
+      "prop_address": "8214 SEASHORE DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78412",
+      "mail_address": "8214 SEASHORE DR CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78412",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017108",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 60
+    },
+    {
       "doc_num": "2026016246",
       "doc_type": "MODIFICATION",
       "filed": "2026-05-11",
@@ -206,6 +331,56 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016246",
       "flags": [
         "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
+      "doc_num": "2026017105",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "SANSING GERALD A",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 540514226",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017105",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
+      "doc_num": "2026017107",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "BLANCO JUAN L",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 540662526",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017107",
+      "flags": [
+        "Tax lien",
         "New this week"
       ],
       "score": 55
@@ -379,6 +554,54 @@
       "flags": [
         "Tax lien",
         "LLC / corp owner"
+      ],
+      "score": 50
+    },
+    {
+      "doc_num": "2026017160",
+      "doc_type": "LIEN",
+      "filed": "2026-05-18",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "SOLIZ JAMES",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SHORELINE",
+      "amount": null,
+      "legal": "",
+      "prop_address": "213 AVENUE J",
+      "prop_city": "PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "2266 S Walker Rd Cleveland",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "77328",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017160",
+      "flags": [
+        "New this week"
+      ],
+      "score": 50
+    },
+    {
+      "doc_num": "2026017163",
+      "doc_type": "LIEN",
+      "filed": "2026-05-18",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "CLARK MIRANDA",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SOUTH",
+      "amount": null,
+      "legal": "",
+      "prop_address": "5102 MOULTRIE DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78413",
+      "mail_address": "5102 MOULTRIE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78413",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017163",
+      "flags": [
+        "New this week"
       ],
       "score": 50
     },
@@ -595,6 +818,102 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014328",
       "flags": [
         "Judgment lien"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026017159",
+      "doc_type": "LIEN",
+      "filed": "2026-05-18",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "SANCHEZ BRIANA",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SHORELINE",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017159",
+      "flags": [
+        "New this week"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026017161",
+      "doc_type": "LIEN",
+      "filed": "2026-05-18",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "PENA SABRINA",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SHORELINE",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017161",
+      "flags": [
+        "New this week"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026017164",
+      "doc_type": "LIEN",
+      "filed": "2026-05-18",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "HARRISON JASMINE",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SOUTH",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017164",
+      "flags": [
+        "New this week"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026017162",
+      "doc_type": "LIEN",
+      "filed": "2026-05-18",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "RODRIGUEZ JOSELYN",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SHORELINE",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017162",
+      "flags": [
+        "New this week"
       ],
       "score": 45
     },
@@ -983,30 +1302,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026013521",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-04-20",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "RUNNELS MADELINE M",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 538240426",
-      "prop_address": "710 E AVENUE F",
-      "prop_city": "ROBSTOWN",
-      "prop_state": "TX",
-      "prop_zip": "78380",
-      "mail_address": "712 E AVENUE F ROBSTOWN",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78380",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013521",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026014407",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-04-27",
@@ -1025,6 +1320,30 @@
       "mail_state": "TX",
       "mail_zip": "78413",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014407",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026013521",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-04-20",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "RUNNELS MADELINE M",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 538240426",
+      "prop_address": "710 E AVENUE F",
+      "prop_city": "ROBSTOWN",
+      "prop_state": "TX",
+      "prop_zip": "78380",
+      "mail_address": "712 E AVENUE F ROBSTOWN",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78380",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013521",
       "flags": [
         "Tax lien"
       ],
@@ -1175,30 +1494,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026013779",
-      "doc_type": "DEED",
-      "filed": "2026-04-21",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "TAX LIEN HOLDINGS LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: ROLLING ACRES NO 2 Lot: 6 Block: 2 (Lot 6, Block 2)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013779",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026013780",
       "doc_type": "DEED",
       "filed": "2026-04-21",
@@ -1217,6 +1512,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013780",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026013779",
+      "doc_type": "DEED",
+      "filed": "2026-04-21",
+      "cat": "TAXDEED",
+      "cat_label": "Tax Deed",
+      "owner": "TAX LIEN FUND LP",
+      "grantee": "TAX LIEN HOLDINGS LLC",
+      "amount": null,
+      "legal": "Subdivision - Name: ROLLING ACRES NO 2 Lot: 6 Block: 2 (Lot 6, Block 2)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013779",
       "flags": [
         "LLC / corp owner"
       ],
@@ -1367,30 +1686,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026013520",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-04-20",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "FARMER RANDALL L",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 538144526",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013520",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026013662",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-04-21",
@@ -1433,6 +1728,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026015398",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026013520",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-04-20",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "FARMER RANDALL L",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 538144526",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013520",
       "flags": [
         "Tax lien"
       ],
