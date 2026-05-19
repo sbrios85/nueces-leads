@@ -1,0 +1,99 @@
+name: Foreclosure esearch only
+
+# FAST TUNING LOOP for foreclosure NCAD matching.
+#
+# Runs ONLY the foreclosure esearch step against the existing
+# dashboard/foreclosures.json:
+#   - NO clerk portal scrape
+#   - NO 166 MB NCAD bulk export download
+#   - NO general-records (liens/judgments) esearch
+#
+# It loads the current foreclosures.json, runs the NCAD esearch
+# enrichment (corroboration guard, address-search fallback, broadened
+# name variants, v5 cache — all apply), and writes the enriched JSON
+# back, then deploys Pages.
+#
+# Use this while iterating on foreclosure NCAD matching (Andrew / 269 /
+# 291 etc.) — a ~3-5 min run instead of the full ~25 min daily scrape.
+# The daily "Scrape Nueces leads" workflow is completely untouched and
+# unaffected by this; when training is done, simply stop using this
+# workflow.
+#
+# Requires Playwright/Chromium (esearch drives a real browser) but NOT
+# tesseract/poppler (no OCR here).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "foreclosure-esearch"
+  cancel-in-progress: false
+
+jobs:
+  esearch:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      - name: Install Playwright + Chromium (for NCAD esearch)
+        run: python -m playwright install --with-deps chromium
+
+      - name: Foreclosure esearch only
+        env:
+          LOG_LEVEL: INFO
+          PYTHONUNBUFFERED: "1"
+          FORECLOSURE_ESEARCH_ONLY: "1"
+        run: python scraper/fetch.py
+
+      - name: Commit refreshed foreclosure data
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          git add data/foreclosures.json dashboard/foreclosures.json 2>/dev/null || true
+          # The esearch cache also changes — commit it so progress
+          # persists across tuning runs (v5 cache, accumulated hits).
+          git add .cache/ncad_search_cache.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "chore: foreclosure esearch only $(date -u +'%Y-%m-%dT%H:%MZ')"
+            git push
+          fi
+
+      - name: Upload dashboard artifact for Pages deploy
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    needs: esearch
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
