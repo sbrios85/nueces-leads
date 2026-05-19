@@ -4359,5 +4359,78 @@ def main() -> int:
     return 0
 
 
+def run_foreclosure_esearch_only() -> int:
+    """Lean entry point: run ONLY the foreclosure esearch step.
+
+    Skips the entire clerk scrape, the 166 MB NCAD bulk download, and
+    the general-records esearch. Loads the existing foreclosures.json,
+    runs enrich_via_ncad_search on those records (so the corroboration
+    guard, address-search fallback, broadened name variants, v5 cache,
+    etc. all apply), and writes the enriched JSON back.
+
+    This is the fast tuning loop for iterating on foreclosure NCAD
+    matching (Andrew / 269 / 291 etc.) — a ~3-5 min run instead of the
+    full ~25 min scrape. It does NOT modify any non-foreclosure data.
+    The daily scrape (main) is untouched and unaffected.
+    """
+    log.info("=== FORECLOSURE-ESEARCH-ONLY run (lean tuning mode) ===")
+    try:
+        existing_path = DASHBOARD_DIR / "foreclosures.json"
+        if not existing_path.exists():
+            log.error("foreclosures.json not found at %s — nothing to do "
+                      "(run a full scrape first)", existing_path)
+            return 1
+        js = json.loads(existing_path.read_text(encoding="utf-8"))
+        all_fc_records = js.get("records", []) or []
+        log.info("foreclosure-esearch-only: loaded %d records from JSON",
+                 len(all_fc_records))
+
+        class _FCWrapper:
+            """Attribute-style proxy over a dict (same as the inline
+            wrapper in main()'s step 9b)."""
+            __slots__ = ("_d",)
+            def __init__(self, d): self._d = d
+            def __getattr__(self, name):
+                if name == "_d":
+                    return object.__getattribute__(self, "_d")
+                return self._d.get(name) or ""
+            def __setattr__(self, name, value):
+                if name == "_d":
+                    object.__setattr__(self, name, value)
+                else:
+                    self._d[name] = value
+
+        wrappers = [_FCWrapper(d) for d in all_fc_records]
+        owners_present = sum(1 for w in wrappers if w.owner)
+        log.info("foreclosure-esearch-only: %d/%d records have owners",
+                 owners_present, len(wrappers))
+        if owners_present == 0:
+            log.info("foreclosure-esearch-only: no records have owners — "
+                     "nothing to enrich")
+            return 0
+
+        enrich_via_ncad_search(wrappers, always_lookup=True)
+        js["records"] = all_fc_records  # mutated in place
+        for path in (DASHBOARD_DIR / "foreclosures.json",
+                      DATA_DIR / "foreclosures.json"):
+            with path.open("w", encoding="utf-8") as fh:
+                json.dump(js, fh, indent=2, default=str)
+            log.info("wrote %s (%d foreclosures, post-esearch)",
+                     path, len(all_fc_records))
+        log.info("=== foreclosure-esearch-only done — outputs rewritten ===")
+        return 0
+    except Exception as exc:
+        log.error("foreclosure-esearch-only failed: %s\n%s",
+                  exc, traceback.format_exc())
+        return 1
+
+
 if __name__ == "__main__":
+    # FORECLOSURE_ESEARCH_ONLY=1 routes to the lean tuning entry point
+    # (foreclosure NCAD esearch only — no clerk scrape, no bulk
+    # download, no general records). Anything else runs the normal
+    # full daily scrape. main() is completely untouched by this.
+    if os.environ.get("FORECLOSURE_ESEARCH_ONLY", "").lower() in (
+            "1", "true", "yes", "y"):
+        sys.exit(run_foreclosure_esearch_only())
     sys.exit(main())
