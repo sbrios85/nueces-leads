@@ -1,5 +1,5 @@
 {
-  "_version": "v5",
+  "_version": "v6",
   "data": {
     "NEGRONIGURU LLC": {
       "site_addr": "627 INDIANA AVE",
@@ -8890,30 +8890,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "791275"
     },
-    "SANSING GERALD A": null,
-    "BLANCO JUAN L": null,
-    "247 ON SITE LLC": null,
-    "SCALPEL PRODUCTIONS LLC": null,
-    "SANCHEZ BRIANA": null,
-    "PENA SABRINA": null,
-    "HARRISON JASMINE": null,
-    "RODRIGUEZ JOSELYN": null,
-    "GUNNA JOEL A": null,
-    "MC J'S & ASSOCIATES LLC": null,
-    "U S BANK TRUST NATIONAL ASSOCIATION": null,
-    "GRANADO ESTATES LP": null,
-    "SELENE FINANCE LP": null,
-    "BAUTISTA RICARDO D": null,
-    "UZOIGWE STANISLAUS NWAFOR": null,
-    "VALENCIA RICARDA": null,
-    "CHAPMAN SARA RENE": null,
-    "BARRERA FILIBERTO G JR": null,
-    "FARMER RANDALL L": null,
-    "ALVARADO ROBERT LEE": null,
-    "RETZLOFF DESTINY": null,
-    "TLC COMPLETE CARE": null,
-    "VALDEZ ASHLEY": null,
-    "VALDEZ ALEXUS MELAINA": null,
     "ECHAVARRIA JAMES": {
       "site_addr": "14429 PENTRIDGE DR",
       "site_city": "CORPUS CHRISTI",
@@ -8942,7 +8918,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "775812"
     },
-    "HERNANDEZ JANESSA": null,
     "PEREZ ADRIANNA NICOLE": {
       "site_addr": "6914 EMPEROR CT",
       "site_city": "CORPUS CHRISTI",
@@ -8971,7 +8946,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "824777"
     },
-    "CEVALLOS LEYDI": null,
     "HERNANDEZ ALEX": {
       "site_addr": "1625 TRIPLE CROWN DR",
       "site_city": "CORPUS CHRISTI",
@@ -8986,7 +8960,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "711574"
     },
-    "ELIZALDE JAZMYN": null,
     "ZAMORA NATALIE": {
       "site_addr": "3018 QUEBEC",
       "site_city": "CORPUS CHRISTI",
@@ -9057,10 +9030,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "423782"
     },
-    "JONES KAYTLIN": null,
-    "HALDAR MOUSSA N": null,
-    "KAREN CHA": null,
-    "Johnny P. Martinez and Maria Virginia Martinez": null,
     "ROGELIO O. ELIZONDO AND MARIA J. ELIZONDO": {
       "site_addr": "5535 WARBONNET DR",
       "site_city": "ROBSTOWN",
@@ -9089,7 +9058,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "323246"
     },
-    "IRMA LETICIA SAENZ A/K/A IRMA SAENZ": null,
     "Englebert Devera and Noemi Devera": {
       "site_addr": "902 W LAKESIDE DR",
       "site_city": "CORPUS CHRISTI",
@@ -9157,12 +9125,116 @@
       "ncad_year": "2026",
       "ncad_owner_id": "660170"
     },
-    "RICKY ROBERTS JR": null,
-    "JAMES P JONES": null,
-    "BENJAMIN G. BRULLOTHS": null,
-    "Jesus A. Balli and Brijida Escobedo": null,
-    "SETH GARRETT SMITH": null,
-    "RUBY BENAVIDEZ": null,
+    "KAREN CHA": {
+      "site_addr": "5718 VENTURA LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78417",
+      "mail_addr": "5718 VENTURA CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78417",
+      "appraised_value": 243173.0,
+      "ncad_prop_id": "378598",
+      "ncad_year": "2026",
+      "ncad_owner_id": "576577"
+    },
+    "Johnny P. Martinez and Maria Virginia Martinez": null,
+    "IRMA LETICIA SAENZ A/K/A IRMA SAENZ": {
+      "site_addr": "4226 WOOD RIVER DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "4226 Wood River Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "appraised_value": 282146.0,
+      "ncad_prop_id": "200065268",
+      "ncad_year": "2026",
+      "ncad_owner_id": "744265"
+    },
+    "RICKY ROBERTS JR": {
+      "site_addr": "14014 HAWKSNEST BAY DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "14014 Hawksnest Bay Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "appraised_value": 532114.0,
+      "ncad_prop_id": "288971",
+      "ncad_year": "2026",
+      "ncad_owner_id": "688155"
+    },
+    "JAMES P JONES": {
+      "site_addr": "2002 ORANGE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "2002 Orange St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "appraised_value": 217550.0,
+      "ncad_prop_id": "226178",
+      "ncad_year": "2026",
+      "ncad_owner_id": "776159"
+    },
+    "BENJAMIN G. BRULLOTHS": {
+      "site_addr": "10302 HILL COUNTRY LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "10302 HILL COUNTRY LN CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "appraised_value": 333094.0,
+      "ncad_prop_id": "376376",
+      "ncad_year": "2026",
+      "ncad_owner_id": "818385"
+    },
+    "Jesus A. Balli and Brijida Escobedo": {
+      "site_addr": "2522 WHIRLWIND ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414",
+      "mail_addr": "2522 WHIRLWIND ST CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "appraised_value": 258766.0,
+      "ncad_prop_id": "200117128",
+      "ncad_year": "2026",
+      "ncad_owner_id": "823353"
+    },
+    "SETH GARRETT SMITH": {
+      "site_addr": "6199 N SANDY HOLLOW",
+      "site_city": "SANDIA",
+      "site_state": "TX",
+      "site_zip": "78383",
+      "mail_addr": "430 Knickerbocker St Apt 13 Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "appraised_value": 249130.0,
+      "ncad_prop_id": "297648",
+      "ncad_year": "2026",
+      "ncad_owner_id": "708017"
+    },
+    "RUBY BENAVIDEZ": {
+      "site_addr": "649 CHAMBERLAIN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "649 Chamberlain St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78404",
+      "appraised_value": 210585.0
+    },
     "JOSE ALBERTO LANDEROS JR AND LAURA LANDEROS": null,
     "Michael Scrutchin and Dorothy Scrutchin": null,
     "ANDREW E NICHOLS I": null,
