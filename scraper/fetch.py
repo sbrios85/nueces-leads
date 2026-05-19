@@ -2482,8 +2482,29 @@ def _load_search_cache() -> Dict[str, Optional[Dict[str, str]]]:
         return {}
 
     # Versioned envelope (current format).
-    if isinstance(raw, dict) and raw.get("_version") == "v5":
+    if isinstance(raw, dict) and raw.get("_version") == "v6":
         return raw.get("data", {})
+
+    # v5 → v6 upgrade. v5 misses were cached BEFORE the "5d" name
+    # variant (surname + first name only, no middle initial, no
+    # suffix — e.g. "NICHOLS ANDREW"). That exact form is what NCAD's
+    # owner index matches for records like doc 2026000296 (the deed
+    # reads "ANDREW E NICHOLS II", OCR'd to "...I"; "NICHOLS ANDREW E"
+    # and bare "NICHOLS" do NOT return the parcel, but "NICHOLS
+    # ANDREW" returns it instantly — confirmed by manual search).
+    # KEEP the hits (still valid), DISCARD the misses so every
+    # previously-missed name is re-attempted ONCE with the new
+    # variant. Genuine misses simply re-cache as v6 misses and are
+    # skipped on subsequent runs (forward progress preserved). Same
+    # proven mechanism as the v4 → v5 upgrade below.
+    if isinstance(raw, dict) and raw.get("_version") == "v5":
+        v5_data = raw.get("data", {})
+        kept = {k: v for k, v in v5_data.items() if v is not None}
+        log.info("upgrading v5 → v6 cache: kept %d hits, "
+                 "discarded %d misses (will retry with surname+first "
+                 "name variant)",
+                 len(kept), len(v5_data) - len(kept))
+        return kept
 
     # v4 → v5 upgrade. v4 misses were generated BEFORE the broadened
     # name-variant logic (first+last, first+middle+last, "I"-suffix
@@ -2526,7 +2547,7 @@ def _save_search_cache(cache: Dict[str, Optional[Dict[str, str]]]) -> None:
     path = ROOT_DIR / NCAD_SEARCH_CACHE
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        envelope = {"_version": "v5", "data": cache}
+        envelope = {"_version": "v6", "data": cache}
         path.write_text(json.dumps(envelope, indent=2), encoding="utf-8")
         log.info("esearch cache: %d entries written to %s",
                  len(cache), path)
