@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -982,8 +981,54 @@ const FC_DEAD_REASONS = {
   "not_interested": "Not interested",
   "sold_cancelled": "Already sold / cancelled",
   "bad_address":    "Bad address / can't find",
-  "other":          "Other"
+  "other":          "Other",
+  "tract_auto":     "Tract (auto)"
 };
+
+// ---- Auto-dead: tract-described leads -------------------------------
+// Business rule (user decision): a foreclosure whose legal description
+// contains the whole word TRACT or TRACTS is auto-routed to the dead
+// section. These are typically rural/large-tract or non-standard plat
+// properties the user does not pursue. Matching is whole-word and
+// case-insensitive so it won't fire on substrings like "TRACTOR".
+//
+// IMPORTANT — this is a SOFT default, not a hard override:
+//   * It only applies when the record has NO explicit FC CRM entry.
+//   * The moment the user clicks Restore (or otherwise sets an
+//     explicit status), restoreFcLead writes an explicit
+//     status:"active" entry, which WINS over this rule — so a
+//     restored tract lead stays active across reloads and does NOT
+//     bounce back into the dead section.
+//   * A manual mark-dead still writes status:"dead" as before.
+// We read the EFFECTIVE legal (manual edit wins over scraped) so that
+// if the user edits a legal to remove/added TRACT, the rule follows
+// what's actually shown.
+const _RE_TRACT_LEGAL = /\bTRACTS?\b/i;
+function fcLegalIsTract(r) {
+  try {
+    const lg = fcFieldValue(r, "legal") || "";
+    return _RE_TRACT_LEGAL.test(String(lg));
+  } catch (e) { return false; }
+}
+// Returns true when this record should render in the dead section.
+//   explicit "dead"            -> dead (manual mark-dead, unchanged)
+//   explicit "active"          -> active (manual restore overrides
+//                                 the auto rule; stays active)
+//   no explicit entry + tract  -> auto-dead
+//   no explicit entry, no tract-> active
+function fcIsDead(r, fcCrm) {
+  const e = fcCrm ? fcCrm[r.doc_num] : loadFcCrm()[r.doc_num];
+  if (e && e.status === "dead") return true;
+  if (e && e.status === "active") return false;
+  return fcLegalIsTract(r);
+}
+// True only for the auto (rule-driven) case — used to label the row's
+// dead reason as "Tract (auto)" and distinguish it from a manual kill.
+function fcIsAutoDeadTract(r, fcCrm) {
+  const e = fcCrm ? fcCrm[r.doc_num] : loadFcCrm()[r.doc_num];
+  if (e && (e.status === "dead" || e.status === "active")) return false;
+  return fcLegalIsTract(r);
+}
 function loadFcCrm() {
   try { return JSON.parse(localStorage.getItem(FC_CRM_KEY) || "{}"); }
   catch (e) { return {}; }
@@ -2039,8 +2084,11 @@ function renderFc() {
   const activeRecords = [];
   const deadRecords = [];
   for (const r of FC_FILTERED) {
-    const e = fcCrm[r.doc_num];
-    if (e && e.status === "dead") deadRecords.push(r);
+    // Dead if: explicitly marked dead, OR (no explicit CRM entry AND
+    // its legal is tract-described). An explicit "active" entry from
+    // Restore overrides the auto rule. See fcIsDead() for the full
+    // precedence rules.
+    if (fcIsDead(r, fcCrm)) deadRecords.push(r);
     else activeRecords.push(r);
   }
 
@@ -2342,7 +2390,12 @@ function buildFcRow(r, isDead) {
   if (isDead) {
     const fcCrm = loadFcCrm();
     const entry = fcCrm[r.doc_num] || {};
-    const reasonLabel = FC_DEAD_REASONS[entry.reason] || "Other";
+    // Auto-dead tract leads have no explicit entry — label them
+    // "Tract (auto)" so they're visibly distinct from a manual kill.
+    // A manually-killed lead keeps its chosen reason.
+    const reasonLabel = fcIsAutoDeadTract(r, fcCrm)
+      ? FC_DEAD_REASONS["tract_auto"]
+      : (FC_DEAD_REASONS[entry.reason] || "Other");
     statusCell = `
       <span class="pill status status-dead" title="This lead is marked dead">Dead</span>
       <div class="dead-reason-cell">${esc(reasonLabel)}</div>
