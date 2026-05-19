@@ -1,0 +1,153 @@
+# Re-corroborate NCAD parcel matches against current clerk legals.
+#
+# Background: the daily scrape attaches NCAD parcels by owner-name
+# search. The corroboration guard inside fetch.py is supposed to reject
+# obviously-wrong parcels by comparing legals, but at scrape time the
+# clerk-side legal is often empty (the PDF parser fills it in later) so
+# the guard short-circuits and a wrong parcel can be attached purely on
+# name score. Concrete real example: doc 2026000263 got NCAD parcel
+# 190276 (Bay Terr, $69k) when the correct parcel is 200066716 (Woodland
+# Creek, $211k).
+#
+# This workflow runs the standalone re-corroboration script which, for
+# every record with both an attached NCAD parcel AND a now-known clerk
+# legal, fetches the NCAD property page directly (not session-gated)
+# and compares its Legal Description to the clerk legal. Mismatches
+# get evicted (NCAD-derived fields cleared); manual overrides on the
+# dashboard are untouched (they live in the user's localStorage and
+# win at render time).
+#
+# DEFAULT MODE: dry-run. Walks every eligible record, writes a full
+# verdict log to data/recorroborate_log.json, makes NO changes to
+# foreclosures.json. Run this first, review the log, THEN run with the
+# Apply input set to true to actually evict.
+#
+# Rollback: every apply-mode run commits both foreclosures.json files
+# in a single commit. `git revert` that commit (then re-run Pages
+# deploy) restores prior state.
+
+name: Re-corroborate NCAD matches
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply evictions (default is dry-run / log only)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "recorroborate-ncad"
+  cancel-in-progress: false
+
+jobs:
+  recorroborate:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      - name: Install Playwright + Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Re-corroborate NCAD matches
+        env:
+          LOG_LEVEL: INFO
+          PYTHONUNBUFFERED: "1"
+          RECORROBORATE_APPLY: "${{ inputs.apply && '1' || '0' }}"
+        run: python scraper/recorroborate_ncad.py
+
+      - name: Show summary log
+        if: always()
+        run: |
+          if [ -f data/recorroborate_log.json ]; then
+            echo "=== Run summary (data/recorroborate_log.json) ==="
+            python3 -c "
+          import json
+          d = json.load(open('data/recorroborate_log.json'))
+          print('mode      :', d['mode'])
+          print('eligible  :', d['eligible'])
+          print('matches   :', d['matches'])
+          print('mismatches:', d['mismatches'])
+          print('ambiguous :', d['ambiguous'])
+          print('errors    :', d['errors'])
+          print('skipped   :', d['skipped'])
+          print()
+          if d['mismatch_details']:
+              print('=== Mismatches ===')
+              for m in d['mismatch_details']:
+                  print(f\"  {m['doc_num']}  (prop_id {m['ncad_prop_id']})\")
+                  print(f\"    clerk: {m['clerk_legal'][:90]!r}\")
+                  print(f\"    ncad : {m['ncad_legal'][:90]!r}\")
+          "
+          else
+            echo "no log written"
+          fi
+
+      - name: Commit changes (apply mode only)
+        if: ${{ inputs.apply }}
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          git add dashboard/foreclosures.json data/foreclosures.json \
+                  data/recorroborate_log.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "chore: re-corroborate NCAD matches $(date -u +'%Y-%m-%dT%H:%MZ')"
+            git push
+          fi
+
+      - name: Commit dry-run log only
+        if: ${{ !inputs.apply }}
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          # In dry-run mode the JSON data files don't change, but we
+          # still commit the log so you can review it from the repo.
+          git add data/recorroborate_log.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no log changes to commit"
+          else
+            git commit -m "chore: re-corroborate NCAD dry-run log $(date -u +'%Y-%m-%dT%H:%MZ')"
+            git push
+          fi
+
+      - name: Upload dashboard artifact for Pages deploy
+        if: ${{ inputs.apply }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    needs: recorroborate
+    if: ${{ inputs.apply }}
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
