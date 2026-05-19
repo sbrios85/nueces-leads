@@ -784,7 +784,13 @@ _BLACKLIST_ADDRESSES = (
 _RE_LEGAL_PARENS = re.compile(
     # LOT: word form with optional comma before the parenthesised digit
     # ("LOT NINE (9)" OR "LOT NINE, (9)") OR plain digit ("LOT 9").
-    r"LOT[S]?\s+(?:[\w-]+(?:\s+[\w-]+)*?\s*,?\s*\((?P<lotw>\d+)\)"
+    # LOT keyword: tolerate the common OCR o->a confusion ("Lat" for
+    # "Lot", seen in doc 2026000265 — "Lat Sixteen (16)"). Scanned all
+    # 103 archived samples: "Lat" is the ONLY such variant present, so
+    # this is deliberately narrow (just o/a) rather than a broad
+    # any-letter loosening that would add regression surface for zero
+    # real benefit.
+    r"L[OA]T[S]?\s+(?:[\w-]+(?:\s+[\w-]+)*?\s*,?\s*\((?P<lotw>\d+)\)"
     r"|(?P<lotd>\d+))[,\s]+"
     # BLOCK: same flexibility — word-paren OR plain digit. Notices mix
     # these freely ("LOT NINE, (9), BLOCK 1" -> doc 2026000296).
@@ -1492,7 +1498,22 @@ def legal_descriptions_match(a: str, b: str) -> bool:
         return False
     if not la or not lb:
         return False
-    if la != lb:
+    # Lot comparison: treat each side's lot field as a SET of tokens
+    # rather than a single value. Foreclosure clerk legals often list
+    # both lots on a 2-lot parcel ("LOTS 7,8" or "LOT 22,23"); the
+    # corresponding NCAD record may list only the lead lot, or list
+    # the partial slices ("E 50' LT 22 & W 15' LT 23"). The properties
+    # are still the same — any overlap between the lot sets is a
+    # match. Real examples that broke under strict equality:
+    #   clerk "LOT 22,23"  vs ncad "LT 22"               (doc 243)
+    #   clerk "LOTS 7,8"   vs ncad "LOT 7&8"              (doc 264)
+    #   clerk "LOT 1,2"    vs ncad "LT 1 AND N .50 OF LT 2" (doc 247)
+    # Empty intersection still rejects (e.g. clerk LOT 15 vs ncad LOT 18).
+    def _lot_set(lot_str: str) -> set:
+        return {p.strip(" ,-")
+                for p in re.split(r"[,&\s]+", lot_str)
+                if p.strip(" ,-")}
+    if not (_lot_set(la) & _lot_set(lb)):
         return False
     if ba and bb and ba != bb:
         return False
