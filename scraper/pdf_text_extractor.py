@@ -179,7 +179,24 @@ _RE_BORROWER = [
                 r"(?:Mortgagor|Borrower|Grantor)s?"
                 r"['\"\u2018\u2019\u201C\u201D]?\)",
                re.IGNORECASE),
-    # Two-column header table:  "Grantor(s)/Mortgagor(s):" on one line,
+    # OCR-jumbled "on or about NAMES DATE (\"Borrower\")" — the normal
+    # template reads "on or about [DATE], [NAMES] (\"Borrower\")", but
+    # some scans transpose the date and the names so the name list
+    # lands BEFORE the date and the (\"Borrower\") marker sits after
+    # the date (doc 2026000219:
+    #   "...on or about Edgar O. Ortega, Hilario Hernandez and
+    #    Alejandro Hernandez January 23, 2025 (\"Borrower\")..."
+    # ). Anchored hard on "on or about" + month-name date +
+    # parenthesised Borrower so it can't misfire on prose. Placed
+    # before the looser/boilerplate patterns so it wins for this form;
+    # the normal date-first order is still handled by later patterns.
+    re.compile(r"on\s+or\s+about\s+"
+                r"([A-Z][A-Za-z.,'&\s-]{6,120}?)"
+                r"\s+(?:January|February|March|April|May|June|July|"
+                r"August|September|October|November|December)"
+                r"\s+\d{1,2},?\s*\d{4}"
+                r"\s*\(\s*['\"\u2018\u2019\u201C\u201D]?Borrower",
+               re.IGNORECASE),
     # the borrower name on the FOLLOWING line — McCarthy & Holthus /
     # power-of-sale "table" template (254). The next line is often
     # prefixed with the Deed-of-Trust date ("6/20/2008 KAREN CHAVEZ"),
@@ -931,8 +948,12 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
     # NOTE: indices shifted +2 when the Upton-Mickits "executed by
     # NAMES (Mortgagor)" pattern and the McCarthy "Grantor(s)/
     # Mortgagor(s):" table pattern were prepended to _RE_BORROWER.
-    # Old {3,4,7} -> {5,6,9}.
-    ENTITY_BORROWER_PATTERN_INDICES = {5, 6, 9}  # Mortgagor / Grantor:LLC / Trustee-of-Trust
+    # Old {3,4,7} -> {5,6,9}. Then shifted +1 again when the OCR-
+    # jumbled "on or about NAMES DATE (Borrower)" pattern was inserted
+    # at index 1 (doc 2026000219 fix): {5,6,9} -> {6,7,10}. Verified
+    # the new indices point to the Mortgagor / Grantor:LLC /
+    # Trustee-of-Trust entity patterns.
+    ENTITY_BORROWER_PATTERN_INDICES = {6, 7, 10}  # Mortgagor / Grantor:LLC / Trustee-of-Trust
     for idx, rx in enumerate(_RE_BORROWER):
         m = rx.search(text)
         if m:
