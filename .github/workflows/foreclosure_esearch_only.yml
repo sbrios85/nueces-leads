@@ -24,6 +24,11 @@ name: Foreclosure esearch only
 
 on:
   workflow_dispatch:
+    inputs:
+      retry_misses:
+        description: "Re-attempt previously-missed names (use after changing match logic; cached hits still reused)"
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -65,6 +70,7 @@ jobs:
           LOG_LEVEL: INFO
           PYTHONUNBUFFERED: "1"
           FORECLOSURE_ESEARCH_ONLY: "1"
+          ESEARCH_RETRY_MISSES: "${{ inputs.retry_misses && '1' || '0' }}"
         run: python scraper/fetch.py
 
       - name: Commit refreshed foreclosure data
