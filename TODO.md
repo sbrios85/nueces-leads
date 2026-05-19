@@ -1,3 +1,4 @@
+[TODO.md](https://github.com/user-attachments/files/28032648/TODO.md)
 [TODO.md](https://github.com/user-attachments/files/27653434/TODO.md)
 # TODO
 
@@ -142,6 +143,60 @@ when broadening to other counties), consider:
 3. Browser extension (works inside user's real Chrome, no detection)
 
 ## Investigated and parked
+
+- **TRACT-form legals: parsed + auto-deaded on dashboard, but NCAD
+  address still not auto-matched (two separate issues — read both)**
+
+  *Status: dashboard auto-dead SHIPPED. Underlying NCAD-match gap and a
+  distinct wrong-parcel bug remain UNSOLVED.*
+
+  Three things happened, and they are not the same thing — keep them
+  separate when revisiting:
+
+  1. **Parser fix (done, shipped).** `pdf_text_extractor.py` previously
+     had only LOT/BLOCK legal regexes, so TRACT-form legals (e.g. doc
+     2026000292 "TRACTS ONE (1) AND TWO (2), SHARPSBURG ADDITION")
+     parsed to a BLANK legal. Added `_RE_LEGAL_TRACT` (third fallback)
+     + matching assembly in `extract_uploaded_pdfs.py`. Regression-
+     tested over all 103 text-archive samples: zero owner/lender/
+     amount/address regressions. After the "Re-parse text archive"
+     workflow run, 2026000292 and 2026000266 now carry their legals.
+
+  2. **Dashboard auto-dead (done, shipped).** Per user decision, the
+     dashboard (`dashboard/index.html`) now auto-routes any record
+     whose EFFECTIVE legal contains the whole word TRACT/TRACTS to the
+     dead-leads section, labeled "Tract (auto)". Soft default: an
+     explicit Restore writes status:"active" which overrides the rule
+     (restored tract leads stay active and do NOT bounce back).
+     Currently catches 2026000292, 2026000291, 2026000266. NOTE: this
+     also auto-kills 2026000292 = 4646 Sharpsburg, which the
+     foreclosure PDF proves is a LEGITIMATE in-town Corpus Christi
+     house. User accepted this tradeoff knowingly; the "Tract (auto)"
+     label + one-click Restore is the mitigation.
+
+  3. **Still unsolved — TRACT legals don't auto-match NCAD address.**
+     The text-archive re-parse path deliberately SKIPS the NCAD
+     cross-reference (no browser), so 2026000292 / 2026000266 still
+     show their old/wrong addresses (3442 XANADU, 1941 YALE). Even on
+     the full daily scrape path, `legal_descriptions_match` keys on
+     LOT/BLOCK — tract legals have neither, so they will not
+     auto-confirm an NCAD parcel even with a correct legal. Fixing
+     this needs a tract-aware NCAD matcher (match on subdivision +
+     tract id, or capture each candidate parcel's own legal to
+     compare). Not started.
+
+  4. **Distinct bug — 2026000266 wrong-parcel match.** Separate from
+     the above: 2026000266's legal is the Robstown "GEORGE H PAUL
+     SUBDIVISION… TRACT 38" but the scraper attached NCAD parcel
+     249198 = "JONES JOHN BLK 3 LOT 21" = 1941 Yale, Corpus Christi —
+     a different property. Owner-name collision (owner has multiple
+     parcels) defeated the corroboration guard in fetch.py
+     `_pick_best_esearch_row` / `_legal_match`, which is skippable
+     when clerk legal is empty and too loose when it isn't. This is a
+     corroboration-guard defect, NOT the parser or the auto-dead rule.
+     Auto-dead now hides this record anyway, so it's lower urgency,
+     but the underlying wrong-match logic is still there for any
+     non-tract record.
 
 - **Consideration / lien amount on CCLN tab via clerk portal**:
   investigated three paths — (a) JSON XHR payloads don't include it,
