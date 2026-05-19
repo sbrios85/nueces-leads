@@ -104,6 +104,22 @@ NCAD_SEARCH_DELAY_SEC   = 1.5      # between requests, polite to the server
 # 30-min job timeout for the final commit/deploy steps.
 NCAD_SEARCH_PHASE_BUDGET_SEC = 18 * 60   # hard wall-clock cap
 
+# Legal-description matcher, used to corroborate esearch name matches
+# against the foreclosure's legal description so a loose surname hit
+# (e.g. "REYNOLDS" -> an unrelated "REYNOLDS RICHARD" parcel) is
+# rejected instead of attaching the wrong NCAD property. Imported
+# defensively: if the parser module is unavailable for any reason the
+# guard simply doesn't fire (esearch behaves as before) rather than
+# crashing the scraper.
+try:
+    from pdf_text_extractor import legal_descriptions_match as _legal_match
+except Exception:  # pragma: no cover - defensive
+    try:
+        from scraper.pdf_text_extractor import (  # type: ignore
+            legal_descriptions_match as _legal_match)
+    except Exception:
+        _legal_match = None  # guard disabled if matcher unavailable
+
 LOOKBACK_DAYS = 30   # Window covering recent filings. The clerk portal
                      # is typically 5-10 days behind real-time as records
                      # work through certification. 30 days gives us a
@@ -2466,8 +2482,26 @@ def _load_search_cache() -> Dict[str, Optional[Dict[str, str]]]:
         return {}
 
     # Versioned envelope (current format).
-    if isinstance(raw, dict) and raw.get("_version") == "v4":
+    if isinstance(raw, dict) and raw.get("_version") == "v5":
         return raw.get("data", {})
+
+    # v4 → v5 upgrade. v4 misses were generated BEFORE the broadened
+    # name-variant logic (first+last, first+middle+last, "I"-suffix
+    # handling) and the circuit-breaker fix. Many of those "no match"
+    # entries are now matchable (e.g. ANDREW E NICHOLS I → the
+    # "NICHOLS ANDREW" variant returns the parcel — confirmed by
+    # manual search). KEEP the hits (still valid) but DISCARD the
+    # misses so every previously-missed name is re-attempted ONCE with
+    # the new logic. Genuine misses simply re-cache as v5 misses and
+    # are skipped on subsequent runs (forward progress preserved).
+    if isinstance(raw, dict) and raw.get("_version") == "v4":
+        v4_data = raw.get("data", {})
+        kept = {k: v for k, v in v4_data.items() if v is not None}
+        log.info("upgrading v4 → v5 cache: kept %d hits, "
+                 "discarded %d misses (will retry with broadened "
+                 "name search)",
+                 len(kept), len(v4_data) - len(kept))
+        return kept
 
     # v3 cache contains a mix of legitimate address hits AND false "no
     # match" entries (token expiry caused ~300 false negatives). On
@@ -2492,7 +2526,7 @@ def _save_search_cache(cache: Dict[str, Optional[Dict[str, str]]]) -> None:
     path = ROOT_DIR / NCAD_SEARCH_CACHE
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        envelope = {"_version": "v4", "data": cache}
+        envelope = {"_version": "v5", "data": cache}
         path.write_text(json.dumps(envelope, indent=2), encoding="utf-8")
         log.info("esearch cache: %d entries written to %s",
                  len(cache), path)
@@ -2537,7 +2571,23 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
     log.info("esearch: %d cached entries loaded", len(cache))
 
     try:
-        results = asyncio.run(_run_ncad_searches([r.owner for r in todo], cache))
+        # Map owner -> the foreclosure's own legal description, so the
+        # esearch corroboration guard can reject loose surname matches
+        # that land on an unrelated parcel (docs 269/291). Last writer
+        # wins on duplicate owners; that's fine — the guard only needs
+        # *a* legal to compare and a wrong one simply fails to
+        # corroborate (safe: attaches no link rather than a wrong one).
+        legal_by_name = {}
+        addr_by_name = {}
+        for r in todo:
+            lg = (getattr(r, "legal", "") or "").strip()
+            if lg:
+                legal_by_name[r.owner] = lg
+            ad = (getattr(r, "prop_address", "") or "").strip()
+            if ad:
+                addr_by_name[r.owner] = ad
+        results = asyncio.run(_run_ncad_searches(
+            [r.owner for r in todo], cache, legal_by_name, addr_by_name))
     except Exception as exc:
         log.error("esearch loop failed: %s\n%s", exc, traceback.format_exc())
         results = {}
@@ -2588,7 +2638,9 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
 
 
 async def _run_ncad_searches(names: List[str],
-                              cache: Dict[str, Optional[Dict[str, str]]]
+                              cache: Dict[str, Optional[Dict[str, str]]],
+                              legal_by_name: Optional[Dict[str, str]] = None,
+                              addr_by_name: Optional[Dict[str, str]] = None
                               ) -> Dict[str, Optional[Dict[str, str]]]:
     """Drive Playwright through one esearch query per uncached name.
 
@@ -2716,7 +2768,14 @@ async def _run_ncad_searches(names: List[str],
                 lookups_since_refresh = 0
 
             try:
-                info = await _esearch_one(page, name, token, current_year)
+                rec_legal = ""
+                rec_addr = ""
+                if legal_by_name:
+                    rec_legal = legal_by_name.get(name, "") or ""
+                if addr_by_name:
+                    rec_addr = addr_by_name.get(name, "") or ""
+                info = await _esearch_one(page, name, token, current_year,
+                                          rec_legal, rec_addr)
             except Exception as exc:
                 log.warning("esearch lookup failed for %r: %s", name, exc)
                 info = None
@@ -2792,7 +2851,9 @@ async def _run_ncad_searches(names: List[str],
 
 
 async def _esearch_one(page, name: str, token: str,
-                        current_year: str) -> Optional[Dict[str, str]]:
+                        current_year: str,
+                        record_legal: str = "",
+                        record_addr: str = "") -> Optional[Dict[str, str]]:
     """Query NCAD esearch for a single owner name, return the first
     matching parcel's address dict, or None.
 
@@ -2861,7 +2922,7 @@ async def _esearch_one(page, name: str, token: str,
 
         # Pick the best row. Appraised value comes from the result-list
         # page directly via the `_appraisedValueDisplay` cell.
-        best = _pick_best_esearch_row(rows, candidate)
+        best = _pick_best_esearch_row(rows, candidate, record_legal)
         if not best:
             continue
 
@@ -2914,6 +2975,99 @@ async def _esearch_one(page, name: str, token: str,
         best.pop("_detail_year", None)
         best.pop("_detail_owner_id", None)
         return best
+
+    # ---- Address-search fallback ------------------------------------
+    # Every name variant failed (or was rejected by the corroboration
+    # guard). If the foreclosure has a property address, search NCAD by
+    # address instead. Owner names frequently don't match NCAD's roll
+    # (spouse/trust/transfer/spelling) while the situs address is
+    # exact — e.g. doc 2026000269: name search hit the wrong "REYNOLDS
+    # RICHARD" parcel, but a search for "14916 Packery" returns the
+    # correct Mary Reynolds parcel instantly. The same corroboration
+    # guard is applied to the address-search results, so a stray
+    # address hit still can't attach a wrong parcel.
+    if record_addr:
+        street, _city, _st, _zip = _split_us_address(record_addr)
+        m = re.match(r"\s*(\d+)\s+(.+)", street or "")
+        if m:
+            st_num = m.group(1)
+            # NCAD matches on the leading street-name token(s); strip
+            # unit/suffix noise. First alpha word is the safest, most
+            # selective key (proven: "Packery" returns the parcel).
+            rest = re.sub(r"[^A-Za-z0-9 ].*$", "", m.group(2)).strip()
+            st_name = rest.split()[0] if rest.split() else ""
+            if st_num and st_name:
+                kw = (f"StreetNumber:{st_num} "
+                      f"StreetName:{st_name} Year:{current_year} ")
+                params = {"keywords": kw}
+                if token:
+                    params["searchSessionToken"] = token
+                a_url = (f"{NCAD_ESEARCH_BASE}/search/result?"
+                         f"{urlencode(params)}")
+                try:
+                    await page.goto(a_url,
+                                    wait_until="domcontentloaded",
+                                    timeout=20_000)
+                    try:
+                        await page.wait_for_selector(
+                            "table tbody tr, [class*='no-results'], "
+                            "[class*='NoResults']", timeout=8_000)
+                    except Exception:
+                        pass
+                    await page.wait_for_timeout(400)
+                    a_html = await page.content()
+                    a_rows = _parse_esearch_result_list(a_html)
+                    if a_rows:
+                        # Reuse the corroboration guard. Pass the
+                        # record's own address as the "query" so a
+                        # situs-vs-situs sanity check still applies even
+                        # when legal is absent.
+                        best = _pick_best_esearch_row(
+                            a_rows, record_addr, record_legal)
+                        if best:
+                            log.info("  esearch: matched %r via ADDRESS "
+                                     "search (%s %s)", name, st_num,
+                                     st_name)
+                            pid = best.get("_detail_prop_id", "") or ""
+                            yr = best.get("_detail_year", "") \
+                                or current_year
+                            oid = best.get("_detail_owner_id", "") or ""
+                            if pid:
+                                d_url = (f"{NCAD_ESEARCH_BASE}"
+                                         f"/Property/View/{pid}"
+                                         f"?year={yr}")
+                                if oid:
+                                    d_url += f"&ownerId={oid}"
+                                try:
+                                    await page.goto(
+                                        d_url,
+                                        wait_until="domcontentloaded",
+                                        timeout=15_000)
+                                    await page.wait_for_timeout(400)
+                                    d_html = await page.content()
+                                    d_info = _parse_esearch_detail(
+                                        d_html)
+                                    if d_info and d_info.get(
+                                            "mail_addr"):
+                                        best["mail_addr"] = \
+                                            d_info["mail_addr"]
+                                        best["mail_city"] = \
+                                            d_info.get("mail_city", "")
+                                        best["mail_state"] = \
+                                            d_info.get("mail_state", "")
+                                        best["mail_zip"] = \
+                                            d_info.get("mail_zip", "")
+                                except Exception as exc:
+                                    log.debug("esearch addr detail nav "
+                                              "failed for %s: %s",
+                                              pid, exc)
+                            best.pop("_detail_prop_id", None)
+                            best.pop("_detail_year", None)
+                            best.pop("_detail_owner_id", None)
+                            return best
+                except Exception as exc:
+                    log.debug("esearch address search failed for "
+                              "%r: %s", record_addr, exc)
 
     return None
 
@@ -3010,13 +3164,25 @@ def _parse_esearch_result_list(html: str) -> List[Dict[str, str]]:
 
 
 def _pick_best_esearch_row(rows: List[Dict[str, str]],
-                            query_name: str) -> Optional[Dict[str, str]]:
+                            query_name: str,
+                            record_legal: str = "") -> Optional[Dict[str, str]]:
     """Choose the best result row for a given query name.
 
     Preferences (in order):
       1. Real property (Type='R') over personal property (Type='P')
       2. Has a real situs address (not blank, not personal-property location)
       3. Closest owner-name match (exact > startswith > contains)
+
+    Corroboration guard: when `record_legal` is provided (the
+    foreclosure's own legal description) AND the matcher is available,
+    the chosen row's NCAD legal description must correspond to it (via
+    legal_descriptions_match). This rejects loose surname collisions
+    such as a foreclosure for "...REYNOLDS" matching an unrelated
+    "REYNOLDS RICHARD" parcel — name_score alone cannot tell those
+    apart from a genuine match (all score 2), so legal corroboration
+    is the only reliable discriminator. If no record_legal is given
+    (or the matcher is unavailable), behaviour is unchanged.
+
     Returns a normalized address dict or None if nothing usable.
     """
     if not rows:
@@ -3044,6 +3210,40 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
 
     rows_sorted = sorted(rows, key=score_row, reverse=True)
     top = rows_sorted[0]
+    if not top.get("situs"):
+        return None
+
+    # Corroboration guard. A name-only match (esp. a bare surname) can
+    # land on a completely unrelated parcel — proven cases: foreclosure
+    # 2026000269 ("...REYNOLDS") wrongly matched "REYNOLDS RICHARD" /
+    # SAN PEDRO, and 2026000291 ("...GARRETT") wrongly matched a
+    # different Garrett / CHANNEL VISTA. name_score cannot distinguish
+    # these from a legit match (all = 2). When we know the
+    # foreclosure's own legal description, require the chosen parcel's
+    # legal to correspond; otherwise try the next-best row, and if none
+    # corroborate, reject entirely (attach NO link rather than a wrong
+    # one). Skipped when record_legal/matcher unavailable (unchanged).
+    if record_legal and _legal_match is not None:
+        corroborated = None
+        for cand in rows_sorted:
+            cand_legal = (cand.get("legal") or "").strip()
+            if not cand_legal:
+                continue
+            try:
+                if _legal_match(record_legal, cand_legal):
+                    corroborated = cand
+                    break
+            except Exception:
+                # Matcher error must never crash the scrape; fall
+                # through to "no corroboration" handling.
+                break
+        if corroborated is None:
+            log.info("  esearch: rejecting %r — no NCAD parcel legal "
+                     "corroborates foreclosure legal %r (avoids wrong "
+                     "match)", query_name, record_legal[:60])
+            return None
+        top = corroborated
+
     if not top.get("situs"):
         return None
 
