@@ -1,0 +1,530 @@
+{
+  "mode": "dry_run",
+  "total_records": 104,
+  "eligible": 85,
+  "skipped": 19,
+  "matches": 34,
+  "mismatches": 22,
+  "ambiguous": 1,
+  "errors": 28,
+  "mismatch_details": [
+    {
+      "doc_num": "2026000276",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "COUNTRY CLUB ESTATES- LOT 7, BLOCK 1, UNIT 27",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000271",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "CASA LINDA ESTATES- LOT 3, BLOCK 7, UNIT 2",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000270",
+      "ncad_prop_id": "252688",
+      "url": "https://esearch.nuecescad.net/Property/View/252688?year=2026&ownerId=779784",
+      "clerk_legal": "PHARAOH VALLEY NORTH- LOT 2, BLOCK 22, UNIT 2",
+      "ncad_legal": "LA PASCUA #2 BLK 6 LOT 19",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000286",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "CARIBBEAN PLACE- LOT 33, BLOCK 9, UNIT 3",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000284",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "CULLEN PLACE- LOT 13, BLOCK 32, UNIT 3",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000285",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "CRESTMONT- LOT 8, BLOCK 14, UNIT 6",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000279",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "WOOLDRIDGE CREEK- LOT 28, BLOCK 1, UNIT 12",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000269",
+      "ncad_prop_id": "296459",
+      "url": "https://esearch.nuecescad.net/Property/View/296459?year=2026&ownerId=731021",
+      "clerk_legal": "VILLAGE BY THE BEACH P U D -LOT 69, BLOCK 1",
+      "ncad_legal": "SAN PEDRO LT 35 BK 4",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000274",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "CLUB ESTATES- LOT 5, BLOCK 6, UNIT 3",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000273",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "CIMARRON CROSSING- LOT 1, BLOCK 12, UNIT 3",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000243",
+      "ncad_prop_id": "260479",
+      "url": "https://esearch.nuecescad.net/Property/View/260479?year=2026&ownerId=732887",
+      "clerk_legal": "LINDALE PARK SECTION 2-A LOT 22,23 BLOCK 29",
+      "ncad_legal": "LINDALE PARK 2-A E 50' LT 22 & W 15' LT 23 BLK 29",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000245",
+      "ncad_prop_id": "274805",
+      "url": "https://esearch.nuecescad.net/Property/View/274805?year=2026&ownerId=821562",
+      "clerk_legal": "CASA LINDA ESTATES LOT 15 BLOCK 9 UNIT 6",
+      "ncad_legal": "OCEAN VIEW LT 18 BK 6 VI",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000235",
+      "ncad_prop_id": "200915",
+      "url": "https://esearch.nuecescad.net/Property/View/200915?year=2026&ownerId=420412",
+      "clerk_legal": "INVERNESS LOT 8 BLOCK 6 UNIT B",
+      "ncad_legal": "BRIGHTON VILLAGE  #4 BLK 9 LOT 9",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000246",
+      "ncad_prop_id": "290139",
+      "url": "https://esearch.nuecescad.net/Property/View/290139?year=2026&ownerId=227049",
+      "clerk_legal": "J.H WILLIAMS ADDITION LOT 6 & 7 BLOCK 14",
+      "ncad_legal": "RANCHO BANQUETE #2 - UNREC LOT 101 1.501",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000237",
+      "ncad_prop_id": "248778",
+      "url": "https://esearch.nuecescad.net/Property/View/248778?year=2026&ownerId=819359",
+      "clerk_legal": "SCHANEN ESTATES LOT 1 BLOCK 5 UNIT 7",
+      "ncad_legal": "JACKSON WOODS #2 BLK 3 LOT 15",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000204",
+      "ncad_prop_id": "201414",
+      "url": "https://esearch.nuecescad.net/Property/View/201414?year=2026&ownerId=401510",
+      "clerk_legal": "DEL MAR- LOT 15, BLOCK 41",
+      "ncad_legal": "BROADMOOR PARK 3 LT 20 BK 1",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000201",
+      "ncad_prop_id": "190401",
+      "url": "https://esearch.nuecescad.net/Property/View/190401?year=2026&ownerId=826886",
+      "clerk_legal": "GRANGE PARK- LOT 10, BLOCK 1, UNIT 1",
+      "ncad_legal": "BAY VIEW LT 9 AND 1O BK 2",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000193",
+      "ncad_prop_id": "258325",
+      "url": "https://esearch.nuecescad.net/Property/View/258325?year=2026&ownerId=523672",
+      "clerk_legal": "THE LAKES- LOT 18, BLOCK 3, UNIT 5B",
+      "ncad_legal": "LEXINGTON BLK 2 LOT 4B",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000188",
+      "ncad_prop_id": "207485",
+      "url": "https://esearch.nuecescad.net/Property/View/207485?year=2026&ownerId=396870",
+      "clerk_legal": "WOOD RIVER LOT 15 BLOCK 18 UNIT 2",
+      "ncad_legal": "CAROLYN HEIGHTS  #5 BLK 7 LOT 3",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000264",
+      "ncad_prop_id": "293036",
+      "url": "https://esearch.nuecescad.net/Property/View/293036?year=2026&ownerId=565591",
+      "clerk_legal": "SARAH A ROBERTS SURVEY NO 6 LOTS 7,8 BLOCK 2",
+      "ncad_legal": "ROBERTS SARAH SUR #6 - PA BLK 2 LOT 7&8",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000251",
+      "ncad_prop_id": "212944",
+      "url": "https://esearch.nuecescad.net/Property/View/212944?year=2026&ownerId=762253",
+      "clerk_legal": "BARCELONA ESTATES LOT 46 BLOCK 3 UNIT 4",
+      "ncad_legal": "CHULA VISTA BLK 4 LOT 18",
+      "verdict": "mismatch"
+    },
+    {
+      "doc_num": "2026000247",
+      "ncad_prop_id": "298471",
+      "url": "https://esearch.nuecescad.net/Property/View/298471?year=2026&ownerId=688421",
+      "clerk_legal": "SAXET HEIGHTS LOT 1,2 BLOCK 3",
+      "ncad_legal": "SAXET HTS 1 LT 1 AND N .50 OF LT 2 BK 3",
+      "verdict": "mismatch"
+    }
+  ],
+  "ambiguous_details": [
+    {
+      "doc_num": "2026000256",
+      "ncad_prop_id": "187695",
+      "url": "https://esearch.nuecescad.net/Property/View/187695?year=2026&ownerId=515674",
+      "clerk_legal": "COUNTRY CLUB ESTATES LOT 18 BLOCK 1 UNIT 30",
+      "ncad_legal": "BANQUETE T/S-HERRERA GRT S POR .287 AC OUT OF BLK D",
+      "verdict": "ambiguous"
+    }
+  ],
+  "error_details": [
+    {
+      "doc_num": "2026000277",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "CLUB ESTATES - LOT 12, BLOCK 2, UNIT 3",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000281",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "PRESCOTT PARK- LOT 1, BLOCK 6, UNIT 1",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000278",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "HOPPER ADDITION- LOT 1, BLOCK 9, UNIT 2",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000272",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "LYNNWOOD PLACE- LOT 14, BLOCK 13, UNIT 3",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000275",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "THE MEADOWS- LOT 18, BLOCK 3, UNIT 2",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000282",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "SCHANEN ESTATES- LOT 6, BLOCK 13, UNIT 2",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000290",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "PARK TERRACE- LOT 7, BLOCK 6, UNIT 1",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000289",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "HOPPER ADDITION- LOT 1, BLOCK 9, UNIT 2",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000283",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "HAMLIN PLACE- LOT 3, BLOCK 8, UNIT 1",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000280",
+      "ncad_prop_id": "194322",
+      "url": "https://esearch.nuecescad.net/Property/View/194322?year=2026&ownerId=783783",
+      "clerk_legal": "OCEAN TERRACE- LOT 9, BLOCK 3",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000263",
+      "ncad_prop_id": "190276",
+      "url": "https://esearch.nuecescad.net/Property/View/190276?year=2026&ownerId=683625",
+      "clerk_legal": "WOODLAND CREEK LOT 15 BLOCK 10 UNIT V",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000261",
+      "ncad_prop_id": "213142",
+      "url": "https://esearch.nuecescad.net/Property/View/213142?year=2026&ownerId=763600",
+      "clerk_legal": "KINGS POINT- LOT 13, BLOCK 2, UNIT 4 ADDITION",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000259",
+      "ncad_prop_id": "547950",
+      "url": "https://esearch.nuecescad.net/Property/View/547950?year=2026&ownerId=746735",
+      "clerk_legal": "GRANADO ESTATES LOT 34 BLOCK 1",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000258",
+      "ncad_prop_id": "200072779",
+      "url": "https://esearch.nuecescad.net/Property/View/200072779?year=2026&ownerId=836310",
+      "clerk_legal": "WOODLAWN LOT 2 BLOCK 2, 2007063008",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000252",
+      "ncad_prop_id": "381540",
+      "url": "https://esearch.nuecescad.net/Property/View/381540?year=2026&ownerId=685358",
+      "clerk_legal": "MORNINGSTAR ESTATES LOT 27 BLOCK 5 UNIT 3",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000226",
+      "ncad_prop_id": "200057276",
+      "url": "https://esearch.nuecescad.net/Property/View/200057276?year=2026&ownerId=818528",
+      "clerk_legal": "WOOD RIVER LOT 41 BLOCK 18 UNIT 2",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000231",
+      "ncad_prop_id": "373507",
+      "url": "https://esearch.nuecescad.net/Property/View/373507?year=2026&ownerId=804038",
+      "clerk_legal": "FLOUR BLUFF ESTATES LOT 12 BLOCK C",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000230",
+      "ncad_prop_id": "252086",
+      "url": "https://esearch.nuecescad.net/Property/View/252086?year=2026&ownerId=782632",
+      "clerk_legal": "LA JOYA ESTATES LOT 14 BLOCK 5 UNIT 2",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000219",
+      "ncad_prop_id": "297762",
+      "url": "https://esearch.nuecescad.net/Property/View/297762?year=2026&ownerId=825850",
+      "clerk_legal": "SANDY OAKS LOT 23 BLOCK 4",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000183",
+      "ncad_prop_id": "200117128",
+      "url": "https://esearch.nuecescad.net/Property/View/200117128?year=2026&ownerId=823353",
+      "clerk_legal": "LOS VIENTOS AT TERRA MAR- LOT 6, BLOCK 9, UNIT 1",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000182",
+      "ncad_prop_id": "297648",
+      "url": "https://esearch.nuecescad.net/Property/View/297648?year=2026&ownerId=708017",
+      "clerk_legal": "SANDY HOLLOW- LOT 1, BLOCK 4, UNIT 2",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000185",
+      "ncad_prop_id": "226905",
+      "url": "https://esearch.nuecescad.net/Property/View/226905?year=2026&ownerId=163811",
+      "clerk_legal": "CRESTMONT- LOT 37, BLOCK 5, UNIT 5",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000172",
+      "ncad_prop_id": "200058326",
+      "url": "https://esearch.nuecescad.net/Property/View/200058326?year=2026&ownerId=254052",
+      "clerk_legal": "CANDLEWOOD LOT 69 BLOCK 3 UNIT 4",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000176",
+      "ncad_prop_id": "183783",
+      "url": "https://esearch.nuecescad.net/Property/View/183783?year=2026&ownerId=120652",
+      "clerk_legal": "NORTHWEST CROSSING LOT 34 BLOCK 5 UNIT 4",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000227",
+      "ncad_prop_id": "185310",
+      "url": "https://esearch.nuecescad.net/Property/View/185310?year=2026&ownerId=595113",
+      "clerk_legal": "LONDON TOWNE LOT 17 BLOCK 20 UNIT 2",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000228",
+      "ncad_prop_id": "597353",
+      "url": "https://esearch.nuecescad.net/Property/View/597353?year=2026&ownerId=793355",
+      "clerk_legal": "CALLICOATTE ESTATES LOT 20 BLOCK 2 UNIT 5",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000229",
+      "ncad_prop_id": "183783",
+      "url": "https://esearch.nuecescad.net/Property/View/183783?year=2026&ownerId=120652",
+      "clerk_legal": "AIRLINE CROSSING LOT 38 BLOCK 4 UNIT 2",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    },
+    {
+      "doc_num": "2026000211",
+      "ncad_prop_id": "546122",
+      "url": "https://esearch.nuecescad.net/Property/View/546122?year=2026&ownerId=791275",
+      "clerk_legal": "KINGS GARDEN- LOT 6, BLOCK 2, UNIT 4",
+      "ncad_legal": "",
+      "verdict": "error",
+      "error": "legal description not found on page"
+    }
+  ],
+  "skipped_details": [
+    {
+      "doc_num": "2026000295",
+      "reason": "clerk legal too sparse to compare (sub='leeward isles i unit 803 building h', lot='')"
+    },
+    {
+      "doc_num": "2026000294",
+      "reason": "clerk legal too sparse to compare (sub='sand dollar ii studio condominium apt 13 bldg a', lot='')"
+    },
+    {
+      "doc_num": "2026000292",
+      "reason": "clerk legal too sparse to compare (sub='sharpsburg tracts one 1 and two 2', lot='')"
+    },
+    {
+      "doc_num": "2026000288",
+      "reason": "clerk legal too sparse to compare (sub='wooldridge creek- lort 28, , unit 12', lot='')"
+    },
+    {
+      "doc_num": "2026000291",
+      "reason": "clerk legal too sparse to compare (sub='tract 1 7 2- casa blanca grant abstract no 221', lot='')"
+    },
+    {
+      "doc_num": "2026000267",
+      "reason": "clerk legal too sparse to compare (sub='apt no 134 building d puerto del padre condominium', lot='')"
+    },
+    {
+      "doc_num": "2026000266",
+      "reason": "clerk legal too sparse to compare (sub='george h paul of the famous driscoll land tract 38, ranchos robstown tract #4', lot='')"
+    },
+    {
+      "doc_num": "2026000260",
+      "reason": "clerk legal too sparse to compare (sub='villa del sol condominiums iii unit 3218 bldg c', lot='')"
+    },
+    {
+      "doc_num": "2026000255",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000222",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000181",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000187",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000298",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000297",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000265",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000262",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2025000821",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000178",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000139",
+      "reason": "no ncad_prop_id attached"
+    }
+  ]
+}
