@@ -2758,25 +2758,48 @@ async def _run_ncad_searches(names: List[str],
         for i, name in enumerate(names, start=1):
             if name in cache:
                 cached = cache[name]
-                # Re-lookup if the cached entry is a successful match but
-                # was built BEFORE we started extracting appraised value
-                # OR mailing address. This is a one-time migration —
-                # once the cache has both, this path stops triggering.
-                missing_appr = (cached and cached.get("site_addr") and
-                                cached.get("appraised_value") in (None, "", 0))
-                missing_mail = (cached and cached.get("site_addr") and
-                                not cached.get("mail_addr"))
-                missing_ncad = (cached and cached.get("site_addr") and
-                                not cached.get("ncad_prop_id"))
-                if missing_appr or missing_mail or missing_ncad:
-                    reason = ("appraised_value" if missing_appr
-                              else "mail_addr" if missing_mail
-                              else "ncad_prop_id")
-                    log.info("  esearch: re-looking up %r (cache lacks "
-                             "%s)", name, reason)
-                    # Fall through and re-fetch.
+                # ESEARCH_RETRY_MISSES=1 forces cached *misses* to be
+                # re-attempted (cached *hits* are still reused, so the
+                # expensive successes aren't lost). This is the
+                # deliberate tuning switch: whenever the variant/match
+                # logic changes, a cached miss would otherwise shield
+                # that record forever (a None entry trips no re-lookup
+                # condition below, so it always `continue`s). The
+                # one-shot cache-version bump only clears misses once,
+                # then the fresh miss re-shields on the very next run —
+                # which is exactly why Andrew kept getting skipped. With
+                # this flag set, the new logic actually runs on the
+                # previously-missed names. Unset for normal runs so
+                # genuine misses stay skipped (forward progress).
+                _retry_misses = os.environ.get(
+                    "ESEARCH_RETRY_MISSES", "").lower() in (
+                        "1", "true", "yes", "y")
+                if cached is None and _retry_misses:
+                    log.info("  esearch: retrying cached miss %r "
+                             "(ESEARCH_RETRY_MISSES set)", name)
+                    # Fall through and re-fetch with current logic.
                 else:
-                    continue                 # already looked up (hit OR miss)
+                    # Re-lookup if the cached entry is a successful
+                    # match but was built BEFORE we started extracting
+                    # appraised value OR mailing address. One-time
+                    # migration — once the cache has both, this path
+                    # stops triggering.
+                    missing_appr = (cached and cached.get("site_addr") and
+                                    cached.get("appraised_value")
+                                    in (None, "", 0))
+                    missing_mail = (cached and cached.get("site_addr") and
+                                    not cached.get("mail_addr"))
+                    missing_ncad = (cached and cached.get("site_addr") and
+                                    not cached.get("ncad_prop_id"))
+                    if missing_appr or missing_mail or missing_ncad:
+                        reason = ("appraised_value" if missing_appr
+                                  else "mail_addr" if missing_mail
+                                  else "ncad_prop_id")
+                        log.info("  esearch: re-looking up %r (cache "
+                                 "lacks %s)", name, reason)
+                        # Fall through and re-fetch.
+                    else:
+                        continue             # already looked up (hit OR miss)
             if time.time() > deadline:
                 log.warning("esearch: time budget exhausted after %d names", i)
                 break
