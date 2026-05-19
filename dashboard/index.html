@@ -462,6 +462,13 @@
   .legal { max-width: 280px; font-size: 12px; color: var(--muted); }
   .addr-loc { font-size: 12px; color: var(--muted); margin-top: 2px;
               white-space: nowrap; }
+  /* The address cells contain an editable <textarea> (fixed height)
+     followed by the read-only city/state/zip line. The global
+     `td { overflow: hidden }` rule clips that second line out of view.
+     These two cells need to grow to their content instead, so the
+     city line is visible. Scoped to .addr-cell only — the global
+     clip stays in place for every other column. */
+  td.addr-cell { overflow: visible; }
   .pane { display: none; padding: 24px 28px; }
   .pane.active { display: block; }
 
@@ -2398,12 +2405,12 @@ function buildFcRow(r, isDead) {
     <td class="days ${daysClass}">${esc(daysText)}</td>
     <td>${esc(r.recorded || "")}</td>
     <td>${_ecell("owner", _ownerEff)}</td>
-    <td>${_ecell("prop_address", _propEff)}${
+    <td class="addr-cell">${_ecell("prop_address", _propEff)}${
         [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim()
           ? `<div class="addr-loc">${esc([r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim())}</div>`
           : ""
       }${absenteeBadge}${shortSaleBadge}</td>
-    <td>${_ecell("mail_address", _mailEff)}${
+    <td class="addr-cell">${_ecell("mail_address", _mailEff)}${
         [r.mail_city, r.mail_state, r.mail_zip].filter(Boolean).join(" ").trim()
           ? `<div class="addr-loc">${esc([r.mail_city, r.mail_state, r.mail_zip].filter(Boolean).join(" ").trim())}</div>`
           : ""
