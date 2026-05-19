@@ -951,6 +951,16 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
             if (idx not in ENTITY_BORROWER_PATTERN_INDICES
                     and _looks_like_lender(name)):
                 continue
+            # Reject captures that are actually chunks of a legal
+            # property description (permissive patterns like "NAMES
+            # conveyed to <trustee>" can grab metes-and-bounds text).
+            # Skipping here lets the loop fall through to the correct
+            # labeled pattern (e.g. "Grantor(s): NAME"). Entity
+            # borrowers are exempt — an LLC name won't trip the legal
+            # tokens, and we don't want to over-filter.
+            if (idx not in ENTITY_BORROWER_PATTERN_INDICES
+                    and _looks_like_legal_description(name)):
+                continue
             out["borrower"] = name
             break
 
@@ -1311,10 +1321,39 @@ def _looks_like_lender(name: str) -> bool:
     return False
 
 
+def _looks_like_legal_description(name: str) -> bool:
+    """Crude heuristic: does this captured 'name' actually look like a
+    chunk of a legal property description rather than a person?
+
+    Used to reject false-positive borrower matches where a permissive
+    pattern (e.g. the "NAMES conveyed to <trustee>" form) grabbed text
+    out of a metes-and-bounds legal description. Real owner names never
+    contain subdivision/lot/block tokens or surveyor connective phrases
+    like "the said" / "corner of". Word-boundary matched to avoid
+    flagging legitimate names that merely contain a substring.
+
+    Concrete case this fixes: doc 2026000231, where the legal text
+    "...northeast corner of Lot 11, Block C of the said Flour Bluff
+    Estates Subdivision, as conveyed to Josephine Proctor..." was
+    captured as the owner instead of "Englebert Devera and Noemi
+    Devera" from the Grantor(s): line.
+    """
+    upper = name.upper()
+    legal_patterns = [
+        r"\bSUBDIVISION\b", r"\bBLOCK\s+[A-Z0-9]\b", r"\bLOT\s+\d",
+        r"\bTHE\s+SAID\b", r"\bCORNER\s+OF\b", r"\bACRES?\b",
+        r"\bSQUARE\s+FEET\b", r"\bMETES\b", r"\bR\.?O\.?W\.?\b",
+        r"\bMAP\s+RECORDS\b", r"\bVOLUME\s+\d", r"\bPLAT\b",
+    ]
+    for pat in legal_patterns:
+        if re.search(pat, upper):
+            return True
+    return False
+
+
 # --------------------------------------------------------------------------- #
 # Legal description normalization (for cross-referencing PDF ↔ NCAD)
 # --------------------------------------------------------------------------- #
-
 def normalize_legal_for_match(legal: str) -> Tuple[str, str, str]:
     """Normalize a legal description into (subdivision, lot, block) tokens
     for cross-source matching.
