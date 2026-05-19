@@ -810,6 +810,38 @@ _RE_LEGAL_DIGITS = re.compile(
     re.IGNORECASE,
 )
 
+# Tract-form legal description — platted city lots that are described
+# by TRACT(S) rather than LOT/BLOCK, e.g.:
+#   "TRACTS ONE (1) AND TWO (2), SHARPSBURG ADDITION, TO THE CITY OF
+#    CORPUS CHRISTI..."  (doc 2026000292)
+# This is NOT rural acreage — "Tract One/Two of <SUBDIVISION> ADDITION"
+# is just an alternate plat vocabulary the county uses for some city
+# subdivisions. The two LOT/BLOCK patterns above can't see it (there's
+# no LOT and no BLOCK), so before this pattern existed these records
+# came through with a BLANK legal — which then defeated the NCAD
+# corroboration guard (empty legal => nothing to verify against =>
+# wrong/unverifiable address attached).
+#
+# The tract-id list is anchored to number-word / digit / "(n)" shapes
+# so the greedy subdivision capture can't swallow the subdivision name
+# (OCR frequently inserts a stray "." after the parenthesised digit,
+# e.g. "TWO (2). SHARPSBURG"). Terminates at ADDITION / SUBDIVISION /
+# "ACCORDING TO" / ", TO THE CITY OF". No lot/block groups — tract
+# legals don't have them; only `sub` is captured (plus the raw tract
+# list, stored as legal_lot for traceability/NCAD hinting).
+_RE_LEGAL_TRACT = re.compile(
+    r"\bTRACT[S]?\s+"
+    r"(?P<tracts>(?:ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN|"
+    r"ELEVEN|TWELVE|\d+)(?:\s*\(\d+\))?"
+    r"(?:[.,\s]*(?:AND|&|,)\s*(?:ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|"
+    r"EIGHT|NINE|TEN|ELEVEN|TWELVE|\d+)(?:\s*\(\d+\))?)*)"
+    r"[.,\s]+"
+    r"(?P<sub>[A-Z][A-Z0-9\s.&'-]+?)"
+    r"\s*,?\s*(?:ADDITION|SUBDIVISION|ACCORDING\s+TO|"
+    r"TO\s+THE\s+CITY\s+OF)",
+    re.IGNORECASE | re.DOTALL,
+)
+
 
 # --------------------------------------------------------------------------- #
 # Date normalization
@@ -1185,7 +1217,11 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
 
     # --- Legal description ---
     # Try the parenthesized form first (LOT EIGHTEEN (18), BLOCK ONE (1)…),
-    # then fall back to digit-only ("Lot 18, Block 1…").
+    # then fall back to digit-only ("Lot 18, Block 1…"), then to the
+    # TRACT form ("TRACTS ONE (1) AND TWO (2), SHARPSBURG ADDITION…").
+    # The TRACT form is tried LAST so it never pre-empts a normal
+    # LOT/BLOCK parse — it only fires for the plat vocabulary the
+    # LOT/BLOCK patterns structurally cannot represent.
     m = _RE_LEGAL_PARENS.search(text)
     if not m:
         m = _RE_LEGAL_DIGITS.search(text)
@@ -1207,6 +1243,30 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
         unit = gd.get("unitw") or gd.get("unitd")
         if unit:
             out["legal_unit"] = unit.strip()
+    else:
+        # Third fallback: TRACT-form legal (no LOT/BLOCK). Captures the
+        # subdivision name; stores the raw tract list in legal_lot so
+        # the assembled legal string and any NCAD hinting still have
+        # the tract identifiers. legal_block stays empty (tract legals
+        # have no block) — legal_descriptions_match tolerates an empty
+        # block on either side, so this won't cause false rejections.
+        mt = _RE_LEGAL_TRACT.search(text)
+        if mt:
+            sub = _clean_name(mt.group("sub") or "")
+            sub = re.sub(r"\s+", " ", sub).strip(" .,")
+            sub = re.sub(r"\.\s+", " ", sub).strip()
+            tracts = re.sub(r"\s+", " ",
+                            mt.group("tracts") or "").strip(" .,")
+            if sub:
+                out["legal_subdivision"] = sub
+                out["legal_lot"] = ""
+                out["legal_block"] = ""
+                if tracts:
+                    # Surface the tract identifiers in a dedicated
+                    # field so the assembled legal string can show
+                    # them ("SHARPSBURG ADDITION TRACTS ONE (1) AND
+                    # TWO (2)") without abusing legal_lot.
+                    out["legal_tracts"] = tracts
 
     return out
 
