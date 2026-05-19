@@ -3384,6 +3384,18 @@ def _esearch_query_variants(name: str) -> List[str]:
                     fml = " ".join(middle_first) + " " + last
                     if fml not in out:
                         out.append(fml)
+                # 5d. Last + FIRST ONLY — no middle initial, no suffix:
+                # "NICHOLS ANDREW". This is NCAD's exact owner-index
+                # form. Proven necessary: the foreclosure deed for doc
+                # 2026000296 reads "ANDREW E NICHOLS II" (OCR'd to
+                # "...I"); a manual NCAD search for "NICHOLS ANDREW"
+                # returns the parcel instantly, but "NICHOLS ANDREW E"
+                # (5b, with the middle initial) and "NICHOLS" (3, bare
+                # surname) do NOT. Only surname + first name, nothing
+                # else, matches NCAD's index for this record.
+                lf_firstonly = last + " " + first
+                if lf_firstonly not in out:
+                    out.append(lf_firstonly)
             # 6 + 7. Joint-owner forms (only when input indicates joint
             # ownership). NCAD records joint deeds two ways:
             #   Short: "LAST FIRST AND WF"           (e.g. "RODRIGUEZ LEO AND WF")
