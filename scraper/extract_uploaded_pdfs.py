@@ -296,14 +296,32 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
         lot = (rec.get("legal_lot") or "").strip()
         blk = (rec.get("legal_block") or "").strip()
         unit = (fields.get("legal_unit") or "").strip()
+        tracts = (fields.get("legal_tracts")
+                  or rec.get("legal_tracts") or "").strip()
+        assembled = ""
         if sub and lot:
             parts = [sub, f"LOT {lot}", f"BLOCK {blk}" if blk else ""]
             if unit:
                 parts.append(f"UNIT {unit}")
             assembled = " ".join(p for p in parts if p)
-            if not _looks_like_garbage(assembled):
-                rec["legal"] = assembled
+        elif sub and tracts:
+            # Tract-form legal (no lot/block) — e.g. doc 2026000292
+            # "SHARPSBURG ADDITION TRACTS ONE (1) AND TWO (2)". The
+            # parser populates legal_tracts for exactly this case.
+            # Keep legal_tracts on the record so a later re-parse can
+            # reuse it.
+            if rec.get("legal_tracts") != tracts:
+                rec["legal_tracts"] = tracts
                 changed = True
+            assembled = f"{sub} ADDITION TRACTS {tracts}"
+        elif sub:
+            # Subdivision only (no lot, no tracts) — still better than
+            # a blank legal column; lets the dashboard show something
+            # and the NCAD step has a subdivision to work with.
+            assembled = sub
+        if assembled and not _looks_like_garbage(assembled):
+            rec["legal"] = assembled
+            changed = True
     rec["pdf_parsed_at"] = datetime.now(timezone.utc).isoformat()
     return changed
 
