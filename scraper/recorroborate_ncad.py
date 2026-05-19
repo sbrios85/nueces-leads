@@ -114,11 +114,22 @@ LOG_JSON  = REPO_ROOT / "data" / "recorroborate_log.json"
 
 NCAD_BASE = "https://esearch.nuecescad.net"
 
-# NCAD detail pages load fast; even on cold start ~1s is enough. We add
-# a generous timeout for safety but each fetch is short. A small pause
-# between fetches is courtesy, not strictly required.
+# NCAD detail pages load fast on a single fetch, but the same parcel
+# often backs many foreclosure records (e.g. 8 Plutus Properties docs
+# all point at the same prop_id 194322). Fetching the same URL 8 times
+# back-to-back is both wasteful and a textbook rate-limit trigger —
+# the first dry-run showed NCAD start returning empty pages after ~12
+# rapid identical hits. We mitigate three ways:
+#   (1) Per-parcel in-memory cache keyed by (prop_id, year, owner_id).
+#       Each unique URL is fetched at most once per run.
+#   (2) Modest base delay between fetches (1.0s — courtesy + safety).
+#   (3) Retry-with-backoff: if a fetch returns no legal, wait, retry
+#       once. NCAD sometimes serves a transient empty body that's fine
+#       after a brief pause.
 PAGE_TIMEOUT_MS = 15_000
-INTER_FETCH_DELAY_S = 0.4
+INTER_FETCH_DELAY_S = 1.0
+RETRY_BACKOFF_S = 4.0
+MAX_RETRIES = 2  # initial + 1 retry
 
 # Fields cleared on eviction. These are exactly the NCAD-derived fields
 # — we deliberately do NOT touch owner / legal / lender / loan_amount /
@@ -240,22 +251,46 @@ def _property_url(r: Dict) -> str:
     return url
 
 
-async def _fetch_property_legal(page, url: str) -> Tuple[str, str]:
+async def _fetch_property_legal(page, url: str,
+                                 cache: Dict[str, Tuple[str, str]]
+                                 ) -> Tuple[str, str]:
     """Returns (legal, error_str). On success error_str is ''.
-    On failure legal is '' and error_str describes the problem."""
-    try:
-        await page.goto(url, wait_until="domcontentloaded",
-                        timeout=PAGE_TIMEOUT_MS)
-        # Small wait for any client-side rendering. NCAD detail pages
-        # are mostly server-rendered so this is brief.
-        await page.wait_for_timeout(400)
-        html = await page.content()
-    except Exception as exc:
-        return "", f"fetch error: {exc}"
-    legal = _parse_property_legal(html)
-    if not legal:
-        return "", "legal description not found on page"
-    return legal, ""
+    On failure legal is '' and error_str describes the problem.
+
+    Uses an in-memory cache so repeated requests for the same URL
+    (multiple foreclosure records sharing one NCAD parcel) reuse the
+    first answer rather than re-hitting the server. Retries once on
+    transient "no legal found" responses, which the first dry-run
+    showed are usually rate-limiting blips that resolve after a pause.
+    """
+    if url in cache:
+        return cache[url]
+    last_err = ""
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            await page.goto(url, wait_until="domcontentloaded",
+                            timeout=PAGE_TIMEOUT_MS)
+            await page.wait_for_timeout(400)
+            html = await page.content()
+        except Exception as exc:
+            last_err = f"fetch error: {exc}"
+            html = ""
+        if html:
+            legal = _parse_property_legal(html)
+            if legal:
+                result = (legal, "")
+                cache[url] = result
+                return result
+            last_err = "legal description not found on page"
+        if attempt < MAX_RETRIES:
+            log.debug("retrying %s after %ss (attempt %d/%d)",
+                       url, RETRY_BACKOFF_S, attempt, MAX_RETRIES)
+            await asyncio.sleep(RETRY_BACKOFF_S)
+    result = ("", last_err)
+    # Cache the failure too — no point hammering a URL that just
+    # failed twice; the workflow can be re-run later.
+    cache[url] = result
+    return result
 
 
 # ----------------------------------------------------------------------
@@ -292,11 +327,22 @@ async def _run() -> Dict:
         context = await browser.new_context()
         page = await context.new_page()
 
+        # Per-run cache keyed by full URL. Many records share parcels
+        # (the Plutus cluster is the obvious case); this avoids the
+        # rate-limit pattern the first dry-run hit. We also count cache
+        # hits for the summary so the speedup is visible.
+        url_cache: Dict[str, Tuple[str, str]] = {}
+        cache_hits = 0
+
         for i, r in enumerate(eligible, 1):
             dn = r.get("doc_num", "?")
             clerk_legal = r.get("legal", "")
             url = _property_url(r)
-            ncad_legal, err = await _fetch_property_legal(page, url)
+            was_cached = url in url_cache
+            ncad_legal, err = await _fetch_property_legal(
+                page, url, url_cache)
+            if was_cached:
+                cache_hits += 1
 
             entry = {
                 "doc_num": dn,
@@ -316,7 +362,8 @@ async def _run() -> Dict:
                 entry["verdict"] = verdict
                 if verdict == "match":
                     matches.append(entry)
-                    log.info("[%d/%d] %s  match", i, len(eligible), dn)
+                    log.info("[%d/%d] %s  match%s", i, len(eligible),
+                              dn, "  (cached)" if was_cached else "")
                 elif verdict == "ambiguous":
                     ambiguous.append(entry)
                     log.info("[%d/%d] %s  AMBIGUOUS (kept) — "
@@ -331,7 +378,10 @@ async def _run() -> Dict:
                              else " (would evict — DRY RUN)")
                     log.info("       clerk: %r", clerk_legal[:80])
                     log.info("       ncad : %r", ncad_legal[:80])
-            await asyncio.sleep(INTER_FETCH_DELAY_S)
+            # Skip the inter-fetch delay on cache hits — no network
+            # was hit, nothing to space out.
+            if not was_cached:
+                await asyncio.sleep(INTER_FETCH_DELAY_S)
 
         await context.close()
         await browser.close()
@@ -385,6 +435,8 @@ async def _run() -> Dict:
         "mismatches": len(mismatches),
         "ambiguous": len(ambiguous),
         "errors": len(errors),
+        "unique_parcels_fetched": len(url_cache),
+        "cache_hits": cache_hits,
         "mismatch_details": mismatches,
         "ambiguous_details": ambiguous,
         "error_details": errors,
@@ -407,6 +459,8 @@ async def _run() -> Dict:
     log.info("ambiguous     : %d (kept)", summary["ambiguous"])
     log.info("errors        : %d (kept)", summary["errors"])
     log.info("skipped       : %d (ineligible)", summary["skipped"])
+    log.info("unique parcels: %d  (cache reused %d times)",
+              len(url_cache), cache_hits)
     log.info("log written to %s", LOG_JSON)
     if not APPLY_MODE and mismatches:
         log.info("DRY RUN — no JSON files changed. "
