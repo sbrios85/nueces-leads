@@ -1,5 +1,5 @@
 {
-  "_version": "v4",
+  "_version": "v5",
   "data": {
     "NEGRONIGURU LLC": {
       "site_addr": "627 INDIANA AVE",
@@ -109,7 +109,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "481909"
     },
-    "HEALTH COM MANAGEMENT LLC": null,
     "VAIZ RAUL JR": {
       "site_addr": "500 IH-69 ACCESS RD STE 408",
       "site_city": "ROBSTOWN",
@@ -120,7 +119,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "TLC COMPLETE CARE": null,
     "WYNN KENNETH J": {
       "site_addr": "5324 COUNTY RD 73A",
       "site_city": "ROBSTOWN",
@@ -241,7 +239,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "BAUTISTA RICARDO D": null,
     "CARLSON JOE R": {
       "site_addr": "1533 DAYTONA DR",
       "site_city": "CORPUS CHRISTI",
@@ -404,7 +401,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "798797"
     },
-    "GRANADO ESTATES LP": null,
     "219 MARSHALL LLC": {
       "site_addr": "104 US HWY 77 S BUS",
       "site_city": "BISHOP",
@@ -419,7 +415,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "803833"
     },
-    "ALVARADO ROBERT LEE": null,
     "DRISCOLL": {
       "site_addr": "PACIFIC AVE",
       "site_city": "CORPUS CHRISTI",
@@ -476,12 +471,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "772313"
     },
-    "ECHAVARRIA JAMES": null,
-    "RIDDLE CHARLES": null,
-    "HERNANDEZ JANESSA": null,
-    "PEREZ ADRIANNA NICOLE": null,
-    "SALINAS JOSEPH ANTHONY": null,
-    "CEVALLOS LEYDI": null,
     "ZAPATA NATHAN": {
       "site_addr": "WEBER RD (FM RD 43)",
       "site_city": "CORPUS CHRISTI",
@@ -524,11 +513,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "790468"
     },
-    "HERNANDEZ ALEX": null,
-    "ELIZALDE JAZMYN": null,
-    "ZAMORA NATALIE": null,
-    "OLIVAREZ MARIA": null,
-    "MARTINEZ KRYSTAL": null,
     "MEDELLIN ANDREA": {
       "site_addr": "933 BRADSHAW DR",
       "site_city": "CORPUS CHRISTI",
@@ -543,8 +527,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "672552"
     },
-    "PALACIOS HERBERT BENJAMI": null,
-    "LEDESMA MATTHEW": null,
     "CENTENO AMANDA": {
       "site_addr": "1114 19th ST",
       "site_city": "CORPUS CHRISTI",
@@ -2225,8 +2207,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "ESTASTE OF SADIE ORCHANSKI LLP": null,
-    "APARICO CATRINA MORIN": null,
     "MARTINEZ FILIBERTO": {
       "site_addr": "146 CLEMMER",
       "site_city": "CORPUS CHRISTI",
@@ -2327,8 +2307,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "AEBB PROPERTIES LLC": null,
-    "WESTLEY CONNIE L": null,
     "FORD MICHAEL D": {
       "site_addr": "4009 BAHAMA DR",
       "site_city": "CORPUS CHRISTI",
@@ -2979,7 +2957,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "BJICDO LLC": null,
     "BARRON DOMINGO E": {
       "site_addr": "LAKE SHORE DR (NO RD)",
       "site_city": "PORT ARANSAS",
@@ -2990,7 +2967,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "MCCORMIK DILLON P": null,
     "PENA HECTOR G": {
       "site_addr": "922 LINDA VISTA DR",
       "site_city": "CORPUS CHRISTI",
@@ -3161,7 +3137,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "ESNAL GUILLERMO": null,
     "MORENO LEOBARDO": {
       "site_addr": "2021 CRAIG ST",
       "site_city": "CORPUS CHRISTI",
@@ -3412,7 +3387,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "TXREAF1001 LLC": null,
     "POLANCO ARALI G": {
       "site_addr": "2629 DEER",
       "site_city": "CORPUS CHRISTI",
@@ -3613,7 +3587,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "LUMANN LLC": null,
     "QUINTANILLA GLORIA G": {
       "site_addr": "4425 VALDEZ DR",
       "site_city": "CORPUS CHRISTI",
@@ -3654,7 +3627,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "DURACOM LLC": null,
     "HINDSLEY MICHAEL": {
       "site_addr": "4513 MOKRY DR",
       "site_city": "CORPUS CHRISTI",
@@ -3805,7 +3777,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "DE LA CRUZ LAURA J": null,
     "SOUTHERN OIL SALES": {
       "site_addr": "4425 LEOPARD ST",
       "site_city": "CORPUS CHRISTI",
@@ -3876,7 +3847,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "KLANECKEY IRIS": null,
     "BALBOA SERVERO JR EST": {
       "site_addr": "1210 18th ST",
       "site_city": "CORPUS CHRISTI",
@@ -3917,7 +3887,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "THEODORA GOMEZ M E": null,
     "BANUELOS HECTOR LEGORRETA": {
       "site_addr": "204 BLEVINS",
       "site_city": "CORPUS CHRISTI",
@@ -3938,9 +3907,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "SERINO DOROTHY ETALS": null,
-    "YABAH HENRY": null,
-    "FOLLIS JENNIFER LYN": null,
     "LOPEZ SALOMON ETUX": {
       "site_addr": "3636 EASTERN",
       "site_city": "CORPUS CHRISTI",
@@ -4011,13 +3977,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "LUNDMARK CARL JAMES": null,
-    "HEMPHILL DANIEL": null,
-    "MANRIQUE CHRISTINA DE LA PENA": null,
-    "MENDEZ FRANCES": null,
-    "FALCON RALPH R": null,
-    "RUFUS AVERY A": null,
-    "TOSCANO ARNOLD J": null,
     "BALBOA FAUSTINO D": {
       "site_addr": "4926 HOLLY RD",
       "site_city": "CORPUS CHRISTI",
@@ -4078,7 +4037,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "DE LOS SANTOS JOSE JR": null,
     "CONTIVAL AUDELIA": {
       "site_addr": "5410 NICOLE CT",
       "site_city": "CORPUS CHRISTI",
@@ -4829,7 +4787,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "DEVEREUZ DAVID": null,
     "GALLARDO MANUEL": {
       "site_addr": "1406 17th ST",
       "site_city": "CORPUS CHRISTI",
@@ -4920,7 +4877,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "ZFG IN CC LLC": null,
     "GONZALES GASPAR": {
       "site_addr": "1534 DORADO",
       "site_city": "CORPUS CHRISTI",
@@ -4981,7 +4937,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "H L N INCESTMENTS": null,
     "SOSA MENDEZ DOMINGO DAVID": {
       "site_addr": "7713 COUNTY RD 7B CIR",
       "site_city": "CORPUS CHRISTI",
@@ -5422,7 +5377,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "REGANT LONESTAR GROUP LLC": null,
     "BARNETT DONNIE D": {
       "site_addr": "2728 AIRLINE RD",
       "site_city": "CORPUS CHRISTI",
@@ -5473,7 +5427,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "MCCORMICH DILLON P": null,
     "RHODES A G": {
       "site_addr": "1218 HAYWARD DR",
       "site_city": "CORPUS CHRISTI",
@@ -5534,7 +5487,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "DE KARZ REBECCA O": null,
     "DIAZ CARLOS JR": {
       "site_addr": "4402 LAURA PL",
       "site_city": "CORPUS CHRISTI",
@@ -5865,7 +5817,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "KACCI GROUP LLC": null,
     "CORRAL INVEST CORP": {
       "site_addr": "1411 PORT AVE",
       "site_city": "CORPUS CHRISTI",
@@ -5916,9 +5867,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "MOLINA FELIPE": null,
-    "LEDESMA PAULINE": null,
-    "STUTZMAN THOMAS L": null,
     "RODRIGUEZ RAMON": {
       "site_addr": "2425 ELIZABETH",
       "site_city": "CORPUS CHRISTI",
@@ -5989,7 +5937,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "GREEDWOOD IRA G ET AL": null,
     "MARTINEZ FRANK H": {
       "site_addr": "4929 COSNER DR",
       "site_city": "CORPUS CHRISTI",
@@ -6120,7 +6067,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "SECTY OF HSING & URBAN DEV": null,
     "DAVILA MARIO ETALS": {
       "site_addr": "2637 WAINWRIGHT",
       "site_city": "CORPUS CHRISTI",
@@ -6591,8 +6537,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "CANDENCE HALCOM DUSTIN": null,
-    "CHAVEERA JULIA CHILTON ETALS": null,
     "DEYO CHERRY": {
       "site_addr": "15129 CANE HARBOR BLVD",
       "site_city": "CORPUS CHRISTI",
@@ -6843,7 +6787,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "RIUDANT DANIEL": null,
     "PICCOLO JOSEPH A": {
       "site_addr": "4334 E OCEAN DR",
       "site_city": "CORPUS CHRISTI",
@@ -6904,7 +6847,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "BJIDCO LLC": null,
     "ROACH JAMES E TR FOR": {
       "site_addr": "5209 FLYNN PKWY",
       "site_city": "CORPUS CHRISTI",
@@ -6935,8 +6877,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "M2J3 TEXAS CONSTRUCTION LLC": null,
-    "SERINO DOROTHY": null,
     "HAWKINS VERTER": {
       "site_addr": "4030 HERNDON",
       "site_city": "CORPUS CHRISTI",
@@ -7067,7 +7007,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "COULTRESS ANNA": null,
     "CAMERON REVOCABLE TR": {
       "site_addr": "3938 SURFSIDE BLVD",
       "site_city": "CORPUS CHRISTI",
@@ -7098,7 +7037,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "YBARAA EMMA F": null,
     "FLORES ROSA": {
       "site_addr": "1225 18th ST",
       "site_city": "CORPUS CHRISTI",
@@ -7189,7 +7127,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "GARCA HOMBERTO": null,
     "GOMEZ LIDIA": {
       "site_addr": "2958 SABINAS ST",
       "site_city": "CORPUS CHRISTI",
@@ -7300,8 +7237,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "FDKCAF LLC": null,
-    "TREVINO RAMON H": null,
     "ALL HUMAN SERVICE CENTER INC": {
       "site_addr": "7133 CANO LN",
       "site_city": "CORPUS CHRISTI",
@@ -7492,7 +7427,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "JARAMILO CARLOS": null,
     "LOVE CLYDE L ET UX": {
       "site_addr": "13938 JIBSTAY ST",
       "site_city": "CORPUS CHRISTI",
@@ -7533,7 +7467,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "FENEX LODGE 24": null,
     "SPENTZOS TATIANA ETALS": {
       "site_addr": "5514 LEOPARD ST",
       "site_city": "CORPUS CHRISTI",
@@ -7584,7 +7517,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "GARACIA BEATRIZ R": null,
     "STUBER RENE ROSS": {
       "site_addr": "1042 SHIELS DR",
       "site_city": "CORPUS CHRISTI",
@@ -7665,7 +7597,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "LEONOR PALACIOS F": null,
     "SCOTT ANNETTE CARLA": {
       "site_addr": "302 LOUISE DR",
       "site_city": "CORPUS CHRISTI",
@@ -7676,12 +7607,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "SALANG AVIATION LLC": null,
-    "U S BANK TRUST NATIONAL ASSOCIATION": null,
-    "SELENE FINANCE LP": null,
-    "CHAPMAN SARA RENE": null,
-    "FARMER RANDALL L": null,
-    "RODRIDUEZ HILDA": null,
     "SPENCE BRODERICK": {
       "site_addr": "6001 ORMS DR",
       "site_city": "CORPUS CHRISTI",
@@ -7702,8 +7627,6 @@
       "mail_state": "",
       "mail_zip": ""
     },
-    "HUMPHREY ROBERT": null,
-    "PERRONE ROBIN": null,
     "IDAHO HOUSING AND FINANCE ASSOCIATION": {
       "site_addr": "1704 RAND MORGAN RD",
       "site_city": "CORPUS CHRISTI",
@@ -7743,7 +7666,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "813429"
     },
-    "VALDEZ ASHLEY": null,
     "DELEON SEBASTIAN LEON": {
       "site_addr": "5731 CREST PEBBLE DR",
       "site_city": "CORPUS CHRISTI",
@@ -7772,7 +7694,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "777570"
     },
-    "VALDEZ ALEXUS MELAINA": null,
     "MENDEZ DELIA": {
       "site_addr": "1021 WHITAKER DR",
       "site_city": "CORPUS CHRISTI",
@@ -7801,10 +7722,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "802104"
     },
-    "RODRIGUEZ CIERRA": null,
-    "JONES KAYTLIN": null,
-    "HALDAR MOUSSA N": null,
-    "247 ON SITE LLC": null,
     "BADALICH CARL": {
       "site_addr": "15133 DASMARINAS DR",
       "site_city": "CORPUS CHRISTI",
@@ -7833,9 +7750,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "787008"
     },
-    "VALENCIA RICARDA": null,
-    "UZOIGWE STANISLAUS NWAFOR": null,
-    "BARRERA FILIBERTO G JR": null,
     "CHATHAM MELBA WELSH": {
       "site_addr": "134 ALTA PLAZA ST",
       "site_city": "CORPUS CHRISTI",
@@ -8010,12 +7924,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "818528"
     },
-    "Block C of the said Flour Bluff Estates Subdivision, as": null,
-    "previously conveyed the above described property in trust to secure payment": null,
-    "LEONARDO WARDLAW": null,
-    "notice is not intended to cover such property, and such property will not be part of the property": null,
-    "ANNA MARIA PEREZ": null,
-    "or others subsequent": null,
     "MARIA JIZA P ALIVIO AND KENNETH C ALIVIO": {
       "site_addr": "3922 JAYDEN DR",
       "site_city": "CORPUS CHRISTI",
@@ -8030,7 +7938,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "798935"
     },
-    "ROSE ANNA DIAZ secures the repayment of a Note": null,
     "JULIAN J. VERA": {
       "site_addr": "5517 S OSO PKWY",
       "site_city": "CORPUS CHRISTI",
@@ -8059,10 +7966,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "401510"
     },
-    "ASHTON DUDLEY AND BRYCE DUDLEY secures the repayment of a Note": null,
-    "RICKY ROBERTS JR": null,
-    "JAMES P JONES": null,
-    "BENJAMIN G. BRULLOTHS": null,
     "KERRI PAYNE": {
       "site_addr": "4905 LAUREN DR",
       "site_city": "CORPUS CHRISTI",
@@ -8077,11 +7980,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "715039"
     },
-    "AND WIFE, WITH HER JOINING HEREIN TO PERFECT THE SECURITY INTEREST BUT NOT TO OTHERWISE BE LIABLE": null,
-    "Jesus A. Balli and Brijida Escobedo": null,
-    "SETH GARRETT SMITH": null,
-    "RUBY BENAVIDEZ": null,
-    "JOSE ALBERTO LANDEROS JR AND LAURA LANDEROS": null,
     "IRENE P HERNANDEZ": {
       "site_addr": "LINCOLN AVE (NO RD)",
       "site_city": "PORT ARANSAS",
@@ -8208,7 +8106,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "818722"
     },
-    "SCALPEL PRODUCTIONS LLC": null,
     "TULOSO MIDWAY INDEPTENDENT SCHOOL DISTRICT": {
       "site_addr": "614 NAS",
       "site_city": "CORPUS CHRISTI",
@@ -8265,7 +8162,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "833401"
     },
-    "RETZLOFF DESTINY": null,
     "OLIVER TINA": {
       "site_addr": "2713 BLUE GRASS DR",
       "site_city": "CORPUS CHRISTI",
@@ -8546,12 +8442,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "685358"
     },
-    "KAREN CHA": null,
-    "Johnny P. Martinez and Maria Virginia Martinez": null,
-    "ROGELIO O. ELIZONDO AND MARIA J. ELIZONDO": null,
-    "LOREN P. KAGER, DORA L. KAGER AND ISRAEL I. KAGER": null,
-    "MC J'S & ASSOCIATES LLC": null,
-    "GUNNA JOEL A": null,
     "JENNIFER R. GONZALES": {
       "site_addr": "7705 JACINTO CIR",
       "site_city": "CORPUS CHRISTI",
@@ -8762,13 +8652,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "651168"
     },
-    "Michael Scrutchin and Dorothy Scrutchin": null,
-    "ANDREW E NICHOLS I": null,
-    "JERRY VELLA and VERONICA V. VELLA": null,
-    "CHRISTOPHER WAYNE HALLAND RACHEL YOLANDA EATMON-HALL": null,
-    "PHILANDER SALONE AND ROBERT A. SALONE": null,
-    "SANSING GERALD A": null,
-    "BLANCO JUAN L": null,
     "GARCIA ARTURO": {
       "site_addr": "328 OHIO AVE",
       "site_city": "CORPUS CHRISTI",
@@ -8839,7 +8722,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "793798"
     },
-    "SANCHEZ BRIANA": null,
     "CLARK MIRANDA": {
       "site_addr": "5102 MOULTRIE DR",
       "site_city": "CORPUS CHRISTI",
@@ -8854,9 +8736,6 @@
       "ncad_year": "2026",
       "ncad_owner_id": "546507"
     },
-    "PENA SABRINA": null,
-    "HARRISON JASMINE": null,
-    "RODRIGUEZ JOSELYN": null,
     "MELANIE SANDERS": {
       "site_addr": "211 W OAKES AVE",
       "site_city": "PORT ARANSAS",
@@ -9010,6 +8889,285 @@
       "ncad_prop_id": "546122",
       "ncad_year": "2026",
       "ncad_owner_id": "791275"
-    }
+    },
+    "SANSING GERALD A": null,
+    "BLANCO JUAN L": null,
+    "247 ON SITE LLC": null,
+    "SCALPEL PRODUCTIONS LLC": null,
+    "SANCHEZ BRIANA": null,
+    "PENA SABRINA": null,
+    "HARRISON JASMINE": null,
+    "RODRIGUEZ JOSELYN": null,
+    "GUNNA JOEL A": null,
+    "MC J'S & ASSOCIATES LLC": null,
+    "U S BANK TRUST NATIONAL ASSOCIATION": null,
+    "GRANADO ESTATES LP": null,
+    "SELENE FINANCE LP": null,
+    "BAUTISTA RICARDO D": null,
+    "UZOIGWE STANISLAUS NWAFOR": null,
+    "VALENCIA RICARDA": null,
+    "CHAPMAN SARA RENE": null,
+    "BARRERA FILIBERTO G JR": null,
+    "FARMER RANDALL L": null,
+    "ALVARADO ROBERT LEE": null,
+    "RETZLOFF DESTINY": null,
+    "TLC COMPLETE CARE": null,
+    "VALDEZ ASHLEY": null,
+    "VALDEZ ALEXUS MELAINA": null,
+    "ECHAVARRIA JAMES": {
+      "site_addr": "14429 PENTRIDGE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410",
+      "mail_addr": "c/o MARK A VELAZQUEZ 14429 Pentridge Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "appraised_value": 309382.0,
+      "ncad_prop_id": "200116910",
+      "ncad_year": "2026",
+      "ncad_owner_id": "793264"
+    },
+    "RIDDLE CHARLES": {
+      "site_addr": "1015 DAKOTA ST",
+      "site_city": "ROBSTOWN",
+      "site_state": "TX",
+      "site_zip": "78380",
+      "mail_addr": "6221 BROOK LEA ST HOUSTON",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "77087",
+      "appraised_value": 130306.0,
+      "ncad_prop_id": "210004",
+      "ncad_year": "2026",
+      "ncad_owner_id": "775812"
+    },
+    "HERNANDEZ JANESSA": null,
+    "PEREZ ADRIANNA NICOLE": {
+      "site_addr": "6914 EMPEROR CT",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414",
+      "mail_addr": "6914 Emperor Ct Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "appraised_value": 365047.0,
+      "ncad_prop_id": "531281",
+      "ncad_year": "2026",
+      "ncad_owner_id": "721714"
+    },
+    "SALINAS JOSEPH ANTHONY": {
+      "site_addr": "330 BEVERLY DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411",
+      "mail_addr": "330 BEVERLY DR CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "appraised_value": 171556.0,
+      "ncad_prop_id": "194725",
+      "ncad_year": "2026",
+      "ncad_owner_id": "824777"
+    },
+    "CEVALLOS LEYDI": null,
+    "HERNANDEZ ALEX": {
+      "site_addr": "1625 TRIPLE CROWN DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78417",
+      "mail_addr": "1625 Triple Crown Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78417",
+      "appraised_value": 196522.0,
+      "ncad_prop_id": "298083",
+      "ncad_year": "2026",
+      "ncad_owner_id": "711574"
+    },
+    "ELIZALDE JAZMYN": null,
+    "ZAMORA NATALIE": {
+      "site_addr": "3018 QUEBEC",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414",
+      "mail_addr": "C/O NATALIE NICOLE BOWEN 3018 Quebec Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "appraised_value": 1000.0,
+      "ncad_prop_id": "573444",
+      "ncad_year": "2026",
+      "ncad_owner_id": "743920"
+    },
+    "OLIVAREZ MARIA": {
+      "site_addr": "1426 S BROWNLEE BLVD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "6455 DE ZAVALA RD Apt 7111 SAN ANTONIO",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78249",
+      "appraised_value": 329432.0,
+      "ncad_prop_id": "189858",
+      "ncad_year": "2026",
+      "ncad_owner_id": "835997"
+    },
+    "MARTINEZ KRYSTAL": {
+      "site_addr": "2222 TORRENTE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414",
+      "mail_addr": "2222 Torrente Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "appraised_value": 290552.0,
+      "ncad_prop_id": "543120",
+      "ncad_year": "2026",
+      "ncad_owner_id": "741908"
+    },
+    "PALACIOS HERBERT BENJAMI": {
+      "site_addr": "15110 BARATARIA DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "15110 Barataria Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "appraised_value": 372206.0,
+      "ncad_prop_id": "188548",
+      "ncad_year": "2026",
+      "ncad_owner_id": "726068"
+    },
+    "LEDESMA MATTHEW": {
+      "site_addr": "342 CLAREMORE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412",
+      "mail_addr": "342 CLAREMORE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78412",
+      "appraised_value": 561074.0,
+      "ncad_prop_id": "274501",
+      "ncad_year": "2026",
+      "ncad_owner_id": "423782"
+    },
+    "JONES KAYTLIN": null,
+    "HALDAR MOUSSA N": null,
+    "KAREN CHA": null,
+    "Johnny P. Martinez and Maria Virginia Martinez": null,
+    "ROGELIO O. ELIZONDO AND MARIA J. ELIZONDO": {
+      "site_addr": "5535 WARBONNET DR",
+      "site_city": "ROBSTOWN",
+      "site_state": "TX",
+      "site_zip": "78380",
+      "mail_addr": "MARIA J ELIZONDO 5535 WARBONNETT DR ROBSTOWN",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78380",
+      "appraised_value": 69659.0,
+      "ncad_prop_id": "246236",
+      "ncad_year": "2026",
+      "ncad_owner_id": "467278"
+    },
+    "LOREN P. KAGER, DORA L. KAGER AND ISRAEL I. KAGER": {
+      "site_addr": "817 FLOUR BLUFF DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "DORA L 817 Flour Bluff Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "appraised_value": 119284.0,
+      "ncad_prop_id": "235024",
+      "ncad_year": "2026",
+      "ncad_owner_id": "323246"
+    },
+    "IRMA LETICIA SAENZ A/K/A IRMA SAENZ": null,
+    "Englebert Devera and Noemi Devera": {
+      "site_addr": "902 W LAKESIDE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "902 W Lakeside Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "appraised_value": 230350.0,
+      "ncad_prop_id": "373507",
+      "ncad_year": "2026",
+      "ncad_owner_id": "804038"
+    },
+    "JOHN DAVID GRAY AND LAURA GARCIA GRAY": {
+      "site_addr": "5710 PALO BLANCO",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78417",
+      "mail_addr": "5710 Palo Blanco St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78417",
+      "appraised_value": 215846.0,
+      "ncad_prop_id": "252086",
+      "ncad_year": "2026",
+      "ncad_owner_id": "782632"
+    },
+    "LEONARDO WARDLAW": {
+      "site_addr": "5006 CASCADE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78413",
+      "mail_addr": "14317 Potranco Rd Ste 205-249 San Antonio",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78253",
+      "appraised_value": 307380.0
+    },
+    "Edgar O. Ortega, Hilario Hernandez and Alejandro Hernandez": {
+      "site_addr": "3002 NEWPORT DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "635 YORKTOWN BLVD Trlr 11 CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "appraised_value": 33750.0,
+      "ncad_prop_id": "297762",
+      "ncad_year": "2026",
+      "ncad_owner_id": "825850"
+    },
+    "ANNA MARIA PEREZ": {
+      "site_addr": "1702 TIMROD DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404",
+      "mail_addr": "1702 Timrod St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78404",
+      "appraised_value": 223694.0,
+      "ncad_prop_id": "284964",
+      "ncad_year": "2026",
+      "ncad_owner_id": "660170"
+    },
+    "RICKY ROBERTS JR": null,
+    "JAMES P JONES": null,
+    "BENJAMIN G. BRULLOTHS": null,
+    "Jesus A. Balli and Brijida Escobedo": null,
+    "SETH GARRETT SMITH": null,
+    "RUBY BENAVIDEZ": null,
+    "JOSE ALBERTO LANDEROS JR AND LAURA LANDEROS": null,
+    "Michael Scrutchin and Dorothy Scrutchin": null,
+    "ANDREW E NICHOLS I": null,
+    "JERRY VELLA and VERONICA V. VELLA": null,
+    "CHRISTOPHER WAYNE HALLAND RACHEL YOLANDA EATMON-HALL": null,
+    "PHILANDER SALONE AND ROBERT A. SALONE": null
   }
 }
