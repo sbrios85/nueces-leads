@@ -3339,15 +3339,65 @@ def _esearch_query_variants(name: str) -> List[str]:
     if "," in n_primary:
         n_primary = n_primary.split(",")[0].strip()
 
-    out = [n]                                # 1. as-is first
-    if n != n_primary and n_primary:
+    # Compute the LAST-FIRST form up front. NCAD's owner search is
+    # explicitly documented as "(Last Name First Name) Ex: Smith John",
+    # so the last-first ordering is the single most likely query to
+    # return the parcel. We therefore seed the variant list with it
+    # FIRST (ahead of the raw "as-is" parsed name), so the highest-
+    # probability form gets the first lookup and isn't at risk of being
+    # pushed past the 8-variant cap. The detailed suffix/middle handling
+    # further below still adds the other refined forms; this is just an
+    # early high-priority seed.
+    #
+    # EXCEPTION: entity / company names (LLC, LP, INC, TRUST, ESTATES,
+    # ASSOCIATION, etc.) have NO "last name first" form. Reordering
+    # "DUAL ACTION ENTERPRISE LLC" as if "LLC" were a surname produces
+    # nonsense queries ("LLC DUAL ACTION ENTERPRISE", bare "LLC" which
+    # would match every company in the county). For entities we skip
+    # the last-first seed entirely and search them as-is — that is the
+    # only sensible form for a company name.
+    _ENTITY_TOKENS = (" LLC", " LLP", " LP", " INC", " LTD", " CO",
+                      " CORP", " TRUST", " ESTATES", " ASSOCIATION",
+                      " ASSOC", " COMPANY", " PARTNERSHIP", " BANK",
+                      " N A", " NA", " FUND", " HOLDINGS", " GROUP",
+                      " SERVICES", " SERVICING", " FINANCIAL",
+                      " FINANCE", " MORTGAGE", " PROPERTIES")
+    _n_pad = " " + n + " "
+    is_entity = any(tok + " " in _n_pad or n.endswith(tok.strip())
+                    for tok in _ENTITY_TOKENS)
+
+    _pp = n_primary.replace(",", "").split()
+    _primary_lastfirst = ""
+    if not is_entity and len(_pp) >= 2:
+        _SUF0 = {"JR", "SR", "I", "II", "III", "IV", "V"}
+        if _pp[-1].upper() in _SUF0 and len(_pp) >= 3:
+            _last0 = _pp[-2]
+            _mf0 = _pp[:-2]
+            _suf0 = _pp[-1]
+        else:
+            _last0 = _pp[-1]
+            _mf0 = _pp[:-1]
+            _suf0 = ""
+        if len(_last0) >= 3 and _mf0:
+            _primary_lastfirst = (_last0 + " " + " ".join(_mf0)).strip()
+            if _suf0:
+                _primary_lastfirst += " " + _suf0
+
+    out = []
+    if _primary_lastfirst:
+        out.append(_primary_lastfirst)       # 1. LAST FIRST — NCAD's documented order (highest probability)
+    if n not in out:
+        out.append(n)                        # 2. as-is parsed name (fallback; #1 for entities)
+    if n != n_primary and n_primary and n_primary not in out:
         out.append(n_primary)                # also try just the primary
 
     if "," in n:
-        out.append(n.replace(",", "").strip())
+        cf = n.replace(",", "").strip()
+        if cf not in out:
+            out.append(cf)
 
     parts = n_primary.replace(",", "").split()
-    if len(parts) >= 2:
+    if not is_entity and len(parts) >= 2:
         # If the LAST word is a Roman numeral suffix or JR/SR, treat the
         # previous word as the actual last name. E.g. "MIGUEL PENA III"
         # → last="PENA", suffix="III", first="MIGUEL"
@@ -3374,10 +3424,16 @@ def _esearch_query_variants(name: str) -> List[str]:
             reordered = reordered.strip()
             if reordered not in out:
                 out.append(reordered)
-            # 3. Last-name only: "PENA"
-            if last not in out:
-                out.append(last)
-            # 4. Last-comma-first: "PENA, MIGUEL III"
+            # 3. Last-comma-first: "PENA, MIGUEL III"
+            #    (bare surname-only is intentionally NOT added here —
+            #    it's deferred to last-resort at the end of this
+            #    function, see "DEFERRED surname-only" below. A bare
+            #    surname returns hundreds of unrelated parcels and,
+            #    when placed early, both wastes the per-name lookup
+            #    budget AND can push genuinely-useful variants like
+            #    "NICHOLS ANDREW" past the 8-variant cap. Trying it
+            #    only after every better-qualified form has failed
+            #    fixes both problems.)
             comma_form = last + ", " + " ".join(middle_first)
             if suffix:
                 comma_form += " " + suffix
@@ -3452,6 +3508,26 @@ def _esearch_query_variants(name: str) -> List[str]:
                                        + secondary)
                         if long_form not in out:
                             out.append(long_form)
+
+    # DEFERRED surname-only (last resort). Appended AFTER every more
+    # qualified variant so it only gets tried if all of them failed.
+    # A bare surname ("NICHOLS", "MARTINEZ") returns far too many
+    # unrelated parcels to identify the right one reliably, and the
+    # corroboration guard rejects those wrong matches anyway — so
+    # trying it early just burns the per-name lookup budget and can
+    # bump useful variants past the 8-cap. Kept (not removed) for the
+    # rare unusual-surname case where it's the only thing that finds
+    # the parcel, but always tried LAST.
+    if not is_entity and 'parts' in dir() and len(parts) >= 2:
+        # Recompute the surname the same way the main block did, so a
+        # trailing JR/SR/I-V suffix doesn't become the "surname".
+        _SUF = {"JR", "SR", "I", "II", "III", "IV", "V"}
+        if parts[-1].upper() in _SUF and len(parts) >= 3:
+            _last = parts[-2]
+        else:
+            _last = parts[-1]
+        if len(_last) >= 3 and _last not in out:
+            out.append(_last)
 
     # Dedup while preserving order.
     seen = set()
