@@ -191,12 +191,26 @@ def _apply_fields(rec: Dict[str, Any], fields: Dict[str, Any],
     if not fields:
         return False
     changed = False
-    # --- Borrower (owner) ---
+    # --- Borrower (owner) + raw original ---
+    # The parser may emit a separate `borrower_raw` field when the
+    # cleanup step modified the captured name (e.g. stripped a trailing
+    # ", AN UNMARRIED MAN" or expanded "joined herein by NAME" into
+    # "NAME1 and NAME2"). Save it as `owner_raw` so a manual reviewer
+    # can recover the original wording if the cleanup ever mis-strips
+    # something. Treated as protected (only filled when empty, or in
+    # overwrite mode) — same merge rules as the other PDF-derived
+    # fields.
     borrower = fields.get("borrower", "")
     if borrower and not _looks_like_garbage(borrower):
         if not rec.get("owner") or overwrite:
             if rec.get("owner") != borrower:
                 rec["owner"] = borrower
+                changed = True
+    borrower_raw = fields.get("borrower_raw", "")
+    if borrower_raw and not _looks_like_garbage(borrower_raw):
+        if not rec.get("owner_raw") or overwrite:
+            if rec.get("owner_raw") != borrower_raw:
+                rec["owner_raw"] = borrower_raw
                 changed = True
     # --- Loan amount ---
     if fields.get("loan_amount"):
