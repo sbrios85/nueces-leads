@@ -1,5 +1,5 @@
 {
-  "mode": "apply",
+  "mode": "dry_run",
   "total_records": 104,
   "eligible": 47,
   "skipped": 57,
