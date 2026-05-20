@@ -507,12 +507,11 @@
   /* ===== Foreclosure Date cell (merged Sale Date + Days Until Sale) =====
      Matches the Houston Foreclosure Alerts reference image:
        Row 1: small uppercase month label ("JUNE", "JULY")
-       Row 2: [date pill with colored underline]  [countdown text "60d"]
-     No progress bar — just a simple colored underline beneath the
-     date pill that signals urgency by color (red ≤14d, amber ≤30d,
-     muted otherwise). The "Xd" countdown text sits to the right of
-     the pill on the same line. Past sales: red "X days ago" beside
-     the pill, no underline. */
+       Row 2: [date pill]  [countdown "60d"]
+       Row 3: a thicker fixed-width colored underline BELOW the pill
+              (wider than the pill itself — gives the visual weight
+              the reference has). Color = urgency tier.
+     Past sales: red "X days ago" beside pill, no underline. */
   .fc-date-cell {
     display: flex; flex-direction: column;
     gap: 2px; align-items: flex-start;
@@ -530,22 +529,26 @@
   .fc-date-row {
     display: flex; align-items: center; gap: 8px;
   }
-  /* Date pill — the urgency color comes through as a thick bottom
-     border (3px) underneath the pill text. No fancy progress bar,
-     no extra element — just a border-bottom in the urgency color. */
+  /* The date itself — no background, no border, just text. */
   .fc-date-pill {
     display: inline-flex; align-items: center;
-    padding: 2px 8px;
     color: var(--fg);
-    font-size: 13px; font-weight: 600;
+    font-size: 14px; font-weight: 600;
     line-height: 1.15;
-    border-bottom: 3px solid var(--muted);  /* default; class overrides */
-    border-radius: 0;
   }
-  /* Urgency-tier colors for the pill's underline. */
-  .fc-date-pill.days-soon   { border-bottom-color: var(--bad); }
-  .fc-date-pill.days-medium { border-bottom-color: var(--warn); }
-  .fc-date-pill.days-far    { border-bottom-color: var(--muted); }
+  /* The colored urgency underline — a separate fixed-width element
+     that sits BELOW the pill+countdown row. ~70px wide regardless of
+     date length so it has consistent visual weight across rows. 3px
+     tall. Color set by daysClass tier. */
+  .fc-date-underline {
+    width: 70px; height: 3px;
+    border-radius: 2px;
+    margin-top: 1px;
+    background: var(--muted);     /* default; class overrides */
+  }
+  .fc-date-underline.days-soon   { background: var(--bad); }
+  .fc-date-underline.days-medium { background: var(--warn); }
+  .fc-date-underline.days-far    { background: var(--muted); }
   /* Countdown text right of the pill ("60d", "25d") — colored to
      match the underline so the urgency reads as one signal. */
   .fc-date-days {
@@ -554,9 +557,7 @@
   .fc-date-days.days-soon   { color: var(--bad); }
   .fc-date-days.days-medium { color: var(--warn); }
   .fc-date-days.days-far    { color: var(--muted); }
-  /* Past-sale "X days ago" — just red text beside an un-underlined
-     pill. (We strip the urgency border in this case via .past.) */
-  .fc-date-pill.past { border-bottom-color: transparent; }
+  /* Past-sale "X days ago" — red text beside pill, no underline. */
   .fc-date-past {
     font-size: 12px; font-weight: 600;
     color: var(--bad);
@@ -2410,9 +2411,9 @@ function buildFcRow(r, isDead) {
   let foreclosureDateCell;
   if (!_dateParts) {
     // No sale date at all — show a dash.
-    foreclosureDateCell = `<div class="fc-date-cell"><div class="fc-date-pill past">—</div></div>`;
+    foreclosureDateCell = `<div class="fc-date-cell"><div class="fc-date-pill">—</div></div>`;
   } else if (days != null && days < 0) {
-    // Past sale: month label + un-underlined pill + red "X days ago".
+    // Past sale: month label + pill + red "X days ago" (no underline).
     const pastTxt = Math.abs(days) + " days ago";
     const pillTxt = _dateParts.month
       ? `${_dateParts.month} ${_dateParts.day}` : _dateParts.raw;
@@ -2421,14 +2422,15 @@ function buildFcRow(r, isDead) {
         ${_dateParts.monthCap ?
             `<div class="fc-date-month">${esc(_dateParts.monthCap)}</div>` : ""}
         <div class="fc-date-row">
-          <div class="fc-date-pill past">${esc(pillTxt)}</div>
+          <div class="fc-date-pill">${esc(pillTxt)}</div>
           <div class="fc-date-past">${esc(pastTxt)}</div>
         </div>
       </div>`;
   } else {
-    // Upcoming sale. Two vertical rows:
+    // Upcoming sale. Three vertical rows:
     //   1. month label  ("JUNE")
-    //   2. pill (urgency-colored underline) + "Xd" countdown
+    //   2. pill + "Xd" countdown side-by-side
+    //   3. colored urgency underline (fixed width, ~70px)
     const pillTxt = _dateParts.month
       ? `${_dateParts.month} ${_dateParts.day}` : _dateParts.raw;
     const daysTxt = days == null ? "" : days + "d";
@@ -2437,11 +2439,12 @@ function buildFcRow(r, isDead) {
         ${_dateParts.monthCap ?
             `<div class="fc-date-month">${esc(_dateParts.monthCap)}</div>` : ""}
         <div class="fc-date-row">
-          <div class="fc-date-pill ${daysClass}">${esc(pillTxt)}</div>
+          <div class="fc-date-pill">${esc(pillTxt)}</div>
           ${daysTxt ?
               `<div class="fc-date-days ${daysClass}">${esc(daysTxt)}</div>`
               : ""}
         </div>
+        <div class="fc-date-underline ${daysClass}"></div>
       </div>`;
   }
   // Effective values: a manual edit (saved via the Save button) wins
