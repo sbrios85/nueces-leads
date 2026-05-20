@@ -14,10 +14,20 @@
     --status-closed: #10b981; --status-dead: #64748b;
   }
   * { box-sizing: border-box; }
+  /* The page is a fixed-height column: header on top, then the
+     .layout flex row (sidebar + main) filling the remaining viewport.
+     The window itself never scrolls — scrolling happens inside .main
+     so sticky table headers can anchor to its top edge. Without this,
+     `position: sticky` on <th> fails because .main has `overflow-x:
+     auto` which establishes a scroll container that traps the
+     header's anchor point. */
+  html, body { height: 100%; }
   body {
     margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI",
            Roboto, "Helvetica Neue", Arial, sans-serif;
     background: var(--bg); color: var(--fg);
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
   header {
     padding: 20px 28px; border-bottom: 1px solid var(--border);
@@ -71,7 +81,8 @@
   .layout {
     display: flex;
     align-items: stretch;
-    min-height: 70vh;
+    flex: 1;
+    min-height: 0;          /* allow children to overflow + scroll */
   }
   .sidebar {
     width: 230px; flex-shrink: 0;
@@ -119,7 +130,12 @@
   }
   .main {
     flex: 1; min-width: 0;
-    overflow-x: auto;
+    /* Scroll BOTH directions inside .main, not on the window. This is
+       what enables sticky table headers — `position: sticky; top: 0`
+       on <th> anchors to the nearest scrolling ancestor, which is now
+       this element. The page header above stays put as the data
+       scrolls underneath. */
+    overflow: auto;
   }
   .stats { display: flex; gap: 24px; padding: 16px 28px;
            border-bottom: 1px solid var(--border); flex-wrap: wrap; }
@@ -1472,11 +1488,15 @@ function openCrm(type, docNum, sourceRecords) {
   const rec = (sourceRecords || []).find(x => x.doc_num === docNum);
   if (!rec) return;
 
-  // Remember where we came from so Back restores it exactly.
+  // Remember where we came from so Back restores it exactly. Scroll
+  // now happens inside .main (not the window), so we save .main's
+  // scrollTop. window.scrollY would always read 0 now that the body
+  // doesn't scroll.
   const activePane = document.querySelector(".pane.active");
+  const mainEl = document.querySelector(".main");
   _crmReturn = {
     pane: activePane ? activePane.id : null,
-    scrollY: window.scrollY,
+    scrollY: mainEl ? mainEl.scrollTop : 0,
   };
 
   const entry = getCrmEntry(type, docNum);
@@ -1577,7 +1597,10 @@ function openCrm(type, docNum, sourceRecords) {
       p.classList.remove("active"));
   const crm = document.getElementById("crm-view");
   crm.hidden = false;
-  window.scrollTo(0, 0);
+  // Scroll the .main container (now our scroll context) to the top
+  // so the CRM view opens at its header.
+  const _mainEl = document.querySelector(".main");
+  if (_mainEl) _mainEl.scrollTop = 0;
 }
 
 function closeCrm() {
@@ -1588,8 +1611,12 @@ function closeCrm() {
     if (p) p.classList.add("active");
   }
   // Defer scroll until after layout reflows the restored table.
+  // Scroll target is .main (now the scroll container), not the window.
   const y = _crmReturn.scrollY;
-  requestAnimationFrame(() => window.scrollTo(0, y));
+  requestAnimationFrame(() => {
+    const _mainEl = document.querySelector(".main");
+    if (_mainEl) _mainEl.scrollTop = y;
+  });
 }
 
 document.getElementById("crm-back").onclick = closeCrm;
