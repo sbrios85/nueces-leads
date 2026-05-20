@@ -153,8 +153,18 @@
   th, td { padding: 11px 10px; text-align: left;
            border-bottom: 1px solid var(--border); vertical-align: top;
            overflow: hidden; }
+  /* Sticky table header. position:sticky anchors the row to the top
+     of the viewport during vertical scroll so the column labels stay
+     visible while reading data rows below. The shadow + a stronger
+     bottom border are what visually distinguish the header from data
+     rows when it's "stuck" — without them, the sticky header just
+     blends with rows scrolling underneath and reads as scrolled-past.
+     z-index above other in-table interactive elements (status menu,
+     etc.) so a sticky header always wins. */
   th { background: var(--panel); cursor: pointer; user-select: none;
-       position: sticky; top: 0; z-index: 1; }
+       position: sticky; top: 0; z-index: 10;
+       border-bottom: 2px solid var(--border);
+       box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
   th:hover { color: var(--accent); }
   /* Sortable headers carry a data-sort attribute. Non-sortable headers
      (like the NCAD link column) have no data-sort and shouldn't
