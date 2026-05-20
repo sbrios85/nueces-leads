@@ -508,10 +508,16 @@
      Matches the Houston Foreclosure Alerts reference image:
        Row 1: small uppercase month label ("JUNE", "JULY")
        Row 2: [date pill]  [countdown "60d"]
-       Row 3: a thicker fixed-width colored underline BELOW the pill
-              (wider than the pill itself — gives the visual weight
-              the reference has). Color = urgency tier.
-     Past sales: red "X days ago" beside pill, no underline. */
+       Row 3: a fixed-width progress bar (~70px) that's ALWAYS visible
+              as a faint gray track. The colored fill grows from left
+              to right as the sale approaches — empty at 60 days out,
+              fully filled at sale day. Baseline 60 days; sales >60d
+              away clamp to 0% fill.
+     Color tiers reflect urgency:
+       > 30 days  → green   (--good)
+       11–30 days → amber   (--warn)
+       ≤ 10 days  → red     (--bad)
+     Past sales: red "X days ago" beside pill, no bar. */
   .fc-date-cell {
     display: flex; flex-direction: column;
     gap: 2px; align-items: flex-start;
@@ -529,35 +535,46 @@
   .fc-date-row {
     display: flex; align-items: center; gap: 8px;
   }
-  /* The date itself — no background, no border, just text. */
+  /* The date itself — plain text, no pill background. */
   .fc-date-pill {
     display: inline-flex; align-items: center;
     color: var(--fg);
     font-size: 14px; font-weight: 600;
     line-height: 1.15;
   }
-  /* The colored urgency underline — a separate fixed-width element
-     that sits BELOW the pill+countdown row. ~70px wide regardless of
-     date length so it has consistent visual weight across rows. 3px
-     tall. Color set by daysClass tier. */
-  .fc-date-underline {
-    width: 70px; height: 3px;
+  /* Progress bar — always 70px wide. The track is a faint gray that
+     stays visible regardless of fill amount, and the colored fill
+     overlays the left portion based on how close the sale is. */
+  .fc-date-bar {
+    position: relative;
+    width: 70px; height: 4px;
+    background: rgba(148,163,184,0.20);   /* track always visible */
     border-radius: 2px;
-    margin-top: 1px;
-    background: var(--muted);     /* default; class overrides */
+    overflow: hidden;
+    margin-top: 2px;
   }
-  .fc-date-underline.days-soon   { background: var(--bad); }
-  .fc-date-underline.days-medium { background: var(--warn); }
-  .fc-date-underline.days-far    { background: var(--muted); }
-  /* Countdown text right of the pill ("60d", "25d") — colored to
-     match the underline so the urgency reads as one signal. */
+  .fc-date-bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    border-radius: 2px;
+    transition: width 0.2s, background 0.2s;
+  }
+  /* Three urgency tiers — green (>30d), amber (11–30d), red (≤10d).
+     These class names are bar-specific (NOT the old days-soon/medium/
+     far that the rest of the dashboard uses, since those have only
+     two color stops). The countdown text uses the same tiers below. */
+  .fc-date-bar-fill.tier-far   { background: var(--good); }
+  .fc-date-bar-fill.tier-mid   { background: var(--warn); }
+  .fc-date-bar-fill.tier-near  { background: var(--bad); }
+  /* Countdown text right of the pill ("60d", "25d"), colored to
+     match the fill so the urgency reads as one signal. */
   .fc-date-days {
     font-size: 12px; font-weight: 600;
   }
-  .fc-date-days.days-soon   { color: var(--bad); }
-  .fc-date-days.days-medium { color: var(--warn); }
-  .fc-date-days.days-far    { color: var(--muted); }
-  /* Past-sale "X days ago" — red text beside pill, no underline. */
+  .fc-date-days.tier-far   { color: var(--good); }
+  .fc-date-days.tier-mid   { color: var(--warn); }
+  .fc-date-days.tier-near  { color: var(--bad); }
+  /* Past-sale "X days ago" — red text, no bar. */
   .fc-date-past {
     font-size: 12px; font-weight: 600;
     color: var(--bad);
@@ -2374,19 +2391,28 @@ function buildFcRow(r, isDead) {
   if (isDead) tr.classList.add("dead-lead");
 
   // ---- Foreclosure Date cell (merged Sale Date + Days Until Sale) ----
-  // Layout matches the Houston Foreclosure Alerts reference:
-  //   Row 1: small uppercase month label ("JUN", "JUL")
-  //   Row 2: rounded date pill ("Jun 2") with an integrated underline
-  //          progress bar, then "25d" countdown to the right
-  // The bar's filled width grows as the sale approaches; 60-day
-  // baseline (a 60d row has no fill, a 1d row is nearly full bar).
-  // Past sales: just "X days ago" in red, no pill / bar.
-  // Color tiers (same convention as the rest of the dashboard):
-  //   ≤14d → bad (red), ≤30d → warn (amber), else far (muted).
+  // Matches the Houston Foreclosure Alerts reference image:
+  //   Row 1: small uppercase month label ("JUNE", "JULY")
+  //   Row 2: [date pill]  [countdown "60d"]
+  //   Row 3: a fixed-width progress bar (~70px) that's ALWAYS visible
+  //          as a faint gray track. Colored fill grows from left to
+  //          right as the sale approaches: empty at 60+ days,
+  //          ~98% at 1 day, full at 0 days.
+  // Three urgency tiers drive the bar fill color AND countdown text:
+  //   > 30 days  → green   (tier-far,  --good)
+  //   11–30 days → amber   (tier-mid,  --warn)
+  //   ≤ 10 days  → red     (tier-near, --bad)
+  // Past sales: "X days ago" in red beside the pill, no bar.
   const days = r.days_until_sale;
-  const daysClass = days == null ? "days-far" :
-                    days <= 14 ? "days-soon" :
-                    days <= 30 ? "days-medium" : "days-far";
+  const tierClass = days == null ? "tier-far" :
+                    days <= 10 ? "tier-near" :
+                    days <= 30 ? "tier-mid"  : "tier-far";
+  // Bar fill % — full = sale day, empty = 60+ days. Clamp to [0,100].
+  let _barPct = 0;
+  if (days != null && days >= 0) {
+    const remaining = Math.max(0, Math.min(60, days));
+    _barPct = Math.round(((60 - remaining) / 60) * 100);
+  }
   // Parse the ISO sale_date into month-name + day-of-month parts.
   // Fallback path returns the raw string unchanged (legacy formats).
   const _dateParts = (() => {
@@ -2430,7 +2456,8 @@ function buildFcRow(r, isDead) {
     // Upcoming sale. Three vertical rows:
     //   1. month label  ("JUNE")
     //   2. pill + "Xd" countdown side-by-side
-    //   3. colored urgency underline (fixed width, ~70px)
+    //   3. progress bar (always 70px wide) — colored fill grows
+    //      from the left as the sale approaches. 60-day baseline.
     const pillTxt = _dateParts.month
       ? `${_dateParts.month} ${_dateParts.day}` : _dateParts.raw;
     const daysTxt = days == null ? "" : days + "d";
@@ -2441,10 +2468,13 @@ function buildFcRow(r, isDead) {
         <div class="fc-date-row">
           <div class="fc-date-pill">${esc(pillTxt)}</div>
           ${daysTxt ?
-              `<div class="fc-date-days ${daysClass}">${esc(daysTxt)}</div>`
+              `<div class="fc-date-days ${tierClass}">${esc(daysTxt)}</div>`
               : ""}
         </div>
-        <div class="fc-date-underline ${daysClass}"></div>
+        <div class="fc-date-bar">
+          <div class="fc-date-bar-fill ${tierClass}"
+               style="width: ${_barPct}%"></div>
+        </div>
       </div>`;
   }
   // Effective values: a manual edit (saved via the Save button) wins
