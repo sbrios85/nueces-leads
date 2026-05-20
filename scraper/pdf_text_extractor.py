@@ -996,6 +996,10 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
         m = rx.search(text)
         if m:
             name = _clean_name_ocr(m.group(1))
+            # Preserve the raw capture (before descriptor stripping) so
+            # downstream code can store it as `owner_raw` for forensics
+            # / manual review when the cleaned version looks wrong.
+            raw_name = name
             # Strip trailing descriptors like ", AN UNMARRIED MAN" etc.
             # (but not for entity borrowers — they keep their suffix)
             if idx not in ENTITY_BORROWER_PATTERN_INDICES:
@@ -1021,6 +1025,11 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
                     and _looks_like_legal_description(name)):
                 continue
             out["borrower"] = name
+            # Only expose borrower_raw if cleanup actually changed
+            # something — keeps the JSON clean (no redundant duplicate
+            # of the same string on the majority of records).
+            if raw_name and raw_name != name:
+                out["borrower_raw"] = raw_name
             break
 
     # --- Lender ---
@@ -1305,18 +1314,91 @@ _BORROWER_DESCRIPTOR_SUFFIXES = re.compile(
 )
 
 
+# Bare trailing marital words — "GINGER WILLIAMS, UNMARRIED" /
+# "JANE SMITH, WIDOW" / "Charles Broadwick, unmarried as trustor".
+# These templates omit the "an"/"a" article that the descriptor regex
+# above requires, and may add a trailing role label ("as trustor",
+# "as grantor"). Anchored to a trailing comma+space+word so we don't
+# strip from inside a legitimate surname like "Widowson" or
+# "Singleton".
+_BORROWER_BARE_MARITAL_SUFFIX = re.compile(
+    r"[,\s]+(?:UNMARRIED|MARRIED|SINGLE|WIDOWED|WIDOW|DIVORCED)"
+    r"(?:\s+as\s+(?:trustor|grantor|borrower|mortgagor))?"
+    r"\.?\s*$",
+    re.IGNORECASE,
+)
+
+
+# "Joined herein/pro forma by NAME" — a multi-party formula where the
+# primary borrower is followed by a co-borrower introduced via a
+# foreclosure-document formula. We want BOTH names in the cleaned
+# output, joined by " and ". Real-world variants seen:
+#   "Daniel Hernandez, a married man joined herein by Evelyn Hernandez"
+#   "MARY JONES joined pro forma by HENRY JONES"
+#   "Tom Smith, an unmarried man joined pro-forma by Lisa Smith"
+# The optional middle clause (", a married man") gets absorbed; the
+# trailing name2 still runs through the suffix strippers afterward in
+# case it has its own trailing descriptor.
+_BORROWER_JOINED_BY = re.compile(
+    r"^(?P<name1>.+?)"
+    r"\s*,?\s*"
+    r"(?:an?\s+(?:married|single|unmarried)\s+(?:man|woman|person)\s+)?"
+    r"joined\s+(?:herein|pro[\s\-]+forma)\s+by\s+"
+    r"(?P<name2>.+?)$",
+    re.IGNORECASE,
+)
+
+
 def _strip_borrower_descriptors(s: str) -> str:
     """Strip trailing descriptors like ", AN UNMARRIED MAN", ",
     HUSBAND AND WIFE", ", A SINGLE PERSON", ", AS COMMUNITY PROPERTY"
     that some templates append to the borrower name. Applied
-    iteratively in case there are stacked descriptors. Returns the
-    cleaned name; if everything got stripped, returns the original.
+    iteratively in case there are stacked descriptors.
+
+    Also handles two extra patterns:
+      - Bare trailing marital words (", UNMARRIED" alone, without the
+        "an"/"a" article).
+      - "joined herein/pro forma by NAME" two-party clauses, output as
+        "NAME1 and NAME2" with each side independently stripped.
+
+    Returns the cleaned name; if everything got stripped (less than 3
+    chars left), returns the original.
     """
     if not s:
         return s
     original = s
-    for _ in range(3):  # at most a few iterations
-        new_s = _BORROWER_DESCRIPTOR_SUFFIXES.sub("", s).strip(" ,.;:&-")
+    s = s.strip()
+
+    # First check for the multi-party "joined herein/pro forma by"
+    # formula. If matched, extract both names, strip their individual
+    # trailing descriptors, and return "name1 and name2".
+    m = _BORROWER_JOINED_BY.match(s)
+    if m:
+        n1 = m.group("name1").strip(" ,.")
+        n2 = m.group("name2").strip(" ,.")
+        # Iteratively strip both sides — name2 often has its own
+        # trailing "an unmarried woman" etc. that needs cleanup.
+        for _ in range(3):
+            new = _BORROWER_BARE_MARITAL_SUFFIX.sub("", n1).strip(" ,.")
+            new = _BORROWER_DESCRIPTOR_SUFFIXES.sub("", new).strip(" ,.")
+            if new == n1:
+                break
+            n1 = new
+        for _ in range(3):
+            new = _BORROWER_BARE_MARITAL_SUFFIX.sub("", n2).strip(" ,.")
+            new = _BORROWER_DESCRIPTOR_SUFFIXES.sub("", new).strip(" ,.")
+            if new == n2:
+                break
+            n2 = new
+        if n1 and n2 and len(n1) >= 3 and len(n2) >= 3:
+            return f"{n1} and {n2}"
+        return original  # joined-by parse left us with garbage — bail
+
+    # Standard path — iteratively strip the suffix descriptors (both
+    # the "with article" regex and the "bare word" regex).
+    for _ in range(3):
+        new_s = _BORROWER_BARE_MARITAL_SUFFIX.sub("", s).strip(" ,.;:&-")
+        new_s = _BORROWER_DESCRIPTOR_SUFFIXES.sub("", new_s).strip(" ,.;:&-")
         if new_s == s:
             break
         s = new_s
