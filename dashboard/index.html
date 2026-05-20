@@ -740,10 +740,10 @@
 <nav class="sidebar">
   <div class="sidebar-section">
     <div class="sidebar-section-title">Lead Types</div>
-    <div class="nav-item active" data-pane="ccln">
+    <div class="nav-item" data-pane="ccln">
       <span>City of Corpus Christi Liens</span>
       <span class="tab-count" id="ccln-count">—</span></div>
-    <div class="nav-item" data-pane="foreclosures">
+    <div class="nav-item active" data-pane="foreclosures">
       <span>Mortgage Foreclosures</span>
       <span class="tab-count" id="fc-count">—</span></div>
     <div class="nav-item" data-pane="taxforeclosures">
@@ -785,7 +785,7 @@
 <div class="main">
 
 <!-- ======== CCLN / CRM PANE ======== -->
-<div class="pane active" id="pane-ccln">
+<div class="pane" id="pane-ccln">
   <div class="stats" id="ccln-stats"></div>
   <table id="ccln-table">
     <thead><tr>
@@ -809,7 +809,7 @@
 </div>
 
 <!-- ======== FORECLOSURES PANE ======== -->
-<div class="pane" id="pane-foreclosures">
+<div class="pane active" id="pane-foreclosures">
   <div class="stats" id="fc-stats"></div>
   <table id="fc-table">
     <thead><tr>
@@ -1699,14 +1699,45 @@ let CCLN_RAW = [], CCLN_FILTERED = [];
 let FC_RAW = [], FC_FILTERED = [];
 
 // ============================================================
-// Tab switching
+// Tab switching + lazy-render
 // ============================================================
+// To keep page load fast as new lead types are added (Code Violations,
+// Vacant Houses, Delinquent Taxes etc. — potentially thousands of rows
+// each), we DON'T render every pane's table at startup. Each pane's
+// data is still fetched and counts/stats are updated, but the actual
+// DOM rows (<tr>) for hidden panes are deferred until the user clicks
+// into them. First click on a pane builds its rows; subsequent clicks
+// are instant (rendered once, kept in DOM).
+//
+// _renderedPanes: a Set of pane ids ("pane-ccln", "pane-foreclosures",
+// etc.) that have been rendered this session. Edits inside a pane re-
+// render that pane normally; the lazy gate only affects the FIRST
+// render per session.
+const _renderedPanes = new Set();
+function _renderPaneIfNeeded(paneId) {
+  if (_renderedPanes.has(paneId)) return;
+  _renderedPanes.add(paneId);
+  // Map pane id → the function that builds its rows. New lead-type
+  // panes get an entry added here when their data wiring is built.
+  // Panes not listed here have nothing to render (placeholder "coming
+  // soon" content is static HTML in the markup).
+  if (paneId === "pane-ccln") {
+    if (CCLN_RAW.length) applyCcln();
+  } else if (paneId === "pane-foreclosures") {
+    if (FC_RAW.length) applyFc();
+  }
+}
+
 document.querySelectorAll(".nav-item").forEach(t => {
   t.onclick = () => {
     document.querySelectorAll(".nav-item").forEach(x => x.classList.remove("active"));
     document.querySelectorAll(".pane").forEach(x => x.classList.remove("active"));
     t.classList.add("active");
-    document.getElementById("pane-" + t.dataset.pane).classList.add("active");
+    const paneId = "pane-" + t.dataset.pane;
+    document.getElementById(paneId).classList.add("active");
+    // Lazy-render: build this pane's rows the first time we land on
+    // it. The data is already loaded; this just constructs the DOM.
+    _renderPaneIfNeeded(paneId);
   };
 });
 
@@ -1736,12 +1767,24 @@ async function loadAll() {
     }
   } catch (e) { /* records.json optional — header just omits the date */ }
 
+  // Which pane is active right now? We'll only render that one's
+  // rows on initial load — the others stay deferred until the user
+  // clicks into them. (Stats + sidebar counts still update for every
+  // pane because those are cheap and visible from any tab.)
+  const _activePane = (document.querySelector(".pane.active") || {}).id;
+
   try {
     const r = await fetch("city_liens.json", {cache:"no-store"});
     const data = await r.json();
     CCLN_RAW = data.records || [];
     document.getElementById("ccln-count").textContent = data.total || 0;
-    renderCclnStats(); applyCcln();
+    renderCclnStats();
+    // Only build the CCLN table rows if CCLN is the active pane on
+    // load. Otherwise defer until first click.
+    if (_activePane === "pane-ccln") {
+      _renderedPanes.add("pane-ccln");
+      applyCcln();
+    }
   } catch (e) { document.getElementById("ccln-empty").hidden = false; }
 
   try {
@@ -1749,7 +1792,12 @@ async function loadAll() {
     const data = await r.json();
     FC_RAW = data.records || [];
     document.getElementById("fc-count").textContent = data.total || 0;
-    renderFcStats(data); applyFc();
+    renderFcStats(data);
+    // Same lazy-render pattern for the foreclosures pane.
+    if (_activePane === "pane-foreclosures") {
+      _renderedPanes.add("pane-foreclosures");
+      applyFc();
+    }
   } catch (e) { document.getElementById("fc-empty").hidden = false; }
 
   // Compute "last PDF upload" timestamp: the max `pdf_parsed_at` across
