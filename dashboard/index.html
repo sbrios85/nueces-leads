@@ -2813,7 +2813,7 @@ function buildFcRow(r, isDead) {
     </td>
     <td>${statusCell}</td>
     <td>${foreclosureDateCell}</td>
-    <td>${esc(r.recorded || "")}</td>
+    <td>${esc(formatDate(r.recorded))}</td>
     <td>${_ecell("owner", _ownerEff)}</td>
     <td class="addr-cell">${_ecell("prop_address", _propEff)}${
         [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim()
