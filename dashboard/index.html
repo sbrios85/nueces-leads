@@ -721,6 +721,140 @@
     display: inline-block; opacity: 0; transition: opacity .15s;
   }
   .saved-indicator.show { opacity: 1; }
+  /* ===== Header right column (Source line + Portals button) ===== */
+  .header-right {
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 8px;
+  }
+  .portals-btn {
+    background: var(--panel);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font: inherit; font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .portals-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  /* ===== Portals modal — wider than the default modal because the
+     card grid needs room. Uses the generic .modal-backdrop / .modal
+     base styles; this block only overrides what differs. ===== */
+  #portals-backdrop .modal {
+    min-width: 640px;
+    max-width: 880px;
+    width: 90vw;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+  .portals-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .portals-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+  .portals-close {
+    background: transparent; border: none; color: var(--muted);
+    font-size: 22px; line-height: 1; cursor: pointer; padding: 0 6px;
+  }
+  .portals-close:hover { color: var(--fg); }
+  /* Legend row above the card grid explaining tag colors. */
+  .portals-legend {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    font-size: 11px; color: var(--muted);
+    margin-bottom: 14px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .portals-legend .tag { vertical-align: middle; }
+  /* Card grid — two columns on wide modals, collapses to one on
+     narrow screens. */
+  .portals-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 720px) {
+    .portals-grid { grid-template-columns: 1fr; }
+  }
+  .portal-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .portal-card .card-row1 {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 8px;
+  }
+  .portal-card .card-name {
+    font-size: 13px; font-weight: 600; color: var(--fg);
+  }
+  .portal-card .card-desc {
+    font-size: 12px; color: var(--muted);
+    line-height: 1.4;
+  }
+  .portal-card .card-link {
+    margin-top: 4px;
+    font-size: 12px; color: var(--accent);
+    text-decoration: none;
+  }
+  .portal-card .card-link:hover { text-decoration: underline; }
+  /* Tag pills for AUTO / SEMI / MANUAL. Color reflects how much
+     elbow grease the source takes:
+       AUTO  = API/subscription, easy           → green
+       SEMI  = manual export then import        → amber
+       MANUAL = open-records request / paper    → red */
+  .portal-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .portal-tag.auto   { background: rgba(34,197,94,.15);  color: var(--good); }
+  .portal-tag.semi   { background: rgba(245,158,11,.18); color: var(--warn); }
+  .portal-tag.manual { background: rgba(239,68,68,.18);  color: var(--bad); }
+  /* PIA email template block at the bottom of the modal — distinct
+     amber tint so it reads as a callout, not a card. */
+  .portals-pia {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: rgba(245,158,11,.08);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 8px;
+  }
+  .portals-pia h4 {
+    margin: 0 0 8px; font-size: 13px; font-weight: 600;
+    color: var(--warn);
+  }
+  .portals-pia .pia-to {
+    font-size: 12px; color: var(--muted); margin-bottom: 8px;
+  }
+  .portals-pia .pia-to a { color: var(--accent); }
+  .portals-pia .pia-body {
+    font-size: 12px; line-height: 1.5;
+    color: var(--fg);
+    font-style: italic;
+  }
+  .portals-pia .pia-copy {
+    margin-top: 10px;
+    background: transparent;
+    border: 1px solid var(--warn);
+    color: var(--warn);
+    border-radius: 5px;
+    font-size: 11px; font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  .portals-pia .pia-copy:hover {
+    background: rgba(245,158,11,.12);
+  }
+  .portals-pia .pia-copy.copied { color: var(--good); border-color: var(--good); }
 </style>
 </head>
 <body>
@@ -733,7 +867,12 @@
     <h1>Nueces County — Lead Pipeline</h1>
     <div class="meta" id="meta">Loading…</div>
   </div>
-  <div class="meta">Source: Nueces County Clerk + NCAD esearch</div>
+  <div class="header-right">
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch</div>
+    <button id="portals-btn" class="portals-btn"
+      title="Open the Data Portals reference — links to external lookup sites + PIA email template"
+      onclick="openPortalsModal()">📂 Data Portals</button>
+  </div>
 </header>
 
 <div class="layout">
@@ -1049,6 +1188,113 @@
       <button class="danger" onclick="confirmCclnDead()">Yes, mark dead</button>
     </div>
     <button class="cancel" onclick="cancelCclnDead()">Cancel</button>
+  </div>
+</div>
+
+<!-- ======== Data Portals modal ========
+     Hardcoded reference list of external data sources for Nueces
+     County lead research. Each card is a hand-curated entry — to
+     add/edit/remove portals, edit the markup below. Tags reflect how
+     the data flows in:
+       AUTO   = API or paid subscription (CSV bulk export available)
+       SEMI   = manual web export → CSV → dashboard import
+       MANUAL = open-records request via email/PIA letter
+     Bottom block: copy-pasteable PIA email template for the County. -->
+<div class="modal-backdrop" id="portals-backdrop">
+  <div class="modal" role="dialog" aria-labelledby="portals-title">
+    <div class="portals-header">
+      <h3 id="portals-title">Data Portals</h3>
+      <button class="portals-close" aria-label="Close"
+              onclick="closePortalsModal()">×</button>
+    </div>
+    <div class="portals-legend">
+      <span><span class="portal-tag auto">Auto</span> = subscription/API</span>
+      <span><span class="portal-tag semi">Semi</span> = manual export → import</span>
+      <span><span class="portal-tag manual">Manual</span> = open-records request</span>
+    </div>
+    <div class="portals-grid">
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">Nueces County Clerk</span>
+          <span class="portal-tag semi">Semi</span>
+        </div>
+        <div class="card-desc">Manual search → CSV export → import here.</div>
+        <a class="card-link" target="_blank" rel="noopener"
+           href="https://nueces.tx.publicsearch.us/">Open ↗</a>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">Nueces CAD Property Search</span>
+          <span class="portal-tag semi">Semi</span>
+        </div>
+        <div class="card-desc">Free search. Filter absentee owners.</div>
+        <a class="card-link" target="_blank" rel="noopener"
+           href="https://esearch.nuecescad.net/">Open ↗</a>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">Nueces CAD Portal</span>
+          <span class="portal-tag semi">Semi</span>
+        </div>
+        <div class="card-desc">Login required, more detail.</div>
+        <a class="card-link" target="_blank" rel="noopener"
+           href="https://www.nuecescad.net/">Open ↗</a>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">TaxNetUSA (paid)</span>
+          <span class="portal-tag auto">Auto</span>
+        </div>
+        <div class="card-desc">Subscription = bulk CSV export.</div>
+        <a class="card-link" target="_blank" rel="noopener"
+           href="https://www.taxnetusa.com/">Open ↗</a>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">Tax Assessor / Collector</span>
+          <span class="portal-tag manual">Manual</span>
+        </div>
+        <div class="card-desc">Delinquent list = PIA request.</div>
+        <a class="card-link" target="_blank" rel="noopener"
+           href="https://www.co.nueces.tx.us/tax-assessor-collector/">Open ↗</a>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">County Foreclosures</span>
+          <span class="portal-tag semi">Semi</span>
+        </div>
+        <div class="card-desc">Public list, manual scrape.</div>
+        <a class="card-link" target="_blank" rel="noopener"
+           href="https://nueces.tx.publicsearch.us/?department=FC">Open ↗</a>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">Nueces Records (Probate)</span>
+          <span class="portal-tag manual">Manual</span>
+        </div>
+        <div class="card-desc">District Clerk lookup.</div>
+        <a class="card-link" target="_blank" rel="noopener"
+           href="https://www.co.nueces.tx.us/district-clerk/">Open ↗</a>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">CC Code Enforcement</span>
+          <span class="portal-tag manual">Manual</span>
+        </div>
+        <div class="card-desc">Open records request.</div>
+        <a class="card-link" target="_blank" rel="noopener"
+           href="https://www.cctexas.com/departments/code-enforcement">Open ↗</a>
+      </div>
+    </div>
+    <div class="portals-pia">
+      <h4>PIA email template:</h4>
+      <div class="pia-to">
+        To: <a href="mailto:publicrecords@nuecesco.com">publicrecords@nuecesco.com</a>
+      </div>
+      <div class="pia-body" id="pia-body">"Pursuant to the Texas Public Information Act, I request: [delinquent tax roll with owner name, mailing address, parcel ID, amount owed, and years delinquent] in CSV or Excel format. I am willing to pay reasonable copying fees up to $25."</div>
+      <button class="pia-copy" id="pia-copy-btn"
+              onclick="copyPiaTemplate(this)">Copy template</button>
+    </div>
   </div>
 </div>
 
@@ -3261,8 +3507,64 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeDrawer();
     closeMarkDeadModal();
+    closePortalsModal();
   }
 });
+
+// ============================================================
+// Data Portals modal — reference panel of external lookup sources.
+// Static content (cards live in the HTML markup); these handlers
+// just open/close it and copy the PIA email template to clipboard.
+// ============================================================
+function openPortalsModal() {
+  document.getElementById("portals-backdrop").classList.add("open");
+}
+function closePortalsModal() {
+  const el = document.getElementById("portals-backdrop");
+  if (el) el.classList.remove("open");
+}
+// Clicking outside the modal (on the backdrop itself) closes it,
+// matching the behavior of the other modals (mark-dead, ccln-confirm).
+const _portalsBackdrop = document.getElementById("portals-backdrop");
+if (_portalsBackdrop) {
+  _portalsBackdrop.addEventListener("click", (e) => {
+    if (e.target.id === "portals-backdrop") closePortalsModal();
+  });
+}
+// Copy the PIA template body to clipboard, then flash a green "Copied!"
+// state on the button for ~1.5s. Falls back to a textarea trick on
+// older browsers without the async clipboard API.
+function copyPiaTemplate(btn) {
+  const body = document.getElementById("pia-body");
+  if (!body) return;
+  const text = body.textContent.trim();
+  const flashCopied = () => {
+    const original = btn.textContent;
+    btn.textContent = "Copied!";
+    btn.classList.add("copied");
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove("copied");
+    }, 1500);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(flashCopied).catch(() => {
+      // Fallback path for browsers/contexts that block async clipboard.
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.left = "-9999px";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); flashCopied(); }
+      catch (e) { /* nothing more we can do — leave the button alone */ }
+      document.body.removeChild(ta);
+    });
+  } else {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.left = "-9999px";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); flashCopied(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+}
 
 applySidebarState();
 loadAll();
