@@ -505,79 +505,73 @@
   .days-medium { color: var(--warn); }
   .days-far { color: var(--muted); }
   /* ===== Foreclosure Date cell (merged Sale Date + Days Until Sale) =====
-     Layout matches the Houston Foreclosure Alerts reference: a rounded
-     date "pill" with an integrated underline-style progress bar, and
-     the urgency countdown text sitting to the RIGHT of the pill (not
-     stacked below). The bar IS the bottom border of the pill — no
-     separate gray track, no gap above. Filled portion fades as the
-     sale approaches, anchored to the left edge of the pill.
-
-     Vertical structure inside the cell is just two rows:
-       1. month label (small, muted, above the pill — like "JUN")
-       2. flex row: [date pill]  [countdown text]
-     Past sales drop the bar entirely and show "X days ago" in red. */
+     Layout matches the Houston Foreclosure Alerts reference image:
+       Row 1: small uppercase month label ("JUNE", "JULY")
+       Row 2: [date pill]  [countdown "60d"]   ← side by side
+       Row 3: full-width progress bar
+     The bar fills MORE as the sale approaches (urgency signal),
+     baseline 60 days — a 60d row has empty bar, a 1d row is nearly
+     full. Past sales drop the bar entirely and show "X days ago" in
+     red to the right of the pill. Color tiers follow the existing
+     convention: red ≤14d, amber ≤30d, muted otherwise. */
   .fc-date-cell {
     display: flex; flex-direction: column;
-    gap: 2px; align-items: flex-start;
+    gap: 3px; align-items: stretch;     /* stretch so bar can be full-width */
     white-space: nowrap;
     line-height: 1.25;
+    min-width: 110px;
   }
-  /* Small uppercase month label above the date pill, e.g. "JUN". */
+  /* Small uppercase month label above the date pill, e.g. "JUNE". */
   .fc-date-month {
     font-size: 9px; font-weight: 700;
     letter-spacing: 0.08em;
     color: var(--muted);
     text-transform: uppercase;
   }
-  /* The pill + countdown sit on one row. */
+  /* The pill + countdown sit on one row, side-by-side. */
   .fc-date-row {
     display: flex; align-items: center; gap: 8px;
   }
-  /* The date pill itself: rounded, slight bg, with the progress bar
-     drawn as a thicker bottom border (via a pseudo-element so we can
-     animate its width). */
+  /* Date pill — rounded, slight bg. The bar is a SEPARATE element
+     below (not part of the pill). */
   .fc-date-pill {
-    position: relative;
     display: inline-flex; align-items: center;
-    padding: 2px 8px 4px 8px;          /* extra bottom space for bar */
+    padding: 2px 8px;
     border-radius: 5px;
     background: rgba(148,163,184,0.10);
     color: var(--fg);
     font-size: 13px; font-weight: 600;
     line-height: 1.15;
   }
-  /* The progress bar — bottom edge of the pill. The container span
-     is the FULL width (so the rounded corners read as the full pill
-     width), and the inner fill grows from the left as the sale gets
-     closer. 2px height; color matches the urgency tier. */
-  .fc-date-pill-bar {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 2px;
-    border-radius: 0 0 5px 5px;
-    overflow: hidden;
+  /* Full-width progress bar — spans the entire cell width on its own
+     row below the pill+countdown line. 3px thick, with a faint track
+     showing through the unfilled portion so the bar reads as a
+     measuring scale rather than just a colored strip. */
+  .fc-date-bar {
+    width: 100%; height: 3px;
+    background: rgba(148,163,184,0.15);
+    border-radius: 2px; overflow: hidden;
   }
-  .fc-date-pill-bar-fill {
-    height: 100%;
+  .fc-date-bar-fill {
+    height: 100%; border-radius: 2px;
     transition: width 0.2s;
   }
-  /* The countdown text to the right of the pill ("60d", "25d"). */
+  /* Countdown text right of the pill ("60d", "25d"). */
   .fc-date-days {
     font-size: 11px; font-weight: 600;
   }
-  /* Past-sale "X days ago" — no pill underline, just red text. */
+  /* Past-sale "X days ago" — no bar, just red text. */
   .fc-date-past {
     font-size: 11px; font-weight: 600;
     color: var(--bad);
   }
-  /* Color tokens — applied to BOTH the bar fill and the countdown
-     text so they read together. */
+  /* Color tokens — applied to both bar fill and countdown text. */
   .fc-date-days.days-soon,
-  .fc-date-pill-bar-fill.days-soon { color: var(--bad); background: var(--bad); }
+  .fc-date-bar-fill.days-soon { color: var(--bad); background: var(--bad); }
   .fc-date-days.days-medium,
-  .fc-date-pill-bar-fill.days-medium { color: var(--warn); background: var(--warn); }
+  .fc-date-bar-fill.days-medium { color: var(--warn); background: var(--warn); }
   .fc-date-days.days-far,
-  .fc-date-pill-bar-fill.days-far { color: var(--muted); background: var(--muted); }
+  .fc-date-bar-fill.days-far { color: var(--muted); background: var(--muted); }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .empty { padding: 60px 28px; text-align: center; color: var(--muted); }
@@ -2435,7 +2429,8 @@ function buildFcRow(r, isDead) {
     // No sale date at all — show a dash.
     foreclosureDateCell = `<div class="fc-date-cell"><div class="fc-date-pill">—</div></div>`;
   } else if (days != null && days < 0) {
-    // Past sale: month label + un-barred pill + red "X days ago".
+    // Past sale: month label + pill + red "X days ago" beside it.
+    // No bar — the red text carries the urgency signal.
     const pastTxt = Math.abs(days) + " days ago";
     const pillTxt = _dateParts.month
       ? `${_dateParts.month} ${_dateParts.day}` : _dateParts.raw;
@@ -2449,7 +2444,10 @@ function buildFcRow(r, isDead) {
         </div>
       </div>`;
   } else {
-    // Upcoming sale: pill with integrated progress bar + countdown.
+    // Upcoming sale. Three vertical rows:
+    //   1. month label  ("JUNE")
+    //   2. pill + countdown side-by-side  ("Jun 2"  "60d")
+    //   3. full-width progress bar
     const pillTxt = _dateParts.month
       ? `${_dateParts.month} ${_dateParts.day}` : _dateParts.raw;
     const daysTxt = days == null ? "" : days + "d";
@@ -2458,16 +2456,14 @@ function buildFcRow(r, isDead) {
         ${_dateParts.monthCap ?
             `<div class="fc-date-month">${esc(_dateParts.monthCap)}</div>` : ""}
         <div class="fc-date-row">
-          <div class="fc-date-pill">
-            ${esc(pillTxt)}
-            <div class="fc-date-pill-bar">
-              <div class="fc-date-pill-bar-fill ${daysClass}"
-                   style="width: ${_barPct}%"></div>
-            </div>
-          </div>
+          <div class="fc-date-pill">${esc(pillTxt)}</div>
           ${daysTxt ?
               `<div class="fc-date-days ${daysClass}">${esc(daysTxt)}</div>`
               : ""}
+        </div>
+        <div class="fc-date-bar">
+          <div class="fc-date-bar-fill ${daysClass}"
+               style="width: ${_barPct}%"></div>
         </div>
       </div>`;
   }
