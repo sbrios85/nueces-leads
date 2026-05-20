@@ -1,4 +1,4 @@
-[TODO.md](https://github.com/user-attachments/files/28032648/TODO.md)
+[TODO.md](https://github.com/user-attachments/files/28040501/TODO.md)
 [TODO.md](https://github.com/user-attachments/files/27653434/TODO.md)
 # TODO
 
@@ -143,6 +143,59 @@ when broadening to other counties), consider:
 3. Browser extension (works inside user's real Chrome, no detection)
 
 ## Investigated and parked
+
+- **NCAD re-corroboration pass: SHIPPED. Underlying scrape-order bug
+  still unsolved.**
+
+  *Status: 38 wrong-parcel matches evicted from the live data on
+  2026-05-20 via `scraper/recorroborate_ncad.py` + workflow
+  "Re-corroborate NCAD matches". Process verified: dry-run first,
+  audited mismatches against subdivision overlap (zero false-positive
+  evictions), then apply.*
+
+  The pass is a clean-up tool, not a fix for the root cause:
+
+  1. **Root cause (still unsolved).** In the daily scrape, NCAD owner
+     search runs BEFORE the PDF parser populates the clerk legal.
+     The corroboration guard inside `fetch.py:_pick_best_esearch_row`
+     short-circuits when `record_legal` is empty, so a wrong-but-
+     plausible parcel can be attached purely by owner-name score. The
+     45% wrong-match rate the first apply revealed (38 of 85
+     eligible) is the size of the leak.
+
+  2. **What's shipped (workaround).** A standalone re-corroboration
+     pass that runs AFTER PDF parsing has populated legals. For each
+     record with both an attached `ncad_prop_id` and a clean clerk
+     legal, fetches the NCAD property page, parses its Legal
+     Description, runs `legal_descriptions_match`. On active rejection
+     evicts the NCAD-derived fields. Conservative by default — never
+     evicts on ambiguity or fetch errors. Dry-run first, then apply.
+
+  3. **Required matcher loosening (also shipped).** The original
+     matcher rejected "LOTS 7,8" vs "LOT 7" as a mismatch — common
+     when clerk lists both lots on a 2-lot parcel and NCAD lists only
+     the lead lot or partial slices. Loosened to set-overlap. Three
+     previously-false-positive evictions (docs 243, 264, 247) became
+     correct matches. Validated against all 435 cross-pairs of real
+     records — zero spurious matches introduced.
+
+  4. **Rate-limit mitigation (also shipped).** First dry-run hit NCAD
+     rate-limiting after ~12 rapid identical-URL requests (Plutus
+     cluster: 8 records share one parcel). Added per-run URL cache
+     + 1.0s inter-fetch delay + retry-with-backoff. Second run: zero
+     errors. Cache saved 19 of 85 fetches in that run.
+
+  5. **The real fix (NOT shipped).** Reorder `fetch.py` so PDF parsing
+     populates `legal_by_name` BEFORE the NCAD esearch loop runs.
+     That way the corroboration guard has a real legal to compare
+     against on first attempt and rejects wrong parcels at scrape
+     time rather than requiring a separate cleanup pass. Bigger
+     refactor; not started.
+
+  6. **Operational note.** Re-run the re-corroboration workflow
+     after each "Re-parse text archive" run (PDF parsing may unlock
+     legals on newly-uploaded foreclosures, surfacing wrong matches
+     that previously couldn't be checked). Dry-run first every time.
 
 - **TRACT-form legals: parsed + auto-deaded on dashboard, but NCAD
   address still not auto-matched (two separate issues — read both)**
