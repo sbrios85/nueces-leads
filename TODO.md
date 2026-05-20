@@ -1,4 +1,4 @@
-[TODO (1).md](https://github.com/user-attachments/files/28068368/TODO.1.md)
+[TODO (2).md](https://github.com/user-attachments/files/28068684/TODO.2.md)
 [TODO.md](https://github.com/user-attachments/files/27653434/TODO.md)
 # TODO
 
@@ -183,8 +183,8 @@ when broadening to other counties), consider:
 
 ## Investigated and parked
 
-- **NCAD re-corroboration pass: SHIPPED. Underlying scrape-order bug
-  still unsolved.**
+- **NCAD wrong-match cleanup: SHIPPED as separate workflow. Original
+  framing of a "structural fetch.py bug" was WRONG — see below.**
 
   *Status: 38 wrong-parcel matches evicted from the live data on
   2026-05-20 via `scraper/recorroborate_ncad.py` + workflow
@@ -192,17 +192,30 @@ when broadening to other counties), consider:
   audited mismatches against subdivision overlap (zero false-positive
   evictions), then apply.*
 
-  The pass is a clean-up tool, not a fix for the root cause:
+  1. **What I previously called a "scrape-order bug" was a
+     misdiagnosis.** Earlier sessions said "fetch.py runs NCAD owner-
+     search before the PDF parser populates the legal, so the
+     corroboration guard short-circuits." After actually reading the
+     code in session on 2026-05-20, that framing is incorrect.
+     What's really happening:
+     - `fetch.py` step 9b DOES read the latest `foreclosures.json`
+       (which has any PDF-parsed legals from prior runs) before
+       running NCAD. The corroboration guard in
+       `_pick_best_esearch_row` DOES see PDF-parsed legals when they
+       exist.
+     - The leak ONLY happens for records whose PDF hadn't been
+       parsed yet when their first NCAD lookup attempted. Records
+       added today by the daily scrape, before the user has uploaded
+       and parsed their PDFs, attach with weak/empty clerk-side
+       legals that don't corroborate well.
+     - Once the user uploads and parses PDFs, the existing scrape
+       never re-runs NCAD on those records — so a wrong match that
+       got attached stays attached until something else (like the
+       re-corroboration workflow) catches it.
+     There is no broken ordering inside `fetch.py`. There IS a gap
+     in WHEN re-corroboration runs across the two workflows.
 
-  1. **Root cause (still unsolved).** In the daily scrape, NCAD owner
-     search runs BEFORE the PDF parser populates the clerk legal.
-     The corroboration guard inside `fetch.py:_pick_best_esearch_row`
-     short-circuits when `record_legal` is empty, so a wrong-but-
-     plausible parcel can be attached purely by owner-name score. The
-     45% wrong-match rate the first apply revealed (38 of 85
-     eligible) is the size of the leak.
-
-  2. **What's shipped (workaround).** A standalone re-corroboration
+  2. **What's shipped (the cleanup).** A standalone re-corroboration
      pass that runs AFTER PDF parsing has populated legals. For each
      record with both an attached `ncad_prop_id` and a clean clerk
      legal, fetches the NCAD property page, parses its Legal
@@ -224,17 +237,28 @@ when broadening to other counties), consider:
      + 1.0s inter-fetch delay + retry-with-backoff. Second run: zero
      errors. Cache saved 19 of 85 fetches in that run.
 
-  5. **The real fix (NOT shipped).** Reorder `fetch.py` so PDF parsing
-     populates `legal_by_name` BEFORE the NCAD esearch loop runs.
-     That way the corroboration guard has a real legal to compare
-     against on first attempt and rejects wrong parcels at scrape
-     time rather than requiring a separate cleanup pass. Bigger
-     refactor; not started.
+  5. **Operational workflow (current).** Two manual workflow clicks:
+     (a) "Parse uploaded foreclosure PDFs" after dropping new PDFs in,
+     (b) "Re-corroborate NCAD matches" in dry-run, review the log,
+     then apply if mismatches look real.
 
-  6. **Operational note.** Re-run the re-corroboration workflow
-     after each "Re-parse text archive" run (PDF parsing may unlock
-     legals on newly-uploaded foreclosures, surfacing wrong matches
-     that previously couldn't be checked). Dry-run first every time.
+  6. **FUTURE CHECK — chain the two workflows into one?**
+     We considered auto-triggering re-corroboration dry-run as a
+     step at the end of the PDF parse workflow. Decided NOT to do it
+     on 2026-05-20 because:
+     - PDFs are uploaded only every few weeks; "remembering to run
+       step 2" is a small recurring cost.
+     - The real bottleneck is reviewing the dry-run log, which can't
+       be automated either way.
+     - Chaining adds ~3-5 minutes per PDF parse for the Playwright
+       install + ~85-record re-corroboration.
+     - Manual control feels right while the system is still being
+       built and tuned.
+     **Revisit this decision once the dashboard is feature-complete
+     and the user's daily workflow stabilizes around "a few minutes
+     a day uploading files."** If at that point the user is reliably
+     going through the two-step process and the dry-run is almost
+     always clean, chaining becomes a clear win. Today it isn't.
 
 - **TRACT-form legals: parsed + auto-deaded on dashboard, but NCAD
   address still not auto-matched (two separate issues — read both)**
