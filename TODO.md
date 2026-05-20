@@ -1,8 +1,47 @@
-[TODO.md](https://github.com/user-attachments/files/28040501/TODO.md)
+[TODO (1).md](https://github.com/user-attachments/files/28068368/TODO.1.md)
 [TODO.md](https://github.com/user-attachments/files/27653434/TODO.md)
 # TODO
 
 ## Open Items
+
+### 0. Expand PIA email templates in the Data Portals modal
+**Priority: low — feature add, not blocking**
+
+The Data Portals modal currently has ONE "PIA email template" callout
+block at the bottom — a single open-records-request template aimed at
+the delinquent tax roll. Goal is to evolve this into a SET of templates
+selectable by lead type, so each open-records request the user makes
+has a starting point with the right wording / requested fields.
+
+Planned templates (final wording TBD per request type):
+- **Code Violations** — request open code-enforcement case list
+  from CC Code Enforcement (cctexas.com).
+- **Water Shutoff** — request list of properties with water service
+  shut off (proxy for vacancy / delinquency signal).
+- **Tax Overages** — request list of surplus funds remaining after
+  tax foreclosure sales, by year.
+- **Vacant Houses** (maybe) — request DPS / driver-license data
+  surfacing addresses with no recent registration. Need to confirm
+  which agency actually controls this dataset before drafting.
+- **Low-tax-owed properties** — request all properties owing between
+  $0–$100/year in property taxes (a heuristic for tiny / forgotten
+  parcels with possible heirship or abandonment angles).
+
+Implementation sketch:
+- Replace the single PIA block with a small dropdown / tab selector
+  ("Template:") above the template body, sourced from a hardcoded
+  array of `{label, to, body}` records.
+- Same Copy button + clipboard flash UX as today.
+- The current delinquent-tax-list template is **REMOVED** as a
+  template (replaced by other variants) since the user can download
+  the delinquent list directly from the Tax Assessor portal now.
+
+Discovery work to do BEFORE coding:
+- Confirm each request's correct recipient email (some go to CC,
+  some to County, some to DPS).
+- Confirm CC Code Enforcement vs County open-records routes.
+- Look up actual statute wording for the Texas Public Information
+  Act so each template cites the right authority for the agency.
 
 ### 1. Migrate CRM data from localStorage to GitHub-backed storage
 **Priority: high — required for mobile / multi-device access**
