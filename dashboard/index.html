@@ -524,13 +524,6 @@
     white-space: nowrap;
     line-height: 1.25;
   }
-  /* Small uppercase month label above the date pill ("JUNE"). */
-  .fc-date-month {
-    font-size: 9px; font-weight: 700;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
   /* Pill + countdown sit on one row, side-by-side. */
   .fc-date-row {
     display: flex; align-items: center; gap: 8px;
@@ -2420,18 +2413,14 @@ function buildFcRow(r, isDead) {
     if (!sd) return null;
     const m = String(sd).match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (!m) return {raw: String(sd)};
-    const monthNames  = ["Jan","Feb","Mar","Apr","May","Jun",
-                         "Jul","Aug","Sep","Oct","Nov","Dec"];
-    const monthFull   = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY",
-                         "JUNE","JULY","AUGUST","SEPTEMBER",
-                         "OCTOBER","NOVEMBER","DECEMBER"];
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun",
+                        "Jul","Aug","Sep","Oct","Nov","Dec"];
     const mo = parseInt(m[2], 10);
     const d  = parseInt(m[3], 10);
     if (mo < 1 || mo > 12) return {raw: String(sd)};
     return {
-      month:    monthNames[mo - 1],          // "Jun"
-      monthCap: monthFull[mo - 1],           // "JUNE"
-      day:      d,                            // 2
+      month: monthNames[mo - 1],   // "Jun"
+      day:   d,                     // 2
     };
   })();
   let foreclosureDateCell;
@@ -2439,32 +2428,27 @@ function buildFcRow(r, isDead) {
     // No sale date at all — show a dash.
     foreclosureDateCell = `<div class="fc-date-cell"><div class="fc-date-pill">—</div></div>`;
   } else if (days != null && days < 0) {
-    // Past sale: month label + pill + red "X days ago" (no underline).
+    // Past sale: pill + red "X days ago", no bar.
     const pastTxt = Math.abs(days) + " days ago";
     const pillTxt = _dateParts.month
       ? `${_dateParts.month} ${_dateParts.day}` : _dateParts.raw;
     foreclosureDateCell = `
       <div class="fc-date-cell">
-        ${_dateParts.monthCap ?
-            `<div class="fc-date-month">${esc(_dateParts.monthCap)}</div>` : ""}
         <div class="fc-date-row">
           <div class="fc-date-pill">${esc(pillTxt)}</div>
           <div class="fc-date-past">${esc(pastTxt)}</div>
         </div>
       </div>`;
   } else {
-    // Upcoming sale. Three vertical rows:
-    //   1. month label  ("JUNE")
-    //   2. pill + "Xd" countdown side-by-side
-    //   3. progress bar (always 70px wide) — colored fill grows
+    // Upcoming sale. Two vertical rows:
+    //   1. pill + "Xd" countdown side-by-side
+    //   2. progress bar (always 70px wide) — colored fill grows
     //      from the left as the sale approaches. 60-day baseline.
     const pillTxt = _dateParts.month
       ? `${_dateParts.month} ${_dateParts.day}` : _dateParts.raw;
     const daysTxt = days == null ? "" : days + "d";
     foreclosureDateCell = `
       <div class="fc-date-cell">
-        ${_dateParts.monthCap ?
-            `<div class="fc-date-month">${esc(_dateParts.monthCap)}</div>` : ""}
         <div class="fc-date-row">
           <div class="fc-date-pill">${esc(pillTxt)}</div>
           ${daysTxt ?
