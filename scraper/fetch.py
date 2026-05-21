@@ -2797,17 +2797,23 @@ async def _run_ncad_searches(names: List[str],
         # something else is wrong, and writing more nulls to the cache
         # would prevent retries on the next run.
         #
-        # NOTE: these were 8/15, which tripped on NORMAL data — the
-        # foreclosure/lead owner lists legitimately contain long runs
-        # of people not in NCAD's residential rolls (investors,
-        # out-of-county owners, entities, name mismatches). 8 straight
-        # legit misses looked identical to "portal down" and aborted
-        # healthy runs before they reached matchable records (e.g.
-        # NICHOLS ANDREW, confirmed present in NCAD by manual search).
-        # Raised so only a genuine systemic failure (dozens of straight
-        # misses) trips the breaker.
-        MAX_CONSECUTIVE_MISSES_BEFORE_REFRESH = 25
-        MAX_CONSECUTIVE_MISSES_AFTER_REFRESH = 30
+        # History:
+        #   - Started at 8/15 — tripped on NORMAL data because the
+        #     foreclosure/lead owner lists legitimately contain runs
+        #     of people not in NCAD's residential rolls (investors,
+        #     out-of-county owners, entities, name mismatches). 8
+        #     legit misses looked identical to "portal down" and
+        #     aborted healthy runs before reaching matchable records.
+        #   - Raised to 25/30 — too high. Real NCAD rate-limiting
+        #     manifests as a streak of 11-13 misses (observed 2026-05-
+        #     20 and 2026-05-21). At 25 the breaker NEVER fires before
+        #     the workflow timeout, so 13 false misses get cached as
+        #     None and need retrying next run. Cache poisoning.
+        #   - Now 12/15 — chosen empirically. Catches the actual rate-
+        #     limit signature we've seen while leaving room for the
+        #     legitimate-miss cluster that broke the 8-threshold.
+        MAX_CONSECUTIVE_MISSES_BEFORE_REFRESH = 12
+        MAX_CONSECUTIVE_MISSES_AFTER_REFRESH = 15
 
         consecutive_misses = 0
         post_refresh_misses = 0
