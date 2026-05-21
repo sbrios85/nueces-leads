@@ -1,5 +1,5 @@
 {
-  "mode": "apply",
+  "mode": "dry_run",
   "total_records": 105,
   "eligible": 0,
   "skipped": 105,
@@ -24,11 +24,11 @@
     },
     {
       "doc_num": "2026000292",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal empty (can't safely verify)"
     },
     {
       "doc_num": "2026000293",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal empty (can't safely verify)"
     },
     {
       "doc_num": "2026000276",
@@ -296,7 +296,7 @@
     },
     {
       "doc_num": "2026000188",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal empty (can't safely verify)"
     },
     {
       "doc_num": "2026000183",
@@ -352,7 +352,7 @@
     },
     {
       "doc_num": "2026000296",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal empty (can't safely verify)"
     },
     {
       "doc_num": "2026000268",
@@ -372,7 +372,7 @@
     },
     {
       "doc_num": "2026000257",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal empty (can't safely verify)"
     },
     {
       "doc_num": "2026000251",
