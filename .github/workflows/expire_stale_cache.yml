@@ -1,0 +1,81 @@
+name: Expire stale NCAD cache (one-shot)
+
+# ONE-SHOT CLEANUP for records that were evicted by recorroborate_ncad.py
+# BEFORE that script learned to expire its own cache entries.
+#
+# Background:
+#   Before 2026-05-21, re-corroboration cleared `ncad_prop_id` on
+#   wrong-matched records but left their entries in the NCAD owner-
+#   search cache pointing at the same wrong parcel. The next daily
+#   scrape re-attached the wrong parcel via the cache shortcut.
+#
+#   The structural fix is now in scraper/recorroborate_ncad.py, but
+#   it only fires when re-corroboration is CURRENTLY evicting a
+#   record. Records evicted BEFORE the fix still have stale cache
+#   entries — and re-corroboration can't help them anymore (no
+#   ncad_prop_id to evict, so they're skipped as ineligible).
+#
+#   This workflow runs a small helper that auto-detects those records
+#   and removes their stale cache entries. After this runs, the
+#   "Foreclosure esearch only" workflow with retry_misses=true will
+#   look them up using current logic (slot-2 spouse search, etc.) and
+#   either find the correct parcel or honestly record a miss.
+#
+# WHEN TO USE:
+#   Run this once, then run "Foreclosure esearch only" with
+#   retry_misses=true.
+#
+# WHEN NOT TO USE:
+#   Don't run this routinely. It's a one-time cleanup. Future evictions
+#   are handled automatically by recorroborate_ncad.py.
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply the changes (otherwise dry run)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "expire-stale-cache"
+  cancel-in-progress: false
+
+jobs:
+  expire:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Expire stale cache entries
+        env:
+          LOG_LEVEL: INFO
+          PYTHONUNBUFFERED: "1"
+          EXPIRE_APPLY: "${{ inputs.apply && '1' || '0' }}"
+        run: python scraper/expire_stale_cache_for_evicted.py
+
+      - name: Commit cache changes
+        if: ${{ inputs.apply }}
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          git add .cache/ncad_search_cache.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no cache changes to commit (nothing matched)"
+          else
+            git commit -m "chore: one-shot expire stale NCAD cache for previously-evicted records"
+            git push
+          fi
