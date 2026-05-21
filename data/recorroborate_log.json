@@ -1,39 +1,34 @@
 {
-  "mode": "dry_run",
-  "total_records": 104,
-  "eligible": 53,
-  "skipped": 51,
-  "matches": 52,
+  "mode": "apply",
+  "total_records": 105,
+  "eligible": 0,
+  "skipped": 105,
+  "matches": 0,
   "mismatches": 0,
-  "ambiguous": 1,
+  "ambiguous": 0,
   "errors": 0,
-  "unique_parcels_fetched": 53,
+  "unique_parcels_fetched": 0,
   "cache_hits": 0,
   "ncad_cache_expiry": null,
   "mismatch_details": [],
-  "ambiguous_details": [
-    {
-      "doc_num": "2026000256",
-      "ncad_prop_id": "187695",
-      "url": "https://esearch.nuecescad.net/Property/View/187695?year=2026&ownerId=515674",
-      "clerk_legal": "COUNTRY CLUB ESTATES LOT 18 BLOCK 1 UNIT 30",
-      "ncad_legal": "BANQUETE T/S-HERRERA GRT S POR .287 AC OUT OF BLK D",
-      "verdict": "ambiguous"
-    }
-  ],
+  "ambiguous_details": [],
   "error_details": [],
   "skipped_details": [
     {
       "doc_num": "2026000295",
-      "reason": "clerk legal too sparse to compare (sub='leeward isles i unit 803 building h', lot='')"
+      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000294",
-      "reason": "clerk legal too sparse to compare (sub='sand dollar ii studio condominium apt 13 bldg a', lot='')"
+      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000292",
-      "reason": "clerk legal too sparse to compare (sub='sharpsburg tracts one 1 and two 2', lot='')"
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000293",
+      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000276",
@@ -64,15 +59,19 @@
       "reason": "no ncad_prop_id attached"
     },
     {
+      "doc_num": "2026000287",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
       "doc_num": "2026000269",
       "reason": "no ncad_prop_id attached"
     },
     {
-      "doc_num": "2026000288",
-      "reason": "clerk legal too sparse to compare (sub='wooldridge creek- lort 28, , unit 12', lot='')"
+      "doc_num": "2026000274",
+      "reason": "no ncad_prop_id attached"
     },
     {
-      "doc_num": "2026000274",
+      "doc_num": "2026000288",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -84,11 +83,15 @@
       "reason": "no ncad_prop_id attached"
     },
     {
+      "doc_num": "2026000278",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
       "doc_num": "2026000281",
       "reason": "no ncad_prop_id attached"
     },
     {
-      "doc_num": "2026000278",
+      "doc_num": "2026000289",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -104,15 +107,11 @@
       "reason": "no ncad_prop_id attached"
     },
     {
-      "doc_num": "2026000290",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000289",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
       "doc_num": "2026000283",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000290",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -121,15 +120,15 @@
     },
     {
       "doc_num": "2026000291",
-      "reason": "clerk legal too sparse to compare (sub='tract 1 7 2- casa blanca grant abstract no 221', lot='')"
+      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000267",
-      "reason": "clerk legal too sparse to compare (sub='apt no 134 building d puerto del padre condominium', lot='')"
+      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000266",
-      "reason": "clerk legal too sparse to compare (sub='george h paul of the famous driscoll land tract 38, ranchos robstown tract #4', lot='')"
+      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000263",
@@ -141,15 +140,51 @@
     },
     {
       "doc_num": "2026000260",
-      "reason": "clerk legal too sparse to compare (sub='villa del sol condominiums iii unit 3218 bldg c', lot='')"
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000259",
+      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000258",
       "reason": "no ncad_prop_id attached"
     },
     {
+      "doc_num": "2026000252",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000254",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
       "doc_num": "2026000255",
-      "reason": "clerk legal too sparse to compare (sub='spring garden unit 1', lot='')"
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000249",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000248",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000236",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000241",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000234",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000243",
+      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000245",
@@ -164,7 +199,67 @@
       "reason": "no ncad_prop_id attached"
     },
     {
+      "doc_num": "2026000238",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000244",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
       "doc_num": "2026000237",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000240",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000232",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000226",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000231",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000230",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000222",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000219",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000214",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000215",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000212",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000210",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000205",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000203",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -172,7 +267,15 @@
       "reason": "no ncad_prop_id attached"
     },
     {
+      "doc_num": "2026000208",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
       "doc_num": "2026000201",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000206",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -180,7 +283,35 @@
       "reason": "no ncad_prop_id attached"
     },
     {
+      "doc_num": "2026000190",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000191",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000195",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
       "doc_num": "2026000188",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000183",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000182",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000181",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000187",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -188,7 +319,27 @@
       "reason": "no ncad_prop_id attached"
     },
     {
+      "doc_num": "2026000172",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
       "doc_num": "2026000176",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000137",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000141",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000115",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000299",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -197,10 +348,30 @@
     },
     {
       "doc_num": "2026000297",
-      "reason": "clerk legal too sparse to compare (sub='spinnaker condominiums unit 305 bldg a', lot='')"
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000296",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000268",
+      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000265",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000262",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000264",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000257",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -208,11 +379,47 @@
       "reason": "no ncad_prop_id attached"
     },
     {
+      "doc_num": "2026000256",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000250",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000253",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000242",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000247",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000233",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000239",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
       "doc_num": "2026000227",
       "reason": "no ncad_prop_id attached"
     },
     {
+      "doc_num": "2026000228",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
       "doc_num": "2026000229",
+      "reason": "no ncad_prop_id attached"
+    },
+    {
+      "doc_num": "2026000211",
       "reason": "no ncad_prop_id attached"
     },
     {
