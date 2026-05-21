@@ -3076,6 +3076,25 @@ async def _esearch_one(page, name: str, token: str,
                             yr = best.get("_detail_year", "") \
                                 or current_year
                             oid = best.get("_detail_owner_id", "") or ""
+                            # Persist the NCAD detail IDs so the dashboard
+                            # can build a direct property-page link AND so
+                            # downstream code can tell this record is fully
+                            # enriched. Bug fix 2026-05-21: this block used
+                            # to live ONLY in the owner-search path; the
+                            # address-search path popped the underscore-
+                            # prefixed copies without first copying them to
+                            # the stable keys. Result: records matched via
+                            # address search ended up with site_addr but
+                            # no ncad_prop_id — looking superficially
+                            # "evicted" to downstream code (re-corroborate,
+                            # cache-expiry helper) even though the lookup
+                            # had succeeded. Verified failures:
+                            # LEONARDO WARDLAW / RUBY BENAVIDEZ. Mirror
+                            # the owner-search path now so both paths
+                            # produce structurally identical results.
+                            best["ncad_prop_id"]  = pid
+                            best["ncad_year"]     = yr
+                            best["ncad_owner_id"] = oid
                             if pid:
                                 d_url = (f"{NCAD_ESEARCH_BASE}"
                                          f"/Property/View/{pid}"
