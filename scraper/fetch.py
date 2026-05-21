@@ -2861,9 +2861,9 @@ async def _run_ncad_searches(names: List[str],
                 else:
                     # Re-lookup if the cached entry is a successful
                     # match but was built BEFORE we started extracting
-                    # appraised value OR mailing address. One-time
-                    # migration — once the cache has both, this path
-                    # stops triggering.
+                    # appraised value OR mailing address OR ncad_legal.
+                    # One-time migration — once the cache has all four,
+                    # this path stops triggering.
                     missing_appr = (cached and cached.get("site_addr") and
                                     cached.get("appraised_value")
                                     in (None, "", 0))
@@ -2871,10 +2871,20 @@ async def _run_ncad_searches(names: List[str],
                                     not cached.get("mail_addr"))
                     missing_ncad = (cached and cached.get("site_addr") and
                                     not cached.get("ncad_prop_id"))
-                    if missing_appr or missing_mail or missing_ncad:
+                    # Cache entries built before 2026-05-21 don't have
+                    # ncad_legal stored. The corroboration guard in the
+                    # enrichment loop treats those entries as "skip" —
+                    # additive fields only, no prop_id attachment.
+                    # Trigger a one-time re-lookup so the cache learns
+                    # ncad_legal for each owner, unblocking prop_id
+                    # attachment.
+                    missing_legal = (cached and cached.get("site_addr") and
+                                     not cached.get("ncad_legal"))
+                    if missing_appr or missing_mail or missing_ncad or missing_legal:
                         reason = ("appraised_value" if missing_appr
                                   else "mail_addr" if missing_mail
-                                  else "ncad_prop_id")
+                                  else "ncad_prop_id" if missing_ncad
+                                  else "ncad_legal")
                         log.info("  esearch: re-looking up %r (cache "
                                  "lacks %s)", name, reason)
                         # Fall through and re-fetch.
