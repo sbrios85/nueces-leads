@@ -149,12 +149,28 @@
      long free-text fields render as 2-row textareas (see _ecell) so
      their values wrap onto a second line instead of being clipped.
      Rows are moderately taller to fit the wrapped 2-line values. */
-  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0;
+          table-layout: fixed; }
   th, td { padding: 11px 10px; text-align: left;
            border-bottom: 1px solid var(--border); vertical-align: top;
            overflow: hidden; }
+  /* Sticky table headers — stay pinned at the top while the user
+     scrolls through the rows.
+     The required combination for reliable sticky behavior on <th>:
+       1. `border-collapse: separate` on the table (collapse breaks
+          sticky in Firefox and is flaky elsewhere). Borders are drawn
+          via `border-bottom` on th/td so the visual is identical to
+          the old collapse layout.
+       2. `position: sticky; top: 0` on the th.
+       3. Solid `background` on the th (not transparent — otherwise
+          rows scroll *through* the header).
+       4. High enough `z-index` to sit above any row pseudo-elements. */
   th { background: var(--panel); cursor: pointer; user-select: none;
-       position: sticky; top: 0; z-index: 1; }
+       position: sticky; top: 0; z-index: 10;
+       /* Add a border below the header that won't get scrolled over
+          (border-bottom alone disappears under sticky positioning in
+          some browsers). box-shadow simulates the divider line. */
+       box-shadow: 0 1px 0 0 var(--border); }
   th:hover { color: var(--accent); }
   /* Sortable headers carry a data-sort attribute. Non-sortable headers
      (like the NCAD link column) have no data-sort and shouldn't
