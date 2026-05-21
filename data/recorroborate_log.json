@@ -1,14 +1,15 @@
 {
-  "mode": "apply",
+  "mode": "dry_run",
   "total_records": 104,
-  "eligible": 85,
-  "skipped": 19,
-  "matches": 47,
-  "mismatches": 37,
+  "eligible": 89,
+  "skipped": 15,
+  "matches": 52,
+  "mismatches": 36,
   "ambiguous": 1,
   "errors": 0,
-  "unique_parcels_fetched": 66,
+  "unique_parcels_fetched": 70,
   "cache_hits": 19,
+  "ncad_cache_expiry": null,
   "mismatch_details": [
     {
       "doc_num": "2026000276",
@@ -267,14 +268,6 @@
       "verdict": "mismatch"
     },
     {
-      "doc_num": "2026000172",
-      "ncad_prop_id": "200058326",
-      "url": "https://esearch.nuecescad.net/Property/View/200058326?year=2026&ownerId=254052",
-      "clerk_legal": "CANDLEWOOD LOT 69 BLOCK 3 UNIT 4",
-      "ncad_legal": "WESTCHESTER PLACE BLK 6 LOT 16",
-      "verdict": "mismatch"
-    },
-    {
       "doc_num": "2026000176",
       "ncad_prop_id": "183783",
       "url": "https://esearch.nuecescad.net/Property/View/183783?year=2026&ownerId=120652",
@@ -353,19 +346,7 @@
     },
     {
       "doc_num": "2026000255",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000222",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000181",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000187",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal too sparse to compare (sub='spring garden unit 1', lot='')"
     },
     {
       "doc_num": "2026000298",
@@ -373,14 +354,10 @@
     },
     {
       "doc_num": "2026000297",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal too sparse to compare (sub='spinnaker condominiums unit 305 bldg a', lot='')"
     },
     {
       "doc_num": "2026000265",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000262",
       "reason": "no ncad_prop_id attached"
     },
     {
