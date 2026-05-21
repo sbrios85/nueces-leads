@@ -2618,18 +2618,85 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
     matched = 0
     appraised_set = 0
     mail_set = 0
+    rejected_uncorroborated = 0
+    rejected_no_legal = 0
     for rec in todo:
         info = results.get(rec.owner) or cache.get(rec.owner)
         if not info:
             continue
+
+        # CORROBORATION GUARD (added 2026-05-21 after the eviction-
+        # resurrection bug). Before writing anything from `info` onto
+        # the record, verify that the cached NCAD parcel's legal
+        # description actually corresponds to this foreclosure's legal.
+        # Without this guard, the enrichment loop blindly re-attaches
+        # wrong parcels — because the cache is keyed by owner name
+        # only, and a single owner name can be associated with a wrong
+        # parcel (e.g. "Plutus Properties, LLC" cached as the BERVONNE
+        # TERRACE parcel). When that record was evicted by re-
+        # corroborate, the eviction cleared `ncad_prop_id` from the
+        # record but the cache still pointed at the wrong parcel; the
+        # next esearch run with always_lookup=True would re-attach it
+        # via the writeback at the bottom of this loop.
+        #
+        # The guard reuses the same legal-matcher recorroborate uses.
+        # When the cached entry has no `ncad_legal` field (older cache
+        # entries built before this guard was added), we conservatively
+        # SKIP the writeback rather than blindly trusting the cache.
+        # New entries always include ncad_legal going forward.
+        rec_legal = (getattr(rec, "legal", "") or "").strip()
+        ncad_legal = (info.get("ncad_legal") or "").strip()
+        cache_corroborated = False
+        if _legal_match is not None and rec_legal and ncad_legal:
+            try:
+                cache_corroborated = _legal_match(rec_legal, ncad_legal)
+            except Exception:
+                cache_corroborated = False
+        elif not ncad_legal:
+            # Older cache entry without ncad_legal stored. Can't
+            # corroborate, but also can't reject — keep additive
+            # enrichments (mail_addr, appraised_value) since those
+            # are still likely useful even without verification,
+            # but DO NOT write ncad_prop_id. See conditional below.
+            cache_corroborated = None  # tri-state: unknown
+
         # Only overwrite address fields if record didn't already have one.
+        # When the cache is uncorroborated, refuse to set prop_address
+        # — that would attach the wrong parcel's address.
         if not rec.prop_address:
-            rec.prop_address = info.get("site_addr", "")
-            rec.prop_city    = info.get("site_city", "") or "CORPUS CHRISTI"
-            rec.prop_state   = info.get("site_state", "") or "TX"
-            rec.prop_zip     = info.get("site_zip", "")
-            if rec.prop_address:
-                matched += 1
+            if cache_corroborated is True:
+                rec.prop_address = info.get("site_addr", "")
+                rec.prop_city    = info.get("site_city", "") or "CORPUS CHRISTI"
+                rec.prop_state   = info.get("site_state", "") or "TX"
+                rec.prop_zip     = info.get("site_zip", "")
+                if rec.prop_address:
+                    matched += 1
+            elif cache_corroborated is False:
+                # Explicit corroboration failure — wrong parcel cached.
+                rejected_uncorroborated += 1
+                continue
+            else:
+                # cache_corroborated is None: older cache entry without
+                # ncad_legal. Keep additive enrichment but skip
+                # ncad_prop_id (see below) — don't attach.
+                rejected_no_legal += 1
+                continue
+
+        # If the record already has a prop_address but the cache is
+        # explicitly uncorroborated, still refuse all writebacks to
+        # protect mail_address / appraised_value / ncad_prop_id.
+        if cache_corroborated is False:
+            rejected_uncorroborated += 1
+            continue
+        if cache_corroborated is None:
+            # No ncad_legal in cache entry — older cache. Allow
+            # additive fields (mail_addr, appraised_value) since those
+            # are useful even uncorroborated and a wrong address is
+            # visible to the user. But DO NOT write ncad_prop_id —
+            # the parcel-id implies "we believe this is THE parcel"
+            # which requires corroboration we don't have.
+            pass
+
         # Mailing address: always update if NCAD returned one and we
         # don't already have it (this is additive — we never overwrite
         # an existing mailing address with a blank).
@@ -2648,13 +2715,21 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
         # Propagate NCAD detail-page IDs so the dashboard can build a
         # direct property-page link. These are additive and never
         # overwrite existing values with empty.
-        for fld in ("ncad_prop_id", "ncad_year", "ncad_owner_id"):
-            val = info.get(fld)
-            if val and hasattr(rec, fld) and not getattr(rec, fld, ""):
-                setattr(rec, fld, val)
+        # GUARDED: only write when the cache entry has been explicitly
+        # corroborated. For uncorroborated-but-allowed entries (older
+        # cache without ncad_legal), skip the prop_id writeback — that
+        # field implies "we believe this IS the parcel" which requires
+        # legal corroboration we don't have.
+        if cache_corroborated is True:
+            for fld in ("ncad_prop_id", "ncad_year", "ncad_owner_id"):
+                val = info.get(fld)
+                if val and hasattr(rec, fld) and not getattr(rec, fld, ""):
+                    setattr(rec, fld, val)
     log.info("esearch: %d / %d records enriched (+%d appraised values, "
-             "+%d mailing addresses)",
-             matched, len(todo), appraised_set, mail_set)
+             "+%d mailing addresses, %d rejected uncorroborated, "
+             "%d skipped no-legal-in-cache)",
+             matched, len(todo), appraised_set, mail_set,
+             rejected_uncorroborated, rejected_no_legal)
     return matched
 
 
@@ -3329,6 +3404,16 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
         # Appraised value comes straight from the result list (no extra
         # page load needed) via the `_appraisedValueDisplay` cell.
         "appraised_value": top.get("appraised_value"),
+        # NCAD's legal description for the chosen parcel. Stored so the
+        # enrichment-from-cache loop can corroborate this cached entry
+        # against each foreclosure record's own legal at enrichment
+        # time. Added 2026-05-21 after the eviction-resurrection bug:
+        # if a record was evicted because its legal didn't match THIS
+        # parcel's legal, blindly re-enriching from the cache silently
+        # re-attaches the same wrong parcel. With ncad_legal in the
+        # cache, the enrichment loop can run the same corroboration
+        # check and refuse to re-attach.
+        "ncad_legal": (top.get("legal") or "").strip(),
         # Stash detail-page URL components so the caller can fetch the
         # property detail page to extract the mailing address.
         "_detail_prop_id":  top.get("prop_id", ""),
