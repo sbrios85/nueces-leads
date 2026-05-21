@@ -1622,22 +1622,51 @@ def legal_descriptions_match(a: str, b: str) -> bool:
     # so a clerk "SPRING GARDEN" and NCAD "SPRING GARDENS" should
     # match. Also strip leading "#" from tokens like "#2" since
     # the same unit/phase shows up with and without the hash.
+    #
+    # CRITICAL: "meaningful" excludes structural words that appear in
+    # nearly every legal description (UNIT, BLOCK, BLK, LOT, LTS, PUD,
+    # PHASE, SECTION, SEC, etc.) and pure numbers. Without this filter,
+    # the lot-fallback path below would match any two legals that both
+    # contain "UNIT" — which is nearly every Nueces parcel. Real
+    # false-positive caught in production 2026-05-21: Scrutchin's
+    # "SPINNAKER CONDOMINIUMS UNIT 305 BLDG A" matched an unrelated
+    # Cabana parcel because both contained the token "UNIT".
+    STRUCTURAL = {
+        "the", "of", "a", "an",
+        "unit", "units", "block", "blk", "bk", "lot", "lots", "lt", "lts",
+        "phase", "section", "sec", "pud", "pu",
+        "addition", "subdivision", "bldg", "building",
+        "tract", "tr", "and",
+    }
+
     def _sub_tokens(s: str) -> set:
-        STOP = {"the", "of", "a", "an"}
         tokens = set()
         for raw in s.split():
             t = raw.strip(",-#/'\".")
             if not t:
                 continue
-            if t.lower() in STOP:
+            tl = t.lower()
+            if tl in STRUCTURAL:
+                continue
+            # Skip pure numbers — "1" doesn't identify a subdivision.
+            if tl.replace(".", "").isdigit():
                 continue
             # Strip trailing 's' for plural-tolerant matching
             # (gardens → garden, heights → height, etc.). Keep the
             # original too so we still match exact strings.
-            tokens.add(t)
-            if len(t) > 3 and t.endswith("s"):
-                tokens.add(t[:-1])
+            tokens.add(tl)
+            if len(tl) > 3 and tl.endswith("s"):
+                tokens.add(tl[:-1])
         return tokens
     a_tokens = _sub_tokens(sa)
     b_tokens = _sub_tokens(sb)
-    return len(a_tokens & b_tokens) >= 1
+    shared = a_tokens & b_tokens
+
+    # When BOTH sides have matching lot+block, sharing ONE substantive
+    # subdivision token is enough — the lot/block agreement is the
+    # strong signal, the subdivision token just confirms the same
+    # parcel. When the lot-fallback path is in play (one side has no
+    # lot), we have less to go on, so require the same — one
+    # substantive token — but since structural words are filtered out,
+    # a coincidental "UNIT" overlap can no longer trigger a match.
+    return len(shared) >= 1
