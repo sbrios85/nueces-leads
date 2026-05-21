@@ -1,5 +1,5 @@
 {
-  "mode": "dry_run",
+  "mode": "apply",
   "total_records": 104,
   "eligible": 89,
   "skipped": 15,
@@ -9,7 +9,11 @@
   "errors": 0,
   "unique_parcels_fetched": 70,
   "cache_hits": 19,
-  "ncad_cache_expiry": null,
+  "ncad_cache_expiry": {
+    "expired": 19,
+    "missing": 17,
+    "total_keys_after": 893
+  },
   "mismatch_details": [
     {
       "doc_num": "2026000276",
