@@ -112,6 +112,19 @@ DASH_JSON = REPO_ROOT / "dashboard" / "foreclosures.json"
 DATA_JSON = REPO_ROOT / "data" / "foreclosures.json"
 LOG_JSON  = REPO_ROOT / "data" / "recorroborate_log.json"
 
+# Path to the NCAD owner-search cache used by scraper/fetch.py. When we
+# evict a wrong-matched record here, the cache still holds the same
+# wrong-parcel result for that owner name. The next daily scrape would
+# re-attach the wrong parcel via the cache shortcut (the cache returns
+# the same answer instantly, never re-running the variant logic). To
+# break that loop we expire cache entries for evicted owner names —
+# next scrape then re-runs NCAD lookup with current logic and either
+# finds the correct parcel or honestly records a miss.
+#
+# This MUST stay in sync with the constant in scraper/fetch.py
+# (NCAD_SEARCH_CACHE). If that file moves, this one breaks silently.
+NCAD_CACHE_PATH = REPO_ROOT / ".cache" / "ncad_search_cache.json"
+
 NCAD_BASE = "https://esearch.nuecescad.net"
 
 # NCAD detail pages load fast on a single fetch, but the same parcel
@@ -153,6 +166,97 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 log = logging.getLogger("recorroborate_ncad")
+
+
+# ----------------------------------------------------------------------
+# NCAD search cache expiry
+# ----------------------------------------------------------------------
+def _expire_ncad_cache_entries(owner_names: List[str]) -> Dict[str, int]:
+    """Remove cache entries for the given owner names so the next daily
+    scrape re-runs NCAD lookup with current logic rather than returning
+    the stale (wrong-parcel) cached result.
+
+    Cache file structure (must match scraper/fetch.py):
+        {"_version": "v6", "data": {<owner_name>: {...} | None}}
+
+    Returns a stats dict: {"expired": int, "missing": int, "total_keys_after": int}.
+      - expired: entries that were found and removed
+      - missing: names we tried to expire but weren't in the cache
+      - total_keys_after: cache size after expiry (sanity check)
+
+    If the cache file doesn't exist or is unreadable, returns
+    {"expired": 0, "missing": <count>, "error": "..."} and logs a
+    warning. We DELIBERATELY do not raise — the eviction in
+    foreclosures.json is the important state change; failing to clean
+    the cache means the next scrape will reattach a wrong parcel, but
+    that's recoverable (re-run this script), and crashing here would
+    leave the JSON evictions only half-applied.
+    """
+    if not owner_names:
+        return {"expired": 0, "missing": 0, "total_keys_after": 0}
+    if not NCAD_CACHE_PATH.exists():
+        log.warning("NCAD cache file not found at %s — skipping cache "
+                    "expiry (next scrape will populate it fresh)",
+                    NCAD_CACHE_PATH)
+        return {"expired": 0, "missing": len(owner_names),
+                "error": "cache_file_missing"}
+    try:
+        raw = json.loads(NCAD_CACHE_PATH.read_text(encoding="utf-8"))
+    except Exception as exc:
+        log.warning("could not read NCAD cache (%s) — skipping expiry",
+                    exc)
+        return {"expired": 0, "missing": len(owner_names),
+                "error": f"read_failed: {exc}"}
+
+    # Unwrap the versioned envelope. We only know how to expire v6.
+    # If we encounter a different version, refuse to touch it — fetch.py
+    # has its own upgrade machinery that will rebuild the cache cleanly
+    # on the next scrape, which is a safe fallback.
+    version = raw.get("_version") if isinstance(raw, dict) else None
+    if version != "v6":
+        log.warning("NCAD cache version is %r, not v6 — skipping expiry "
+                    "(fetch.py will rebuild on next scrape)", version)
+        return {"expired": 0, "missing": len(owner_names),
+                "error": f"unsupported_version: {version}"}
+
+    data = raw.get("data") or {}
+    if not isinstance(data, dict):
+        log.warning("NCAD cache 'data' field is not a dict — skipping expiry")
+        return {"expired": 0, "missing": len(owner_names),
+                "error": "malformed_data"}
+
+    expired = 0
+    missing = 0
+    for name in owner_names:
+        if name in data:
+            del data[name]
+            expired += 1
+        else:
+            missing += 1
+
+    # Only rewrite the file if something actually changed. Avoids
+    # spurious "modified file" diffs in git for no-op runs.
+    if expired > 0:
+        raw["data"] = data
+        try:
+            NCAD_CACHE_PATH.write_text(
+                json.dumps(raw, indent=2, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            log.info("NCAD cache: expired %d entries, kept %d",
+                     expired, len(data))
+        except Exception as exc:
+            log.warning("could not write NCAD cache after expiry (%s) — "
+                        "next scrape may still see stale entries", exc)
+            return {"expired": 0, "missing": missing,
+                    "error": f"write_failed: {exc}"}
+    else:
+        log.info("NCAD cache: no entries to expire (none of the %d "
+                 "evicted owner names were in the cache)",
+                 len(owner_names))
+
+    return {"expired": expired, "missing": missing,
+            "total_keys_after": len(data)}
 
 
 # ----------------------------------------------------------------------
@@ -389,10 +493,21 @@ async def _run() -> Dict:
     # ------------------------------------------------------------------
     # Apply evictions (only when explicitly requested)
     # ------------------------------------------------------------------
+    cache_expiry_stats = None
     if APPLY_MODE and mismatches:
         evicted_docs = {e["doc_num"] for e in mismatches}
+        # Collect the OWNER NAMES of evicted records BEFORE we mutate
+        # anything else. We need these to expire NCAD-search-cache
+        # entries — without that, the next daily scrape would re-attach
+        # the same wrong parcels via the cache shortcut (the cache is
+        # keyed by owner name and returns the same parcel-id for the
+        # same name every time, no matter how many evictions we did).
+        evicted_owner_names: List[str] = []
         for r in records:
             if r.get("doc_num") in evicted_docs:
+                owner_name = (r.get("owner") or "").strip()
+                if owner_name:
+                    evicted_owner_names.append(owner_name)
                 for k in EVICT_FIELDS:
                     if k in r:
                         # Use the same "empty" representation that the
@@ -423,6 +538,13 @@ async def _run() -> Dict:
         log.info("APPLIED: evicted NCAD link on %d record(s)",
                   len(evicted_docs))
 
+        # Expire the NCAD-search-cache entries for the evicted records.
+        # This is the structural fix for the cache/eviction misalignment:
+        # without it, the next daily scrape would just reattach the same
+        # wrong parcels via cache shortcuts. With it, the next scrape
+        # re-runs full NCAD lookup with current variant logic.
+        cache_expiry_stats = _expire_ncad_cache_entries(evicted_owner_names)
+
     # ------------------------------------------------------------------
     # Structured log so the workflow run is reviewable later
     # ------------------------------------------------------------------
@@ -437,6 +559,7 @@ async def _run() -> Dict:
         "errors": len(errors),
         "unique_parcels_fetched": len(url_cache),
         "cache_hits": cache_hits,
+        "ncad_cache_expiry": cache_expiry_stats,
         "mismatch_details": mismatches,
         "ambiguous_details": ambiguous,
         "error_details": errors,
