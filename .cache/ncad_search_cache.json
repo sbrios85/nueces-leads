@@ -9311,6 +9311,34 @@
     "GUNNA JOEL A": null,
     "JONES KAYTLIN": null,
     "HALDAR MOUSSA N": null,
-    "HUMPHREY ROBERT": null
+    "HUMPHREY ROBERT": null,
+    "Charles Broadwick": {
+      "site_addr": "630 WILSHIRE PL",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411",
+      "mail_addr": "630 WILSHIRE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "appraised_value": 220465.0,
+      "ncad_prop_id": "286714",
+      "ncad_year": "2026",
+      "ncad_owner_id": "223624"
+    },
+    "Daniel Hernandez and Evelyn Hernandez": {
+      "site_addr": "6129 ORANGEWOOD DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412",
+      "mail_addr": "6129 Orangewood Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78412",
+      "appraised_value": 180448.0,
+      "ncad_prop_id": "204497",
+      "ncad_year": "2026",
+      "ncad_owner_id": "792258"
+    }
   }
 }
