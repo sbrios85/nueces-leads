@@ -489,6 +489,69 @@
   .days-soon { color: var(--bad); }
   .days-medium { color: var(--warn); }
   .days-far { color: var(--muted); }
+  /* ===== Foreclosure Date cell (merged Sale Date + Days Until Sale)
+     Vertical stack inside one <td>:
+       Row 1: [date text "Jun 2"]  [countdown "60d"]   ← side-by-side
+       Row 2: fixed 70px progress bar with faint gray track
+     The bar fills MORE as the sale approaches (urgency signal),
+     baseline 60 days — a 60d row has empty fill, a 1d row is ~98%
+     full, 0d is 100%. Sales >60d clamp to 0 fill.
+     Three urgency tiers drive bar color AND countdown text color:
+       > 30 days  → green   (tier-far,  --good)
+       11–30 days → amber   (tier-mid,  --warn)
+       ≤ 10 days  → red     (tier-near, --bad)
+     Past sales: "X days ago" in red beside the date, no bar. */
+  .fc-date-cell {
+    display: flex; flex-direction: column;
+    gap: 4px; align-items: flex-start;
+    white-space: nowrap;
+    line-height: 1.25;
+  }
+  /* Row 1: pill + countdown side-by-side. */
+  .fc-date-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  /* The date text itself — plain, no pill background. */
+  .fc-date-pill {
+    display: inline-flex; align-items: center;
+    color: var(--fg);
+    font-size: 13px; font-weight: 600;
+    line-height: 1.15;
+  }
+  /* Fixed-width progress bar — always 70px so urgency is comparable
+     across rows at a glance. Faint gray track is always visible. */
+  .fc-date-bar {
+    position: relative;
+    width: 70px; height: 4px;
+    background: rgba(148,163,184,0.20);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .fc-date-bar-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    border-radius: 2px;
+    transition: width 0.2s, background 0.2s;
+  }
+  /* Three urgency tiers — green (>30d), amber (11-30d), red (≤10d).
+     These class names are bar-specific (NOT the dashboard-wide
+     days-soon/medium/far that have only two color stops). */
+  .fc-date-bar-fill.tier-far   { background: var(--good); }
+  .fc-date-bar-fill.tier-mid   { background: var(--warn); }
+  .fc-date-bar-fill.tier-near  { background: var(--bad); }
+  /* Countdown text right of the date ("60d", "25d") — colored to
+     match the bar so the urgency reads as one signal. */
+  .fc-date-days {
+    font-size: 12px; font-weight: 600;
+  }
+  .fc-date-days.tier-far   { color: var(--good); }
+  .fc-date-days.tier-mid   { color: var(--warn); }
+  .fc-date-days.tier-near  { color: var(--bad); }
+  /* Past-sale "X days ago" — red text beside date, no bar. */
+  .fc-date-past {
+    font-size: 12px; font-weight: 600;
+    color: var(--bad);
+  }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .empty { padding: 60px 28px; text-align: center; color: var(--muted); }
@@ -900,8 +963,7 @@
     <thead><tr>
       <th style="width: 40px;" title="Save manual edits"></th>
       <th data-sort="status"         style="width: 58px;">Status</th>
-      <th data-sort="sale_date"      style="width: 80px;">Sale Date</th>
-      <th data-sort="days_until_sale" style="width: 66px;">Days Until Sale</th>
+      <th data-sort="sale_date"      style="width: 130px;">Sale Date</th>
       <th data-sort="recorded"       style="width: 80px;">Recorded</th>
       <th data-sort="owner"          style="width: 155px;">Owner</th>
       <th data-sort="prop_address"   style="width: 175px;">Property Address</th>
@@ -2492,7 +2554,7 @@ function renderFc() {
     const toggleTr = document.createElement("tr");
     toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
     toggleTr.innerHTML = `
-      <td colspan="15">
+      <td colspan="14">
         <span class="chev">▶</span>
         <span>${deadRecords.length} dead lead${deadRecords.length === 1 ? "" : "s"}</span>
         <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
@@ -2522,13 +2584,68 @@ function buildFcRow(r, isDead) {
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
 
+  // ---- Foreclosure Date cell (merged Sale Date + Days Until Sale) ----
+  // Three urgency tiers — green (>30d), amber (11–30d), red (≤10d) —
+  // drive both the bar fill color and the "Xd" countdown text color.
+  // Progress bar is always visible as a faint gray track; the colored
+  // fill grows from left to right as the sale date approaches. 60-day
+  // baseline (60d → empty fill, 1d → ~98% fill, 0d → 100% fill).
+  // Past sales: "X days ago" in red beside the date, no bar.
   const days = r.days_until_sale;
-  const daysClass = days === null || days === undefined ? "days-far" :
-                    days <= 14 ? "days-soon" :
-                    days <= 30 ? "days-medium" : "days-far";
-  const daysText = days === null || days === undefined ? "—" :
-                   days < 0 ? Math.abs(days) + " days ago" :
-                   days + " days";
+  // Tier class drives bar fill + countdown text color.
+  const tierClass = days == null ? "tier-far" :
+                    days <= 10 ? "tier-near" :
+                    days <= 30 ? "tier-mid"  : "tier-far";
+  // Bar fill % — full = sale day, empty = 60+ days. Clamp to [0,100].
+  let _barPct = 0;
+  if (days != null && days >= 0) {
+    const remaining = Math.max(0, Math.min(60, days));
+    _barPct = Math.round(((60 - remaining) / 60) * 100);
+  }
+  // Format the sale_date: ISO "2026-07-07" → "Jul 7". Fall back to
+  // whatever was stored if it doesn't look like ISO (legacy formats).
+  const _saleDateDisplay = (() => {
+    const sd = r.sale_date;
+    if (!sd) return "—";
+    const m = String(sd).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return String(sd);
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun",
+                        "Jul","Aug","Sep","Oct","Nov","Dec"];
+    const mo = parseInt(m[2], 10);
+    const d  = parseInt(m[3], 10);
+    if (mo < 1 || mo > 12) return String(sd);
+    return monthNames[mo - 1] + " " + d;
+  })();
+  // Build the merged cell HTML once so the <td> is small further down.
+  let foreclosureDateCell;
+  if (!r.sale_date) {
+    // No sale date at all — just a dash.
+    foreclosureDateCell = `<div class="fc-date-cell"><div class="fc-date-pill">—</div></div>`;
+  } else if (days != null && days < 0) {
+    // Past sale: date + red "X days ago", no bar.
+    const pastTxt = Math.abs(days) + " days ago";
+    foreclosureDateCell = `
+      <div class="fc-date-cell">
+        <div class="fc-date-row">
+          <div class="fc-date-pill">${esc(_saleDateDisplay)}</div>
+          <div class="fc-date-past">${esc(pastTxt)}</div>
+        </div>
+      </div>`;
+  } else {
+    // Upcoming sale (or no countdown data): date + countdown + bar.
+    const daysTxt = days == null ? "" : days + "d";
+    foreclosureDateCell = `
+      <div class="fc-date-cell">
+        <div class="fc-date-row">
+          <div class="fc-date-pill">${esc(_saleDateDisplay)}</div>
+          ${daysTxt ? `<div class="fc-date-days ${tierClass}">${esc(daysTxt)}</div>` : ""}
+        </div>
+        <div class="fc-date-bar">
+          <div class="fc-date-bar-fill ${tierClass}"
+               style="width: ${_barPct}%"></div>
+        </div>
+      </div>`;
+  }
   // Effective values: a manual edit (saved via the Save button) wins
   // over the scraped value. The street line is what's editable; city/
   // state/zip stay from the scrape (rarely the missing piece).
@@ -2835,8 +2952,7 @@ function buildFcRow(r, isDead) {
       <span class="save-ok" title="Saved">✓</span>
     </td>
     <td>${statusCell}</td>
-    <td>${esc(r.sale_date || "")}</td>
-    <td class="days ${daysClass}">${esc(daysText)}</td>
+    <td>${foreclosureDateCell}</td>
     <td>${esc(r.recorded || "")}</td>
     <td>${_ecell("owner", _ownerEff)}</td>
     <td class="addr-cell">${_ecell("prop_address", _propEff)}${
