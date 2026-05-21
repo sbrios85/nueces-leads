@@ -3322,22 +3322,43 @@ def _esearch_query_variants(name: str) -> List[str]:
     """Generate query strings to try for a given owner name.
 
     For a single name "JOHN BRUNO AMARO":
-      1. "JOHN BRUNO AMARO" — full name as-is
-      2. "AMARO JOHN BRUNO" — last-first format (NCAD's preferred index)
-      3. "AMARO" — last name only (broad fallback)
-      4. "AMARO, JOHN BRUNO" — last-comma-first format
-      5. "JOHN AMARO" — first+last (drops middle)
+      1. "AMARO JOHN BRUNO" — last-first (NCAD's documented index format)
+      2. "JOHN BRUNO AMARO" — full name as-is
+      3. "JOHN AMARO" — first + last (drops middle)
+      4. "AMARO JOHN" — last-first, suffix stripped
+      ...and so on through several refined forms, ending with
+      "AMARO" — bare surname (last-resort broad fallback).
 
     NCAD records JOINT ownership as "LAST FIRST AND WF" (wife) /
     "AND HUSBAND" / "AND SPOUSE". When the input borrower name already
     indicates joint ownership ("AND WIFE", "AND HUSBAND", or two
     Cordell-style co-borrowers), generate those joint-owner forms too:
-      6. "AMARO JOHN AND WF"
-      7. "AMARO JOHN BRUNO AND WF"
+      "AMARO JOHN AND WF"
+      "AMARO JOHN BRUNO AND WF"
+      "AMARO JOHN AND WF JANE MARIE AMARO"  (Cordell-style with full spouse)
+
+    For Cordell-style two-party inputs ("LEO RODRIGUEZ AND MONICA
+    RODRIGUEZ"), the SECONDARY party's name is also tried as a
+    primary search, but ONLY after all primary forms — this catches
+    the case where NCAD lists the parcel under one spouse only:
+      "RODRIGUEZ MONICA"
+      "MONICA RODRIGUEZ"
+    See the secondary-party block below for full details. Added
+    2026-05-21 after the Daniel/Evelyn Hernandez case showed NCAD
+    sometimes lists only one spouse as the registered owner.
+
+    Comma-form variants ("LAST, FIRST") were REMOVED 2026-05-21 —
+    NCAD's owner index uses space-separated names ("HERNANDEZ EVELYN")
+    not commas, so the comma variants never matched.
     """
+    # Normalize: uppercase, strip non-alphanumeric punctuation. Commas
+    # are stripped here (2026-05-21) because NCAD's owner index uses
+    # space-separated names, never commas — keeping them only produced
+    # wasted query variants like "PLUTUS PROPERTIES, LLC" and the
+    # never-matching "LAST, FIRST" forms we removed at the same time.
     n = re.sub(r"\s+", " ", name.upper().strip())
-    n = re.sub(r"[^A-Z0-9 ,&-]", " ", n)
-    n = re.sub(r"\s+", " ", n).strip(" ,")
+    n = re.sub(r"[^A-Z0-9 &-]", " ", n)   # was [^A-Z0-9 ,&-] — comma dropped
+    n = re.sub(r"\s+", " ", n).strip()
     if not n:
         return []
 
@@ -3406,18 +3427,54 @@ def _esearch_query_variants(name: str) -> List[str]:
             if _suf0:
                 _primary_lastfirst += " " + _suf0
 
+    # For Cordell-style multi-party inputs, ALSO pre-compute the
+    # SECONDARY party's last-first form so we can place it at slot 2.
+    # This handles the case where NCAD lists the parcel only under
+    # one spouse's name (e.g. "HERNANDEZ EVELYN") while the foreclosure
+    # deed lists both parties — getting Evelyn's variant to slot 2
+    # means it gets tried right after the primary's high-probability
+    # last-first form, dramatically reducing wasted queries on
+    # spouse-registered parcels.
+    _secondary_lastfirst = ""
+    if not is_entity and cordell_style and len(parts_full) == 2:
+        _sec_raw = parts_full[1].strip(" ,")
+        # Strip descriptors that may have snuck through cleanup.
+        _sec_raw = re.sub(
+            r"\s+(?:HUSBAND\s+AND\s+WIFE|HIS\s+WIFE|HER\s+HUSBAND|"
+            r"AN?\s+(?:MARRIED|SINGLE|UNMARRIED)\s+(?:MAN|WOMAN|PERSON))"
+            r"\s*$", "", _sec_raw, flags=re.IGNORECASE).strip()
+        _sp = _sec_raw.replace(",", "").split()
+        if len(_sp) >= 2:
+            _SEC_SUF0 = {"JR", "SR", "I", "II", "III", "IV", "V"}
+            if _sp[-1].upper() in _SEC_SUF0 and len(_sp) >= 3:
+                _sec_last0 = _sp[-2]
+                _sec_mf0 = _sp[:-2]
+            else:
+                _sec_last0 = _sp[-1]
+                _sec_mf0 = _sp[:-1]
+            if len(_sec_last0) >= 3 and _sec_mf0:
+                # Just FIRST name (not full middle) for slot 2 —
+                # matches NCAD's exact owner-index format and keeps
+                # the variant tight. Middle-name forms still appear
+                # later in the secondary block.
+                _secondary_lastfirst = _sec_last0 + " " + _sec_mf0[0]
+
     out = []
     if _primary_lastfirst:
-        out.append(_primary_lastfirst)       # 1. LAST FIRST — NCAD's documented order (highest probability)
+        out.append(_primary_lastfirst)       # 1. LAST FIRST primary — NCAD's documented order
+    if _secondary_lastfirst:
+        out.append(_secondary_lastfirst)     # 2. LAST FIRST secondary — catches spouse-registered parcels fast
     if n not in out:
-        out.append(n)                        # 2. as-is parsed name (fallback; #1 for entities)
+        out.append(n)                        # 3. as-is parsed name (fallback; #1 for entities)
     if n != n_primary and n_primary and n_primary not in out:
         out.append(n_primary)                # also try just the primary
 
-    if "," in n:
-        cf = n.replace(",", "").strip()
-        if cf not in out:
-            out.append(cf)
+    # NOTE: comma-form variants ("LAST, FIRST") were removed 2026-05-21
+    # after observing NCAD's index uses space-separated names ("HERNANDEZ
+    # EVELYN") and never commas. Skipping the comma variants saves ~1-2
+    # queries per record across all daily scrapes. If we ever see a
+    # parcel that's only findable via "LAST, FIRST", add the variant
+    # back here (and to the labeled-name section below).
 
     parts = n_primary.replace(",", "").split()
     if not is_entity and len(parts) >= 2:
@@ -3447,22 +3504,16 @@ def _esearch_query_variants(name: str) -> List[str]:
             reordered = reordered.strip()
             if reordered not in out:
                 out.append(reordered)
-            # 3. Last-comma-first: "PENA, MIGUEL III"
-            #    (bare surname-only is intentionally NOT added here —
-            #    it's deferred to last-resort at the end of this
-            #    function, see "DEFERRED surname-only" below. A bare
-            #    surname returns hundreds of unrelated parcels and,
-            #    when placed early, both wastes the per-name lookup
-            #    budget AND can push genuinely-useful variants like
-            #    "NICHOLS ANDREW" past the 8-variant cap. Trying it
-            #    only after every better-qualified form has failed
-            #    fixes both problems.)
-            comma_form = last + ", " + " ".join(middle_first)
-            if suffix:
-                comma_form += " " + suffix
-            comma_form = comma_form.strip(" ,")
-            if comma_form not in out:
-                out.append(comma_form)
+            # NOTE: the "LAST, FIRST" comma-form variant was removed
+            # 2026-05-21. NCAD's owner index uses space-separated names
+            # ("HERNANDEZ EVELYN") never commas, so this variant
+            # consumed a query slot without ever matching. (Bare
+            # surname-only is also intentionally NOT added here — it's
+            # deferred to last-resort at the end of this function, see
+            # "DEFERRED surname-only" below. A bare surname returns
+            # hundreds of unrelated parcels and, when placed early,
+            # both wastes the per-name lookup budget AND can push
+            # genuinely-useful variants past the cap.)
             # 5. Clean name variations WITHOUT the generational suffix.
             # NCAD often lists owners without the Jr/Sr/I-V suffix, so
             # always try the suffix-stripped forms (this is the broad
@@ -3532,6 +3583,53 @@ def _esearch_query_variants(name: str) -> List[str]:
                         if long_form not in out:
                             out.append(long_form)
 
+    # 8/9/10. Secondary-party variants. When the input is a Cordell-
+    # style "NAME1 AND NAME2" — two complete names joined by AND — we
+    # also try the SECONDARY party as a primary search. This catches
+    # the case where NCAD records the parcel under only one spouse's
+    # name (e.g. "HERNANDEZ EVELYN") while the foreclosure deed lists
+    # both ("Daniel Hernandez and Evelyn Hernandez"). Before this was
+    # added on 2026-05-21, the variant generator only tried Daniel's
+    # forms and missed Evelyn's parcel entirely.
+    #
+    # Placed AFTER the primary's variants (so primary still gets first
+    # crack) but BEFORE the bare-surname fallback (so we try the
+    # precise spouse forms before the broad surname flood).
+    if (not is_entity and cordell_style and len(parts_full) == 2):
+        secondary_raw = parts_full[1].strip(" ,")
+        # Strip any descriptors that snuck through cleanup (defensive).
+        secondary_raw = re.sub(
+            r"\s+(?:HUSBAND\s+AND\s+WIFE|HIS\s+WIFE|HER\s+HUSBAND|"
+            r"AN?\s+(?:MARRIED|SINGLE|UNMARRIED)\s+(?:MAN|WOMAN|PERSON))"
+            r"\s*$", "", secondary_raw, flags=re.IGNORECASE).strip()
+        sec_parts = secondary_raw.replace(",", "").split()
+        if len(sec_parts) >= 2:
+            # Apply the same suffix detection as for the primary.
+            _SEC_SUF = {"JR", "SR", "I", "II", "III", "IV", "V"}
+            if sec_parts[-1].upper() in _SEC_SUF and len(sec_parts) >= 3:
+                sec_last = sec_parts[-2]
+                sec_mf = sec_parts[:-2]
+            else:
+                sec_last = sec_parts[-1]
+                sec_mf = sec_parts[:-1]
+            sec_first = sec_mf[0] if sec_mf else ""
+            if len(sec_last) >= 3 and sec_first:
+                # 8. "HERNANDEZ EVELYN" — secondary last-first (highest
+                #    precision, matches NCAD's documented index format).
+                sec_lf = sec_last + " " + sec_first
+                if sec_lf not in out:
+                    out.append(sec_lf)
+                # 9. "EVELYN HERNANDEZ" — secondary first-last.
+                sec_fl = sec_first + " " + sec_last
+                if sec_fl not in out:
+                    out.append(sec_fl)
+                # 10. "HERNANDEZ EVELYN MARIE" — secondary with middle
+                #     if any. Useful when NCAD indexes both names.
+                if len(sec_mf) >= 2:
+                    sec_lfm = sec_last + " " + " ".join(sec_mf)
+                    if sec_lfm not in out:
+                        out.append(sec_lfm)
+
     # DEFERRED surname-only (last resort). Appended AFTER every more
     # qualified variant so it only gets tried if all of them failed.
     # A bare surname ("NICHOLS", "MARTINEZ") returns far too many
@@ -3559,7 +3657,12 @@ def _esearch_query_variants(name: str) -> List[str]:
         if q not in seen:
             seen.add(q)
             uniq.append(q)
-    return uniq[:8]
+    # Cap at 10 variants per name. Was 8; bumped 2026-05-21 when the
+    # secondary-party variants were added (multi-party borrowers now
+    # need 3 extra slots for the spouse's last-first/first-last forms).
+    # Single-party names still produce fewer than 8, so this cap only
+    # affects the Cordell-style multi-party case.
+    return uniq[:10]
 
 
 def _parse_esearch_detail(html: str) -> Optional[Dict[str, str]]:
