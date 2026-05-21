@@ -14,20 +14,10 @@
     --status-closed: #10b981; --status-dead: #64748b;
   }
   * { box-sizing: border-box; }
-  /* The page is a fixed-height column: header on top, then the
-     .layout flex row (sidebar + main) filling the remaining viewport.
-     The window itself never scrolls — scrolling happens inside .main
-     so sticky table headers can anchor to its top edge. Without this,
-     `position: sticky` on <th> fails because .main has `overflow-x:
-     auto` which establishes a scroll container that traps the
-     header's anchor point. */
-  html, body { height: 100%; }
   body {
     margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI",
            Roboto, "Helvetica Neue", Arial, sans-serif;
     background: var(--bg); color: var(--fg);
-    display: flex; flex-direction: column;
-    overflow: hidden;
   }
   header {
     padding: 20px 28px; border-bottom: 1px solid var(--border);
@@ -81,8 +71,7 @@
   .layout {
     display: flex;
     align-items: stretch;
-    flex: 1;
-    min-height: 0;          /* allow children to overflow + scroll */
+    min-height: 70vh;
   }
   .sidebar {
     width: 230px; flex-shrink: 0;
@@ -130,12 +119,7 @@
   }
   .main {
     flex: 1; min-width: 0;
-    /* Scroll BOTH directions inside .main, not on the window. This is
-       what enables sticky table headers — `position: sticky; top: 0`
-       on <th> anchors to the nearest scrolling ancestor, which is now
-       this element. The page header above stays put as the data
-       scrolls underneath. */
-    overflow: auto;
+    overflow-x: auto;
   }
   .stats { display: flex; gap: 24px; padding: 16px 28px;
            border-bottom: 1px solid var(--border); flex-wrap: wrap; }
@@ -169,18 +153,8 @@
   th, td { padding: 11px 10px; text-align: left;
            border-bottom: 1px solid var(--border); vertical-align: top;
            overflow: hidden; }
-  /* Sticky table header. position:sticky anchors the row to the top
-     of the viewport during vertical scroll so the column labels stay
-     visible while reading data rows below. The shadow + a stronger
-     bottom border are what visually distinguish the header from data
-     rows when it's "stuck" — without them, the sticky header just
-     blends with rows scrolling underneath and reads as scrolled-past.
-     z-index above other in-table interactive elements (status menu,
-     etc.) so a sticky header always wins. */
   th { background: var(--panel); cursor: pointer; user-select: none;
-       position: sticky; top: 0; z-index: 10;
-       border-bottom: 2px solid var(--border);
-       box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+       position: sticky; top: 0; z-index: 1; }
   th:hover { color: var(--accent); }
   /* Sortable headers carry a data-sort attribute. Non-sortable headers
      (like the NCAD link column) have no data-sort and shouldn't
@@ -256,28 +230,6 @@
   td a:hover .ext-icon { color: var(--good); }
   .ncad-search-link .ext-icon { font-size: 13px; color: var(--muted); }
   .ncad-search-link:hover .ext-icon { color: var(--accent); }
-  /* Paste-NCAD-URL icon. Sits next to the main NCAD icon as a small,
-     subordinate affordance — same column, slightly smaller, muted
-     until hovered so it never competes with the primary link for an
-     accidental click. Available on every FC row (paste:true) so the
-     user can also correct a wrong scrape match, not just fill in an
-     empty one. */
-  .ncad-paste-link {
-    margin-left: 6px;
-    opacity: 0.55;
-    text-decoration: none;
-  }
-  .ncad-paste-link:hover { opacity: 1; }
-  .ncad-paste-link .ncad-paste-icon {
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .ncad-paste-link:hover .ncad-paste-icon { color: var(--accent); }
-  /* When the NCAD link came from a manual paste (not a scrape match),
-     the main arrow icon picks up a subtle accent color so the user
-     can tell at a glance which rows they've manually wired up. */
-  .ext-icon.ncad-manual { color: var(--warn); }
-  td a:hover .ext-icon.ncad-manual { color: var(--good); }
   .pill.absentee { background: rgba(245,158,11,.20); color: var(--warn);
                    font-weight: 600; }
   /* Possible short sale: appraised value < loan amount AND deed < 1yr.
@@ -504,74 +456,6 @@
   .days-soon { color: var(--bad); }
   .days-medium { color: var(--warn); }
   .days-far { color: var(--muted); }
-  /* ===== Foreclosure Date cell (merged Sale Date + Days Until Sale) =====
-     Matches the Houston Foreclosure Alerts reference image:
-       Row 1: small uppercase month label ("JUNE", "JULY")
-       Row 2: [date pill]  [countdown "60d"]
-       Row 3: a fixed-width progress bar (~70px) that's ALWAYS visible
-              as a faint gray track. The colored fill grows from left
-              to right as the sale approaches — empty at 60 days out,
-              fully filled at sale day. Baseline 60 days; sales >60d
-              away clamp to 0% fill.
-     Color tiers reflect urgency:
-       > 30 days  → green   (--good)
-       11–30 days → amber   (--warn)
-       ≤ 10 days  → red     (--bad)
-     Past sales: red "X days ago" beside pill, no bar. */
-  .fc-date-cell {
-    display: flex; flex-direction: column;
-    gap: 2px; align-items: flex-start;
-    white-space: nowrap;
-    line-height: 1.25;
-  }
-  /* Pill + countdown sit on one row, side-by-side. */
-  .fc-date-row {
-    display: flex; align-items: center; gap: 8px;
-  }
-  /* The date itself — plain text, no pill background. */
-  .fc-date-pill {
-    display: inline-flex; align-items: center;
-    color: var(--fg);
-    font-size: 14px; font-weight: 600;
-    line-height: 1.15;
-  }
-  /* Progress bar — always 70px wide. The track is a faint gray that
-     stays visible regardless of fill amount, and the colored fill
-     overlays the left portion based on how close the sale is. */
-  .fc-date-bar {
-    position: relative;
-    width: 70px; height: 4px;
-    background: rgba(148,163,184,0.20);   /* track always visible */
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 2px;
-  }
-  .fc-date-bar-fill {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    border-radius: 2px;
-    transition: width 0.2s, background 0.2s;
-  }
-  /* Three urgency tiers — green (>30d), amber (11–30d), red (≤10d).
-     These class names are bar-specific (NOT the old days-soon/medium/
-     far that the rest of the dashboard uses, since those have only
-     two color stops). The countdown text uses the same tiers below. */
-  .fc-date-bar-fill.tier-far   { background: var(--good); }
-  .fc-date-bar-fill.tier-mid   { background: var(--warn); }
-  .fc-date-bar-fill.tier-near  { background: var(--bad); }
-  /* Countdown text right of the pill ("60d", "25d"), colored to
-     match the fill so the urgency reads as one signal. */
-  .fc-date-days {
-    font-size: 12px; font-weight: 600;
-  }
-  .fc-date-days.tier-far   { color: var(--good); }
-  .fc-date-days.tier-mid   { color: var(--warn); }
-  .fc-date-days.tier-near  { color: var(--bad); }
-  /* Past-sale "X days ago" — red text, no bar. */
-  .fc-date-past {
-    font-size: 12px; font-weight: 600;
-    color: var(--bad);
-  }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .empty { padding: 60px 28px; text-align: center; color: var(--muted); }
@@ -585,6 +469,17 @@
      city line is visible. Scoped to .addr-cell only — the global
      clip stays in place for every other column. */
   td.addr-cell { overflow: visible; }
+
+  /* Condo badge — small 🏘️ icon prefixed to the legal description
+     for records detected as condominiums. Helps the user spot condos
+     at a glance when the "Hide condos" toggle is off. */
+  .condo-badge {
+    display: inline-block;
+    margin-right: 4px;
+    font-size: 13px;
+    cursor: help;
+  }
+
   .pane { display: none; padding: 24px 28px; }
   .pane.active { display: block; }
 
@@ -721,159 +616,6 @@
     display: inline-block; opacity: 0; transition: opacity .15s;
   }
   .saved-indicator.show { opacity: 1; }
-  /* ===== Header right column (Source line + Portals button) ===== */
-  .header-right {
-    display: flex; flex-direction: column;
-    align-items: flex-end; gap: 8px;
-  }
-  .portals-btn {
-    background: var(--panel);
-    color: var(--fg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px 12px;
-    font: inherit; font-size: 13px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .portals-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  /* ===== Portals modal — wider than the default modal because the
-     card grid needs room. Uses the generic .modal-backdrop / .modal
-     base styles; this block only overrides what differs. ===== */
-  #portals-backdrop .modal {
-    min-width: 640px;
-    max-width: 880px;
-    width: 90vw;
-    max-height: 88vh;
-    overflow-y: auto;
-  }
-  .portals-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .portals-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
-  .portals-close {
-    background: transparent; border: none; color: var(--muted);
-    font-size: 22px; line-height: 1; cursor: pointer; padding: 0 6px;
-  }
-  .portals-close:hover { color: var(--fg); }
-  /* Legend row above the card grid explaining tag colors. */
-  .portals-legend {
-    display: flex; gap: 14px; flex-wrap: wrap;
-    font-size: 11px; color: var(--muted);
-    margin-bottom: 14px;
-    padding-bottom: 12px; border-bottom: 1px solid var(--border);
-    align-items: center;
-  }
-  .portals-legend .tag { vertical-align: middle; }
-  /* Card grid — two columns on wide modals, collapses to one on
-     narrow screens. */
-  .portals-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  @media (max-width: 720px) {
-    .portals-grid { grid-template-columns: 1fr; }
-  }
-  .portal-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 14px;
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .portal-card .card-row1 {
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 8px;
-  }
-  .portal-card .card-name {
-    font-size: 13px; font-weight: 600; color: var(--fg);
-  }
-  .portal-card .card-desc {
-    font-size: 12px; color: var(--muted);
-    line-height: 1.4;
-  }
-  .portal-card .card-link {
-    margin-top: 4px;
-    font-size: 12px; color: var(--accent);
-    text-decoration: none;
-  }
-  .portal-card .card-link:hover { text-decoration: underline; }
-  /* Cards that expose multiple endpoints (e.g. the Tax Assessor has
-     both a Delinquent List download AND a Property Search) stack
-     labeled link rows under the description. Each row shows the
-     label on the left and the Open arrow on the right, vertically
-     aligned. Visually distinct from single-link cards without
-     introducing a separate component. */
-  .portal-card .card-link-row {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 8px;
-    font-size: 12px;
-    margin-top: 4px;
-  }
-  .portal-card .card-link-row .lbl {
-    color: var(--muted);
-  }
-  .portal-card .card-link-row a {
-    color: var(--accent); text-decoration: none; white-space: nowrap;
-  }
-  .portal-card .card-link-row a:hover { text-decoration: underline; }
-  /* Tag pills for AUTO / SEMI / MANUAL. Color reflects how much
-     elbow grease the source takes:
-       AUTO  = API/subscription, easy           → green
-       SEMI  = manual export then import        → amber
-       MANUAL = open-records request / paper    → red */
-  .portal-tag {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .portal-tag.auto   { background: rgba(34,197,94,.15);  color: var(--good); }
-  .portal-tag.semi   { background: rgba(245,158,11,.18); color: var(--warn); }
-  .portal-tag.manual { background: rgba(239,68,68,.18);  color: var(--bad); }
-  /* PIA email template block at the bottom of the modal — distinct
-     amber tint so it reads as a callout, not a card. */
-  .portals-pia {
-    margin-top: 16px;
-    padding: 14px 16px;
-    background: var(--bg);
-    border: 1px solid rgba(245,158,11,.45);
-    border-radius: 8px;
-  }
-  .portals-pia h4 {
-    margin: 0 0 8px; font-size: 13px; font-weight: 600;
-    color: var(--warn);
-  }
-  .portals-pia .pia-to {
-    font-size: 12px; color: var(--muted); margin-bottom: 8px;
-  }
-  .portals-pia .pia-to a { color: var(--accent); }
-  .portals-pia .pia-body {
-    font-size: 12px; line-height: 1.5;
-    color: var(--fg);
-    font-style: italic;
-  }
-  .portals-pia .pia-copy {
-    margin-top: 10px;
-    background: transparent;
-    border: 1px solid var(--warn);
-    color: var(--warn);
-    border-radius: 5px;
-    font-size: 11px; font-weight: 600;
-    padding: 5px 12px;
-    cursor: pointer;
-  }
-  .portals-pia .pia-copy:hover {
-    background: rgba(245,158,11,.12);
-  }
-  .portals-pia .pia-copy.copied { color: var(--good); border-color: var(--good); }
 </style>
 </head>
 <body>
@@ -886,27 +628,22 @@
     <h1>Nueces County — Lead Pipeline</h1>
     <div class="meta" id="meta">Loading…</div>
   </div>
-  <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch</div>
-    <button id="portals-btn" class="portals-btn"
-      title="Open the Data Portals reference — links to external lookup sites + PIA email template"
-      onclick="openPortalsModal()">📂 Data Portals</button>
-  </div>
+  <div class="meta">Source: Nueces County Clerk + NCAD esearch</div>
 </header>
 
 <div class="layout">
 <nav class="sidebar">
   <div class="sidebar-section">
     <div class="sidebar-section-title">Lead Types</div>
-    <div class="nav-item active" data-pane="foreclosures">
+    <div class="nav-item active" data-pane="ccln">
+      <span>City of Corpus Christi Liens</span>
+      <span class="tab-count" id="ccln-count">—</span></div>
+    <div class="nav-item" data-pane="foreclosures">
       <span>Mortgage Foreclosures</span>
       <span class="tab-count" id="fc-count">—</span></div>
     <div class="nav-item" data-pane="taxforeclosures">
       <span>Tax Foreclosures</span>
       <span class="tab-count" id="tfc-count">—</span></div>
-    <div class="nav-item" data-pane="ccln">
-      <span>City of Corpus Christi Liens</span>
-      <span class="tab-count" id="ccln-count">—</span></div>
     <div class="nav-item" data-pane="codeviolation">
       <span>Code Violation</span></div>
     <div class="nav-item" data-pane="vacanthouses">
@@ -943,7 +680,7 @@
 <div class="main">
 
 <!-- ======== CCLN / CRM PANE ======== -->
-<div class="pane" id="pane-ccln">
+<div class="pane active" id="pane-ccln">
   <div class="stats" id="ccln-stats"></div>
   <table id="ccln-table">
     <thead><tr>
@@ -967,13 +704,14 @@
 </div>
 
 <!-- ======== FORECLOSURES PANE ======== -->
-<div class="pane active" id="pane-foreclosures">
+<div class="pane" id="pane-foreclosures">
   <div class="stats" id="fc-stats"></div>
   <table id="fc-table">
     <thead><tr>
       <th style="width: 40px;" title="Save manual edits"></th>
       <th data-sort="status"         style="width: 58px;">Status</th>
-      <th data-sort="sale_date"      style="width: 110px;">Foreclosure Date</th>
+      <th data-sort="sale_date"      style="width: 80px;">Sale Date</th>
+      <th data-sort="days_until_sale" style="width: 66px;">Days Until Sale</th>
       <th data-sort="recorded"       style="width: 80px;">Recorded</th>
       <th data-sort="owner"          style="width: 155px;">Owner</th>
       <th data-sort="prop_address"   style="width: 175px;">Property Address</th>
@@ -1210,122 +948,6 @@
   </div>
 </div>
 
-<!-- ======== Data Portals modal ========
-     Hardcoded reference list of external data sources for Nueces
-     County lead research. Each card is a hand-curated entry — to
-     add/edit/remove portals, edit the markup below. Tags reflect how
-     the data flows in:
-       AUTO   = API or paid subscription (CSV bulk export available)
-       SEMI   = manual web export → CSV → dashboard import
-       MANUAL = open-records request via email/PIA letter
-     Bottom block: copy-pasteable PIA email template for the County. -->
-<div class="modal-backdrop" id="portals-backdrop">
-  <div class="modal" role="dialog" aria-labelledby="portals-title">
-    <div class="portals-header">
-      <h3 id="portals-title">Data Portals</h3>
-      <button class="portals-close" aria-label="Close"
-              onclick="closePortalsModal()">×</button>
-    </div>
-    <div class="portals-legend">
-      <span><span class="portal-tag auto">Auto</span> = subscription/API</span>
-      <span><span class="portal-tag semi">Semi</span> = manual export → import</span>
-      <span><span class="portal-tag manual">Manual</span> = open-records request</span>
-    </div>
-    <div class="portals-grid">
-      <div class="portal-card">
-        <div class="card-row1">
-          <span class="card-name">Nueces County Clerk</span>
-          <span class="portal-tag semi">Semi</span>
-        </div>
-        <div class="card-desc">Manual search → CSV export → import here.</div>
-        <a class="card-link" target="_blank" rel="noopener"
-           href="https://nueces.tx.publicsearch.us/">Open ↗</a>
-      </div>
-      <div class="portal-card">
-        <div class="card-row1">
-          <span class="card-name">Nueces CAD Property Search</span>
-          <span class="portal-tag auto">Auto</span>
-        </div>
-        <div class="card-desc">Free search. Filter absentee owners.</div>
-        <a class="card-link" target="_blank" rel="noopener"
-           href="https://esearch.nuecescad.net/">Open ↗</a>
-      </div>
-      <div class="portal-card">
-        <div class="card-row1">
-          <span class="card-name">Nueces County GIS Portal</span>
-          <span class="portal-tag semi">Semi</span>
-        </div>
-        <div class="card-desc">Map-based parcel viewer.</div>
-        <a class="card-link" target="_blank" rel="noopener"
-           href="https://gis.bisclient.com/nuecescad/">Open ↗</a>
-      </div>
-      <div class="portal-card">
-        <div class="card-row1">
-          <span class="card-name">Nueces County Tax Assessor</span>
-          <span class="portal-tag semi">Semi</span>
-        </div>
-        <div class="card-row-link">
-          <span class="card-link-row">
-            <span class="lbl">Delinquent List Download</span>
-            <a target="_blank" rel="noopener"
-               href="https://www.nuecesco.com/county-services/tax-assessor-collector/documents">Open ↗</a>
-          </span>
-          <span class="card-link-row">
-            <span class="lbl">Property Search</span>
-            <a target="_blank" rel="noopener"
-               href="https://actweb.acttax.com/nueces/nueces/">Open ↗</a>
-          </span>
-        </div>
-      </div>
-      <div class="portal-card">
-        <div class="card-row1">
-          <span class="card-name">Linebarger Foreclosures</span>
-          <span class="portal-tag semi">Semi</span>
-        </div>
-        <div class="card-desc">State-wide tax foreclosures with addresses and pictures.</div>
-        <a class="card-link" target="_blank" rel="noopener"
-           href="https://taxsales.lgbs.com/map?lat=27.77667409334743&lon=-97.48802149999999&zoom=10&offset=0&ordering=precinct,sale_nbr,uid&sale_type=SALE,RESALE,STRUCK%20OFF,FUTURE%20SALE&county=NUECES%20COUNTY&state=TX&in_bbox=-98.27903712499999,27.28652231984749,-96.69700587499999,28.264627180893054">Open ↗</a>
-      </div>
-      <div class="portal-card">
-        <div class="card-row1">
-          <span class="card-name">Nueces County Foreclosure Sale</span>
-          <span class="portal-tag semi">Semi</span>
-        </div>
-        <div class="card-desc">Additional site to bid for foreclosures.</div>
-        <a class="card-link" target="_blank" rel="noopener"
-           href="https://nueces.texas.sheriffsaleauctions.com/index.cfm?resetcfcobjs=1">Open ↗</a>
-      </div>
-      <div class="portal-card">
-        <div class="card-row1">
-          <span class="card-name">Nueces County District Clerk Records</span>
-          <span class="portal-tag semi">Semi</span>
-        </div>
-        <div class="card-desc">Probates, tax lawsuits, divorces.</div>
-        <a class="card-link" target="_blank" rel="noopener"
-           href="https://research.txcourts.gov/CourtRecordsSearch/ui/Home#/home">Open ↗</a>
-      </div>
-      <div class="portal-card">
-        <div class="card-row1">
-          <span class="card-name">CC Code Enforcement and Water Shutoff</span>
-          <span class="portal-tag manual">Manual</span>
-        </div>
-        <div class="card-desc">Open records request.</div>
-        <a class="card-link" target="_blank" rel="noopener"
-           href="https://cctexas.jotform.com/203084314220036">Open ↗</a>
-      </div>
-    </div>
-    <div class="portals-pia">
-      <h4>PIA email template:</h4>
-      <div class="pia-to">
-        To: <a href="mailto:publicrecords@nuecesco.com">publicrecords@nuecesco.com</a>
-      </div>
-      <div class="pia-body" id="pia-body">"Pursuant to the Texas Public Information Act, I request: [delinquent tax roll with owner name, mailing address, parcel ID, amount owed, and years delinquent] in CSV or Excel format. I am willing to pay reasonable copying fees up to $25."</div>
-      <button class="pia-copy" id="pia-copy-btn"
-              onclick="copyPiaTemplate(this)">Copy template</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // ============================================================
 // CRM state — persisted in localStorage, keyed by doc_num
@@ -1492,164 +1114,6 @@ function commitFcFields(docNum, edits) {
   o[docNum] = Object.assign({}, cur, {fields:fields,
     _updated_at: new Date().toISOString()});
   saveFcOverrides(o);
-}
-
-// ---- Appraised value override ----
-// Lives in its own slot on the override record (not in `fields`)
-// because it's numeric, not a text field, and follows the same
-// editable-when-blank pattern as loan_amount. When NCAD has captured
-// an appraised value, the cell is READ-ONLY (trustworthy NCAD data,
-// protect from accidental edits). When NCAD is blank — which is now
-// the common case for the 38 records evicted by re-corroboration —
-// the cell is editable and the user types in what they read on NCAD
-// (after pasting the correct link below). Empty input clears the
-// override so the value reverts to whatever the scrape produced next.
-function fcEffectiveAppraisedValue(r) {
-  const o = getFcOverride(r.doc_num);
-  if (o.appraised_value != null && o.appraised_value !== "") {
-    const n = Number(o.appraised_value);
-    if (!isNaN(n)) return n;
-  }
-  if (r.appraised_value != null && r.appraised_value !== "") {
-    const n = Number(r.appraised_value);
-    if (!isNaN(n)) return n;
-  }
-  return null;
-}
-// Effective loan amount = manual override (existing slot) if present,
-// else scraped. Used by the short-sale detector so that badge tracks
-// what's actually shown in the Loan Amount cell, not the raw scrape.
-function fcEffectiveLoanAmount(r) {
-  const o = getFcOverride(r.doc_num);
-  if (o.loan_amount != null && o.loan_amount !== "") {
-    const n = Number(o.loan_amount);
-    if (!isNaN(n)) return n;
-  }
-  if (r.loan_amount != null && r.loan_amount !== "") {
-    const n = Number(r.loan_amount);
-    if (!isNaN(n)) return n;
-  }
-  return null;
-}
-
-// ---- NCAD-URL override (paste-link feature) ----
-// The re-corroboration pass evicted 38 records that had wrong NCAD
-// parcels attached. The script correctly cleared `ncad_prop_id` on
-// those records, but they still need a correct NCAD link — and the
-// daily owner-search scrape won't find one (otherwise it would
-// already have). The paste-link feature lets the user manually
-// supply the right URL after looking up the parcel on NCAD by hand.
-//
-// Stored on the same per-doc override record as the other overrides,
-// under `ncad_override: {prop_id, year, owner_id}`. Override wins at
-// render time inside ncadCellHtml(). Available on every row (not
-// just evicted ones) so the user can also correct a wrong match the
-// script's matcher missed.
-//
-// The store lives in localStorage and is never written to the
-// scraped JSON, so the daily scrape can't clobber a paste.
-
-// Strict parser for an NCAD property URL. Accepts only the canonical
-// /Property/View/{id}[?year=Y[&ownerId=O]] shape. Whitespace tolerated;
-// http/https tolerated; with or without www. Anything else returns
-// null so the caller can show a clear error.
-//
-// Real example URL that should parse cleanly:
-//   https://esearch.nuecescad.net/Property/View/258029?year=2026&ownerId=662288
-// → {prop_id: "258029", year: "2026", owner_id: "662288"}
-function parseNcadUrl(input) {
-  if (input == null) return null;
-  const s = String(input).trim();
-  if (!s) return null;
-  // Capture the property id from the path. Match only the BIS host
-  // family (esearch.nuecescad.net) so a random URL can't sneak through.
-  const m = s.match(
-    /^https?:\/\/(?:www\.)?esearch\.nuecescad\.net\/Property\/View\/(\d+)(?:\?(.*))?$/i
-  );
-  if (!m) return null;
-  const propId = m[1];
-  const query = m[2] || "";
-  let year = "", ownerId = "";
-  // Parse the query string with URLSearchParams for robustness
-  // (it handles any param order and tolerates extra unknown params).
-  try {
-    const params = new URLSearchParams(query);
-    year = (params.get("year") || "").trim();
-    ownerId = (params.get("ownerId") || "").trim();
-  } catch (e) { /* malformed query — keep what we have */ }
-  // Year is optional but if present must look like a 4-digit year.
-  if (year && !/^\d{4}$/.test(year)) year = "";
-  if (ownerId && !/^\d+$/.test(ownerId)) ownerId = "";
-  return {prop_id: propId, year: year, owner_id: ownerId};
-}
-// Effective NCAD attachment: override wins over scrape.
-function fcEffectiveNcad(r) {
-  const o = getFcOverride(r.doc_num);
-  if (o.ncad_override && o.ncad_override.prop_id) {
-    return {
-      prop_id:  o.ncad_override.prop_id,
-      year:     o.ncad_override.year || "2026",
-      owner_id: o.ncad_override.owner_id || "",
-      from_override: true,
-    };
-  }
-  if (r.ncad_prop_id) {
-    return {
-      prop_id:  r.ncad_prop_id,
-      year:     r.ncad_year || "2026",
-      owner_id: r.ncad_owner_id || "",
-      from_override: false,
-    };
-  }
-  return null;
-}
-// Prompt + write a manual NCAD link override for one record. The
-// previous override is shown in the prompt's default value so the
-// user can edit instead of retype. An empty submission clears the
-// override (reverts to scraped or "no match"). Garbage URLs show a
-// clear error and don't write anything.
-function pasteNcadUrl(docNum) {
-  const cur = getFcOverride(docNum).ncad_override;
-  let placeholder = "";
-  if (cur && cur.prop_id) {
-    placeholder = "https://esearch.nuecescad.net/Property/View/" +
-        cur.prop_id +
-        (cur.year ? "?year=" + cur.year : "") +
-        (cur.owner_id ? "&ownerId=" + cur.owner_id : "");
-  }
-  const msg =
-    "Paste the full NCAD property URL for this record.\n\n" +
-    "Example:\n" +
-    "  https://esearch.nuecescad.net/Property/View/258029" +
-    "?year=2026&ownerId=662288\n\n" +
-    "Leave blank and press OK to clear the existing link.";
-  const input = prompt(msg, placeholder);
-  if (input === null) return;          // user cancelled
-  const trimmed = String(input).trim();
-  if (trimmed === "") {
-    // Clear the override.
-    const o = loadFcOverrides();
-    if (o[docNum] && o[docNum].ncad_override) {
-      delete o[docNum].ncad_override;
-      saveFcOverrides(o);
-    }
-    renderFc();
-    return;
-  }
-  const parsed = parseNcadUrl(trimmed);
-  if (!parsed) {
-    alert(
-      "That doesn't look like a valid NCAD property URL.\n\n" +
-      "Expected format:\n" +
-      "  https://esearch.nuecescad.net/Property/View/<id>" +
-      "?year=<yyyy>&ownerId=<id>\n\n" +
-      "Open the correct property on NCAD, copy the URL from the " +
-      "browser's address bar, and try again."
-    );
-    return;
-  }
-  setFcOverride(docNum, {ncad_override: parsed});
-  renderFc();
 }
 
 // ============================================================
@@ -1829,15 +1293,11 @@ function openCrm(type, docNum, sourceRecords) {
   const rec = (sourceRecords || []).find(x => x.doc_num === docNum);
   if (!rec) return;
 
-  // Remember where we came from so Back restores it exactly. Scroll
-  // now happens inside .main (not the window), so we save .main's
-  // scrollTop. window.scrollY would always read 0 now that the body
-  // doesn't scroll.
+  // Remember where we came from so Back restores it exactly.
   const activePane = document.querySelector(".pane.active");
-  const mainEl = document.querySelector(".main");
   _crmReturn = {
     pane: activePane ? activePane.id : null,
-    scrollY: mainEl ? mainEl.scrollTop : 0,
+    scrollY: window.scrollY,
   };
 
   const entry = getCrmEntry(type, docNum);
@@ -1938,10 +1398,7 @@ function openCrm(type, docNum, sourceRecords) {
       p.classList.remove("active"));
   const crm = document.getElementById("crm-view");
   crm.hidden = false;
-  // Scroll the .main container (now our scroll context) to the top
-  // so the CRM view opens at its header.
-  const _mainEl = document.querySelector(".main");
-  if (_mainEl) _mainEl.scrollTop = 0;
+  window.scrollTo(0, 0);
 }
 
 function closeCrm() {
@@ -1952,12 +1409,8 @@ function closeCrm() {
     if (p) p.classList.add("active");
   }
   // Defer scroll until after layout reflows the restored table.
-  // Scroll target is .main (now the scroll container), not the window.
   const y = _crmReturn.scrollY;
-  requestAnimationFrame(() => {
-    const _mainEl = document.querySelector(".main");
-    if (_mainEl) _mainEl.scrollTop = y;
-  });
+  requestAnimationFrame(() => window.scrollTo(0, y));
 }
 
 document.getElementById("crm-back").onclick = closeCrm;
@@ -1973,45 +1426,14 @@ let CCLN_RAW = [], CCLN_FILTERED = [];
 let FC_RAW = [], FC_FILTERED = [];
 
 // ============================================================
-// Tab switching + lazy-render
+// Tab switching
 // ============================================================
-// To keep page load fast as new lead types are added (Code Violations,
-// Vacant Houses, Delinquent Taxes etc. — potentially thousands of rows
-// each), we DON'T render every pane's table at startup. Each pane's
-// data is still fetched and counts/stats are updated, but the actual
-// DOM rows (<tr>) for hidden panes are deferred until the user clicks
-// into them. First click on a pane builds its rows; subsequent clicks
-// are instant (rendered once, kept in DOM).
-//
-// _renderedPanes: a Set of pane ids ("pane-ccln", "pane-foreclosures",
-// etc.) that have been rendered this session. Edits inside a pane re-
-// render that pane normally; the lazy gate only affects the FIRST
-// render per session.
-const _renderedPanes = new Set();
-function _renderPaneIfNeeded(paneId) {
-  if (_renderedPanes.has(paneId)) return;
-  _renderedPanes.add(paneId);
-  // Map pane id → the function that builds its rows. New lead-type
-  // panes get an entry added here when their data wiring is built.
-  // Panes not listed here have nothing to render (placeholder "coming
-  // soon" content is static HTML in the markup).
-  if (paneId === "pane-ccln") {
-    if (CCLN_RAW.length) applyCcln();
-  } else if (paneId === "pane-foreclosures") {
-    if (FC_RAW.length) applyFc();
-  }
-}
-
 document.querySelectorAll(".nav-item").forEach(t => {
   t.onclick = () => {
     document.querySelectorAll(".nav-item").forEach(x => x.classList.remove("active"));
     document.querySelectorAll(".pane").forEach(x => x.classList.remove("active"));
     t.classList.add("active");
-    const paneId = "pane-" + t.dataset.pane;
-    document.getElementById(paneId).classList.add("active");
-    // Lazy-render: build this pane's rows the first time we land on
-    // it. The data is already loaded; this just constructs the DOM.
-    _renderPaneIfNeeded(paneId);
+    document.getElementById("pane-" + t.dataset.pane).classList.add("active");
   };
 });
 
@@ -2041,24 +1463,12 @@ async function loadAll() {
     }
   } catch (e) { /* records.json optional — header just omits the date */ }
 
-  // Which pane is active right now? We'll only render that one's
-  // rows on initial load — the others stay deferred until the user
-  // clicks into them. (Stats + sidebar counts still update for every
-  // pane because those are cheap and visible from any tab.)
-  const _activePane = (document.querySelector(".pane.active") || {}).id;
-
   try {
     const r = await fetch("city_liens.json", {cache:"no-store"});
     const data = await r.json();
     CCLN_RAW = data.records || [];
     document.getElementById("ccln-count").textContent = data.total || 0;
-    renderCclnStats();
-    // Only build the CCLN table rows if CCLN is the active pane on
-    // load. Otherwise defer until first click.
-    if (_activePane === "pane-ccln") {
-      _renderedPanes.add("pane-ccln");
-      applyCcln();
-    }
+    renderCclnStats(); applyCcln();
   } catch (e) { document.getElementById("ccln-empty").hidden = false; }
 
   try {
@@ -2066,12 +1476,7 @@ async function loadAll() {
     const data = await r.json();
     FC_RAW = data.records || [];
     document.getElementById("fc-count").textContent = data.total || 0;
-    renderFcStats(data);
-    // Same lazy-render pattern for the foreclosures pane.
-    if (_activePane === "pane-foreclosures") {
-      _renderedPanes.add("pane-foreclosures");
-      applyFc();
-    }
+    renderFcStats(data); applyFc();
   } catch (e) { document.getElementById("fc-empty").hidden = false; }
 
   // Compute "last PDF upload" timestamp: the max `pdf_parsed_at` across
@@ -2518,12 +1923,63 @@ document.getElementById("drawer-backdrop").onclick = closeDrawer;
 // ============================================================
 // Foreclosures rendering
 // ============================================================
+
+// ============================================================
+// Condo filtering. Condos are intentionally NOT door-knock leads
+// in the user's current workflow — they're typically owned via
+// LLCs/trusts, have HOA fees, and need different appraisal logic.
+// We surface them in the data but hide them from the table by
+// default. The toggle below lets the user show them on demand.
+//
+// Detection is pure derivation from the existing `legal` field:
+// any record whose legal contains "CONDOMINIUM" (case-insensitive)
+// is a condo. Singular and plural forms both match.
+// ============================================================
+function isCondoRecord(r) {
+  const lg = (r && r.legal) || "";
+  return /CONDOMINIUM/i.test(lg);
+}
+const FC_HIDE_CONDOS_KEY = "nueces_fc_hide_condos";
+function loadFcHideCondos() {
+  // Default: true (hide condos). User can toggle on to show them.
+  const v = localStorage.getItem(FC_HIDE_CONDOS_KEY);
+  if (v === null) return true;
+  return v === "1";
+}
+function saveFcHideCondos(hide) {
+  localStorage.setItem(FC_HIDE_CONDOS_KEY, hide ? "1" : "0");
+}
+let FC_HIDE_CONDOS = loadFcHideCondos();
+
 function renderFcStats(data) {
+  // Compute condo count from raw records (FC_RAW exists by the time
+  // this renders).
+  const condoCount = (typeof FC_RAW !== "undefined" && FC_RAW)
+      ? FC_RAW.filter(isCondoRecord).length : 0;
   document.getElementById("fc-stats").innerHTML = `
     <div class="stat"><div class="v">${data.total || 0}</div><div class="k">Total foreclosures</div></div>
     <div class="stat"><div class="v">${data.pre_foreclosure || 0}</div><div class="k">Pre-foreclosure</div></div>
     <div class="stat"><div class="v">${data.post_foreclosure || 0}</div><div class="k">Post-foreclosure</div></div>
+    <div class="stat" style="min-width:auto; padding:8px 14px;">
+      <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px;">
+        <input type="checkbox" id="fc-hide-condos-toggle"
+               ${FC_HIDE_CONDOS ? "checked" : ""}
+               style="margin:0; cursor:pointer;">
+        <span>Hide condos</span>
+        <span style="opacity:0.6;">(${condoCount})</span>
+      </label>
+    </div>
   `;
+  // Wire up the toggle. Changing it re-runs applyFc() which re-
+  // filters and re-renders the table.
+  const toggle = document.getElementById("fc-hide-condos-toggle");
+  if (toggle) {
+    toggle.addEventListener("change", (e) => {
+      FC_HIDE_CONDOS = e.target.checked;
+      saveFcHideCondos(FC_HIDE_CONDOS);
+      applyFc();
+    });
+  }
 }
 // ============================================================
 // Foreclosure sort state — keyed by column name. Defaults to
@@ -2582,17 +2038,6 @@ function _fcCompare(a, b, key, dir, type) {
     if (ob.loan_amount != null && ob.loan_amount !== "")
       vb = ob.loan_amount;
   }
-  // Same trick for appraised_value: manually-entered appraisals
-  // should sort alongside scraped ones, not all sink to the bottom
-  // as empties.
-  if (key === "appraised_value") {
-    const oa = getFcOverride(a.doc_num);
-    const ob = getFcOverride(b.doc_num);
-    if (oa.appraised_value != null && oa.appraised_value !== "")
-      va = oa.appraised_value;
-    if (ob.appraised_value != null && ob.appraised_value !== "")
-      vb = ob.appraised_value;
-  }
 
   // Empty-value sink: always to the bottom.
   const aEmpty = va == null || va === "";
@@ -2629,7 +2074,15 @@ function _fcCompare(a, b, key, dir, type) {
 function applyFc() {
   // No filter input anymore — the search box was removed. All records
   // pass through; sort by current column.
-  FC_FILTERED = FC_RAW.slice();
+  //
+  // Condo filter: when FC_HIDE_CONDOS is true (default), exclude any
+  // record whose legal contains "CONDOMINIUM". Toggle is in the stats
+  // header above the table; state persists in localStorage.
+  let pool = FC_RAW.slice();
+  if (FC_HIDE_CONDOS) {
+    pool = pool.filter(r => !isCondoRecord(r));
+  }
+  FC_FILTERED = pool;
   const type = FC_SORT_TYPES[FC_SORT_KEY] || "string";
   FC_FILTERED.sort((a, b) =>
       _fcCompare(a, b, FC_SORT_KEY, FC_SORT_DIR, type));
@@ -2675,7 +2128,7 @@ function renderFc() {
     const toggleTr = document.createElement("tr");
     toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
     toggleTr.innerHTML = `
-      <td colspan="14">
+      <td colspan="15">
         <span class="chev">▶</span>
         <span>${deadRecords.length} dead lead${deadRecords.length === 1 ? "" : "s"}</span>
         <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
@@ -2705,84 +2158,13 @@ function buildFcRow(r, isDead) {
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
 
-  // ---- Foreclosure Date cell (merged Sale Date + Days Until Sale) ----
-  // Matches the Houston Foreclosure Alerts reference image:
-  //   Row 1: small uppercase month label ("JUNE", "JULY")
-  //   Row 2: [date pill]  [countdown "60d"]
-  //   Row 3: a fixed-width progress bar (~70px) that's ALWAYS visible
-  //          as a faint gray track. Colored fill grows from left to
-  //          right as the sale approaches: empty at 60+ days,
-  //          ~98% at 1 day, full at 0 days.
-  // Three urgency tiers drive the bar fill color AND countdown text:
-  //   > 30 days  → green   (tier-far,  --good)
-  //   11–30 days → amber   (tier-mid,  --warn)
-  //   ≤ 10 days  → red     (tier-near, --bad)
-  // Past sales: "X days ago" in red beside the pill, no bar.
   const days = r.days_until_sale;
-  const tierClass = days == null ? "tier-far" :
-                    days <= 10 ? "tier-near" :
-                    days <= 30 ? "tier-mid"  : "tier-far";
-  // Bar fill % — full = sale day, empty = 60+ days. Clamp to [0,100].
-  let _barPct = 0;
-  if (days != null && days >= 0) {
-    const remaining = Math.max(0, Math.min(60, days));
-    _barPct = Math.round(((60 - remaining) / 60) * 100);
-  }
-  // Parse the ISO sale_date into month-name + day-of-month parts.
-  // Fallback path returns the raw string unchanged (legacy formats).
-  const _dateParts = (() => {
-    const sd = r.sale_date;
-    if (!sd) return null;
-    const m = String(sd).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!m) return {raw: String(sd)};
-    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun",
-                        "Jul","Aug","Sep","Oct","Nov","Dec"];
-    const mo = parseInt(m[2], 10);
-    const d  = parseInt(m[3], 10);
-    if (mo < 1 || mo > 12) return {raw: String(sd)};
-    return {
-      month: monthNames[mo - 1],   // "Jun"
-      day:   d,                     // 2
-    };
-  })();
-  let foreclosureDateCell;
-  if (!_dateParts) {
-    // No sale date at all — show a dash.
-    foreclosureDateCell = `<div class="fc-date-cell"><div class="fc-date-pill">—</div></div>`;
-  } else if (days != null && days < 0) {
-    // Past sale: pill + red "X days ago", no bar.
-    const pastTxt = Math.abs(days) + " days ago";
-    const pillTxt = _dateParts.month
-      ? `${_dateParts.month} ${_dateParts.day}` : _dateParts.raw;
-    foreclosureDateCell = `
-      <div class="fc-date-cell">
-        <div class="fc-date-row">
-          <div class="fc-date-pill">${esc(pillTxt)}</div>
-          <div class="fc-date-past">${esc(pastTxt)}</div>
-        </div>
-      </div>`;
-  } else {
-    // Upcoming sale. Two vertical rows:
-    //   1. pill + "Xd" countdown side-by-side
-    //   2. progress bar (always 70px wide) — colored fill grows
-    //      from the left as the sale approaches. 60-day baseline.
-    const pillTxt = _dateParts.month
-      ? `${_dateParts.month} ${_dateParts.day}` : _dateParts.raw;
-    const daysTxt = days == null ? "" : days + "d";
-    foreclosureDateCell = `
-      <div class="fc-date-cell">
-        <div class="fc-date-row">
-          <div class="fc-date-pill">${esc(pillTxt)}</div>
-          ${daysTxt ?
-              `<div class="fc-date-days ${tierClass}">${esc(daysTxt)}</div>`
-              : ""}
-        </div>
-        <div class="fc-date-bar">
-          <div class="fc-date-bar-fill ${tierClass}"
-               style="width: ${_barPct}%"></div>
-        </div>
-      </div>`;
-  }
+  const daysClass = days === null || days === undefined ? "days-far" :
+                    days <= 14 ? "days-soon" :
+                    days <= 30 ? "days-medium" : "days-far";
+  const daysText = days === null || days === undefined ? "—" :
+                   days < 0 ? Math.abs(days) + " days ago" :
+                   days + " days";
   // Effective values: a manual edit (saved via the Save button) wins
   // over the scraped value. The street line is what's editable; city/
   // state/zip stay from the scrape (rarely the missing piece).
@@ -2922,49 +2304,9 @@ function buildFcRow(r, isDead) {
   } else {
     loanDocCell = esc(r.loan_doc || "—");
   }
-  // ---- Appraised Value cell logic ----
-  // Same shape as Loan Amount: read-only when NCAD captured a real
-  // value (protect trustworthy data), editable when blank (the user
-  // looks it up on NCAD and types it in). After the re-corroboration
-  // pass evicted 38 wrong NCAD matches, those records now have blank
-  // appraisals — this cell is the catch-all for filling them in by
-  // hand after pasting the correct NCAD URL above.
-  //
-  // The override lives in the same per-doc record on localStorage as
-  // the other overrides (slot: appraised_value), so the daily scrape
-  // can't clobber it and a future scrape that DOES capture a value
-  // will still defer to the override (override always wins) — clear
-  // the field if you ever want to revert to the scraped figure.
-  const _scrapedAppr = (r.appraised_value != null && r.appraised_value !== "")
-      ? Number(r.appraised_value) : null;
-  const _hasScrapedAppr = _scrapedAppr != null && !isNaN(_scrapedAppr);
-  const _ovAppr = (_ov.appraised_value != null && _ov.appraised_value !== "")
-      ? Number(_ov.appraised_value) : null;
-  const _hasOvAppr = _ovAppr != null && !isNaN(_ovAppr);
-  const _apprEditable = !_hasScrapedAppr;
-  const _fmtAppr = (n) => Number(n).toLocaleString("en-US",
-      {maximumFractionDigits: 0});
-  // Editable-mode value goes in the input box.
-  const _apprBoxStr = _hasOvAppr ? _fmtAppr(_ovAppr) : "";
-  // Read-only display.
-  const _apprReadOnly = _hasScrapedAppr ? "$" + _fmtAppr(_scrapedAppr) : "—";
-  let apprCell;
-  if (_apprEditable) {
-    apprCell =
-      `<span class="loan-amt-wrap"><span class="dollar">$</span>` +
-      `<input class="loan-amt-edit"
-        type="text" inputmode="decimal"
-        value="${esc(_apprBoxStr)}"
-        data-doc="${esc(r.doc_num)}"
-        placeholder="enter appraisal"
-        title="No appraised value captured (NCAD link missing or evicted). Look it up on NCAD and enter the value here."
-        oninput="fcMarkDirty(this)"
-        data-field="appraised_value"
-        onclick="event.stopPropagation();"></span>`;
-  } else {
-    apprCell =
-      `<span title="Appraised value from NCAD (read-only)">${esc(_apprReadOnly)}</span>`;
-  }
+  const apprVal = r.appraised_value ?
+      "$" + Number(r.appraised_value).toLocaleString("en-US",
+                                                     {maximumFractionDigits: 0}) : "—";
   const mailFull = _mailEff ?
       [_mailEff, r.mail_city, r.mail_state, r.mail_zip]
           .filter(Boolean).join(" ") : "";
@@ -3016,17 +2358,14 @@ function buildFcRow(r, isDead) {
   let shortSaleBadge = "";
   let triggerReason = "";
 
-  // Condition 1: underwater (appraised < loan). We use the EFFECTIVE
-  // values (override wins over scrape) so that the badge tracks what's
-  // actually shown in the cells — once the user pastes a NCAD link
-  // and types the appraisal in, the SHORT SALE badge updates with it.
-  const _shortAppr = fcEffectiveAppraisedValue(r);
-  const _shortLoan = fcEffectiveLoanAmount(r);
-  if (_shortAppr != null && _shortLoan != null) {
-    if (_shortAppr < _shortLoan) {
-      const apprStr = "$" + _shortAppr.toLocaleString("en-US",
+  // Condition 1: underwater (appraised < loan)
+  if (r.appraised_value && r.loan_amount) {
+    const appr = Number(r.appraised_value);
+    const loan = Number(r.loan_amount);
+    if (!isNaN(appr) && !isNaN(loan) && appr < loan) {
+      const apprStr = "$" + appr.toLocaleString("en-US",
           {maximumFractionDigits: 0});
-      const loanStr = "$" + _shortLoan.toLocaleString("en-US",
+      const loanStr = "$" + loan.toLocaleString("en-US",
           {maximumFractionDigits: 0});
       triggerReason = `Appraised ${apprStr} < Loan ${loanStr} (underwater)`;
     }
@@ -3098,9 +2437,7 @@ function buildFcRow(r, isDead) {
   // otherwise copy-owner + open-search fallback (the old
   // /Search/Result deep link was session-gated and bounced to
   // /Search/Expired site-wide).
-  // FC rows also get a small paste-link icon so the user can manually
-  // attach (or correct) the NCAD link for evicted / unmatched rows.
-  let ncadCell = ncadCellHtml(r, {paste: true});
+  let ncadCell = ncadCellHtml(r);
 
   // Editable text cell helper. Renders an input pre-filled with the
   // effective value; tags it with data-field so the Save button can
@@ -3134,8 +2471,9 @@ function buildFcRow(r, isDead) {
       <span class="save-ok" title="Saved">✓</span>
     </td>
     <td>${statusCell}</td>
-    <td>${foreclosureDateCell}</td>
-    <td>${esc(formatDate(r.recorded))}</td>
+    <td>${esc(r.sale_date || "")}</td>
+    <td class="days ${daysClass}">${esc(daysText)}</td>
+    <td>${esc(r.recorded || "")}</td>
     <td>${_ecell("owner", _ownerEff)}</td>
     <td class="addr-cell">${_ecell("prop_address", _propEff)}${
         [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim()
@@ -3162,11 +2500,11 @@ function buildFcRow(r, isDead) {
         onclick="event.stopPropagation();"></span>`
       : `<span title="Original loan amount captured from the foreclosure PDF (read-only)">$${esc(_readOnlyStr)}</span>`
       }${modBadge}${origAmtLine}</td>
-    <td>${apprCell}</td>
+    <td>${apprVal}</td>
     <td>${esc(formatDate(r.deed_date))}${modBadge}${origDateLine}</td>
     <td>${loanDocCell}</td>
     <td>${_ecell("lender", _lenderEff)}</td>
-    <td class="legal">${_ecell("legal", _legalEff, true)}</td>
+    <td class="legal">${isCondoRecord(r) ? '<span class="condo-badge" title="Condominium — not a typical door-knock lead">🏘️</span>' : ""}${_ecell("legal", _legalEff, true)}</td>
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${missingPdf ? `<span class="no-pdf-badge" title="No foreclosure PDF has been uploaded for this lead yet. Download it from the clerk portal and add it via the normal upload workflow to fill in owner / loan / lender.">NO PDF</span>` : ""}</td>
     <td style="text-align: center;">${ncadCell}</td>
   `;
@@ -3306,13 +2644,10 @@ function fcSaveRow(btn) {
   // Collect every edit control on this row.
   const edits = {};
   let loanAmtRaw = null;
-  let apprValRaw = null;
   tr.querySelectorAll("[data-field]").forEach(el => {
     const f = el.dataset.field;
     if (f === "loan_amount") {
       loanAmtRaw = String(el.value || "").replace(/[$,\s]/g, "");
-    } else if (f === "appraised_value") {
-      apprValRaw = String(el.value || "").replace(/[$,\s]/g, "");
     } else {
       edits[f] = el.value;
     }
@@ -3332,22 +2667,6 @@ function fcSaveRow(btn) {
     } else {
       const num = Number(loanAmtRaw);
       if (!isNaN(num)) setFcOverride(docNum, {loan_amount: num});
-    }
-  }
-
-  // Persist appraised value (own override slot; numeric, blank clears).
-  // Same shape as loan_amount: clearing the input drops the override
-  // entirely so the cell falls back to whatever the scrape produces.
-  if (apprValRaw !== null) {
-    if (apprValRaw === "") {
-      const o = loadFcOverrides();
-      if (o[docNum] && "appraised_value" in o[docNum]) {
-        delete o[docNum].appraised_value;
-        saveFcOverrides(o);
-      }
-    } else {
-      const num = Number(apprValRaw);
-      if (!isNaN(num)) setFcOverride(docNum, {appraised_value: num});
     }
   }
 
@@ -3428,39 +2747,17 @@ function flipOwnerForNcad(raw) {
   return (last + " " + first).trim();
 }
 
-function ncadCellHtml(r, opts) {
-  opts = opts || {};
-  const wantPaste = !!opts.paste;
-  const eff = (typeof fcEffectiveNcad === "function")
-      ? fcEffectiveNcad(r) : null;
-  // Helper: small clipboard/paste icon that opens the paste-URL
-  // prompt. Only emitted for FC rows (paste:true). Kept visually
-  // subordinate to the main link so an accidental click on a row
-  // that's already matched correctly is unlikely.
-  const pasteIconHtml = wantPaste ? (
-    `<a href="#"
-        class="ncad-paste-link"
-        title="Paste a NCAD property URL to manually attach (or correct) the link"
-        onclick="event.preventDefault(); event.stopPropagation();` +
-        ` pasteNcadUrl('${esc(r.doc_num)}'); return false;">` +
-        `<i class="ext-icon ncad-paste-icon">📋</i></a>`
-  ) : "";
-
-  if (eff && eff.prop_id) {
+function ncadCellHtml(r) {
+  if (r && r.ncad_prop_id) {
     const url = "https://esearch.nuecescad.net/Property/View/" +
-                encodeURIComponent(eff.prop_id) +
-                "?year=" + encodeURIComponent(eff.year || "2026") +
-                (eff.owner_id ?
-                  "&ownerId=" + encodeURIComponent(eff.owner_id) : "");
-    // Show a small "(manual)" hint on overridden rows so the user can
-    // tell at a glance which links came from a paste vs a scrape match.
-    const overrideHint = eff.from_override
-      ? ` — manually attached via paste-URL (click the 📋 to edit or clear)`
-      : ``;
+                encodeURIComponent(r.ncad_prop_id) +
+                "?year=" + encodeURIComponent(r.ncad_year || "2026") +
+                (r.ncad_owner_id ?
+                  "&ownerId=" + encodeURIComponent(r.ncad_owner_id) : "");
     return `<a href="${esc(url)}" target="_blank" rel="noopener"
-               title="Open this property on NCAD${esc(overrideHint)}"
+               title="Open this property on NCAD"
                onclick="event.stopPropagation()">
-               <i class="ext-icon${eff.from_override ? " ncad-manual" : ""}">↗</i></a>${pasteIconHtml}`;
+               <i class="ext-icon">↗</i></a>`;
   }
   if (r && r.owner) {
     // Copy owner (flipped to NCAD's Last-First format) to clipboard,
@@ -3477,10 +2774,9 @@ function ncadCellHtml(r, opts) {
                class="ncad-search-link"
                title="Copy &quot;${esc(flipped)}&quot; &amp; open NCAD search (paste with Ctrl+V)"
                onclick="${esc(handler)}">
-               <i class="ext-icon">🔍</i></a>${pasteIconHtml}`;
+               <i class="ext-icon">🔍</i></a>`;
   }
-  // No owner either — just the paste affordance (if FC), else dash.
-  return pasteIconHtml || "—";
+  return "—";
 }
 
 // Format an ISO date string (YYYY-MM-DD) as US-numeric (M/D/YYYY).
@@ -3535,64 +2831,8 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeDrawer();
     closeMarkDeadModal();
-    closePortalsModal();
   }
 });
-
-// ============================================================
-// Data Portals modal — reference panel of external lookup sources.
-// Static content (cards live in the HTML markup); these handlers
-// just open/close it and copy the PIA email template to clipboard.
-// ============================================================
-function openPortalsModal() {
-  document.getElementById("portals-backdrop").classList.add("open");
-}
-function closePortalsModal() {
-  const el = document.getElementById("portals-backdrop");
-  if (el) el.classList.remove("open");
-}
-// Clicking outside the modal (on the backdrop itself) closes it,
-// matching the behavior of the other modals (mark-dead, ccln-confirm).
-const _portalsBackdrop = document.getElementById("portals-backdrop");
-if (_portalsBackdrop) {
-  _portalsBackdrop.addEventListener("click", (e) => {
-    if (e.target.id === "portals-backdrop") closePortalsModal();
-  });
-}
-// Copy the PIA template body to clipboard, then flash a green "Copied!"
-// state on the button for ~1.5s. Falls back to a textarea trick on
-// older browsers without the async clipboard API.
-function copyPiaTemplate(btn) {
-  const body = document.getElementById("pia-body");
-  if (!body) return;
-  const text = body.textContent.trim();
-  const flashCopied = () => {
-    const original = btn.textContent;
-    btn.textContent = "Copied!";
-    btn.classList.add("copied");
-    setTimeout(() => {
-      btn.textContent = original;
-      btn.classList.remove("copied");
-    }, 1500);
-  };
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(flashCopied).catch(() => {
-      // Fallback path for browsers/contexts that block async clipboard.
-      const ta = document.createElement("textarea");
-      ta.value = text; ta.style.position = "fixed"; ta.style.left = "-9999px";
-      document.body.appendChild(ta); ta.select();
-      try { document.execCommand("copy"); flashCopied(); }
-      catch (e) { /* nothing more we can do — leave the button alone */ }
-      document.body.removeChild(ta);
-    });
-  } else {
-    const ta = document.createElement("textarea");
-    ta.value = text; ta.style.position = "fixed"; ta.style.left = "-9999px";
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand("copy"); flashCopied(); } catch (e) {}
-    document.body.removeChild(ta);
-  }
-}
 
 applySidebarState();
 loadAll();
