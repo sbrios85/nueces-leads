@@ -41,7 +41,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: "expire-stale-cache"
+  group: "ncad-cache-write"
   cancel-in-progress: false
 
 jobs:
@@ -54,6 +54,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Pull latest (catch checkout race)
+        # See comment in foreclosure_esearch_only.yml. Belt-and-
+        # suspenders defense alongside the shared concurrency group.
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Set up Python
         uses: actions/setup-python@v5
