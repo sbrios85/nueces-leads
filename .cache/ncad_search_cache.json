@@ -9095,7 +9095,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78253",
-      "appraised_value": 307380.0
+      "appraised_value": 307380.0,
+      "ncad_prop_id": "218711",
+      "ncad_year": "2026",
+      "ncad_owner_id": "787949"
     },
     "Edgar O. Ortega, Hilario Hernandez and Alejandro Hernandez": {
       "site_addr": "3002 NEWPORT DR",
@@ -9233,7 +9236,10 @@
       "mail_city": "",
       "mail_state": "TX",
       "mail_zip": "78404",
-      "appraised_value": 210585.0
+      "appraised_value": 210585.0,
+      "ncad_prop_id": "260472",
+      "ncad_year": "2026",
+      "ncad_owner_id": "667557"
     },
     "JOSE ALBERTO LANDEROS JR AND LAURA LANDEROS": null,
     "Michael Scrutchin and Dorothy Scrutchin": null,
