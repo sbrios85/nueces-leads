@@ -1,13 +1,13 @@
 {
   "mode": "dry_run",
   "total_records": 105,
-  "eligible": 0,
-  "skipped": 105,
-  "matches": 0,
+  "eligible": 12,
+  "skipped": 93,
+  "matches": 12,
   "mismatches": 0,
   "ambiguous": 0,
   "errors": 0,
-  "unique_parcels_fetched": 0,
+  "unique_parcels_fetched": 12,
   "cache_hits": 0,
   "ncad_cache_expiry": null,
   "mismatch_details": [],
@@ -16,11 +16,11 @@
   "skipped_details": [
     {
       "doc_num": "2026000295",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal too sparse to compare (sub='leeward isles i unit 803 building h', lot='')"
     },
     {
       "doc_num": "2026000294",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal too sparse to compare (sub='sand dollar ii studio condominium apt 13 bldg a', lot='')"
     },
     {
       "doc_num": "2026000292",
@@ -36,10 +36,6 @@
     },
     {
       "doc_num": "2026000271",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000270",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -60,10 +56,6 @@
     },
     {
       "doc_num": "2026000287",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000269",
       "reason": "no ncad_prop_id attached"
     },
     {
@@ -115,68 +107,28 @@
       "reason": "no ncad_prop_id attached"
     },
     {
-      "doc_num": "2026000280",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
       "doc_num": "2026000291",
       "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000267",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal too sparse to compare (sub='apt no 134 building d puerto del padre condominium', lot='')"
     },
     {
       "doc_num": "2026000266",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000263",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000261",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal too sparse to compare (sub='george h paul of the famous driscoll land tract 38, ranchos robstown tract #4', lot='')"
     },
     {
       "doc_num": "2026000260",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000259",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal too sparse to compare (sub='villa del sol condominiums iii unit 3218 bldg c', lot='')"
     },
     {
       "doc_num": "2026000258",
       "reason": "no ncad_prop_id attached"
     },
     {
-      "doc_num": "2026000252",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000254",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
       "doc_num": "2026000255",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000249",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000248",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000236",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000241",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal too sparse to compare (sub='spring garden unit 1', lot='')"
     },
     {
       "doc_num": "2026000234",
