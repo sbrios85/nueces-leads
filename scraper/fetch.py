@@ -2640,31 +2640,43 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
         # via the writeback at the bottom of this loop.
         #
         # The guard reuses the same legal-matcher recorroborate uses.
-        # When the cached entry has no `ncad_legal` field (older cache
-        # entries built before this guard was added), we conservatively
-        # SKIP the writeback rather than blindly trusting the cache.
-        # New entries always include ncad_legal going forward.
+        # State machine (set `cache_corroborated`):
+        #   True   — corroborated, enrich fully (the normal good case)
+        #   False  — explicit mismatch, reject everything (the bug fix)
+        #   "optimistic" — foreclosure record has no legal yet (scrape
+        #            time, PDF parser hasn't run). Allow attachment;
+        #            recorroborate runs later and will catch wrongs.
+        #            Regression 2026-05-21: an earlier version of this
+        #            guard defaulted to False when rec_legal was empty,
+        #            killing the entire daily scrape's NCAD attachment.
+        #   "skip"  — older cache without ncad_legal field. Allow only
+        #            additive fields (mail/appraised) but NOT prop_id.
         rec_legal = (getattr(rec, "legal", "") or "").strip()
         ncad_legal = (info.get("ncad_legal") or "").strip()
-        cache_corroborated = False
         if _legal_match is not None and rec_legal and ncad_legal:
             try:
                 cache_corroborated = _legal_match(rec_legal, ncad_legal)
             except Exception:
-                cache_corroborated = False
+                cache_corroborated = "optimistic"
+        elif not rec_legal:
+            # Foreclosure record has no legal yet (scrape-time path —
+            # PDF parser hasn't run yet). Allow attachment; re-
+            # corroborate catches wrongs once legals are populated.
+            cache_corroborated = "optimistic"
         elif not ncad_legal:
-            # Older cache entry without ncad_legal stored. Can't
-            # corroborate, but also can't reject — keep additive
-            # enrichments (mail_addr, appraised_value) since those
-            # are still likely useful even without verification,
-            # but DO NOT write ncad_prop_id. See conditional below.
-            cache_corroborated = None  # tri-state: unknown
+            # Older cache entry without ncad_legal stored. We have a
+            # foreclosure legal but no NCAD legal to compare. Skip
+            # ncad_prop_id but allow additive fields.
+            cache_corroborated = "skip"
+        else:
+            # _legal_match is None (import failed). Be conservative.
+            cache_corroborated = "skip"
 
         # Only overwrite address fields if record didn't already have one.
-        # When the cache is uncorroborated, refuse to set prop_address
-        # — that would attach the wrong parcel's address.
+        # When the cache is explicitly uncorroborated, refuse to set
+        # prop_address — that would attach the wrong parcel's address.
         if not rec.prop_address:
-            if cache_corroborated is True:
+            if cache_corroborated is True or cache_corroborated == "optimistic":
                 rec.prop_address = info.get("site_addr", "")
                 rec.prop_city    = info.get("site_city", "") or "CORPUS CHRISTI"
                 rec.prop_state   = info.get("site_state", "") or "TX"
@@ -2676,9 +2688,9 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
                 rejected_uncorroborated += 1
                 continue
             else:
-                # cache_corroborated is None: older cache entry without
-                # ncad_legal. Keep additive enrichment but skip
-                # ncad_prop_id (see below) — don't attach.
+                # cache_corroborated == "skip": older cache entry
+                # without ncad_legal. Don't set prop_address; skip
+                # entirely (we won't be able to set prop_id either).
                 rejected_no_legal += 1
                 continue
 
@@ -2688,14 +2700,9 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
         if cache_corroborated is False:
             rejected_uncorroborated += 1
             continue
-        if cache_corroborated is None:
-            # No ncad_legal in cache entry — older cache. Allow
-            # additive fields (mail_addr, appraised_value) since those
-            # are useful even uncorroborated and a wrong address is
-            # visible to the user. But DO NOT write ncad_prop_id —
-            # the parcel-id implies "we believe this is THE parcel"
-            # which requires corroboration we don't have.
-            pass
+        # "skip" and "optimistic" both fall through to additive
+        # writebacks below. Difference: "optimistic" also gets the
+        # ncad_prop_id writeback (at scrape time); "skip" does not.
 
         # Mailing address: always update if NCAD returned one and we
         # don't already have it (this is additive — we never overwrite
@@ -2713,14 +2720,12 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
             rec.appraised_value = appr
             appraised_set += 1
         # Propagate NCAD detail-page IDs so the dashboard can build a
-        # direct property-page link. These are additive and never
-        # overwrite existing values with empty.
-        # GUARDED: only write when the cache entry has been explicitly
-        # corroborated. For uncorroborated-but-allowed entries (older
-        # cache without ncad_legal), skip the prop_id writeback — that
-        # field implies "we believe this IS the parcel" which requires
-        # legal corroboration we don't have.
-        if cache_corroborated is True:
+        # direct property-page link. GUARDED: write when the cache is
+        # corroborated OR when we're at scrape time (rec_legal empty,
+        # so "optimistic" mode). Skip when we have a foreclosure legal
+        # but no ncad_legal to compare against ("skip" mode) — we'd
+        # rather wait for recorroborate or a fresh esearch to verify.
+        if cache_corroborated is True or cache_corroborated == "optimistic":
             for fld in ("ncad_prop_id", "ncad_year", "ncad_owner_id"):
                 val = info.get(fld)
                 if val and hasattr(rec, fld) and not getattr(rec, fld, ""):
