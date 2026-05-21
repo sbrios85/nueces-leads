@@ -9340,6 +9340,63 @@
       "ncad_prop_id": "204497",
       "ncad_year": "2026",
       "ncad_owner_id": "792258"
+    },
+    "Johnny P. Martinez and Maria Virginia Martinez": {
+      "site_addr": "3690 REYNA ST",
+      "site_city": "ROBSTOWN",
+      "site_state": "TX",
+      "site_zip": "78380",
+      "mail_addr": "VIRGINIA MARTINEZ 3690 REYNA ROBSTOWN",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78380",
+      "appraised_value": 155408.0,
+      "ncad_prop_id": "200032031",
+      "ncad_year": "2026",
+      "ncad_owner_id": "461921"
+    },
+    "JOSE ALBERTO LANDEROS JR AND LAURA LANDEROS": {
+      "site_addr": "5830 LLANO DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78407",
+      "mail_addr": "5830 Llano Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78407",
+      "appraised_value": 192697.0,
+      "ncad_prop_id": "181881",
+      "ncad_year": "2026",
+      "ncad_owner_id": "738544"
+    },
+    "Michael Scrutchin and Dorothy Scrutchin": {
+      "site_addr": "14434 E CABANA",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418",
+      "mail_addr": "2310 33rd St Galveston",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "77550",
+      "appraised_value": 275092.0,
+      "ncad_prop_id": "200031953",
+      "ncad_year": "2026",
+      "ncad_owner_id": "766914"
+    },
+    "CHRISTOPHER WAYNE HALLAND RACHEL YOLANDA EATMON-HALL": null,
+    "PHILANDER SALONE AND ROBERT A. SALONE": {
+      "site_addr": "3717 WOODSTONE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415",
+      "mail_addr": "55 Beattie Pl Ste 110 Greenville",
+      "mail_city": "",
+      "mail_state": "SC",
+      "mail_zip": "29601",
+      "appraised_value": 198134.0,
+      "ncad_prop_id": "200013844",
+      "ncad_year": "2026",
+      "ncad_owner_id": "767087"
     }
   }
 }
