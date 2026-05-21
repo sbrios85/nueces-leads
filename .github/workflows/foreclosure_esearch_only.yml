@@ -36,7 +36,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "foreclosure-esearch"
+  group: "ncad-cache-write"
   cancel-in-progress: false
 
 jobs:
@@ -49,6 +49,22 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Pull latest (catch checkout race)
+        # Two cache-touching workflows (esearch, recorroborate, expire-
+        # stale-cache, scrape) all read+write .cache/ncad_search_cache.json.
+        # When they run close together, the checkout step can fetch a
+        # stale main ref if the previous workflow's push hasn't fully
+        # propagated yet. The shared "ncad-cache-write" concurrency
+        # group is the primary defense, but this is a belt-and-suspenders
+        # check: explicitly fetch origin and reset to it. If we already
+        # have the latest, this is a no-op. If we're stale, we sync.
+        # Real-world failure case (2026-05-21): recorroborate evicted
+        # 36 cache entries and pushed at 04:21; esearch checked out at
+        # 04:25 but saw the pre-eviction state and overwrote the cache.
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Set up Python
         uses: actions/setup-python@v5
