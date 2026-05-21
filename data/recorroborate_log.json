@@ -1,13 +1,13 @@
 {
   "mode": "dry_run",
   "total_records": 105,
-  "eligible": 12,
-  "skipped": 93,
-  "matches": 12,
+  "eligible": 22,
+  "skipped": 83,
+  "matches": 22,
   "mismatches": 0,
   "ambiguous": 0,
   "errors": 0,
-  "unique_parcels_fetched": 12,
+  "unique_parcels_fetched": 22,
   "cache_hits": 0,
   "ncad_cache_expiry": null,
   "mismatch_details": [],
@@ -131,47 +131,7 @@
       "reason": "clerk legal too sparse to compare (sub='spring garden unit 1', lot='')"
     },
     {
-      "doc_num": "2026000234",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000243",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000245",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000235",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000246",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000238",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000244",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
       "doc_num": "2026000237",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000240",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000232",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000226",
       "reason": "no ncad_prop_id attached"
     },
     {
