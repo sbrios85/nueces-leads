@@ -1,4 +1,4 @@
-[TODO (2).md](https://github.com/user-attachments/files/28068684/TODO.2.md)
+[TODO.md](https://github.com/user-attachments/files/28080928/TODO.md)
 [TODO.md](https://github.com/user-attachments/files/27653434/TODO.md)
 # TODO
 
@@ -182,6 +182,36 @@ when broadening to other counties), consider:
 3. Browser extension (works inside user's real Chrome, no detection)
 
 ## Investigated and parked
+
+- **"HALLAND" name-join edge case (doc 2026000265): PARKED — no
+  auto-fix.**
+
+  The PDF text for this record reads:
+  `CHRISTOPHER WAYNE HALLANDRACHEL YOLANDA EATMON-HALLAND...`
+  (the two names "Christopher Wayne Hall" and "Rachel Yolanda
+  Eatmon-Hall" run together with no space, plus an "AND" connector
+  collapsed into the first surname).
+
+  The parser captures it as:
+  `CHRISTOPHER WAYNE HALLAND RACHEL YOLANDA EATMON-HALL`
+  — a single string with no "AND" between the two parties, and the
+  trailing "AND" on "EATMON-HALLAND" missing.
+
+  Why we don't auto-split "HALLAND" → "HALL AND":
+  - "Halland" is a legitimate surname (Swedish-origin, used in
+    Texas property records). A regex that split it into "HALL AND"
+    would break real records belonging to families named Halland.
+  - The same logic applies to other "-AND" name endings: ROLAND,
+    LELAND, GARLAND, COPELAND, SUTHERLAND etc. — any auto-split
+    would mangle these.
+
+  Decision: leave the parser alone. Handle manually on the
+  dashboard via the inline owner-edit textarea. The new `owner_raw`
+  backup field will hold the raw parser capture for forensics.
+
+  **DO NOT** re-open this for an auto-fix in future sessions.
+  Decided 2026-05-21 after a prior session reached the same
+  conclusion and forgot to record it.
 
 - **NCAD wrong-match cleanup: SHIPPED as separate workflow. Original
   framing of a "structural fetch.py bug" was WRONG — see below.**
