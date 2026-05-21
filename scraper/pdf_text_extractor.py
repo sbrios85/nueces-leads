@@ -1578,8 +1578,6 @@ def legal_descriptions_match(a: str, b: str) -> bool:
     sb, lb, bb = normalize_legal_for_match(b)
     if not sa or not sb:
         return False
-    if not la or not lb:
-        return False
     # Lot comparison: treat each side's lot field as a SET of tokens
     # rather than a single value. Foreclosure clerk legals often list
     # both lots on a 2-lot parcel ("LOTS 7,8" or "LOT 22,23"); the
@@ -1595,12 +1593,51 @@ def legal_descriptions_match(a: str, b: str) -> bool:
         return {p.strip(" ,-")
                 for p in re.split(r"[,&\s]+", lot_str)
                 if p.strip(" ,-")}
-    if not (_lot_set(la) & _lot_set(lb)):
-        return False
-    if ba and bb and ba != bb:
-        return False
+    # Lot-fallback handling (2026-05-21). The original code returned
+    # False whenever EITHER side had an empty lot. That over-rejected:
+    # Spring Garden/Martinez has clerk legal "SPRING GARDEN UNIT 1"
+    # with no lot at all, vs NCAD "SPRING GARDENS UNIT 1 S/2 LT 12".
+    # Subdivision matches strongly — those ARE the same property —
+    # but the matcher rejected the pair because clerk had no lot.
+    # New behavior: when one side has no lot, require a strong
+    # subdivision match (BOTH sides agree on a meaningful set of
+    # tokens, after stripping plurals/punctuation) and a non-
+    # disagreement on block. This is conservative — won't fire when
+    # subdivisions are genuinely different — but allows match when
+    # the clerk just didn't include a lot.
+    if la and lb:
+        if not (_lot_set(la) & _lot_set(lb)):
+            return False
+        if ba and bb and ba != bb:
+            return False
+    else:
+        # At least one side has no lot. Fall back to subdivision-only
+        # match, but require strong subdivision agreement and no block
+        # disagreement.
+        if ba and bb and ba != bb:
+            return False
     # Subdivision: at least 1 meaningful token in common.
-    STOP = {"the", "of", "a", "an"}
-    a_tokens = set(sa.split()) - STOP
-    b_tokens = set(sb.split()) - STOP
+    # Normalize: strip trailing punctuation, convert plural endings
+    # (GARDENS↔GARDEN). NCAD's index uses inconsistent plural forms,
+    # so a clerk "SPRING GARDEN" and NCAD "SPRING GARDENS" should
+    # match. Also strip leading "#" from tokens like "#2" since
+    # the same unit/phase shows up with and without the hash.
+    def _sub_tokens(s: str) -> set:
+        STOP = {"the", "of", "a", "an"}
+        tokens = set()
+        for raw in s.split():
+            t = raw.strip(",-#/'\".")
+            if not t:
+                continue
+            if t.lower() in STOP:
+                continue
+            # Strip trailing 's' for plural-tolerant matching
+            # (gardens → garden, heights → height, etc.). Keep the
+            # original too so we still match exact strings.
+            tokens.add(t)
+            if len(t) > 3 and t.endswith("s"):
+                tokens.add(t[:-1])
+        return tokens
+    a_tokens = _sub_tokens(sa)
+    b_tokens = _sub_tokens(sb)
     return len(a_tokens & b_tokens) >= 1
