@@ -3131,11 +3131,46 @@ async def _esearch_one(page, name: str, token: str,
         m = re.match(r"\s*(\d+)\s+(.+)", street or "")
         if m:
             st_num = m.group(1)
-            # NCAD matches on the leading street-name token(s); strip
-            # unit/suffix noise. First alpha word is the safest, most
-            # selective key (proven: "Packery" returns the parcel).
-            rest = re.sub(r"[^A-Za-z0-9 ].*$", "", m.group(2)).strip()
-            st_name = rest.split()[0] if rest.split() else ""
+            # Pick the most distinctive token from the street name for
+            # NCAD's keyword search. Earlier versions used just the
+            # first alpha word, but that breaks on:
+            #   - Irish apostrophe names: "O'MALLEY DR" → first token "O"
+            #     (NCAD stores "O MALLEY", so apostrophe should split
+            #     into 2 tokens not terminate them)
+            #   - Directionals: "W CORNELIA CIR" → first token "W"
+            #     (matches every west-side street in the city)
+            #   - Short generics: "OLD BROWNSVILLE RD" → "OLD" matches
+            #     every "OLD" prefixed street
+            # New approach:
+            #   1. Replace apostrophes (ASCII + Unicode) with spaces so
+            #      "O'MALLEY" becomes 2 tokens "O" + "MALLEY"
+            #   2. Strip non-alphanumeric+space, lowercase for selection
+            #   3. Skip single-char tokens and directionals (N/S/E/W/NW/
+            #      NE/SW/SE) — they're not selective enough
+            #   4. Take the LONGEST remaining token — most distinctive
+            #      (e.g. "MALLEY" wins over "DR", "CORNELIA" wins over "W")
+            #   5. Fall back to the first non-skipped token if all tied
+            raw = m.group(2)
+            # Step 1: apostrophes → spaces (handle ASCII and curly).
+            raw = re.sub(r"[\u2018\u2019']", " ", raw)
+            # Step 2: keep only alpha/num/space; drop punctuation tails.
+            raw = re.sub(r"[^A-Za-z0-9 ]", " ", raw)
+            tokens = [t for t in raw.split() if t]
+            # Step 3: filter directionals and 1-char tokens.
+            SKIP_TOKENS = {
+                "n", "s", "e", "w", "ne", "nw", "se", "sw",
+                "north", "south", "east", "west",
+            }
+            keepable = [t for t in tokens
+                        if len(t) > 1 and t.lower() not in SKIP_TOKENS]
+            # Step 4: longest wins (ties broken by earliest position).
+            if keepable:
+                st_name = max(keepable, key=len)
+            elif tokens:
+                # All tokens were directionals/short — just take first.
+                st_name = tokens[0]
+            else:
+                st_name = ""
             if st_num and st_name:
                 kw = (f"StreetNumber:{st_num} "
                       f"StreetName:{st_name} Year:{current_year} ")
