@@ -597,6 +597,12 @@
   .crm-back-btn:hover { border-color: var(--accent); color: var(--accent); }
   .crm-title { font-size: 18px; font-weight: 600; }
   .crm-body { padding: 24px 28px; max-width: 1100px; }
+  /* MFC CRM uses full-screen width — drop the centered-column
+     constraint. Detected by the presence of the mfc-layout child. */
+  .crm-body:has(.mfc-layout) { max-width: none; }
+  /* Fallback for browsers without :has() (older Safari/Firefox <121):
+     when JS sets data-crm-type="mfc" on the body, full-width applies. */
+  .crm-body[data-crm-type="mfc"] { max-width: none; }
   .crm-grid {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 28px; align-items: start;
@@ -661,7 +667,7 @@
   /* Property snapshot — compact two-column header card. */
   .mfc-snapshot {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 16px; margin-bottom: 14px;
+    border-radius: 10px; padding: 12px 16px;
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 6px 24px;
   }
@@ -850,7 +856,7 @@
   /* Activity log — collapsed disclosure at the bottom. */
   .mfc-activity {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px 18px; margin-top: 20px;
+    border-radius: 10px; padding: 14px 18px;
   }
   .mfc-activity > summary {
     cursor: pointer; font-size: 12px; color: var(--muted);
@@ -859,7 +865,7 @@
   }
   .mfc-activity > summary:hover { color: var(--accent); }
   .mfc-activity-list {
-    margin-top: 12px; max-height: 240px; overflow-y: auto;
+    margin-top: 12px; max-height: 400px; overflow-y: auto;
   }
   .mfc-activity-row {
     display: flex; gap: 10px; padding: 5px 0;
@@ -871,19 +877,26 @@
   }
   .mfc-activity-row .ev { color: var(--fg); }
 
-  /* MFC layout — main grid with quick-fill on the right. */
-  .mfc-main {
-    display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px;
+  /* MFC layout — full-page two-column grid.
+     LEFT (60%): property snapshot + outreach attempts + notes.
+     RIGHT (40%): quick fill + activity log.
+     Each column stacks its cards vertically and fills its column. */
+  .mfc-layout {
+    display: grid; grid-template-columns: 3fr 2fr; gap: 20px;
     align-items: start;
   }
-  @media (max-width: 880px) {
-    .mfc-main { grid-template-columns: 1fr; }
+  @media (max-width: 1100px) {
+    .mfc-layout { grid-template-columns: 1fr; }
+  }
+  .mfc-col {
+    display: flex; flex-direction: column; gap: 14px;
+    min-width: 0;  /* let children shrink rather than overflow */
   }
 
-  /* Notes card — full-width below the grid. */
+  /* Notes card — sits inside its grid column. */
   .mfc-notes {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 18px; margin-top: 20px;
+    border-radius: 10px; padding: 18px;
   }
   .mfc-notes h3 {
     margin: 0 0 12px; font-size: 14px; font-weight: 600;
@@ -2303,15 +2316,30 @@ function openMfcCrm(docNum, sourceRecords) {
   // --- Compose ---
   document.getElementById("crm-title").textContent =
     (rec.owner || "Lead") + " — Mortgage Foreclosure";
-  document.getElementById("crm-body").innerHTML = `
+  // --- Compose ---
+  // Stage row spans the top (full width). Below, a 2-column grid
+  // fills the whole page: LEFT has the snapshot + outreach +
+  // notes (the content the user actively edits), RIGHT has the
+  // quick-fill fields + activity log (reference / fast-edit).
+  document.getElementById("crm-title").textContent =
+    (rec.owner || "Lead") + " — Mortgage Foreclosure";
+  const crmBody = document.getElementById("crm-body");
+  // Tell the body it's an MFC view so the CSS knows to drop the
+  // max-width centering and use full screen real estate.
+  crmBody.dataset.crmType = "mfc";
+  crmBody.innerHTML = `
     ${stageHtml}
-    ${snapshotHtml}
-    <div class="mfc-main">
-      ${attemptsHtml}
-      ${quickFillHtml}
+    <div class="mfc-layout">
+      <div class="mfc-col mfc-col-left">
+        ${snapshotHtml}
+        ${attemptsHtml}
+        ${notesHtml}
+      </div>
+      <div class="mfc-col mfc-col-right">
+        ${quickFillHtml}
+        ${activityHtml}
+      </div>
     </div>
-    ${notesHtml}
-    ${activityHtml}
   `;
 
   // --- Auto-save wiring for quick-fill + notes ---
@@ -2508,7 +2536,13 @@ function openCrm(type, docNum, sourceRecords) {
 
   document.getElementById("crm-title").textContent =
     (rec.owner || "Lead") + " — " + cfg.label;
-  document.getElementById("crm-body").innerHTML = `
+  const _crmBodyEl = document.getElementById("crm-body");
+  // Clear any per-type data attribute set by other CRM views (e.g.
+  // the MFC view sets data-crm-type="mfc" to enable full-width
+  // styling). The generic CRM should always render in the centered
+  // max-width column.
+  delete _crmBodyEl.dataset.crmType;
+  _crmBodyEl.innerHTML = `
     <div class="crm-grid">
       <div class="crm-card">
         <h3>Lead Info (read-only)</h3>
