@@ -948,45 +948,46 @@
      button opens a small modal that adds/renames/deletes fields. */
   .mfc-custom {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px;
+    border-radius: 10px; padding: 10px 12px;
   }
   .mfc-custom-head {
     display: flex; justify-content: space-between;
-    align-items: center; margin-bottom: 8px;
+    align-items: center; margin-bottom: 6px;
   }
   .mfc-custom-head h3 {
-    margin: 0; font-size: 14px; font-weight: 600;
+    margin: 0; font-size: 13px; font-weight: 600;
     color: var(--accent); text-transform: uppercase;
     letter-spacing: 0.04em;
   }
   .mfc-custom-manage-btn {
     background: transparent; border: 1px solid var(--border);
     color: var(--muted); border-radius: 6px;
-    padding: 4px 10px; font-size: 11px; cursor: pointer;
+    padding: 3px 9px; font-size: 11px; cursor: pointer;
   }
   .mfc-custom-manage-btn:hover {
     border-color: var(--accent); color: var(--accent);
   }
   .mfc-custom-empty {
-    color: var(--muted); font-size: 12px; padding: 6px 0;
+    color: var(--muted); font-size: 12px; padding: 4px 0;
     font-style: italic;
   }
   .mfc-custom-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 6px 14px;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 4px 12px;
   }
   .mfc-custom-field label {
     display: block; font-size: 10px; color: var(--muted);
-    margin-bottom: 2px; text-transform: uppercase;
+    margin-bottom: 1px; text-transform: uppercase;
     letter-spacing: 0.03em;
+    line-height: 1.3;
   }
   .mfc-custom-field input,
   .mfc-custom-field select {
     width: 100%; box-sizing: border-box;
     background: var(--bg); border: 1px solid var(--border);
-    color: var(--fg); border-radius: 5px;
-    padding: 4px 8px; font: inherit; font-size: 13px;
+    color: var(--fg); border-radius: 4px;
+    padding: 3px 7px; font: inherit; font-size: 13px;
   }
   /* "SYSTEM" pill next to hard-wired field labels — tells the user
      this field can't be deleted/renamed via Manage Fields. Small,
@@ -1014,8 +1015,8 @@
      snapshot card's editable rows, so it feels familiar. */
   .mfc-custom-formatted {
     background: var(--bg); border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 4px 8px;
+    border-radius: 4px;
+    padding: 3px 7px;
     font: inherit; font-size: 13px;
     color: var(--fg);
     cursor: text;
@@ -1035,8 +1036,8 @@
     background: var(--bg);
     border: 1px solid var(--accent);
     color: var(--fg);
-    border-radius: 5px;
-    padding: 4px 8px;
+    border-radius: 4px;
+    padding: 3px 7px;
     font: inherit; font-size: 13px;
   }
   .mfc-custom-edit-input:focus { outline: none; }
@@ -1052,31 +1053,31 @@
      a delete X. "+ Add contact" button at the bottom adds another. */
   .mfc-contacts {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px;
+    border-radius: 10px; padding: 10px 12px;
   }
   .mfc-contacts-head {
     display: flex; justify-content: space-between;
-    align-items: center; margin-bottom: 8px;
+    align-items: center; margin-bottom: 6px;
   }
   .mfc-contacts-head h3 {
-    margin: 0; font-size: 14px; font-weight: 600;
+    margin: 0; font-size: 13px; font-weight: 600;
     color: var(--accent); text-transform: uppercase;
     letter-spacing: 0.04em;
   }
   .mfc-contacts-add-btn {
     background: transparent; border: 1px solid var(--border);
     color: var(--muted); border-radius: 6px;
-    padding: 4px 10px; font-size: 11px; cursor: pointer;
+    padding: 3px 9px; font-size: 11px; cursor: pointer;
   }
   .mfc-contacts-add-btn:hover {
     border-color: var(--accent); color: var(--accent);
   }
   .mfc-contacts-empty {
-    color: var(--muted); font-size: 12px; padding: 6px 0;
+    color: var(--muted); font-size: 12px; padding: 4px 0;
     font-style: italic;
   }
   .mfc-contact {
-    padding: 8px 0;
+    padding: 6px 0;
     border-bottom: 1px solid var(--border);
   }
   .mfc-contact:last-child { border-bottom: none; padding-bottom: 0; }
@@ -1087,14 +1088,14 @@
     display: grid;
     grid-template-columns: minmax(80px, 90px) 1fr 26px;
     gap: 6px; align-items: center;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
   .mfc-contact-title,
   .mfc-contact-name {
     background: transparent;
     border: none; border-bottom: 1px dashed transparent;
     color: var(--fg);
-    padding: 2px 4px; font: inherit;
+    padding: 1px 4px; font: inherit;
     border-radius: 3px;
     transition: border-color 0.1s, background 0.1s;
   }
@@ -1131,7 +1132,7 @@
   .mfc-contact-fields {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 4px 10px;
+    gap: 3px 10px;
   }
   /* Notes textarea spans both columns at the bottom of the stack.
      The :has() selector works in modern browsers; the explicit
@@ -1144,25 +1145,33 @@
   .mfc-contact-fields .crm-field { margin-bottom: 0; }
   .mfc-contact-fields label {
     font-size: 10px;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
+    line-height: 1.3;
   }
   .mfc-contact-fields input[type="text"],
   .mfc-contact-fields input[type="date"] {
-    padding: 4px 8px;
+    padding: 3px 7px;
     font-size: 13px;
+    border-radius: 4px;
   }
-  /* Per-contact notes textarea — compact, two lines, resizable
-     vertically if the user needs more room. */
+  /* Per-contact notes textarea — auto-grows with content via JS
+     handler (_mfcWireAutogrow). Starts small (one line) and
+     extends to fit whatever the user types. No scrollbar needed
+     because the textarea itself grows. overflow:hidden hides the
+     scrollbar that would otherwise flash during the height reset
+     in the resize handler. */
   .mfc-contact-fields textarea {
     width: 100%; box-sizing: border-box;
     background: var(--bg);
     border: 1px solid var(--border);
     color: var(--fg);
-    border-radius: 5px;
-    padding: 4px 8px;
+    border-radius: 4px;
+    padding: 3px 7px;
     font: inherit; font-size: 13px;
-    resize: vertical;
-    min-height: 32px;
+    resize: none;
+    overflow: hidden;
+    min-height: 24px;
+    line-height: 1.4;
   }
   .mfc-contact-fields textarea:focus {
     outline: none; border-color: var(--accent);
@@ -2905,6 +2914,32 @@ function _mfcRemoveContact(docNum, contactId) {
   openMfcCrm(docNum, FC_RAW);
 }
 
+// Wire auto-grow on every textarea matching the selector. Resets
+// height to "auto" first so the textarea can shrink when content
+// is deleted, then sets it to scrollHeight (the natural content
+// height). Runs once immediately to size pre-existing content,
+// then on every `input` event. Cheap: a single height write per
+// keystroke, no animation.
+//
+// We attach listeners idempotently by tagging each textarea with
+// dataset._autogrowBound so re-renders don't pile up duplicate
+// listeners (openMfcCrm re-runs on stage changes, custom-field
+// edits, etc.).
+function _mfcWireAutogrowTextareas(selector) {
+  document.querySelectorAll(selector).forEach(ta => {
+    const resize = () => {
+      ta.style.height = "auto";
+      ta.style.height = ta.scrollHeight + "px";
+    };
+    // Initial size — for textareas already filled with content
+    // when the CRM is opened.
+    resize();
+    if (ta.dataset._autogrowBound === "1") return;
+    ta.dataset._autogrowBound = "1";
+    ta.addEventListener("input", resize);
+  });
+}
+
 // ----------------------------------------------------------------
 // Schema-manager modal (configure which custom fields exist)
 // ----------------------------------------------------------------
@@ -3576,7 +3611,7 @@ function openMfcCrm(docNum, sourceRecords) {
   if (rec.owner) _titleParts.push(titleCase(rec.owner));
   if (rec.prop_address) _titleParts.push(titleCase(rec.prop_address));
   document.getElementById("crm-title").textContent =
-    _titleParts.join(" — ");
+    _titleParts.join(" | ");
 
   // Stage row spans the top (full width). Below, a 3-column grid
   // fills the whole page: snapshot + research + contacts, with
@@ -3701,6 +3736,13 @@ function openMfcCrm(docNum, sourceRecords) {
   crm.hidden = false;
   if (_mainEl) _mainEl.scrollTop = 0;
   else window.scrollTo(0, 0);
+
+  // Auto-grow contact notes textareas. Each textarea expands as
+  // the user types so long notes are fully visible without a
+  // scrollbar. Initial pass runs AFTER the CRM view is visible —
+  // scrollHeight returns 0 on a hidden element, so this has to
+  // happen post-show or pre-existing notes wouldn't size right.
+  _mfcWireAutogrowTextareas("#crm-body .mfc-contact-fields textarea");
 }
 
 // Stage handler — updates the stored stage AND logs an activity row,
