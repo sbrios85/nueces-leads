@@ -851,6 +851,70 @@
     line-height: 1; opacity: 0.4;
   }
   .mfc-del-attempt:hover { color: var(--bad); opacity: 1; }
+
+  /* Follow-up pill on individual attempt rows. Shown when the
+     attempt has a `followup` date set. Future dates get the muted
+     style; today-or-past get the yellow "due" treatment. The pill
+     is inlined into the notes cell to avoid breaking the row grid. */
+  .mfc-followup-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 7px;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: rgba(148,163,184,0.08);
+    vertical-align: middle;
+  }
+  .mfc-followup-badge.mfc-followup-due {
+    color: #facc15;  /* yellow-400 */
+    border-color: rgba(250,204,21,0.4);
+    background: rgba(250,204,21,0.10);
+  }
+
+  /* Follow-up banner — appears at the top of the MFC CRM (below
+     the stage row) when there's a pending follow-up on this lead,
+     summarizing the soonest one. Muted style for future-dated
+     follow-ups, attention-grabbing yellow for overdue. */
+  .mfc-fu-banner {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+    background: rgba(56,189,248,0.07);
+    border: 1px solid rgba(56,189,248,0.25);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--fg);
+  }
+  .mfc-fu-banner-due {
+    background: rgba(250,204,21,0.10);
+    border-color: rgba(250,204,21,0.45);
+  }
+  .mfc-fu-banner-icon {
+    font-size: 16px; line-height: 1;
+  }
+  .mfc-fu-banner-text {
+    flex: 1; min-width: 0;
+  }
+  .mfc-fu-banner-text strong {
+    font-weight: 600; color: var(--accent);
+  }
+  .mfc-fu-banner-due .mfc-fu-banner-text strong {
+    color: #facc15;
+  }
+  .mfc-fu-banner-count {
+    color: var(--muted); font-size: 12px;
+    padding-left: 6px; border-left: 1px solid var(--border);
+  }
+
+  /* Modal field hint — small grey text in parens next to a label */
+  .modal-field-hint {
+    color: var(--muted); font-weight: 400;
+    font-size: 11px; text-transform: none;
+    letter-spacing: 0; font-style: italic;
+  }
   .mfc-attempts-empty {
     color: var(--muted); font-size: 13px; padding: 12px 0;
     text-align: center; font-style: italic;
@@ -2007,13 +2071,17 @@
       <select id="mfc-attempt-method"></select>
     </div>
     <div class="crm-field">
+      <label>Response</label>
+      <select id="mfc-attempt-response"></select>
+    </div>
+    <div class="crm-field">
+      <label>Try again on <span class="modal-field-hint">(optional — leave blank if no follow-up planned)</span></label>
+      <input type="date" id="mfc-attempt-followup">
+    </div>
+    <div class="crm-field">
       <label>Notes</label>
       <textarea id="mfc-attempt-notes" rows="3"
                 placeholder="What happened? (optional)"></textarea>
-    </div>
-    <div class="crm-field">
-      <label>Response</label>
-      <select id="mfc-attempt-response"></select>
     </div>
     <div class="mfc-attempt-modal-actions">
       <button onclick="_mfcCloseAttemptModal()">Cancel</button>
@@ -2914,6 +2982,68 @@ function _mfcRemoveContact(docNum, contactId) {
   openMfcCrm(docNum, FC_RAW);
 }
 
+// Compute the next pending follow-up across all attempts + contacts
+// on this entry. Returns:
+//   { date, source, label, count, isDue }
+// or null if there are no follow-ups at all.
+//
+// `count` is the total number of follow-ups pending (date is set
+// to today or any future date). The "next" follow-up is the
+// earliest of them. Past-dated follow-ups are included in count
+// and surface as "overdue" — if any past-dated one exists, the
+// banner highlights the OLDEST overdue rather than the next
+// future one, since overdue work is what the user needs to see.
+//
+// `source` is "attempt" or "contact"; `label` is a human string
+// describing what's pending (e.g. "Try again — Knock" or
+// "Nora Vargas — Wife").
+function _mfcComputeNextFollowup(entry) {
+  if (!entry) return null;
+  const items = [];
+  // Attempts.
+  const attempts = Array.isArray(entry.attempts) ? entry.attempts : [];
+  for (const a of attempts) {
+    if (!a.followup) continue;
+    const respDef = MFC_RESPONSES.find(r => r.key === (a.response || ""));
+    const respTxt = respDef ? respDef.label : (a.response || "");
+    items.push({
+      date: a.followup,
+      source: "attempt",
+      label: "Try again — " + (a.method || "outreach") +
+             (respTxt ? ` (${respTxt})` : ""),
+    });
+  }
+  // Contacts.
+  const contacts = Array.isArray(entry.contacts) ? entry.contacts : [];
+  for (const c of contacts) {
+    if (!c.followup) continue;
+    const who = c.name
+      ? (c.title ? `${c.name} (${c.title})` : c.name)
+      : (c.title || "Contact");
+    items.push({
+      date: c.followup,
+      source: "contact",
+      label: who,
+    });
+  }
+  if (items.length === 0) return null;
+  const todayIso = new Date().toISOString().slice(0, 10);
+  // Overdue: any followup <= today. If any overdue exist, pick the
+  // OLDEST (most urgent). Else pick the earliest upcoming.
+  const overdue = items.filter(i => i.date <= todayIso)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const upcoming = items.filter(i => i.date > todayIso)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const pick = overdue[0] || upcoming[0];
+  return {
+    date: pick.date,
+    source: pick.source,
+    label: pick.label,
+    count: items.length,
+    isDue: pick.date <= todayIso,
+  };
+}
+
 // Wire auto-grow on every textarea matching the selector. Resets
 // height to "auto" first so the textarea can shrink when content
 // is deleted, then sets it to scrollHeight (the natural content
@@ -3375,7 +3505,40 @@ function openMfcCrm(docNum, sourceRecords) {
     </div>
   `;
 
+  // --- Follow-up banner (top of CRM) ---
+  // Compact summary showing the soonest pending follow-up across
+  // all attempts AND all contacts. Helps the user see "what needs
+  // attention" without scanning the whole CRM. Shows nothing when
+  // there are no follow-ups at all.
+  const _fu = _mfcComputeNextFollowup(entry);
+  let followupBannerHtml = "";
+  if (_fu) {
+    const fuDateTxt = new Date(_fu.date + "T00:00:00").toLocaleDateString("en-US",
+      { weekday: "short", month: "short", day: "numeric" });
+    const moreTxt = _fu.count > 1
+      ? ` <span class="mfc-fu-banner-count">+${_fu.count - 1} more pending</span>`
+      : "";
+    followupBannerHtml = `
+      <div class="mfc-fu-banner ${_fu.isDue ? "mfc-fu-banner-due" : ""}">
+        <span class="mfc-fu-banner-icon">${_fu.isDue ? "⚠" : "📌"}</span>
+        <span class="mfc-fu-banner-text">
+          ${_fu.isDue ? "Follow-up due" : "Next follow-up"}:
+          <strong>${esc(fuDateTxt)}</strong> —
+          ${esc(_fu.label)}
+        </span>
+        ${moreTxt}
+      </div>
+    `;
+  }
   // --- Outreach attempts log ---
+  // Each attempt may have a `followup` ISO date (set via the
+  // attempt modal's "Try again on" field). The badge logic:
+  //   - followup empty: nothing rendered
+  //   - followup in the future: muted "Follow up: <date>" pill
+  //   - followup today or in the past: yellow "Follow-up due" pill
+  // This lets the user scan the attempts log and instantly see
+  // which row is waiting on them.
+  const _todayIso = new Date().toISOString().slice(0, 10);
   const attemptsRowsHtml = attempts.length === 0
     ? `<div class="mfc-attempts-empty">No outreach logged yet.</div>`
     : attempts.map(a => {
@@ -3386,11 +3549,22 @@ function openMfcCrm(docNum, sourceRecords) {
           ? new Date(a.date + "T00:00:00").toLocaleDateString("en-US",
               { month: "short", day: "numeric" })
           : "—";
+        let followupBadge = "";
+        if (a.followup) {
+          const fuTxt = new Date(a.followup + "T00:00:00").toLocaleDateString("en-US",
+            { month: "short", day: "numeric" });
+          const isDue = a.followup <= _todayIso;
+          followupBadge = isDue
+            ? `<span class="mfc-followup-badge mfc-followup-due"
+                    title="Follow-up was due ${esc(a.followup)}">Follow-up due</span>`
+            : `<span class="mfc-followup-badge"
+                    title="Try again on ${esc(a.followup)}">Try ${esc(fuTxt)}</span>`;
+        }
         return `
           <div class="mfc-attempt-row">
             <span class="date">${esc(dateTxt)}</span>
             <span class="method">${esc(a.method || "—")}</span>
-            <span class="notes">${esc(a.notes || "")}</span>
+            <span class="notes">${esc(a.notes || "")}${followupBadge}</span>
             <span class="response ${respCls}">${esc(respTxt)}</span>
             <button class="mfc-del-attempt"
                     onclick="_mfcDeleteAttempt('${esc(docNum)}', '${esc(a.id)}')"
@@ -3624,6 +3798,7 @@ function openMfcCrm(docNum, sourceRecords) {
   crmBody.dataset.docNum = docNum;
   crmBody.innerHTML = `
     ${stageHtml}
+    ${followupBannerHtml}
     <div class="mfc-layout">
       <div class="mfc-col mfc-col-1">
         ${snapshotHtml}
@@ -3781,6 +3956,8 @@ function _mfcOpenAttemptModal(docNum, attemptId) {
     existing.notes || "";
   document.getElementById("mfc-attempt-response").value =
     existing.response || "";
+  document.getElementById("mfc-attempt-followup").value =
+    existing.followup || "";
   document.getElementById("mfc-attempt-modal-backdrop")
     .classList.add("open");
   document.getElementById("mfc-attempt-notes").focus();
@@ -3799,6 +3976,7 @@ function _mfcSaveAttempt() {
   const method   = document.getElementById("mfc-attempt-method").value;
   const notes    = document.getElementById("mfc-attempt-notes").value;
   const response = document.getElementById("mfc-attempt-response").value;
+  const followup = document.getElementById("mfc-attempt-followup").value;
 
   const entry = getCrmEntry("mfc", docNum);
   const attempts = Array.isArray(entry.attempts) ? entry.attempts.slice() : [];
@@ -3806,15 +3984,16 @@ function _mfcSaveAttempt() {
   if (attemptId) {
     // Edit existing.
     const i = attempts.findIndex(a => a.id === attemptId);
-    if (i >= 0) attempts[i] = { ...attempts[i], date, method, notes, response };
+    if (i >= 0) attempts[i] = { ...attempts[i], date, method, notes, response, followup };
     _mfcLogActivity(docNum, `Edited outreach: ${method} (${date})`);
   } else {
     // New.
     const id = "att_" + Math.random().toString(36).slice(2, 10);
-    attempts.unshift({ id, date, method, notes, response });
+    attempts.unshift({ id, date, method, notes, response, followup });
     _mfcLogActivity(docNum,
       `Logged outreach: ${method} (${date})` +
-      (response ? ` — ${(MFC_RESPONSES.find(r=>r.key===response)||{}).label||response}` : ""));
+      (response ? ` — ${(MFC_RESPONSES.find(r=>r.key===response)||{}).label||response}` : "") +
+      (followup ? ` · follow-up ${followup}` : ""));
     // Auto-update "last_contact" to this date if it's later than
     // what's saved — small convenience.
     if (!entry.last_contact || date > entry.last_contact) {
