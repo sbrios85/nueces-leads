@@ -997,6 +997,116 @@
     outline: none; border-color: var(--accent);
   }
 
+  /* Money / percent fields: input with a $ prefix or % suffix
+     symbol attached. The wrapper looks like a single input visually,
+     so the user can click anywhere on it to focus. */
+  .mfc-custom-affix {
+    display: flex; align-items: stretch;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px; overflow: hidden;
+    transition: border-color 0.1s;
+  }
+  .mfc-custom-affix:focus-within {
+    border-color: var(--accent);
+  }
+  .mfc-custom-affix input {
+    flex: 1; min-width: 0;
+    border: none !important; background: transparent !important;
+    padding: 7px 8px; font: inherit; font-size: 13px;
+    color: var(--fg);
+  }
+  .mfc-custom-affix input:focus { outline: none; }
+  .mfc-custom-affix-symbol {
+    display: flex; align-items: center;
+    padding: 0 10px;
+    color: var(--muted); font-size: 13px; font-weight: 600;
+    background: rgba(148,163,184,0.08);
+    user-select: none;
+  }
+  /* Position: $ on the left, % on the right. */
+  .mfc-custom-affix-money .mfc-custom-affix-symbol {
+    border-right: 1px solid var(--border);
+  }
+  .mfc-custom-affix-percent .mfc-custom-affix-symbol {
+    border-left: 1px solid var(--border);
+  }
+  /* Hide number-spinner arrows — they're noisy and the type="number"
+     is only there for inputmode/keyboard, not the spinner. */
+  .mfc-custom-affix input::-webkit-outer-spin-button,
+  .mfc-custom-affix input::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  .mfc-custom-affix input { -moz-appearance: textfield; }
+
+  /* Contacts card — list of editable contact blocks. Each block
+     has an editable name (acts as a sub-header), phone, email, and
+     a delete X. "+ Add contact" button at the bottom adds another. */
+  .mfc-contacts {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px;
+  }
+  .mfc-contacts-head {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 12px;
+  }
+  .mfc-contacts-head h3 {
+    margin: 0; font-size: 14px; font-weight: 600;
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mfc-contacts-add-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); border-radius: 6px;
+    padding: 4px 10px; font-size: 11px; cursor: pointer;
+  }
+  .mfc-contacts-add-btn:hover {
+    border-color: var(--accent); color: var(--accent);
+  }
+  .mfc-contacts-empty {
+    color: var(--muted); font-size: 12px; padding: 6px 0;
+    font-style: italic;
+  }
+  .mfc-contact {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .mfc-contact:last-child { border-bottom: none; padding-bottom: 0; }
+  .mfc-contact-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .mfc-contact-name {
+    flex: 1; background: transparent;
+    border: none; border-bottom: 1px dashed transparent;
+    color: var(--fg); font-size: 14px; font-weight: 600;
+    padding: 2px 4px; font: inherit; font-weight: 600;
+    font-size: 14px;
+    border-radius: 3px;
+    transition: border-color 0.1s, background 0.1s;
+  }
+  .mfc-contact-name:hover {
+    border-bottom-color: var(--border);
+  }
+  .mfc-contact-name:focus {
+    outline: none;
+    border-bottom-color: var(--accent);
+    background: rgba(56,189,248,0.06);
+  }
+  .mfc-contact-name::placeholder {
+    color: var(--muted); font-weight: 400;
+    font-style: italic;
+  }
+  .mfc-contact-del {
+    background: transparent; border: none; color: var(--muted);
+    font-size: 16px; cursor: pointer; padding: 2px 6px;
+    line-height: 1; opacity: 0.5;
+  }
+  .mfc-contact-del:hover { color: var(--bad); opacity: 1; }
+  .mfc-contact-fields {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .mfc-contact-fields .crm-field { margin-bottom: 0; }
+
   /* Schema-manager modal */
   .mfc-schema-modal-backdrop {
     display: none; position: fixed; inset: 0;
@@ -2461,6 +2571,74 @@ function _mfcSetCustom(docNum, fieldId, value) {
 }
 
 // ----------------------------------------------------------------
+// MFC contacts (per-lead list)
+// ----------------------------------------------------------------
+// Each lead can have N contacts. Stored on the entry as:
+//   contacts: [ { id, name, phone, email } ]
+// "name" is editable per contact (e.g. "John", "Jane", "Realtor").
+// The "+ Add contact" button appends a new blank contact; the X
+// button on each contact removes it.
+
+function _mfcGenContactId() {
+  return "c_" + Math.random().toString(36).slice(2, 10);
+}
+
+function _mfcGetContacts(docNum) {
+  const entry = getCrmEntry("mfc", docNum);
+  return Array.isArray(entry.contacts) ? entry.contacts : [];
+}
+
+function _mfcSetContactField(docNum, contactId, field, value) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const contacts = Array.isArray(entry.contacts)
+    ? entry.contacts.slice() : [];
+  const i = contacts.findIndex(c => c.id === contactId);
+  if (i < 0) return;
+  contacts[i] = { ...contacts[i], [field]: value };
+  entry.contacts = contacts;
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  saveCrmStore("mfc", store);
+}
+
+function _mfcAddContact(docNum) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const contacts = Array.isArray(entry.contacts)
+    ? entry.contacts.slice() : [];
+  contacts.push({
+    id: _mfcGenContactId(), name: "", phone: "", email: "",
+  });
+  entry.contacts = contacts;
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  saveCrmStore("mfc", store);
+  // Re-render so the new contact block appears.
+  openMfcCrm(docNum, FC_RAW);
+}
+
+function _mfcRemoveContact(docNum, contactId) {
+  const entry = getCrmEntry("mfc", docNum);
+  const c = (entry.contacts || []).find(x => x.id === contactId);
+  // Only warn if there's actual data attached — empty blank rows
+  // can be silently dropped.
+  const hasData = c && (c.name || c.phone || c.email);
+  if (hasData && !confirm("Delete this contact?")) return;
+  const store = loadCrmStore("mfc");
+  const e2 = store[docNum] || {};
+  e2.contacts = (e2.contacts || []).filter(x => x.id !== contactId);
+  e2._updated_at = new Date().toISOString();
+  store[docNum] = e2;
+  saveCrmStore("mfc", store);
+  if (hasData) {
+    _mfcLogActivity(docNum,
+      `Removed contact "${(c.name || "(unnamed)")}"`);
+  }
+  openMfcCrm(docNum, FC_RAW);
+}
+
+// ----------------------------------------------------------------
 // Schema-manager modal (configure which custom fields exist)
 // ----------------------------------------------------------------
 // In-flight edit buffer: a copy of the schema that the user is
@@ -2506,6 +2684,8 @@ function _mfcRenderSchemaList() {
       <select onchange="_mfcSchemaUpdate(${i}, 'type', this.value)">
         <option value="text"${f.type==="text"?" selected":""}>Text</option>
         <option value="number"${f.type==="number"?" selected":""}>Number</option>
+        <option value="money"${f.type==="money"?" selected":""}>Money ($)</option>
+        <option value="percent"${f.type==="percent"?" selected":""}>Percent (%)</option>
         <option value="date"${f.type==="date"?" selected":""}>Date</option>
         <option value="yesno"${f.type==="yesno"?" selected":""}>Yes / No</option>
       </select>
@@ -2800,6 +2980,23 @@ function openMfcCrm(docNum, sourceRecords) {
             </select>`;
           } else if (f.type === "date") {
             control = `<input type="date" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+          } else if (f.type === "money") {
+            // Money: $ prefix outside the input, value stored as plain
+            // number string. The user types numbers — formatting (commas,
+            // currency symbol) happens visually around the input.
+            control = `<div class="mfc-custom-affix mfc-custom-affix-money">
+              <span class="mfc-custom-affix-symbol">$</span>
+              <input type="number" step="any" inputmode="decimal"
+                     data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">
+            </div>`;
+          } else if (f.type === "percent") {
+            // Percent: % suffix outside the input. User types the number
+            // (e.g. 5.25), display shows "5.25 %".
+            control = `<div class="mfc-custom-affix mfc-custom-affix-percent">
+              <input type="number" step="any" inputmode="decimal"
+                     data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">
+              <span class="mfc-custom-affix-symbol">%</span>
+            </div>`;
           } else if (f.type === "number") {
             control = `<input type="number" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
           } else {
@@ -2840,18 +3037,6 @@ function openMfcCrm(docNum, sourceRecords) {
         <input type="date" data-mfc-key="next_followup" value="${esc(_v("next_followup"))}">
       </div>
       <div class="crm-field">
-        <label>Reinstatement Amount</label>
-        <input type="text" data-mfc-key="reinstatement_amount" value="${esc(_v("reinstatement_amount"))}">
-      </div>
-      <div class="crm-field">
-        <label>Sale Date Confirmed?</label>
-        <select data-mfc-key="sale_confirmed">
-          <option value=""${_v("sale_confirmed")===""?" selected":""}>—</option>
-          <option value="yes"${_v("sale_confirmed")==="yes"?" selected":""}>Yes</option>
-          <option value="no"${_v("sale_confirmed")==="no"?" selected":""}>No</option>
-        </select>
-      </div>
-      <div class="crm-field">
         <label>Occupancy</label>
         <select data-mfc-key="occupancy">
           <option value=""${_v("occupancy")===""?" selected":""}>—</option>
@@ -2861,6 +3046,52 @@ function openMfcCrm(docNum, sourceRecords) {
           <option value="unknown"${_v("occupancy")==="unknown"?" selected":""}>Unknown</option>
         </select>
       </div>
+    </div>
+  `;
+
+  // --- Contacts card (per-lead list of editable contacts) ---
+  // Each contact has its own name (editable as a sub-header) plus
+  // phone and email. The "+ Add" button below appends a new blank
+  // contact; X on each contact removes it.
+  const contactsList = Array.isArray(entry.contacts) ? entry.contacts : [];
+  const contactsBlocksHtml = contactsList.length === 0
+    ? `<div class="mfc-contacts-empty">No contacts yet. Click <strong>+ Add</strong> to add the borrower, co-borrower, realtor, etc.</div>`
+    : contactsList.map(c => `
+        <div class="mfc-contact" data-contact-id="${esc(c.id)}">
+          <div class="mfc-contact-head">
+            <input class="mfc-contact-name" type="text"
+                   placeholder="Contact name (e.g. John, Jane, Realtor)"
+                   value="${esc(c.name || "")}"
+                   data-mfc-contact-field="name"
+                   data-mfc-contact-id="${esc(c.id)}">
+            <button class="mfc-contact-del"
+                    title="Remove this contact"
+                    onclick="_mfcRemoveContact('${esc(docNum)}', '${esc(c.id)}')">×</button>
+          </div>
+          <div class="mfc-contact-fields">
+            <div class="crm-field">
+              <label>Phone</label>
+              <input type="text" value="${esc(c.phone || "")}"
+                     data-mfc-contact-field="phone"
+                     data-mfc-contact-id="${esc(c.id)}">
+            </div>
+            <div class="crm-field">
+              <label>Email</label>
+              <input type="text" value="${esc(c.email || "")}"
+                     data-mfc-contact-field="email"
+                     data-mfc-contact-id="${esc(c.id)}">
+            </div>
+          </div>
+        </div>
+      `).join("");
+  const contactsHtml = `
+    <div class="mfc-contacts">
+      <div class="mfc-contacts-head">
+        <h3>Contacts</h3>
+        <button class="mfc-contacts-add-btn"
+                onclick="_mfcAddContact('${esc(docNum)}')">+ Add</button>
+      </div>
+      ${contactsBlocksHtml}
     </div>
   `;
 
@@ -2916,6 +3147,7 @@ function openMfcCrm(docNum, sourceRecords) {
       </div>
       <div class="mfc-col mfc-col-3">
         ${quickFillHtml}
+        ${contactsHtml}
       </div>
       <div class="mfc-fullrow">
         ${attemptsHtml}
@@ -2979,6 +3211,22 @@ function openMfcCrm(docNum, sourceRecords) {
         flash();
       });
     }
+  });
+
+  // Auto-save for contact fields. Each input is tagged with the
+  // contact id and the field name (name/phone/email); we look both
+  // up and write to entry.contacts[i][field].
+  let contactSaveTimer = null;
+  document.querySelectorAll("#crm-body [data-mfc-contact-id]").forEach(el => {
+    const cid = el.dataset.mfcContactId;
+    const field = el.dataset.mfcContactField;
+    el.addEventListener("input", () => {
+      clearTimeout(contactSaveTimer);
+      contactSaveTimer = setTimeout(() => {
+        _mfcSetContactField(docNum, cid, field, el.value);
+        flash();
+      }, 400);
+    });
   });
 
   // --- Show CRM view ---
