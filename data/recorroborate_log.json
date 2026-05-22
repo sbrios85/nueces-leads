@@ -1,13 +1,13 @@
 {
   "mode": "dry_run",
   "total_records": 105,
-  "eligible": 22,
-  "skipped": 83,
-  "matches": 22,
+  "eligible": 52,
+  "skipped": 53,
+  "matches": 52,
   "mismatches": 0,
   "ambiguous": 0,
   "errors": 0,
-  "unique_parcels_fetched": 22,
+  "unique_parcels_fetched": 52,
   "cache_hits": 0,
   "ncad_cache_expiry": null,
   "mismatch_details": [],
@@ -135,120 +135,12 @@
       "reason": "no ncad_prop_id attached"
     },
     {
-      "doc_num": "2026000231",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000230",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000222",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000219",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000214",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000215",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000212",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000210",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000205",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000203",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
       "doc_num": "2026000204",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000208",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000201",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000206",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000193",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000190",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000191",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000195",
       "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000188",
       "reason": "clerk legal empty (can't safely verify)"
-    },
-    {
-      "doc_num": "2026000183",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000182",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000181",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000187",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000185",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000172",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000176",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000137",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000141",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000115",
-      "reason": "no ncad_prop_id attached"
     },
     {
       "doc_num": "2026000299",
@@ -260,26 +152,14 @@
     },
     {
       "doc_num": "2026000297",
-      "reason": "no ncad_prop_id attached"
+      "reason": "clerk legal too sparse to compare (sub='spinnaker condominiums unit 305 bldg a', lot='')"
     },
     {
       "doc_num": "2026000296",
       "reason": "clerk legal empty (can't safely verify)"
     },
     {
-      "doc_num": "2026000268",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
       "doc_num": "2026000265",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000262",
-      "reason": "no ncad_prop_id attached"
-    },
-    {
-      "doc_num": "2026000264",
       "reason": "no ncad_prop_id attached"
     },
     {
