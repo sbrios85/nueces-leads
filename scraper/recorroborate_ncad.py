@@ -158,6 +158,62 @@ EVICT_FIELDS = (
     "mail_zip",
 )
 
+# Conditionally-evicted prop_address fields. These are PDF-sourced
+# IN THEORY, but if the PDF parser failed to extract an address (e.g.
+# the "Property Address/Mailing Address:" combined-label format) the
+# scraper falls back to using the NCAD-cache site_addr as the
+# foreclosure's prop_address. When that NCAD parcel is later evicted
+# as a wrong match (Cardenas, Flores — name-search matched the wrong
+# person), prop_address is the wrong parcel's address too.
+#
+# Logic at apply time: look up the record's owner in the NCAD search
+# cache. If the cached site_addr matches the record's prop_address
+# (after normalization), we know prop_address came from esearch
+# attachment, not from the PDF parser — clear it too.
+PROP_ADDR_FIELDS = (
+    "prop_address", "prop_city", "prop_state", "prop_zip",
+)
+NCAD_SEARCH_CACHE = REPO_ROOT / ".cache" / "ncad_search_cache.json"
+
+def _normalize_addr(s: str) -> str:
+    """Lowercase + collapse whitespace + strip punctuation for address
+    comparison. Same logic used elsewhere to detect address equality
+    despite minor formatting differences.
+
+    Apostrophe handling: Irish-derived street names like O'Malley,
+    O'Brien, O'Reilly appear in PDFs WITH an apostrophe (ASCII ' or
+    curly ') but NCAD's database stores them WITHOUT — "O MALLEY",
+    "O BRIEN". We normalize both to the no-apostrophe form so they
+    compare equal.
+        "4401 O'MALLEY DR" → "4401 o malley dr"
+        "4401 O MALLEY DR" → "4401 o malley dr"  (same)
+    Both ASCII and Unicode (U+2018/U+2019) apostrophes are stripped.
+    """
+    s = (s or "").lower()
+    s = re.sub(r"[.,]", "", s)
+    # Replace apostrophes (ASCII and Unicode curly) with a space so
+    # "o'malley" and "o malley" normalize identically. We use a space
+    # rather than empty-string so we don't accidentally fuse tokens
+    # that were already separated by a comma+apostrophe pattern.
+    s = re.sub(r"[\u2018\u2019']", " ", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+def _ncad_cache_addr_for_owner(owner_name: str) -> str:
+    """Return the cached NCAD site_addr for this owner name, or empty
+    if not in cache. Reads the cache file fresh each call (no caching
+    here) — cache file is small and this only runs at apply time."""
+    if not owner_name or not NCAD_SEARCH_CACHE.exists():
+        return ""
+    try:
+        with open(NCAD_SEARCH_CACHE) as f:
+            cache_doc = json.load(f)
+        data = cache_doc.get("data") or {}
+        entry = data.get(owner_name) or {}
+        return (entry.get("site_addr") or "").strip()
+    except Exception:
+        return ""
+
 # Mode: dry-run (default) or apply.
 APPLY_MODE = os.environ.get("RECORROBORATE_APPLY", "").strip() == "1"
 
@@ -503,6 +559,10 @@ async def _run() -> Dict:
         # keyed by owner name and returns the same parcel-id for the
         # same name every time, no matter how many evictions we did).
         evicted_owner_names: List[str] = []
+        # Track which records ALSO had their prop_address cleared because
+        # it matched the now-evicted NCAD parcel's site_addr (proof it
+        # came from esearch attachment, not from PDF parser).
+        prop_addr_also_evicted: List[str] = []
         for r in records:
             if r.get("doc_num") in evicted_docs:
                 owner_name = (r.get("owner") or "").strip()
@@ -517,6 +577,28 @@ async def _run() -> Dict:
                             r[k] = None
                         else:
                             r[k] = ""
+                # Conditional prop_address eviction. When the record's
+                # prop_address matches the NCAD search cache's site_addr
+                # for the same owner, it means prop_address was sourced
+                # from esearch (the PDF parser couldn't extract it).
+                # Since we're evicting the NCAD link as a wrong match,
+                # the address attached from that wrong parcel is also
+                # wrong and must be cleared.
+                rec_addr = _normalize_addr(r.get("prop_address") or "")
+                cached_addr = _normalize_addr(
+                    _ncad_cache_addr_for_owner(owner_name))
+                if rec_addr and cached_addr and rec_addr == cached_addr:
+                    for k in PROP_ADDR_FIELDS:
+                        if k in r:
+                            r[k] = ""
+                    prop_addr_also_evicted.append(r.get("doc_num"))
+                    log.info("  also cleared prop_address on %s "
+                             "(was '%s' — matched evicted NCAD parcel)",
+                             r.get("doc_num"), r.get("prop_address") or "")
+        if prop_addr_also_evicted:
+            log.info("APPLIED: also cleared prop_address on %d record(s) "
+                     "(came from now-evicted NCAD parcel)",
+                     len(prop_addr_also_evicted))
         DASH_JSON.write_text(
             json.dumps(payload, indent=2, ensure_ascii=False),
             encoding="utf-8",
@@ -524,6 +606,10 @@ async def _run() -> Dict:
         if DATA_JSON.exists():
             # Keep data/foreclosures.json in lockstep (the daily scrape
             # writes both). This is just the canonical copy under data/.
+            # Mirror the conditional prop_address eviction here too —
+            # use the same prop_addr_also_evicted set computed above so
+            # both files end up identical.
+            prop_evict_set = set(prop_addr_also_evicted)
             data_payload = json.loads(DATA_JSON.read_text(encoding="utf-8"))
             data_recs = data_payload.get("records") or []
             for r in data_recs:
@@ -531,6 +617,10 @@ async def _run() -> Dict:
                     for k in EVICT_FIELDS:
                         if k in r:
                             r[k] = None if k == "appraised_value" else ""
+                    if r.get("doc_num") in prop_evict_set:
+                        for k in PROP_ADDR_FIELDS:
+                            if k in r:
+                                r[k] = ""
             DATA_JSON.write_text(
                 json.dumps(data_payload, indent=2, ensure_ascii=False),
                 encoding="utf-8",
