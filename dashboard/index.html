@@ -597,12 +597,14 @@
   .crm-back-btn:hover { border-color: var(--accent); color: var(--accent); }
   .crm-title { font-size: 18px; font-weight: 600; }
   .crm-body { padding: 24px 28px; max-width: 1100px; }
-  /* MFC CRM uses full-screen width — drop the centered-column
-     constraint. Detected by the presence of the mfc-layout child. */
-  .crm-body:has(.mfc-layout) { max-width: none; }
+  /* MFC CRM uses a wider layout than the centered max-width default
+     so the two columns have room to breathe, but still capped so
+     cards don't stretch absurdly wide on ultrawide monitors.
+     Detected by the presence of the mfc-layout child. */
+  .crm-body:has(.mfc-layout) { max-width: 1500px; }
   /* Fallback for browsers without :has() (older Safari/Firefox <121):
-     when JS sets data-crm-type="mfc" on the body, full-width applies. */
-  .crm-body[data-crm-type="mfc"] { max-width: none; }
+     when JS sets data-crm-type="mfc" on the body, the wider cap applies. */
+  .crm-body[data-crm-type="mfc"] { max-width: 1500px; }
   .crm-grid {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 28px; align-items: start;
@@ -915,14 +917,14 @@
      RIGHT (40%): quick fill + activity log.
      Each column stacks its cards vertically and fills its column. */
   .mfc-layout {
-    display: grid; grid-template-columns: 3fr 2fr; gap: 20px;
+    display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px;
     align-items: start;
   }
   @media (max-width: 1100px) {
     .mfc-layout { grid-template-columns: 1fr; }
   }
   .mfc-col {
-    display: flex; flex-direction: column; gap: 14px;
+    display: flex; flex-direction: column; gap: 12px;
     min-width: 0;  /* let children shrink rather than overflow */
   }
 
@@ -2623,11 +2625,13 @@ function openMfcCrm(docNum, sourceRecords) {
 
   // Helper: render an overridable snapshot row. `key` matches an
   // entry in MFC_OVERRIDE_FIELDS. `parsedDisplay` is the formatted
-  // parsed value (e.g. "$190,400"). `parsedRaw` is the raw value
-  // pre-filled in the edit input when the user clicks to edit (so
-  // they can type relative to the actual value, not a $-formatted
-  // string). `extraHtml` lets a row append small auxiliary content
-  // (e.g. the city/zip sub-line under the property address) — this
+  // parsed value (e.g. "$190,400 <span ...>(Aug 2021)</span>") —
+  // treated as TRUSTED HTML, since we build it from our own
+  // formatters. `parsedRaw` is the raw value pre-filled in the
+  // edit input when the user clicks to edit. User-supplied
+  // overrides are ESCAPED as text, since they come from typed
+  // input and shouldn't carry HTML through. `extraHtml` lets a
+  // row append auxiliary content (city/zip sub-line, etc.) — this
   // sits OUTSIDE the editable display so editing only touches the
   // primary value.
   const _renderEditableRow = (label, key, parsedDisplay, parsedRaw, extraHtml, isBig) => {
@@ -2639,6 +2643,12 @@ function openMfcCrm(docNum, sourceRecords) {
     const editedBadge = eff.overridden
       ? `<span class="mfc-snap-edited" title="Manually edited — click to edit again">✏️</span>`
       : "";
+    // Display: if overridden, escape the user's text (untrusted).
+    // If not overridden, use the parsedDisplay HTML as-is (trusted).
+    // Empty values fall back to a muted em-dash.
+    const displayHtml = eff.overridden
+      ? (eff.value ? esc(eff.value) : `<span style="color:var(--muted)">—</span>`)
+      : (eff.value || `<span style="color:var(--muted)">—</span>`);
     return `
       <div class="mfc-snap-row" data-mfc-override-key="${esc(key)}">
         <span class="k">${esc(label)}</span>
@@ -2646,9 +2656,7 @@ function openMfcCrm(docNum, sourceRecords) {
           <span class="mfc-snap-display"
                 onclick="_mfcStartEdit(this)"
                 data-edit-val="${esc(valForEdit)}"
-                title="Click to edit (overrides parsed value)">${
-            esc(eff.value) || `<span style="color:var(--muted)">—</span>`
-          }${editedBadge}</span>${extraHtml || ""}
+                title="Click to edit (overrides parsed value)">${displayHtml}${editedBadge}</span>${extraHtml || ""}
         </span>
       </div>
     `;
