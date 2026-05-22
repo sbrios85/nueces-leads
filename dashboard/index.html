@@ -597,14 +597,13 @@
   .crm-back-btn:hover { border-color: var(--accent); color: var(--accent); }
   .crm-title { font-size: 18px; font-weight: 600; }
   .crm-body { padding: 24px 28px; max-width: 1100px; }
-  /* MFC CRM uses a wider layout than the centered max-width default
-     so the two columns have room to breathe, but still capped so
-     cards don't stretch absurdly wide on ultrawide monitors.
-     Detected by the presence of the mfc-layout child. */
-  .crm-body:has(.mfc-layout) { max-width: 1500px; }
-  /* Fallback for browsers without :has() (older Safari/Firefox <121):
-     when JS sets data-crm-type="mfc" on the body, the wider cap applies. */
-  .crm-body[data-crm-type="mfc"] { max-width: 1500px; }
+  /* MFC CRM uses a 3-column grid layout that handles its own
+     spacing — drop the centered max-width so it can spread across
+     the full screen. Detected by the presence of mfc-layout. */
+  .crm-body:has(.mfc-layout) { max-width: none; }
+  /* Fallback for browsers without :has(): the JS sets
+     data-crm-type="mfc" on the body for the same effect. */
+  .crm-body[data-crm-type="mfc"] { max-width: none; }
   .crm-grid {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 28px; align-items: start;
@@ -666,15 +665,15 @@
      lead types continue to use the generic crm-grid layout above.
      ============================================================ */
 
-  /* Property snapshot — compact two-column header card. */
+  /* Property snapshot — single-column inside the card. Each row
+     is label + value side-by-side. Used to be a 2-up grid; now
+     that the snapshot lives in its own narrow page column we
+     stack everything vertically for cleaner reading. */
   .mfc-snapshot {
     background: var(--panel); border: 1px solid var(--border);
     border-radius: 10px; padding: 12px 16px;
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 6px 24px;
-  }
-  @media (max-width: 780px) {
-    .mfc-snapshot { grid-template-columns: 1fr; }
+    display: flex; flex-direction: column;
+    gap: 6px;
   }
   .mfc-snap-row {
     display: flex; gap: 8px; align-items: baseline;
@@ -912,20 +911,35 @@
   }
   .mfc-activity-row .ev { color: var(--fg); }
 
-  /* MFC layout — full-page two-column grid.
-     LEFT (60%): property snapshot + outreach attempts + notes.
-     RIGHT (40%): quick fill + activity log.
-     Each column stacks its cards vertically and fills its column. */
+  /* MFC layout — full-page three-column grid.
+     COL 1: property snapshot (narrow, fits ~6-8 fields stacked).
+     COL 2: research/custom fields (mid-width, holds the field grid).
+     COL 3: quick fill + activity log (narrow, narrow forms).
+     Below ~1400px we fall to 2 columns (snapshot+research left,
+     quick fill right). Below ~1000px, single column. */
   .mfc-layout {
-    display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
     align-items: start;
   }
-  @media (max-width: 1100px) {
+  @media (max-width: 1400px) {
+    .mfc-layout { grid-template-columns: 1fr 1fr; }
+    .mfc-col-3 { grid-column: 1 / -1; }  /* quick fill spans full row */
+  }
+  @media (max-width: 1000px) {
     .mfc-layout { grid-template-columns: 1fr; }
+    .mfc-col-3 { grid-column: auto; }
   }
   .mfc-col {
     display: flex; flex-direction: column; gap: 12px;
     min-width: 0;  /* let children shrink rather than overflow */
+  }
+  /* Outreach + Notes break out of the column grid and span all
+     columns below — they need horizontal room for the attempts
+     table and notes editor. */
+  .mfc-fullrow {
+    grid-column: 1 / -1;
   }
 
   /* Custom fields card — slot for user-defined research data.
@@ -957,14 +971,14 @@
     color: var(--muted); font-size: 12px; padding: 6px 0;
     font-style: italic;
   }
-  /* Custom-field rows are a 2-column grid: label / control. Two
-     fields per row when there's space, one per row when narrow. */
+  /* Custom-field rows. The Research card lives in a column that
+     can be narrow (3-col mode ~330px) or wide (single-col mode
+     full screen). Use auto-fit so fields lay out 1-up in narrow
+     columns, 2-up when there's room, no media query needed. */
   .mfc-custom-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 10px 16px;
-  }
-  @media (max-width: 780px) {
-    .mfc-custom-grid { grid-template-columns: 1fr; }
   }
   .mfc-custom-field label {
     display: block; font-size: 11px; color: var(--muted);
@@ -2690,7 +2704,7 @@ function openMfcCrm(docNum, sourceRecords) {
           rec.appraised_value == null ? "" : String(rec.appraised_value),
           "", false)}
 
-      <details class="mfc-details" style="grid-column: 1/-1;">
+      <details class="mfc-details">
         <summary>More details</summary>
         <div class="mfc-details-grid">
           <div class="mfc-details-row"><span class="k">Doc #</span><span class="v">${esc(rec.doc_num || "—")}</span></div>
@@ -2894,14 +2908,22 @@ function openMfcCrm(docNum, sourceRecords) {
   crmBody.innerHTML = `
     ${stageHtml}
     <div class="mfc-layout">
-      <div class="mfc-col mfc-col-left">
+      <div class="mfc-col mfc-col-1">
         ${snapshotHtml}
+      </div>
+      <div class="mfc-col mfc-col-2">
         ${customHtml}
+      </div>
+      <div class="mfc-col mfc-col-3">
+        ${quickFillHtml}
+      </div>
+      <div class="mfc-fullrow">
         ${attemptsHtml}
+      </div>
+      <div class="mfc-fullrow">
         ${notesHtml}
       </div>
-      <div class="mfc-col mfc-col-right">
-        ${quickFillHtml}
+      <div class="mfc-fullrow">
         ${activityHtml}
       </div>
     </div>
