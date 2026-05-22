@@ -704,11 +704,30 @@ _RE_MOD_DOC_BLOCK = [
 # Strategy 1: explicit label like "Commonly known as: ADDRESS",
 # "Property Address: ADDRESS", or "(Address: ADDRESS)" — most reliable
 # when present. Different law firms use different label phrases.
+#
+# Label variations handled:
+#   - "Property Address" (most common)
+#   - "Property Address/Mailing Address" (combined-label format) ←
+#       added 2026-05-21 after Cardenas (doc 237) and Flores (doc 204)
+#       both had this format and the old regex skipped them, sending
+#       esearch on a name-only lookup that returned false-positive
+#       parcels for similar-named people.
+#   - "Property is located at"
+#   - "Reported Address", "Address", "Commonly known as"
+# The `(?:/[A-Za-z\s]+?)?` allows an optional secondary label glued
+# to the primary one with a slash (e.g. "/Mailing Address").
+#
+# Apostrophe handling: street names like "O'MALLEY" can use ASCII '
+# OR the curly right-single-quote U+2019 ('). The street capture group
+# now includes both — the original character class allowed only ASCII
+# letters/digits/spaces/dot, so "O'MALLEY" terminated the match at
+# the curly quote and the whole address didn't capture.
 _RE_LABELED_ADDRESS = re.compile(
     r"\(?\s*(?:(?:more\s+)?commonly\s+known\s+as|Property\s+Address|"
     r"Property\s+is\s+located\s+at|Reported\s+Address|Address)"
+    r"(?:\s*/\s*(?:Mailing\s+Address|Mail\s+Address|Mailing))?"
     r"[\s:;]+"
-    r"(\d{1,5}[A-Z]?\s+[A-Z][A-Za-z0-9\s.]{2,60}?\b"
+    r"(\d{1,5}[A-Z]?\s+[A-Z][A-Za-z0-9\s.\u2018\u2019']{2,60}?\b"
     r"(?:STREET|ST|AVENUE|AVE|ROAD|RD|DRIVE|DR|LANE|LN|"
     r"BOULEVARD|BLVD|COURT|CT|CIRCLE|CIR|PLACE|PL|"
     r"WAY|TRAIL|TR|PARKWAY|PKWY|LOOP|HIGHWAY|HWY|TERRACE|TER)\.?"
