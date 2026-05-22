@@ -661,24 +661,25 @@
   /* Property snapshot — compact two-column header card. */
   .mfc-snapshot {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 18px 22px; margin-bottom: 20px;
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 14px;
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 16px 32px;
+    gap: 6px 24px;
   }
   @media (max-width: 780px) {
     .mfc-snapshot { grid-template-columns: 1fr; }
   }
   .mfc-snap-row {
-    display: flex; gap: 10px; align-items: baseline;
-    font-size: 13px; line-height: 1.45;
+    display: flex; gap: 8px; align-items: baseline;
+    font-size: 13px; line-height: 1.35;
   }
   .mfc-snap-row .k {
-    color: var(--muted); font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.04em; min-width: 78px; flex-shrink: 0;
+    color: var(--muted); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.04em; min-width: 68px; flex-shrink: 0;
   }
-  .mfc-snap-row .v { color: var(--fg); word-break: break-word; }
+  .mfc-snap-row .v { color: var(--fg); word-break: break-word;
+                      font-size: 13px; }
   .mfc-snap-row .v.big {
-    font-size: 15px; font-weight: 600;
+    font-size: 13px; font-weight: 600;
   }
   /* Equity coloring — green good (>30%), amber middling (10-30%),
      red thin (<10% or negative). */
@@ -688,25 +689,25 @@
 
   /* "More details" disclosure for the long readonly list. */
   .mfc-details {
-    margin-top: 14px; padding-top: 14px;
+    margin-top: 8px; padding-top: 8px;
     border-top: 1px dashed var(--border);
   }
   .mfc-details > summary {
-    cursor: pointer; font-size: 12px; color: var(--accent);
+    cursor: pointer; font-size: 11px; color: var(--accent);
     user-select: none; outline: none;
   }
   .mfc-details > summary:hover { text-decoration: underline; }
-  .mfc-details[open] > summary { margin-bottom: 10px; }
+  .mfc-details[open] > summary { margin-bottom: 6px; }
   .mfc-details-grid {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 6px 24px;
+    gap: 2px 24px;
   }
   @media (max-width: 780px) {
     .mfc-details-grid { grid-template-columns: 1fr; }
   }
   .mfc-details-row {
     display: flex; justify-content: space-between; gap: 10px;
-    font-size: 12px; padding: 4px 0;
+    font-size: 12px; padding: 2px 0;
   }
   .mfc-details-row .k { color: var(--muted); }
   .mfc-details-row .v { color: var(--fg); text-align: right;
@@ -715,11 +716,11 @@
   /* Stage tracker — pill row at the top. */
   .mfc-stages {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px 18px; margin-bottom: 20px;
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
   }
   .mfc-stages-label {
-    font-size: 11px; text-transform: uppercase; color: var(--muted);
-    letter-spacing: 0.05em; margin-bottom: 10px;
+    font-size: 10px; text-transform: uppercase; color: var(--muted);
+    letter-spacing: 0.05em; margin-bottom: 7px;
   }
   .mfc-stage-row {
     display: flex; flex-wrap: wrap; gap: 6px;
@@ -2303,8 +2304,8 @@ function openMfcCrm(docNum, sourceRecords) {
   document.getElementById("crm-title").textContent =
     (rec.owner || "Lead") + " — Mortgage Foreclosure";
   document.getElementById("crm-body").innerHTML = `
-    ${snapshotHtml}
     ${stageHtml}
+    ${snapshotHtml}
     <div class="mfc-main">
       ${attemptsHtml}
       ${quickFillHtml}
