@@ -997,46 +997,44 @@
     outline: none; border-color: var(--accent);
   }
 
-  /* Money / percent fields: input with a $ prefix or % suffix
-     symbol attached. The wrapper looks like a single input visually,
-     so the user can click anywhere on it to focus. */
-  .mfc-custom-affix {
-    display: flex; align-items: stretch;
+  /* Money / percent fields use a click-to-edit pattern: a
+     formatted text display ("$172,000" or "5.2%") that swaps to a
+     plain number input when clicked. Same affordance as the
+     snapshot card's editable rows, so it feels familiar. */
+  .mfc-custom-formatted {
     background: var(--bg); border: 1px solid var(--border);
-    border-radius: 6px; overflow: hidden;
-    transition: border-color 0.1s;
-  }
-  .mfc-custom-affix:focus-within {
-    border-color: var(--accent);
-  }
-  .mfc-custom-affix input {
-    flex: 1; min-width: 0;
-    border: none !important; background: transparent !important;
-    padding: 7px 8px; font: inherit; font-size: 13px;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font: inherit; font-size: 13px;
     color: var(--fg);
+    cursor: text;
+    min-height: 20px;
+    transition: border-color 0.1s, background 0.1s;
   }
-  .mfc-custom-affix input:focus { outline: none; }
-  .mfc-custom-affix-symbol {
-    display: flex; align-items: center;
-    padding: 0 10px;
-    color: var(--muted); font-size: 13px; font-weight: 600;
-    background: rgba(148,163,184,0.08);
-    user-select: none;
+  .mfc-custom-formatted:hover {
+    border-color: var(--accent);
+    background: rgba(56,189,248,0.04);
   }
-  /* Position: $ on the left, % on the right. */
-  .mfc-custom-affix-money .mfc-custom-affix-symbol {
-    border-right: 1px solid var(--border);
+  .mfc-custom-formatted.empty::before {
+    content: "—";
+    color: var(--muted);
   }
-  .mfc-custom-affix-percent .mfc-custom-affix-symbol {
-    border-left: 1px solid var(--border);
+  .mfc-custom-edit-input {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    color: var(--fg);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font: inherit; font-size: 13px;
   }
-  /* Hide number-spinner arrows — they're noisy and the type="number"
-     is only there for inputmode/keyboard, not the spinner. */
-  .mfc-custom-affix input::-webkit-outer-spin-button,
-  .mfc-custom-affix input::-webkit-inner-spin-button {
+  .mfc-custom-edit-input:focus { outline: none; }
+  /* Hide spinner arrows. */
+  .mfc-custom-edit-input::-webkit-outer-spin-button,
+  .mfc-custom-edit-input::-webkit-inner-spin-button {
     -webkit-appearance: none; margin: 0;
   }
-  .mfc-custom-affix input { -moz-appearance: textfield; }
+  .mfc-custom-edit-input { -moz-appearance: textfield; }
 
   /* Contacts card — list of editable contact blocks. Each block
      has an editable name (acts as a sub-header), phone, email, and
@@ -1129,12 +1127,41 @@
   .mfc-schema-list {
     margin-bottom: 14px;
   }
+  /* Schema row: drag-handle | label-input | type-select | delete.
+     The grab handle on the left lets the user drag-reorder rows.
+     The whole row becomes draggable when the handle is grabbed
+     (drag is attached to the row, the handle is the grip). */
   .mfc-schema-row {
-    display: grid; grid-template-columns: 1fr 110px 28px;
+    display: grid;
+    grid-template-columns: 18px 1fr 130px 28px;
     gap: 8px; align-items: center; padding: 6px 0;
     border-bottom: 1px solid var(--border);
+    transition: opacity 0.1s, background 0.1s;
   }
   .mfc-schema-row:last-child { border-bottom: none; }
+  /* Visual states during drag-and-drop. */
+  .mfc-schema-row.dragging {
+    opacity: 0.35;
+    background: rgba(56,189,248,0.05);
+  }
+  .mfc-schema-row.drag-over-top {
+    box-shadow: 0 -2px 0 0 var(--accent) inset;
+  }
+  .mfc-schema-row.drag-over-bottom {
+    box-shadow: 0 2px 0 0 var(--accent) inset;
+  }
+  /* Drag handle. Six-dot grip icon (CSS), cursor changes to "grab"
+     to invite dragging, "grabbing" while pressed. */
+  .mfc-schema-grip {
+    display: flex; align-items: center; justify-content: center;
+    width: 18px; height: 24px;
+    cursor: grab; color: var(--muted);
+    user-select: none;
+    font-size: 16px; line-height: 1;
+    opacity: 0.5; transition: opacity 0.1s, color 0.1s;
+  }
+  .mfc-schema-grip:hover { opacity: 1; color: var(--fg); }
+  .mfc-schema-grip:active { cursor: grabbing; }
   .mfc-schema-row input,
   .mfc-schema-row select {
     background: var(--bg); border: 1px solid var(--border);
@@ -2570,6 +2597,85 @@ function _mfcSetCustom(docNum, fieldId, value) {
   saveCrmStore("mfc", store);
 }
 
+// Format a stored raw value for display in money/percent fields.
+//   money:    "172000"  → "$172,000"
+//   percent:  "5.2"     → "5.2%"
+// Empty string returns "" (the display will show a placeholder via
+// the .empty CSS class). Invalid numbers fall through as the raw
+// string — better to show "abc" than hide bad input.
+function _mfcFormatCustomValue(raw, type) {
+  if (raw == null || String(raw).trim() === "") return "";
+  const n = Number(raw);
+  if (!isFinite(n)) return String(raw);
+  if (type === "money") {
+    // Comma-separated, no decimals when whole, up to 2 when not.
+    const hasFrac = n % 1 !== 0;
+    return "$" + n.toLocaleString("en-US", {
+      minimumFractionDigits: hasFrac ? 2 : 0,
+      maximumFractionDigits: 2,
+    });
+  }
+  if (type === "percent") {
+    // Strip trailing zeros for clean display, keep up to 3 decimals.
+    const hasFrac = n % 1 !== 0;
+    return n.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: hasFrac ? 3 : 0,
+    }) + "%";
+  }
+  return String(raw);
+}
+
+// Click handler for a formatted money/percent display. Swaps the
+// display for a plain number input, focuses it, and commits on
+// blur or Enter (Escape cancels). Re-renders the CRM on commit so
+// the new formatted value appears.
+function _mfcCustomStartEdit(displayEl) {
+  if (!displayEl || displayEl.dataset._editing === "1") return;
+  displayEl.dataset._editing = "1";
+  const docNum = document.getElementById("crm-body").dataset.docNum;
+  if (!docNum) return;
+  const fieldId = displayEl.dataset.mfcCustomId;
+  const type    = displayEl.dataset.mfcCustomType;  // "money" | "percent"
+  const rawVal  = displayEl.dataset.rawVal || "";
+  if (!fieldId || !type) return;
+
+  // Build a number input that mirrors the display's geometry.
+  const input = document.createElement("input");
+  input.type = "number";
+  input.step = "any";
+  input.inputMode = "decimal";
+  input.className = "mfc-custom-edit-input";
+  input.value = rawVal;
+  // Drop the input in place of the display.
+  displayEl.style.display = "none";
+  displayEl.parentNode.insertBefore(input, displayEl);
+  input.focus();
+  input.select();
+
+  let committed = false;
+  const commit = () => {
+    if (committed) return;
+    committed = true;
+    const newVal = input.value;
+    _mfcSetCustom(docNum, fieldId, newVal);
+    openMfcCrm(docNum, FC_RAW);
+  };
+  const cancel = () => {
+    if (committed) return;
+    committed = true;
+    input.remove();
+    displayEl.style.display = "";
+    delete displayEl.dataset._editing;
+  };
+
+  input.addEventListener("blur", commit);
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); commit(); }
+    else if (e.key === "Escape") { e.preventDefault(); cancel(); }
+  });
+}
+
 // ----------------------------------------------------------------
 // MFC contacts (per-lead list)
 // ----------------------------------------------------------------
@@ -2667,9 +2773,10 @@ function _mfcCloseSchemaModal() {
 }
 
 // Render the editable schema list from the draft buffer. Each row
-// is a label input + type select + delete button. Values flow back
-// into the draft via input/change handlers so the buffer always
-// reflects the visible state.
+// has a drag handle, label input, type select, and delete button.
+// Values flow back into the draft via input/change handlers so the
+// buffer always reflects the visible state. After rendering we
+// wire up HTML5 drag-and-drop on each row so the user can reorder.
 function _mfcRenderSchemaList() {
   const list = document.getElementById("mfc-schema-list");
   if (_mfcSchemaDraft.length === 0) {
@@ -2678,6 +2785,7 @@ function _mfcRenderSchemaList() {
   }
   list.innerHTML = _mfcSchemaDraft.map((f, i) => `
     <div class="mfc-schema-row" data-schema-idx="${i}">
+      <span class="mfc-schema-grip" title="Drag to reorder">⋮⋮</span>
       <input type="text" placeholder="Field name (e.g. Spouse, Year Built)"
              value="${esc(f.label || "")}"
              oninput="_mfcSchemaUpdate(${i}, 'label', this.value)">
@@ -2693,6 +2801,105 @@ function _mfcRenderSchemaList() {
               onclick="_mfcSchemaDeleteRow(${i})">×</button>
     </div>
   `).join("");
+  _mfcWireSchemaDrag();
+}
+
+// Wire HTML5 drag-and-drop on every schema row in the modal.
+// Approach: rows are NOT draggable by default — we toggle the
+// `draggable` attribute ON only when the user mousedowns on the
+// grip handle. Otherwise dragging the label input would conflict
+// with text-selection inside it (the input would either start a
+// drag instead of selecting text, or text-select would break
+// the drag entirely depending on browser).
+function _mfcWireSchemaDrag() {
+  const rows = document.querySelectorAll("#mfc-schema-list .mfc-schema-row");
+  let srcIdx = null;
+
+  const clearHover = () => {
+    rows.forEach(r => {
+      r.classList.remove("drag-over-top", "drag-over-bottom");
+    });
+  };
+
+  rows.forEach(row => {
+    const grip = row.querySelector(".mfc-schema-grip");
+    if (grip) {
+      // Enable draggable on grip-mousedown, disable it on row mouseup
+      // (after dragend cleanup runs). This narrows the drag origin
+      // to the grip without disabling drag entirely.
+      grip.addEventListener("mousedown", () => {
+        row.setAttribute("draggable", "true");
+      });
+    }
+    row.addEventListener("mouseleave", () => {
+      // If the user mousedowns the grip then moves the cursor away
+      // without starting a drag, clean up so other rows aren't
+      // accidentally draggable.
+      if (!row.classList.contains("dragging")) {
+        row.removeAttribute("draggable");
+      }
+    });
+    row.addEventListener("dragstart", e => {
+      srcIdx = parseInt(row.dataset.schemaIdx, 10);
+      row.classList.add("dragging");
+      // Required for Firefox to start the drag.
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", String(srcIdx));
+      }
+    });
+
+    row.addEventListener("dragend", () => {
+      row.classList.remove("dragging");
+      row.removeAttribute("draggable");
+      clearHover();
+      srcIdx = null;
+    });
+
+    row.addEventListener("dragover", e => {
+      e.preventDefault();
+      if (srcIdx == null) return;
+      const tgtIdx = parseInt(row.dataset.schemaIdx, 10);
+      if (tgtIdx === srcIdx) {
+        clearHover();
+        return;
+      }
+      // Determine top-half vs bottom-half of the hovered row.
+      const rect = row.getBoundingClientRect();
+      const isTop = (e.clientY - rect.top) < (rect.height / 2);
+      clearHover();
+      row.classList.add(isTop ? "drag-over-top" : "drag-over-bottom");
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+    });
+
+    row.addEventListener("dragleave", () => {
+      row.classList.remove("drag-over-top", "drag-over-bottom");
+    });
+
+    row.addEventListener("drop", e => {
+      e.preventDefault();
+      if (srcIdx == null) return;
+      const tgtIdx = parseInt(row.dataset.schemaIdx, 10);
+      const rect = row.getBoundingClientRect();
+      const isTop = (e.clientY - rect.top) < (rect.height / 2);
+      // Compute the insertion index. If we dropped on the top half
+      // of the target, insert ABOVE it; bottom half, insert BELOW.
+      let insertAt = isTop ? tgtIdx : tgtIdx + 1;
+      // Splicing accounting: when moving downward past the source's
+      // original position, the index needs adjusting because the
+      // removal shifts subsequent indices left by one.
+      if (srcIdx < insertAt) insertAt -= 1;
+      if (insertAt === srcIdx) {
+        clearHover();
+        return;  // no-op
+      }
+      const [moved] = _mfcSchemaDraft.splice(srcIdx, 1);
+      _mfcSchemaDraft.splice(insertAt, 0, moved);
+      clearHover();
+      srcIdx = null;
+      _mfcRenderSchemaList();
+    });
+  });
 }
 
 function _mfcSchemaUpdate(idx, key, value) {
@@ -2980,23 +3187,21 @@ function openMfcCrm(docNum, sourceRecords) {
             </select>`;
           } else if (f.type === "date") {
             control = `<input type="date" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
-          } else if (f.type === "money") {
-            // Money: $ prefix outside the input, value stored as plain
-            // number string. The user types numbers — formatting (commas,
-            // currency symbol) happens visually around the input.
-            control = `<div class="mfc-custom-affix mfc-custom-affix-money">
-              <span class="mfc-custom-affix-symbol">$</span>
-              <input type="number" step="any" inputmode="decimal"
-                     data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">
-            </div>`;
-          } else if (f.type === "percent") {
-            // Percent: % suffix outside the input. User types the number
-            // (e.g. 5.25), display shows "5.25 %".
-            control = `<div class="mfc-custom-affix mfc-custom-affix-percent">
-              <input type="number" step="any" inputmode="decimal"
-                     data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">
-              <span class="mfc-custom-affix-symbol">%</span>
-            </div>`;
+          } else if (f.type === "money" || f.type === "percent") {
+            // Money / percent fields: shown formatted ("$172,000" or
+            // "5.2%") in a read-only display by default. Click the
+            // display → it swaps to a plain number input. Enter or
+            // blur commits and returns to formatted display. The raw
+            // value stored is the plain number string (no symbols,
+            // no commas) so calculations stay easy.
+            const formatted = _mfcFormatCustomValue(cur, f.type);
+            const emptyCls = cur === "" ? " empty" : "";
+            control = `<div class="mfc-custom-formatted${emptyCls}"
+                            data-mfc-custom-id="${esc(f.id)}"
+                            data-mfc-custom-type="${esc(f.type)}"
+                            data-raw-val="${esc(cur)}"
+                            onclick="_mfcCustomStartEdit(this)"
+                            title="Click to edit">${esc(formatted)}</div>`;
           } else if (f.type === "number") {
             control = `<input type="number" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
           } else {
