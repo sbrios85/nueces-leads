@@ -1,0 +1,96 @@
+name: Cleanup orphan prop_addresses (one-shot)
+
+# ONE-SHOT CLEANUP for records that have a stale prop_address attached
+# from a now-evicted NCAD parcel.
+#
+# Background:
+#   Before 2026-05-21, re-corroboration evicted wrong NCAD matches by
+#   clearing ncad_prop_id + mail_address + appraised_value, but it
+#   never touched prop_address. The assumption was that prop_address
+#   came from the PDF parser — but in real cases (Cardenas/Flores),
+#   the parser had failed to extract an address and fetch.py used the
+#   NCAD-cache site_addr as prop_address. When the NCAD link was then
+#   evicted as a wrong match, the address from that wrong parcel
+#   stayed on the record.
+#
+#   The structural fix is now in scraper/recorroborate_ncad.py, which
+#   conditionally clears prop_address when it matches the (about-to-be-
+#   evicted) NCAD parcel's cached site_addr. But that only fires on
+#   CURRENT evictions. Records evicted BEFORE that fix still have the
+#   stale wrong addresses.
+#
+#   This workflow runs a one-time sweep that auto-detects those records
+#   and clears the wrong prop_address.
+#
+# Detection logic (cleanup_orphan_prop_addresses.py):
+#   For each record with no ncad_prop_id but has prop_address,
+#   look up its owner in the NCAD search cache. If the cached
+#   site_addr matches the record's prop_address (after normalization),
+#   that's proof the address came from esearch attachment, not from
+#   PDF — clear it.
+#
+# WHEN TO USE:
+#   Run once after deploying the recorroborate_ncad.py conditional-
+#   prop_address-eviction fix. Future evictions handle this case
+#   automatically, so no need to run regularly.
+#
+# WHEN NOT TO USE:
+#   Don't run routinely. This is a one-time cleanup.
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply the changes (otherwise dry run)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "foreclosures-json-write"
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pull latest (catch checkout race)
+        # Belt-and-suspenders defense alongside the shared concurrency
+        # group — same pattern other JSON-writing workflows use.
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run cleanup
+        env:
+          LOG_LEVEL: INFO
+          PYTHONUNBUFFERED: "1"
+          CLEANUP_APPLY: "${{ inputs.apply && '1' || '0' }}"
+        run: python scraper/cleanup_orphan_prop_addresses.py
+
+      - name: Commit changes
+        if: ${{ inputs.apply }}
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          git add dashboard/foreclosures.json data/foreclosures.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no JSON changes to commit (nothing matched)"
+          else
+            git commit -m "chore: one-shot cleanup of orphan prop_addresses from prior NCAD evictions"
+            git push
+          fi
