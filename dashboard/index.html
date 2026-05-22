@@ -648,6 +648,257 @@
     margin-top: 4px;
   }
 
+  /* ============================================================
+     MFC-specific CRM styles (new layout 2026-05-22)
+     ------------------------------------------------------------
+     The MFC CRM gets a custom layout instead of the generic
+     CRM_CONFIG-driven one because the MFC workflow is materially
+     different from CCLN/TFC/TO/MO: time-sensitive (sale date
+     ticking), multi-touch outreach, and a real pipeline. Other
+     lead types continue to use the generic crm-grid layout above.
+     ============================================================ */
+
+  /* Property snapshot — compact two-column header card. */
+  .mfc-snapshot {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 22px; margin-bottom: 20px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px 32px;
+  }
+  @media (max-width: 780px) {
+    .mfc-snapshot { grid-template-columns: 1fr; }
+  }
+  .mfc-snap-row {
+    display: flex; gap: 10px; align-items: baseline;
+    font-size: 13px; line-height: 1.45;
+  }
+  .mfc-snap-row .k {
+    color: var(--muted); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.04em; min-width: 78px; flex-shrink: 0;
+  }
+  .mfc-snap-row .v { color: var(--fg); word-break: break-word; }
+  .mfc-snap-row .v.big {
+    font-size: 15px; font-weight: 600;
+  }
+  /* Equity coloring — green good (>30%), amber middling (10-30%),
+     red thin (<10% or negative). */
+  .equity-good { color: var(--good); font-weight: 600; }
+  .equity-mid  { color: var(--warn); font-weight: 600; }
+  .equity-bad  { color: var(--bad);  font-weight: 600; }
+
+  /* "More details" disclosure for the long readonly list. */
+  .mfc-details {
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px dashed var(--border);
+  }
+  .mfc-details > summary {
+    cursor: pointer; font-size: 12px; color: var(--accent);
+    user-select: none; outline: none;
+  }
+  .mfc-details > summary:hover { text-decoration: underline; }
+  .mfc-details[open] > summary { margin-bottom: 10px; }
+  .mfc-details-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+  }
+  @media (max-width: 780px) {
+    .mfc-details-grid { grid-template-columns: 1fr; }
+  }
+  .mfc-details-row {
+    display: flex; justify-content: space-between; gap: 10px;
+    font-size: 12px; padding: 4px 0;
+  }
+  .mfc-details-row .k { color: var(--muted); }
+  .mfc-details-row .v { color: var(--fg); text-align: right;
+                         word-break: break-word; }
+
+  /* Stage tracker — pill row at the top. */
+  .mfc-stages {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px; margin-bottom: 20px;
+  }
+  .mfc-stages-label {
+    font-size: 11px; text-transform: uppercase; color: var(--muted);
+    letter-spacing: 0.05em; margin-bottom: 10px;
+  }
+  .mfc-stage-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .mfc-stage-pill {
+    flex: 1 1 auto; min-width: 0;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--muted); border-radius: 6px;
+    padding: 8px 12px; font-size: 13px; cursor: pointer;
+    text-align: center; transition: all 0.1s;
+    white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mfc-stage-pill:hover {
+    border-color: var(--accent); color: var(--fg);
+  }
+  .mfc-stage-pill.active {
+    background: rgba(56,189,248,0.12);
+    border-color: var(--accent); color: var(--accent);
+    font-weight: 600;
+  }
+  /* Terminal stages (Closed / Dead) get distinctive coloring when
+     active so it's instantly visible they're not part of the
+     working pipeline. */
+  .mfc-stage-pill.active.closed-won {
+    background: rgba(34,197,94,0.12);
+    border-color: var(--good); color: var(--good);
+  }
+  .mfc-stage-pill.active.dead {
+    background: rgba(239,68,68,0.12);
+    border-color: var(--bad); color: var(--bad);
+  }
+  .mfc-stage-pill.active.watching {
+    background: rgba(245,158,11,0.12);
+    border-color: var(--warn); color: var(--warn);
+  }
+  /* Separator: visually divide active pipeline from terminal stages. */
+  .mfc-stage-sep {
+    width: 1px; background: var(--border); margin: 0 4px;
+    align-self: stretch;
+  }
+
+  /* Outreach attempts log — table inside a card. */
+  .mfc-attempts {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px;
+  }
+  .mfc-attempts-head {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 12px;
+  }
+  .mfc-attempts-head h3 {
+    margin: 0; font-size: 14px; font-weight: 600;
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mfc-add-attempt-btn {
+    background: var(--accent); color: white;
+    border: none; border-radius: 6px;
+    padding: 6px 12px; font-size: 12px; font-weight: 600;
+    cursor: pointer;
+  }
+  .mfc-add-attempt-btn:hover { opacity: 0.9; }
+  .mfc-attempt-row {
+    display: grid; grid-template-columns: 80px 80px 1fr 110px 28px;
+    gap: 10px; padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; align-items: baseline;
+  }
+  .mfc-attempt-row:last-child { border-bottom: none; }
+  .mfc-attempt-row .date  { color: var(--muted); font-size: 12px; }
+  .mfc-attempt-row .method {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    background: rgba(56,189,248,0.10); color: var(--accent);
+    font-size: 11px; font-weight: 600; text-align: center;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    width: fit-content; justify-self: start;
+  }
+  .mfc-attempt-row .notes { color: var(--fg); word-break: break-word; }
+  .mfc-attempt-row .response {
+    font-size: 12px; color: var(--muted); text-align: right;
+  }
+  .mfc-attempt-row .response.pos { color: var(--good); font-weight: 600; }
+  .mfc-attempt-row .response.neg { color: var(--bad); font-weight: 600; }
+  .mfc-del-attempt {
+    background: transparent; border: none; color: var(--muted);
+    cursor: pointer; font-size: 16px; padding: 0;
+    line-height: 1; opacity: 0.4;
+  }
+  .mfc-del-attempt:hover { color: var(--bad); opacity: 1; }
+  .mfc-attempts-empty {
+    color: var(--muted); font-size: 13px; padding: 12px 0;
+    text-align: center; font-style: italic;
+  }
+
+  /* Attempt modal */
+  .mfc-attempt-modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .mfc-attempt-modal-backdrop.open { display: flex; }
+  .mfc-attempt-modal {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px;
+    width: min(440px, 90vw);
+  }
+  .mfc-attempt-modal h3 {
+    margin: 0 0 18px; font-size: 16px;
+  }
+  .mfc-attempt-modal .crm-field { margin-bottom: 12px; }
+  .mfc-attempt-modal-actions {
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin-top: 18px;
+  }
+  .mfc-attempt-modal-actions button {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--fg); border-radius: 6px;
+    padding: 7px 16px; font: inherit; cursor: pointer;
+  }
+  .mfc-attempt-modal-actions button.primary {
+    background: var(--accent); border-color: var(--accent);
+    color: white; font-weight: 600;
+  }
+  .mfc-attempt-modal-actions button:hover { border-color: var(--accent); }
+
+  /* Activity log — collapsed disclosure at the bottom. */
+  .mfc-activity {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 18px; margin-top: 20px;
+  }
+  .mfc-activity > summary {
+    cursor: pointer; font-size: 12px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    user-select: none; outline: none;
+  }
+  .mfc-activity > summary:hover { color: var(--accent); }
+  .mfc-activity-list {
+    margin-top: 12px; max-height: 240px; overflow-y: auto;
+  }
+  .mfc-activity-row {
+    display: flex; gap: 10px; padding: 5px 0;
+    font-size: 12px; color: var(--muted);
+  }
+  .mfc-activity-row .ts {
+    color: var(--muted); flex-shrink: 0; min-width: 110px;
+    font-variant-numeric: tabular-nums;
+  }
+  .mfc-activity-row .ev { color: var(--fg); }
+
+  /* MFC layout — main grid with quick-fill on the right. */
+  .mfc-main {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 880px) {
+    .mfc-main { grid-template-columns: 1fr; }
+  }
+
+  /* Notes card — full-width below the grid. */
+  .mfc-notes {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px; margin-top: 20px;
+  }
+  .mfc-notes h3 {
+    margin: 0 0 12px; font-size: 14px; font-weight: 600;
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mfc-notes textarea {
+    width: 100%; box-sizing: border-box; min-height: 160px;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 6px;
+    padding: 10px 12px; font: inherit; resize: vertical;
+  }
+  .mfc-notes textarea:focus {
+    outline: none; border-color: var(--accent);
+  }
+
   /* CRM side-panel drawer */
   .drawer-backdrop {
     display: none; position: fixed; inset: 0;
@@ -1316,6 +1567,41 @@
   </div>
 </div>
 
+<!-- ======== MFC outreach-attempt modal ======== -->
+<!-- Renders a small modal where the user types in an outreach
+     attempt (date, method, notes, response). Opened by the
+     "+ Log attempt" button in the MFC CRM and by clicking an
+     existing attempt row to edit it. Save is handled by
+     _mfcSaveAttempt() in the script below. -->
+<div class="mfc-attempt-modal-backdrop" id="mfc-attempt-modal-backdrop"
+     onclick="if(event.target===this)_mfcCloseAttemptModal()">
+  <div class="mfc-attempt-modal" role="dialog"
+       aria-labelledby="mfc-attempt-modal-title">
+    <h3 id="mfc-attempt-modal-title">Log outreach attempt</h3>
+    <div class="crm-field">
+      <label>Date</label>
+      <input type="date" id="mfc-attempt-date">
+    </div>
+    <div class="crm-field">
+      <label>Method</label>
+      <select id="mfc-attempt-method"></select>
+    </div>
+    <div class="crm-field">
+      <label>Notes</label>
+      <textarea id="mfc-attempt-notes" rows="3"
+                placeholder="What happened? (optional)"></textarea>
+    </div>
+    <div class="crm-field">
+      <label>Response</label>
+      <select id="mfc-attempt-response"></select>
+    </div>
+    <div class="mfc-attempt-modal-actions">
+      <button onclick="_mfcCloseAttemptModal()">Cancel</button>
+      <button class="primary" onclick="_mfcSaveAttempt()">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // CRM state — persisted in localStorage, keyed by doc_num
@@ -1655,6 +1941,505 @@ function moneyFmt(v) {
   return "$" + n.toLocaleString("en-US", {maximumFractionDigits: 0});
 }
 
+// ================================================================
+// MFC CRM — custom layout for Mortgage Foreclosures
+// ----------------------------------------------------------------
+// Replaces the generic CRM_CONFIG-driven layout (`openCrm`) for MFC
+// leads only. The other lead types (CCLN/TFC/TO/MO) continue to use
+// the generic layout until we get the MFC design right, then we
+// template the same approach for them.
+//
+// Design rationale: MFC leads have a real pipeline (new → contacted
+// → negotiating → under contract → closed/dead) and multi-touch
+// outreach (mail, knock, phone, text), and the sale-date clock is
+// always ticking. The generic two-card layout doesn't surface any of
+// that. This layout puts the stage tracker and outreach log up front
+// so the lead state is visible at a glance.
+//
+// Data model (stored under nueces_mfc_crm_v1 in localStorage):
+//   entry = {
+//     // existing legacy fields (kept for backward-compat):
+//     phone, email, last_contact, next_followup,
+//     reinstatement_amount, sale_confirmed, occupancy, notes,
+//
+//     // NEW fields:
+//     stage:    string  // "new"|"contacted"|"negotiating"|
+//                       //  "under_contract"|"closed_won"|
+//                       //  "watching"|"dead"
+//     attempts: Array<{ id, date, method, notes, response }>
+//     activity: Array<{ ts, ev }>   // auto-generated timestamps
+//     _updated_at: ISO string
+//   }
+// ================================================================
+
+// Stage definitions — order matters (left-to-right in the UI),
+// terminal stages are flagged so they get visual separation +
+// distinctive coloring.
+const MFC_STAGES = [
+  { key: "new",            label: "New",            terminal: false },
+  { key: "contacted",      label: "Contacted",      terminal: false },
+  { key: "negotiating",    label: "Negotiating",    terminal: false },
+  { key: "under_contract", label: "Under Contract", terminal: false },
+  { key: "closed_won",     label: "Closed",         terminal: true, kind: "closed-won" },
+  { key: "watching",       label: "Watching",       terminal: true, kind: "watching" },
+  { key: "dead",           label: "Dead",           terminal: true, kind: "dead" },
+];
+
+// Outreach methods. Tweak this list if you add channels.
+const MFC_METHODS = ["Mail", "Knock", "Phone", "Text", "Email",
+                     "Drive-by", "Other"];
+
+// Response categories for an outreach attempt.
+const MFC_RESPONSES = [
+  { key: "",           label: "—",                  cls: ""    },
+  { key: "no_answer",  label: "No answer",          cls: ""    },
+  { key: "no_response",label: "No response yet",    cls: ""    },
+  { key: "negative",   label: "Not interested",     cls: "neg" },
+  { key: "callback",   label: "Callback requested", cls: "pos" },
+  { key: "interested", label: "Interested",         cls: "pos" },
+];
+
+// Populate the modal's select dropdowns once when the script loads.
+// Runs deferred via DOMContentLoaded so the modal HTML is already in
+// the DOM. Idempotent if the document is already interactive.
+(function _mfcInitModalSelects() {
+  const populate = () => {
+    const ms = document.getElementById("mfc-attempt-method");
+    if (ms && !ms.options.length) {
+      MFC_METHODS.forEach(m => {
+        const o = document.createElement("option");
+        o.value = m; o.textContent = m;
+        ms.appendChild(o);
+      });
+    }
+    const rs = document.getElementById("mfc-attempt-response");
+    if (rs && !rs.options.length) {
+      MFC_RESPONSES.forEach(r => {
+        const o = document.createElement("option");
+        o.value = r.key; o.textContent = r.label;
+        rs.appendChild(o);
+      });
+    }
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", populate);
+  } else {
+    populate();
+  }
+})();
+
+// Logs an activity row on the MFC entry. Used by stage changes,
+// outreach edits, etc. Kept ≤50 entries per lead so localStorage
+// stays bounded if a lead is very active.
+function _mfcLogActivity(docNum, eventText) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const activity = Array.isArray(entry.activity) ? entry.activity : [];
+  activity.unshift({ ts: new Date().toISOString(), ev: eventText });
+  // Cap to 50 entries; oldest drops off.
+  entry.activity = activity.slice(0, 50);
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  saveCrmStore("mfc", store);
+}
+
+function _mfcFormatActivityTs(iso) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleString("en-US", {
+    month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit",
+  });
+}
+
+// Equity calculation. Returns { dollars, pct, tier } where tier is
+// "good" (>30%), "mid" (10-30%), "bad" (<10% or negative). Returns
+// null when either value is missing (avoids misleading "$0").
+function _mfcCalcEquity(loan, appraised) {
+  // Number(null) is 0 in JS — that would silently treat a missing
+  // loan as "$0 owed" and show implausible 100% equity. Reject any
+  // null/undefined/empty input before coercing.
+  if (loan == null || loan === "" ||
+      appraised == null || appraised === "") return null;
+  const l = Number(loan);
+  const a = Number(appraised);
+  if (!isFinite(l) || !isFinite(a) || a <= 0 || l < 0) return null;
+  const dollars = a - l;
+  const pct = (dollars / a) * 100;
+  let tier;
+  if (pct > 30) tier = "good";
+  else if (pct >= 10) tier = "mid";
+  else tier = "bad";
+  return { dollars, pct, tier };
+}
+
+// Pending state for the "log attempt" modal so the Save button can
+// find what's being edited.
+let _mfcPendingAttempt = null;
+
+function openMfcCrm(docNum, sourceRecords) {
+  const rec = (sourceRecords || []).find(x => x.doc_num === docNum);
+  if (!rec) return;
+
+  // Remember return state (same pattern as openCrm).
+  const _mainEl = document.querySelector(".main");
+  const activePane = document.querySelector(".pane.active");
+  _crmReturn = {
+    pane: activePane ? activePane.id : null,
+    scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY,
+  };
+
+  const entry = getCrmEntry("mfc", docNum);
+  const currentStage = entry.stage || "new";
+  const attempts = Array.isArray(entry.attempts) ? entry.attempts : [];
+  const activity = Array.isArray(entry.activity) ? entry.activity : [];
+
+  const equity = _mfcCalcEquity(rec.loan_amount, rec.appraised_value);
+  const equityHtml = equity
+    ? `<span class="equity-${equity.tier}">${moneyFmt(equity.dollars)} (${equity.pct.toFixed(0)}%)</span>`
+    : `<span style="color:var(--muted)">—</span>`;
+
+  // --- Property snapshot ---
+  const saleDate = rec.sale_date
+    ? new Date(rec.sale_date + "T00:00:00")
+        .toLocaleDateString("en-US",
+          { month: "short", day: "numeric", year: "numeric" })
+    : "—";
+  const days = rec.days_until_sale;
+  const daysTxt = days == null ? ""
+    : days < 0 ? ` (${Math.abs(days)}d ago)`
+    : ` (${days}d)`;
+  const propCityLine = [rec.prop_city, rec.prop_state, rec.prop_zip]
+    .filter(Boolean).join(" ").trim();
+  const mailFull = [rec.mail_address, rec.mail_city, rec.mail_state, rec.mail_zip]
+    .filter(Boolean).join(" ").trim();
+  const loanDate = rec.deed_date
+    ? new Date(rec.deed_date + "T00:00:00")
+        .toLocaleDateString("en-US",
+          { month: "short", year: "numeric" })
+    : "—";
+
+  const snapshotHtml = `
+    <div class="mfc-snapshot">
+      <div class="mfc-snap-row">
+        <span class="k">Owner</span>
+        <span class="v big">${esc(rec.owner || "—")}</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Sale Date</span>
+        <span class="v big">${esc(saleDate)}${esc(daysTxt)}</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Property</span>
+        <span class="v">${esc(rec.prop_address || "—")}${
+          propCityLine ? `<br><span style="color:var(--muted);font-size:12px">${esc(propCityLine)}</span>` : ""
+        }</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Equity</span>
+        <span class="v big">${equityHtml}</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Lender</span>
+        <span class="v">${esc(rec.lender || "—")}</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Loan</span>
+        <span class="v">${moneyFmt(rec.loan_amount)} <span style="color:var(--muted)">(${esc(loanDate)})</span></span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Legal</span>
+        <span class="v">${esc(rec.legal || "—")}</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Appraised</span>
+        <span class="v">${moneyFmt(rec.appraised_value)}</span>
+      </div>
+
+      <details class="mfc-details" style="grid-column: 1/-1;">
+        <summary>More details</summary>
+        <div class="mfc-details-grid">
+          <div class="mfc-details-row"><span class="k">Doc #</span><span class="v">${esc(rec.doc_num || "—")}</span></div>
+          <div class="mfc-details-row"><span class="k">Recorded</span><span class="v">${esc(rec.recorded || "—")}</span></div>
+          <div class="mfc-details-row"><span class="k">Loan Document</span><span class="v">${esc(rec.loan_doc || "—")}</span></div>
+          <div class="mfc-details-row"><span class="k">Loan Mod Document</span><span class="v">${esc(rec.loan_mod_doc || "—")}</span></div>
+          <div class="mfc-details-row"><span class="k">Original Loan Date</span><span class="v">${esc(rec.deed_date_original || "—")}</span></div>
+          <div class="mfc-details-row"><span class="k">Mailing Address</span><span class="v">${esc(mailFull || "—")}</span></div>
+          <div class="mfc-details-row"><span class="k">NCAD prop_id</span><span class="v">${esc(rec.ncad_prop_id || "—")}</span></div>
+          <div class="mfc-details-row"><span class="k">Days Until Sale</span><span class="v">${days == null ? "—" : days + " days"}</span></div>
+        </div>
+      </details>
+    </div>
+  `;
+
+  // --- Stage tracker ---
+  const stageHtml = `
+    <div class="mfc-stages">
+      <div class="mfc-stages-label">Stage</div>
+      <div class="mfc-stage-row">
+        ${MFC_STAGES.filter(s => !s.terminal).map(s => `
+          <button class="mfc-stage-pill ${s.key === currentStage ? "active" : ""}"
+                  onclick="_mfcSetStage('${esc(docNum)}', '${s.key}')">
+            ${esc(s.label)}
+          </button>
+        `).join("")}
+        <div class="mfc-stage-sep"></div>
+        ${MFC_STAGES.filter(s => s.terminal).map(s => `
+          <button class="mfc-stage-pill ${s.key === currentStage ? "active " + (s.kind || "") : ""}"
+                  onclick="_mfcSetStage('${esc(docNum)}', '${s.key}')">
+            ${esc(s.label)}
+          </button>
+        `).join("")}
+      </div>
+    </div>
+  `;
+
+  // --- Outreach attempts log ---
+  const attemptsRowsHtml = attempts.length === 0
+    ? `<div class="mfc-attempts-empty">No outreach logged yet.</div>`
+    : attempts.map(a => {
+        const respDef = MFC_RESPONSES.find(r => r.key === (a.response || ""));
+        const respCls = respDef ? respDef.cls : "";
+        const respTxt = respDef ? respDef.label : "—";
+        const dateTxt = a.date
+          ? new Date(a.date + "T00:00:00").toLocaleDateString("en-US",
+              { month: "short", day: "numeric" })
+          : "—";
+        return `
+          <div class="mfc-attempt-row">
+            <span class="date">${esc(dateTxt)}</span>
+            <span class="method">${esc(a.method || "—")}</span>
+            <span class="notes">${esc(a.notes || "")}</span>
+            <span class="response ${respCls}">${esc(respTxt)}</span>
+            <button class="mfc-del-attempt"
+                    onclick="_mfcDeleteAttempt('${esc(docNum)}', '${esc(a.id)}')"
+                    title="Delete this attempt">×</button>
+          </div>
+        `;
+      }).join("");
+
+  const attemptsHtml = `
+    <div class="mfc-attempts">
+      <div class="mfc-attempts-head">
+        <h3>Outreach Attempts</h3>
+        <button class="mfc-add-attempt-btn"
+                onclick="_mfcOpenAttemptModal('${esc(docNum)}')">
+          + Log attempt
+        </button>
+      </div>
+      ${attemptsRowsHtml}
+    </div>
+  `;
+
+  // --- Quick-fill fields (right column) ---
+  const _v = k => entry[k] != null ? entry[k] : "";
+  const quickFillHtml = `
+    <div class="crm-card">
+      <h3>Quick Fill <span class="crm-saved" id="crm-saved">Saved ✓</span></h3>
+      <div class="crm-field">
+        <label>Phone</label>
+        <input type="text" data-mfc-key="phone" value="${esc(_v("phone"))}">
+      </div>
+      <div class="crm-field">
+        <label>Email</label>
+        <input type="text" data-mfc-key="email" value="${esc(_v("email"))}">
+      </div>
+      <div class="crm-field">
+        <label>Next Follow-up</label>
+        <input type="date" data-mfc-key="next_followup" value="${esc(_v("next_followup"))}">
+      </div>
+      <div class="crm-field">
+        <label>Reinstatement Amount</label>
+        <input type="text" data-mfc-key="reinstatement_amount" value="${esc(_v("reinstatement_amount"))}">
+      </div>
+      <div class="crm-field">
+        <label>Sale Date Confirmed?</label>
+        <select data-mfc-key="sale_confirmed">
+          <option value=""${_v("sale_confirmed")===""?" selected":""}>—</option>
+          <option value="yes"${_v("sale_confirmed")==="yes"?" selected":""}>Yes</option>
+          <option value="no"${_v("sale_confirmed")==="no"?" selected":""}>No</option>
+        </select>
+      </div>
+      <div class="crm-field">
+        <label>Occupancy</label>
+        <select data-mfc-key="occupancy">
+          <option value=""${_v("occupancy")===""?" selected":""}>—</option>
+          <option value="owner"${_v("occupancy")==="owner"?" selected":""}>Owner-occupied</option>
+          <option value="tenant"${_v("occupancy")==="tenant"?" selected":""}>Tenant</option>
+          <option value="vacant"${_v("occupancy")==="vacant"?" selected":""}>Vacant</option>
+          <option value="unknown"${_v("occupancy")==="unknown"?" selected":""}>Unknown</option>
+        </select>
+      </div>
+    </div>
+  `;
+
+  // --- Notes (full width) ---
+  const notesHtml = `
+    <div class="mfc-notes">
+      <h3>Notes</h3>
+      <textarea data-mfc-key="notes" placeholder="Free-form notes…">${esc(_v("notes"))}</textarea>
+    </div>
+  `;
+
+  // --- Activity log ---
+  const activityHtml = `
+    <details class="mfc-activity">
+      <summary>Activity log (${activity.length})</summary>
+      <div class="mfc-activity-list">
+        ${activity.length === 0
+          ? `<div style="color:var(--muted);font-size:12px;font-style:italic">No activity yet.</div>`
+          : activity.map(e => `
+            <div class="mfc-activity-row">
+              <span class="ts">${esc(_mfcFormatActivityTs(e.ts))}</span>
+              <span class="ev">${esc(e.ev)}</span>
+            </div>
+          `).join("")
+        }
+      </div>
+    </details>
+  `;
+
+  // --- Compose ---
+  document.getElementById("crm-title").textContent =
+    (rec.owner || "Lead") + " — Mortgage Foreclosure";
+  document.getElementById("crm-body").innerHTML = `
+    ${snapshotHtml}
+    ${stageHtml}
+    <div class="mfc-main">
+      ${attemptsHtml}
+      ${quickFillHtml}
+    </div>
+    ${notesHtml}
+    ${activityHtml}
+  `;
+
+  // --- Auto-save wiring for quick-fill + notes ---
+  let saveTimer = null;
+  const flash = () => {
+    const s = document.getElementById("crm-saved");
+    if (!s) return;
+    s.classList.add("show");
+    clearTimeout(s._t);
+    s._t = setTimeout(() => s.classList.remove("show"), 1200);
+  };
+  document.querySelectorAll("#crm-body [data-mfc-key]").forEach(el => {
+    const key = el.dataset.mfcKey;
+    const tag = el.tagName.toLowerCase();
+    if ((tag === "input" && el.type === "text") || tag === "textarea") {
+      el.addEventListener("input", () => {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          setCrmField("mfc", docNum, key, el.value);
+          flash();
+        }, 400);
+      });
+    } else {
+      el.addEventListener("change", () => {
+        setCrmField("mfc", docNum, key, el.value);
+        flash();
+      });
+    }
+  });
+
+  // --- Show CRM view ---
+  document.querySelectorAll(".pane").forEach(p =>
+      p.classList.remove("active"));
+  const crm = document.getElementById("crm-view");
+  crm.hidden = false;
+  if (_mainEl) _mainEl.scrollTop = 0;
+  else window.scrollTo(0, 0);
+}
+
+// Stage handler — updates the stored stage AND logs an activity row,
+// then re-renders the CRM so the pill row reflects the change.
+function _mfcSetStage(docNum, newStage) {
+  const entry = getCrmEntry("mfc", docNum);
+  const oldStage = entry.stage || "new";
+  if (oldStage === newStage) return;  // no-op
+  setCrmField("mfc", docNum, "stage", newStage);
+  const oldLbl = (MFC_STAGES.find(s => s.key === oldStage) || {}).label || oldStage;
+  const newLbl = (MFC_STAGES.find(s => s.key === newStage) || {}).label || newStage;
+  _mfcLogActivity(docNum, `Stage: ${oldLbl} → ${newLbl}`);
+  // Re-open to refresh the UI. Pass FC_RAW as the source (MFC lives
+  // in the foreclosures records array).
+  openMfcCrm(docNum, FC_RAW);
+}
+
+// Open the "log attempt" modal. The actual save happens in
+// _mfcSaveAttempt below.
+function _mfcOpenAttemptModal(docNum, attemptId) {
+  _mfcPendingAttempt = { docNum, attemptId };
+  const isEdit = !!attemptId;
+  let existing = {};
+  if (isEdit) {
+    const entry = getCrmEntry("mfc", docNum);
+    const a = (entry.attempts || []).find(x => x.id === attemptId);
+    if (a) existing = a;
+  }
+  // Default date = today.
+  const todayIso = new Date().toISOString().slice(0, 10);
+  document.getElementById("mfc-attempt-date").value =
+    existing.date || todayIso;
+  document.getElementById("mfc-attempt-method").value =
+    existing.method || "Mail";
+  document.getElementById("mfc-attempt-notes").value =
+    existing.notes || "";
+  document.getElementById("mfc-attempt-response").value =
+    existing.response || "";
+  document.getElementById("mfc-attempt-modal-backdrop")
+    .classList.add("open");
+  document.getElementById("mfc-attempt-notes").focus();
+}
+
+function _mfcCloseAttemptModal() {
+  document.getElementById("mfc-attempt-modal-backdrop")
+    .classList.remove("open");
+  _mfcPendingAttempt = null;
+}
+
+function _mfcSaveAttempt() {
+  if (!_mfcPendingAttempt) return;
+  const { docNum, attemptId } = _mfcPendingAttempt;
+  const date     = document.getElementById("mfc-attempt-date").value;
+  const method   = document.getElementById("mfc-attempt-method").value;
+  const notes    = document.getElementById("mfc-attempt-notes").value;
+  const response = document.getElementById("mfc-attempt-response").value;
+
+  const entry = getCrmEntry("mfc", docNum);
+  const attempts = Array.isArray(entry.attempts) ? entry.attempts.slice() : [];
+
+  if (attemptId) {
+    // Edit existing.
+    const i = attempts.findIndex(a => a.id === attemptId);
+    if (i >= 0) attempts[i] = { ...attempts[i], date, method, notes, response };
+    _mfcLogActivity(docNum, `Edited outreach: ${method} (${date})`);
+  } else {
+    // New.
+    const id = "att_" + Math.random().toString(36).slice(2, 10);
+    attempts.unshift({ id, date, method, notes, response });
+    _mfcLogActivity(docNum,
+      `Logged outreach: ${method} (${date})` +
+      (response ? ` — ${(MFC_RESPONSES.find(r=>r.key===response)||{}).label||response}` : ""));
+    // Auto-update "last_contact" to this date if it's later than
+    // what's saved — small convenience.
+    if (!entry.last_contact || date > entry.last_contact) {
+      setCrmField("mfc", docNum, "last_contact", date);
+    }
+  }
+  setCrmField("mfc", docNum, "attempts", attempts);
+  _mfcCloseAttemptModal();
+  openMfcCrm(docNum, FC_RAW);
+}
+
+function _mfcDeleteAttempt(docNum, attemptId) {
+  if (!confirm("Delete this outreach attempt?")) return;
+  const entry = getCrmEntry("mfc", docNum);
+  const attempts = (entry.attempts || []).filter(a => a.id !== attemptId);
+  setCrmField("mfc", docNum, "attempts", attempts);
+  _mfcLogActivity(docNum, "Deleted an outreach attempt");
+  openMfcCrm(docNum, FC_RAW);
+}
+
 function openCrm(type, docNum, sourceRecords) {
   const cfg = CRM_CONFIG[type];
   if (!cfg) return;
@@ -1793,8 +2578,15 @@ function closeCrm() {
 
 document.getElementById("crm-back").onclick = closeCrm;
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" &&
-      !document.getElementById("crm-view").hidden) closeCrm();
+  if (e.key !== "Escape") return;
+  // Priority: attempt modal first (if open), then CRM view.
+  const attemptModal = document.getElementById(
+    "mfc-attempt-modal-backdrop");
+  if (attemptModal && attemptModal.classList.contains("open")) {
+    _mfcCloseAttemptModal();
+    return;
+  }
+  if (!document.getElementById("crm-view").hidden) closeCrm();
 });
 
 // ============================================================
@@ -3019,7 +3811,7 @@ function buildFcRow(r, isDead) {
             anchor.nodeType === 1 ? anchor : anchor.parentNode))
         return;
     }
-    openCrm("mfc", r.doc_num, FC_RAW);
+    openMfcCrm(r.doc_num, FC_RAW);
   });
   return tr;
 }
