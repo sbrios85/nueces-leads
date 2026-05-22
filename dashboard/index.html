@@ -992,6 +992,21 @@
     color: var(--fg); border-radius: 6px;
     padding: 7px 10px; font: inherit; font-size: 13px;
   }
+  /* "SYSTEM" pill next to hard-wired field labels — tells the user
+     this field can't be deleted/renamed via Manage Fields. Small,
+     muted, doesn't compete with the label text. */
+  .mfc-systemfield-tag {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 5px;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.06em;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--muted);
+    background: rgba(148,163,184,0.08);
+    text-transform: uppercase;
+  }
   .mfc-custom-field input:focus,
   .mfc-custom-field select:focus {
     outline: none; border-color: var(--accent);
@@ -1069,30 +1084,47 @@
     border-bottom: 1px solid var(--border);
   }
   .mfc-contact:last-child { border-bottom: none; padding-bottom: 0; }
+  /* Header row: Title (narrow) | Name (wider) | delete X. The two
+     inputs sit side-by-side so the user can type a label like
+     "Realtor" + "John Garcia" and read them as one line. */
   .mfc-contact-head {
-    display: flex; align-items: center; gap: 8px;
+    display: grid;
+    grid-template-columns: minmax(80px, 90px) 1fr 26px;
+    gap: 6px; align-items: center;
     margin-bottom: 8px;
   }
+  .mfc-contact-title,
   .mfc-contact-name {
-    flex: 1; background: transparent;
+    background: transparent;
     border: none; border-bottom: 1px dashed transparent;
-    color: var(--fg); font-size: 14px; font-weight: 600;
-    padding: 2px 4px; font: inherit; font-weight: 600;
-    font-size: 14px;
+    color: var(--fg);
+    padding: 2px 4px; font: inherit;
     border-radius: 3px;
     transition: border-color 0.1s, background 0.1s;
   }
+  .mfc-contact-title {
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.04em; color: var(--muted);
+    font-weight: 600;
+  }
+  .mfc-contact-name {
+    font-size: 14px; font-weight: 600;
+  }
+  .mfc-contact-title:hover,
   .mfc-contact-name:hover {
     border-bottom-color: var(--border);
   }
+  .mfc-contact-title:focus,
   .mfc-contact-name:focus {
     outline: none;
     border-bottom-color: var(--accent);
     background: rgba(56,189,248,0.06);
   }
+  .mfc-contact-title::placeholder,
   .mfc-contact-name::placeholder {
     color: var(--muted); font-weight: 400;
     font-style: italic;
+    opacity: 0.6;
   }
   .mfc-contact-del {
     background: transparent; border: none; color: var(--muted);
@@ -1104,6 +1136,22 @@
     display: flex; flex-direction: column; gap: 8px;
   }
   .mfc-contact-fields .crm-field { margin-bottom: 0; }
+  /* Per-contact notes textarea — small (2 rows by default) but
+     vertically resizable in case the user wants more room. */
+  .mfc-contact-fields textarea {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font: inherit; font-size: 13px;
+    resize: vertical;
+    min-height: 50px;
+  }
+  .mfc-contact-fields textarea:focus {
+    outline: none; border-color: var(--accent);
+  }
 
   /* Schema-manager modal */
   .mfc-schema-modal-backdrop {
@@ -2713,8 +2761,15 @@ function _mfcAddContact(docNum) {
   const entry = store[docNum] || {};
   const contacts = Array.isArray(entry.contacts)
     ? entry.contacts.slice() : [];
+  // Initialize with the full per-contact schema. Fields not used
+  // by older entries (title/followup/notes added 2026-05-22) start
+  // empty; older entries without these keys still render fine
+  // since the templates use `c.title || ""` etc.
   contacts.push({
-    id: _mfcGenContactId(), name: "", phone: "", email: "",
+    id: _mfcGenContactId(),
+    title: "", name: "",
+    phone: "", email: "",
+    followup: "", notes: "",
   });
   entry.contacts = contacts;
   entry._updated_at = new Date().toISOString();
@@ -3170,49 +3225,75 @@ function openMfcCrm(docNum, sourceRecords) {
   // Schema lives globally; per-lead values live on the entry. The
   // "Manage" button opens a modal that lets the user add/rename/
   // delete field definitions across all MFC leads at once.
+  //
+  // Hard-wired fields at the top: Occupancy. These are NOT
+  // configurable via Manage Fields — they're part of the lead
+  // schema architecture, with fixed values that other features can
+  // filter on later (e.g. "show vacant houses only"). They live on
+  // entry root (`entry.occupancy`) not in custom_fields, so they're
+  // distinct from user-added research fields.
   const customSchema = loadMfcCustomSchema();
   const customValues = (entry.custom_fields || {});
-  const customFieldRowsHtml = customSchema.length === 0
-    ? `<div class="mfc-custom-empty">No custom fields yet. Click <strong>Manage</strong> to add research fields like Spouse, Year Built, Sqft, Vacant?, etc.</div>`
-    : `<div class="mfc-custom-grid">
-        ${customSchema.map(f => {
-          const cur = customValues[f.id] || "";
-          let control;
-          if (f.type === "yesno") {
-            control = `<select data-mfc-custom-id="${esc(f.id)}">
-              <option value=""${cur===""?" selected":""}>—</option>
-              <option value="yes"${cur==="yes"?" selected":""}>Yes</option>
-              <option value="no"${cur==="no"?" selected":""}>No</option>
-              <option value="unknown"${cur==="unknown"?" selected":""}>Unknown</option>
-            </select>`;
-          } else if (f.type === "date") {
-            control = `<input type="date" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
-          } else if (f.type === "money" || f.type === "percent") {
-            // Money / percent fields: shown formatted ("$172,000" or
-            // "5.2%") in a read-only display by default. Click the
-            // display → it swaps to a plain number input. Enter or
-            // blur commits and returns to formatted display. The raw
-            // value stored is the plain number string (no symbols,
-            // no commas) so calculations stay easy.
-            const formatted = _mfcFormatCustomValue(cur, f.type);
-            const emptyCls = cur === "" ? " empty" : "";
-            control = `<div class="mfc-custom-formatted${emptyCls}"
-                            data-mfc-custom-id="${esc(f.id)}"
-                            data-mfc-custom-type="${esc(f.type)}"
-                            data-raw-val="${esc(cur)}"
-                            onclick="_mfcCustomStartEdit(this)"
-                            title="Click to edit">${esc(formatted)}</div>`;
-          } else if (f.type === "number") {
-            control = `<input type="number" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
-          } else {
-            control = `<input type="text" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
-          }
-          return `<div class="mfc-custom-field">
-            <label>${esc(f.label)}</label>
-            ${control}
-          </div>`;
-        }).join("")}
-      </div>`;
+  // Build the Occupancy field — always rendered, regardless of
+  // whether any user-defined custom fields exist.
+  const occVal = entry.occupancy || "";
+  const occupancyHtml = `
+    <div class="mfc-custom-field mfc-custom-systemfield">
+      <label>Occupancy <span class="mfc-systemfield-tag" title="System field (always present)">SYSTEM</span></label>
+      <select data-mfc-key="occupancy">
+        <option value=""${occVal===""?" selected":""}>—</option>
+        <option value="owner"${occVal==="owner"?" selected":""}>Owner-occupied</option>
+        <option value="tenant"${occVal==="tenant"?" selected":""}>Tenant</option>
+        <option value="vacant"${occVal==="vacant"?" selected":""}>Vacant</option>
+        <option value="unknown"${occVal==="unknown"?" selected":""}>Unknown</option>
+      </select>
+    </div>
+  `;
+  const userFieldRowsHtml = customSchema.length === 0
+    ? `<div class="mfc-custom-empty">No custom fields yet. Click <strong>Manage</strong> to add research fields like Spouse, Year Built, Sqft, etc.</div>`
+    : customSchema.map(f => {
+        const cur = customValues[f.id] || "";
+        let control;
+        if (f.type === "yesno") {
+          control = `<select data-mfc-custom-id="${esc(f.id)}">
+            <option value=""${cur===""?" selected":""}>—</option>
+            <option value="yes"${cur==="yes"?" selected":""}>Yes</option>
+            <option value="no"${cur==="no"?" selected":""}>No</option>
+            <option value="unknown"${cur==="unknown"?" selected":""}>Unknown</option>
+          </select>`;
+        } else if (f.type === "date") {
+          control = `<input type="date" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+        } else if (f.type === "money" || f.type === "percent") {
+          const formatted = _mfcFormatCustomValue(cur, f.type);
+          const emptyCls = cur === "" ? " empty" : "";
+          control = `<div class="mfc-custom-formatted${emptyCls}"
+                          data-mfc-custom-id="${esc(f.id)}"
+                          data-mfc-custom-type="${esc(f.type)}"
+                          data-raw-val="${esc(cur)}"
+                          onclick="_mfcCustomStartEdit(this)"
+                          title="Click to edit">${esc(formatted)}</div>`;
+        } else if (f.type === "number") {
+          control = `<input type="number" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+        } else {
+          control = `<input type="text" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+        }
+        return `<div class="mfc-custom-field">
+          <label>${esc(f.label)}</label>
+          ${control}
+        </div>`;
+      }).join("");
+  // Compose: Occupancy first, then the user's custom fields below.
+  // When the user has no custom fields yet, show the friendly
+  // "add some" prompt under Occupancy.
+  const customFieldRowsHtml = `
+    <div class="mfc-custom-grid">
+      ${occupancyHtml}
+      ${customSchema.length === 0 ? "" : userFieldRowsHtml}
+    </div>
+    ${customSchema.length === 0
+      ? `<div class="mfc-custom-empty">No custom research fields yet. Click <strong>Manage</strong> to add fields like ARV, Year Built, Sqft, Vacant?, etc.</div>`
+      : ""}
+  `;
   const customHtml = `
     <div class="mfc-custom">
       <div class="mfc-custom-head">
@@ -3224,48 +3305,40 @@ function openMfcCrm(docNum, sourceRecords) {
     </div>
   `;
 
-  // --- Quick-fill fields (right column) ---
+  // The Quick Fill card was removed 2026-05-22. Phone/Email moved
+  // to per-contact slots; Next Follow-up moved to per-contact;
+  // Occupancy moved to the Research card as a hard-wired field.
+  // The _v helper is still used by Notes and the Activity log.
   const _v = k => entry[k] != null ? entry[k] : "";
-  const quickFillHtml = `
-    <div class="crm-card">
-      <h3>Quick Fill <span class="crm-saved" id="crm-saved">Saved ✓</span></h3>
-      <div class="crm-field">
-        <label>Phone</label>
-        <input type="text" data-mfc-key="phone" value="${esc(_v("phone"))}">
-      </div>
-      <div class="crm-field">
-        <label>Email</label>
-        <input type="text" data-mfc-key="email" value="${esc(_v("email"))}">
-      </div>
-      <div class="crm-field">
-        <label>Next Follow-up</label>
-        <input type="date" data-mfc-key="next_followup" value="${esc(_v("next_followup"))}">
-      </div>
-      <div class="crm-field">
-        <label>Occupancy</label>
-        <select data-mfc-key="occupancy">
-          <option value=""${_v("occupancy")===""?" selected":""}>—</option>
-          <option value="owner"${_v("occupancy")==="owner"?" selected":""}>Owner-occupied</option>
-          <option value="tenant"${_v("occupancy")==="tenant"?" selected":""}>Tenant</option>
-          <option value="vacant"${_v("occupancy")==="vacant"?" selected":""}>Vacant</option>
-          <option value="unknown"${_v("occupancy")==="unknown"?" selected":""}>Unknown</option>
-        </select>
-      </div>
-    </div>
-  `;
 
   // --- Contacts card (per-lead list of editable contacts) ---
   // Each contact has its own name (editable as a sub-header) plus
   // phone and email. The "+ Add" button below appends a new blank
   // contact; X on each contact removes it.
+  // Each contact block (top → bottom):
+  //   Row 1: Title (narrow) + Name (wider) side-by-side, with the
+  //          delete X tucked at the end of the row.
+  //   Row 2: Phone (full width)
+  //   Row 3: Email (full width)
+  //   Row 4: Follow-up date (per-contact — different people may
+  //          have different next-touch dates).
+  //   Row 5: Notes (textarea, per-contact — small jottings about
+  //          THIS person specifically, not the lead overall.)
+  // Examples of Title + Name: "Realtor" + "John Garcia",
+  // "Neighbor" + "Susan Winters", "Co-borrower" + "Jane Doe".
   const contactsList = Array.isArray(entry.contacts) ? entry.contacts : [];
   const contactsBlocksHtml = contactsList.length === 0
-    ? `<div class="mfc-contacts-empty">No contacts yet. Click <strong>+ Add</strong> to add the borrower, co-borrower, realtor, etc.</div>`
+    ? `<div class="mfc-contacts-empty">No contacts yet. Click <strong>+ Add</strong> to add the borrower, co-borrower, realtor, neighbor, etc.</div>`
     : contactsList.map(c => `
         <div class="mfc-contact" data-contact-id="${esc(c.id)}">
           <div class="mfc-contact-head">
+            <input class="mfc-contact-title" type="text"
+                   placeholder="Title"
+                   value="${esc(c.title || "")}"
+                   data-mfc-contact-field="title"
+                   data-mfc-contact-id="${esc(c.id)}">
             <input class="mfc-contact-name" type="text"
-                   placeholder="Contact name (e.g. John, Jane, Realtor)"
+                   placeholder="Name"
                    value="${esc(c.name || "")}"
                    data-mfc-contact-field="name"
                    data-mfc-contact-id="${esc(c.id)}">
@@ -3286,6 +3359,19 @@ function openMfcCrm(docNum, sourceRecords) {
                      data-mfc-contact-field="email"
                      data-mfc-contact-id="${esc(c.id)}">
             </div>
+            <div class="crm-field">
+              <label>Follow-up</label>
+              <input type="date" value="${esc(c.followup || "")}"
+                     data-mfc-contact-field="followup"
+                     data-mfc-contact-id="${esc(c.id)}">
+            </div>
+            <div class="crm-field">
+              <label>Notes</label>
+              <textarea rows="2"
+                        placeholder="Notes about this contact…"
+                        data-mfc-contact-field="notes"
+                        data-mfc-contact-id="${esc(c.id)}">${esc(c.notes || "")}</textarea>
+            </div>
           </div>
         </div>
       `).join("");
@@ -3301,9 +3387,12 @@ function openMfcCrm(docNum, sourceRecords) {
   `;
 
   // --- Notes (full width) ---
+  // The "Saved ✓" indicator used to live on the Quick Fill card
+  // header. With Quick Fill removed, it moves here — Notes is the
+  // most-edited field and a logical place for save feedback.
   const notesHtml = `
     <div class="mfc-notes">
-      <h3>Notes</h3>
+      <h3>Notes <span class="crm-saved" id="crm-saved">Saved ✓</span></h3>
       <textarea data-mfc-key="notes" placeholder="Free-form notes…">${esc(_v("notes"))}</textarea>
     </div>
   `;
@@ -3351,7 +3440,6 @@ function openMfcCrm(docNum, sourceRecords) {
         ${customHtml}
       </div>
       <div class="mfc-col mfc-col-3">
-        ${quickFillHtml}
         ${contactsHtml}
       </div>
       <div class="mfc-fullrow">
@@ -3420,18 +3508,33 @@ function openMfcCrm(docNum, sourceRecords) {
 
   // Auto-save for contact fields. Each input is tagged with the
   // contact id and the field name (name/phone/email); we look both
-  // up and write to entry.contacts[i][field].
+  // Auto-save for contact fields. Each input is tagged with the
+  // contact id and the field name (title/name/phone/email/followup/
+  // notes); we look both up and write to entry.contacts[i][field].
+  // Debounce text inputs and textareas (typing); fire immediately
+  // on date / select changes.
   let contactSaveTimer = null;
   document.querySelectorAll("#crm-body [data-mfc-contact-id]").forEach(el => {
     const cid = el.dataset.mfcContactId;
     const field = el.dataset.mfcContactField;
-    el.addEventListener("input", () => {
-      clearTimeout(contactSaveTimer);
-      contactSaveTimer = setTimeout(() => {
+    const tag = el.tagName.toLowerCase();
+    const isTextish = (tag === "textarea") ||
+                      (tag === "input" && (el.type === "text" || el.type === "number"));
+    if (isTextish) {
+      el.addEventListener("input", () => {
+        clearTimeout(contactSaveTimer);
+        contactSaveTimer = setTimeout(() => {
+          _mfcSetContactField(docNum, cid, field, el.value);
+          flash();
+        }, 400);
+      });
+    } else {
+      // date / select: commit on change.
+      el.addEventListener("change", () => {
         _mfcSetContactField(docNum, cid, field, el.value);
         flash();
-      }, 400);
-    });
+      });
+    }
   });
 
   // --- Show CRM view ---
