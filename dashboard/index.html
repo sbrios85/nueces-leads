@@ -693,6 +693,39 @@
   .equity-mid  { color: var(--warn); font-weight: 600; }
   .equity-bad  { color: var(--bad);  font-weight: 600; }
 
+  /* Snapshot click-to-edit affordances. Each .mfc-snap-display
+     becomes editable on click; .mfc-snap-edit-input is the inline
+     input that replaces it during editing. The ✏️ pencil after a
+     value tells the user "this has been manually overridden — the
+     parsed value is hidden behind your edit". */
+  .mfc-snap-display {
+    cursor: text;
+    padding: 1px 4px; margin: -1px -4px;
+    border-radius: 4px;
+    transition: background 0.1s;
+    display: inline-block;
+  }
+  .mfc-snap-display:hover {
+    background: rgba(56,189,248,0.08);
+  }
+  .mfc-snap-edited {
+    margin-left: 5px; font-size: 11px;
+    opacity: 0.6;
+  }
+  .mfc-snap-edit-input {
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    color: var(--fg);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font: inherit;
+    font-size: 13px;
+    min-width: 180px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .mfc-snap-edit-input:focus { outline: none; }
+
   /* "More details" disclosure for the long readonly list. */
   .mfc-details {
     margin-top: 8px; padding-top: 8px;
@@ -892,6 +925,135 @@
     display: flex; flex-direction: column; gap: 14px;
     min-width: 0;  /* let children shrink rather than overflow */
   }
+
+  /* Custom fields card — slot for user-defined research data.
+     Lives in the LEFT column under the snapshot. Schema (which
+     fields exist) is global; values are per-lead. The "Manage"
+     button opens a small modal that adds/renames/deletes fields. */
+  .mfc-custom {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px;
+  }
+  .mfc-custom-head {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 12px;
+  }
+  .mfc-custom-head h3 {
+    margin: 0; font-size: 14px; font-weight: 600;
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mfc-custom-manage-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); border-radius: 6px;
+    padding: 4px 10px; font-size: 11px; cursor: pointer;
+  }
+  .mfc-custom-manage-btn:hover {
+    border-color: var(--accent); color: var(--accent);
+  }
+  .mfc-custom-empty {
+    color: var(--muted); font-size: 12px; padding: 6px 0;
+    font-style: italic;
+  }
+  /* Custom-field rows are a 2-column grid: label / control. Two
+     fields per row when there's space, one per row when narrow. */
+  .mfc-custom-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+  }
+  @media (max-width: 780px) {
+    .mfc-custom-grid { grid-template-columns: 1fr; }
+  }
+  .mfc-custom-field label {
+    display: block; font-size: 11px; color: var(--muted);
+    margin-bottom: 4px; text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .mfc-custom-field input,
+  .mfc-custom-field select {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 6px;
+    padding: 7px 10px; font: inherit; font-size: 13px;
+  }
+  .mfc-custom-field input:focus,
+  .mfc-custom-field select:focus {
+    outline: none; border-color: var(--accent);
+  }
+
+  /* Schema-manager modal */
+  .mfc-schema-modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .mfc-schema-modal-backdrop.open { display: flex; }
+  .mfc-schema-modal {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px;
+    width: min(560px, 90vw); max-height: 80vh;
+    overflow-y: auto;
+  }
+  .mfc-schema-modal h3 {
+    margin: 0 0 14px; font-size: 16px;
+  }
+  .mfc-schema-modal .modal-sub {
+    margin: 0 0 18px; font-size: 12px; color: var(--muted);
+  }
+  .mfc-schema-list {
+    margin-bottom: 14px;
+  }
+  .mfc-schema-row {
+    display: grid; grid-template-columns: 1fr 110px 28px;
+    gap: 8px; align-items: center; padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .mfc-schema-row:last-child { border-bottom: none; }
+  .mfc-schema-row input,
+  .mfc-schema-row select {
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 4px;
+    padding: 5px 8px; font: inherit; font-size: 13px;
+    width: 100%; box-sizing: border-box;
+  }
+  .mfc-schema-row input:focus,
+  .mfc-schema-row select:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .mfc-schema-row .del-btn {
+    background: transparent; border: none; color: var(--muted);
+    font-size: 16px; cursor: pointer; padding: 0; opacity: 0.5;
+    line-height: 1;
+  }
+  .mfc-schema-row .del-btn:hover { color: var(--bad); opacity: 1; }
+  .mfc-schema-empty {
+    color: var(--muted); font-size: 12px; font-style: italic;
+    padding: 12px 0; text-align: center;
+  }
+  .mfc-schema-add-btn {
+    background: transparent; border: 1px dashed var(--border);
+    color: var(--muted); border-radius: 6px;
+    padding: 8px 12px; font-size: 12px; cursor: pointer;
+    width: 100%;
+  }
+  .mfc-schema-add-btn:hover {
+    border-color: var(--accent); color: var(--accent);
+  }
+  .mfc-schema-modal-actions {
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin-top: 18px; padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .mfc-schema-modal-actions button {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--fg); border-radius: 6px;
+    padding: 7px 16px; font: inherit; cursor: pointer;
+  }
+  .mfc-schema-modal-actions button.primary {
+    background: var(--accent); border-color: var(--accent);
+    color: white; font-weight: 600;
+  }
+  .mfc-schema-modal-actions button:hover { border-color: var(--accent); }
 
   /* Notes card — sits inside its grid column. */
   .mfc-notes {
@@ -1616,6 +1778,35 @@
   </div>
 </div>
 
+<!-- ======== MFC custom-field schema-manager modal ========
+     Lets the user define which custom fields exist across all
+     MFC leads. The list is dynamic — rows are added/removed by
+     _mfcOpenSchemaModal / _mfcSchemaAdd / _mfcSchemaRemove. Save
+     commits the in-flight changes to localStorage and re-opens
+     the CRM so the Research card reflects the new schema. -->
+<div class="mfc-schema-modal-backdrop" id="mfc-schema-modal-backdrop"
+     onclick="if(event.target===this)_mfcCloseSchemaModal()">
+  <div class="mfc-schema-modal" role="dialog"
+       aria-labelledby="mfc-schema-modal-title">
+    <h3 id="mfc-schema-modal-title">Manage research fields</h3>
+    <p class="modal-sub">
+      Define the custom fields that appear in the Research section
+      of every Mortgage Foreclosure lead. Changes apply across all
+      MFC leads. Deleting a field removes its value from every lead.
+    </p>
+    <div class="mfc-schema-list" id="mfc-schema-list">
+      <!-- populated by _mfcOpenSchemaModal -->
+    </div>
+    <button class="mfc-schema-add-btn" onclick="_mfcSchemaAddRow()">
+      + Add field
+    </button>
+    <div class="mfc-schema-modal-actions">
+      <button onclick="_mfcCloseSchemaModal()">Cancel</button>
+      <button class="primary" onclick="_mfcSaveSchema()">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // CRM state — persisted in localStorage, keyed by doc_num
@@ -2091,6 +2282,303 @@ function _mfcCalcEquity(loan, appraised) {
 // find what's being edited.
 let _mfcPendingAttempt = null;
 
+// ----------------------------------------------------------------
+// MFC field overrides
+// ----------------------------------------------------------------
+// Snapshot fields (owner/loan/lender/etc) come from the foreclosure
+// PDF parse + NCAD. They can be wrong — typos, OCR errors, the wrong
+// parcel got attached, etc. Overrides let the user manually correct
+// any of them per lead. The override LIVES on the CRM entry under
+// `overrides: { fieldKey: stringValue }`. An empty/missing override
+// falls back to the parsed value. Cleared override (set to "") falls
+// back to parsed value too — meaning "" can't be a deliberate
+// override; if you need to BLANK a parsed value, use the string "—".
+//
+// The list below names every snapshot field that supports overrides.
+// New snapshot fields wired in later should be added here so users
+// can correct them too.
+const MFC_OVERRIDE_FIELDS = [
+  "owner", "sale_date", "prop_address", "prop_city_line",
+  "lender", "loan_amount", "loan_date_str", "legal", "appraised_value",
+];
+
+// Returns the effective display value for a snapshot field on a
+// record, applying any user override. The `formatter` callback runs
+// against the parsed value only — overrides are stored as plain
+// strings and shown as-is (the user controls their own formatting).
+function _mfcFieldValue(entry, rec, key, parsedValue) {
+  const overrides = (entry && entry.overrides) || {};
+  const ov = overrides[key];
+  if (ov != null && String(ov).trim() !== "") {
+    return { value: String(ov), overridden: true };
+  }
+  return { value: parsedValue, overridden: false };
+}
+
+function _mfcSetOverride(docNum, key, newValue) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const overrides = Object.assign({}, entry.overrides || {});
+  const trimmed = newValue == null ? "" : String(newValue).trim();
+  // Empty value = clear the override (revert to parsed).
+  if (trimmed === "") {
+    delete overrides[key];
+  } else {
+    overrides[key] = trimmed;
+  }
+  entry.overrides = overrides;
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  saveCrmStore("mfc", store);
+  _mfcLogActivity(docNum,
+    trimmed === ""
+      ? `Cleared override on "${key}" (reverted to parsed value)`
+      : `Edited "${key}" → "${trimmed}"`);
+}
+
+// Click handler for an overridable snapshot value. Replaces the
+// display span with an <input>, focuses+selects it, and wires
+// blur/Enter to commit + Escape to cancel.
+function _mfcStartEdit(displayEl) {
+  if (!displayEl || displayEl.dataset._editing === "1") return;
+  displayEl.dataset._editing = "1";
+  const rowEl = displayEl.closest(".mfc-snap-row");
+  if (!rowEl) return;
+  const key = rowEl.dataset.mfcOverrideKey;
+  if (!key) return;
+  // Find the parent docNum — we stash it on the CRM body when
+  // openMfcCrm runs (set just below).
+  const docNum = document.getElementById("crm-body").dataset.docNum;
+  if (!docNum) return;
+
+  const currentVal = displayEl.dataset.editVal || "";
+  // Build the input. Use text type for everything — keeps the UI
+  // simple. Numbers and dates can be typed as the user prefers,
+  // they're stored as strings on the override and displayed raw.
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "mfc-snap-edit-input";
+  input.value = currentVal;
+  // Replace the display.
+  displayEl.style.display = "none";
+  displayEl.parentNode.insertBefore(input, displayEl);
+  input.focus();
+  input.select();
+
+  let committed = false;
+  const commit = () => {
+    if (committed) return;
+    committed = true;
+    const newVal = input.value;
+    _mfcSetOverride(docNum, key, newVal);
+    // Re-render the whole CRM so the row reflects the change AND
+    // any computed values (equity if loan/appraised changed) update.
+    openMfcCrm(docNum, FC_RAW);
+  };
+  const cancel = () => {
+    if (committed) return;
+    committed = true;
+    input.remove();
+    displayEl.style.display = "";
+    delete displayEl.dataset._editing;
+  };
+
+  input.addEventListener("blur", commit);
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); commit(); }
+    else if (e.key === "Escape") { e.preventDefault(); cancel(); }
+  });
+}
+
+// ----------------------------------------------------------------
+// MFC custom fields
+// ----------------------------------------------------------------
+// Custom fields let the user store research data the system can't
+// extract from PDFs (spouse name, square footage, vacant?, etc.).
+//
+// SCHEMA (definition of WHICH fields exist) is global — every MFC
+// lead has the same set of slots. Stored in localStorage under
+// "nueces_mfc_custom_field_schema_v1" as an array of:
+//   { id, label, type }       // type ∈ "text"|"number"|"date"|"yesno"
+//
+// VALUES (per-lead user input) live on each MFC CRM entry under
+// entry.custom_fields[id] = string.
+//
+// Why global schema (not per-lead): keeps the layout consistent
+// across leads — you don't have to re-create the same fields for
+// every record. Per-lead values let you fill different data per
+// lead within the same schema.
+const MFC_CUSTOM_SCHEMA_KEY = "nueces_mfc_custom_field_schema_v1";
+
+function loadMfcCustomSchema() {
+  try {
+    const raw = localStorage.getItem(MFC_CUSTOM_SCHEMA_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) { return []; }
+}
+function saveMfcCustomSchema(schema) {
+  localStorage.setItem(MFC_CUSTOM_SCHEMA_KEY,
+    JSON.stringify(Array.isArray(schema) ? schema : []));
+}
+function _mfcGenFieldId() {
+  return "cf_" + Math.random().toString(36).slice(2, 10);
+}
+
+// Set a custom-field value on a lead. Empty string clears it but
+// keeps the slot in the schema (the user has to delete the field
+// definition from "Manage fields" to remove the slot entirely).
+function _mfcSetCustom(docNum, fieldId, value) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const custom = Object.assign({}, entry.custom_fields || {});
+  if (value == null || String(value).trim() === "") {
+    delete custom[fieldId];
+  } else {
+    custom[fieldId] = String(value);
+  }
+  entry.custom_fields = custom;
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  saveCrmStore("mfc", store);
+}
+
+// ----------------------------------------------------------------
+// Schema-manager modal (configure which custom fields exist)
+// ----------------------------------------------------------------
+// In-flight edit buffer: a copy of the schema that the user is
+// modifying. Committed to localStorage only when they press Save.
+// Lets Cancel discard changes cleanly.
+let _mfcSchemaDraft = [];
+
+function _mfcOpenSchemaModal() {
+  // Deep-copy current schema into the draft buffer.
+  _mfcSchemaDraft = loadMfcCustomSchema().map(f => ({ ...f }));
+  if (_mfcSchemaDraft.length === 0) {
+    // Start with one blank row so the modal isn't an empty void.
+    _mfcSchemaDraft.push({
+      id: _mfcGenFieldId(), label: "", type: "text",
+    });
+  }
+  _mfcRenderSchemaList();
+  document.getElementById("mfc-schema-modal-backdrop")
+    .classList.add("open");
+}
+
+function _mfcCloseSchemaModal() {
+  document.getElementById("mfc-schema-modal-backdrop")
+    .classList.remove("open");
+  _mfcSchemaDraft = [];
+}
+
+// Render the editable schema list from the draft buffer. Each row
+// is a label input + type select + delete button. Values flow back
+// into the draft via input/change handlers so the buffer always
+// reflects the visible state.
+function _mfcRenderSchemaList() {
+  const list = document.getElementById("mfc-schema-list");
+  if (_mfcSchemaDraft.length === 0) {
+    list.innerHTML = `<div class="mfc-schema-empty">No fields. Click "+ Add field" below to create one.</div>`;
+    return;
+  }
+  list.innerHTML = _mfcSchemaDraft.map((f, i) => `
+    <div class="mfc-schema-row" data-schema-idx="${i}">
+      <input type="text" placeholder="Field name (e.g. Spouse, Year Built)"
+             value="${esc(f.label || "")}"
+             oninput="_mfcSchemaUpdate(${i}, 'label', this.value)">
+      <select onchange="_mfcSchemaUpdate(${i}, 'type', this.value)">
+        <option value="text"${f.type==="text"?" selected":""}>Text</option>
+        <option value="number"${f.type==="number"?" selected":""}>Number</option>
+        <option value="date"${f.type==="date"?" selected":""}>Date</option>
+        <option value="yesno"${f.type==="yesno"?" selected":""}>Yes / No</option>
+      </select>
+      <button class="del-btn" title="Delete this field"
+              onclick="_mfcSchemaDeleteRow(${i})">×</button>
+    </div>
+  `).join("");
+}
+
+function _mfcSchemaUpdate(idx, key, value) {
+  if (!_mfcSchemaDraft[idx]) return;
+  _mfcSchemaDraft[idx][key] = value;
+  // No re-render needed for inline updates — the inputs already
+  // hold the current text. Only the buffer needs to stay in sync.
+}
+
+function _mfcSchemaAddRow() {
+  _mfcSchemaDraft.push({
+    id: _mfcGenFieldId(), label: "", type: "text",
+  });
+  _mfcRenderSchemaList();
+}
+
+function _mfcSchemaDeleteRow(idx) {
+  if (!_mfcSchemaDraft[idx]) return;
+  const f = _mfcSchemaDraft[idx];
+  // Warn if the field has data on any lead (it'll be lost on save).
+  if (f.label && _mfcCustomFieldHasData(f.id)) {
+    if (!confirm(
+        `Delete field "${f.label}"?\n\n` +
+        `This will remove its value from EVERY lead that has it. ` +
+        `This cannot be undone.`)) {
+      return;
+    }
+  }
+  _mfcSchemaDraft.splice(idx, 1);
+  _mfcRenderSchemaList();
+}
+
+// Check whether any MFC lead currently has a value for the given
+// field id. Used before deletion to warn about destructive changes.
+function _mfcCustomFieldHasData(fieldId) {
+  const store = loadCrmStore("mfc");
+  return Object.values(store).some(e =>
+    e && e.custom_fields && e.custom_fields[fieldId]);
+}
+
+// Persist the draft schema, scrub deleted-field values from every
+// lead, and re-render the CRM so the Research card matches.
+function _mfcSaveSchema() {
+  // Validate: drop rows with empty labels (user added a row but
+  // didn't fill it in — silently discard rather than fail noisily).
+  const cleaned = _mfcSchemaDraft.filter(f => f.label && f.label.trim());
+  // Trim labels and ensure ids/types exist.
+  for (const f of cleaned) {
+    f.label = f.label.trim();
+    if (!f.id) f.id = _mfcGenFieldId();
+    if (!f.type) f.type = "text";
+  }
+  // Find deleted field ids: anything in the OLD schema not in the
+  // new one. Scrub their values from every lead so we don't leave
+  // orphan data sitting in localStorage forever.
+  const oldSchema = loadMfcCustomSchema();
+  const newIds = new Set(cleaned.map(f => f.id));
+  const deletedIds = oldSchema.map(f => f.id).filter(id => !newIds.has(id));
+  if (deletedIds.length > 0) {
+    const store = loadCrmStore("mfc");
+    let touched = false;
+    for (const e of Object.values(store)) {
+      if (!e || !e.custom_fields) continue;
+      for (const id of deletedIds) {
+        if (id in e.custom_fields) {
+          delete e.custom_fields[id];
+          touched = true;
+        }
+      }
+    }
+    if (touched) saveCrmStore("mfc", store);
+  }
+  saveMfcCustomSchema(cleaned);
+  _mfcCloseSchemaModal();
+  // Re-render the active CRM if one is open so the Research card
+  // immediately reflects the new schema.
+  const crmBody = document.getElementById("crm-body");
+  if (crmBody && crmBody.dataset.crmType === "mfc" && crmBody.dataset.docNum) {
+    openMfcCrm(crmBody.dataset.docNum, FC_RAW);
+  }
+}
+
 function openMfcCrm(docNum, sourceRecords) {
   const rec = (sourceRecords || []).find(x => x.doc_num === docNum);
   if (!rec) return;
@@ -2133,42 +2621,66 @@ function openMfcCrm(docNum, sourceRecords) {
           { month: "short", year: "numeric" })
     : "—";
 
+  // Helper: render an overridable snapshot row. `key` matches an
+  // entry in MFC_OVERRIDE_FIELDS. `parsedDisplay` is the formatted
+  // parsed value (e.g. "$190,400"). `parsedRaw` is the raw value
+  // pre-filled in the edit input when the user clicks to edit (so
+  // they can type relative to the actual value, not a $-formatted
+  // string). `extraHtml` lets a row append small auxiliary content
+  // (e.g. the city/zip sub-line under the property address) — this
+  // sits OUTSIDE the editable display so editing only touches the
+  // primary value.
+  const _renderEditableRow = (label, key, parsedDisplay, parsedRaw, extraHtml, isBig) => {
+    const eff = _mfcFieldValue(entry, rec, key, parsedDisplay);
+    const valForEdit = eff.overridden
+      ? eff.value
+      : (parsedRaw == null ? "" : String(parsedRaw));
+    const bigCls = isBig ? " big" : "";
+    const editedBadge = eff.overridden
+      ? `<span class="mfc-snap-edited" title="Manually edited — click to edit again">✏️</span>`
+      : "";
+    return `
+      <div class="mfc-snap-row" data-mfc-override-key="${esc(key)}">
+        <span class="k">${esc(label)}</span>
+        <span class="v${bigCls}">
+          <span class="mfc-snap-display"
+                onclick="_mfcStartEdit(this)"
+                data-edit-val="${esc(valForEdit)}"
+                title="Click to edit (overrides parsed value)">${
+            esc(eff.value) || `<span style="color:var(--muted)">—</span>`
+          }${editedBadge}</span>${extraHtml || ""}
+        </span>
+      </div>
+    `;
+  };
+
   const snapshotHtml = `
     <div class="mfc-snapshot">
-      <div class="mfc-snap-row">
-        <span class="k">Owner</span>
-        <span class="v big">${esc(rec.owner || "—")}</span>
-      </div>
-      <div class="mfc-snap-row">
-        <span class="k">Sale Date</span>
-        <span class="v big">${esc(saleDate)}${esc(daysTxt)}</span>
-      </div>
-      <div class="mfc-snap-row">
-        <span class="k">Property</span>
-        <span class="v">${esc(rec.prop_address || "—")}${
-          propCityLine ? `<br><span style="color:var(--muted);font-size:12px">${esc(propCityLine)}</span>` : ""
-        }</span>
-      </div>
+      ${_renderEditableRow("Owner", "owner",
+          rec.owner || "—", rec.owner || "", "", true)}
+      ${_renderEditableRow("Sale Date", "sale_date",
+          (saleDate + daysTxt), rec.sale_date || "", "", true)}
+      ${_renderEditableRow("Property", "prop_address",
+          rec.prop_address || "—", rec.prop_address || "",
+          propCityLine
+            ? `<div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(propCityLine)}</div>`
+            : "",
+          false)}
       <div class="mfc-snap-row">
         <span class="k">Equity</span>
         <span class="v big">${equityHtml}</span>
       </div>
-      <div class="mfc-snap-row">
-        <span class="k">Lender</span>
-        <span class="v">${esc(rec.lender || "—")}</span>
-      </div>
-      <div class="mfc-snap-row">
-        <span class="k">Loan</span>
-        <span class="v">${moneyFmt(rec.loan_amount)} <span style="color:var(--muted)">(${esc(loanDate)})</span></span>
-      </div>
-      <div class="mfc-snap-row">
-        <span class="k">Legal</span>
-        <span class="v">${esc(rec.legal || "—")}</span>
-      </div>
-      <div class="mfc-snap-row">
-        <span class="k">Appraised</span>
-        <span class="v">${moneyFmt(rec.appraised_value)}</span>
-      </div>
+      ${_renderEditableRow("Lender", "lender",
+          rec.lender || "—", rec.lender || "", "", false)}
+      ${_renderEditableRow("Loan", "loan_amount",
+          moneyFmt(rec.loan_amount) + ` <span style="color:var(--muted)">(${esc(loanDate)})</span>`,
+          rec.loan_amount == null ? "" : String(rec.loan_amount), "", false)}
+      ${_renderEditableRow("Legal", "legal",
+          rec.legal || "—", rec.legal || "", "", false)}
+      ${_renderEditableRow("Appraised", "appraised_value",
+          moneyFmt(rec.appraised_value),
+          rec.appraised_value == null ? "" : String(rec.appraised_value),
+          "", false)}
 
       <details class="mfc-details" style="grid-column: 1/-1;">
         <summary>More details</summary>
@@ -2242,6 +2754,49 @@ function openMfcCrm(docNum, sourceRecords) {
         </button>
       </div>
       ${attemptsRowsHtml}
+    </div>
+  `;
+
+  // --- Custom fields card (user-defined research data) ---
+  // Schema lives globally; per-lead values live on the entry. The
+  // "Manage" button opens a modal that lets the user add/rename/
+  // delete field definitions across all MFC leads at once.
+  const customSchema = loadMfcCustomSchema();
+  const customValues = (entry.custom_fields || {});
+  const customFieldRowsHtml = customSchema.length === 0
+    ? `<div class="mfc-custom-empty">No custom fields yet. Click <strong>Manage</strong> to add research fields like Spouse, Year Built, Sqft, Vacant?, etc.</div>`
+    : `<div class="mfc-custom-grid">
+        ${customSchema.map(f => {
+          const cur = customValues[f.id] || "";
+          let control;
+          if (f.type === "yesno") {
+            control = `<select data-mfc-custom-id="${esc(f.id)}">
+              <option value=""${cur===""?" selected":""}>—</option>
+              <option value="yes"${cur==="yes"?" selected":""}>Yes</option>
+              <option value="no"${cur==="no"?" selected":""}>No</option>
+              <option value="unknown"${cur==="unknown"?" selected":""}>Unknown</option>
+            </select>`;
+          } else if (f.type === "date") {
+            control = `<input type="date" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+          } else if (f.type === "number") {
+            control = `<input type="number" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+          } else {
+            control = `<input type="text" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+          }
+          return `<div class="mfc-custom-field">
+            <label>${esc(f.label)}</label>
+            ${control}
+          </div>`;
+        }).join("")}
+      </div>`;
+  const customHtml = `
+    <div class="mfc-custom">
+      <div class="mfc-custom-head">
+        <h3>Research</h3>
+        <button class="mfc-custom-manage-btn"
+                onclick="_mfcOpenSchemaModal()">Manage fields</button>
+      </div>
+      ${customFieldRowsHtml}
     </div>
   `;
 
@@ -2327,11 +2882,13 @@ function openMfcCrm(docNum, sourceRecords) {
   // Tell the body it's an MFC view so the CSS knows to drop the
   // max-width centering and use full screen real estate.
   crmBody.dataset.crmType = "mfc";
+  crmBody.dataset.docNum = docNum;
   crmBody.innerHTML = `
     ${stageHtml}
     <div class="mfc-layout">
       <div class="mfc-col mfc-col-left">
         ${snapshotHtml}
+        ${customHtml}
         ${attemptsHtml}
         ${notesHtml}
       </div>
@@ -2365,6 +2922,30 @@ function openMfcCrm(docNum, sourceRecords) {
     } else {
       el.addEventListener("change", () => {
         setCrmField("mfc", docNum, key, el.value);
+        flash();
+      });
+    }
+  });
+
+  // Auto-save for custom fields. Same debounce pattern but writes
+  // to entry.custom_fields[fieldId] via _mfcSetCustom() rather than
+  // touching the top-level entry.
+  let customSaveTimer = null;
+  document.querySelectorAll("#crm-body [data-mfc-custom-id]").forEach(el => {
+    const id = el.dataset.mfcCustomId;
+    const tag = el.tagName.toLowerCase();
+    const isText = (tag === "input" && (el.type === "text" || el.type === "number"));
+    if (isText) {
+      el.addEventListener("input", () => {
+        clearTimeout(customSaveTimer);
+        customSaveTimer = setTimeout(() => {
+          _mfcSetCustom(docNum, id, el.value);
+          flash();
+        }, 400);
+      });
+    } else {
+      el.addEventListener("change", () => {
+        _mfcSetCustom(docNum, id, el.value);
         flash();
       });
     }
@@ -2614,7 +3195,13 @@ function closeCrm() {
 document.getElementById("crm-back").onclick = closeCrm;
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
-  // Priority: attempt modal first (if open), then CRM view.
+  // Priority: any open modal first, then CRM view.
+  const schemaModal = document.getElementById(
+    "mfc-schema-modal-backdrop");
+  if (schemaModal && schemaModal.classList.contains("open")) {
+    _mfcCloseSchemaModal();
+    return;
+  }
   const attemptModal = document.getElementById(
     "mfc-attempt-modal-backdrop");
   if (attemptModal && attemptModal.classList.contains("open")) {
