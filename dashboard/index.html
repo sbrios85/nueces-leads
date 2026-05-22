@@ -948,11 +948,11 @@
      button opens a small modal that adds/renames/deletes fields. */
   .mfc-custom {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px 18px;
+    border-radius: 10px; padding: 12px 14px;
   }
   .mfc-custom-head {
     display: flex; justify-content: space-between;
-    align-items: center; margin-bottom: 12px;
+    align-items: center; margin-bottom: 8px;
   }
   .mfc-custom-head h3 {
     margin: 0; font-size: 14px; font-weight: 600;
@@ -971,26 +971,22 @@
     color: var(--muted); font-size: 12px; padding: 6px 0;
     font-style: italic;
   }
-  /* Custom-field rows. The Research card lives in a column that
-     can be narrow (3-col mode ~330px) or wide (single-col mode
-     full screen). Use auto-fit so fields lay out 1-up in narrow
-     columns, 2-up when there's room, no media query needed. */
   .mfc-custom-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px 16px;
+    gap: 6px 14px;
   }
   .mfc-custom-field label {
-    display: block; font-size: 11px; color: var(--muted);
-    margin-bottom: 4px; text-transform: uppercase;
+    display: block; font-size: 10px; color: var(--muted);
+    margin-bottom: 2px; text-transform: uppercase;
     letter-spacing: 0.03em;
   }
   .mfc-custom-field input,
   .mfc-custom-field select {
     width: 100%; box-sizing: border-box;
     background: var(--bg); border: 1px solid var(--border);
-    color: var(--fg); border-radius: 6px;
-    padding: 7px 10px; font: inherit; font-size: 13px;
+    color: var(--fg); border-radius: 5px;
+    padding: 4px 8px; font: inherit; font-size: 13px;
   }
   /* "SYSTEM" pill next to hard-wired field labels — tells the user
      this field can't be deleted/renamed via Manage Fields. Small,
@@ -1018,8 +1014,8 @@
      snapshot card's editable rows, so it feels familiar. */
   .mfc-custom-formatted {
     background: var(--bg); border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 7px 10px;
+    border-radius: 5px;
+    padding: 4px 8px;
     font: inherit; font-size: 13px;
     color: var(--fg);
     cursor: text;
@@ -1039,8 +1035,8 @@
     background: var(--bg);
     border: 1px solid var(--accent);
     color: var(--fg);
-    border-radius: 6px;
-    padding: 7px 10px;
+    border-radius: 5px;
+    padding: 4px 8px;
     font: inherit; font-size: 13px;
   }
   .mfc-custom-edit-input:focus { outline: none; }
@@ -1056,11 +1052,11 @@
      a delete X. "+ Add contact" button at the bottom adds another. */
   .mfc-contacts {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px 18px;
+    border-radius: 10px; padding: 12px 14px;
   }
   .mfc-contacts-head {
     display: flex; justify-content: space-between;
-    align-items: center; margin-bottom: 12px;
+    align-items: center; margin-bottom: 8px;
   }
   .mfc-contacts-head h3 {
     margin: 0; font-size: 14px; font-weight: 600;
@@ -1080,7 +1076,7 @@
     font-style: italic;
   }
   .mfc-contact {
-    padding: 10px 0;
+    padding: 8px 0;
     border-bottom: 1px solid var(--border);
   }
   .mfc-contact:last-child { border-bottom: none; padding-bottom: 0; }
@@ -1091,7 +1087,7 @@
     display: grid;
     grid-template-columns: minmax(80px, 90px) 1fr 26px;
     gap: 6px; align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
   .mfc-contact-title,
   .mfc-contact-name {
@@ -1108,7 +1104,7 @@
     font-weight: 600;
   }
   .mfc-contact-name {
-    font-size: 14px; font-weight: 600;
+    font-size: 13px; font-weight: 600;
   }
   .mfc-contact-title:hover,
   .mfc-contact-name:hover {
@@ -1133,21 +1129,40 @@
   }
   .mfc-contact-del:hover { color: var(--bad); opacity: 1; }
   .mfc-contact-fields {
-    display: flex; flex-direction: column; gap: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 10px;
+  }
+  /* Notes textarea spans both columns at the bottom of the stack.
+     The :has() selector works in modern browsers; the explicit
+     class .mfc-contact-notes-field is the fallback for Safari
+     <17 / Firefox <121. Both target the same element. */
+  .mfc-contact-fields .crm-field:has(textarea),
+  .mfc-contact-fields .mfc-contact-notes-field {
+    grid-column: 1 / -1;
   }
   .mfc-contact-fields .crm-field { margin-bottom: 0; }
-  /* Per-contact notes textarea — small (2 rows by default) but
-     vertically resizable in case the user wants more room. */
+  .mfc-contact-fields label {
+    font-size: 10px;
+    margin-bottom: 2px;
+  }
+  .mfc-contact-fields input[type="text"],
+  .mfc-contact-fields input[type="date"] {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+  /* Per-contact notes textarea — compact, two lines, resizable
+     vertically if the user needs more room. */
   .mfc-contact-fields textarea {
     width: 100%; box-sizing: border-box;
     background: var(--bg);
     border: 1px solid var(--border);
     color: var(--fg);
-    border-radius: 6px;
-    padding: 7px 10px;
+    border-radius: 5px;
+    padding: 4px 8px;
     font: inherit; font-size: 13px;
     resize: vertical;
-    min-height: 50px;
+    min-height: 32px;
   }
   .mfc-contact-fields textarea:focus {
     outline: none; border-color: var(--accent);
@@ -1227,6 +1242,25 @@
     line-height: 1;
   }
   .mfc-schema-row .del-btn:hover { color: var(--bad); opacity: 1; }
+  /* System rows in the schema modal: label/type are display-only.
+     They're still draggable (the user can reorder), but they can't
+     be renamed, retyped, or deleted. */
+  .mfc-schema-row-system {
+    background: rgba(148,163,184,0.04);
+  }
+  .mfc-schema-system-label {
+    color: var(--fg); font-size: 13px;
+    padding: 5px 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .mfc-schema-system-type {
+    color: var(--muted); font-size: 12px;
+    padding: 5px 8px;
+    font-style: italic;
+  }
+  .mfc-schema-system-spacer {
+    width: 28px; height: 1px;
+  }
   .mfc-schema-empty {
     color: var(--muted); font-size: 12px; font-style: italic;
     padding: 12px 0; text-align: center;
@@ -2611,6 +2645,42 @@ function _mfcStartEdit(displayEl) {
 // lead within the same schema.
 const MFC_CUSTOM_SCHEMA_KEY = "nueces_mfc_custom_field_schema_v1";
 
+// SYSTEM fields: built-in research fields that are always present
+// regardless of the user's custom schema. They render alongside
+// user-defined fields (and can be reordered via drag in the Manage
+// Fields modal), but they can NOT be renamed, retyped, or deleted.
+// Each system field has:
+//   id      — stable identifier (used in drag/reorder logic)
+//   label   — display label
+//   type    — control type (drives rendering)
+//   key     — top-level entry key where the value is stored (these
+//             values live on entry root, NOT entry.custom_fields)
+//   isSystem: true — marker so render and modal can treat specially
+//   options — for 'select' type, the list of {value, label} options
+//
+// To add another system field later, just push another entry here
+// and add a render branch + an entry-key autosave hook.
+const MFC_SYSTEM_FIELDS = [
+  {
+    id: "_sys_occupancy",
+    label: "Occupancy",
+    type: "select",
+    key: "occupancy",
+    isSystem: true,
+    options: [
+      { value: "",        label: "—" },
+      { value: "owner",   label: "Owner-occupied" },
+      { value: "tenant",  label: "Tenant" },
+      { value: "vacant",  label: "Vacant" },
+      { value: "unknown", label: "Unknown" },
+    ],
+  },
+];
+
+function _mfcSystemFieldById(id) {
+  return MFC_SYSTEM_FIELDS.find(f => f.id === id) || null;
+}
+
 function loadMfcCustomSchema() {
   try {
     const raw = localStorage.getItem(MFC_CUSTOM_SCHEMA_KEY);
@@ -2623,6 +2693,42 @@ function saveMfcCustomSchema(schema) {
   localStorage.setItem(MFC_CUSTOM_SCHEMA_KEY,
     JSON.stringify(Array.isArray(schema) ? schema : []));
 }
+
+// Returns the FULL schema for rendering Research: system fields
+// woven into the user's saved schema by id reference.
+// Storage representation:
+//   - User schema array entries are either:
+//       { id: "cf_xxx", label, type }   <- custom field
+//       { id: "_sys_occupancy" }        <- system-field placeholder
+//   - System-field entries store ONLY the id; the rest is looked
+//     up from MFC_SYSTEM_FIELDS at render time. This way changing
+//     a system field's label/options later updates everywhere.
+//   - If a system field is missing from the saved schema (e.g. an
+//     older user who hasn't migrated yet), it's automatically
+//     prepended on load so it's always present.
+function loadMfcSchemaForRender() {
+  let schema = loadMfcCustomSchema();
+  const presentIds = new Set(schema.map(f => f.id));
+  // Prepend any missing system fields. Order: as listed in
+  // MFC_SYSTEM_FIELDS. This only fires once (the first time after
+  // adding a new system field); after the first save, the user's
+  // order persists.
+  const missing = MFC_SYSTEM_FIELDS
+    .filter(sf => !presentIds.has(sf.id))
+    .map(sf => ({ id: sf.id }));
+  if (missing.length > 0) {
+    schema = [...missing, ...schema];
+  }
+  // Hydrate system-field entries with their full definition.
+  return schema.map(f => {
+    if (f.id && f.id.startsWith("_sys_")) {
+      const def = _mfcSystemFieldById(f.id);
+      return def ? { ...def } : null;  // null = drop unknown system fields
+    }
+    return f;
+  }).filter(Boolean);
+}
+
 function _mfcGenFieldId() {
   return "cf_" + Math.random().toString(36).slice(2, 10);
 }
@@ -2808,10 +2914,18 @@ function _mfcRemoveContact(docNum, contactId) {
 let _mfcSchemaDraft = [];
 
 function _mfcOpenSchemaModal() {
-  // Deep-copy current schema into the draft buffer.
-  _mfcSchemaDraft = loadMfcCustomSchema().map(f => ({ ...f }));
-  if (_mfcSchemaDraft.length === 0) {
-    // Start with one blank row so the modal isn't an empty void.
+  // The modal works on the FULL render-order schema (custom + system
+  // fields), so the user can reorder system fields among their own.
+  // Use loadMfcSchemaForRender() to get the merged list.
+  // Custom fields get a full {id, label, type} draft.
+  // System fields get a draft entry like {id: "_sys_...", isSystem,
+  //   label, type} for display; on Save these are persisted as
+  //   minimal {id} placeholders (label/type come from the registry).
+  _mfcSchemaDraft = loadMfcSchemaForRender().map(f => ({ ...f }));
+  // Add a blank custom row if there are no custom fields yet so
+  // the user has somewhere to type a new one.
+  const hasCustom = _mfcSchemaDraft.some(f => !f.isSystem);
+  if (!hasCustom) {
     _mfcSchemaDraft.push({
       id: _mfcGenFieldId(), label: "", type: "text",
     });
@@ -2838,7 +2952,24 @@ function _mfcRenderSchemaList() {
     list.innerHTML = `<div class="mfc-schema-empty">No fields. Click "+ Add field" below to create one.</div>`;
     return;
   }
-  list.innerHTML = _mfcSchemaDraft.map((f, i) => `
+  list.innerHTML = _mfcSchemaDraft.map((f, i) => {
+    if (f.isSystem) {
+      // System rows are reorderable but not editable. Label and
+      // type come from the registry, delete is suppressed.
+      return `
+        <div class="mfc-schema-row mfc-schema-row-system" data-schema-idx="${i}">
+          <span class="mfc-schema-grip" title="Drag to reorder">⋮⋮</span>
+          <div class="mfc-schema-system-label">
+            ${esc(f.label)}
+            <span class="mfc-systemfield-tag">SYSTEM</span>
+          </div>
+          <span class="mfc-schema-system-type">${esc(_mfcSystemTypeLabel(f.type))}</span>
+          <span class="mfc-schema-system-spacer" title="System fields can't be deleted"></span>
+        </div>
+      `;
+    }
+    // Regular custom row — fully editable.
+    return `
     <div class="mfc-schema-row" data-schema-idx="${i}">
       <span class="mfc-schema-grip" title="Drag to reorder">⋮⋮</span>
       <input type="text" placeholder="Field name (e.g. Spouse, Year Built)"
@@ -2855,8 +2986,14 @@ function _mfcRenderSchemaList() {
       <button class="del-btn" title="Delete this field"
               onclick="_mfcSchemaDeleteRow(${i})">×</button>
     </div>
-  `).join("");
+  `;}).join("");
   _mfcWireSchemaDrag();
+}
+
+// Friendly label for the type column when showing a system field.
+function _mfcSystemTypeLabel(type) {
+  if (type === "select") return "Choice";
+  return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
 // Wire HTML5 drag-and-drop on every schema row in the modal.
@@ -2974,6 +3111,9 @@ function _mfcSchemaAddRow() {
 function _mfcSchemaDeleteRow(idx) {
   if (!_mfcSchemaDraft[idx]) return;
   const f = _mfcSchemaDraft[idx];
+  // Defensive: system rows have no delete button, but if something
+  // ever calls this on a system row, just no-op.
+  if (f.isSystem) return;
   // Warn if the field has data on any lead (it'll be lost on save).
   if (f.label && _mfcCustomFieldHasData(f.id)) {
     if (!confirm(
@@ -2997,22 +3137,38 @@ function _mfcCustomFieldHasData(fieldId) {
 
 // Persist the draft schema, scrub deleted-field values from every
 // lead, and re-render the CRM so the Research card matches.
+//
+// Storage shape: system fields persist as just `{id}` placeholders;
+// custom fields persist as `{id, label, type}`. The full definition
+// of system fields lives in MFC_SYSTEM_FIELDS and is rehydrated on
+// load by loadMfcSchemaForRender().
 function _mfcSaveSchema() {
-  // Validate: drop rows with empty labels (user added a row but
-  // didn't fill it in — silently discard rather than fail noisily).
-  const cleaned = _mfcSchemaDraft.filter(f => f.label && f.label.trim());
-  // Trim labels and ensure ids/types exist.
-  for (const f of cleaned) {
-    f.label = f.label.trim();
-    if (!f.id) f.id = _mfcGenFieldId();
-    if (!f.type) f.type = "text";
-  }
-  // Find deleted field ids: anything in the OLD schema not in the
-  // new one. Scrub their values from every lead so we don't leave
-  // orphan data sitting in localStorage forever.
+  // Validate. System rows are kept as-is (they're not user-edited).
+  // Custom rows: drop ones with empty labels (user added a row but
+  // didn't fill it in).
+  const cleaned = _mfcSchemaDraft
+    .filter(f => f.isSystem || (f.label && f.label.trim()))
+    .map(f => {
+      if (f.isSystem) {
+        // Persist only the id — label/type come from the registry.
+        return { id: f.id };
+      }
+      return {
+        id: f.id || _mfcGenFieldId(),
+        label: f.label.trim(),
+        type: f.type || "text",
+      };
+    });
+  // Find deleted CUSTOM field ids: anything in the OLD schema not
+  // in the new one (and not a system field). Scrub their values
+  // from every lead so we don't leave orphan data sitting in
+  // localStorage forever. System ids are never "deleted" — they
+  // can only be reordered.
   const oldSchema = loadMfcCustomSchema();
   const newIds = new Set(cleaned.map(f => f.id));
-  const deletedIds = oldSchema.map(f => f.id).filter(id => !newIds.has(id));
+  const deletedIds = oldSchema
+    .map(f => f.id)
+    .filter(id => id && !id.startsWith("_sys_") && !newIds.has(id));
   if (deletedIds.length > 0) {
     const store = loadCrmStore("mfc");
     let touched = false;
@@ -3221,76 +3377,70 @@ function openMfcCrm(docNum, sourceRecords) {
     </div>
   `;
 
-  // --- Custom fields card (user-defined research data) ---
-  // Schema lives globally; per-lead values live on the entry. The
-  // "Manage" button opens a modal that lets the user add/rename/
-  // delete field definitions across all MFC leads at once.
-  //
-  // Hard-wired fields at the top: Occupancy. These are NOT
-  // configurable via Manage Fields — they're part of the lead
-  // schema architecture, with fixed values that other features can
-  // filter on later (e.g. "show vacant houses only"). They live on
-  // entry root (`entry.occupancy`) not in custom_fields, so they're
-  // distinct from user-added research fields.
-  const customSchema = loadMfcCustomSchema();
+  // --- Research card (custom fields + system fields) ---
+  // The Research card mixes user-defined custom fields with built-in
+  // SYSTEM fields (e.g. Occupancy). System fields are part of the
+  // saved schema by id reference and can be reordered by drag like
+  // any other field — but in the Manage Fields modal they can't be
+  // renamed, retyped, or deleted (their definitions live in the
+  // MFC_SYSTEM_FIELDS registry, not in localStorage). System-field
+  // values store on the entry root (entry.occupancy etc.) instead
+  // of entry.custom_fields, so they're easy to query later.
+  const rawCustomSchema = loadMfcCustomSchema();
+  const mergedSchema = loadMfcSchemaForRender();
   const customValues = (entry.custom_fields || {});
-  // Build the Occupancy field — always rendered, regardless of
-  // whether any user-defined custom fields exist.
-  const occVal = entry.occupancy || "";
-  const occupancyHtml = `
-    <div class="mfc-custom-field mfc-custom-systemfield">
-      <label>Occupancy <span class="mfc-systemfield-tag" title="System field (always present)">SYSTEM</span></label>
-      <select data-mfc-key="occupancy">
-        <option value=""${occVal===""?" selected":""}>—</option>
-        <option value="owner"${occVal==="owner"?" selected":""}>Owner-occupied</option>
-        <option value="tenant"${occVal==="tenant"?" selected":""}>Tenant</option>
-        <option value="vacant"${occVal==="vacant"?" selected":""}>Vacant</option>
-        <option value="unknown"${occVal==="unknown"?" selected":""}>Unknown</option>
-      </select>
-    </div>
-  `;
-  const userFieldRowsHtml = customSchema.length === 0
-    ? `<div class="mfc-custom-empty">No custom fields yet. Click <strong>Manage</strong> to add research fields like Spouse, Year Built, Sqft, etc.</div>`
-    : customSchema.map(f => {
-        const cur = customValues[f.id] || "";
-        let control;
-        if (f.type === "yesno") {
-          control = `<select data-mfc-custom-id="${esc(f.id)}">
-            <option value=""${cur===""?" selected":""}>—</option>
-            <option value="yes"${cur==="yes"?" selected":""}>Yes</option>
-            <option value="no"${cur==="no"?" selected":""}>No</option>
-            <option value="unknown"${cur==="unknown"?" selected":""}>Unknown</option>
-          </select>`;
-        } else if (f.type === "date") {
-          control = `<input type="date" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
-        } else if (f.type === "money" || f.type === "percent") {
-          const formatted = _mfcFormatCustomValue(cur, f.type);
-          const emptyCls = cur === "" ? " empty" : "";
-          control = `<div class="mfc-custom-formatted${emptyCls}"
-                          data-mfc-custom-id="${esc(f.id)}"
-                          data-mfc-custom-type="${esc(f.type)}"
-                          data-raw-val="${esc(cur)}"
-                          onclick="_mfcCustomStartEdit(this)"
-                          title="Click to edit">${esc(formatted)}</div>`;
-        } else if (f.type === "number") {
-          control = `<input type="number" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
-        } else {
-          control = `<input type="text" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
-        }
-        return `<div class="mfc-custom-field">
-          <label>${esc(f.label)}</label>
-          ${control}
-        </div>`;
-      }).join("");
-  // Compose: Occupancy first, then the user's custom fields below.
-  // When the user has no custom fields yet, show the friendly
-  // "add some" prompt under Occupancy.
+  const hasUserFields = rawCustomSchema.some(f =>
+    !(f.id && f.id.startsWith("_sys_")));
+  const fieldRowsHtml = mergedSchema.map(f => {
+    let control;
+    if (f.isSystem && f.type === "select") {
+      // System select (e.g. Occupancy).
+      const cur = entry[f.key] || "";
+      control = `<select data-mfc-key="${esc(f.key)}">
+        ${f.options.map(o =>
+          `<option value="${esc(o.value)}"${cur===o.value?" selected":""}>${esc(o.label)}</option>`
+        ).join("")}
+      </select>`;
+    } else {
+      // User-defined custom field.
+      const cur = customValues[f.id] || "";
+      if (f.type === "yesno") {
+        control = `<select data-mfc-custom-id="${esc(f.id)}">
+          <option value=""${cur===""?" selected":""}>—</option>
+          <option value="yes"${cur==="yes"?" selected":""}>Yes</option>
+          <option value="no"${cur==="no"?" selected":""}>No</option>
+          <option value="unknown"${cur==="unknown"?" selected":""}>Unknown</option>
+        </select>`;
+      } else if (f.type === "date") {
+        control = `<input type="date" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+      } else if (f.type === "money" || f.type === "percent") {
+        const formatted = _mfcFormatCustomValue(cur, f.type);
+        const emptyCls = cur === "" ? " empty" : "";
+        control = `<div class="mfc-custom-formatted${emptyCls}"
+                        data-mfc-custom-id="${esc(f.id)}"
+                        data-mfc-custom-type="${esc(f.type)}"
+                        data-raw-val="${esc(cur)}"
+                        onclick="_mfcCustomStartEdit(this)"
+                        title="Click to edit">${esc(formatted)}</div>`;
+      } else if (f.type === "number") {
+        control = `<input type="number" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+      } else {
+        control = `<input type="text" data-mfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+      }
+    }
+    const systemTag = f.isSystem
+      ? ` <span class="mfc-systemfield-tag" title="System field (always present)">SYSTEM</span>`
+      : "";
+    return `<div class="mfc-custom-field${f.isSystem ? " mfc-custom-systemfield" : ""}">
+      <label>${esc(f.label)}${systemTag}</label>
+      ${control}
+    </div>`;
+  }).join("");
   const customFieldRowsHtml = `
     <div class="mfc-custom-grid">
-      ${occupancyHtml}
-      ${customSchema.length === 0 ? "" : userFieldRowsHtml}
+      ${fieldRowsHtml}
     </div>
-    ${customSchema.length === 0
+    ${!hasUserFields
       ? `<div class="mfc-custom-empty">No custom research fields yet. Click <strong>Manage</strong> to add fields like ARV, Year Built, Sqft, Vacant?, etc.</div>`
       : ""}
   `;
@@ -3365,7 +3515,7 @@ function openMfcCrm(docNum, sourceRecords) {
                      data-mfc-contact-field="followup"
                      data-mfc-contact-id="${esc(c.id)}">
             </div>
-            <div class="crm-field">
+            <div class="crm-field mfc-contact-notes-field">
               <label>Notes</label>
               <textarea rows="2"
                         placeholder="Notes about this contact…"
@@ -3416,15 +3566,22 @@ function openMfcCrm(docNum, sourceRecords) {
   `;
 
   // --- Compose ---
+  // Title format: "Lead Type — Owner — Property Address". Lead
+  // type goes first as the primary classifier (lets the user see
+  // at a glance what kind of work this lead represents), then
+  // owner name, then property address for context. All parts are
+  // title-cased for readability — source data is ALL CAPS from
+  // the clerk records.
+  const _titleParts = ["Mortgage Foreclosure"];
+  if (rec.owner) _titleParts.push(titleCase(rec.owner));
+  if (rec.prop_address) _titleParts.push(titleCase(rec.prop_address));
   document.getElementById("crm-title").textContent =
-    (rec.owner || "Lead") + " — Mortgage Foreclosure";
-  // --- Compose ---
-  // Stage row spans the top (full width). Below, a 2-column grid
-  // fills the whole page: LEFT has the snapshot + outreach +
-  // notes (the content the user actively edits), RIGHT has the
-  // quick-fill fields + activity log (reference / fast-edit).
-  document.getElementById("crm-title").textContent =
-    (rec.owner || "Lead") + " — Mortgage Foreclosure";
+    _titleParts.join(" — ");
+
+  // Stage row spans the top (full width). Below, a 3-column grid
+  // fills the whole page: snapshot + research + contacts, with
+  // outreach attempts + notes + activity log spanning all columns
+  // beneath.
   const crmBody = document.getElementById("crm-body");
   // Tell the body it's an MFC view so the CSS knows to drop the
   // max-width centering and use full screen real estate.
@@ -5179,6 +5336,40 @@ document.getElementById("fc-reason-backdrop").onclick = (e) => {
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g,
     c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+// Title-case a string for human-readable display. Source data
+// (clerk records) is typed ALL CAPS; this lowers everything and
+// capitalizes the first letter of each whitespace-delimited word.
+// Used for the CRM detail-view title so "VALENTIN VARGAS AND NORA L
+// VARGAS" reads as "Valentin Vargas And Nora L Vargas".
+//
+// Special cases handled:
+//   - Roman numeral SUFFIXES (II, III, IV, V, VI, VII, VIII, IX, X)
+//     force-uppercased when they appear at the end of the string
+//     or just before a comma. This catches "ANDREW NICHOLS II"
+//     but avoids touching the same letters mid-name where they're
+//     usually middle initials ("John V Smith").
+//   - Mc / Mac prefixes: the letter immediately after gets
+//     capitalized too (McDonald, MacArthur), since otherwise the
+//     basic algorithm produces "Mcdonald" / "Macarthur".
+//
+// Limits: doesn't handle every edge case (van der, de la, O'Brien
+// apostrophe casing). Fine for the high-level title where
+// exactness isn't critical.
+function titleCase(s) {
+  if (s == null) return "";
+  // Step 1: basic title-case.
+  let out = String(s).toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  // Step 2: Mc / Mac — capitalize the next letter.
+  out = out.replace(/\b(Ma?c)([a-z])/g,
+    (_, prefix, letter) => prefix + letter.toUpperCase());
+  // Step 3: Roman numeral SUFFIXES — only at end of string or
+  // before a comma. Single I/V/X aren't included because they're
+  // typically middle initials, not numerals.
+  out = out.replace(/\b(Ii|Iii|Iv|Vi|Vii|Viii|Ix)(\b)(?=\s*(?:,|$))/g,
+    (_, numeral, wordEnd) => numeral.toUpperCase() + wordEnd);
+  return out;
 }
 
 // Build the NCAD column cell.
