@@ -669,24 +669,41 @@
      is label + value side-by-side. Used to be a 2-up grid; now
      that the snapshot lives in its own narrow page column we
      stack everything vertically for cleaner reading. */
+  /* Property snapshot — 2-column compact grid. Long-value rows
+     (Owner, Property, Legal) span both columns; short paired
+     values (Sale Date / Equity / Lender / Loan / Appraised) sit
+     2-up. About half the height of the old single-column layout. */
   .mfc-snapshot {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 16px;
-    display: flex; flex-direction: column;
-    gap: 6px;
+    border-radius: 10px; padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+    row-gap: 4px;
   }
   .mfc-snap-row {
     display: flex; gap: 8px; align-items: baseline;
-    font-size: 13px; line-height: 1.35;
+    font-size: 13px; line-height: 1.3;
+    min-width: 0;
+  }
+  /* Long-value rows span the full width. The "wide" modifier is
+     applied to Owner / Property / Legal in the JS template. */
+  .mfc-snap-row.wide {
+    grid-column: 1 / -1;
   }
   .mfc-snap-row .k {
     color: var(--muted); font-size: 10px; text-transform: uppercase;
-    letter-spacing: 0.04em; min-width: 68px; flex-shrink: 0;
+    letter-spacing: 0.04em; min-width: 60px; flex-shrink: 0;
   }
   .mfc-snap-row .v { color: var(--fg); word-break: break-word;
                       font-size: 13px; }
   .mfc-snap-row .v.big {
     font-size: 13px; font-weight: 600;
+  }
+  /* "More details" expandable section spans both columns. */
+  .mfc-snapshot .mfc-details {
+    grid-column: 1 / -1;
+    margin-top: 4px;
   }
   /* Equity coloring — green good (>30%), amber middling (10-30%),
      red thin (<10% or negative). */
@@ -1255,6 +1272,127 @@
   .mfc-contact-fields textarea:focus {
     outline: none; border-color: var(--accent);
   }
+
+  /* ------- Skiptrace card -------
+     A list of labeled rows surfacing research data dug up about
+     the lead (alt phones, addresses, social handles, relatives).
+     Same visual language as Contacts but compact one-row entries
+     instead of multi-field blocks. */
+  .mfc-skiptrace {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px;
+  }
+  .mfc-skiptrace-head {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 6px;
+  }
+  .mfc-skiptrace-head h3 {
+    margin: 0; font-size: 13px; font-weight: 600;
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mfc-skiptrace-add-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); border-radius: 6px;
+    padding: 3px 9px; font-size: 11px; cursor: pointer;
+  }
+  .mfc-skiptrace-add-btn:hover {
+    border-color: var(--accent); color: var(--accent);
+  }
+  .mfc-skiptrace-empty {
+    color: var(--muted); font-size: 12px; padding: 4px 0;
+    font-style: italic;
+  }
+  .mfc-skiptrace-list {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  /* Per-row grid: Kind dropdown | Label | Value | × delete.
+     Sized so the kind dropdown stays compact and label+value get
+     the rest. On narrow widths (mobile), rows can wrap if needed. */
+  .mfc-skiptrace-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 1.5fr 26px;
+    gap: 6px; align-items: center;
+  }
+  .mfc-skiptrace-row select,
+  .mfc-skiptrace-row input {
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 4px;
+    padding: 3px 7px; font: inherit; font-size: 13px;
+    width: 100%; box-sizing: border-box;
+  }
+  .mfc-skiptrace-row select:focus,
+  .mfc-skiptrace-row input:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .mfc-skiptrace-row input::placeholder {
+    color: var(--muted); font-style: italic; opacity: 0.6;
+  }
+  .mfc-skiptrace-del {
+    background: transparent; border: none; color: var(--muted);
+    font-size: 16px; cursor: pointer; padding: 2px 6px;
+    line-height: 1; opacity: 0.5;
+  }
+  .mfc-skiptrace-del:hover { color: var(--bad); opacity: 1; }
+
+  /* ------- Photo card -------
+     URL-based photo of the property. The user pastes a public URL
+     (Drive/Dropbox/Imgur) into the input; if the URL resolves, the
+     image preview appears beneath it. Sits in col-1 below the
+     snapshot (the "green circle" slot in the screenshot). */
+  .mfc-photo {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px;
+  }
+  .mfc-photo-head {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 6px;
+  }
+  .mfc-photo-head h3 {
+    margin: 0; font-size: 13px; font-weight: 600;
+    color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mfc-photo-url-input {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 4px;
+    padding: 3px 7px; font: inherit; font-size: 12px;
+  }
+  .mfc-photo-url-input:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .mfc-photo-url-input::placeholder {
+    color: var(--muted); font-style: italic; opacity: 0.6;
+  }
+  .mfc-photo-preview-wrap {
+    margin-top: 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .mfc-photo-preview {
+    display: block;
+    width: 100%; height: auto;
+    max-height: 280px;
+    object-fit: cover;
+  }
+  .mfc-photo-empty {
+    color: var(--muted); font-size: 12px; padding: 4px 0;
+    font-style: italic;
+  }
+  .mfc-photo-error {
+    color: var(--bad); font-size: 12px; padding: 6px 0;
+    font-style: italic;
+  }
+  /* Open-in-new-tab link below the preview */
+  .mfc-photo-link {
+    display: inline-block;
+    margin-top: 6px;
+    color: var(--muted); font-size: 11px;
+    text-decoration: none;
+  }
+  .mfc-photo-link:hover { color: var(--accent); }
 
   /* Schema-manager modal */
   .mfc-schema-modal-backdrop {
@@ -3057,6 +3195,90 @@ function _mfcRemoveContact(docNum, contactId) {
   openMfcCrm(docNum, FC_RAW);
 }
 
+// ----------------------------------------------------------------
+// MFC skiptrace results (per-lead list)
+// ----------------------------------------------------------------
+// Each lead can have N skiptrace results — phones, emails, addresses,
+// social handles, employer info, possible relatives, etc. Stored on
+// the entry as:
+//   skiptrace: [ { id, kind, label, value } ]
+//   kind:  "phone" | "email" | "address" | "social" | "other"
+//   label: free-text descriptor ("Mom's phone", "Work", "Old addr 2019")
+//   value: the actual data string
+// Modeled after Contacts but separate because skiptrace data is
+// research output — what you DUG UP about the lead — while contacts
+// are people you've actually engaged with.
+
+const MFC_SKIPTRACE_KINDS = [
+  { key: "phone",   label: "Phone"   },
+  { key: "email",   label: "Email"   },
+  { key: "address", label: "Address" },
+  { key: "social",  label: "Social"  },
+  { key: "other",   label: "Other"   },
+];
+
+function _mfcGenSkiptraceId() {
+  return "st_" + Math.random().toString(36).slice(2, 10);
+}
+
+function _mfcSetSkiptraceField(docNum, rowId, field, value) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  const i = rows.findIndex(r => r.id === rowId);
+  if (i < 0) return;
+  rows[i] = { ...rows[i], [field]: value };
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  saveCrmStore("mfc", store);
+}
+
+function _mfcAddSkiptrace(docNum) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  rows.push({
+    id: _mfcGenSkiptraceId(),
+    kind: "phone",
+    label: "",
+    value: "",
+  });
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  saveCrmStore("mfc", store);
+  openMfcCrm(docNum, FC_RAW);
+}
+
+function _mfcRemoveSkiptrace(docNum, rowId) {
+  const entry = getCrmEntry("mfc", docNum);
+  const r = (entry.skiptrace || []).find(x => x.id === rowId);
+  const hasData = r && (r.label || r.value);
+  if (hasData && !confirm("Delete this skiptrace entry?")) return;
+  const store = loadCrmStore("mfc");
+  const e2 = store[docNum] || {};
+  e2.skiptrace = (e2.skiptrace || []).filter(x => x.id !== rowId);
+  e2._updated_at = new Date().toISOString();
+  store[docNum] = e2;
+  saveCrmStore("mfc", store);
+  if (hasData) {
+    _mfcLogActivity(docNum,
+      `Removed skiptrace ${r.kind}: ${r.label || r.value || "(empty)"}`);
+  }
+  openMfcCrm(docNum, FC_RAW);
+}
+
+// ----------------------------------------------------------------
+// MFC house photo (per-lead URL)
+// ----------------------------------------------------------------
+// Stored as a top-level entry field: entry.photo_url (string). The
+// user hosts the image externally (Drive / Dropbox / Imgur) and
+// pastes the URL. Empty value hides the preview.
+function _mfcSetPhotoUrl(docNum, url) {
+  setCrmField("mfc", docNum, "photo_url", url || "");
+}
+
 // Compute the next pending follow-up across all attempts + contacts
 // on this entry. Returns:
 //   { date, source, label, count, isDue }
@@ -3486,12 +3708,13 @@ function openMfcCrm(docNum, sourceRecords) {
   // row append auxiliary content (city/zip sub-line, etc.) — this
   // sits OUTSIDE the editable display so editing only touches the
   // primary value.
-  const _renderEditableRow = (label, key, parsedDisplay, parsedRaw, extraHtml, isBig) => {
+  const _renderEditableRow = (label, key, parsedDisplay, parsedRaw, extraHtml, isBig, isWide) => {
     const eff = _mfcFieldValue(entry, rec, key, parsedDisplay);
     const valForEdit = eff.overridden
       ? eff.value
       : (parsedRaw == null ? "" : String(parsedRaw));
     const bigCls = isBig ? " big" : "";
+    const wideCls = isWide ? " wide" : "";
     const editedBadge = eff.overridden
       ? `<span class="mfc-snap-edited" title="Manually edited — click to edit again">✏️</span>`
       : "";
@@ -3502,7 +3725,7 @@ function openMfcCrm(docNum, sourceRecords) {
       ? (eff.value ? esc(eff.value) : `<span style="color:var(--muted)">—</span>`)
       : (eff.value || `<span style="color:var(--muted)">—</span>`);
     return `
-      <div class="mfc-snap-row" data-mfc-override-key="${esc(key)}">
+      <div class="mfc-snap-row${wideCls}" data-mfc-override-key="${esc(key)}">
         <span class="k">${esc(label)}</span>
         <span class="v${bigCls}">
           <span class="mfc-snap-display"
@@ -3517,30 +3740,30 @@ function openMfcCrm(docNum, sourceRecords) {
   const snapshotHtml = `
     <div class="mfc-snapshot">
       ${_renderEditableRow("Owner", "owner",
-          rec.owner || "—", rec.owner || "", "", true)}
-      ${_renderEditableRow("Sale Date", "sale_date",
-          (saleDate + daysTxt), rec.sale_date || "", "", true)}
+          rec.owner || "—", rec.owner || "", "", true, true)}
       ${_renderEditableRow("Property", "prop_address",
           rec.prop_address || "—", rec.prop_address || "",
           propCityLine
             ? `<div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(propCityLine)}</div>`
             : "",
-          false)}
+          false, true)}
+      ${_renderEditableRow("Sale Date", "sale_date",
+          (saleDate + daysTxt), rec.sale_date || "", "", true, false)}
       <div class="mfc-snap-row">
         <span class="k">Equity</span>
         <span class="v big">${equityHtml}</span>
       </div>
-      ${_renderEditableRow("Lender", "lender",
-          rec.lender || "—", rec.lender || "", "", false)}
       ${_renderEditableRow("Loan", "loan_amount",
           moneyFmt(rec.loan_amount) + ` <span style="color:var(--muted)">(${esc(loanDate)})</span>`,
-          rec.loan_amount == null ? "" : String(rec.loan_amount), "", false)}
-      ${_renderEditableRow("Legal", "legal",
-          rec.legal || "—", rec.legal || "", "", false)}
+          rec.loan_amount == null ? "" : String(rec.loan_amount), "", false, false)}
       ${_renderEditableRow("Appraised", "appraised_value",
           moneyFmt(rec.appraised_value),
           rec.appraised_value == null ? "" : String(rec.appraised_value),
-          "", false)}
+          "", false, false)}
+      ${_renderEditableRow("Lender", "lender",
+          rec.lender || "—", rec.lender || "", "", false, true)}
+      ${_renderEditableRow("Legal", "legal",
+          rec.legal || "—", rec.legal || "", "", false, true)}
 
       <details class="mfc-details">
         <summary>More details</summary>
@@ -3820,6 +4043,74 @@ function openMfcCrm(docNum, sourceRecords) {
     </div>
   `;
 
+  // --- Skiptrace card (research data dug up about the lead) ---
+  // Sits above Outreach Attempts on the full-width row. Each row is
+  // Kind | Label | Value | × delete.
+  const skiptraceList = Array.isArray(entry.skiptrace) ? entry.skiptrace : [];
+  const skiptraceRowsHtml = skiptraceList.length === 0
+    ? `<div class="mfc-skiptrace-empty">No skiptrace data yet. Click <strong>+ Add</strong> to add alt phones, addresses, social handles, relatives, etc.</div>`
+    : `<div class="mfc-skiptrace-list">
+        ${skiptraceList.map(r => {
+          const kindOpts = MFC_SKIPTRACE_KINDS.map(k =>
+            `<option value="${esc(k.key)}"${(r.kind||"phone")===k.key?" selected":""}>${esc(k.label)}</option>`
+          ).join("");
+          return `
+            <div class="mfc-skiptrace-row" data-skip-id="${esc(r.id)}">
+              <select data-mfc-skip-field="kind" data-mfc-skip-id="${esc(r.id)}">
+                ${kindOpts}
+              </select>
+              <input type="text" placeholder="Label (e.g. Mom's phone)"
+                     value="${esc(r.label || "")}"
+                     data-mfc-skip-field="label"
+                     data-mfc-skip-id="${esc(r.id)}">
+              <input type="text" placeholder="Value"
+                     value="${esc(r.value || "")}"
+                     data-mfc-skip-field="value"
+                     data-mfc-skip-id="${esc(r.id)}">
+              <button class="mfc-skiptrace-del"
+                      title="Delete this entry"
+                      onclick="_mfcRemoveSkiptrace('${esc(docNum)}', '${esc(r.id)}')">×</button>
+            </div>
+          `;
+        }).join("")}
+      </div>`;
+  const skiptraceHtml = `
+    <div class="mfc-skiptrace">
+      <div class="mfc-skiptrace-head">
+        <h3>Skiptrace <span class="mfc-attempts-count">${skiptraceList.length}</span></h3>
+        <button class="mfc-skiptrace-add-btn"
+                onclick="_mfcAddSkiptrace('${esc(docNum)}')">+ Add</button>
+      </div>
+      ${skiptraceRowsHtml}
+    </div>
+  `;
+
+  // --- Photo card (URL-based property photo) ---
+  // The user pastes a public URL (Drive/Dropbox/Imgur). The img
+  // element loads it; if loading fails, an error message replaces
+  // the preview via the onerror handler. Empty URL shows a hint.
+  const photoUrl = entry.photo_url || "";
+  const photoPreview = photoUrl
+    ? `<div class="mfc-photo-preview-wrap">
+         <img class="mfc-photo-preview" src="${esc(photoUrl)}"
+              alt="Property photo"
+              onerror="this.parentNode.innerHTML='<div class=\\'mfc-photo-error\\'>Couldn\\'t load image. Check that the URL is publicly accessible and points directly to the image file (ends in .jpg/.png/etc).</div>'">
+       </div>
+       <a class="mfc-photo-link" href="${esc(photoUrl)}" target="_blank" rel="noopener">Open original ↗</a>`
+    : `<div class="mfc-photo-empty">No photo yet. Paste a public image URL above (Drive/Dropbox/Imgur).</div>`;
+  const photoHtml = `
+    <div class="mfc-photo">
+      <div class="mfc-photo-head">
+        <h3>House Photo</h3>
+      </div>
+      <input type="url" class="mfc-photo-url-input"
+             data-mfc-key="photo_url"
+             placeholder="Paste image URL (e.g. https://i.imgur.com/abc.jpg)"
+             value="${esc(photoUrl)}">
+      ${photoPreview}
+    </div>
+  `;
+
   // --- Notes (full width) ---
   // The "Saved ✓" indicator used to live on the Quick Fill card
   // header. With Quick Fill removed, it moves here — Notes is the
@@ -3877,12 +4168,16 @@ function openMfcCrm(docNum, sourceRecords) {
     <div class="mfc-layout">
       <div class="mfc-col mfc-col-1">
         ${snapshotHtml}
+        ${photoHtml}
       </div>
       <div class="mfc-col mfc-col-2">
         ${customHtml}
       </div>
       <div class="mfc-col mfc-col-3">
         ${contactsHtml}
+      </div>
+      <div class="mfc-fullrow">
+        ${skiptraceHtml}
       </div>
       <div class="mfc-fullrow">
         ${attemptsHtml}
@@ -3908,12 +4203,24 @@ function openMfcCrm(docNum, sourceRecords) {
   document.querySelectorAll("#crm-body [data-mfc-key]").forEach(el => {
     const key = el.dataset.mfcKey;
     const tag = el.tagName.toLowerCase();
-    if ((tag === "input" && el.type === "text") || tag === "textarea") {
+    // Textual inputs (text/url/email/etc) and textareas get a
+    // debounced save on each keystroke. Selects/dates/etc commit on
+    // change. The photo_url field also re-renders the CRM after
+    // save so the image preview refreshes — without this, the
+    // preview would stay blank until the user navigated away and
+    // back.
+    const isTextish = (tag === "textarea") ||
+                      (tag === "input" &&
+                       (el.type === "text" || el.type === "url" ||
+                        el.type === "email" || el.type === "tel" ||
+                        el.type === "number"));
+    if (isTextish) {
       el.addEventListener("input", () => {
         clearTimeout(saveTimer);
         saveTimer = setTimeout(() => {
           setCrmField("mfc", docNum, key, el.value);
           flash();
+          if (key === "photo_url") openMfcCrm(docNum, FC_RAW);
         }, 400);
       });
     } else {
@@ -3974,6 +4281,30 @@ function openMfcCrm(docNum, sourceRecords) {
       // date / select: commit on change.
       el.addEventListener("change", () => {
         _mfcSetContactField(docNum, cid, field, el.value);
+        flash();
+      });
+    }
+  });
+
+  // Auto-save for skiptrace rows. Each input/select tagged with
+  // mfc-skip-id + mfc-skip-field — writes to entry.skiptrace[i].
+  // Same debounce-vs-change pattern as contacts.
+  let skipSaveTimer = null;
+  document.querySelectorAll("#crm-body [data-mfc-skip-id]").forEach(el => {
+    const id = el.dataset.mfcSkipId;
+    const field = el.dataset.mfcSkipField;
+    const tag = el.tagName.toLowerCase();
+    if (tag === "input") {
+      el.addEventListener("input", () => {
+        clearTimeout(skipSaveTimer);
+        skipSaveTimer = setTimeout(() => {
+          _mfcSetSkiptraceField(docNum, id, field, el.value);
+          flash();
+        }, 400);
+      });
+    } else {
+      el.addEventListener("change", () => {
+        _mfcSetSkiptraceField(docNum, id, field, el.value);
         flash();
       });
     }
