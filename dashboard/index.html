@@ -817,6 +817,21 @@
     color: var(--accent); text-transform: uppercase;
     letter-spacing: 0.04em;
   }
+  /* Counter pill in the Outreach Attempts header — small muted
+     bubble showing the total. Sits inside the h3 next to the
+     section title. */
+  .mfc-attempts-count {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    font-size: 11px; font-weight: 600;
+    background: rgba(148,163,184,0.12);
+    color: var(--muted);
+    border-radius: 10px;
+    letter-spacing: 0;
+    text-transform: none;
+    vertical-align: middle;
+  }
   .mfc-add-attempt-btn {
     background: var(--accent); color: white;
     border: none; border-radius: 6px;
@@ -2502,9 +2517,69 @@ const MFC_STAGES = [
   { key: "dead",           label: "Dead",           terminal: true, kind: "dead" },
 ];
 
-// Outreach methods. Tweak this list if you add channels.
-const MFC_METHODS = ["Mail", "Knock", "Phone", "Text", "Email",
-                     "Drive-by", "Other"];
+// Outreach methods. The order here is the order shown in the
+// Log Attempt dropdown. To add/rename a method, add it here AND
+// add an entry in MFC_METHOD_MIGRATIONS below if the rename
+// should retroactively apply to attempts already logged.
+const MFC_METHODS = [
+  "Mailed",
+  "Knocked",
+  "Left Letter",
+  "Called",
+  "Texted",
+  "Called/Texted",
+  "Emailed",
+  "Drive-By",
+  "Other",
+];
+
+// One-time renames of method labels. When the dashboard loads, any
+// stored attempt whose `method` string matches an OLD key gets
+// rewritten to the NEW value. This is destructive (overwrites the
+// stored field) but consistent — the user sees their history with
+// today's labels, not yesterday's.
+//
+// Keep this map until the user explicitly removes it. If a future
+// rename happens, ADD entries; don't delete old ones, because some
+// users may not have run the migration yet.
+const MFC_METHOD_MIGRATIONS = {
+  "Mail":     "Mailed",
+  "Knock":    "Knocked",
+  "Phone":    "Called",
+  "Text":     "Texted",
+  "Email":    "Emailed",
+  "Drive-by": "Drive-By",
+  // "Other" was already correct.
+};
+
+// Run the method migration on load. Walks every MFC entry's
+// attempts and rewrites any method matching the OLD key. No-op
+// (and fast) when nothing needs migrating.
+function _mfcMigrateMethodNames() {
+  const store = loadCrmStore("mfc");
+  let touched = false;
+  for (const docNum of Object.keys(store)) {
+    const e = store[docNum];
+    if (!e || !Array.isArray(e.attempts)) continue;
+    for (const a of e.attempts) {
+      const m = a.method;
+      if (m && MFC_METHOD_MIGRATIONS[m]) {
+        a.method = MFC_METHOD_MIGRATIONS[m];
+        touched = true;
+      }
+    }
+  }
+  if (touched) {
+    saveCrmStore("mfc", store);
+    console.log("[mfc] Migrated method names on existing attempts");
+  }
+}
+// Schedule migration once the page is ready. Idempotent.
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", _mfcMigrateMethodNames);
+} else {
+  _mfcMigrateMethodNames();
+}
 
 // Response categories for an outreach attempt.
 const MFC_RESPONSES = [
@@ -3576,7 +3651,7 @@ function openMfcCrm(docNum, sourceRecords) {
   const attemptsHtml = `
     <div class="mfc-attempts">
       <div class="mfc-attempts-head">
-        <h3>Outreach Attempts</h3>
+        <h3>Outreach Attempts <span class="mfc-attempts-count">${attempts.length}</span></h3>
         <button class="mfc-add-attempt-btn"
                 onclick="_mfcOpenAttemptModal('${esc(docNum)}')">
           + Log attempt
@@ -3951,7 +4026,7 @@ function _mfcOpenAttemptModal(docNum, attemptId) {
   document.getElementById("mfc-attempt-date").value =
     existing.date || todayIso;
   document.getElementById("mfc-attempt-method").value =
-    existing.method || "Mail";
+    existing.method || "Mailed";
   document.getElementById("mfc-attempt-notes").value =
     existing.notes || "";
   document.getElementById("mfc-attempt-response").value =
