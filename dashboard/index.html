@@ -1435,6 +1435,92 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
+
+  /* Skiptrace header — flex row with the title + legend on left
+     and the + Add button on right. */
+  .mfc-skiptrace-head-left {
+    display: flex; align-items: center;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .mfc-skip-legend {
+    display: flex; align-items: center;
+    gap: 4px; flex-wrap: wrap;
+    cursor: help;
+  }
+  .mfc-skip-legend-pill {
+    display: inline-block;
+    padding: 1px 7px;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    text-transform: capitalize;
+  }
+
+  /* Per-phone slot wrapper — holds the input and a possible ⚠
+     duplicate-warning badge. The badge sits absolutely positioned
+     in the top-right corner of the slot. */
+  .mfc-skip-phone-slot {
+    position: relative;
+    min-width: 0;
+  }
+  .mfc-skip-phone-slot input {
+    /* Status tint inline styles override these neutrals when set. */
+    background: var(--bg);
+  }
+  .mfc-skip-phone-dupe {
+    position: absolute;
+    top: -4px; right: -2px;
+    background: #facc15;
+    color: #422006;
+    border-radius: 10px;
+    padding: 0 4px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.4;
+    cursor: help;
+    border: 1px solid #ca8a04;
+    z-index: 2;
+  }
+
+  /* Right-click status menu — floating, positioned at cursor */
+  .mfc-phone-status-menu {
+    position: fixed;
+    display: none;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px;
+    min-width: 200px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    z-index: 1000;
+  }
+  .mfc-phone-status-menu.open { display: block; }
+  .mfc-phone-status-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--fg);
+  }
+  .mfc-phone-status-item:hover {
+    background: rgba(56,189,248,0.10);
+  }
+  .mfc-phone-status-item.active {
+    background: rgba(56,189,248,0.05);
+  }
+  .mfc-phone-status-swatch {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .mfc-phone-status-label { flex: 1; }
+  .mfc-phone-status-check {
+    color: var(--accent);
+    font-size: 14px; font-weight: 700;
+  }
   /* Delete button inherits the contact-style del look */
   .mfc-skiptrace-del {
     background: transparent; border: none; color: var(--muted);
@@ -3328,6 +3414,23 @@ function _mfcRemoveContact(docNum, contactId) {
 const MFC_SKIPTRACE_PHONE_COUNT = 10;
 const MFC_SKIPTRACE_EMAIL_COUNT = 2;
 
+// Phone-status tags. Each phone slot in a skiptrace entry tracks
+// a status alongside its number. The status drives a background
+// color (full tint on the input). Empty status = no tint (default,
+// "untested"). Five statuses chosen to match the user's existing
+// Google Sheets workflow plus one for "called, no answer" which
+// is distinct from "left voicemail."
+//
+// Order here is the order shown in the right-click menu and legend.
+const MFC_PHONE_STATUSES = [
+  { key: "",          label: "Untested",         color: ""        },
+  { key: "no_answer", label: "Called, no answer", color: "#94a3b8"  },  // slate-400
+  { key: "texted",    label: "Texted — waiting", color: "#facc15"  },  // yellow-400
+  { key: "vm_left",   label: "VM left — waiting", color: "#a78bfa" },  // violet-400
+  { key: "confirmed", label: "Confirmed contact", color: "#22c55e" },  // green-500
+  { key: "bad",       label: "Bad / Disconnected", color: "#ef4444" }, // red-500
+];
+
 function _mfcGenSkiptraceId() {
   return "st_" + Math.random().toString(36).slice(2, 10);
 }
@@ -3341,9 +3444,43 @@ function _mfcBlankSkiptraceEntry() {
     facebook: "",
     been_verified: "",
     notes: "",
-    phones: Array(MFC_SKIPTRACE_PHONE_COUNT).fill(""),
+    // Each phone slot holds a value and a status. Status is empty
+    // by default (untested) — fills in as the user works the list.
+    phones: Array.from({length: MFC_SKIPTRACE_PHONE_COUNT},
+      () => ({ value: "", status: "" })),
     emails: Array(MFC_SKIPTRACE_EMAIL_COUNT).fill(""),
   };
+}
+
+// Normalize a phones array — handles both old string-array shape
+// (legacy / migration-not-yet-run) AND new object-array shape.
+// Always returns 10 slots of { value, status }.
+function _mfcNormalizePhones(phones) {
+  const out = [];
+  const arr = Array.isArray(phones) ? phones : [];
+  for (let i = 0; i < MFC_SKIPTRACE_PHONE_COUNT; i++) {
+    const p = arr[i];
+    if (p == null) {
+      out.push({ value: "", status: "" });
+    } else if (typeof p === "string") {
+      out.push({ value: p, status: "" });
+    } else {
+      out.push({
+        value: p.value || "",
+        status: p.status || "",
+      });
+    }
+  }
+  return out;
+}
+
+// Normalize a phone number for duplicate detection. Strips all
+// non-digits, then keeps the last 10 digits (so "(361) 555-1234"
+// and "1-361-555-1234" and "3615551234" all compare equal).
+function _mfcPhoneDigits(raw) {
+  if (!raw) return "";
+  const digits = String(raw).replace(/\D/g, "");
+  return digits.length > 10 ? digits.slice(-10) : digits;
 }
 
 // One-time migration: rewrite old (kind/label/value) skiptrace
@@ -3359,49 +3496,63 @@ function _mfcMigrateSkiptraceSchema() {
     const e = store[docNum];
     const rows = e && e.skiptrace;
     if (!Array.isArray(rows) || rows.length === 0) continue;
-    // Detect old shape: first row has `kind` field but no `phones` array.
-    const isOldShape = rows[0] && "kind" in rows[0] && !Array.isArray(rows[0].phones);
-    if (!isOldShape) continue;
-    // Group old rows by their "label" — if multiple rows share a
-    // label, fold them into one new entry. Otherwise each old row
-    // becomes its own new entry.
-    const groups = new Map();
-    for (const r of rows) {
-      const key = (r.label || "").trim() || ("row-" + (r.id || Math.random()));
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(r);
-    }
-    const migrated = [];
-    for (const [groupKey, items] of groups.entries()) {
-      const entry = _mfcBlankSkiptraceEntry();
-      entry.title = items[0].label || "";
-      let phoneIdx = 0, emailIdx = 0;
-      for (const r of items) {
-        const v = r.value || "";
-        if (!v) continue;
-        if (r.kind === "phone" && phoneIdx < MFC_SKIPTRACE_PHONE_COUNT) {
-          entry.phones[phoneIdx++] = v;
-        } else if (r.kind === "email" && emailIdx < MFC_SKIPTRACE_EMAIL_COUNT) {
-          entry.emails[emailIdx++] = v;
-        } else if (r.kind === "address" && !entry.address) {
-          entry.address = v;
-        } else if (r.kind === "social" && !entry.facebook) {
-          entry.facebook = v;
-        } else {
-          // "other" or overflow — append to notes.
-          entry.notes = (entry.notes
-            ? entry.notes + " · "
-            : "") + (r.kind ? `${r.kind}: ` : "") + v;
-        }
+    // Migration 1: detect old kind/label/value shape.
+    const isOldKindShape = rows[0] && "kind" in rows[0] && !Array.isArray(rows[0].phones);
+    if (isOldKindShape) {
+      // (existing kind/label/value migration — unchanged)
+      const groups = new Map();
+      for (const r of rows) {
+        const key = (r.label || "").trim() || ("row-" + (r.id || Math.random()));
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(r);
       }
-      migrated.push(entry);
+      const migrated = [];
+      for (const [groupKey, items] of groups.entries()) {
+        const entry = _mfcBlankSkiptraceEntry();
+        entry.title = items[0].label || "";
+        let phoneIdx = 0, emailIdx = 0;
+        for (const r of items) {
+          const v = r.value || "";
+          if (!v) continue;
+          if (r.kind === "phone" && phoneIdx < MFC_SKIPTRACE_PHONE_COUNT) {
+            entry.phones[phoneIdx++] = { value: v, status: "" };
+          } else if (r.kind === "email" && emailIdx < MFC_SKIPTRACE_EMAIL_COUNT) {
+            entry.emails[emailIdx++] = v;
+          } else if (r.kind === "address" && !entry.address) {
+            entry.address = v;
+          } else if (r.kind === "social" && !entry.facebook) {
+            entry.facebook = v;
+          } else {
+            entry.notes = (entry.notes
+              ? entry.notes + " · "
+              : "") + (r.kind ? `${r.kind}: ` : "") + v;
+          }
+        }
+        migrated.push(entry);
+      }
+      e.skiptrace = migrated;
+      touched = true;
+      continue;
     }
-    e.skiptrace = migrated;
-    touched = true;
+    // Migration 2: phones may be a string-array (pre-status schema)
+    // → wrap them to {value, status} objects.
+    let entryChanged = false;
+    for (const r of rows) {
+      if (Array.isArray(r.phones) && r.phones.length > 0 &&
+          typeof r.phones[0] === "string") {
+        r.phones = r.phones.map(v => ({ value: v || "", status: "" }));
+        // Pad to full 10 slots.
+        while (r.phones.length < MFC_SKIPTRACE_PHONE_COUNT) {
+          r.phones.push({ value: "", status: "" });
+        }
+        entryChanged = true;
+      }
+    }
+    if (entryChanged) touched = true;
   }
   if (touched) {
     saveCrmStore("mfc", store);
-    console.log("[mfc] Migrated skiptrace entries to family-tree schema");
+    console.log("[mfc] Migrated skiptrace entries to current schema");
   }
 }
 // Schedule alongside method-name migration.
@@ -3426,23 +3577,43 @@ function _mfcSetSkiptraceField(docNum, rowId, field, value) {
   saveCrmStore("mfc", store);
 }
 
-// Set a specific phone slot (idx 0..9) on a skiptrace entry.
+// Set the value of a phone slot (idx 0..9). Preserves status.
 function _mfcSetSkiptracePhone(docNum, rowId, idx, value) {
   const store = loadCrmStore("mfc");
   const entry = store[docNum] || {};
   const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
   const i = rows.findIndex(r => r.id === rowId);
   if (i < 0) return;
-  const phones = Array.isArray(rows[i].phones)
-    ? rows[i].phones.slice()
-    : Array(MFC_SKIPTRACE_PHONE_COUNT).fill("");
-  while (phones.length < MFC_SKIPTRACE_PHONE_COUNT) phones.push("");
-  phones[idx] = value;
+  const phones = _mfcNormalizePhones(rows[i].phones);
+  phones[idx] = { value, status: phones[idx].status };
   rows[i] = { ...rows[i], phones };
   entry.skiptrace = rows;
   entry._updated_at = new Date().toISOString();
   store[docNum] = entry;
   saveCrmStore("mfc", store);
+}
+
+// Set the STATUS of a phone slot. Preserves value.
+function _mfcSetSkiptracePhoneStatus(docNum, rowId, idx, status) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  const i = rows.findIndex(r => r.id === rowId);
+  if (i < 0) return;
+  const phones = _mfcNormalizePhones(rows[i].phones);
+  phones[idx] = { value: phones[idx].value, status };
+  rows[i] = { ...rows[i], phones };
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  // Log status changes to activity — useful for "when did I mark
+  // this number bad?" questions later.
+  const stDef = MFC_PHONE_STATUSES.find(s => s.key === status);
+  const stLabel = stDef ? stDef.label : status || "Untested";
+  const phoneNum = phones[idx].value || `slot ${idx+1}`;
+  _mfcLogActivity(docNum,
+    `Phone ${phoneNum} → ${stLabel}`);
+  openMfcCrm(docNum, FC_RAW);
 }
 
 // Set a specific email slot (idx 0..1) on a skiptrace entry.
@@ -3506,6 +3677,81 @@ function _mfcRemoveSkiptrace(docNum, rowId) {
 // pastes the URL. Empty value hides the preview.
 function _mfcSetPhotoUrl(docNum, url) {
   setCrmField("mfc", docNum, "photo_url", url || "");
+}
+
+// ----------------------------------------------------------------
+// Right-click status menu for skiptrace phones
+// ----------------------------------------------------------------
+// Opens a floating menu at the cursor position with the available
+// phone statuses. Choosing one calls _mfcSetSkiptracePhoneStatus,
+// which writes and re-renders. Click anywhere outside (or pressing
+// Escape) closes without changing.
+//
+// The menu is a single shared DOM node — created on first use and
+// kept around. Its content is rebuilt each time it opens so the
+// "currently selected" highlight reflects the right phone.
+
+function _mfcEnsurePhoneStatusMenu() {
+  let menu = document.getElementById("mfc-phone-status-menu");
+  if (menu) return menu;
+  menu = document.createElement("div");
+  menu.id = "mfc-phone-status-menu";
+  menu.className = "mfc-phone-status-menu";
+  document.body.appendChild(menu);
+  // Close on outside click or Escape.
+  document.addEventListener("click", (e) => {
+    if (!menu.classList.contains("open")) return;
+    if (!menu.contains(e.target)) menu.classList.remove("open");
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menu.classList.contains("open")) {
+      menu.classList.remove("open");
+    }
+  });
+  return menu;
+}
+
+function _mfcOpenPhoneStatusMenu(event, docNum, rowId, slotIdx) {
+  event.preventDefault();
+  const menu = _mfcEnsurePhoneStatusMenu();
+  // Read the current status to highlight it in the menu.
+  const entry = getCrmEntry("mfc", docNum);
+  const row = (entry.skiptrace || []).find(r => r.id === rowId);
+  const phones = _mfcNormalizePhones(row ? row.phones : []);
+  const currentStatus = phones[slotIdx] ? phones[slotIdx].status : "";
+  // Build the menu items.
+  menu.innerHTML = MFC_PHONE_STATUSES.map(s => {
+    const active = s.key === currentStatus;
+    const swatchStyle = s.color
+      ? `background-color: ${s.color};`
+      : "background: transparent; border: 1px dashed var(--border);";
+    return `
+      <div class="mfc-phone-status-item${active ? " active" : ""}"
+           data-st="${esc(s.key)}">
+        <span class="mfc-phone-status-swatch" style="${swatchStyle}"></span>
+        <span class="mfc-phone-status-label">${esc(s.label)}</span>
+        ${active ? '<span class="mfc-phone-status-check">✓</span>' : ""}
+      </div>
+    `;
+  }).join("");
+  // Wire item clicks. Listen on the menu and dispatch by data-st.
+  menu.onclick = (e) => {
+    const item = e.target.closest(".mfc-phone-status-item");
+    if (!item) return;
+    const newStatus = item.dataset.st;
+    menu.classList.remove("open");
+    _mfcSetSkiptracePhoneStatus(docNum, rowId, slotIdx, newStatus);
+  };
+  // Position at cursor, clamped to viewport so it doesn't go
+  // off-screen on right-edge clicks.
+  const W = 200, H = MFC_PHONE_STATUSES.length * 30 + 8;
+  let x = event.clientX;
+  let y = event.clientY;
+  if (x + W > window.innerWidth)  x = window.innerWidth - W - 8;
+  if (y + H > window.innerHeight) y = window.innerHeight - H - 8;
+  menu.style.left = x + "px";
+  menu.style.top  = y + "px";
+  menu.classList.add("open");
 }
 
 // Compute the next pending follow-up across all attempts + contacts
@@ -4303,19 +4549,75 @@ function openMfcCrm(docNum, sourceRecords) {
       </div>
     `;
   };
+  // Build a duplicate map: normalized digits → list of locations
+  // [{entry, slot, label}] across ALL skiptrace entries on this
+  // lead. Used to flag dupes with a ⚠ next to each duplicated
+  // phone slot. Empty values don't count toward the map.
+  const _dupeMap = new Map();
+  for (let ei = 0; ei < skiptraceList.length; ei++) {
+    const r = skiptraceList[ei];
+    const phones = _mfcNormalizePhones(r.phones);
+    for (let pi = 0; pi < phones.length; pi++) {
+      const digits = _mfcPhoneDigits(phones[pi].value);
+      if (digits.length < 7) continue;  // ignore partial input
+      if (!_dupeMap.has(digits)) _dupeMap.set(digits, []);
+      _dupeMap.get(digits).push({
+        entryIdx: ei + 1,
+        slotIdx: pi + 1,
+        entryLabel: r.title || r.name || `Entry ${ei + 1}`,
+      });
+    }
+  }
+
   const skiptraceRowsHtml = skiptraceList.length === 0
     ? `<div class="mfc-skiptrace-empty">No skiptrace entries yet. Click <strong>+ Add</strong> to start a family tree — owner, spouse, parents, siblings, kids, neighbors, realtor, etc.</div>`
     : `<div class="mfc-skiptrace-list">
         ${skiptraceList.map((r, idx) => {
-          const phones = Array.isArray(r.phones) ? r.phones : [];
+          const phones = _mfcNormalizePhones(r.phones);
           const emails = Array.isArray(r.emails) ? r.emails : [];
           const phoneInputsHtml = [];
           for (let i = 0; i < MFC_SKIPTRACE_PHONE_COUNT; i++) {
-            phoneInputsHtml.push(`<input type="text"
-              placeholder="Phone ${i+1}"
-              value="${esc(phones[i] || "")}"
-              data-mfc-skip-phone-idx="${i}"
-              data-mfc-skip-id="${esc(r.id)}">`);
+            const p = phones[i];
+            const statusDef = MFC_PHONE_STATUSES.find(s => s.key === (p.status || "")) || MFC_PHONE_STATUSES[0];
+            // Inline style: tint matches status color when set.
+            // The 25% alpha keeps the number text legible against
+            // the colored background.
+            const tintStyle = statusDef.color
+              ? `background-color: ${statusDef.color}33; border-color: ${statusDef.color}88;`
+              : "";
+            // Duplicate detection: if this number appears more than
+            // once across the lead, render a ⚠ icon next to it
+            // listing where else it's used.
+            const digits = _mfcPhoneDigits(p.value);
+            const dupeLocs = (digits.length >= 7 && _dupeMap.has(digits))
+              ? _dupeMap.get(digits) : [];
+            let dupeBadge = "";
+            if (dupeLocs.length > 1) {
+              // Build a tooltip listing the OTHER places (not this one).
+              const others = dupeLocs.filter(
+                d => !(d.entryIdx === (idx + 1) && d.slotIdx === (i + 1))
+              );
+              const tooltip = others.length === 0
+                ? "Duplicate detected"
+                : "Also at: " + others.map(d =>
+                    `${d.entryLabel} (Phone ${d.slotIdx})`
+                  ).join("; ");
+              dupeBadge = `<span class="mfc-skip-phone-dupe"
+                title="${esc(tooltip)}">⚠</span>`;
+            }
+            phoneInputsHtml.push(`
+              <div class="mfc-skip-phone-slot">
+                <input type="text"
+                  placeholder="Phone ${i+1}"
+                  value="${esc(p.value || "")}"
+                  data-mfc-skip-phone-idx="${i}"
+                  data-mfc-skip-id="${esc(r.id)}"
+                  style="${tintStyle}"
+                  title="${esc(statusDef.label)} — right-click to set status"
+                  oncontextmenu="_mfcOpenPhoneStatusMenu(event, '${esc(docNum)}', '${esc(r.id)}', ${i}); return false;">
+                ${dupeBadge}
+              </div>
+            `);
           }
           const emailInputsHtml = [];
           for (let i = 0; i < MFC_SKIPTRACE_EMAIL_COUNT; i++) {
@@ -4361,10 +4663,28 @@ function openMfcCrm(docNum, sourceRecords) {
           `;
         }).join("")}
       </div>`;
+  // Phone-status legend pills shown in the Skiptrace card header.
+  // Skip "Untested" (it's the default with no color) — only the
+  // colored statuses get a pill.
+  const skipLegendHtml = MFC_PHONE_STATUSES
+    .filter(s => s.color)
+    .map(s => `
+      <span class="mfc-skip-legend-pill"
+            style="background-color: ${s.color}33; border-color: ${s.color}88;"
+            title="${esc(s.label)}">
+        ${esc(s.label.split(/[—\s]/)[0])}
+      </span>
+    `).join("");
   const skiptraceHtml = `
     <div class="mfc-skiptrace">
       <div class="mfc-skiptrace-head">
-        <h3>Skiptrace <span class="mfc-attempts-count">${skiptraceList.length}</span></h3>
+        <div class="mfc-skiptrace-head-left">
+          <h3>Skiptrace <span class="mfc-attempts-count">${skiptraceList.length}</span></h3>
+          <div class="mfc-skip-legend"
+               title="Right-click a phone to set its status">
+            ${skipLegendHtml}
+          </div>
+        </div>
         <button class="mfc-skiptrace-add-btn"
                 onclick="_mfcAddSkiptrace('${esc(docNum)}')">+ Add</button>
       </div>
@@ -4610,6 +4930,21 @@ function openMfcCrm(docNum, sourceRecords) {
         clearTimeout(skipSaveTimer);
         skipSaveTimer = setTimeout(save, 400);
       });
+      // For phone fields specifically: re-render on blur so the
+      // duplicate ⚠ badges update without disrupting typing. Mid-
+      // typing re-renders would steal focus; on blur is the sweet
+      // spot — you finish a number, tab/click away, dupes flag.
+      if (phoneIdx != null) {
+        el.addEventListener("blur", () => {
+          // Make sure the pending save flushes before we re-render,
+          // otherwise the freshly typed number could be lost.
+          if (skipSaveTimer) {
+            clearTimeout(skipSaveTimer);
+            save();
+          }
+          openMfcCrm(docNum, FC_RAW);
+        });
+      }
     } else {
       el.addEventListener("change", save);
     }
