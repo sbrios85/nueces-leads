@@ -2113,18 +2113,75 @@
 </div>
 
 <!-- ======== TAX FORECLOSURES PANE ======== -->
+<!-- Structure cloned from MFC pane (#pane-foreclosures). Column
+     headers are identical for now — user will rename to TFC-appropriate
+     labels next. IDs use the "tfc-" prefix to avoid collisions with
+     MFC ("fc-") so both panes can be wired independently later. The
+     tbody has 2 stub rows below the headers so column widths are
+     visible during the editing phase. -->
 <div class="pane" id="pane-taxforeclosures">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Tax Foreclosures coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      This tab will track tax-delinquent properties heading to county
-      auction. The data source is different from mortgage foreclosures
-      (tax sales are handled separately by the county tax office and
-      the Linebarger law firm) — we'll wire it up in a future update.
-    </div>
-  </div>
+  <div class="stats" id="tfc-stats"></div>
+  <table id="tfc-table">
+    <thead><tr>
+      <th style="width: 40px;" title="Save manual edits"></th>
+      <th data-sort="status"         style="width: 58px;">Status</th>
+      <th data-sort="sale_date"      style="width: 130px;">Sale Date</th>
+      <th data-sort="recorded"       style="width: 80px;">Recorded</th>
+      <th data-sort="owner"          style="width: 155px;">Owner</th>
+      <th data-sort="prop_address"   style="width: 175px;">Property Address</th>
+      <th data-sort="mail_address"   style="width: 150px;">Mailing Address</th>
+      <th data-sort="loan_amount"    style="width: 112px;">Loan Amount</th>
+      <th data-sort="appraised_value" style="width: 92px;">Appraised Value</th>
+      <th data-sort="deed_date"      style="width: 90px;">Loan Date</th>
+      <th data-sort="loan_doc"       style="width: 108px;">Loan Document</th>
+      <th data-sort="lender"         style="width: 150px;">Lender</th>
+      <th data-sort="legal"          style="width: 170px;">Legal Description</th>
+      <th data-sort="doc_num"        style="width: 82px;">Doc#</th>
+      <th style="width: 44px;">NCAD</th>
+    </tr></thead>
+    <tbody>
+      <!-- Stub rows — placeholder data so column widths are
+           visible while we're tuning the header. Will be replaced
+           by real scraped TFC records once a tax-sale data source
+           is wired up. -->
+      <tr>
+        <td></td>
+        <td><span class="pill status status-new">NEW</span></td>
+        <td>Jul 7, 2026</td>
+        <td>05/15/26</td>
+        <td>SAMPLE OWNER NAME</td>
+        <td>123 EXAMPLE ST<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78401</span></td>
+        <td>456 MAILING DR<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78415</span></td>
+        <td>$0</td>
+        <td>$150,000</td>
+        <td>—</td>
+        <td>—</td>
+        <td>—</td>
+        <td>EXAMPLE SUBDIVISION LOT 1 BLOCK 2</td>
+        <td>T-2026-001</td>
+        <td><span style="color:var(--muted)">—</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><span class="pill status status-new">NEW</span></td>
+        <td>Jul 14, 2026</td>
+        <td>05/20/26</td>
+        <td>ANOTHER SAMPLE</td>
+        <td>456 PLACEHOLDER AVE<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78411</span></td>
+        <td>456 PLACEHOLDER AVE<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78411</span></td>
+        <td>$0</td>
+        <td>$95,000</td>
+        <td>—</td>
+        <td>—</td>
+        <td>—</td>
+        <td>SAMPLE SUB OUT OF TR 5</td>
+        <td>T-2026-002</td>
+        <td><span style="color:var(--muted)">—</span></td>
+      </tr>
+    </tbody>
+    <tfoot id="tfc-dead-foot"></tfoot>
+  </table>
+  <div id="tfc-empty" class="empty" hidden>No upcoming tax foreclosures matching filters.</div>
 </div>
 
 <!-- ======== CODE VIOLATION PANE (raw) ======== -->
