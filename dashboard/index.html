@@ -1404,9 +1404,14 @@
   /* Phone row — 10 hard slots in a single grid. On wider screens
      all 10 fit on one row; on narrower screens the grid will wrap
      to 2 rows automatically since we use minmax. */
+  /* Phone grid: 14 slots arranged 7 per row at wide widths (so each
+     row is shorter and easier to scan). On narrower screens drops
+     to 5-per-row (matches the existing breakpoint) and then 3-per
+     for mobile. Slot min-width of 90px keeps full numbers readable
+     even when packed tight. */
   .mfc-skip-phones {
     display: grid;
-    grid-template-columns: repeat(10, minmax(90px, 1fr));
+    grid-template-columns: repeat(7, minmax(90px, 1fr));
     gap: 4px;
     margin-bottom: 4px;
   }
@@ -1423,7 +1428,7 @@
   .mfc-skip-phones input::placeholder {
     color: var(--muted); font-style: italic; opacity: 0.4;
   }
-  /* Below ~1500px, drop to 2 rows of 5 so phones stay readable. */
+  /* Below ~1500px, drop to 5 per row (3 rows for 14 slots). */
   @media (max-width: 1500px) {
     .mfc-skip-phones {
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -3411,7 +3416,7 @@ function _mfcRemoveContact(docNum, contactId) {
 // schema are migrated to the new shape at load time. See
 // _mfcMigrateSkiptraceSchema below.
 
-const MFC_SKIPTRACE_PHONE_COUNT = 10;
+const MFC_SKIPTRACE_PHONE_COUNT = 14;
 const MFC_SKIPTRACE_EMAIL_COUNT = 2;
 
 // Phone-status tags. Each phone slot in a skiptrace entry tracks
@@ -4701,13 +4706,19 @@ function openMfcCrm(docNum, sourceRecords) {
   // colored statuses get a pill.
   const skipLegendHtml = MFC_PHONE_STATUSES
     .filter(s => s.color)
-    .map(s => `
+    .map(s => {
+      // Take the first word of the status label as the pill text.
+      // Strip trailing punctuation (the "Called, no answer" label
+      // would otherwise become "Called," — comma included).
+      const firstWord = s.label.split(/[—\s]/)[0].replace(/[,.;:]+$/, "");
+      return `
       <span class="mfc-skip-legend-pill"
             style="background-color: ${s.color}33; border-color: ${s.color}88;"
             title="${esc(s.label)}">
-        ${esc(s.label.split(/[—\s]/)[0])}
+        ${esc(firstWord)}
       </span>
-    `).join("");
+    `;
+    }).join("");
   const skiptraceHtml = `
     <div class="mfc-skiptrace">
       <div class="mfc-skiptrace-head">
