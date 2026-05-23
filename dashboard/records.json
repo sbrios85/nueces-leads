@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-05-22T16:21:39.560807+00:00",
+  "fetched_at": "2026-05-23T11:41:44.572420+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-04-22",
-    "end": "2026-05-22"
+    "start": "2026-04-23",
+    "end": "2026-05-23"
   },
-  "total": 94,
-  "with_address": 38,
+  "total": 86,
+  "with_address": 36,
   "records": [
     {
       "doc_num": "2026017184",
@@ -84,31 +84,6 @@
       "score": 55
     },
     {
-      "doc_num": "2026017107",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-18",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "BLANCO JUAN L",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 540662526",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017107",
-      "flags": [
-        "Tax lien",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
       "doc_num": "2026017106",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-18",
@@ -134,15 +109,15 @@
       "score": 55
     },
     {
-      "doc_num": "2026017104",
+      "doc_num": "2026017107",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-18",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "PINEDA LORI A JONES",
+      "owner": "BLANCO JUAN L",
       "grantee": "INTERNAL REVENUE SERVICE",
       "amount": null,
-      "legal": "AMENDMENT TO CORRECT SERIAL NO 540414726 ON DOC  TO  SERIAL NO 489613924",
+      "legal": "SERIAL NO 540662526",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -151,7 +126,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017104",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017107",
       "flags": [
         "Tax lien",
         "New this week"
@@ -184,6 +159,31 @@
       "score": 55
     },
     {
+      "doc_num": "2026017104",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "PINEDA LORI A JONES",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "AMENDMENT TO CORRECT SERIAL NO 540414726 ON DOC  TO  SERIAL NO 489613924",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017104",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
       "doc_num": "2026014531",
       "doc_type": "LIS PENDENS",
       "filed": "2026-04-27",
@@ -205,54 +205,6 @@
       "flags": [
         "Lis pendens",
         "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026016941",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-05-15",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "ORTEGA ELIZABETH",
-      "grantee": "CARRINGTON MORTGAGE",
-      "amount": null,
-      "legal": "1333 MARYLAND DRIVE CORPUS CHRISTI TEXAS 78415 (Lot 16, Block 8)",
-      "prop_address": "1333 MARYLAND DRIVE",
-      "prop_city": "CORPUS CHRISTI TEXAS",
-      "prop_state": "TX",
-      "prop_zip": "78415",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016941",
-      "flags": [
-        "New this week"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026016917",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-05-15",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "MONTEMAYOR ANDRES",
-      "grantee": "NATIONSTAR MORTGAGE LLC",
-      "amount": null,
-      "legal": "10706 TIMBERGROVE LN CORPUS CHRISTI TX 78410 (Lot 23, Block I)",
-      "prop_address": "10706 TIMBERGROVE LN",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78410",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016917",
-      "flags": [
-        "New this week"
       ],
       "score": 50
     },
@@ -572,30 +524,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026013905",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-04-22",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "NATIONAL BANK & TRUST",
-      "grantee": "PETER JON ROEL & ASSOCIATES LLC",
-      "amount": null,
-      "legal": "237 RUTH STREET CORPUS CHRISTI TX 78405 (Lot 1A, Block 7)",
-      "prop_address": "237 RUTH STREET",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78405",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013905",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026015425",
       "doc_type": "APPOINTMENT",
       "filed": "2026-05-04",
@@ -638,30 +566,6 @@
       "mail_state": "TX",
       "mail_zip": "78703",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014809",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026013948",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-04-22",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "RICHARDS COASTAL PROPERTIES LLC",
-      "grantee": "SIKES KIMBERLY",
-      "amount": null,
-      "legal": "BLDG B",
-      "prop_address": "1419 11TH ST",
-      "prop_city": "PORT ARANSAS",
-      "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "1235 Hilltop Dr Cleburne",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "76033",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013948",
       "flags": [
         "LLC / corp owner"
       ],
@@ -812,78 +716,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026014011",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-04-22",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "GRANADO ESTATES LP",
-      "grantee": "ESTEVANES AMANDA",
-      "amount": null,
-      "legal": "Subdivision - Name: GRANADO ESTATE Lot: 45 Block: 1 (Lot 45, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014011",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013970",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-04-22",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "SELENE FINANCE LP",
-      "grantee": "AUCTION.COM LLC",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013970",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013885",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-04-22",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "219 MARSHALL LLC",
-      "grantee": "MENDOZA ARNOLD",
-      "amount": null,
-      "legal": "Subdivision - Name: DEL MAR ADDITION Lot: 2 Block: 38 (Lot 2, Block 38)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013885",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026015477",
       "doc_type": "DEED",
       "filed": "2026-05-04",
@@ -904,102 +736,6 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026015477",
       "flags": [
         "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013925",
-      "doc_type": "DEED",
-      "filed": "2026-04-22",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "MOUNT NORTH CAPITAL 4 LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: ORIGINAL TOWN OF BISHOP Lot: 8 Block: 32 (Lot 8, Block 32)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013925",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013926",
-      "doc_type": "DEED",
-      "filed": "2026-04-22",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "MOUNT NORTH CAPITAL 4 LLC",
-      "amount": null,
-      "legal": "TRACT D OF THE CORRINE J ELLIFF ESTATE (Lot 60)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013926",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026013924",
-      "doc_type": "DEED",
-      "filed": "2026-04-22",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "TAX LIEN FUND LP",
-      "grantee": "MOUNT NORTH CAPITAL 4 LLC",
-      "amount": null,
-      "legal": "Subdivision - Name: HIGH TERRACE ADDITION Lot: 50 Block: 4 (Lot 50, Block 4)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026013924",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026014900",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-04-29",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "BAUTISTA RICARDO D",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NUMBER 539053426",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014900",
-      "flags": [
-        "Tax lien"
       ],
       "score": 40
     },
@@ -1028,6 +764,30 @@
       "score": 40
     },
     {
+      "doc_num": "2026014900",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-04-29",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "BAUTISTA RICARDO D",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NUMBER 539053426",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014900",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
       "doc_num": "2026015397",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-04",
@@ -1046,6 +806,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026015397",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026016165",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-11",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "JONES LINDA",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NO 539861126",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016165",
       "flags": [
         "Tax lien"
       ],
@@ -1124,30 +908,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026016165",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-11",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "JONES LINDA",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 539861126",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016165",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026015398",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-04",
@@ -1214,6 +974,50 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016729",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026016941",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-05-15",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "ORTEGA ELIZABETH",
+      "grantee": "CARRINGTON MORTGAGE",
+      "amount": null,
+      "legal": "1333 MARYLAND DRIVE CORPUS CHRISTI TEXAS 78415 (Lot 16, Block 8)",
+      "prop_address": "1333 MARYLAND DRIVE",
+      "prop_city": "CORPUS CHRISTI TEXAS",
+      "prop_state": "TX",
+      "prop_zip": "78415",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016941",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026016917",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-05-15",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "MONTEMAYOR ANDRES",
+      "grantee": "NATIONSTAR MORTGAGE LLC",
+      "amount": null,
+      "legal": "10706 TIMBERGROVE LN CORPUS CHRISTI TX 78410 (Lot 23, Block I)",
+      "prop_address": "10706 TIMBERGROVE LN",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78410",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016917",
       "flags": [],
       "score": 35
     },
@@ -1504,28 +1308,6 @@
       "score": 35
     },
     {
-      "doc_num": "2026014416",
-      "doc_type": "LIEN",
-      "filed": "2026-04-27",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "HOGAN NICHOLAS",
-      "grantee": "CHRISTUS SPOHN HOSPITAL SOUTH",
-      "amount": null,
-      "legal": "",
-      "prop_address": "2830 AUSTIN ST",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78404",
-      "mail_address": "PO Box 4154 Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78469",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014416",
-      "flags": [],
-      "score": 35
-    },
-    {
       "doc_num": "2026014413",
       "doc_type": "LIEN",
       "filed": "2026-04-27",
@@ -1544,6 +1326,28 @@
       "mail_state": "TX",
       "mail_zip": "78411",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014413",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026014416",
+      "doc_type": "LIEN",
+      "filed": "2026-04-27",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "HOGAN NICHOLAS",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SOUTH",
+      "amount": null,
+      "legal": "",
+      "prop_address": "2830 AUSTIN ST",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78404",
+      "mail_address": "PO Box 4154 Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78469",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014416",
       "flags": [],
       "score": 35
     },
@@ -2142,28 +1946,6 @@
       "score": 30
     },
     {
-      "doc_num": "2026014526",
-      "doc_type": "DEED",
-      "filed": "2026-04-27",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "NUECES COUNTY",
-      "grantee": "TAX LIEN DEED ASSET BUYER LLC",
-      "amount": null,
-      "legal": "SUIT NO 2015DCV-2903-E (Lot 9, Block 3)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014526",
-      "flags": [],
-      "score": 30
-    },
-    {
       "doc_num": "2026016478",
       "doc_type": "DEED",
       "filed": "2026-05-12",
@@ -2182,6 +1964,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016478",
+      "flags": [],
+      "score": 30
+    },
+    {
+      "doc_num": "2026014526",
+      "doc_type": "DEED",
+      "filed": "2026-04-27",
+      "cat": "TAXDEED",
+      "cat_label": "Tax Deed",
+      "owner": "NUECES COUNTY",
+      "grantee": "TAX LIEN DEED ASSET BUYER LLC",
+      "amount": null,
+      "legal": "SUIT NO 2015DCV-2903-E (Lot 9, Block 3)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014526",
       "flags": [],
       "score": 30
     }
