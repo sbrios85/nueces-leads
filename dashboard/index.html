@@ -1328,19 +1328,44 @@
      Title is narrow (110px), Name and Notes get more room, Address
      gets the most since it's often long, FB/BV are compact since
      they're URLs the user will mostly click rather than read. */
+  /* Header row: 9 elements on one line at full width.
+       Title (110) | Name (130-1fr) | Address (160-1.4fr) |
+       FB (70 + ↗) | BV (70 + ↗) | Notes (140-1.4fr) |
+       Email 1 (140-1fr) | Email 2 (140-1fr) | × (26)
+     Goal is to keep one entry to 2 visual rows (header + phones)
+     instead of 3. FB/BV are deliberately tiny — the user mostly
+     uses the ↗ icon to open them, the input itself is small. */
   .mfc-skip-header {
     display: grid;
     grid-template-columns:
-      110px            /* title */
-      minmax(120px, 1.2fr)   /* name */
-      minmax(140px, 1.5fr)   /* address */
-      minmax(110px, 110px)   /* facebook */
-      minmax(110px, 110px)   /* been verified */
-      minmax(140px, 1.5fr)   /* notes */
-      26px;            /* delete */
+      110px               /* title */
+      minmax(110px, 1fr)  /* name */
+      minmax(130px, 1.4fr)/* address */
+      minmax(80px, 90px)  /* facebook (input + ↗) */
+      minmax(80px, 90px)  /* been verified */
+      minmax(120px, 1.4fr)/* notes */
+      minmax(120px, 1fr)  /* email 1 */
+      minmax(120px, 1fr)  /* email 2 */
+      26px;               /* delete */
     gap: 4px;
     align-items: center;
     margin-bottom: 4px;
+  }
+  /* Below ~1400px the 9-col header is too cramped — wrap the
+     emails to a second sub-row by reducing column count and
+     letting the emails span two cells. */
+  @media (max-width: 1400px) {
+    .mfc-skip-header {
+      grid-template-columns:
+        110px
+        minmax(110px, 1fr)
+        minmax(130px, 1.4fr)
+        80px 80px
+        minmax(120px, 1.4fr)
+        minmax(120px, 1fr)
+        minmax(120px, 1fr)
+        26px;
+    }
   }
   .mfc-skip-header input {
     width: 100%; box-sizing: border-box;
@@ -1354,19 +1379,21 @@
   .mfc-skip-header input::placeholder {
     color: var(--muted); font-style: italic; opacity: 0.5;
   }
-  /* URL field wrapper — input + ↗ link sit side-by-side inline */
+  /* URL field wrapper — input + ↗ link sit side-by-side inline.
+     The input gets a tiny font-size so even "Faceboo..." fits
+     legibly in the narrow slot. */
   .mfc-skip-url {
-    display: flex; align-items: center; gap: 3px;
+    display: flex; align-items: center; gap: 2px;
     min-width: 0;
   }
   .mfc-skip-url input {
     flex: 1; min-width: 0;
-    font-size: 11px;
-    padding: 3px 6px;
+    font-size: 10px;
+    padding: 3px 5px;
   }
   .mfc-skip-url-link {
     color: var(--accent); text-decoration: none;
-    font-size: 13px; padding: 1px 3px;
+    font-size: 13px; padding: 0 2px;
     flex-shrink: 0;
   }
   .mfc-skip-url-link.disabled {
@@ -1407,24 +1434,6 @@
     .mfc-skip-phones {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
-  }
-  /* Email row — 2 slots side by side */
-  .mfc-skip-emails {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px;
-  }
-  .mfc-skip-emails input {
-    width: 100%; box-sizing: border-box;
-    background: var(--bg); border: 1px solid var(--border);
-    color: var(--fg); border-radius: 4px;
-    padding: 2px 7px; font: inherit; font-size: 12px;
-  }
-  .mfc-skip-emails input:focus {
-    outline: none; border-color: var(--accent);
-  }
-  .mfc-skip-emails input::placeholder {
-    color: var(--muted); font-style: italic; opacity: 0.4;
   }
   /* Delete button inherits the contact-style del look */
   .mfc-skiptrace-del {
@@ -4342,12 +4351,12 @@ function openMfcCrm(docNum, sourceRecords) {
                        data-mfc-skip-field="notes"
                        data-mfc-skip-id="${esc(r.id)}"
                        class="mfc-skip-notes">
+                ${emailInputsHtml.join("")}
                 <button class="mfc-skiptrace-del"
                         title="Delete this entry"
                         onclick="_mfcRemoveSkiptrace('${esc(docNum)}', '${esc(r.id)}')">×</button>
               </div>
               <div class="mfc-skip-phones">${phoneInputsHtml.join("")}</div>
-              <div class="mfc-skip-emails">${emailInputsHtml.join("")}</div>
             </div>
           `;
         }).join("")}
