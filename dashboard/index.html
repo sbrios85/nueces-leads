@@ -1404,14 +1404,14 @@
   /* Phone row — 10 hard slots in a single grid. On wider screens
      all 10 fit on one row; on narrower screens the grid will wrap
      to 2 rows automatically since we use minmax. */
-  /* Phone grid: 14 slots arranged 7 per row at wide widths (so each
-     row is shorter and easier to scan). On narrower screens drops
-     to 5-per-row (matches the existing breakpoint) and then 3-per
-     for mobile. Slot min-width of 90px keeps full numbers readable
-     even when packed tight. */
+  /* Phone grid: 14 slots in a single row at wide widths. Each slot
+     gets at minimum 80px (enough for a 10-digit number at 11px
+     font). On narrower screens drops to 7 per row, then 5, then 3.
+     The min-width: 0 on slots lets them shrink past their natural
+     content size if needed. */
   .mfc-skip-phones {
     display: grid;
-    grid-template-columns: repeat(7, minmax(90px, 1fr));
+    grid-template-columns: repeat(14, minmax(0, 1fr));
     gap: 4px;
     margin-bottom: 4px;
   }
@@ -1428,8 +1428,14 @@
   .mfc-skip-phones input::placeholder {
     color: var(--muted); font-style: italic; opacity: 0.4;
   }
-  /* Below ~1500px, drop to 5 per row (3 rows for 14 slots). */
-  @media (max-width: 1500px) {
+  /* Below ~1700px (most laptops), drop to 7 per row — 2 rows total. */
+  @media (max-width: 1700px) {
+    .mfc-skip-phones {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+  }
+  /* Below ~1200px, drop to 5 per row. */
+  @media (max-width: 1200px) {
     .mfc-skip-phones {
       grid-template-columns: repeat(5, minmax(0, 1fr));
     }
