@@ -1558,19 +1558,13 @@
     color: var(--accent); text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  /* Picture Folder row — sits between the title and the image URL
-     input. Small label on top, then input + ↗ link inline. */
-  .mfc-photo-folder-row {
-    margin-bottom: 6px;
-  }
-  .mfc-photo-folder-label {
-    display: block;
-    color: var(--muted); font-size: 10px;
-    text-transform: uppercase; letter-spacing: 0.04em;
-    margin-bottom: 2px;
-  }
-  .mfc-photo-folder-input-wrap {
+  /* Photo URLs row — image URL input + folder URL input + ↗ link
+     on a single horizontal line. The image URL gets slightly more
+     room since it's the primary field and typically has a longer
+     URL (Imgur paths are longer than Drive folder paths usually). */
+  .mfc-photo-url-row {
     display: flex; align-items: center; gap: 4px;
+    margin-bottom: 8px;
   }
   .mfc-photo-folder-input {
     flex: 1; min-width: 0;
@@ -1596,7 +1590,12 @@
   }
   .mfc-photo-folder-link:hover { opacity: 0.7; }
   .mfc-photo-url-input {
-    width: 100%; box-sizing: border-box;
+    /* Inside .mfc-photo-url-row this becomes a flex item with
+       slightly more weight (1.4) than the folder input (1.0), so
+       it gets a touch more room since Imgur/Drive image URLs are
+       typically a bit longer than folder URLs. */
+    flex: 1.4; min-width: 0;
+    box-sizing: border-box;
     background: var(--bg); border: 1px solid var(--border);
     color: var(--fg); border-radius: 4px;
     padding: 3px 7px; font: inherit; font-size: 12px;
@@ -4806,23 +4805,20 @@ function openMfcCrm(docNum, sourceRecords) {
       <div class="mfc-photo-head">
         <h3>House Photo</h3>
       </div>
-      <div class="mfc-photo-folder-row">
-        <label class="mfc-photo-folder-label">Picture Folder</label>
-        <div class="mfc-photo-folder-input-wrap">
-          <input type="url" class="mfc-photo-folder-input"
-                 data-mfc-key="photo_folder_url"
-                 placeholder="Paste folder URL (Drive / Dropbox / etc.)"
-                 value="${esc(folderUrl)}">
-          <a class="mfc-photo-folder-link${folderUrl ? "" : " disabled"}"
-             href="${folderUrl ? esc(folderHrefUrl) : "javascript:void(0)"}"
-             target="_blank" rel="noopener"
-             title="${folderUrl ? "Open folder in new tab" : "(no URL yet)"}">↗</a>
-        </div>
+      <div class="mfc-photo-url-row">
+        <input type="url" class="mfc-photo-url-input"
+               data-mfc-key="photo_url"
+               placeholder="Image URL (Imgur/Drive/Dropbox)"
+               value="${esc(photoUrl)}">
+        <input type="url" class="mfc-photo-folder-input"
+               data-mfc-key="photo_folder_url"
+               placeholder="Folder URL (Drive/Dropbox)"
+               value="${esc(folderUrl)}">
+        <a class="mfc-photo-folder-link${folderUrl ? "" : " disabled"}"
+           href="${folderUrl ? esc(folderHrefUrl) : "javascript:void(0)"}"
+           target="_blank" rel="noopener"
+           title="${folderUrl ? "Open folder in new tab" : "(no folder URL yet)"}">↗</a>
       </div>
-      <input type="url" class="mfc-photo-url-input"
-             data-mfc-key="photo_url"
-             placeholder="Paste image URL (e.g. https://i.imgur.com/abc.jpg)"
-             value="${esc(photoUrl)}">
       ${photoPreview}
     </div>
   `;
