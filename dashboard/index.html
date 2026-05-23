@@ -1273,11 +1273,12 @@
     outline: none; border-color: var(--accent);
   }
 
-  /* ------- Skiptrace card -------
-     A list of labeled rows surfacing research data dug up about
-     the lead (alt phones, addresses, social handles, relatives).
-     Same visual language as Contacts but compact one-row entries
-     instead of multi-field blocks. */
+  /* ------- Skiptrace card (family-tree layout) -------
+     Each entry is 3 visual rows: header (title/name/address/FB/BV/
+     notes/×) + phone row (10 slots) + email row (2 slots). On
+     wide screens the header and phone rows fit in single lines;
+     on narrower screens they wrap naturally. Entries are
+     separated by a top border. */
   .mfc-skiptrace {
     background: var(--panel); border: 1px solid var(--border);
     border-radius: 10px; padding: 10px 12px;
@@ -1304,30 +1305,128 @@
     font-style: italic;
   }
   .mfc-skiptrace-list {
-    display: flex; flex-direction: column; gap: 4px;
+    display: flex; flex-direction: column; gap: 6px;
   }
-  /* Per-row grid: Kind dropdown | Label | Value | × delete.
-     Sized so the kind dropdown stays compact and label+value get
-     the rest. On narrow widths (mobile), rows can wrap if needed. */
-  .mfc-skiptrace-row {
+  /* Per-entry block. First entry has no top border (the card's
+     own padding gives it room); subsequent entries are separated
+     by a thin border so the eye can scan between people. */
+  .mfc-skip-entry {
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .mfc-skip-entry:first-child {
+    padding-top: 2px;
+    border-top: none;
+  }
+  /* Small label above the entry — "Entry 1", "Entry 2", etc. */
+  .mfc-skip-entry-label {
+    color: var(--muted); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 3px;
+  }
+  /* Header row: title | name | address | FB | BV | notes | ×
+     Title is narrow (110px), Name and Notes get more room, Address
+     gets the most since it's often long, FB/BV are compact since
+     they're URLs the user will mostly click rather than read. */
+  .mfc-skip-header {
     display: grid;
-    grid-template-columns: 90px 1fr 1.5fr 26px;
-    gap: 6px; align-items: center;
+    grid-template-columns:
+      110px            /* title */
+      minmax(120px, 1.2fr)   /* name */
+      minmax(140px, 1.5fr)   /* address */
+      minmax(110px, 110px)   /* facebook */
+      minmax(110px, 110px)   /* been verified */
+      minmax(140px, 1.5fr)   /* notes */
+      26px;            /* delete */
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 4px;
   }
-  .mfc-skiptrace-row select,
-  .mfc-skiptrace-row input {
+  .mfc-skip-header input {
+    width: 100%; box-sizing: border-box;
     background: var(--bg); border: 1px solid var(--border);
     color: var(--fg); border-radius: 4px;
     padding: 3px 7px; font: inherit; font-size: 13px;
-    width: 100%; box-sizing: border-box;
   }
-  .mfc-skiptrace-row select:focus,
-  .mfc-skiptrace-row input:focus {
+  .mfc-skip-header input:focus {
     outline: none; border-color: var(--accent);
   }
-  .mfc-skiptrace-row input::placeholder {
-    color: var(--muted); font-style: italic; opacity: 0.6;
+  .mfc-skip-header input::placeholder {
+    color: var(--muted); font-style: italic; opacity: 0.5;
   }
+  /* URL field wrapper — input + ↗ link sit side-by-side inline */
+  .mfc-skip-url {
+    display: flex; align-items: center; gap: 3px;
+    min-width: 0;
+  }
+  .mfc-skip-url input {
+    flex: 1; min-width: 0;
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+  .mfc-skip-url-link {
+    color: var(--accent); text-decoration: none;
+    font-size: 13px; padding: 1px 3px;
+    flex-shrink: 0;
+  }
+  .mfc-skip-url-link.disabled {
+    color: var(--muted); opacity: 0.3;
+    pointer-events: none;
+  }
+  .mfc-skip-url-link:hover { opacity: 0.7; }
+  /* Phone row — 10 hard slots in a single grid. On wider screens
+     all 10 fit on one row; on narrower screens the grid will wrap
+     to 2 rows automatically since we use minmax. */
+  .mfc-skip-phones {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(90px, 1fr));
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .mfc-skip-phones input {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 4px;
+    padding: 2px 6px; font: inherit; font-size: 11px;
+    min-width: 0;
+  }
+  .mfc-skip-phones input:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .mfc-skip-phones input::placeholder {
+    color: var(--muted); font-style: italic; opacity: 0.4;
+  }
+  /* Below ~1500px, drop to 2 rows of 5 so phones stay readable. */
+  @media (max-width: 1500px) {
+    .mfc-skip-phones {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+  /* Below ~900px, 3 phones per row for narrow viewports. */
+  @media (max-width: 900px) {
+    .mfc-skip-phones {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  /* Email row — 2 slots side by side */
+  .mfc-skip-emails {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .mfc-skip-emails input {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 4px;
+    padding: 2px 7px; font: inherit; font-size: 12px;
+  }
+  .mfc-skip-emails input:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .mfc-skip-emails input::placeholder {
+    color: var(--muted); font-style: italic; opacity: 0.4;
+  }
+  /* Delete button inherits the contact-style del look */
   .mfc-skiptrace-del {
     background: transparent; border: none; color: var(--muted);
     font-size: 16px; cursor: pointer; padding: 2px 6px;
@@ -3196,31 +3295,115 @@ function _mfcRemoveContact(docNum, contactId) {
 }
 
 // ----------------------------------------------------------------
-// MFC skiptrace results (per-lead list)
+// MFC skiptrace results (per-lead family-tree style list)
 // ----------------------------------------------------------------
-// Each lead can have N skiptrace results — phones, emails, addresses,
-// social handles, employer info, possible relatives, etc. Stored on
-// the entry as:
-//   skiptrace: [ { id, kind, label, value } ]
-//   kind:  "phone" | "email" | "address" | "social" | "other"
-//   label: free-text descriptor ("Mom's phone", "Work", "Old addr 2019")
-//   value: the actual data string
-// Modeled after Contacts but separate because skiptrace data is
-// research output — what you DUG UP about the lead — while contacts
-// are people you've actually engaged with.
+// Each lead has a list of skiptrace ENTRIES — typically the owner +
+// family members + neighbors + realtors. Each entry has:
+//   id        — stable identifier
+//   title     — free-text descriptor ("Owner", "Rhonda's Niece",
+//               "Neighbor", "Realtor", etc.)
+//   name      — person's name
+//   address   — city/state or full address
+//   facebook  — URL (clickable when filled)
+//   been_verified — URL to the BeenVerified.com or similar lookup
+//   notes     — free-text notes about this person
+//   phones    — array of 10 strings (slots 0-9, mostly empty)
+//   emails    — array of 2 strings
+// Modeled after the user's existing Google Sheets workflow for
+// vacant-house family-tree skiptracing.
+//
+// Older entries from the previous (kind/label/value) skiptrace
+// schema are migrated to the new shape at load time. See
+// _mfcMigrateSkiptraceSchema below.
 
-const MFC_SKIPTRACE_KINDS = [
-  { key: "phone",   label: "Phone"   },
-  { key: "email",   label: "Email"   },
-  { key: "address", label: "Address" },
-  { key: "social",  label: "Social"  },
-  { key: "other",   label: "Other"   },
-];
+const MFC_SKIPTRACE_PHONE_COUNT = 10;
+const MFC_SKIPTRACE_EMAIL_COUNT = 2;
 
 function _mfcGenSkiptraceId() {
   return "st_" + Math.random().toString(36).slice(2, 10);
 }
 
+function _mfcBlankSkiptraceEntry() {
+  return {
+    id: _mfcGenSkiptraceId(),
+    title: "",
+    name: "",
+    address: "",
+    facebook: "",
+    been_verified: "",
+    notes: "",
+    phones: Array(MFC_SKIPTRACE_PHONE_COUNT).fill(""),
+    emails: Array(MFC_SKIPTRACE_EMAIL_COUNT).fill(""),
+  };
+}
+
+// One-time migration: rewrite old (kind/label/value) skiptrace
+// entries to the new family-tree shape. Old kind/label/value rows
+// get converted as best-effort — kind+label becomes title, value
+// fills the most-appropriate slot (phones[0] for "phone", emails[0]
+// for "email", address for "address", etc.). After migration runs
+// once and saves, subsequent reads see the new shape.
+function _mfcMigrateSkiptraceSchema() {
+  const store = loadCrmStore("mfc");
+  let touched = false;
+  for (const docNum of Object.keys(store)) {
+    const e = store[docNum];
+    const rows = e && e.skiptrace;
+    if (!Array.isArray(rows) || rows.length === 0) continue;
+    // Detect old shape: first row has `kind` field but no `phones` array.
+    const isOldShape = rows[0] && "kind" in rows[0] && !Array.isArray(rows[0].phones);
+    if (!isOldShape) continue;
+    // Group old rows by their "label" — if multiple rows share a
+    // label, fold them into one new entry. Otherwise each old row
+    // becomes its own new entry.
+    const groups = new Map();
+    for (const r of rows) {
+      const key = (r.label || "").trim() || ("row-" + (r.id || Math.random()));
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(r);
+    }
+    const migrated = [];
+    for (const [groupKey, items] of groups.entries()) {
+      const entry = _mfcBlankSkiptraceEntry();
+      entry.title = items[0].label || "";
+      let phoneIdx = 0, emailIdx = 0;
+      for (const r of items) {
+        const v = r.value || "";
+        if (!v) continue;
+        if (r.kind === "phone" && phoneIdx < MFC_SKIPTRACE_PHONE_COUNT) {
+          entry.phones[phoneIdx++] = v;
+        } else if (r.kind === "email" && emailIdx < MFC_SKIPTRACE_EMAIL_COUNT) {
+          entry.emails[emailIdx++] = v;
+        } else if (r.kind === "address" && !entry.address) {
+          entry.address = v;
+        } else if (r.kind === "social" && !entry.facebook) {
+          entry.facebook = v;
+        } else {
+          // "other" or overflow — append to notes.
+          entry.notes = (entry.notes
+            ? entry.notes + " · "
+            : "") + (r.kind ? `${r.kind}: ` : "") + v;
+        }
+      }
+      migrated.push(entry);
+    }
+    e.skiptrace = migrated;
+    touched = true;
+  }
+  if (touched) {
+    saveCrmStore("mfc", store);
+    console.log("[mfc] Migrated skiptrace entries to family-tree schema");
+  }
+}
+// Schedule alongside method-name migration.
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", _mfcMigrateSkiptraceSchema);
+} else {
+  _mfcMigrateSkiptraceSchema();
+}
+
+// Set a top-level field on a skiptrace entry (title, name, address,
+// facebook, been_verified, notes).
 function _mfcSetSkiptraceField(docNum, rowId, field, value) {
   const store = loadCrmStore("mfc");
   const entry = store[docNum] || {};
@@ -3234,16 +3417,49 @@ function _mfcSetSkiptraceField(docNum, rowId, field, value) {
   saveCrmStore("mfc", store);
 }
 
+// Set a specific phone slot (idx 0..9) on a skiptrace entry.
+function _mfcSetSkiptracePhone(docNum, rowId, idx, value) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  const i = rows.findIndex(r => r.id === rowId);
+  if (i < 0) return;
+  const phones = Array.isArray(rows[i].phones)
+    ? rows[i].phones.slice()
+    : Array(MFC_SKIPTRACE_PHONE_COUNT).fill("");
+  while (phones.length < MFC_SKIPTRACE_PHONE_COUNT) phones.push("");
+  phones[idx] = value;
+  rows[i] = { ...rows[i], phones };
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  saveCrmStore("mfc", store);
+}
+
+// Set a specific email slot (idx 0..1) on a skiptrace entry.
+function _mfcSetSkiptraceEmail(docNum, rowId, idx, value) {
+  const store = loadCrmStore("mfc");
+  const entry = store[docNum] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  const i = rows.findIndex(r => r.id === rowId);
+  if (i < 0) return;
+  const emails = Array.isArray(rows[i].emails)
+    ? rows[i].emails.slice()
+    : Array(MFC_SKIPTRACE_EMAIL_COUNT).fill("");
+  while (emails.length < MFC_SKIPTRACE_EMAIL_COUNT) emails.push("");
+  emails[idx] = value;
+  rows[i] = { ...rows[i], emails };
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[docNum] = entry;
+  saveCrmStore("mfc", store);
+}
+
 function _mfcAddSkiptrace(docNum) {
   const store = loadCrmStore("mfc");
   const entry = store[docNum] || {};
   const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
-  rows.push({
-    id: _mfcGenSkiptraceId(),
-    kind: "phone",
-    label: "",
-    value: "",
-  });
+  rows.push(_mfcBlankSkiptraceEntry());
   entry.skiptrace = rows;
   entry._updated_at = new Date().toISOString();
   store[docNum] = entry;
@@ -3254,7 +3470,11 @@ function _mfcAddSkiptrace(docNum) {
 function _mfcRemoveSkiptrace(docNum, rowId) {
   const entry = getCrmEntry("mfc", docNum);
   const r = (entry.skiptrace || []).find(x => x.id === rowId);
-  const hasData = r && (r.label || r.value);
+  // Only warn if there's actual data attached (any field non-empty).
+  const hasData = r && (r.title || r.name || r.address || r.facebook ||
+    r.been_verified || r.notes ||
+    (r.phones || []).some(p => p) ||
+    (r.emails || []).some(e => e));
   if (hasData && !confirm("Delete this skiptrace entry?")) return;
   const store = loadCrmStore("mfc");
   const e2 = store[docNum] || {};
@@ -3264,7 +3484,7 @@ function _mfcRemoveSkiptrace(docNum, rowId) {
   saveCrmStore("mfc", store);
   if (hasData) {
     _mfcLogActivity(docNum,
-      `Removed skiptrace ${r.kind}: ${r.label || r.value || "(empty)"}`);
+      `Removed skiptrace entry: ${r.title || r.name || "(unnamed)"}`);
   }
   openMfcCrm(docNum, FC_RAW);
 }
@@ -4043,33 +4263,91 @@ function openMfcCrm(docNum, sourceRecords) {
     </div>
   `;
 
-  // --- Skiptrace card (research data dug up about the lead) ---
-  // Sits above Outreach Attempts on the full-width row. Each row is
-  // Kind | Label | Value | × delete.
+  // --- Skiptrace card (family-tree style — owner + relatives + neighbors) ---
+  // Sits above Outreach Attempts on the full-width row. Each entry
+  // is 3 visual rows:
+  //   Row 1: Title | Name | Address | Facebook URL | Been Verified URL | Notes | × delete
+  //   Row 2: Phone slots 1-10 (10 hard slots, mostly empty by default)
+  //   Row 3: Email slots 1-2
+  // The "+ Add" button appends a fresh blank entry.
   const skiptraceList = Array.isArray(entry.skiptrace) ? entry.skiptrace : [];
+  // URL field helper — input + small ↗ link when URL is set.
+  // Renders the link to ABOUT:blank when value is empty so the user
+  // still sees the icon position; clicking does nothing on empty.
+  const _urlField = (rowId, field, value, placeholder) => {
+    const url = value || "";
+    const hasUrl = url.trim().length > 0;
+    // Add https:// if missing so the link actually opens externally.
+    const hrefUrl = hasUrl
+      ? (url.startsWith("http") ? url : "https://" + url)
+      : "#";
+    return `
+      <div class="mfc-skip-url">
+        <input type="text" placeholder="${esc(placeholder)}"
+               value="${esc(url)}"
+               data-mfc-skip-field="${esc(field)}"
+               data-mfc-skip-id="${esc(rowId)}">
+        <a class="mfc-skip-url-link${hasUrl ? "" : " disabled"}"
+           href="${hasUrl ? esc(hrefUrl) : "javascript:void(0)"}"
+           target="_blank" rel="noopener"
+           title="${hasUrl ? "Open in new tab" : "(no URL yet)"}">↗</a>
+      </div>
+    `;
+  };
   const skiptraceRowsHtml = skiptraceList.length === 0
-    ? `<div class="mfc-skiptrace-empty">No skiptrace data yet. Click <strong>+ Add</strong> to add alt phones, addresses, social handles, relatives, etc.</div>`
+    ? `<div class="mfc-skiptrace-empty">No skiptrace entries yet. Click <strong>+ Add</strong> to start a family tree — owner, spouse, parents, siblings, kids, neighbors, realtor, etc.</div>`
     : `<div class="mfc-skiptrace-list">
-        ${skiptraceList.map(r => {
-          const kindOpts = MFC_SKIPTRACE_KINDS.map(k =>
-            `<option value="${esc(k.key)}"${(r.kind||"phone")===k.key?" selected":""}>${esc(k.label)}</option>`
-          ).join("");
+        ${skiptraceList.map((r, idx) => {
+          const phones = Array.isArray(r.phones) ? r.phones : [];
+          const emails = Array.isArray(r.emails) ? r.emails : [];
+          const phoneInputsHtml = [];
+          for (let i = 0; i < MFC_SKIPTRACE_PHONE_COUNT; i++) {
+            phoneInputsHtml.push(`<input type="text"
+              placeholder="Phone ${i+1}"
+              value="${esc(phones[i] || "")}"
+              data-mfc-skip-phone-idx="${i}"
+              data-mfc-skip-id="${esc(r.id)}">`);
+          }
+          const emailInputsHtml = [];
+          for (let i = 0; i < MFC_SKIPTRACE_EMAIL_COUNT; i++) {
+            emailInputsHtml.push(`<input type="text"
+              placeholder="Email ${i+1}"
+              value="${esc(emails[i] || "")}"
+              data-mfc-skip-email-idx="${i}"
+              data-mfc-skip-id="${esc(r.id)}">`);
+          }
           return `
-            <div class="mfc-skiptrace-row" data-skip-id="${esc(r.id)}">
-              <select data-mfc-skip-field="kind" data-mfc-skip-id="${esc(r.id)}">
-                ${kindOpts}
-              </select>
-              <input type="text" placeholder="Label (e.g. Mom's phone)"
-                     value="${esc(r.label || "")}"
-                     data-mfc-skip-field="label"
-                     data-mfc-skip-id="${esc(r.id)}">
-              <input type="text" placeholder="Value"
-                     value="${esc(r.value || "")}"
-                     data-mfc-skip-field="value"
-                     data-mfc-skip-id="${esc(r.id)}">
-              <button class="mfc-skiptrace-del"
-                      title="Delete this entry"
-                      onclick="_mfcRemoveSkiptrace('${esc(docNum)}', '${esc(r.id)}')">×</button>
+            <div class="mfc-skip-entry" data-skip-id="${esc(r.id)}">
+              <div class="mfc-skip-entry-label">Entry ${idx + 1}</div>
+              <div class="mfc-skip-header">
+                <input type="text" placeholder="Title"
+                       value="${esc(r.title || "")}"
+                       data-mfc-skip-field="title"
+                       data-mfc-skip-id="${esc(r.id)}"
+                       class="mfc-skip-title">
+                <input type="text" placeholder="Name"
+                       value="${esc(r.name || "")}"
+                       data-mfc-skip-field="name"
+                       data-mfc-skip-id="${esc(r.id)}"
+                       class="mfc-skip-name">
+                <input type="text" placeholder="Address"
+                       value="${esc(r.address || "")}"
+                       data-mfc-skip-field="address"
+                       data-mfc-skip-id="${esc(r.id)}"
+                       class="mfc-skip-address">
+                ${_urlField(r.id, "facebook", r.facebook, "Facebook")}
+                ${_urlField(r.id, "been_verified", r.been_verified, "Been Verified")}
+                <input type="text" placeholder="Notes"
+                       value="${esc(r.notes || "")}"
+                       data-mfc-skip-field="notes"
+                       data-mfc-skip-id="${esc(r.id)}"
+                       class="mfc-skip-notes">
+                <button class="mfc-skiptrace-del"
+                        title="Delete this entry"
+                        onclick="_mfcRemoveSkiptrace('${esc(docNum)}', '${esc(r.id)}')">×</button>
+              </div>
+              <div class="mfc-skip-phones">${phoneInputsHtml.join("")}</div>
+              <div class="mfc-skip-emails">${emailInputsHtml.join("")}</div>
             </div>
           `;
         }).join("")}
@@ -4288,25 +4566,43 @@ function openMfcCrm(docNum, sourceRecords) {
 
   // Auto-save for skiptrace rows. Each input/select tagged with
   // mfc-skip-id + mfc-skip-field — writes to entry.skiptrace[i].
-  // Same debounce-vs-change pattern as contacts.
+  // Auto-save for skiptrace entries. Each input is tagged with
+  // its parent entry id (data-mfc-skip-id) plus one of:
+  //   data-mfc-skip-field      → top-level entry field (title,
+  //                              name, address, fb, bv, notes)
+  //   data-mfc-skip-phone-idx  → phone slot (0..9)
+  //   data-mfc-skip-email-idx  → email slot (0..1)
+  // The dispatch picks the right setter for each.
   let skipSaveTimer = null;
   document.querySelectorAll("#crm-body [data-mfc-skip-id]").forEach(el => {
     const id = el.dataset.mfcSkipId;
-    const field = el.dataset.mfcSkipField;
+    const field   = el.dataset.mfcSkipField;
+    const phoneIdx = el.dataset.mfcSkipPhoneIdx;
+    const emailIdx = el.dataset.mfcSkipEmailIdx;
+    const save = () => {
+      if (field) {
+        _mfcSetSkiptraceField(docNum, id, field, el.value);
+        // Re-render only when a URL field changes, so the ↗ link
+        // active state toggles. Other text fields don't need a
+        // re-render — the value stays in the DOM.
+        if (field === "facebook" || field === "been_verified") {
+          openMfcCrm(docNum, FC_RAW);
+        }
+      } else if (phoneIdx != null) {
+        _mfcSetSkiptracePhone(docNum, id, parseInt(phoneIdx, 10), el.value);
+      } else if (emailIdx != null) {
+        _mfcSetSkiptraceEmail(docNum, id, parseInt(emailIdx, 10), el.value);
+      }
+      flash();
+    };
     const tag = el.tagName.toLowerCase();
-    if (tag === "input") {
+    if (tag === "input" || tag === "textarea") {
       el.addEventListener("input", () => {
         clearTimeout(skipSaveTimer);
-        skipSaveTimer = setTimeout(() => {
-          _mfcSetSkiptraceField(docNum, id, field, el.value);
-          flash();
-        }, 400);
+        skipSaveTimer = setTimeout(save, 400);
       });
     } else {
-      el.addEventListener("change", () => {
-        _mfcSetSkiptraceField(docNum, id, field, el.value);
-        flash();
-      });
+      el.addEventListener("change", save);
     }
   });
 
