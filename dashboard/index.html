@@ -1558,6 +1558,43 @@
     color: var(--accent); text-transform: uppercase;
     letter-spacing: 0.04em;
   }
+  /* Picture Folder row — sits between the title and the image URL
+     input. Small label on top, then input + ↗ link inline. */
+  .mfc-photo-folder-row {
+    margin-bottom: 6px;
+  }
+  .mfc-photo-folder-label {
+    display: block;
+    color: var(--muted); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+  .mfc-photo-folder-input-wrap {
+    display: flex; align-items: center; gap: 4px;
+  }
+  .mfc-photo-folder-input {
+    flex: 1; min-width: 0;
+    box-sizing: border-box;
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--fg); border-radius: 4px;
+    padding: 3px 7px; font: inherit; font-size: 12px;
+  }
+  .mfc-photo-folder-input:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .mfc-photo-folder-input::placeholder {
+    color: var(--muted); font-style: italic; opacity: 0.6;
+  }
+  .mfc-photo-folder-link {
+    color: var(--accent); text-decoration: none;
+    font-size: 14px; padding: 1px 4px;
+    flex-shrink: 0;
+  }
+  .mfc-photo-folder-link.disabled {
+    color: var(--muted); opacity: 0.3;
+    pointer-events: none;
+  }
+  .mfc-photo-folder-link:hover { opacity: 0.7; }
   .mfc-photo-url-input {
     width: 100%; box-sizing: border-box;
     background: var(--bg); border: 1px solid var(--border);
@@ -4746,7 +4783,16 @@ function openMfcCrm(docNum, sourceRecords) {
   // The user pastes a public URL (Drive/Dropbox/Imgur). The img
   // element loads it; if loading fails, an error message replaces
   // the preview via the onerror handler. Empty URL shows a hint.
+  //
+  // The "Picture Folder" field is a separate URL — meant for a
+  // link to a folder (Drive folder, Dropbox folder, etc.) where
+  // the user keeps the full set of photos for this property. It
+  // doesn't try to render anything; just gives a clickable ↗.
   const photoUrl = entry.photo_url || "";
+  const folderUrl = entry.photo_folder_url || "";
+  const folderHrefUrl = folderUrl
+    ? (folderUrl.startsWith("http") ? folderUrl : "https://" + folderUrl)
+    : "";
   const photoPreview = photoUrl
     ? `<div class="mfc-photo-preview-wrap">
          <img class="mfc-photo-preview" src="${esc(photoUrl)}"
@@ -4754,11 +4800,24 @@ function openMfcCrm(docNum, sourceRecords) {
               onerror="this.parentNode.innerHTML='<div class=\\'mfc-photo-error\\'>Couldn\\'t load image. Check that the URL is publicly accessible and points directly to the image file (ends in .jpg/.png/etc).</div>'">
        </div>
        <a class="mfc-photo-link" href="${esc(photoUrl)}" target="_blank" rel="noopener">Open original ↗</a>`
-    : `<div class="mfc-photo-empty">No photo yet. Paste a public image URL above (Drive/Dropbox/Imgur).</div>`;
+    : `<div class="mfc-photo-empty">No photo yet. Paste a public image URL below (Drive/Dropbox/Imgur).</div>`;
   const photoHtml = `
     <div class="mfc-photo">
       <div class="mfc-photo-head">
         <h3>House Photo</h3>
+      </div>
+      <div class="mfc-photo-folder-row">
+        <label class="mfc-photo-folder-label">Picture Folder</label>
+        <div class="mfc-photo-folder-input-wrap">
+          <input type="url" class="mfc-photo-folder-input"
+                 data-mfc-key="photo_folder_url"
+                 placeholder="Paste folder URL (Drive / Dropbox / etc.)"
+                 value="${esc(folderUrl)}">
+          <a class="mfc-photo-folder-link${folderUrl ? "" : " disabled"}"
+             href="${folderUrl ? esc(folderHrefUrl) : "javascript:void(0)"}"
+             target="_blank" rel="noopener"
+             title="${folderUrl ? "Open folder in new tab" : "(no URL yet)"}">↗</a>
+        </div>
       </div>
       <input type="url" class="mfc-photo-url-input"
              data-mfc-key="photo_url"
@@ -4877,7 +4936,7 @@ function openMfcCrm(docNum, sourceRecords) {
         saveTimer = setTimeout(() => {
           setCrmField("mfc", docNum, key, el.value);
           flash();
-          if (key === "photo_url") openMfcCrm(docNum, FC_RAW);
+          if (key === "photo_url" || key === "photo_folder_url") openMfcCrm(docNum, FC_RAW);
         }, 400);
       });
     } else {
