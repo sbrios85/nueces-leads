@@ -1,0 +1,89 @@
+name: Scrape Tax Foreclosures (LGBS)
+
+# Lightweight workflow — TFC scraping is just an HTTPS GET to the LGBS
+# JSON API. No Playwright, no NCAD enrichment, no PDF parsing. Runs
+# daily on a slightly offset cron from the main MFC scraper so they
+# don't race for the Pages deploy slot.
+
+on:
+  schedule:
+    - cron: "30 7 * * *"     # daily at 07:30 UTC (offset from MFC scrape at 07:00)
+  workflow_dispatch:
+
+permissions:
+  contents: write            # to commit tfc.json back to the repo
+  pages: write               # for the Pages deploy
+  id-token: write            # for the Pages deploy
+
+# Share the same concurrency group as the main MFC scraper so we never
+# try to push two commits at once.
+concurrency:
+  group: "ncad-cache-write"
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10        # API scraper finishes in <30s normally
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pull latest (catch checkout race)
+        # Same belt-and-suspenders sync as the MFC workflow — if a
+        # commit landed between checkout and this step, we want HEAD.
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          # Same cache key as the main scraper so we don't waste
+          # cache space on a duplicate dependency tree.
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install Python dependencies
+        # We only need `requests` for this scraper, but installing the
+        # full requirements.txt keeps caching consistent and is fast.
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run TFC scraper
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python scraper/scrape_tfc.py
+
+      - name: Commit updated TFC data
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          git add dashboard/tfc.json data/tfc.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "chore: refresh TFC leads $(date -u +'%Y-%m-%dT%H:%MZ')"
+            git push
+          fi
+
+      - name: Upload dashboard artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    needs: scrape
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
