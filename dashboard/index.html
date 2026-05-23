@@ -3606,6 +3606,7 @@ function _mfcSetSkiptracePhoneStatus(docNum, rowId, idx, status) {
   entry.skiptrace = rows;
   entry._updated_at = new Date().toISOString();
   store[docNum] = entry;
+  saveCrmStore("mfc", store);
   // Log status changes to activity — useful for "when did I mark
   // this number bad?" questions later.
   const stDef = MFC_PHONE_STATUSES.find(s => s.key === status);
@@ -4141,6 +4142,38 @@ function openMfcCrm(docNum, sourceRecords) {
     pane: activePane ? activePane.id : null,
     scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY,
   };
+
+  // Detect whether the CRM is already open. If it is, this call
+  // is a RE-RENDER (status change, dupe check, etc.) and we should
+  // PRESERVE the user's current scroll position. If it's hidden,
+  // we're navigating in from the list and should scroll to the top
+  // of the lead.
+  const crmEl = document.getElementById("crm-view");
+  const _wasOpen = crmEl && !crmEl.hidden;
+  // Remember which input was focused (and its caret position) so
+  // we can restore focus after the re-render — without this, blur
+  // on a phone would trigger a re-render that steals focus from
+  // wherever the user just clicked.
+  const _focusedEl = document.activeElement;
+  let _focusInfo = null;
+  if (_wasOpen && _focusedEl && _focusedEl.closest("#crm-body")) {
+    // Try to fingerprint the focused element so we can re-find it
+    // after the re-render. Skiptrace phones/emails use data attrs
+    // we can match on; other fields use data-mfc-key.
+    if (_focusedEl.dataset.mfcSkipId != null) {
+      _focusInfo = {
+        kind: "skip",
+        skipId: _focusedEl.dataset.mfcSkipId,
+        field: _focusedEl.dataset.mfcSkipField || null,
+        phoneIdx: _focusedEl.dataset.mfcSkipPhoneIdx || null,
+        emailIdx: _focusedEl.dataset.mfcSkipEmailIdx || null,
+        selStart: _focusedEl.selectionStart,
+        selEnd: _focusedEl.selectionEnd,
+      };
+    }
+  }
+  // Capture the existing scroll position to restore it later.
+  const _prevScrollY = _mainEl ? _mainEl.scrollTop : window.scrollY;
 
   const entry = getCrmEntry("mfc", docNum);
   const currentStage = entry.stage || "new";
@@ -4955,8 +4988,39 @@ function openMfcCrm(docNum, sourceRecords) {
       p.classList.remove("active"));
   const crm = document.getElementById("crm-view");
   crm.hidden = false;
-  if (_mainEl) _mainEl.scrollTop = 0;
-  else window.scrollTo(0, 0);
+  // Scroll behavior: reset to top ONLY when opening fresh from the
+  // list. If we were already open (re-render), preserve where the
+  // user was reading. Same goes for focus: restore the focused
+  // input + caret position so phone-blur re-renders don't yank
+  // focus away from whatever the user just clicked.
+  if (_wasOpen) {
+    if (_mainEl) _mainEl.scrollTop = _prevScrollY;
+    else window.scrollTo(0, _prevScrollY);
+    if (_focusInfo && _focusInfo.kind === "skip") {
+      let sel = `#crm-body [data-mfc-skip-id="${_focusInfo.skipId}"]`;
+      if (_focusInfo.field != null) {
+        sel += `[data-mfc-skip-field="${_focusInfo.field}"]`;
+      } else if (_focusInfo.phoneIdx != null) {
+        sel += `[data-mfc-skip-phone-idx="${_focusInfo.phoneIdx}"]`;
+      } else if (_focusInfo.emailIdx != null) {
+        sel += `[data-mfc-skip-email-idx="${_focusInfo.emailIdx}"]`;
+      }
+      const refound = document.querySelector(sel);
+      if (refound && typeof refound.focus === "function") {
+        refound.focus();
+        // Restore caret if it was set.
+        if (_focusInfo.selStart != null &&
+            typeof refound.setSelectionRange === "function") {
+          try {
+            refound.setSelectionRange(_focusInfo.selStart, _focusInfo.selEnd);
+          } catch (_) { /* some input types reject setSelectionRange */ }
+        }
+      }
+    }
+  } else {
+    if (_mainEl) _mainEl.scrollTop = 0;
+    else window.scrollTo(0, 0);
+  }
 
   // Auto-grow contact notes textareas. Each textarea expands as
   // the user types so long notes are fully visible without a
