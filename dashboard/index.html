@@ -5419,6 +5419,9 @@ document.addEventListener("keydown", (e) => {
 // ============================================================
 let CCLN_RAW = [], CCLN_FILTERED = [];
 let FC_RAW = [], FC_FILTERED = [];
+// TFC = Tax Foreclosures (Linebarger Goggan Blair & Sampson source).
+// Loaded from tfc.json — see scraper/scrape_tfc.py for the data shape.
+let TFC_RAW = [];
 
 // ============================================================
 // Tab switching + lazy-render
@@ -5521,6 +5524,22 @@ async function loadAll() {
       applyFc();
     }
   } catch (e) { document.getElementById("fc-empty").hidden = false; }
+
+  // --- TFC (tax foreclosures from LGBS) ---
+  // Scraped daily by scraper/scrape_tfc.py from
+  // https://taxsales.lgbs.com/api/property_sales/. The JSON shape is
+  // { records: [...], total: N, fetched_at: ISO, source: "lgbs" }.
+  // If the file doesn't exist yet (first deploy before the scraper
+  // has run), we silently fall back to the empty-table state — the
+  // stub rows are still visible from the static HTML.
+  try {
+    const r = await fetch("tfc.json", {cache:"no-store"});
+    if (r.ok) {
+      const data = await r.json();
+      TFC_RAW = data.records || [];
+      renderTfcTable();
+    }
+  } catch (e) { /* tfc.json optional — table keeps its stub rows */ }
 
   // Compute "last PDF upload" timestamp: the max `pdf_parsed_at` across
   // foreclosure records. This tells the user when they last uploaded
@@ -6192,6 +6211,79 @@ function renderFc() {
       }
     }
   }
+}
+
+// ----------------------------------------------------------------
+// Tax Foreclosures (TFC) — render table
+// ----------------------------------------------------------------
+// Phase 1: read-only listing rendered from tfc.json. No sorting/
+// filtering/CRM integration yet — that's planned for later phases.
+// Replaces the static stub rows in the HTML with real scraped data
+// from scraper/scrape_tfc.py. If TFC_RAW is empty (e.g. scraper
+// hasn't run, or LGBS API was down), the static stub rows remain
+// visible so the user still sees the column layout.
+function renderTfcTable() {
+  const tb = document.querySelector("#tfc-table tbody");
+  if (!tb) return;
+  if (TFC_RAW.length === 0) return;  // keep stub rows if no data
+  tb.innerHTML = "";
+  document.getElementById("tfc-empty").hidden = true;
+
+  // Sort by sale date ascending — soonest sales first. Within a date,
+  // by sale number (the order properties appear at auction).
+  const sorted = TFC_RAW.slice().sort((a, b) => {
+    const dA = a.sale_date_only || "";
+    const dB = b.sale_date_only || "";
+    if (dA !== dB) return dA.localeCompare(dB);
+    return (a.sale_nbr || 0) - (b.sale_nbr || 0);
+  });
+
+  for (const r of sorted) {
+    const tr = document.createElement("tr");
+    // Build the same 15-column layout as the static stub rows.
+    // Columns where TFC has no equivalent data show "—" muted.
+    // Sale date formatting matches MFC convention (Mon DD, YYYY).
+    const saleDate = _tfcFmtDate(r.sale_date_only);
+    const recorded = "";  // TFC doesn't have a "recorded" date concept
+    const owner = "";  // Phase 2 — comes from detail endpoint
+    const legal = "";  // Phase 2 — comes from detail endpoint
+    const propAddr = r.prop_address || "";
+    const adjValue = r.adjudged_value;
+    const minBid   = r.minimum_bid;
+    // For now, use the cause_nbr as "Doc#" since TFC has no doc_num.
+    const causeNbr = r.cause_nbr || "";
+
+    tr.innerHTML = `
+      <td></td>
+      <td><span class="pill status status-new">NEW</span></td>
+      <td>${esc(saleDate)}</td>
+      <td>${esc(recorded) || "—"}</td>
+      <td>${esc(owner) || `<span style="color:var(--muted)">— (Phase 2)</span>`}</td>
+      <td>${esc(propAddr)}</td>
+      <td><span style="color:var(--muted)">—</span></td>
+      <td>${adjValue == null ? "—" : moneyFmt(adjValue)}</td>
+      <td>${minBid == null ? "—" : moneyFmt(minBid)}</td>
+      <td><span style="color:var(--muted)">—</span></td>
+      <td><span style="color:var(--muted)">—</span></td>
+      <td><span style="color:var(--muted)">—</span></td>
+      <td>${esc(legal) || `<span style="color:var(--muted)">— (Phase 2)</span>`}</td>
+      <td>${esc(causeNbr)}</td>
+      <td><span style="color:var(--muted)">—</span></td>
+    `;
+    tb.appendChild(tr);
+  }
+}
+
+// Format a "YYYY-MM-DD" date string as "Mon D, YYYY" to match the
+// MFC table style. Returns the raw input if it can't be parsed.
+function _tfcFmtDate(ymd) {
+  if (!ymd) return "";
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(ymd);
+  if (!m) return ymd;
+  const months = ["Jan","Feb","Mar","Apr","May","Jun",
+                  "Jul","Aug","Sep","Oct","Nov","Dec"];
+  const y = +m[1], mo = +m[2], d = +m[3];
+  return `${months[mo-1]} ${d}, ${y}`;
 }
 
 // Build a single foreclosure table row. `isDead` controls whether the
