@@ -1,15 +1,17 @@
 name: Enrich TFC with NCAD
 
-# Manual trigger only at first — once it's been verified to work
-# reliably for a few runs, you can add a schedule block to run daily
-# after scrape_tfc.yml completes. Example schedule:
+# Manual trigger only at first. After a few clean runs you can add
+# a daily schedule to run after scrape_tfc.yml. Example:
 #   schedule:
 #     - cron: "45 7 * * *"   # 07:45 UTC, ~15 min after scrape_tfc
 #
-# Two inputs:
-#   apply  — false (dry-run, default) or true (write changes)
-#   force  — false (default; skip records that already have
-#            ncad_prop_id) or true (re-enrich every record)
+# Inputs:
+#   apply       — false (dry-run, default) or true (write changes)
+#   force       — false (default; skip records that already have
+#                 ncad_prop_id) or true (re-enrich every record)
+#   fetch_mail  — false (default; result-list data only) or true
+#                 (also fetch each match's detail page for mailing
+#                 address — doubles run time)
 
 on:
   workflow_dispatch:
@@ -23,6 +25,13 @@ on:
           - "true"
       force:
         description: "Re-enrich records that already have ncad_prop_id"
+        type: choice
+        default: "false"
+        options:
+          - "false"
+          - "true"
+      fetch_mail:
+        description: "Also fetch mailing address (doubles request count)"
         type: choice
         default: "false"
         options:
@@ -49,33 +58,22 @@ jobs:
       # Install the Chromium browser used by Playwright. The
       # `playwright` Python package is in requirements.txt but the
       # actual browser binary is downloaded separately by this
-      # command. Without this step, the Playwright fallback in the
-      # enrichment script would fail with "Executable doesn't exist".
+      # command. Without this step, the script fails with
+      # "Executable doesn't exist".
       - name: Install Playwright Chromium
         run: python -m playwright install --with-deps chromium
 
-      # Cache the NCAD parcel zip + parsed index between runs.
-      # Saves ~80 MB download + parsing time when nothing's changed.
-      # The cache key uses the week-of-year so the cache naturally
-      # refreshes weekly (matching PARCEL_CACHE_TTL_SECONDS in the
-      # script).
-      - name: Cache NCAD parcel data
-        uses: actions/cache@v4
-        with:
-          path: .cache
-          key: ncad-parcels-${{ runner.os }}-${{ github.run_id }}
-          restore-keys: |
-            ncad-parcels-${{ runner.os }}-
-
       - name: Run TFC NCAD enrichment
         env:
-          ENRICH_TFC_APPLY: ${{ github.event.inputs.apply == 'true' && '1' || '0' }}
-          ENRICH_TFC_FORCE: ${{ github.event.inputs.force == 'true' && '1' || '0' }}
+          ENRICH_TFC_APPLY:    ${{ github.event.inputs.apply == 'true' && '1' || '0' }}
+          ENRICH_TFC_FORCE:    ${{ github.event.inputs.force == 'true' && '1' || '0' }}
+          FETCH_MAIL_ADDRESS:  ${{ github.event.inputs.fetch_mail == 'true' && '1' || '0' }}
         run: |
           python scraper/enrich_tfc_ncad.py
 
-      # Only commit when apply mode is on AND there are actual changes.
-      # The git diff check prevents empty commits on no-match runs.
+      # Only commit when apply mode is on AND there are actual
+      # changes. The git diff check prevents empty commits on
+      # no-match runs.
       - name: Commit enriched JSON
         if: github.event.inputs.apply == 'true'
         run: |
