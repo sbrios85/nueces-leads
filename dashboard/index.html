@@ -606,30 +606,6 @@
      clip stays in place for every other column. */
   td.addr-cell { overflow: visible; }
 
-  /* Inline-row layout for address cells: editable input on the left
-     takes the remaining width, city/state/zip text sits beside it
-     on the same visual row. Used in both TFC and MFC row templates
-     for prop_address + mail_address cells. Wrapping the textarea +
-     addr-loc in this flex container avoids forcing the textarea to
-     drop its content onto a second line. */
-  .addr-inline {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-  }
-  .addr-inline .cell-edit {
-    flex: 1;
-    min-width: 0;
-  }
-  /* When .addr-loc sits inside .addr-inline, drop the margin-top
-     (the flex container handles vertical alignment) and don't let
-     the city/zip text get squeezed when the cell is narrow. */
-  .addr-inline .addr-loc {
-    margin-top: 0;
-    flex-shrink: 0;
-  }
-
   /* Condo badge — small 🏘️ icon prefixed to the legal description
      for records detected as condominiums. Helps the user spot condos
      at a glance when the "Hide condos" toggle is off. */
@@ -6840,12 +6816,11 @@ function buildTfcRow(r, mode) {
   // that would just duplicate info. The mailing column DOES need
   // one because r.mail_address from NCAD enrichment is the street-
   // only part with city/state/zip in separate fields. Render that
-  // alongside the editable cell using .addr-inline flex layout
-  // (rather than below it) so the row stays a single visual line.
+  // below the editable cell as a smaller "addr-loc" line.
   const mailLoc = [r.mail_city, r.mail_state, r.mail_zip]
       .filter(Boolean).join(" ").trim();
   const mailLocLine = mailLoc
-      ? `<span class="addr-loc">${esc(mailLoc)}</span>` : "";
+      ? `<div class="addr-loc">${esc(mailLoc)}</div>` : "";
 
   tr.innerHTML = `
     <td class="save-cell">
@@ -6860,7 +6835,7 @@ function buildTfcRow(r, mode) {
     <td style="text-align:center;">${_tfcDaysCell(r.sale_date_only || r.sale_date)}</td>
     <td>${_tfcEcell("owner", _ownerEff, true)}</td>
     <td class="addr-cell">${_tfcEcell("prop_address", _propEff, true)}</td>
-    <td class="addr-cell"><div class="addr-inline">${_tfcEcell("mail_address", _mailEff, true)}${mailLocLine}</div></td>
+    <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true)}${mailLocLine}</td>
     <td>${minBid == null ? '<span style="color:var(--muted)">—</span>' : moneyFmt(minBid)}</td>
     <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : moneyFmt(r.market_value)}</td>
     <td>${_tfcEcell("legal", _legalEff, true)}</td>
@@ -7431,16 +7406,16 @@ function buildFcRow(r, isDead) {
     <td>${foreclosureDateCell}</td>
     <td>${esc(formatDate(r.recorded))}</td>
     <td>${_ecell("owner", _ownerEff)}</td>
-    <td class="addr-cell"><div class="addr-inline">${_ecell("prop_address", _propEff)}${
+    <td class="addr-cell">${_ecell("prop_address", _propEff)}${
         [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim()
-          ? `<span class="addr-loc">${esc([r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim())}</span>`
+          ? `<div class="addr-loc">${esc([r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim())}</div>`
           : ""
-      }</div>${absenteeBadge}${shortSaleBadge}</td>
-    <td class="addr-cell"><div class="addr-inline">${_ecell("mail_address", _mailEff)}${
+      }${absenteeBadge}${shortSaleBadge}</td>
+    <td class="addr-cell">${_ecell("mail_address", _mailEff)}${
         [r.mail_city, r.mail_state, r.mail_zip].filter(Boolean).join(" ").trim()
-          ? `<span class="addr-loc">${esc([r.mail_city, r.mail_state, r.mail_zip].filter(Boolean).join(" ").trim())}</span>`
+          ? `<div class="addr-loc">${esc([r.mail_city, r.mail_state, r.mail_zip].filter(Boolean).join(" ").trim())}</div>`
           : ""
-      }</div></td>
+      }</td>
     <td>
       ${_editable ? `
       <span class="loan-amt-wrap"><span class="dollar">$</span><input class="loan-amt-edit"
