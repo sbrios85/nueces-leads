@@ -110,6 +110,11 @@ ADDR_INDEX_TTL_SECONDS = 7 * 24 * 60 * 60
 
 # Network / parsing safety
 REQUEST_TIMEOUT_SEC = 300                # zip download can be slow
+# Retry strategy for the parcel zip download. NCAD's CDN can rate-
+# limit large downloads with 429 (Too Many Requests) — retry with
+# exponential backoff to ride through the transient block.
+ZIP_DOWNLOAD_RETRIES = 5
+ZIP_DOWNLOAD_BACKOFF = (5, 15, 30, 60, 120)  # seconds between attempts
 PARSE_DEADLINE_SECONDS = 120             # cap on total zip-parse time
 PER_FILE_TIMEOUT_SECONDS = 30            # cap per inner text file
 MAX_INNER_FILE_BYTES = 80 * 1024 * 1024  # skip > 80 MB inner files
@@ -144,15 +149,58 @@ log = logging.getLogger("enrich-tfc-ncad")
 # Step 1 — Discover and download the NCAD bulk parcel zip
 # ==================================================================
 
-def _http_get_bytes(url: str, timeout: int = REQUEST_TIMEOUT_SEC) -> bytes:
-    """Fetch a URL as raw bytes with a browser-like UA. Raises on error."""
-    resp = requests.get(
-        url,
-        headers={"User-Agent": USER_AGENT},
-        timeout=timeout,
-    )
-    resp.raise_for_status()
-    return resp.content
+def _http_get_bytes(url: str, timeout: int = REQUEST_TIMEOUT_SEC,
+                     referer: str = "",
+                     retries: int = 1) -> bytes:
+    """Fetch a URL as raw bytes with browser-like headers and optional
+    retries with exponential backoff. Raises on final failure.
+
+    The Referer header is critical for NCAD's CDN — they 429 requests
+    that don't look like they came from clicking a link on the
+    downloads page. Default retries=1 (no retry) keeps the call cheap
+    for non-zip fetches; the zip-download path passes retries=N.
+    """
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+    }
+    if referer:
+        headers["Referer"] = referer
+
+    last_err: Optional[Exception] = None
+    for attempt in range(retries):
+        try:
+            resp = requests.get(url, headers=headers, timeout=timeout)
+            # 429 / 503 are the rate-limit / overload responses we
+            # specifically want to retry. 4xx (other than 429) is
+            # permanent — fail fast.
+            if resp.status_code in (429, 503):
+                raise requests.HTTPError(
+                    f"{resp.status_code} from {url}",
+                    response=resp,
+                )
+            resp.raise_for_status()
+            return resp.content
+        except (requests.RequestException, requests.HTTPError) as exc:
+            last_err = exc
+            if attempt < retries - 1:
+                # Pick backoff seconds — use the schedule when within
+                # range, hold at the last value beyond.
+                idx = min(attempt, len(ZIP_DOWNLOAD_BACKOFF) - 1)
+                wait = ZIP_DOWNLOAD_BACKOFF[idx]
+                log.warning(
+                    "GET %s failed (attempt %d/%d): %s — retrying in %ds",
+                    url, attempt + 1, retries, exc, wait,
+                )
+                time.sleep(wait)
+            else:
+                log.error(
+                    "GET %s failed after %d attempts: %s",
+                    url, retries, exc,
+                )
+    raise last_err if last_err else RuntimeError("download failed")
 
 
 def _http_get_text(url: str, timeout: int = 60) -> str:
@@ -221,6 +269,10 @@ def _load_or_download_parcel_zip() -> Optional[bytes]:
     PARCEL_CACHE_TTL_SECONDS, reuse it. Otherwise fetch the latest
     URL and save. On fetch failure with a present cache, fall back
     to the cached copy with a warning.
+
+    Manual URL override: set the env var NCAD_ZIP_URL to bypass URL
+    discovery entirely. Useful when NCAD's downloads page is down or
+    you want to test against a specific export version.
     """
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     if PARCEL_ZIP_CACHE.exists():
@@ -230,18 +282,35 @@ def _load_or_download_parcel_zip() -> Optional[bytes]:
                      age / 3600)
             return PARCEL_ZIP_CACHE.read_bytes()
 
-    try:
-        zip_url = _discover_ncad_export_url()
-    except Exception as exc:
-        log.error("could not discover NCAD export URL: %s", exc)
-        if PARCEL_ZIP_CACHE.exists():
-            log.warning("falling back to stale parcel cache")
-            return PARCEL_ZIP_CACHE.read_bytes()
-        return None
+    # Manual override wins over discovery. Operator can paste a known
+    # working URL via env var when NCAD's site is misbehaving.
+    manual_url = os.getenv("NCAD_ZIP_URL", "").strip()
+    if manual_url:
+        zip_url = manual_url
+        log.info("using manual NCAD_ZIP_URL override")
+    else:
+        try:
+            zip_url = _discover_ncad_export_url()
+        except Exception as exc:
+            log.error("could not discover NCAD export URL: %s", exc)
+            if PARCEL_ZIP_CACHE.exists():
+                log.warning("falling back to stale parcel cache")
+                return PARCEL_ZIP_CACHE.read_bytes()
+            return None
 
     log.info("downloading NCAD parcel zip: %s", zip_url)
+    log.info("(if NCAD rate-limits us, we'll retry with backoff up to %d times)",
+             ZIP_DOWNLOAD_RETRIES)
     try:
-        content = _http_get_bytes(zip_url)
+        # The Referer header is critical: NCAD's CDN rate-limits
+        # requests that don't look like they came from a link on the
+        # downloads page. Passing the downloads page as Referer makes
+        # the request look like a normal browser click.
+        content = _http_get_bytes(
+            zip_url,
+            referer=NCAD_DOWNLOADS_PAGE,
+            retries=ZIP_DOWNLOAD_RETRIES,
+        )
         log.info("parcel zip: %d MB", len(content) // (1024 * 1024))
     except Exception as exc:
         log.error("parcel zip download failed: %s", exc)
