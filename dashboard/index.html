@@ -2165,6 +2165,8 @@
     <thead><tr>
       <th style="width: 40px;" title="Save manual edits"></th>
       <th data-sort="status"         style="width: 72px;">Status</th>
+      <th data-sort="sale_type"      style="width: 90px;">Sales Type</th>
+      <th data-sort="fc_status"      style="width: 130px;">FC Status</th>
       <th data-sort="sale_date"      style="width: 130px;">Sale Date</th>
       <th data-sort="owner"          style="width: 165px;">Owner</th>
       <th data-sort="prop_address"   style="width: 195px;">Property Address</th>
@@ -2183,6 +2185,8 @@
       <tr>
         <td></td>
         <td><span class="pill status status-new">NEW</span></td>
+        <td>SALE</td>
+        <td>Scheduled for Online Auction</td>
         <td>Jul 7, 2026</td>
         <td>SAMPLE OWNER NAME</td>
         <td>123 EXAMPLE ST<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78401</span></td>
@@ -2196,6 +2200,8 @@
       <tr>
         <td></td>
         <td><span class="pill status status-new">NEW</span></td>
+        <td>FUTURE SALE</td>
+        <td>Scheduled for Online Auction</td>
         <td>Jul 14, 2026</td>
         <td>ANOTHER SAMPLE</td>
         <td>456 PLACEHOLDER AVE<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78411</span></td>
@@ -6292,10 +6298,14 @@ function renderTfcStats() {
 
   // Bucket records the same way renderTfcTable does so the tile
   // counts always agree with the visible sections:
-  //   1. CRM dead/canceled wins over LGBS status (a Future-status
-  //      record manually marked Canceled belongs in Dead/Canceled).
-  //   2. LGBS FUTURE SALE → Future Sales tile.
-  //   3. Everything else (LGBS SALE, anything not future) → Active.
+  //   1. CRM dead/canceled wins over everything (user-overridden).
+  //   2. LGBS reports the foreclosure as "Cancelled" in `status`
+  //      (free-text field — usually "Scheduled for Online Auction"
+  //      or "Cancelled") → Dead/Canceled automatically.
+  //   3. LGBS `sale_type === "FUTURE SALE"` → Future Sales tile.
+  //      (The `sale_type` field is the auction bucket; `status` is
+  //      the free-text per-property listing state.)
+  //   4. Everything else (sale_type "SALE", anything not future) → Active.
   let crmStore = {};
   try {
     const raw = localStorage.getItem(TFC_CRM_KEY);
@@ -6311,8 +6321,17 @@ function renderTfcStats() {
       deadCanceled++;
       continue;
     }
-    const lgbsStatus = String(r.status || "").toUpperCase().trim();
-    if (lgbsStatus === "FUTURE SALE") {
+    // LGBS auto-cancellation: free-text status containing "cancel"
+    // means the foreclosure was stopped/cancelled by the lender or
+    // the homeowner. Bucket as dead/canceled without requiring the
+    // user to mark it manually.
+    const lgbsStatusText = String(r.status || "").toLowerCase();
+    if (lgbsStatusText.includes("cancel")) {
+      deadCanceled++;
+      continue;
+    }
+    const saleType = String(r.sale_type || "").toUpperCase().trim();
+    if (saleType === "FUTURE SALE") {
       future++;
     } else {
       active++;
@@ -6369,8 +6388,15 @@ function renderTfcTable() {
   });
 
   // Bucket records by effective status. CRM overrides (dead/canceled)
-  // win over the LGBS status. Otherwise FUTURE SALE → future, SALE
-  // (or anything else still in the scrape) → active.
+  // win over LGBS. LGBS-cancelled records (free-text `status` field
+  // contains "cancel") auto-bucket as dead/canceled even without
+  // manual marking. Otherwise `sale_type === "FUTURE SALE"` → future,
+  // anything else → active.
+  //
+  // Note: `sale_type` is the auction bucket (SALE/FUTURE SALE/etc.);
+  // `status` is free-text per-property state ("Scheduled for Online
+  // Auction" / "Cancelled"). Easy to confuse — they're different
+  // fields and we need both.
   const crm = loadTfcCrm();
   const activeRecords = [];
   const futureRecords = [];
@@ -6381,8 +6407,14 @@ function renderTfcTable() {
       deadRecords.push(r);
       continue;
     }
-    const lgbsStatus = String(r.status || "").toUpperCase().trim();
-    if (lgbsStatus === "FUTURE SALE") {
+    // LGBS-auto-cancellation: bucket directly without user action.
+    const lgbsStatusText = String(r.status || "").toLowerCase();
+    if (lgbsStatusText.includes("cancel")) {
+      deadRecords.push(r);
+      continue;
+    }
+    const saleType = String(r.sale_type || "").toUpperCase().trim();
+    if (saleType === "FUTURE SALE") {
       futureRecords.push(r);
     } else {
       activeRecords.push(r);
@@ -6401,7 +6433,7 @@ function renderTfcTable() {
   if (futureRecords.length > 0) {
     const headTr = document.createElement("tr");
     headTr.className = "tfc-section-row future";
-    headTr.innerHTML = `<td colspan="11">
+    headTr.innerHTML = `<td colspan="13">
       Future Sales — scheduled, not yet active (${futureRecords.length})
     </td>`;
     tb.appendChild(headTr);
@@ -6418,7 +6450,7 @@ function renderTfcTable() {
     const toggleTr = document.createElement("tr");
     toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
     toggleTr.innerHTML = `
-      <td colspan="11">
+      <td colspan="13">
         <span class="chev">▶</span>
         <span>${deadRecords.length} dead / canceled lead${deadRecords.length === 1 ? "" : "s"}</span>
         <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
@@ -6464,20 +6496,39 @@ function buildTfcRow(r, mode) {
   let statusCell;
   if (mode === "dead") {
     const entry = (loadTfcCrm()[uid]) || {};
-    const reasonLabel = TFC_DEAD_REASONS[entry.reason] || "Other";
-    // "Canceled" gets its own label vs "Dead"; the reason key
-    // "canceled" doubles as both a status and a reason.
-    const isCanceled = entry.tfc_status === "canceled";
-    const pillLabel = isCanceled ? "Canceled" : "Dead";
-    statusCell = `
-      <span class="pill status status-dead" title="This lead is marked ${esc(pillLabel.toLowerCase())}">${esc(pillLabel)}</span>
-      <div class="dead-reason-cell">${esc(reasonLabel)}</div>
+    // Three sources of a dead row, in priority order:
+    //   1. User manually marked it via the CRM (entry.tfc_status set)
+    //   2. LGBS reports the foreclosure as Cancelled (auto-bucketed)
+    //   3. Edge case — shouldn't normally hit
+    // The "Restore" button only makes sense for #1 (user can undo
+    // their own decision). For #2, restoring won't help — LGBS will
+    // keep reporting Cancelled until the scraper picks up a change.
+    const userMarked = entry.tfc_status === "dead" || entry.tfc_status === "canceled";
+    const lgbsCanceled = !userMarked &&
+        String(r.status || "").toLowerCase().includes("cancel");
+    let reasonLabel, pillLabel;
+    if (userMarked) {
+      reasonLabel = TFC_DEAD_REASONS[entry.reason] || "Other";
+      pillLabel = entry.tfc_status === "canceled" ? "Canceled" : "Dead";
+    } else if (lgbsCanceled) {
+      reasonLabel = "LGBS reports: " + (r.status || "Cancelled");
+      pillLabel = "Canceled";
+    } else {
+      reasonLabel = "Other";
+      pillLabel = "Dead";
+    }
+    // Hide Restore for LGBS-auto-canceled rows (can't undo LGBS).
+    const restoreBtn = userMarked ? `
       <button class="restore-btn" data-uid="${esc(uid)}"
               style="margin-top: 4px;"
               title="Restore this lead to active"
               onclick="restoreTfcLead('${esc(uid)}'); event.stopPropagation();">
         Restore
-      </button>
+      </button>` : "";
+    statusCell = `
+      <span class="pill status status-dead" title="This lead is marked ${esc(pillLabel.toLowerCase())}">${esc(pillLabel)}</span>
+      <div class="dead-reason-cell">${esc(reasonLabel)}</div>
+      ${restoreBtn}
     `;
   } else if (mode === "future") {
     statusCell = `
@@ -6530,6 +6581,8 @@ function buildTfcRow(r, mode) {
       <span class="save-ok" title="Saved">✓</span>
     </td>
     <td>${statusCell}</td>
+    <td>${esc(r.sale_type || "") || '<span style="color:var(--muted)">—</span>'}</td>
+    <td>${_tfcFcStatusCell(r.status)}</td>
     <td>${esc(saleDate) || "—"}</td>
     <td>${_tfcEcell("owner", _ownerEff, true)}</td>
     <td class="addr-cell">${_tfcEcell("prop_address", _propEff, true)}${propLocLine}</td>
@@ -6553,6 +6606,26 @@ function _tfcFmtDate(ymd) {
                   "Jul","Aug","Sep","Oct","Nov","Dec"];
   const y = +m[1], mo = +m[2], d = +m[3];
   return `${months[mo-1]} ${d}, ${y}`;
+}
+
+// Render the FC Status cell. LGBS sends free-text status like
+// "Scheduled for Online Auction" or "Cancelled". We color-code the
+// two common values to make it visually scannable; anything else
+// falls through as plain text. Note this is the LGBS-reported FC
+// status, distinct from the user-controlled CRM status (the colored
+// pill in the first Status column).
+function _tfcFcStatusCell(status) {
+  const s = String(status || "").trim();
+  if (!s) return '<span style="color:var(--muted)">—</span>';
+  // Cancelled comes from LGBS in either spelling; normalize for match.
+  const norm = s.toLowerCase();
+  if (norm.includes("cancel")) {
+    return `<span style="color: var(--status-dead); font-size: 12px;">${esc(s)}</span>`;
+  }
+  if (norm.includes("scheduled")) {
+    return `<span style="color: var(--good); font-size: 12px;">${esc(s)}</span>`;
+  }
+  return `<span style="font-size: 12px;">${esc(s)}</span>`;
 }
 
 // ============================================================
