@@ -6717,10 +6717,16 @@ function buildTfcRow(r, mode) {
 
   const uid = r.uid || "";
   const saleDate = _tfcFmtDate(r.sale_date_only || r.sale_date);
-  const owner = "";  // Phase 2 — comes from detail endpoint
-  const legal = "";  // Phase 2 — comes from detail endpoint
+  // Owner + legal now come from NCAD enrichment
+  // (scraper/enrich_tfc_ncad.py writes r.owner and r.legal into
+  // tfc.json). Empty string fallback preserves behaviour for
+  // unenriched records (brand-new TFC entries from the daily scrape
+  // that haven't had an enrichment pass run against them yet).
+  const owner = r.owner || "";
+  const legal = r.legal || "";
   const propAddr = r.prop_address || "";
-  // Market Value will come from NCAD later; empty for now.
+  // Market Value now comes from NCAD enrichment as r.market_value
+  // (read directly in the cell template below, no local var needed).
   // Min Bid comes from LGBS minimum_bid.
   const minBid = r.minimum_bid;
   const causeNbr = r.cause_nbr || "";
@@ -6795,10 +6801,13 @@ function buildTfcRow(r, mode) {
               value="${esc(val)}" placeholder="—">`;
   };
 
-  // Effective values pull from overrides first, then defaults.
+  // Effective values pull from overrides first, then JSON values
+  // from NCAD enrichment, then empty string. The 3-level fallback
+  // means user edits always win over scraper data; scraper data
+  // shows up automatically the moment enrichment lands.
   const _ownerEff = tfcFieldValue(r, "owner") || owner;
   const _propEff  = tfcFieldValue(r, "prop_address") || propAddr;
-  const _mailEff  = tfcFieldValue(r, "mail_address") || "";
+  const _mailEff  = tfcFieldValue(r, "mail_address") || r.mail_address || "";
   const _legalEff = tfcFieldValue(r, "legal") || legal;
 
   // City/state/zip live below the editable property address line.
