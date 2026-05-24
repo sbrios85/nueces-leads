@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-05-24T19:57:34+00:00",
+  "ran_at": "2026-05-24T20:32:21+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -19,9 +19,10 @@
         "ncad_prop_id": "182368",
         "ncad_owner_id": "119272",
         "ncad_year": "2026",
-        "mail_address": "1058 BEECHCRAFT AVE CORPUS CHRISTI",
-        "mail_city": "TX 78405",
-        "mail_state": "TX"
+        "mail_address": "1058 BEECHCRAFT AVE",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78405"
       }
     },
     {
@@ -39,9 +40,10 @@
         "ncad_prop_id": "268487",
         "ncad_owner_id": "551061",
         "ncad_year": "2026",
-        "mail_address": "1838 BERNANDINO ST CORPUS CHRISTI",
-        "mail_city": "TX 78416",
-        "mail_state": "TX"
+        "mail_address": "1838 BERNANDINO ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78416"
       }
     },
     {
@@ -59,9 +61,10 @@
         "ncad_prop_id": "261677",
         "ncad_owner_id": "699393",
         "ncad_year": "2026",
-        "mail_address": "1521 El Paso St Corpus Christi",
-        "mail_city": "TX 78417-2816",
-        "mail_state": "TX"
+        "mail_address": "1521 El Paso St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78417"
       }
     },
     {
@@ -79,8 +82,8 @@
         "ncad_prop_id": "292188",
         "ncad_owner_id": "461542",
         "ncad_year": "2026",
-        "mail_address": "GUADALUPE SOSA MAYEN 5318 SEGUIN CORPUS CHRISTI",
-        "mail_city": "TX 78415",
+        "mail_address": "GUADALUPE SOSA MAYEN",
+        "mail_city": "5318 SEGUIN",
         "mail_state": "TX"
       }
     },
@@ -99,8 +102,8 @@
         "ncad_prop_id": "245073",
         "ncad_owner_id": "459548",
         "ncad_year": "2026",
-        "mail_address": "REBECCA MALDONADO 519 JACKSON ST ROBSTOWN",
-        "mail_city": "TX 78380",
+        "mail_address": "REBECCA MALDONADO",
+        "mail_city": "519 JACKSON ST",
         "mail_state": "TX"
       }
     },
@@ -119,9 +122,10 @@
         "ncad_prop_id": "208344",
         "ncad_owner_id": "843755",
         "ncad_year": "2026",
-        "mail_address": "3630 WATERLOO DR CORPUS CHRISTI",
-        "mail_city": "TX 78415-3339",
-        "mail_state": "TX"
+        "mail_address": "3630 WATERLOO DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -139,9 +143,10 @@
         "ncad_prop_id": "252702",
         "ncad_owner_id": "792159",
         "ncad_year": "2026",
-        "mail_address": "322 W Woodlawn Ave San Antonio",
-        "mail_city": "TX 78212-3393",
-        "mail_state": "TX"
+        "mail_address": "322 W Woodlawn Ave",
+        "mail_city": "San Antonio",
+        "mail_state": "TX",
+        "mail_zip": "78212"
       }
     },
     {
@@ -159,8 +164,8 @@
         "ncad_prop_id": "272283",
         "ncad_owner_id": "390710",
         "ncad_year": "2026",
-        "mail_address": "PRISCILLA QUINTANILLA 900 PERKINS ST ROBSTOWN",
-        "mail_city": "TX 78380-3917",
+        "mail_address": "PRISCILLA QUINTANILLA",
+        "mail_city": "900 PERKINS ST",
         "mail_state": "TX"
       }
     },
@@ -179,8 +184,8 @@
         "ncad_prop_id": "200017928",
         "ncad_owner_id": "567028",
         "ncad_year": "2026",
-        "mail_address": "PASCUALA REYES 703 ELESA ST CORPUS CHRISTI",
-        "mail_city": "TX 78405-2523",
+        "mail_address": "PASCUALA REYES",
+        "mail_city": "703 ELESA ST",
         "mail_state": "TX"
       }
     },
@@ -199,9 +204,10 @@
         "ncad_prop_id": "200042961",
         "ncad_owner_id": "673424",
         "ncad_year": "2026",
-        "mail_address": "213 E AVENUE F ROBSTOWN",
-        "mail_city": "TX 78380-2713",
-        "mail_state": "TX"
+        "mail_address": "213 E AVENUE F",
+        "mail_city": "ROBSTOWN",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -219,9 +225,10 @@
         "ncad_prop_id": "200045091",
         "ncad_owner_id": "421348",
         "ncad_year": "2026",
-        "mail_address": "4530 NESBITT CORPUS CHRISTI",
-        "mail_city": "TX 78415",
-        "mail_state": "TX"
+        "mail_address": "4530 NESBITT",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -238,7 +245,11 @@
         "market_value": 102208.0,
         "ncad_prop_id": "287739",
         "ncad_owner_id": "830559",
-        "ncad_year": "2026"
+        "ncad_year": "2026",
+        "mail_address": "4443 NAPLES ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -256,9 +267,10 @@
         "ncad_prop_id": "200018363",
         "ncad_owner_id": "735184",
         "ncad_year": "2026",
-        "mail_address": "10854 Mayfield Dr Corpus Christi",
-        "mail_city": "TX 78410-2822",
-        "mail_state": "TX"
+        "mail_address": "10854 Mayfield Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -276,9 +288,10 @@
         "ncad_prop_id": "267696",
         "ncad_owner_id": "539087",
         "ncad_year": "2026",
-        "mail_address": "506 IOWA ROBSTOWN",
-        "mail_city": "TX 78380",
-        "mail_state": "TX"
+        "mail_address": "506 IOWA",
+        "mail_city": "ROBSTOWN",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -296,9 +309,10 @@
         "ncad_prop_id": "524482",
         "ncad_owner_id": "786677",
         "ncad_year": "2026",
-        "mail_address": "3909 Roscher Rd Corpus Christi",
-        "mail_city": "TX 78418-8917",
-        "mail_state": "TX"
+        "mail_address": "3909 Roscher Rd",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -316,9 +330,10 @@
         "ncad_prop_id": "535341",
         "ncad_owner_id": "786677",
         "ncad_year": "2026",
-        "mail_address": "3909 Roscher Rd Corpus Christi",
-        "mail_city": "TX 78418-8917",
-        "mail_state": "TX"
+        "mail_address": "3909 Roscher Rd",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -336,9 +351,10 @@
         "ncad_prop_id": "278930",
         "ncad_owner_id": "835866",
         "ncad_year": "2026",
-        "mail_address": "13921 SUNTAN AVE CORPUS CHRISTI",
-        "mail_city": "TX 78418-6054",
-        "mail_state": "TX"
+        "mail_address": "13921 SUNTAN AVE",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -356,9 +372,10 @@
         "ncad_prop_id": "200017216",
         "ncad_owner_id": "238178",
         "ncad_year": "2026",
-        "mail_address": "2129 DAVID CORPUS CHRISTI",
-        "mail_city": "TX 78405",
-        "mail_state": "TX"
+        "mail_address": "2129 DAVID",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78405"
       }
     },
     {
@@ -376,9 +393,10 @@
         "ncad_prop_id": "219123",
         "ncad_owner_id": "736209",
         "ncad_year": "2026",
-        "mail_address": "4605 Coody Ln Corpus Christi",
-        "mail_city": "TX 78413-2121",
-        "mail_state": "TX"
+        "mail_address": "4605 Coody Ln",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -396,9 +414,10 @@
         "ncad_prop_id": "216100",
         "ncad_owner_id": "679254",
         "ncad_year": "2026",
-        "mail_address": "508 Marie St Robstown",
-        "mail_city": "TX 78380-3714",
-        "mail_state": "TX"
+        "mail_address": "508 Marie St",
+        "mail_city": "Robstown",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -415,7 +434,11 @@
         "market_value": 131168.0,
         "ncad_prop_id": "200068950",
         "ncad_owner_id": "677199",
-        "ncad_year": "2026"
+        "ncad_year": "2026",
+        "mail_address": "520 Industrial Ave",
+        "mail_city": "Robstown",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -433,9 +456,10 @@
         "ncad_prop_id": "262909",
         "ncad_owner_id": "388249",
         "ncad_year": "2026",
-        "mail_address": "1027 OHIO ROBSTOWN",
-        "mail_city": "TX 78380",
-        "mail_state": "TX"
+        "mail_address": "1027 OHIO",
+        "mail_city": "ROBSTOWN",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -453,9 +477,10 @@
         "ncad_prop_id": "224274",
         "ncad_owner_id": "728607",
         "ncad_year": "2026",
-        "mail_address": "118 W Avenue F Robstown",
-        "mail_city": "TX 78380-2615",
-        "mail_state": "TX"
+        "mail_address": "118 W Avenue F",
+        "mail_city": "Robstown",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -473,9 +498,10 @@
         "ncad_prop_id": "252793",
         "ncad_owner_id": "780262",
         "ncad_year": "2026",
-        "mail_address": "3032 Elgin St Corpus Christi",
-        "mail_city": "TX 78405-2455",
-        "mail_state": "TX"
+        "mail_address": "3032 Elgin St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78405"
       }
     },
     {
@@ -493,9 +519,10 @@
         "ncad_prop_id": "208290",
         "ncad_owner_id": "787758",
         "ncad_year": "2026",
-        "mail_address": "PO Box 270156 Corpus Christi",
-        "mail_city": "TX 78427-0156",
-        "mail_state": "TX"
+        "mail_address": "PO Box 270156",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78427"
       }
     },
     {
@@ -513,9 +540,10 @@
         "ncad_prop_id": "267354",
         "ncad_owner_id": "764625",
         "ncad_year": "2026",
-        "mail_address": "PO Box 484 Ingleside",
-        "mail_city": "TX 78362-0484",
-        "mail_state": "TX"
+        "mail_address": "PO Box 484",
+        "mail_city": "Ingleside",
+        "mail_state": "TX",
+        "mail_zip": "78362"
       }
     },
     {
@@ -533,9 +561,10 @@
         "ncad_prop_id": "295938",
         "ncad_owner_id": "705441",
         "ncad_year": "2026",
-        "mail_address": "2214 Nogales St Corpus Christi",
-        "mail_city": "TX 78416-1657",
-        "mail_state": "TX"
+        "mail_address": "2214 Nogales St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78416"
       }
     }
   ]
