@@ -1,0 +1,92 @@
+name: Enrich TFC with NCAD
+
+# Manual trigger only at first — once it's been verified to work
+# reliably for a few runs, you can add a schedule block to run daily
+# after scrape_tfc.yml completes. Example schedule:
+#   schedule:
+#     - cron: "45 7 * * *"   # 07:45 UTC, ~15 min after scrape_tfc
+#
+# Two inputs:
+#   apply  — false (dry-run, default) or true (write changes)
+#   force  — false (default; skip records that already have
+#            ncad_prop_id) or true (re-enrich every record)
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply changes to tfc.json (false = dry-run)"
+        type: choice
+        default: "false"
+        options:
+          - "false"
+          - "true"
+      force:
+        description: "Re-enrich records that already have ncad_prop_id"
+        type: choice
+        default: "false"
+        options:
+          - "false"
+          - "true"
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      # Cache the NCAD parcel zip + parsed index between runs.
+      # Saves ~80 MB download + parsing time when nothing's changed.
+      # The cache key uses the week-of-year so the cache naturally
+      # refreshes weekly (matching PARCEL_CACHE_TTL_SECONDS in the
+      # script).
+      - name: Cache NCAD parcel data
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: ncad-parcels-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            ncad-parcels-${{ runner.os }}-
+
+      - name: Run TFC NCAD enrichment
+        env:
+          ENRICH_TFC_APPLY: ${{ github.event.inputs.apply == 'true' && '1' || '0' }}
+          ENRICH_TFC_FORCE: ${{ github.event.inputs.force == 'true' && '1' || '0' }}
+        run: |
+          python scraper/enrich_tfc_ncad.py
+
+      # Only commit when apply mode is on AND there are actual changes.
+      # The git diff check prevents empty commits on no-match runs.
+      - name: Commit enriched JSON
+        if: github.event.inputs.apply == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dashboard/tfc.json data/tfc.json data/enrich_tfc_ncad_log.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "TFC: NCAD enrichment pass"
+            git push
+          fi
+
+      # Always upload the run log as an artifact so dry-run results
+      # are reviewable without checking it into the repo.
+      - name: Upload enrichment log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: enrich-tfc-ncad-log
+          path: data/enrich_tfc_ncad_log.json
+          if-no-files-found: ignore
