@@ -6807,20 +6807,23 @@ function buildTfcRow(r, mode) {
   // shows up automatically the moment enrichment lands.
   const _ownerEff = tfcFieldValue(r, "owner") || owner;
   const _propEff  = tfcFieldValue(r, "prop_address") || propAddr;
-  const _mailEff  = tfcFieldValue(r, "mail_address") || r.mail_address || "";
+  // Mailing address: merge NCAD's separately-extracted street + city
+  // + state + zip into ONE line for the editable cell. No override
+  // logic — user edits go through the standard save flow like every
+  // other cell.
+  const _mailEff = [
+        r.mail_address,
+        [r.mail_city, r.mail_state, r.mail_zip]
+            .filter(Boolean).join(" ").trim()
+      ].filter(Boolean).join(" ").trim();
   const _legalEff = tfcFieldValue(r, "legal") || legal;
 
   // Note: r.prop_address is the FULL property address as one string
   // ("1058 BEECHCRAFT AVE, CORPUS CHRISTI TX 78405-2802"), so the
   // property column doesn't need a separate city/state/zip line —
-  // that would just duplicate info. The mailing column DOES need
-  // one because r.mail_address from NCAD enrichment is the street-
-  // only part with city/state/zip in separate fields. Render that
-  // below the editable cell as a smaller "addr-loc" line.
-  const mailLoc = [r.mail_city, r.mail_state, r.mail_zip]
-      .filter(Boolean).join(" ").trim();
-  const mailLocLine = mailLoc
-      ? `<div class="addr-loc">${esc(mailLoc)}</div>` : "";
+  // that would just duplicate info. The mailing column now ALSO
+  // shows one merged line (see _mailEff construction above), so
+  // there's no separate "addr-loc" subline either.
 
   tr.innerHTML = `
     <td class="save-cell">
@@ -6835,7 +6838,7 @@ function buildTfcRow(r, mode) {
     <td style="text-align:center;">${_tfcDaysCell(r.sale_date_only || r.sale_date)}</td>
     <td>${_tfcEcell("owner", _ownerEff, true)}</td>
     <td class="addr-cell">${_tfcEcell("prop_address", _propEff, true)}</td>
-    <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true)}${mailLocLine}</td>
+    <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true)}</td>
     <td>${minBid == null ? '<span style="color:var(--muted)">—</span>' : moneyFmt(minBid)}</td>
     <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : moneyFmt(r.market_value)}</td>
     <td>${_tfcEcell("legal", _legalEff, true)}</td>
