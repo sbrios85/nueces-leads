@@ -46,6 +46,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r scraper/requirements.txt
 
+      # Install the Chromium browser used by Playwright. The
+      # `playwright` Python package is in requirements.txt but the
+      # actual browser binary is downloaded separately by this
+      # command. Without this step, the Playwright fallback in the
+      # enrichment script would fail with "Executable doesn't exist".
+      - name: Install Playwright Chromium
+        run: python -m playwright install --with-deps chromium
+
       # Cache the NCAD parcel zip + parsed index between runs.
       # Saves ~80 MB download + parsing time when nothing's changed.
       # The cache key uses the week-of-year so the cache naturally
