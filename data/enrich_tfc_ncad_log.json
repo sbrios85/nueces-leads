@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-05-24T20:32:21+00:00",
+  "ran_at": "2026-05-24T20:54:17+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -82,9 +82,10 @@
         "ncad_prop_id": "292188",
         "ncad_owner_id": "461542",
         "ncad_year": "2026",
-        "mail_address": "GUADALUPE SOSA MAYEN",
-        "mail_city": "5318 SEGUIN",
-        "mail_state": "TX"
+        "mail_address": "5318 SEGUIN",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -102,9 +103,10 @@
         "ncad_prop_id": "245073",
         "ncad_owner_id": "459548",
         "ncad_year": "2026",
-        "mail_address": "REBECCA MALDONADO",
-        "mail_city": "519 JACKSON ST",
-        "mail_state": "TX"
+        "mail_address": "519 JACKSON ST",
+        "mail_city": "ROBSTOWN",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -164,9 +166,10 @@
         "ncad_prop_id": "272283",
         "ncad_owner_id": "390710",
         "ncad_year": "2026",
-        "mail_address": "PRISCILLA QUINTANILLA",
-        "mail_city": "900 PERKINS ST",
-        "mail_state": "TX"
+        "mail_address": "900 PERKINS ST",
+        "mail_city": "ROBSTOWN",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -184,9 +187,10 @@
         "ncad_prop_id": "200017928",
         "ncad_owner_id": "567028",
         "ncad_year": "2026",
-        "mail_address": "PASCUALA REYES",
-        "mail_city": "703 ELESA ST",
-        "mail_state": "TX"
+        "mail_address": "703 ELESA ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78405"
       }
     },
     {
@@ -245,11 +249,7 @@
         "market_value": 102208.0,
         "ncad_prop_id": "287739",
         "ncad_owner_id": "830559",
-        "ncad_year": "2026",
-        "mail_address": "4443 NAPLES ST",
-        "mail_city": "CORPUS CHRISTI",
-        "mail_state": "TX",
-        "mail_zip": "78415"
+        "ncad_year": "2026"
       }
     },
     {
