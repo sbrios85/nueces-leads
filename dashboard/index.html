@@ -6808,13 +6808,15 @@ function buildTfcRow(r, mode) {
   const _ownerEff = tfcFieldValue(r, "owner") || owner;
   const _propEff  = tfcFieldValue(r, "prop_address") || propAddr;
   // Mailing address: merge NCAD's separately-extracted street + city
-  // + state + zip into ONE line for the editable cell. No override
-  // logic — user edits go through the standard save flow like every
-  // other cell.
-  const _mailEff = [
-        r.mail_address,
-        [r.mail_city, r.mail_state, r.mail_zip]
-            .filter(Boolean).join(" ").trim()
+  // + state + zip into ONE line for the editable cell. If the user
+  // has saved an override for mail_address, use it AS-IS — their
+  // override already contains whatever they typed (including city/
+  // zip), so re-appending the NCAD city/zip would double them up.
+  const _mailOverride = tfcFieldValue(r, "mail_address");
+  const _mailEff = _mailOverride ||
+      [r.mail_address,
+       [r.mail_city, r.mail_state, r.mail_zip]
+           .filter(Boolean).join(" ").trim()
       ].filter(Boolean).join(" ").trim();
   const _legalEff = tfcFieldValue(r, "legal") || legal;
 
@@ -7100,12 +7102,26 @@ function buildFcRow(r, isDead) {
         </div>
       </div>`;
   }
-  // Effective values: a manual edit (saved via the Save button) wins
-  // over the scraped value. The street line is what's editable; city/
-  // state/zip stay from the scrape (rarely the missing piece).
+  // Effective values for the editable cells. For property and
+  // mailing addresses, merge NCAD's separately-extracted street +
+  // city + state + zip into ONE string so the editable cell shows
+  // the full address on a single visual row. If the user has saved
+  // an override for that field, use it AS-IS — their override
+  // already contains whatever they typed (including city/zip),
+  // so re-appending the NCAD city/zip would double them up.
   const _ownerEff = fcFieldValue(r, "owner") || "";
-  const _propEff  = fcFieldValue(r, "prop_address") || "";
-  const _mailEff  = fcFieldValue(r, "mail_address") || "";
+  const _propOverride = fcFieldValue(r, "prop_address");
+  const _propEff = _propOverride ||
+      [r.prop_address,
+       [r.prop_city, r.prop_state, r.prop_zip]
+           .filter(Boolean).join(" ").trim()
+      ].filter(Boolean).join(" ").trim();
+  const _mailOverride = fcFieldValue(r, "mail_address");
+  const _mailEff = _mailOverride ||
+      [r.mail_address,
+       [r.mail_city, r.mail_state, r.mail_zip]
+           .filter(Boolean).join(" ").trim()
+      ].filter(Boolean).join(" ").trim();
   const _lenderEff = fcFieldValue(r, "lender") || "";
   const _legalEff  = fcFieldValue(r, "legal") || "";
   // A record with no pdf_parsed_at has never had its foreclosure PDF
@@ -7115,8 +7131,8 @@ function buildFcRow(r, isDead) {
   // from the clerk portal. (A manual edit can also fill fields, so we
   // only flag when there's genuinely no PDF AND no manual owner.)
   const missingPdf = !r.pdf_parsed_at && !_ownerEff;
-  const fullAddr = _propEff ?
-      [_propEff, r.prop_city, r.prop_state, r.prop_zip]
+  const fullAddr = r.prop_address ?
+      [r.prop_address, r.prop_city, r.prop_state, r.prop_zip]
           .filter(Boolean).join(" ") : "";
   // Loan amount: a manual override (entered by the user after a loan
   // mod) wins over the scraped value. The override lives in
@@ -7242,8 +7258,12 @@ function buildFcRow(r, isDead) {
   const apprVal = r.appraised_value ?
       "$" + Number(r.appraised_value).toLocaleString("en-US",
                                                      {maximumFractionDigits: 0}) : "—";
-  const mailFull = _mailEff ?
-      [_mailEff, r.mail_city, r.mail_state, r.mail_zip]
+  // mailFull is the full mailing address as one string, used by
+  // downstream features like skiptrace links. Build it from the raw
+  // JSON fields directly — `_mailEff` is now pre-merged for display
+  // purposes, so re-merging here would double the city/state/zip.
+  const mailFull = r.mail_address ?
+      [r.mail_address, r.mail_city, r.mail_state, r.mail_zip]
           .filter(Boolean).join(" ") : "";
 
   // Non-owner-occupied detection (same as before — ZIP+street-number
@@ -7409,16 +7429,8 @@ function buildFcRow(r, isDead) {
     <td>${foreclosureDateCell}</td>
     <td>${esc(formatDate(r.recorded))}</td>
     <td>${_ecell("owner", _ownerEff)}</td>
-    <td class="addr-cell">${_ecell("prop_address", _propEff)}${
-        [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim()
-          ? `<div class="addr-loc">${esc([r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim())}</div>`
-          : ""
-      }${absenteeBadge}${shortSaleBadge}</td>
-    <td class="addr-cell">${_ecell("mail_address", _mailEff)}${
-        [r.mail_city, r.mail_state, r.mail_zip].filter(Boolean).join(" ").trim()
-          ? `<div class="addr-loc">${esc([r.mail_city, r.mail_state, r.mail_zip].filter(Boolean).join(" ").trim())}</div>`
-          : ""
-      }</td>
+    <td class="addr-cell">${_ecell("prop_address", _propEff)}${absenteeBadge}${shortSaleBadge}</td>
+    <td class="addr-cell">${_ecell("mail_address", _mailEff)}</td>
     <td>
       ${_editable ? `
       <span class="loan-amt-wrap"><span class="dollar">$</span><input class="loan-amt-edit"
