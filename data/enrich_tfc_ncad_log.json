@@ -1,0 +1,542 @@
+{
+  "ran_at": "2026-05-24T19:57:34+00:00",
+  "apply_mode": true,
+  "force_mode": true,
+  "fetch_mail_address": true,
+  "entries": [
+    {
+      "uid": "1009142746",
+      "prop_address": "1058 BEECHCRAFT AVE, CORPUS CHRISTI TX 78405-2802",
+      "result": "matched",
+      "ncad_prop_id": "182368",
+      "ncad_owner": "ADAMS MARTIN L",
+      "ncad_legal": "AIRPORT PARK BLK 1 LOT 4",
+      "market_value": 105823.0,
+      "additions": {
+        "owner": "ADAMS MARTIN L",
+        "legal": "AIRPORT PARK BLK 1 LOT 4",
+        "market_value": 105823.0,
+        "ncad_prop_id": "182368",
+        "ncad_owner_id": "119272",
+        "ncad_year": "2026",
+        "mail_address": "1058 BEECHCRAFT AVE CORPUS CHRISTI",
+        "mail_city": "TX 78405",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1007738835",
+      "prop_address": "4613 ANGELA DR, CORPUS CHRISTI TX 78416",
+      "result": "matched",
+      "ncad_prop_id": "268487",
+      "ncad_owner": "ORTEGA JESSE",
+      "ncad_legal": "MOLINA 2 LT 22B BLK 11",
+      "market_value": 34000.0,
+      "additions": {
+        "owner": "ORTEGA JESSE",
+        "legal": "MOLINA 2 LT 22B BLK 11",
+        "market_value": 34000.0,
+        "ncad_prop_id": "268487",
+        "ncad_owner_id": "551061",
+        "ncad_year": "2026",
+        "mail_address": "1838 BERNANDINO ST CORPUS CHRISTI",
+        "mail_city": "TX 78416",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1012482142",
+      "prop_address": "1521 EL PASO ST, CORPUS CHRISTI TX 78417-2816",
+      "result": "matched",
+      "ncad_prop_id": "261677",
+      "ncad_owner": "HERRERA PAULITA C  ETALS",
+      "ncad_legal": "LOS ENCINOS BLK F LOT 6",
+      "market_value": 108701.0,
+      "additions": {
+        "owner": "HERRERA PAULITA C  ETALS",
+        "legal": "LOS ENCINOS BLK F LOT 6",
+        "market_value": 108701.0,
+        "ncad_prop_id": "261677",
+        "ncad_owner_id": "699393",
+        "ncad_year": "2026",
+        "mail_address": "1521 El Paso St Corpus Christi",
+        "mail_city": "TX 78417-2816",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008177121",
+      "prop_address": "5694 COUNTY ROAD 73, ROBSTOWN TX 78380-5841",
+      "result": "matched",
+      "ncad_prop_id": "292188",
+      "ncad_owner": "MAYEN EDGAR ROLANDO ET UX",
+      "ncad_legal": "RIVERSIDE LT 31",
+      "market_value": 209530.0,
+      "additions": {
+        "owner": "MAYEN EDGAR ROLANDO ET UX",
+        "legal": "RIVERSIDE LT 31",
+        "market_value": 209530.0,
+        "ncad_prop_id": "292188",
+        "ncad_owner_id": "461542",
+        "ncad_year": "2026",
+        "mail_address": "GUADALUPE SOSA MAYEN 5318 SEGUIN CORPUS CHRISTI",
+        "mail_city": "TX 78415",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1009699521",
+      "prop_address": "519 JACKSON AVE, ROBSTOWN TX 78380-3624",
+      "result": "matched",
+      "ncad_prop_id": "245073",
+      "ncad_owner": "MALDONADO ROBERT III ETUX",
+      "ncad_legal": "HOME PLACE - RBST BLK 1 LOT 7",
+      "market_value": 186895.0,
+      "additions": {
+        "owner": "MALDONADO ROBERT III ETUX",
+        "legal": "HOME PLACE - RBST BLK 1 LOT 7",
+        "market_value": 186895.0,
+        "ncad_prop_id": "245073",
+        "ncad_owner_id": "459548",
+        "ncad_year": "2026",
+        "mail_address": "REBECCA MALDONADO 519 JACKSON ST ROBSTOWN",
+        "mail_city": "TX 78380",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008394525",
+      "prop_address": "3630 WATERLOO DR, CORPUS CHRISTI TX 78415-3339",
+      "result": "matched",
+      "ncad_prop_id": "208344",
+      "ncad_owner": "JOSE E RAMOS JR",
+      "ncad_legal": "CARROLL PLACE ADDN 2 LT 25 BK 3",
+      "market_value": 157574.0,
+      "additions": {
+        "owner": "JOSE E RAMOS JR",
+        "legal": "CARROLL PLACE ADDN 2 LT 25 BK 3",
+        "market_value": 157574.0,
+        "ncad_prop_id": "208344",
+        "ncad_owner_id": "843755",
+        "ncad_year": "2026",
+        "mail_address": "3630 WATERLOO DR CORPUS CHRISTI",
+        "mail_city": "TX 78415-3339",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008915366",
+      "prop_address": "4525 RAMONA DR, CORPUS CHRISTI TX 78416-2214",
+      "result": "matched",
+      "ncad_prop_id": "252702",
+      "ncad_owner": "CORE PROFITS CONSULTING AND HOLDINGS LLC",
+      "ncad_legal": "LA PASCUA 2 LT 33 BK 6",
+      "market_value": 116034.0,
+      "additions": {
+        "owner": "CORE PROFITS CONSULTING AND HOLDINGS LLC",
+        "legal": "LA PASCUA 2 LT 33 BK 6",
+        "market_value": 116034.0,
+        "ncad_prop_id": "252702",
+        "ncad_owner_id": "792159",
+        "ncad_year": "2026",
+        "mail_address": "322 W Woodlawn Ave San Antonio",
+        "mail_city": "TX 78212-3393",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008960271",
+      "prop_address": "900 PERKINS ST, ROBSTOWN TX 78380-3917",
+      "result": "matched",
+      "ncad_prop_id": "272283",
+      "ncad_owner": "QUINTANILLA DWIGHT AND",
+      "ncad_legal": "NEWELL - RBST BLK 1 LOT 13",
+      "market_value": 69313.0,
+      "additions": {
+        "owner": "QUINTANILLA DWIGHT AND",
+        "legal": "NEWELL - RBST BLK 1 LOT 13",
+        "market_value": 69313.0,
+        "ncad_prop_id": "272283",
+        "ncad_owner_id": "390710",
+        "ncad_year": "2026",
+        "mail_address": "PRISCILLA QUINTANILLA 900 PERKINS ST ROBSTOWN",
+        "mail_city": "TX 78380-3917",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008174360",
+      "prop_address": "703 ELESA ST, CORPUS CHRISTI TX 78405-2523",
+      "result": "matched",
+      "ncad_prop_id": "200017928",
+      "ncad_owner": "REYES RICARDO AND WF",
+      "ncad_legal": "SEIKEL BLK 5 LOTS 11, 12 & 13",
+      "market_value": 73371.0,
+      "additions": {
+        "owner": "REYES RICARDO AND WF",
+        "legal": "SEIKEL BLK 5 LOTS 11, 12 & 13",
+        "market_value": 73371.0,
+        "ncad_prop_id": "200017928",
+        "ncad_owner_id": "567028",
+        "ncad_year": "2026",
+        "mail_address": "PASCUALA REYES 703 ELESA ST CORPUS CHRISTI",
+        "mail_city": "TX 78405-2523",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1009330554",
+      "prop_address": "4371 PIPER CUB ST, ROBSTOWN TX 78380",
+      "result": "matched",
+      "ncad_prop_id": "200042961",
+      "ncad_owner": "CANTU BENJAMIN ROSS",
+      "ncad_legal": "TIERRA VERDE UNIT 2 TRACT 25B",
+      "market_value": 51419.0,
+      "additions": {
+        "owner": "CANTU BENJAMIN ROSS",
+        "legal": "TIERRA VERDE UNIT 2 TRACT 25B",
+        "market_value": 51419.0,
+        "ncad_prop_id": "200042961",
+        "ncad_owner_id": "673424",
+        "ncad_year": "2026",
+        "mail_address": "213 E AVENUE F ROBSTOWN",
+        "mail_city": "TX 78380-2713",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1009513476",
+      "prop_address": "4530 NESBITT DR, CORPUS CHRISTI TX 78415-5116",
+      "result": "matched",
+      "ncad_prop_id": "200045091",
+      "ncad_owner": "DAVILA MARIA INEZ",
+      "ncad_legal": "TROPICAL PARK BLK 2 LOT 17",
+      "market_value": 103030.0,
+      "additions": {
+        "owner": "DAVILA MARIA INEZ",
+        "legal": "TROPICAL PARK BLK 2 LOT 17",
+        "market_value": 103030.0,
+        "ncad_prop_id": "200045091",
+        "ncad_owner_id": "421348",
+        "ncad_year": "2026",
+        "mail_address": "4530 NESBITT CORPUS CHRISTI",
+        "mail_city": "TX 78415",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1007720525",
+      "prop_address": "4443 NAPLES ST, CORPUS CHRISTI TX 78415-5241",
+      "result": "matched",
+      "ncad_prop_id": "287739",
+      "ncad_owner": "VEGA MONICA P AND ETALS",
+      "ncad_legal": "PORTAIRS NE23.3O' OF LT 21 & SW31.7O' OF LT 22 BK 5",
+      "market_value": 102208.0,
+      "additions": {
+        "owner": "VEGA MONICA P AND ETALS",
+        "legal": "PORTAIRS NE23.3O' OF LT 21 & SW31.7O' OF LT 22 BK 5",
+        "market_value": 102208.0,
+        "ncad_prop_id": "287739",
+        "ncad_owner_id": "830559",
+        "ncad_year": "2026"
+      }
+    },
+    {
+      "uid": "1009613081",
+      "prop_address": "10854 MAYFIELD DR, CORPUS CHRISTI TX 78410-2822",
+      "result": "matched",
+      "ncad_prop_id": "200018363",
+      "ncad_owner": "GUERRERO ANNA",
+      "ncad_legal": "SHADY ACRES BLK 2 LOT 8",
+      "market_value": 144846.0,
+      "additions": {
+        "owner": "GUERRERO ANNA",
+        "legal": "SHADY ACRES BLK 2 LOT 8",
+        "market_value": 144846.0,
+        "ncad_prop_id": "200018363",
+        "ncad_owner_id": "735184",
+        "ncad_year": "2026",
+        "mail_address": "10854 Mayfield Dr Corpus Christi",
+        "mail_city": "TX 78410-2822",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008967561",
+      "prop_address": "1310 DOROTHY ST, ROBSTOWN TX 78380-3940",
+      "result": "matched",
+      "ncad_prop_id": "267696",
+      "ncad_owner": "GARCIA VELMA",
+      "ncad_legal": "MOBIL HOME ESTATES-RBST LT 5 BK 2",
+      "market_value": 15330.0,
+      "additions": {
+        "owner": "GARCIA VELMA",
+        "legal": "MOBIL HOME ESTATES-RBST LT 5 BK 2",
+        "market_value": 15330.0,
+        "ncad_prop_id": "267696",
+        "ncad_owner_id": "539087",
+        "ncad_year": "2026",
+        "mail_address": "506 IOWA ROBSTOWN",
+        "mail_city": "TX 78380",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1013326193",
+      "prop_address": "3909 ROSCHER RD, CORPUS CHRISTI TX 78418-8917",
+      "result": "matched",
+      "ncad_prop_id": "524482",
+      "ncad_owner": "DJILAI EDDIE RACHID & WF TERESA",
+      "ncad_legal": "G & M ESTATES BLK 1 LOT 1RR",
+      "market_value": 1915332.0,
+      "additions": {
+        "owner": "DJILAI EDDIE RACHID & WF TERESA",
+        "legal": "G & M ESTATES BLK 1 LOT 1RR",
+        "market_value": 1915332.0,
+        "ncad_prop_id": "524482",
+        "ncad_owner_id": "786677",
+        "ncad_year": "2026",
+        "mail_address": "3909 Roscher Rd Corpus Christi",
+        "mail_city": "TX 78418-8917",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1012928889",
+      "prop_address": "3905 ROSCHER RD, CORPUS CHRISTI TX 78418-8917",
+      "result": "matched",
+      "ncad_prop_id": "535341",
+      "ncad_owner": "DJILAI EDDIE RACHID & WF TERESA",
+      "ncad_legal": "G & M ESTATES BLK 1 LOT 2RR",
+      "market_value": 662892.0,
+      "additions": {
+        "owner": "DJILAI EDDIE RACHID & WF TERESA",
+        "legal": "G & M ESTATES BLK 1 LOT 2RR",
+        "market_value": 662892.0,
+        "ncad_prop_id": "535341",
+        "ncad_owner_id": "786677",
+        "ncad_year": "2026",
+        "mail_address": "3909 Roscher Rd Corpus Christi",
+        "mail_city": "TX 78418-8917",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1015790033",
+      "prop_address": "13921 SUNTAN AVE, CORPUS CHRISTI TX 78418-6054",
+      "result": "matched",
+      "ncad_prop_id": "278930",
+      "ncad_owner": "CHACON STEPHANIE F",
+      "ncad_legal": "PADRE ISLAND SEC 2 LT 6 BLK 73",
+      "market_value": 453460.0,
+      "additions": {
+        "owner": "CHACON STEPHANIE F",
+        "legal": "PADRE ISLAND SEC 2 LT 6 BLK 73",
+        "market_value": 453460.0,
+        "ncad_prop_id": "278930",
+        "ncad_owner_id": "835866",
+        "ncad_year": "2026",
+        "mail_address": "13921 SUNTAN AVE CORPUS CHRISTI",
+        "mail_city": "TX 78418-6054",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008187051",
+      "prop_address": "2129 DAVID ST, CORPUS CHRISTI TX 78405-1901",
+      "result": "matched",
+      "ncad_prop_id": "200017216",
+      "ncad_owner": "ZUNDT EMILIO M",
+      "ncad_legal": "SEGREST LT 2 BK 5 & POR OF ALLEY",
+      "market_value": 43344.0,
+      "additions": {
+        "owner": "ZUNDT EMILIO M",
+        "legal": "SEGREST LT 2 BK 5 & POR OF ALLEY",
+        "market_value": 43344.0,
+        "ncad_prop_id": "200017216",
+        "ncad_owner_id": "238178",
+        "ncad_year": "2026",
+        "mail_address": "2129 DAVID CORPUS CHRISTI",
+        "mail_city": "TX 78405",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1009778654",
+      "prop_address": "4605 COODY LN, CORPUS CHRISTI TX 78413-2121",
+      "result": "matched",
+      "ncad_prop_id": "219123",
+      "ncad_owner": "WOOD JENESSA & MARK GONZALES",
+      "ncad_legal": "COUNTRY CLUB ESTATES #21 BLK 2 LOT 10",
+      "market_value": 308520.0,
+      "additions": {
+        "owner": "WOOD JENESSA & MARK GONZALES",
+        "legal": "COUNTRY CLUB ESTATES #21 BLK 2 LOT 10",
+        "market_value": 308520.0,
+        "ncad_prop_id": "219123",
+        "ncad_owner_id": "736209",
+        "ncad_year": "2026",
+        "mail_address": "4605 Coody Ln Corpus Christi",
+        "mail_city": "TX 78413-2121",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1009679980",
+      "prop_address": "508 MARIE ST, ROBSTOWN TX 78380-3714",
+      "result": "matched",
+      "ncad_prop_id": "216100",
+      "ncad_owner": "ANZALDUA BELINDA SAENZ",
+      "ncad_legal": "COMPRESS-RBST LTS 5 & 6 BLK 2",
+      "market_value": 86445.0,
+      "additions": {
+        "owner": "ANZALDUA BELINDA SAENZ",
+        "legal": "COMPRESS-RBST LTS 5 & 6 BLK 2",
+        "market_value": 86445.0,
+        "ncad_prop_id": "216100",
+        "ncad_owner_id": "679254",
+        "ncad_year": "2026",
+        "mail_address": "508 Marie St Robstown",
+        "mail_city": "TX 78380-3714",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1009010113",
+      "prop_address": "520 INDUSTRIAL AVE, ROBSTOWN TX 78380-3807",
+      "result": "matched",
+      "ncad_prop_id": "200068950",
+      "ncad_owner": "SANCHEZ ELIAS",
+      "ncad_legal": "WRIGHT - RBST BLK 3 LOT 10",
+      "market_value": 131168.0,
+      "additions": {
+        "owner": "SANCHEZ ELIAS",
+        "legal": "WRIGHT - RBST BLK 3 LOT 10",
+        "market_value": 131168.0,
+        "ncad_prop_id": "200068950",
+        "ncad_owner_id": "677199",
+        "ncad_year": "2026"
+      }
+    },
+    {
+      "uid": "1007507779",
+      "prop_address": "1027 OHIO ST, ROBSTOWN TX 78380-3418",
+      "result": "matched",
+      "ncad_prop_id": "262909",
+      "ncad_owner": "SERNA RODOLFO ET UX YOLANDA A",
+      "ncad_legal": "MALOY AND BOSQUEZ EXTN-RBST LTS 15 & 16 BK 1",
+      "market_value": 105362.0,
+      "additions": {
+        "owner": "SERNA RODOLFO ET UX YOLANDA A",
+        "legal": "MALOY AND BOSQUEZ EXTN-RBST LTS 15 & 16 BK 1",
+        "market_value": 105362.0,
+        "ncad_prop_id": "262909",
+        "ncad_owner_id": "388249",
+        "ncad_year": "2026",
+        "mail_address": "1027 OHIO ROBSTOWN",
+        "mail_city": "TX 78380",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008191881",
+      "prop_address": "118 W AVENUE D, ROBSTOWN TX 78380-2918",
+      "result": "matched",
+      "ncad_prop_id": "224274",
+      "ncad_owner": "GARCIA AUSTIN & NORMANDY",
+      "ncad_legal": "DARE H E-RBST LT 15 & W/2 OF LT 16",
+      "market_value": 205452.0,
+      "additions": {
+        "owner": "GARCIA AUSTIN & NORMANDY",
+        "legal": "DARE H E-RBST LT 15 & W/2 OF LT 16",
+        "market_value": 205452.0,
+        "ncad_prop_id": "224274",
+        "ncad_owner_id": "728607",
+        "ncad_year": "2026",
+        "mail_address": "118 W Avenue F Robstown",
+        "mail_city": "TX 78380-2615",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1013326563",
+      "prop_address": "4613 VALDEZ DR, CORPUS CHRISTI TX 78416-2226",
+      "result": "matched",
+      "ncad_prop_id": "252793",
+      "ncad_owner": "THOMAS VELDA R ETALS",
+      "ncad_legal": "LA PASCUA #2 BLK 8 LOT 43",
+      "market_value": 110243.0,
+      "additions": {
+        "owner": "THOMAS VELDA R ETALS",
+        "legal": "LA PASCUA #2 BLK 8 LOT 43",
+        "market_value": 110243.0,
+        "ncad_prop_id": "252793",
+        "ncad_owner_id": "780262",
+        "ncad_year": "2026",
+        "mail_address": "3032 Elgin St Corpus Christi",
+        "mail_city": "TX 78405-2455",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008227652",
+      "prop_address": "3725 PANAMA DR, CORPUS CHRISTI TX 78415-3329",
+      "result": "matched",
+      "ncad_prop_id": "208290",
+      "ncad_owner": "CARRIER BRENT LEE JR",
+      "ncad_legal": "CARROLL PLACE ADD LT 16 BK 3",
+      "market_value": 167105.0,
+      "additions": {
+        "owner": "CARRIER BRENT LEE JR",
+        "legal": "CARROLL PLACE ADD LT 16 BK 3",
+        "market_value": 167105.0,
+        "ncad_prop_id": "208290",
+        "ncad_owner_id": "787758",
+        "ncad_year": "2026",
+        "mail_address": "PO Box 270156 Corpus Christi",
+        "mail_city": "TX 78427-0156",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008251510",
+      "prop_address": "2114 HARVARD ST, CORPUS CHRISTI TX 78416-1231",
+      "result": "matched",
+      "ncad_prop_id": "267354",
+      "ncad_owner": "REYNA LEE OSWALD",
+      "ncad_legal": "MIDWAY BLK 8 LOT 7",
+      "market_value": 104742.0,
+      "additions": {
+        "owner": "REYNA LEE OSWALD",
+        "legal": "MIDWAY BLK 8 LOT 7",
+        "market_value": 104742.0,
+        "ncad_prop_id": "267354",
+        "ncad_owner_id": "764625",
+        "ncad_year": "2026",
+        "mail_address": "PO Box 484 Ingleside",
+        "mail_city": "TX 78362-0484",
+        "mail_state": "TX"
+      }
+    },
+    {
+      "uid": "1008122147",
+      "prop_address": "2214 NOGALES ST, CORPUS CHRISTI TX 78416-1657",
+      "result": "matched",
+      "ncad_prop_id": "295938",
+      "ncad_owner": "BITONI ROSA",
+      "ncad_legal": "SAN DIEGO BLK 6 LOT 26",
+      "market_value": 69721.0,
+      "additions": {
+        "owner": "BITONI ROSA",
+        "legal": "SAN DIEGO BLK 6 LOT 26",
+        "market_value": 69721.0,
+        "ncad_prop_id": "295938",
+        "ncad_owner_id": "705441",
+        "ncad_year": "2026",
+        "mail_address": "2214 Nogales St Corpus Christi",
+        "mail_city": "TX 78416-1657",
+        "mail_state": "TX"
+      }
+    }
+  ]
+}
