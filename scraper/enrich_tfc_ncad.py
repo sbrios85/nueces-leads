@@ -95,6 +95,12 @@ PAGE_TIMEOUT_MS = 20_000
 RESULT_WAIT_TIMEOUT_MS = 8_000
 DETAIL_TIMEOUT_MS = 15_000
 
+# Session-token refresh interval. NCAD's `searchSessionToken` has a
+# finite TTL (observed ~5 minutes per fetch.py). Every N lookups we
+# reload the homepage to mint a fresh token, so we don't silently
+# start returning empty results when the token expires mid-run.
+TOKEN_REFRESH_INTERVAL = 25
+
 # Optional: also fetch each match's detail page to capture the
 # mailing address (not present in the result list). Disabled by
 # default since it doubles the request count. Enable for a fully-
@@ -333,18 +339,63 @@ def _pick_best_row(rows: List[Dict[str, Any]],
 # esearch fetch — one address lookup via Playwright
 # ==================================================================
 
+async def _mint_session_token(page) -> str:
+    """Reload NCAD's esearch homepage and harvest the session token.
+
+    The BIS Consultants esearch portal embeds a `searchSessionToken`
+    in a <meta name="search-token"> tag on its homepage. Every search
+    URL must include this token as `&searchSessionToken=...` — without
+    it, the result page returns empty regardless of query validity.
+
+    The token has a finite TTL (observed ~5 minutes), so we refresh
+    it periodically during a long enrichment run. Returns the token
+    string, or empty string if minting failed (caller can decide
+    what to do — typically log a warning and proceed; some queries
+    may work without it depending on session state).
+    """
+    try:
+        await page.goto(
+            NCAD_ESEARCH_BASE + "/",
+            wait_until="domcontentloaded",
+            timeout=30_000,
+        )
+        # Small settle delay — meta tag is in <head> so it loads fast,
+        # but a tiny wait protects against the rare slow render.
+        await page.wait_for_timeout(400)
+        token = await page.evaluate("""() => {
+            const m = document.querySelector('meta[name="search-token"]');
+            return m ? m.getAttribute('content') : '';
+        }""") or ""
+        if token:
+            log.info("  session token acquired (len=%d)", len(token))
+        else:
+            log.warning("  session token: meta tag missing or empty")
+        return token
+    except Exception as exc:
+        log.warning("  could not mint session token: %s", exc)
+        return ""
+
+
 async def _esearch_address(page,
                             st_num: str,
                             st_name: str,
                             year: str,
-                            query_addr: str) -> Optional[Dict[str, Any]]:
+                            query_addr: str,
+                            token: str = "") -> Optional[Dict[str, Any]]:
     """Fetch and parse a single address-search result page.
+
+    The `token` arg is NCAD's per-session `searchSessionToken` — without
+    it the result page returns empty regardless of how good the query
+    is. Mint via _mint_session_token() before the loop.
 
     Returns the chosen result row (dict with owner/legal/value/prop_id
     etc.) or None if no usable match.
     """
     kw = f"StreetNumber:{st_num} StreetName:{st_name} Year:{year} "
-    url = f"{NCAD_ESEARCH_BASE}/search/result?{urlencode({'keywords': kw})}"
+    params = {"keywords": kw}
+    if token:
+        params["searchSessionToken"] = token
+    url = f"{NCAD_ESEARCH_BASE}/search/result?{urlencode(params)}"
     log.info("  query: %s", url)
     try:
         await page.goto(url, wait_until="domcontentloaded",
@@ -566,6 +617,17 @@ async def _enrich_all(records: List[Dict[str, Any]]
         page = await context.new_page()
 
         try:
+            # Warm the session and mint the initial token.
+            log.info("warming session and minting token...")
+            token = await _mint_session_token(page)
+            if not token:
+                log.warning("starting without a token — queries may "
+                            "return empty. Will try to refresh on first "
+                            "consecutive-miss signal.")
+            # Counters for token refresh logic.
+            lookups_since_refresh = 0
+            consecutive_misses = 0
+
             for i, rec in enumerate(records):
                 uid = rec.get("uid", "")
                 addr_log = rec.get("prop_address", "")
@@ -574,6 +636,17 @@ async def _enrich_all(records: List[Dict[str, Any]]
                 if rec.get("ncad_prop_id") and not FORCE:
                     skipped_already += 1
                     continue
+
+                # Periodic token refresh — TTL is ~5 minutes so a long
+                # run should refresh proactively to avoid silently
+                # expiring mid-loop.
+                if lookups_since_refresh >= TOKEN_REFRESH_INTERVAL:
+                    log.info("  refreshing session token (after %d lookups)",
+                              lookups_since_refresh)
+                    new_token = await _mint_session_token(page)
+                    if new_token:
+                        token = new_token
+                    lookups_since_refresh = 0
 
                 # Get a parseable street address. Prefer
                 # prop_address_street (just the street line); fall
@@ -598,25 +671,46 @@ async def _enrich_all(records: List[Dict[str, Any]]
                           "StreetName:%s", i + 1, len(records), uid,
                           street, st_num, st_name)
 
-                # Run the esearch lookup.
+                # Run the esearch lookup. Always pass the current
+                # session token — without it the result page returns
+                # empty regardless of query.
                 try:
                     best = await _esearch_address(
                         page, st_num, st_name, NCAD_YEAR, street,
+                        token=token,
                     )
                 except Exception as exc:
                     log.warning("  esearch failed: %s", exc)
                     best = None
+                lookups_since_refresh += 1
 
                 if not best:
                     no_match += 1
+                    consecutive_misses += 1
                     log_entries.append({
                         "uid": uid,
                         "prop_address": addr_log,
                         "result": "no-match",
                         "query": f"StreetNumber:{st_num} StreetName:{st_name}",
                     })
+                    # Reactive token refresh: if we get a streak of
+                    # misses, the token may have expired silently.
+                    # Try minting a fresh one and continue. If the
+                    # very next lookup also misses we'll keep going
+                    # (could be legit data misses), but at least we
+                    # gave a stale token a chance to recover.
+                    if consecutive_misses == 5:
+                        log.warning("  5 consecutive misses — "
+                                     "re-minting token in case it expired")
+                        new_token = await _mint_session_token(page)
+                        if new_token:
+                            token = new_token
+                            lookups_since_refresh = 0
                     await asyncio.sleep(INTER_FETCH_DELAY_S)
                     continue
+
+                # Reset miss counter on a successful match.
+                consecutive_misses = 0
 
                 # Optional: fetch detail page for mailing address.
                 mail_info: Dict[str, str] = {}
