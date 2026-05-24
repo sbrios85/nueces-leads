@@ -631,19 +631,31 @@ async def _esearch_detail_for_mail(page,
 def _split_us_address(full: str) -> Dict[str, str]:
     """Split a US-style address string into components.
 
-    Handles two real-world NCAD formats:
+    Handles three real-world NCAD formats:
       1. Two-line (most common on detail pages):
          "1058 BEECHCRAFT AVE
           CORPUS CHRISTI, TX 78405"
          Street is line 1; city/state/zip is line 2 with a comma
          between city and state.
-      2. One-line legacy: "STREET, CITY, ST ZIP" — fall-through case
+      2. Three-or-more-line with co-owner name(s) prepended:
+         "GUADALUPE SOSA MAYEN          ← co-owner name (skip)
+          5318 SEGUIN                   ← actual street
+          CORPUS CHRISTI, TX 78416"     ← city/state/zip
+         Common pattern when the property is owned "ET UX" (and
+         wife/husband) — NCAD prepends the co-owner's name to the
+         mailing block. Verified 2026-05-24 against prop 292188
+         (MAYEN ET UX) and 245073 (MALDONADO ETUX).
+      3. One-line legacy: "STREET, CITY, ST ZIP" — fall-through case
          for older or non-standard renderings.
+
+    Discriminator for name vs street: a real US street address
+    always starts with a digit (the house number). A name line never
+    does. So we skip leading lines that have no leading digit until
+    we find one that does — that's our street.
 
     Returns {mail_addr, mail_city, mail_state, mail_zip}. Best-effort:
     missing components come back as empty strings rather than failing
-    the whole parse. Verified 2026-05-24 against NCAD prop 182368
-    (1058 BEECHCRAFT AVE → ADAMS MARTIN L mailing address).
+    the whole parse.
     """
     if not full:
         return {}
@@ -651,20 +663,39 @@ def _split_us_address(full: str) -> Dict[str, str]:
     # Normalize whitespace: collapse runs of spaces but PRESERVE
     # newlines, since the newline is our primary separator.
     full = full.strip()
-    # Split on the FIRST newline (one or more). If multiple lines
-    # are present beyond the second, they're junk (extra contact
-    # info, agent rows, etc.) — drop them.
+    # Split into lines. If multiple lines are present beyond the
+    # expected 2-3, they're junk (extra contact info, agent rows,
+    # etc.) — we'll still try to find a street + city among them.
     lines = [ln.strip() for ln in re.split(r"\n+", full) if ln.strip()]
     if not lines:
         return {}
 
-    street = lines[0]
+    # Find the first line that looks like a real street address —
+    # i.e. starts with a digit. Anything before it is a co-owner
+    # name (the ET UX pattern). Without this, the parser was treating
+    # "GUADALUPE SOSA MAYEN" as the street and "5318 SEGUIN" as the
+    # city, because the parser blindly took lines[0] and lines[1].
+    street_idx = None
+    for i, line in enumerate(lines):
+        if re.match(r"^\s*\d", line):
+            street_idx = i
+            break
+
+    # If NO line starts with a digit, fall back to the original
+    # behaviour (use lines[0] as street). This protects oddball
+    # records like PO Boxes ("PO BOX 1234") from being dropped.
+    if street_idx is None:
+        street_idx = 0
+
+    street = lines[street_idx]
     city = state = zipc = ""
 
-    if len(lines) >= 2:
+    # The city/state/zip line is the NEXT line after the street.
+    next_idx = street_idx + 1
+    if next_idx < len(lines):
         # Line 2 is "CITY, ST ZIP" or "CITY ST ZIP" (with or
         # without comma between city and state).
-        line2 = lines[1]
+        line2 = lines[next_idx]
         # Try comma-separated first: "CORPUS CHRISTI, TX 78405".
         m = re.match(
             r"^(.+?),\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)\s*$",
