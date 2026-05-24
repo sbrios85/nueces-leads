@@ -48,6 +48,7 @@ ones that already have ncad_prop_id (unless --force is passed).
 
 from __future__ import annotations
 
+import asyncio
 import csv
 import io
 import json
@@ -110,11 +111,13 @@ ADDR_INDEX_TTL_SECONDS = 7 * 24 * 60 * 60
 
 # Network / parsing safety
 REQUEST_TIMEOUT_SEC = 300                # zip download can be slow
-# Retry strategy for the parcel zip download. NCAD's CDN can rate-
-# limit large downloads with 429 (Too Many Requests) — retry with
-# exponential backoff to ride through the transient block.
-ZIP_DOWNLOAD_RETRIES = 5
-ZIP_DOWNLOAD_BACKOFF = (5, 15, 30, 60, 120)  # seconds between attempts
+# Retry strategy for the parcel zip download via plain `requests`.
+# Kept short because NCAD's CDN often fingerprints GitHub Actions IPs
+# and 429s every request regardless — when that happens we want to
+# fall through to the Playwright path quickly rather than waste
+# minutes on retries that can't possibly succeed.
+ZIP_DOWNLOAD_RETRIES = 2
+ZIP_DOWNLOAD_BACKOFF = (5, 10)  # seconds between attempts
 PARSE_DEADLINE_SECONDS = 120             # cap on total zip-parse time
 PER_FILE_TIMEOUT_SECONDS = 30            # cap per inner text file
 MAX_INNER_FILE_BYTES = 80 * 1024 * 1024  # skip > 80 MB inner files
@@ -201,6 +204,63 @@ def _http_get_bytes(url: str, timeout: int = REQUEST_TIMEOUT_SEC,
                     url, retries, exc,
                 )
     raise last_err if last_err else RuntimeError("download failed")
+
+
+async def _pw_get_bytes(url: str, referer: str = "",
+                         timeout: int = REQUEST_TIMEOUT_SEC) -> bytes:
+    """Playwright fallback for binary downloads when plain requests
+    gets blocked (typically by CDN WAFs that fingerprint GitHub
+    Actions IPs and reject the request before headers even matter).
+
+    A real Chromium browser sends a TLS fingerprint + cookies +
+    full header set that CDNs accept as legitimate, where `requests`
+    looks like a bot to them. Modeled on fetch.py:_pw_get_bytes —
+    same pattern that MFC uses to successfully download this same
+    parcel zip.
+
+    Optional `referer` first navigates to that page so the request
+    chain looks like a real user clicking through. NCAD's CDN
+    especially cares about this — direct CDN URL hits get 429'd
+    while clickthrough requests pass.
+    """
+    from playwright.async_api import async_playwright
+
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(
+            headless=True, args=["--no-sandbox"],
+        )
+        context = await browser.new_context(user_agent=USER_AGENT)
+        try:
+            # First "visit" the downloads page so the CDN sees us as
+            # a normal visitor with a referrer + a cookie jar.
+            if referer:
+                try:
+                    page = await context.new_page()
+                    await page.goto(
+                        referer, wait_until="domcontentloaded",
+                        timeout=30_000,
+                    )
+                    # Give the page a moment to set any cookies / run
+                    # any WAF challenge JS. Most CDN protections that
+                    # use JS challenges (Cloudflare etc.) only block
+                    # the FIRST request; subsequent ones with the
+                    # cookie pass through.
+                    await page.wait_for_timeout(2000)
+                    await page.close()
+                except Exception as exc:
+                    log.warning("playwright referer-visit failed: %s "
+                                "(continuing with direct fetch)", exc)
+            # Now fetch the binary URL within the same browser context
+            # — cookies + TLS fingerprint carry over.
+            resp = await context.request.get(url, timeout=timeout * 1000)
+            if resp.status != 200:
+                raise RuntimeError(
+                    f"playwright HTTP {resp.status} for {url}"
+                )
+            return await resp.body()
+        finally:
+            await context.close()
+            await browser.close()
 
 
 def _http_get_text(url: str, timeout: int = 60) -> str:
@@ -301,19 +361,44 @@ def _load_or_download_parcel_zip() -> Optional[bytes]:
     log.info("downloading NCAD parcel zip: %s", zip_url)
     log.info("(if NCAD rate-limits us, we'll retry with backoff up to %d times)",
              ZIP_DOWNLOAD_RETRIES)
+
+    # Two-tier download strategy:
+    # 1. Try plain `requests` with browser headers + Referer + retries.
+    #    Fast and cheap when it works.
+    # 2. If `requests` exhausts retries (typically because NCAD's CDN
+    #    fingerprints GitHub Actions IPs and 429s every request before
+    #    headers even matter), fall back to Playwright. A real Chromium
+    #    browser sends a TLS fingerprint + cookies + full header set
+    #    that CDNs treat as legitimate.
+    #
+    # This is the same pattern fetch.py uses, which is why MFC can
+    # download this same zip successfully.
+    content: Optional[bytes] = None
     try:
-        # The Referer header is critical: NCAD's CDN rate-limits
-        # requests that don't look like they came from a link on the
-        # downloads page. Passing the downloads page as Referer makes
-        # the request look like a normal browser click.
         content = _http_get_bytes(
             zip_url,
             referer=NCAD_DOWNLOADS_PAGE,
             retries=ZIP_DOWNLOAD_RETRIES,
         )
-        log.info("parcel zip: %d MB", len(content) // (1024 * 1024))
+        log.info("parcel zip via requests: %d MB", len(content) // (1024 * 1024))
     except Exception as exc:
-        log.error("parcel zip download failed: %s", exc)
+        log.warning("plain requests failed (%s) — falling back to Playwright",
+                    exc)
+        try:
+            content = asyncio.run(_pw_get_bytes(
+                zip_url, referer=NCAD_DOWNLOADS_PAGE,
+            ))
+            log.info("parcel zip via Playwright: %d MB",
+                     len(content) // (1024 * 1024))
+        except Exception as pw_exc:
+            log.error("Playwright fallback also failed: %s", pw_exc)
+            if PARCEL_ZIP_CACHE.exists():
+                log.warning("falling back to stale parcel cache")
+                return PARCEL_ZIP_CACHE.read_bytes()
+            return None
+
+    if not content:
+        log.error("no content from either download path")
         if PARCEL_ZIP_CACHE.exists():
             log.warning("falling back to stale parcel cache")
             return PARCEL_ZIP_CACHE.read_bytes()
