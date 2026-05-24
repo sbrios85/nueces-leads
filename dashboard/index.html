@@ -6810,11 +6810,22 @@ function buildTfcRow(r, mode) {
   const _mailEff  = tfcFieldValue(r, "mail_address") || r.mail_address || "";
   const _legalEff = tfcFieldValue(r, "legal") || legal;
 
-  // City/state/zip live below the editable property address line.
-  const propLoc = [r.prop_city, r.prop_state, r.prop_zipcode]
+  // Note: r.prop_address is the FULL property address as one string
+  // ("1058 BEECHCRAFT AVE, CORPUS CHRISTI TX 78405-2802"), so there's
+  // no need for a separate city/state/zip second line under that cell
+  // — that would just duplicate info. The mailing column DOES use a
+  // second line because r.mail_address from NCAD enrichment is the
+  // street-only part with city/state/zip in separate fields.
+
+  // Same treatment for the MAILING address: street on top, city/
+  // state/zip on a smaller second line. Fields come from NCAD
+  // enrichment (enrich_tfc_ncad.py with FETCH_MAIL_ADDRESS=1). When
+  // the mail address matches the property address (owner-occupied)
+  // we still show both lines for consistency with MFC's pattern.
+  const mailLoc = [r.mail_city, r.mail_state, r.mail_zip]
       .filter(Boolean).join(" ").trim();
-  const propLocLine = propLoc
-      ? `<div class="addr-loc">${esc(propLoc)}</div>` : "";
+  const mailLocLine = mailLoc
+      ? `<div class="addr-loc">${esc(mailLoc)}</div>` : "";
 
   tr.innerHTML = `
     <td class="save-cell">
@@ -6828,8 +6839,8 @@ function buildTfcRow(r, mode) {
     <td>${esc(saleDate) || "—"}</td>
     <td style="text-align:center;">${_tfcDaysCell(r.sale_date_only || r.sale_date)}</td>
     <td>${_tfcEcell("owner", _ownerEff, true)}</td>
-    <td class="addr-cell">${_tfcEcell("prop_address", _propEff, true)}${propLocLine}</td>
-    <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true)}</td>
+    <td class="addr-cell">${_tfcEcell("prop_address", _propEff, true)}</td>
+    <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true)}${mailLocLine}</td>
     <td>${minBid == null ? '<span style="color:var(--muted)">—</span>' : moneyFmt(minBid)}</td>
     <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : moneyFmt(r.market_value)}</td>
     <td>${_tfcEcell("legal", _legalEff, true)}</td>
