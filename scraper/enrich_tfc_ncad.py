@@ -561,6 +561,15 @@ async def _esearch_detail_for_mail(page,
     # Reuse fetch.py's detail-page parsing logic (kept inline to avoid
     # the import dependency). The detail page renders the mailing
     # address in <dl>/<dd> pairs or in labeled cards.
+    #
+    # Key parsing detail: NCAD's Mailing Address cell renders the
+    # street on one line and "CITY, ST ZIP" on a separate line (no
+    # comma between street and city, just a <br>). Earlier versions
+    # of this parser used `get_text(" ", ...)` which collapsed the
+    # newline into a space, producing "1058 BEECHCRAFT AVE CORPUS
+    # CHRISTI" as the street and "TX 78405" as the city. Fix: extract
+    # text with a real newline separator so _split_us_address sees the
+    # two-line structure and parses it correctly.
     try:
         soup = BeautifulSoup(html, "lxml")
     except Exception:
@@ -574,7 +583,9 @@ async def _esearch_detail_for_mail(page,
         dds = dl.find_all("dd")
         for dt, dd in zip(dts, dds):
             label = dt.get_text(" ", strip=True).lower().rstrip(":")
-            value = dd.get_text(" ", strip=True)
+            # Preserve newlines for the value side — addresses
+            # frequently use multi-line layouts.
+            value = dd.get_text("\n", strip=True)
             if label and value:
                 text_pairs[label] = value
     # Pattern B: cards with header + body labeled "Mailing Address".
@@ -589,14 +600,17 @@ async def _esearch_detail_for_mail(page,
             continue
         if "mail" in ht:
             text_pairs.setdefault("mailing address",
-                                   body.get_text(" \n", strip=True))
-    # Pattern C: tables with two-cell label/value rows.
+                                   body.get_text("\n", strip=True))
+    # Pattern C: tables with two-cell label/value rows. THIS is the
+    # pattern NCAD's detail page actually uses (verified 2026-05-24
+    # against prop 182368). Newline preservation on the value cell is
+    # essential — see top-of-function comment for full context.
     for tr in soup.find_all("tr"):
         cells = tr.find_all(["th", "td"])
         if len(cells) < 2:
             continue
         label = cells[0].get_text(" ", strip=True).lower().rstrip(":")
-        value = cells[1].get_text(" ", strip=True)
+        value = cells[1].get_text("\n", strip=True)
         if label and value:
             text_pairs.setdefault(label, value)
 
@@ -615,35 +629,100 @@ async def _esearch_detail_for_mail(page,
 
 
 def _split_us_address(full: str) -> Dict[str, str]:
-    """Split 'STREET, CITY, ST ZIP' into components. Best-effort —
-    NCAD's address strings have several variations."""
+    """Split a US-style address string into components.
+
+    Handles two real-world NCAD formats:
+      1. Two-line (most common on detail pages):
+         "1058 BEECHCRAFT AVE
+          CORPUS CHRISTI, TX 78405"
+         Street is line 1; city/state/zip is line 2 with a comma
+         between city and state.
+      2. One-line legacy: "STREET, CITY, ST ZIP" — fall-through case
+         for older or non-standard renderings.
+
+    Returns {mail_addr, mail_city, mail_state, mail_zip}. Best-effort:
+    missing components come back as empty strings rather than failing
+    the whole parse. Verified 2026-05-24 against NCAD prop 182368
+    (1058 BEECHCRAFT AVE → ADAMS MARTIN L mailing address).
+    """
     if not full:
         return {}
-    parts = [p.strip() for p in full.split(",") if p.strip()]
-    if not parts:
+
+    # Normalize whitespace: collapse runs of spaces but PRESERVE
+    # newlines, since the newline is our primary separator.
+    full = full.strip()
+    # Split on the FIRST newline (one or more). If multiple lines
+    # are present beyond the second, they're junk (extra contact
+    # info, agent rows, etc.) — drop them.
+    lines = [ln.strip() for ln in re.split(r"\n+", full) if ln.strip()]
+    if not lines:
         return {}
-    street = parts[0]
+
+    street = lines[0]
     city = state = zipc = ""
-    if len(parts) >= 2:
-        city = parts[1]
-    if len(parts) >= 3:
-        tail = parts[2]
-        m = re.match(r"\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)\s*$", tail)
+
+    if len(lines) >= 2:
+        # Line 2 is "CITY, ST ZIP" or "CITY ST ZIP" (with or
+        # without comma between city and state).
+        line2 = lines[1]
+        # Try comma-separated first: "CORPUS CHRISTI, TX 78405".
+        m = re.match(
+            r"^(.+?),\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)\s*$",
+            line2,
+        )
         if m:
-            state = m.group(1)
-            zipc = m.group(2)
+            city = m.group(1).strip()
+            state = m.group(2)
+            zipc = m.group(3)
         else:
-            tokens = tail.split()
-            if tokens and re.match(r"\d{5}", tokens[-1]):
+            # No comma — try "CITY ST ZIP" with state+zip at end.
+            # Walk backwards: zip is last token (5 digits), state is
+            # 2-letter token immediately before it, everything else
+            # is city.
+            tokens = line2.split()
+            if tokens and re.match(r"^\d{5}(?:-\d{4})?$", tokens[-1]):
                 zipc = tokens[-1]
-                if len(tokens) >= 2 and len(tokens[-2]) == 2:
+                if len(tokens) >= 2 and re.match(r"^[A-Z]{2}$", tokens[-2]):
                     state = tokens[-2]
+                    city = " ".join(tokens[:-2])
+                else:
+                    city = " ".join(tokens[:-1])
+            else:
+                # No recognizable zip — treat the whole line as city.
+                city = line2
+
+    # Legacy fallback: input had only ONE line but contains commas.
+    # This handles old code paths or unusual NCAD renderings where
+    # the address came back as "STREET, CITY, ST ZIP" all on one
+    # line. Mirrors the pre-2026-05-24 behaviour for compatibility.
+    if not city and "," in street:
+        parts = [p.strip() for p in street.split(",") if p.strip()]
+        if len(parts) >= 2:
+            street = parts[0]
+            if len(parts) >= 2:
+                city = parts[1]
+            if len(parts) >= 3:
+                tail = parts[2]
+                m = re.match(
+                    r"\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)\s*$", tail)
+                if m:
+                    state = m.group(1)
+                    zipc = m.group(2)
+
+    # Strip ZIP+4 down to 5-digit ZIP for consistency. ZIP+4 is
+    # rarely useful for lead-generation work and creates display
+    # inconsistency where some rows show 78405 and others 78405-2802.
+    zip5 = ""
+    if zipc:
+        zm = re.match(r"^(\d{5})", zipc)
+        if zm:
+            zip5 = zm.group(1)
+
     return {
         "mail_addr":  street,
         "mail_city":  city,
         "mail_state": state or "TX",
-        "mail_zip":   re.match(r"(\d{5})", zipc).group(1)
-                       if zipc and re.match(r"(\d{5})", zipc) else "",
+        "mail_zip":   zip5,
     }
 
 
