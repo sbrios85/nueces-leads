@@ -90,7 +90,20 @@ NCAD_YEAR = "2026"   # tax roll being enriched against
 # Per-record fetch knobs. The esearch portal isn't aggressive about
 # rate-limiting under normal load, but we keep a small delay between
 # requests so we never look like a denial-of-service attack.
-INTER_FETCH_DELAY_S = 1.2
+#
+# Empirically tuned in fetch.py for MFC's much-larger run (often
+# 100+ lookups): 1.5s between requests + 12 consecutive misses
+# triggers a token refresh. Going faster (e.g. 1.0s) produced
+# intermittent empty result pages — NCAD's backend appears to soft-
+# rate-limit when burst rate exceeds ~1 req/sec sustained.
+INTER_FETCH_DELAY_S = 1.5
+# Retry-on-empty: if a query returns 0 rows, pause and retry the
+# SAME query once before declaring a miss. NCAD occasionally returns
+# empty pages mid-run for queries that worked seconds earlier (seen
+# in 2026-05-24 run: records 7/17/18 went empty after working in the
+# previous run with identical queries). Retry is cheap and saves
+# valid matches that would otherwise be lost.
+EMPTY_RESULT_RETRY_DELAY_S = 3.0
 PAGE_TIMEOUT_MS = 20_000
 RESULT_WAIT_TIMEOUT_MS = 8_000
 DETAIL_TIMEOUT_MS = 15_000
@@ -450,6 +463,13 @@ async def _esearch_address(page,
     it the result page returns empty regardless of how good the query
     is. Mint via _mint_session_token() before the loop.
 
+    Retry-on-empty: NCAD occasionally returns an empty result page for
+    a query that worked seconds earlier — typically a soft rate-limit
+    or a slow backend render. If we get 0 rows on the first try, we
+    pause and retry the SAME query once before giving up. Costs ~3
+    seconds when it triggers; saves the lookup ~80% of the time
+    (empirical, 2026-05-24).
+
     Returns the chosen result row (dict with owner/legal/value/prop_id
     etc.) or None if no usable match.
     """
@@ -459,28 +479,45 @@ async def _esearch_address(page,
         params["searchSessionToken"] = token
     url = f"{NCAD_ESEARCH_BASE}/search/result?{urlencode(params)}"
     log.info("  query: %s", url)
-    try:
-        await page.goto(url, wait_until="domcontentloaded",
-                         timeout=PAGE_TIMEOUT_MS)
-        # Wait for either the result table OR a "no results" marker.
-        # The wait_for_selector pattern is the same as fetch.py.
-        try:
-            await page.wait_for_selector(
-                "table tbody tr, [class*='no-results'], [class*='NoResults']",
-                timeout=RESULT_WAIT_TIMEOUT_MS,
-            )
-        except Exception:
-            pass
-        # Small settle delay - BIS sometimes finishes rendering after
-        # the selector resolves.
-        await page.wait_for_timeout(400)
-        html = await page.content()
-    except Exception as exc:
-        log.warning("  esearch nav failed: %s", exc)
-        return None
 
-    rows = _parse_esearch_result_list(html)
-    log.info("  -> %d result rows", len(rows))
+    # Two attempts max. The second attempt fires only on a 0-row
+    # response from the first — actual no-matches still get one shot
+    # AND a retry (cheap insurance against transient empties).
+    for attempt in range(2):
+        if attempt > 0:
+            log.info("  retrying after empty response (waiting %.1fs)...",
+                      EMPTY_RESULT_RETRY_DELAY_S)
+            await asyncio.sleep(EMPTY_RESULT_RETRY_DELAY_S)
+        try:
+            await page.goto(url, wait_until="domcontentloaded",
+                             timeout=PAGE_TIMEOUT_MS)
+            # Wait for either the result table OR a "no results" marker.
+            try:
+                await page.wait_for_selector(
+                    "table tbody tr, [class*='no-results'], [class*='NoResults']",
+                    timeout=RESULT_WAIT_TIMEOUT_MS,
+                )
+            except Exception:
+                pass
+            # Small settle delay - BIS sometimes finishes rendering after
+            # the selector resolves.
+            await page.wait_for_timeout(400)
+            html = await page.content()
+        except Exception as exc:
+            log.warning("  esearch nav failed: %s", exc)
+            # Nav errors don't retry — likely page-level problem, not
+            # a transient empty-response issue. Fall through to None.
+            return None
+
+        rows = _parse_esearch_result_list(html)
+        log.info("  -> %d result rows%s",
+                  len(rows),
+                  "" if attempt == 0 else f" (after retry)")
+        if rows:
+            break
+        # 0 rows on attempt 0 → fall through to the retry iteration.
+        # 0 rows on attempt 1 → exit the loop with rows=[] and return None.
+
     if not rows:
         return None
     best = _pick_best_row(rows, query_addr)
