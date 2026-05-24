@@ -2168,6 +2168,7 @@
       <th data-sort="sale_type"      style="width: 90px;">Sales Type</th>
       <th data-sort="fc_status"      style="width: 130px;">FC Status</th>
       <th data-sort="sale_date"      style="width: 130px;">Sale Date</th>
+      <th data-sort="days_until_sale" style="width: 70px;" title="Days until the auction sale date">Days</th>
       <th data-sort="owner"          style="width: 165px;">Owner</th>
       <th data-sort="prop_address"   style="width: 195px;">Property Address</th>
       <th data-sort="mail_address"   style="width: 165px;">Mailing Address</th>
@@ -2188,6 +2189,7 @@
         <td>SALE</td>
         <td>Scheduled for Online Auction</td>
         <td>Jul 7, 2026</td>
+        <td><span style="color:var(--muted)">—</span></td>
         <td>SAMPLE OWNER NAME</td>
         <td>123 EXAMPLE ST<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78401</span></td>
         <td>456 MAILING DR<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78415</span></td>
@@ -2203,6 +2205,7 @@
         <td>FUTURE SALE</td>
         <td>Scheduled for Online Auction</td>
         <td>Jul 14, 2026</td>
+        <td><span style="color:var(--muted)">—</span></td>
         <td>ANOTHER SAMPLE</td>
         <td>456 PLACEHOLDER AVE<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78411</span></td>
         <td>456 PLACEHOLDER AVE<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78411</span></td>
@@ -6306,6 +6309,178 @@ function _updateTfcSidebarCount() {
   if (firstV) el.textContent = firstV.textContent;
 }
 
+// ============================================================
+// TFC sort state — keyed by column name. Defaults to "sale_date"
+// ascending (soonest sales first). Not persisted: a fresh page load
+// starts here. Same pattern as FC_SORT_KEY for the MFC table.
+// ============================================================
+let TFC_SORT_KEY = "sale_date";
+let TFC_SORT_DIR = "asc";
+
+// Which JSON field to read for each sortable column, plus how to
+// compare. Same type names as FC_SORT_TYPES so _tfcCompare can reuse
+// behavior.
+//   string:           locale-aware alphabetical
+//   number:           numeric, empty sinks to bottom
+//   date:             ISO-style, empty sinks to bottom
+//   status:           CRM status (Active before Dead when asc)
+//   days_until_sale:  computed from sale_date, treats past as negative
+const TFC_SORT_TYPES = {
+  status:           "status",
+  sale_type:        "string",
+  fc_status:        "string",
+  sale_date:        "date",
+  days_until_sale:  "days_until_sale",
+  owner:            "string",
+  prop_address:     "string",
+  mail_address:     "string",
+  min_bid:          "number",
+  market_value:     "number",
+  legal:            "string",
+  cause_nbr:        "string",
+};
+
+// Effective field value: manual CRM override wins over scraped data.
+// (Hoisted above the sort helpers because compare uses it for the
+// loan_amount-style "sort by what's displayed" behavior.)
+function _tfcRowFieldValue(r, key) {
+  // FC Status comes from `r.status` (LGBS free-text), not a same-
+  // named field. Map it through.
+  if (key === "fc_status") return r.status || "";
+  // Days until sale is computed at compare time; this getter
+  // shouldn't be called for it, but return null defensively.
+  if (key === "days_until_sale") return null;
+  return r[key];
+}
+
+// Compute days from today (local) until a YYYY-MM-DD date. Negative
+// values = past, NaN = unparseable. Today is day 0.
+function _tfcDaysUntil(ymd) {
+  if (!ymd) return NaN;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(ymd));
+  if (!m) return NaN;
+  const target = new Date(+m[1], +m[2] - 1, +m[3]);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  target.setHours(0, 0, 0, 0);
+  const ms = target - today;
+  return Math.round(ms / 86400000);
+}
+
+// Render the Days Until Sale pill. Color-coded so urgency reads at
+// a glance:
+//   ≤ 7 days  → red    (sale this week, act now)
+//   ≤ 30 days → orange (sale this month)
+//   ≤ 90 days → green  (comfortable runway)
+//   > 90 days → muted  (far out)
+//   past      → gray strikethrough (auction date passed)
+function _tfcDaysCell(saleYmd) {
+  const d = _tfcDaysUntil(saleYmd);
+  if (isNaN(d)) return '<span style="color:var(--muted)">—</span>';
+  if (d < 0) {
+    return `<span style="color:var(--muted); text-decoration:line-through;"
+              title="Auction date has passed">${d}d</span>`;
+  }
+  let color;
+  if (d <= 7)       color = "var(--bad, #ef4444)";
+  else if (d <= 30) color = "var(--warn, #f59e0b)";
+  else if (d <= 90) color = "var(--good, #22c55e)";
+  else              color = "var(--muted)";
+  return `<span style="color:${color}; font-weight:500;"
+            title="${d} day${d === 1 ? "" : "s"} until auction">${d}d</span>`;
+}
+
+// Sort helper. Empty values always sink to bottom regardless of
+// direction — an empty cell is never the "right answer" for sorting.
+function _tfcCompare(a, b, key, dir, type) {
+  let va, vb;
+
+  if (type === "status") {
+    // Sort by CRM status: active=0, future=1 (LGBS-derived),
+    // dead/canceled=2. Within asc, active comes first. Dead rows
+    // are also visually pinned to the dead-leads footer regardless.
+    const crm = loadTfcCrm();
+    const _statusRank = (r) => {
+      const e = crm[r.uid] || {};
+      if (e.tfc_status === "dead" || e.tfc_status === "canceled") return 2;
+      if (String(r.status || "").toLowerCase().includes("cancel")) return 2;
+      if (String(r.sale_type || "").toUpperCase() === "FUTURE SALE") return 1;
+      return 0;
+    };
+    const sa = _statusRank(a), sb = _statusRank(b);
+    return dir === "asc" ? sa - sb : sb - sa;
+  }
+
+  if (type === "days_until_sale") {
+    const da = _tfcDaysUntil(a.sale_date_only || a.sale_date);
+    const db = _tfcDaysUntil(b.sale_date_only || b.sale_date);
+    const aEmpty = isNaN(da), bEmpty = isNaN(db);
+    if (aEmpty && bEmpty) return 0;
+    if (aEmpty) return 1;
+    if (bEmpty) return -1;
+    return dir === "asc" ? da - db : db - da;
+  }
+
+  va = _tfcRowFieldValue(a, key);
+  vb = _tfcRowFieldValue(b, key);
+
+  // Manual override beats scraped value for any sortable field that
+  // has an override (owner, prop_address, mail_address, legal). Sort
+  // order matches the visible value.
+  if (key === "owner" || key === "prop_address" ||
+      key === "mail_address" || key === "legal") {
+    const oa = (getTfcEntry(a.uid).overrides || {})[key];
+    const ob = (getTfcEntry(b.uid).overrides || {})[key];
+    if (oa != null && oa !== "") va = oa;
+    if (ob != null && ob !== "") vb = ob;
+  }
+
+  // Empty-value sink.
+  const aEmpty = va == null || va === "";
+  const bEmpty = vb == null || vb === "";
+  if (aEmpty && bEmpty) return 0;
+  if (aEmpty) return 1;
+  if (bEmpty) return -1;
+
+  if (type === "number") {
+    const na = Number(va), nb = Number(vb);
+    if (isNaN(na) && isNaN(nb)) return 0;
+    if (isNaN(na)) return 1;
+    if (isNaN(nb)) return -1;
+    return dir === "asc" ? na - nb : nb - na;
+  }
+  if (type === "date") {
+    const ta = Date.parse(va), tb = Date.parse(vb);
+    if (isNaN(ta) && isNaN(tb)) {
+      return dir === "asc" ? String(va).localeCompare(String(vb))
+                            : String(vb).localeCompare(String(va));
+    }
+    if (isNaN(ta)) return 1;
+    if (isNaN(tb)) return -1;
+    return dir === "asc" ? ta - tb : tb - ta;
+  }
+  // string
+  const sa = String(va).toLowerCase();
+  const sb = String(vb).toLowerCase();
+  return dir === "asc" ? sa.localeCompare(sb) : sb.localeCompare(sa);
+}
+
+// ============================================================
+// TFC hide-condos toggle — own localStorage key (independent from MFC
+// so the user can have different visibility preferences per tab).
+// Default: true (hide condos), same as MFC.
+// ============================================================
+const TFC_HIDE_CONDOS_KEY = "nueces_tfc_hide_condos";
+function loadTfcHideCondos() {
+  const v = localStorage.getItem(TFC_HIDE_CONDOS_KEY);
+  if (v === null) return true;
+  return v === "1";
+}
+function saveTfcHideCondos(hide) {
+  localStorage.setItem(TFC_HIDE_CONDOS_KEY, hide ? "1" : "0");
+}
+let TFC_HIDE_CONDOS = loadTfcHideCondos();
+
 function renderTfcStats() {
   const stats = document.getElementById("tfc-stats");
   if (!stats) return;
@@ -6355,12 +6530,37 @@ function renderTfcStats() {
   // Future is intentionally separate — those are not actionable yet.
   const total = active + deadCanceled;
 
+  // Condo count, computed from the full TFC pool. Drives the
+  // parenthetical count next to the toggle. Falls back to 0 if
+  // legal descriptions aren't populated yet (Phase 2 work).
+  const condoCount = (TFC_RAW || []).filter(isCondoRecord).length;
+
   stats.innerHTML = `
     <div class="stat"><div class="v">${total}</div><div class="k">Total Tax Foreclosures</div></div>
     <div class="stat"><div class="v">${active}</div><div class="k">Active Foreclosures</div></div>
     <div class="stat"><div class="v">${deadCanceled}</div><div class="k">Dead/Canceled</div></div>
     <div class="stat"><div class="v">${future}</div><div class="k">Future Sales</div></div>
+    <div class="stat" style="min-width:auto; padding:8px 14px;">
+      <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px;">
+        <input type="checkbox" id="tfc-hide-condos-toggle"
+               ${TFC_HIDE_CONDOS ? "checked" : ""}
+               style="margin:0; cursor:pointer;">
+        <span>Hide condos</span>
+        <span style="opacity:0.6;">(${condoCount})</span>
+      </label>
+    </div>
   `;
+  // Wire the toggle. Re-renders the table (which re-applies the
+  // filter) and re-renders stats so the parenthetical count is
+  // accurate even if nothing else changed.
+  const tfcCondoToggle = document.getElementById("tfc-hide-condos-toggle");
+  if (tfcCondoToggle) {
+    tfcCondoToggle.addEventListener("change", (e) => {
+      TFC_HIDE_CONDOS = e.target.checked;
+      saveTfcHideCondos(TFC_HIDE_CONDOS);
+      renderTfcTable();
+    });
+  }
   // Mirror the Total tile into the sidebar pill (same number).
   _updateTfcSidebarCount();
 }
@@ -6394,14 +6594,21 @@ function renderTfcTable() {
   const emptyEl = document.getElementById("tfc-empty");
   if (emptyEl) emptyEl.hidden = true;
 
-  // Sort by sale date ascending — soonest sales first. Within a date,
-  // by sale number (the order properties appear at auction).
-  const sorted = TFC_RAW.slice().sort((a, b) => {
-    const dA = a.sale_date_only || a.sale_date || "";
-    const dB = b.sale_date_only || b.sale_date || "";
-    if (dA !== dB) return String(dA).localeCompare(String(dB));
-    return (a.sale_nbr || 0) - (b.sale_nbr || 0);
-  });
+  // Filter step: hide-condos toggle. Condo check reads the `legal`
+  // field, which TFC won't have until Phase 2 / NCAD enrichment —
+  // so today this filter typically excludes 0 records, but it's
+  // wired so it Just Works once legal descriptions arrive.
+  let pool = TFC_RAW.slice();
+  if (TFC_HIDE_CONDOS) {
+    pool = pool.filter(r => !isCondoRecord(r));
+  }
+
+  // Sort step: by the user-selected column. Bucketing (active /
+  // future / dead) still happens after sort so dead leads always
+  // end up in the footer regardless of the sort key. Within each
+  // bucket, rows appear in sort order.
+  const sortType = TFC_SORT_TYPES[TFC_SORT_KEY] || "string";
+  pool.sort((a, b) => _tfcCompare(a, b, TFC_SORT_KEY, TFC_SORT_DIR, sortType));
 
   // Bucket records by effective status. CRM overrides (dead/canceled)
   // win over LGBS. LGBS-cancelled records (free-text `status` field
@@ -6417,7 +6624,7 @@ function renderTfcTable() {
   const activeRecords = [];
   const futureRecords = [];
   const deadRecords   = [];   // includes "canceled" — both render here
-  for (const r of sorted) {
+  for (const r of pool) {
     const entry = crm[r.uid] || {};
     if (entry.tfc_status === "dead" || entry.tfc_status === "canceled") {
       deadRecords.push(r);
@@ -6437,6 +6644,16 @@ function renderTfcTable() {
     }
   }
 
+  // Refresh sort-direction arrows on column headers. Two phases:
+  // first clear every header, then set the active one. (Avoids
+  // stale arrows when the user switches columns.)
+  document.querySelectorAll("#tfc-table th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === TFC_SORT_KEY) {
+      th.classList.add(TFC_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
+    }
+  });
+
   // ---- Active section ----
   for (const r of activeRecords) {
     tb.appendChild(buildTfcRow(r, "active"));
@@ -6449,7 +6666,7 @@ function renderTfcTable() {
   if (futureRecords.length > 0) {
     const headTr = document.createElement("tr");
     headTr.className = "tfc-section-row future";
-    headTr.innerHTML = `<td colspan="13">
+    headTr.innerHTML = `<td colspan="14">
       Future Sales — scheduled, not yet active (${futureRecords.length})
     </td>`;
     tb.appendChild(headTr);
@@ -6466,7 +6683,7 @@ function renderTfcTable() {
     const toggleTr = document.createElement("tr");
     toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
     toggleTr.innerHTML = `
-      <td colspan="13">
+      <td colspan="14">
         <span class="chev">▶</span>
         <span>${deadRecords.length} dead / canceled lead${deadRecords.length === 1 ? "" : "s"}</span>
         <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
@@ -6600,14 +6817,15 @@ function buildTfcRow(r, mode) {
     <td>${esc(r.sale_type || "") || '<span style="color:var(--muted)">—</span>'}</td>
     <td>${_tfcFcStatusCell(r.status)}</td>
     <td>${esc(saleDate) || "—"}</td>
+    <td style="text-align:center;">${_tfcDaysCell(r.sale_date_only || r.sale_date)}</td>
     <td>${_tfcEcell("owner", _ownerEff, true)}</td>
     <td class="addr-cell">${_tfcEcell("prop_address", _propEff, true)}${propLocLine}</td>
     <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true)}</td>
     <td>${minBid == null ? '<span style="color:var(--muted)">—</span>' : moneyFmt(minBid)}</td>
-    <td><span style="color:var(--muted)">—</span></td>
+    <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : moneyFmt(r.market_value)}</td>
     <td>${_tfcEcell("legal", _legalEff, true)}</td>
     <td>${esc(causeNbr) || '<span style="color:var(--muted)">—</span>'}</td>
-    <td><span style="color:var(--muted)">—</span></td>
+    <td style="text-align:center;">${ncadCellHtml(r)}</td>
   `;
   return tr;
 }
@@ -7555,6 +7773,23 @@ document.querySelectorAll("#fc-table th[data-sort]").forEach(th => {
       FC_SORT_DIR = "asc";
     }
     applyFc();
+  });
+});
+
+// Tax Foreclosure column headers: same click-to-sort UX. First click
+// on a new column → ascending; click again → flip. Arrow indicators
+// update inside renderTfcTable. We don't re-render stats here because
+// sorting doesn't change the bucket counts.
+document.querySelectorAll("#tfc-table th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (TFC_SORT_KEY === key) {
+      TFC_SORT_DIR = TFC_SORT_DIR === "asc" ? "desc" : "asc";
+    } else {
+      TFC_SORT_KEY = key;
+      TFC_SORT_DIR = "asc";
+    }
+    renderTfcTable();
   });
 });
 
