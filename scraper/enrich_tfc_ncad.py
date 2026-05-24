@@ -152,20 +152,52 @@ SKIP_TOKENS = {
 }
 
 
-def _parse_street_address(street: str) -> Optional[Tuple[str, str]]:
-    """Parse 'NNNN STREET NAME [TYPE]' into (street_number, street_name).
+# Common street type suffixes — stripped before computing the
+# StreetName value so "1521 EL PASO ST" becomes "EL PASO", not
+# "EL PASO ST" (NCAD indexes by the name, not the type).
+_STREET_TYPE_SUFFIXES = {
+    "ST", "STREET",
+    "AVE", "AVENUE",
+    "BLVD", "BOULEVARD",
+    "DR", "DRIVE",
+    "RD", "ROAD",
+    "LN", "LANE",
+    "CT", "COURT",
+    "PL", "PLACE",
+    "TRL", "TRAIL",
+    "PKWY", "PARKWAY",
+    "CIR", "CIRCLE",
+    "TER", "TERRACE",
+    "HWY", "HIGHWAY",
+    "WAY", "LOOP", "RUN", "ROW", "PATH", "BAY",
+}
 
-    Returns None if the input doesn't have a leading number followed
-    by at least one alphabetic word. The street type (AVE/DR/etc.)
-    is dropped — NCAD's search doesn't use it.
 
-    Examples (mirrors fetch.py's logic exactly):
-      '1058 BEECHCRAFT AVE'    -> ('1058', 'BEECHCRAFT')
-      'W CORNELIA CIR'         -> None (no number)
-      '226 W CORNELIA CIR'     -> ('226', 'CORNELIA')  (W dropped)
-      'OLD BROWNSVILLE RD'     -> None (no number)
-      '4501 OLD BROWNSVILLE RD'-> ('4501', 'BROWNSVILLE') (longest)
-      "4525 O'MALLEY DR"       -> ('4525', 'MALLEY')
+def _parse_street_address(street: str
+                          ) -> Optional[Tuple[str, List[str]]]:
+    """Parse 'NNNN STREET NAME [TYPE]' and return (number, candidates).
+
+    Returns None if no leading number is present. Otherwise returns
+    the number and a LIST of StreetName candidates to try in order
+    against NCAD's search. We try the most specific first and fall
+    back to less specific, so single-word names work the same as
+    before AND multi-word names like "EL PASO" succeed.
+
+    Candidate ordering:
+      1. Full multi-word name (no type suffix). Works for "EL PASO",
+         "SAN PEDRO", "LA PLATA", "OLD BROWNSVILLE", etc.
+      2. Longest distinctive token (current behavior — fetch.py-style).
+         Catches "OLD BROWNSVILLE" → "BROWNSVILLE" if try 1 misses.
+      3. First non-directional token (if different from try 1 and 2).
+         Catches edge cases where NCAD only indexes the first word.
+
+    Examples:
+      '1058 BEECHCRAFT AVE'  -> ('1058', ['BEECHCRAFT'])
+      '1521 EL PASO ST'      -> ('1521', ['EL PASO', 'PASO'])
+      '226 W CORNELIA CIR'   -> ('226', ['W CORNELIA', 'CORNELIA'])
+      '500 SANTA FE WAY'     -> ('500', ['SANTA FE', 'SANTA'])
+      '4501 OLD BROWNSVILLE RD'
+                              -> ('4501', ['OLD BROWNSVILLE', 'BROWNSVILLE'])
     """
     if not street:
         return None
@@ -177,19 +209,49 @@ def _parse_street_address(street: str) -> Optional[Tuple[str, str]]:
     # Apostrophes -> spaces, then strip punctuation.
     raw = re.sub(r"[\u2018\u2019']", " ", raw)
     raw = re.sub(r"[^A-Za-z0-9 ]", " ", raw)
-    tokens = [t for t in raw.split() if t]
-    # Filter out directionals and single-character tokens — too
-    # generic to be selective for NCAD's keyword index.
+    tokens = [t.upper() for t in raw.split() if t]
+    if not tokens:
+        return None
+
+    # Strip trailing street type ("ST", "AVE", "BLVD", "DR", etc.).
+    # We only strip the LAST token, and only if it's a known type —
+    # this avoids breaking names that happen to contain type-like
+    # words mid-name (e.g. "STREET LAKE WAY" if such a thing existed).
+    if len(tokens) > 1 and tokens[-1] in _STREET_TYPE_SUFFIXES:
+        tokens = tokens[:-1]
+    # Some addresses double up the type ("ST RD") — strip again.
+    if len(tokens) > 1 and tokens[-1] in _STREET_TYPE_SUFFIXES:
+        tokens = tokens[:-1]
+    if not tokens:
+        return None
+
+    # Candidate 1: full name with all remaining tokens. This is the
+    # multi-word case. Single-word streets degenerate to just one
+    # token, which is fine and identical to candidate 2.
+    full_name = " ".join(tokens)
+    candidates: List[str] = [full_name]
+
+    # Candidate 2: longest distinctive token, dropping directionals
+    # and single-character tokens. Same logic as the original parser.
     keepable = [t for t in tokens
                 if len(t) > 1 and t.lower() not in SKIP_TOKENS]
     if keepable:
-        # Longest token = most distinctive. Ties -> earliest position.
-        st_name = max(keepable, key=lambda t: (len(t), -tokens.index(t)))
+        longest = max(keepable, key=lambda t: (len(t), -tokens.index(t)))
     elif tokens:
-        st_name = tokens[0]
+        longest = tokens[0]
     else:
-        return None
-    return st_num, st_name.upper()
+        longest = ""
+    if longest and longest not in candidates:
+        candidates.append(longest)
+
+    # Candidate 3: first token (in case NCAD indexes only the first
+    # word for some streets). Only added if different from the
+    # previous candidates.
+    first = tokens[0] if tokens else ""
+    if first and first not in candidates and first.lower() not in SKIP_TOKENS:
+        candidates.append(first)
+
+    return st_num, candidates
 
 
 # ==================================================================
@@ -665,24 +727,44 @@ async def _enrich_all(records: List[Dict[str, Any]]
                         "result": "no-parseable-address",
                     })
                     continue
-                st_num, st_name = parsed
+                st_num, st_name_candidates = parsed
 
                 log.info("[%d/%d] uid=%s addr=%r -> StreetNumber:%s "
-                          "StreetName:%s", i + 1, len(records), uid,
-                          street, st_num, st_name)
+                          "StreetName candidates: %s",
+                          i + 1, len(records), uid,
+                          street, st_num, st_name_candidates)
 
-                # Run the esearch lookup. Always pass the current
-                # session token — without it the result page returns
-                # empty regardless of query.
-                try:
-                    best = await _esearch_address(
-                        page, st_num, st_name, NCAD_YEAR, street,
-                        token=token,
+                # Run the esearch lookup. Try each StreetName
+                # candidate in order — most specific first. The
+                # first candidate that returns a usable result wins.
+                # Always pass the current session token — without it
+                # the result page returns empty regardless of query.
+                best = None
+                tried_queries: List[str] = []
+                for cand_idx, st_name in enumerate(st_name_candidates):
+                    if cand_idx > 0:
+                        log.info("  trying fallback candidate %d/%d: %r",
+                                  cand_idx + 1, len(st_name_candidates),
+                                  st_name)
+                    try:
+                        best = await _esearch_address(
+                            page, st_num, st_name, NCAD_YEAR, street,
+                            token=token,
+                        )
+                    except Exception as exc:
+                        log.warning("  esearch failed: %s", exc)
+                        best = None
+                    lookups_since_refresh += 1
+                    tried_queries.append(
+                        f"StreetNumber:{st_num} StreetName:{st_name}"
                     )
-                except Exception as exc:
-                    log.warning("  esearch failed: %s", exc)
-                    best = None
-                lookups_since_refresh += 1
+                    if best:
+                        break
+                    # Tiny pause between candidate attempts so we
+                    # don't burst-hit NCAD when one record needs
+                    # several fallbacks.
+                    if cand_idx < len(st_name_candidates) - 1:
+                        await asyncio.sleep(0.4)
 
                 if not best:
                     no_match += 1
@@ -691,7 +773,7 @@ async def _enrich_all(records: List[Dict[str, Any]]
                         "uid": uid,
                         "prop_address": addr_log,
                         "result": "no-match",
-                        "query": f"StreetNumber:{st_num} StreetName:{st_name}",
+                        "query": tried_queries,
                     })
                     # Reactive token refresh: if we get a streak of
                     # misses, the token may have expired silently.
