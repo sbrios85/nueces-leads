@@ -387,6 +387,46 @@
   }
   tr.dead-lead td { opacity: 0.45; }
 
+  /* ===== TFC Future Sales tinted band =====
+     A "FUTURE SALE" status on a TFC row gets a subtle blue tint so
+     these not-yet-actionable leads are visually distinct from Active
+     ones. The Option 3 layout puts them in their own band between
+     Active and Dead. Tint is gentle so the row content is still the
+     primary signal. */
+  tr.tfc-future-row td {
+    background: rgba(56,189,248,.06);
+  }
+  tr.tfc-future-row:hover td {
+    background: rgba(56,189,248,.11);
+  }
+  /* Section divider rows that label each band (Active / Future / Dead). */
+  tr.tfc-section-row td {
+    background: transparent;
+    padding: 12px 12px 4px;
+    border-top: 1px solid rgba(148,163,184,.20);
+    border-bottom: none;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: default;
+  }
+  tr.tfc-section-row.future td {
+    color: var(--status-new);
+    background: rgba(56,189,248,.04);
+  }
+  tr.tfc-section-row.dead td {
+    color: var(--status-dead);
+  }
+  /* Active status pill — green, click to mark dead. */
+  .pill.status-future {
+    background: rgba(56,189,248,.18);
+    color: var(--status-new);
+    cursor: pointer;
+  }
+  .pill.status-future:hover { filter: brightness(1.25); }
+
   /* Mark-dead button (lives in Status column) */
   .mark-dead-btn {
     background: transparent;
@@ -2124,19 +2164,15 @@
   <table id="tfc-table">
     <thead><tr>
       <th style="width: 40px;" title="Save manual edits"></th>
-      <th data-sort="status"         style="width: 58px;">Status</th>
+      <th data-sort="status"         style="width: 72px;">Status</th>
       <th data-sort="sale_date"      style="width: 130px;">Sale Date</th>
-      <th data-sort="recorded"       style="width: 80px;">Recorded</th>
-      <th data-sort="owner"          style="width: 155px;">Owner</th>
-      <th data-sort="prop_address"   style="width: 175px;">Property Address</th>
-      <th data-sort="mail_address"   style="width: 150px;">Mailing Address</th>
-      <th data-sort="loan_amount"    style="width: 112px;">Loan Amount</th>
-      <th data-sort="appraised_value" style="width: 92px;">Appraised Value</th>
-      <th data-sort="deed_date"      style="width: 90px;">Loan Date</th>
-      <th data-sort="loan_doc"       style="width: 108px;">Loan Document</th>
-      <th data-sort="lender"         style="width: 150px;">Lender</th>
-      <th data-sort="legal"          style="width: 170px;">Legal Description</th>
-      <th data-sort="doc_num"        style="width: 82px;">Doc#</th>
+      <th data-sort="owner"          style="width: 165px;">Owner</th>
+      <th data-sort="prop_address"   style="width: 195px;">Property Address</th>
+      <th data-sort="mail_address"   style="width: 165px;">Mailing Address</th>
+      <th data-sort="min_bid"        style="width: 100px;">Min Bid</th>
+      <th data-sort="market_value"   style="width: 100px;">Market Value</th>
+      <th data-sort="legal"          style="width: 190px;">Legal Description</th>
+      <th data-sort="cause_nbr"      style="width: 95px;">Cause #</th>
       <th style="width: 44px;">NCAD</th>
     </tr></thead>
     <tbody>
@@ -2148,15 +2184,11 @@
         <td></td>
         <td><span class="pill status status-new">NEW</span></td>
         <td>Jul 7, 2026</td>
-        <td>05/15/26</td>
         <td>SAMPLE OWNER NAME</td>
         <td>123 EXAMPLE ST<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78401</span></td>
         <td>456 MAILING DR<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78415</span></td>
-        <td>$0</td>
-        <td>$150,000</td>
-        <td>—</td>
-        <td>—</td>
-        <td>—</td>
+        <td>$2,500</td>
+        <td><span style="color:var(--muted)">—</span></td>
         <td>EXAMPLE SUBDIVISION LOT 1 BLOCK 2</td>
         <td>T-2026-001</td>
         <td><span style="color:var(--muted)">—</span></td>
@@ -2165,15 +2197,11 @@
         <td></td>
         <td><span class="pill status status-new">NEW</span></td>
         <td>Jul 14, 2026</td>
-        <td>05/20/26</td>
         <td>ANOTHER SAMPLE</td>
         <td>456 PLACEHOLDER AVE<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78411</span></td>
         <td>456 PLACEHOLDER AVE<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78411</span></td>
-        <td>$0</td>
-        <td>$95,000</td>
-        <td>—</td>
-        <td>—</td>
-        <td>—</td>
+        <td>$1,800</td>
+        <td><span style="color:var(--muted)">—</span></td>
         <td>SAMPLE SUB OUT OF TR 5</td>
         <td>T-2026-002</td>
         <td><span style="color:var(--muted)">—</span></td>
@@ -2370,6 +2398,25 @@
       <button data-reason="other">Other</button>
     </div>
     <button class="cancel" id="fc-reason-cancel">Cancel</button>
+  </div>
+</div>
+
+<!-- ======== TFC Mark-Dead / Canceled Reason Picker Modal ======== -->
+<!-- Twin of the MFC modal above. Separate from MFC because TFC has
+     its own dead/canceled distinction (Dead = user gave up on lead;
+     Canceled = homeowner stopped the foreclosure) and a different
+     CRM store. Shares the .modal CSS classes. -->
+<div class="modal-backdrop" id="tfc-reason-backdrop">
+  <div class="modal" role="dialog" aria-labelledby="tfc-reason-title">
+    <h3 id="tfc-reason-title">Mark <span class="target" id="tfc-reason-target">—</span> as dead?</h3>
+    <p class="sub">Why is this lead dead or canceled? You can restore it later.</p>
+    <div class="reasons" id="tfc-reason-list">
+      <button data-reason="canceled">Foreclosure canceled (homeowner stopped it)</button>
+      <button data-reason="not_interested">Not interested</button>
+      <button data-reason="bad_address">Bad address / can't find</button>
+      <button data-reason="other">Other</button>
+    </div>
+    <button class="cancel" id="tfc-reason-cancel">Cancel</button>
   </div>
 </div>
 
@@ -6243,35 +6290,36 @@ function renderTfcStats() {
   const stats = document.getElementById("tfc-stats");
   if (!stats) return;
 
-  // Pull dead/canceled flags from the future TFC CRM store if it
-  // exists. Each entry is keyed by the TFC record uid (LGBS uid).
-  // Shape mirrors MFC CRM: { tfc_status: "active" | "dead" | "canceled" }
-  // until the CRM lands, this is always empty → 0.
+  // Bucket records the same way renderTfcTable does so the tile
+  // counts always agree with the visible sections:
+  //   1. CRM dead/canceled wins over LGBS status (a Future-status
+  //      record manually marked Canceled belongs in Dead/Canceled).
+  //   2. LGBS FUTURE SALE → Future Sales tile.
+  //   3. Everything else (LGBS SALE, anything not future) → Active.
   let crmStore = {};
   try {
-    const raw = localStorage.getItem("tfc-crm-store");
+    const raw = localStorage.getItem(TFC_CRM_KEY);
     if (raw) crmStore = JSON.parse(raw) || {};
   } catch (e) { /* malformed → treat as empty */ }
 
   let active = 0, deadCanceled = 0, future = 0;
   for (const r of (TFC_RAW || [])) {
-    const status = String(r.status || "").toUpperCase().trim();
     const crmEntry = crmStore[r.uid] || {};
     const crmStatus = crmEntry.tfc_status || "";
 
-    if (status === "FUTURE SALE") {
-      future++;
-    } else if (status === "SALE") {
-      if (crmStatus === "dead" || crmStatus === "canceled") {
-        deadCanceled++;
-      } else {
-        active++;
-      }
+    if (crmStatus === "dead" || crmStatus === "canceled") {
+      deadCanceled++;
+      continue;
     }
-    // Any other status (RESALE / STRUCK OFF) is excluded by the
-    // scraper, so it shouldn't appear here, but we silently skip
-    // it if it does.
+    const lgbsStatus = String(r.status || "").toUpperCase().trim();
+    if (lgbsStatus === "FUTURE SALE") {
+      future++;
+    } else {
+      active++;
+    }
   }
+  // Total = leads the user is actively working OR has closed out.
+  // Future is intentionally separate — those are not actionable yet.
   const total = active + deadCanceled;
 
   stats.innerHTML = `
@@ -6291,69 +6339,372 @@ function renderTfcStats() {
 // from scraper/scrape_tfc.py. If TFC_RAW is empty (e.g. scraper
 // hasn't run, or LGBS API was down), the static stub rows remain
 // visible so the user still sees the column layout.
+//
+// Layout (Option 3): three vertically stacked bands inside one
+// table:
+//   1. Active Foreclosures (LGBS SALE-status, not marked dead)
+//   2. Future Sales (LGBS FUTURE SALE, tinted blue band)
+//   3. Dead/Canceled (collapsible footer, dimmed rows)
+// A user can flip any row between Active <-> Dead via the status
+// pill. The Future bucket is automatic (LGBS-driven) — those rows
+// can also be marked dead/canceled if needed but won't be moved
+// to Active manually (LGBS controls that transition).
 function renderTfcTable() {
   const tb = document.querySelector("#tfc-table tbody");
+  const tf = document.getElementById("tfc-dead-foot");
   if (!tb) return;
   if (TFC_RAW.length === 0) return;  // keep stub rows if no data
   tb.innerHTML = "";
-  document.getElementById("tfc-empty").hidden = true;
+  if (tf) tf.innerHTML = "";
+  const emptyEl = document.getElementById("tfc-empty");
+  if (emptyEl) emptyEl.hidden = true;
 
   // Sort by sale date ascending — soonest sales first. Within a date,
   // by sale number (the order properties appear at auction).
   const sorted = TFC_RAW.slice().sort((a, b) => {
-    const dA = a.sale_date_only || "";
-    const dB = b.sale_date_only || "";
-    if (dA !== dB) return dA.localeCompare(dB);
+    const dA = a.sale_date_only || a.sale_date || "";
+    const dB = b.sale_date_only || b.sale_date || "";
+    if (dA !== dB) return String(dA).localeCompare(String(dB));
     return (a.sale_nbr || 0) - (b.sale_nbr || 0);
   });
 
+  // Bucket records by effective status. CRM overrides (dead/canceled)
+  // win over the LGBS status. Otherwise FUTURE SALE → future, SALE
+  // (or anything else still in the scrape) → active.
+  const crm = loadTfcCrm();
+  const activeRecords = [];
+  const futureRecords = [];
+  const deadRecords   = [];   // includes "canceled" — both render here
   for (const r of sorted) {
-    const tr = document.createElement("tr");
-    // Build the same 15-column layout as the static stub rows.
-    // Columns where TFC has no equivalent data show "—" muted.
-    // Sale date formatting matches MFC convention (Mon DD, YYYY).
-    const saleDate = _tfcFmtDate(r.sale_date_only);
-    const recorded = "";  // TFC doesn't have a "recorded" date concept
-    const owner = "";  // Phase 2 — comes from detail endpoint
-    const legal = "";  // Phase 2 — comes from detail endpoint
-    const propAddr = r.prop_address || "";
-    const adjValue = r.adjudged_value;
-    const minBid   = r.minimum_bid;
-    // For now, use the cause_nbr as "Doc#" since TFC has no doc_num.
-    const causeNbr = r.cause_nbr || "";
-
-    tr.innerHTML = `
-      <td></td>
-      <td><span class="pill status status-new">NEW</span></td>
-      <td>${esc(saleDate)}</td>
-      <td>${esc(recorded) || "—"}</td>
-      <td>${esc(owner) || `<span style="color:var(--muted)">— (Phase 2)</span>`}</td>
-      <td>${esc(propAddr)}</td>
-      <td><span style="color:var(--muted)">—</span></td>
-      <td>${adjValue == null ? "—" : moneyFmt(adjValue)}</td>
-      <td>${minBid == null ? "—" : moneyFmt(minBid)}</td>
-      <td><span style="color:var(--muted)">—</span></td>
-      <td><span style="color:var(--muted)">—</span></td>
-      <td><span style="color:var(--muted)">—</span></td>
-      <td>${esc(legal) || `<span style="color:var(--muted)">— (Phase 2)</span>`}</td>
-      <td>${esc(causeNbr)}</td>
-      <td><span style="color:var(--muted)">—</span></td>
-    `;
-    tb.appendChild(tr);
+    const entry = crm[r.uid] || {};
+    if (entry.tfc_status === "dead" || entry.tfc_status === "canceled") {
+      deadRecords.push(r);
+      continue;
+    }
+    const lgbsStatus = String(r.status || "").toUpperCase().trim();
+    if (lgbsStatus === "FUTURE SALE") {
+      futureRecords.push(r);
+    } else {
+      activeRecords.push(r);
+    }
   }
+
+  // ---- Active section ----
+  for (const r of activeRecords) {
+    tb.appendChild(buildTfcRow(r, "active"));
+  }
+
+  // ---- Future Sales section ----
+  // Section header row only renders when there are future sales.
+  // Otherwise the tinted band has nothing to label, and we'd just
+  // have a stray header.
+  if (futureRecords.length > 0) {
+    const headTr = document.createElement("tr");
+    headTr.className = "tfc-section-row future";
+    headTr.innerHTML = `<td colspan="11">
+      Future Sales — scheduled, not yet active (${futureRecords.length})
+    </td>`;
+    tb.appendChild(headTr);
+    for (const r of futureRecords) {
+      tb.appendChild(buildTfcRow(r, "future"));
+    }
+  }
+
+  // ---- Dead / Canceled section (footer, collapsible) ----
+  if (deadRecords.length > 0 && tf) {
+    const expanded =
+        localStorage.getItem("tfc_dead_expanded") === "true";
+
+    const toggleTr = document.createElement("tr");
+    toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
+    toggleTr.innerHTML = `
+      <td colspan="11">
+        <span class="chev">▶</span>
+        <span>${deadRecords.length} dead / canceled lead${deadRecords.length === 1 ? "" : "s"}</span>
+        <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
+          — click to ${expanded ? "collapse" : "expand"}
+        </span>
+      </td>
+    `;
+    toggleTr.onclick = () => {
+      const nowExpanded = !toggleTr.classList.contains("expanded");
+      localStorage.setItem("tfc_dead_expanded", nowExpanded ? "true" : "false");
+      renderTfcTable();
+    };
+    tf.appendChild(toggleTr);
+
+    if (expanded) {
+      for (const r of deadRecords) {
+        tf.appendChild(buildTfcRow(r, "dead"));
+      }
+    }
+  }
+}
+
+// Build a single TFC table row. `mode` is "active" | "future" | "dead".
+// - active: green pill, click to mark dead; row normal
+// - future: blue pill, tinted row background, click to mark dead
+// - dead:   dimmed row, shows reason, Restore button
+function buildTfcRow(r, mode) {
+  const tr = document.createElement("tr");
+  if (mode === "dead") tr.classList.add("dead-lead");
+  if (mode === "future") tr.classList.add("tfc-future-row");
+
+  const uid = r.uid || "";
+  const saleDate = _tfcFmtDate(r.sale_date_only || r.sale_date);
+  const owner = "";  // Phase 2 — comes from detail endpoint
+  const legal = "";  // Phase 2 — comes from detail endpoint
+  const propAddr = r.prop_address || "";
+  // Market Value will come from NCAD later; empty for now.
+  // Min Bid comes from LGBS minimum_bid.
+  const minBid = r.minimum_bid;
+  const causeNbr = r.cause_nbr || "";
+
+  // ---- Status cell ----
+  let statusCell;
+  if (mode === "dead") {
+    const entry = (loadTfcCrm()[uid]) || {};
+    const reasonLabel = TFC_DEAD_REASONS[entry.reason] || "Other";
+    // "Canceled" gets its own label vs "Dead"; the reason key
+    // "canceled" doubles as both a status and a reason.
+    const isCanceled = entry.tfc_status === "canceled";
+    const pillLabel = isCanceled ? "Canceled" : "Dead";
+    statusCell = `
+      <span class="pill status status-dead" title="This lead is marked ${esc(pillLabel.toLowerCase())}">${esc(pillLabel)}</span>
+      <div class="dead-reason-cell">${esc(reasonLabel)}</div>
+      <button class="restore-btn" data-uid="${esc(uid)}"
+              style="margin-top: 4px;"
+              title="Restore this lead to active"
+              onclick="restoreTfcLead('${esc(uid)}'); event.stopPropagation();">
+        Restore
+      </button>
+    `;
+  } else if (mode === "future") {
+    statusCell = `
+      <span class="pill status status-future"
+            data-uid="${esc(uid)}"
+            title="Click to mark this lead as dead or canceled"
+            onclick="openTfcMarkDeadModal('${esc(uid)}', this.closest('tr')); event.stopPropagation();">Future</span>
+    `;
+  } else {
+    statusCell = `
+      <span class="pill status status-active"
+            data-uid="${esc(uid)}"
+            title="Click to mark this lead as dead or canceled"
+            onclick="openTfcMarkDeadModal('${esc(uid)}', this.closest('tr')); event.stopPropagation();"
+            style="cursor: pointer;">Active</span>
+    `;
+  }
+
+  // ---- Editable cells (owner / prop_address / mail_address / legal) ----
+  // Mirror MFC's _ecell pattern: textarea for long free-text, input
+  // for short. Save button persists via tfcSaveRow.
+  const _tfcEcell = (key, val, isLong) => {
+    const common = `class="cell-edit" data-field="${key}"
+      data-uid="${esc(uid)}"
+      oninput="tfcMarkDirty(this)"
+      onclick="event.stopPropagation();"`;
+    if (isLong)
+      return `<textarea ${common} rows="2"
+              placeholder="—">${esc(val)}</textarea>`;
+    return `<input type="text" ${common}
+              value="${esc(val)}" placeholder="—">`;
+  };
+
+  // Effective values pull from overrides first, then defaults.
+  const _ownerEff = tfcFieldValue(r, "owner") || owner;
+  const _propEff  = tfcFieldValue(r, "prop_address") || propAddr;
+  const _mailEff  = tfcFieldValue(r, "mail_address") || "";
+  const _legalEff = tfcFieldValue(r, "legal") || legal;
+
+  // City/state/zip live below the editable property address line.
+  const propLoc = [r.prop_city, r.prop_state, r.prop_zipcode]
+      .filter(Boolean).join(" ").trim();
+  const propLocLine = propLoc
+      ? `<div class="addr-loc">${esc(propLoc)}</div>` : "";
+
+  tr.innerHTML = `
+    <td class="save-cell">
+      <button class="save-btn" title="Save manual edits on this row"
+        onclick="tfcSaveRow(this); event.stopPropagation();">💾</button>
+      <span class="save-ok" title="Saved">✓</span>
+    </td>
+    <td>${statusCell}</td>
+    <td>${esc(saleDate) || "—"}</td>
+    <td>${_tfcEcell("owner", _ownerEff, true)}</td>
+    <td class="addr-cell">${_tfcEcell("prop_address", _propEff, true)}${propLocLine}</td>
+    <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true)}</td>
+    <td>${minBid == null ? '<span style="color:var(--muted)">—</span>' : moneyFmt(minBid)}</td>
+    <td><span style="color:var(--muted)">—</span></td>
+    <td>${_tfcEcell("legal", _legalEff, true)}</td>
+    <td>${esc(causeNbr) || '<span style="color:var(--muted)">—</span>'}</td>
+    <td><span style="color:var(--muted)">—</span></td>
+  `;
+  return tr;
 }
 
 // Format a "YYYY-MM-DD" date string as "Mon D, YYYY" to match the
 // MFC table style. Returns the raw input if it can't be parsed.
 function _tfcFmtDate(ymd) {
   if (!ymd) return "";
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(ymd);
-  if (!m) return ymd;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(ymd));
+  if (!m) return String(ymd);
   const months = ["Jan","Feb","Mar","Apr","May","Jun",
                   "Jul","Aug","Sep","Oct","Nov","Dec"];
   const y = +m[1], mo = +m[2], d = +m[3];
   return `${months[mo-1]} ${d}, ${y}`;
 }
+
+// ============================================================
+// TFC CRM store — per-record status, dead reason, field overrides
+// ============================================================
+// Mirrors the MFC CRM (FC_CRM_KEY + fc-overrides) but keyed by LGBS
+// `uid` (stable per property sale). Forward-compatible with the
+// planned TFC CRM expansion: when we add contacts/attempts/skiptrace
+// blocks later, they nest under the same uid key.
+//
+// Shape per uid:
+//   {
+//     tfc_status: "active" | "future" | "dead" | "canceled",
+//     reason: "<key from TFC_DEAD_REASONS>",
+//     marked_dead_at: ISO,
+//     restored_at: ISO,
+//     overrides: { owner: "...", prop_address: "...", ... },
+//     _updated_at: ISO
+//   }
+const TFC_CRM_KEY = "tfc-crm-store";
+const TFC_DEAD_REASONS = {
+  "canceled":       "Foreclosure canceled by homeowner",
+  "not_interested": "Not interested",
+  "bad_address":    "Bad address / can't find",
+  "other":          "Other"
+};
+function loadTfcCrm() {
+  try { return JSON.parse(localStorage.getItem(TFC_CRM_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveTfcCrm(crm) {
+  localStorage.setItem(TFC_CRM_KEY, JSON.stringify(crm));
+}
+function getTfcEntry(uid) {
+  const crm = loadTfcCrm();
+  return crm[uid] || {};
+}
+function setTfcEntry(uid, patch) {
+  const crm = loadTfcCrm();
+  const cur = crm[uid] || {};
+  crm[uid] = Object.assign({}, cur, patch, {
+    _updated_at: new Date().toISOString()
+  });
+  saveTfcCrm(crm);
+  return crm[uid];
+}
+// Effective field value: manual override wins over scraped data.
+function tfcFieldValue(r, key) {
+  const entry = getTfcEntry(r.uid);
+  const ov = entry.overrides || {};
+  if (ov[key] != null && ov[key] !== "") return ov[key];
+  return r[key];
+}
+
+// ============================================================
+// TFC mark-dead modal flow (mirrors MFC's openMarkDeadModal etc.)
+// ============================================================
+let _pendingTfcDeadUid = null;
+
+function openTfcMarkDeadModal(uid, rowEl) {
+  _pendingTfcDeadUid = uid;
+  // Pull the property address from the row for the dialog header so
+  // the user can verify they're marking the right lead. The address
+  // cell is the 5th td (0-indexed 4). Fall back to uid if missing.
+  let label = uid;
+  if (rowEl && rowEl.cells[4]) {
+    const addrText = (rowEl.cells[4].textContent || "").trim();
+    if (addrText) label = addrText.slice(0, 60);
+  }
+  document.getElementById("tfc-reason-target").textContent = label;
+  document.getElementById("tfc-reason-backdrop").classList.add("open");
+}
+function closeTfcMarkDeadModal() {
+  _pendingTfcDeadUid = null;
+  document.getElementById("tfc-reason-backdrop").classList.remove("open");
+}
+function confirmTfcMarkDead(reason) {
+  if (!_pendingTfcDeadUid) return;
+  // "canceled" reason → tfc_status "canceled"; everything else → "dead".
+  // This drives the pill label (Canceled vs Dead) when rendered.
+  const status = (reason === "canceled") ? "canceled" : "dead";
+  setTfcEntry(_pendingTfcDeadUid, {
+    tfc_status: status,
+    reason: reason,
+    marked_dead_at: new Date().toISOString()
+  });
+  closeTfcMarkDeadModal();
+  renderTfcStats();
+  renderTfcTable();
+}
+function restoreTfcLead(uid) {
+  setTfcEntry(uid, {
+    tfc_status: "active",
+    restored_at: new Date().toISOString()
+  });
+  renderTfcStats();
+  renderTfcTable();
+}
+
+// ============================================================
+// TFC save-row flow (mirrors MFC fcSaveRow / fcMarkDirty)
+// ============================================================
+function tfcMarkDirty(el) {
+  const tr = el.closest("tr");
+  if (!tr) return;
+  tr.classList.add("row-dirty");
+  tr.classList.remove("row-saved");
+}
+function tfcSaveRow(btn) {
+  const tr = btn.closest("tr");
+  if (!tr) return;
+  const uidEl = tr.querySelector("[data-uid]");
+  if (!uidEl) return;
+  const uid = uidEl.dataset.uid;
+
+  // Collect every edit control on this row keyed by data-field.
+  const edits = {};
+  tr.querySelectorAll("[data-field]").forEach(el => {
+    edits[el.dataset.field] = el.value;
+  });
+
+  // Merge into the entry's overrides bag.
+  const entry = getTfcEntry(uid);
+  const overrides = Object.assign({}, entry.overrides || {}, edits);
+  // Strip empty strings so the field cleanly falls back to scraped value.
+  Object.keys(overrides).forEach(k => {
+    if (overrides[k] === "") delete overrides[k];
+  });
+  setTfcEntry(uid, {overrides: overrides});
+
+  tr.classList.remove("row-dirty");
+  tr.classList.add("row-saved");
+  setTimeout(() => { renderTfcTable(); }, 1500);
+}
+
+// Wire the TFC mark-dead modal once at startup.
+document.addEventListener("DOMContentLoaded", () => {
+  const list = document.getElementById("tfc-reason-list");
+  if (list) {
+    list.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-reason]");
+      if (!btn) return;
+      confirmTfcMarkDead(btn.dataset.reason);
+    });
+  }
+  const cancelBtn = document.getElementById("tfc-reason-cancel");
+  if (cancelBtn) cancelBtn.onclick = closeTfcMarkDeadModal;
+  const bd = document.getElementById("tfc-reason-backdrop");
+  if (bd) bd.onclick = (e) => {
+    if (e.target.id === "tfc-reason-backdrop") closeTfcMarkDeadModal();
+  };
+});
 
 // Build a single foreclosure table row. `isDead` controls whether the
 // Status column shows "Mark Dead" or "Restore" + reason label, and
