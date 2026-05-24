@@ -6292,6 +6292,20 @@ function renderFc() {
 //
 // The Dead/Canceled count reads from a tfc-crm-store key if present
 // (forward-compat with the planned TFC CRM). Missing → 0.
+// Keep the sidebar pill in sync with the "Total Tax Foreclosures"
+// stat tile. Same source of truth, same number, so the two never
+// drift. Total = active + dead/canceled, EXCLUDING future sales.
+function _updateTfcSidebarCount() {
+  const el = document.getElementById("tfc-count");
+  if (!el) return;
+  // Re-read the rendered tile so we don't duplicate bucketing logic.
+  // The first .stat .v in the TFC stats container is "Total".
+  const stats = document.getElementById("tfc-stats");
+  if (!stats) return;
+  const firstV = stats.querySelector(".stat .v");
+  if (firstV) el.textContent = firstV.textContent;
+}
+
 function renderTfcStats() {
   const stats = document.getElementById("tfc-stats");
   if (!stats) return;
@@ -6347,6 +6361,8 @@ function renderTfcStats() {
     <div class="stat"><div class="v">${deadCanceled}</div><div class="k">Dead/Canceled</div></div>
     <div class="stat"><div class="v">${future}</div><div class="k">Future Sales</div></div>
   `;
+  // Mirror the Total tile into the sidebar pill (same number).
+  _updateTfcSidebarCount();
 }
 
 // ----------------------------------------------------------------
