@@ -4381,7 +4381,7 @@ function openMfcCrm(docNum, sourceRecords) {
         <summary>More details</summary>
         <div class="mfc-details-grid">
           <div class="mfc-details-row"><span class="k">Doc #</span><span class="v">${esc(rec.doc_num || "—")}</span></div>
-          <div class="mfc-details-row"><span class="k">Recorded</span><span class="v">${esc(rec.recorded || "—")}</span></div>
+          <div class="mfc-details-row"><span class="k">Recorded</span><span class="v">${esc(formatDate(rec.recorded))}</span></div>
           <div class="mfc-details-row"><span class="k">Loan Document</span><span class="v">${esc(rec.loan_doc || "—")}</span></div>
           <div class="mfc-details-row"><span class="k">Loan Mod Document</span><span class="v">${esc(rec.loan_mod_doc || "—")}</span></div>
           <div class="mfc-details-row"><span class="k">Original Loan Date</span><span class="v">${esc(rec.deed_date_original || "—")}</span></div>
@@ -5537,6 +5537,7 @@ async function loadAll() {
     if (r.ok) {
       const data = await r.json();
       TFC_RAW = data.records || [];
+      renderTfcStats();
       renderTfcTable();
     }
   } catch (e) { /* tfc.json optional — table keeps its stub rows */ }
@@ -6214,6 +6215,74 @@ function renderFc() {
 }
 
 // ----------------------------------------------------------------
+// Tax Foreclosures (TFC) — render stats tiles
+// ----------------------------------------------------------------
+// Four tiles, sourced from TFC_RAW + (future) TFC CRM store:
+//
+//   Total Tax Foreclosures = Active + Dead/Canceled
+//     (the universe of leads the user is actively working OR has
+//     manually closed out. Future-status records are NOT in this
+//     count — they live in their own tile.)
+//
+//   Active Foreclosures = SALE-status records not marked dead/canceled
+//     in the CRM. "SALE" means scheduled for the current upcoming
+//     auction date. These are the leads the user can work right now.
+//
+//   Dead/Canceled = leads the user manually marked in the CRM as
+//     dead (no longer want to work) or canceled (homeowner stopped
+//     the foreclosure). Placeholder = 0 until the TFC CRM ships and
+//     the data model adds a tfc_status field per lead.
+//
+//   Future Sales = FUTURE SALE status from LGBS. These are scheduled
+//     for a later auction date, so they're not actionable yet but
+//     worth surfacing as a queue. Tracked separately on purpose.
+//
+// The Dead/Canceled count reads from a tfc-crm-store key if present
+// (forward-compat with the planned TFC CRM). Missing → 0.
+function renderTfcStats() {
+  const stats = document.getElementById("tfc-stats");
+  if (!stats) return;
+
+  // Pull dead/canceled flags from the future TFC CRM store if it
+  // exists. Each entry is keyed by the TFC record uid (LGBS uid).
+  // Shape mirrors MFC CRM: { tfc_status: "active" | "dead" | "canceled" }
+  // until the CRM lands, this is always empty → 0.
+  let crmStore = {};
+  try {
+    const raw = localStorage.getItem("tfc-crm-store");
+    if (raw) crmStore = JSON.parse(raw) || {};
+  } catch (e) { /* malformed → treat as empty */ }
+
+  let active = 0, deadCanceled = 0, future = 0;
+  for (const r of (TFC_RAW || [])) {
+    const status = String(r.status || "").toUpperCase().trim();
+    const crmEntry = crmStore[r.uid] || {};
+    const crmStatus = crmEntry.tfc_status || "";
+
+    if (status === "FUTURE SALE") {
+      future++;
+    } else if (status === "SALE") {
+      if (crmStatus === "dead" || crmStatus === "canceled") {
+        deadCanceled++;
+      } else {
+        active++;
+      }
+    }
+    // Any other status (RESALE / STRUCK OFF) is excluded by the
+    // scraper, so it shouldn't appear here, but we silently skip
+    // it if it does.
+  }
+  const total = active + deadCanceled;
+
+  stats.innerHTML = `
+    <div class="stat"><div class="v">${total}</div><div class="k">Total Tax Foreclosures</div></div>
+    <div class="stat"><div class="v">${active}</div><div class="k">Active Foreclosures</div></div>
+    <div class="stat"><div class="v">${deadCanceled}</div><div class="k">Dead/Canceled</div></div>
+    <div class="stat"><div class="v">${future}</div><div class="k">Future Sales</div></div>
+  `;
+}
+
+// ----------------------------------------------------------------
 // Tax Foreclosures (TFC) — render table
 // ----------------------------------------------------------------
 // Phase 1: read-only listing rendered from tfc.json. No sorting/
@@ -6662,7 +6731,7 @@ function buildFcRow(r, isDead) {
     </td>
     <td>${statusCell}</td>
     <td>${foreclosureDateCell}</td>
-    <td>${esc(r.recorded || "")}</td>
+    <td>${esc(formatDate(r.recorded))}</td>
     <td>${_ecell("owner", _ownerEff)}</td>
     <td class="addr-cell">${_ecell("prop_address", _propEff)}${
         [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ").trim()
