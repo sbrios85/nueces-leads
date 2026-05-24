@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-05-23T11:41:44.572420+00:00",
+  "fetched_at": "2026-05-24T11:54:07.812429+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-04-23",
-    "end": "2026-05-23"
+    "start": "2026-04-24",
+    "end": "2026-05-24"
   },
-  "total": 86,
+  "total": 84,
   "with_address": 36,
   "records": [
     {
@@ -668,30 +668,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026014130",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-04-23",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "NEXT SPORTS COMPANY LLC",
-      "grantee": "PLAINSCAPITAL BANK",
-      "amount": null,
-      "legal": "Subdivision - Name: GUGENHEIM & COHEN FARM LOTS SECTION 5 RANGE VIII Lot: 1,8 (Lot 1,8)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014130",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026014918",
       "doc_type": "APPOINTMENT",
       "filed": "2026-04-30",
@@ -928,30 +904,6 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026015398",
       "flags": [
         "Tax lien"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026014050",
-      "doc_type": "DEED OF TRUST",
-      "filed": "2026-04-23",
-      "cat": "PRO",
-      "cat_label": "Probate",
-      "owner": "ALVARADO ROBERT LEE",
-      "grantee": "FREEDOM MORTGAGE CORPORATION",
-      "amount": null,
-      "legal": "PROBATE CAUSE NO 2016-PR-00546-3",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014050",
-      "flags": [
-        "Probate / estate"
       ],
       "score": 40
     },
@@ -1308,28 +1260,6 @@
       "score": 35
     },
     {
-      "doc_num": "2026014413",
-      "doc_type": "LIEN",
-      "filed": "2026-04-27",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "RODRIGUEZ JESSICA",
-      "grantee": "CHRISTUS SPOHN HOSPITAL SHORELINE",
-      "amount": null,
-      "legal": "",
-      "prop_address": "3242 OLSEN DR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78411",
-      "mail_address": "3242 Olsen Dr Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78411",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014413",
-      "flags": [],
-      "score": 35
-    },
-    {
       "doc_num": "2026014416",
       "doc_type": "LIEN",
       "filed": "2026-04-27",
@@ -1348,6 +1278,28 @@
       "mail_state": "TX",
       "mail_zip": "78469",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014416",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026014413",
+      "doc_type": "LIEN",
+      "filed": "2026-04-27",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "RODRIGUEZ JESSICA",
+      "grantee": "CHRISTUS SPOHN HOSPITAL SHORELINE",
+      "amount": null,
+      "legal": "",
+      "prop_address": "3242 OLSEN DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78411",
+      "mail_address": "3242 Olsen Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014413",
       "flags": [],
       "score": 35
     },
