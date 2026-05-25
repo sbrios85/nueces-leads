@@ -319,6 +319,86 @@
     vertical-align: middle;
     font-size: 13px;
   }
+  /* ============================================================
+     STACK PANE — lead-type badges
+     ============================================================
+     One badge per lead-type signal that's present on a property.
+     Each lead type gets its own background color so a property
+     with multiple signals shows multiple colored pills at a
+     glance. Colors chosen to be visually distinct in both light
+     and dark mode; they intentionally don't reuse status-* colors
+     (those mean "lifecycle stage" not "data source").
+     New lead types just need to add a corresponding class +
+     a STACK_SOURCES entry below. */
+  .stack-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    margin: 1px 3px 1px 0;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    line-height: 16px;
+    vertical-align: middle;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .stack-badge-ccln {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+  .stack-badge-vacant {
+    background: rgba(168, 85, 247, 0.15);
+    color: #a855f7;
+    border-color: rgba(168, 85, 247, 0.35);
+  }
+  .stack-badge-taxdelq {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.35);
+  }
+  .stack-badge-cv {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.35);
+  }
+  /* Signal-count pill on the leftmost column. Shows the total
+     number of lead-list signals on this property. Becomes more
+     saturated as count rises — visual cue that more-stacked
+     properties are higher-priority. */
+  .stack-signal-count {
+    display: inline-block;
+    min-width: 24px;
+    text-align: center;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .stack-signal-count.count-1 {
+    background: rgba(148, 163, 184, 0.18);
+    color: #94a3b8;
+  }
+  .stack-signal-count.count-2 {
+    background: rgba(56, 189, 248, 0.20);
+    color: #38bdf8;
+  }
+  .stack-signal-count.count-3 {
+    background: rgba(245, 158, 11, 0.25);
+    color: #f59e0b;
+  }
+  .stack-signal-count.count-4 {
+    background: rgba(239, 68, 68, 0.30);
+    color: #ef4444;
+  }
+  /* Stack row clickability — same hover treatment as CCLN/MFC rows. */
+  #stack-table tbody tr {
+    cursor: pointer;
+  }
+  #stack-table tbody tr:hover {
+    background: rgba(56, 189, 248, 0.06);
+  }
   /* Loan modification flag: the PDF references a loan mod, so the
      scraped loan amount is likely stale and needs manual lookup.
      Clickable — clicking dismisses it (both copies) once the user
@@ -2113,7 +2193,8 @@
     <div class="nav-item" data-pane="delinquenttaxes">
       <span>Delinquent Taxes</span></div>
     <div class="nav-item" data-pane="stack">
-      <span>Stack</span></div>
+      <span>Stack</span>
+      <span class="tab-count" id="stack-count">—</span></div>
   </div>
 
   <div class="sidebar-section">
@@ -2325,17 +2406,44 @@
   </div>
 </div>
 
-<!-- ======== STACK PANE (raw multi-list overlap) ======== -->
+<!-- ======== STACK PANE (multi-signal lead aggregator) ======== -->
+<!-- ===================================================================
+     Properties appearing on multiple lead lists at the same time.
+     Inclusion rule:
+       - Auto-include if the property has a CCLN record OR a Vacant
+         Houses record (these are standalone strong signals).
+       - Otherwise include if the property has 2+ signals from any
+         combination of the remaining lead lists (Tax Delinquent +
+         Code Violation, etc.).
+     Soft-deleted records from any source are excluded.
+     Property matching uses ncad_account_num when available, falling
+     back to a normalized property address. See STACK_SOURCES below
+     for how new lead types plug in.
+=================================================================== -->
 <div class="pane" id="pane-stack">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Stack coming soon
+  <div class="stats" id="stack-stats"></div>
+  <table id="stack-table">
+    <thead><tr>
+      <th data-sort="signal_count" style="width: 110px;">Signals</th>
+      <th data-sort="types"         style="width: 180px;">Lead Types</th>
+      <th data-sort="prop_address"  style="width: 240px;">Property Address</th>
+      <th data-sort="owner"         style="width: 220px;">Owner</th>
+      <th data-sort="latest_filed"  style="width: 110px;">Latest Filed</th>
+      <th data-sort="ncad_account_num" style="width: 140px;">NCAD Account</th>
+      <th style="width: 56px;">NCAD</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div id="stack-empty" class="empty" hidden>
+    <div style="font-size:18px;margin-bottom:12px;color:var(--fg);">
+      No stacked leads yet
     </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      Raw data view for properties appearing on multiple lead lists at
-      once — e.g. Delinquent Taxes + City of Corpus Christi Liens +
-      Vacant + Code Violation. This is the un-worked source list before
-      CRM data (contacts, notes, follow-ups) gets added.
+    <div style="max-width:540px;margin:0 auto;line-height:1.6;">
+      Properties appear here when they show up in two or more lead
+      lists at once, or whenever they appear on the City of Corpus
+      Christi Liens or Vacant Houses lists (those are auto-included
+      since each is a strong standalone signal). Run more scrapers
+      to populate the other lead types and watch this list grow.
     </div>
   </div>
 </div>
@@ -7363,6 +7471,13 @@ let TFC_RAW = [];
 // render per session.
 const _renderedPanes = new Set();
 function _renderPaneIfNeeded(paneId) {
+  // Stack is special: it derives from multiple data sources whose
+  // soft-delete state can change while the user is on other panes.
+  // Always re-render on visit so dead records correctly disappear.
+  if (paneId === "pane-stack") {
+    applyStack();
+    return;
+  }
   if (_renderedPanes.has(paneId)) return;
   _renderedPanes.add(paneId);
   // Map pane id → the function that builds its rows. New lead-type
@@ -7432,6 +7547,25 @@ async function loadAll() {
     if (_activePane === "pane-ccln") {
       _renderedPanes.add("pane-ccln");
       applyCcln();
+    }
+    // Stack is a derived view over CCLN (and future lead types).
+    // If the user landed on the Stack pane while data was still
+    // loading, we need to repaint now that data is in. Also drops
+    // the pane from _renderedPanes if it was rendered empty, so the
+    // next navigation triggers a fresh render.
+    if (_activePane === "pane-stack" && typeof applyStack === "function") {
+      _renderedPanes.add("pane-stack");
+      applyStack();
+    } else if (typeof _stackBuildList === "function") {
+      // Stack isn't the active pane — but still update the sidebar
+      // count so the badge stays accurate without forcing a full
+      // render. Cheap: just runs the join and counts the result.
+      const stackCountEl = document.getElementById("stack-count");
+      if (stackCountEl) {
+        try {
+          stackCountEl.textContent = _stackBuildList().length.toLocaleString();
+        } catch (e) { /* defensive: leave the dash placeholder */ }
+      }
     }
   } catch (e) { document.getElementById("ccln-empty").hidden = false; }
 
@@ -7793,6 +7927,455 @@ function buildCclnRow(r, isDead) {
   });
   return tr;
 }
+
+// ============================================================
+// STACK — multi-signal lead aggregator
+// ============================================================
+// The Stack pane joins records ACROSS multiple lead-list data
+// sources (CCLN today; Vacant Houses, Tax Delinquent, and Code
+// Violations as their scrapers come online) and surfaces
+// properties that appear on enough lists to qualify as a
+// genuine distressed-property lead.
+//
+// Inclusion rule:
+//   - Auto-include any property with a CCLN record
+//   - Auto-include any property with a Vacant Houses record
+//   - Include any property with 2+ signals from any combo of
+//     the remaining types (Tax Delinquent + Code Violation, etc.)
+//   - Always exclude soft-deleted records from any source
+//
+// Property matching:
+//   - Primary: ncad_account_num (e.g. "0386-0005-0060") when
+//     present — same NCAD = definitely same property
+//   - Fallback: normalized property address (uppercased,
+//     trimmed, street-suffix-stripped)
+//   - If a record has neither, it can't be stack-matched and is
+//     dropped (rare — would only happen on records missing both)
+//
+// Adding a new lead-type source:
+//   1. Add a `stack-badge-{type}` CSS class with a color
+//   2. Add an entry to STACK_SOURCES below (5 fields)
+//   3. Set `autoInclude: true` for strong-signal types, false for
+//      types that need to stack with another source to qualify
+//   No other code changes needed — the Stack renderer iterates
+//   the registry, so new sources slot in automatically.
+//
+// Today, only CCLN data is wired up. Until other scrapers ship,
+// the Stack table contains all active CCLN records (one badge,
+// one signal each). That's intentional — the plumbing is here so
+// when Vacant Houses / Tax Delinquent / Code Violations ship,
+// they appear in Stack with zero additional Stack code.
+// ============================================================
+
+const STACK_SOURCES = [
+  {
+    type: "ccln",
+    label: "City Lien",
+    badgeClass: "stack-badge-ccln",
+    autoInclude: true,
+    getRecords: () => (typeof CCLN_RAW !== "undefined" ? CCLN_RAW : []),
+    isActive: (r) => getCclnStatus(r.doc_num) !== "dead",
+    primaryKey: (r) => r.doc_num,
+    addressKey: (r) => r.prop_address,
+    ncadKey: (r) => r.ncad_account_num,
+    ownerKey: (r) => r.owner,
+    filedKey: (r) => r.filed,
+    openCrm: (r) => openCrm("ccln", r.doc_num, CCLN_RAW),
+  },
+  // Future entries — wire up when each scraper ships:
+  // {
+  //   type: "vacant", label: "Vacant", badgeClass: "stack-badge-vacant",
+  //   autoInclude: true,
+  //   getRecords: () => VACANT_RAW || [],
+  //   isActive: (r) => !isVacantDead(r),
+  //   primaryKey: (r) => r.id,
+  //   addressKey: (r) => r.prop_address,
+  //   ncadKey: (r) => r.ncad_account_num,
+  //   ownerKey: (r) => r.owner,
+  //   filedKey: (r) => r.registered_date,
+  //   openCrm: (r) => openCrm("vacant", r.id, VACANT_RAW),
+  // },
+  // {
+  //   type: "taxdelq", label: "Tax Delinq.", badgeClass: "stack-badge-taxdelq",
+  //   autoInclude: false,   // weak alone, needs to stack with another
+  //   ...
+  // },
+  // {
+  //   type: "cv", label: "Code Viol.", badgeClass: "stack-badge-cv",
+  //   autoInclude: false,
+  //   ...
+  // },
+];
+
+// ----------------------------------------------------------------
+// Address normalization for cross-source matching
+// ----------------------------------------------------------------
+// CCLN scraped addresses look like:
+//   "1822 KEYS"               (no suffix)
+//   "1414 19TH STREET"        (full suffix)
+//   "11515 HAVEN DR"          (abbreviated suffix)
+//   "502 CROSSTOWN EXPY"      (abbreviated)
+//   "440 LOUISIANA ST STE 952" (with suite — uncommon in CCLN
+//                              prop_address but possible)
+// Future Vacant Houses / Tax data may use full words or
+// different abbreviations. The normalizer collapses all of these
+// to a canonical key so they match each other.
+
+const _stackStreetSuffixes = {
+  "STREET": "ST", "AVENUE": "AVE", "AVE": "AVE", "AV": "AVE",
+  "DRIVE": "DR", "DR": "DR", "BOULEVARD": "BLVD", "BLVD": "BLVD",
+  "ROAD": "RD", "RD": "RD", "LANE": "LN", "LN": "LN",
+  "COURT": "CT", "CT": "CT", "PLACE": "PL", "PL": "PL",
+  "CIRCLE": "CIR", "CIR": "CIR", "PARKWAY": "PKWY", "PKWY": "PKWY",
+  "HIGHWAY": "HWY", "HWY": "HWY", "EXPRESSWAY": "EXPY", "EXPY": "EXPY",
+  "TERRACE": "TER", "TER": "TER", "TRAIL": "TRL", "TRL": "TRL",
+  "WAY": "WAY", "ST": "ST",
+};
+
+function _stackNormalizeAddress(addr) {
+  if (!addr) return "";
+  let s = String(addr).toUpperCase().trim();
+  // Collapse multiple whitespace runs to single space
+  s = s.replace(/\s+/g, " ");
+  // Strip leading/trailing punctuation
+  s = s.replace(/^[.,#-]+|[.,#-]+$/g, "");
+  // Drop unit/suite tokens to focus on the street address itself —
+  // a "440 LOUISIANA ST STE 952" matches a "440 LOUISIANA ST" if
+  // both are encountered (rare in CCLN prop addresses but defensive)
+  s = s.replace(/\s+(STE|SUITE|UNIT|APT|#)\s*\S+\s*$/i, "");
+  // Canonicalize the trailing street suffix if present
+  const tokens = s.split(" ");
+  if (tokens.length >= 2) {
+    const last = tokens[tokens.length - 1];
+    if (_stackStreetSuffixes[last]) {
+      tokens[tokens.length - 1] = _stackStreetSuffixes[last];
+      s = tokens.join(" ");
+    }
+  }
+  return s;
+}
+
+// Build a stable key for stack-matching. Returns ncad: prefix when
+// available, addr: fallback otherwise, or null if neither exists
+// (record can't be stack-matched).
+function _stackPropertyKey(record, source) {
+  const ncad = source.ncadKey ? source.ncadKey(record) : null;
+  if (ncad) {
+    const cleaned = String(ncad).trim();
+    if (cleaned) return "ncad:" + cleaned;
+  }
+  const addr = source.addressKey ? source.addressKey(record) : null;
+  if (addr) {
+    const norm = _stackNormalizeAddress(addr);
+    if (norm) return "addr:" + norm;
+  }
+  return null;
+}
+
+// ----------------------------------------------------------------
+// Build the stack list: group records by property_key, apply
+// inclusion rule, return one entry per qualifying property.
+// ----------------------------------------------------------------
+function _stackBuildList() {
+  // property_key -> { signals: [{source, record}, ...], byType: {type: count} }
+  const groups = new Map();
+
+  for (const source of STACK_SOURCES) {
+    const records = source.getRecords() || [];
+    for (const rec of records) {
+      // Skip soft-deleted records — Stack only surfaces live leads
+      try {
+        if (source.isActive && !source.isActive(rec)) continue;
+      } catch (e) { /* defensive: treat thrown isActive as active */ }
+
+      const key = _stackPropertyKey(rec, source);
+      if (!key) continue;   // no matchable identity — drop silently
+
+      let g = groups.get(key);
+      if (!g) {
+        g = { signals: [], byType: {} };
+        groups.set(key, g);
+      }
+      g.signals.push({ source, record: rec });
+      g.byType[source.type] = (g.byType[source.type] || 0) + 1;
+    }
+  }
+
+  // Apply inclusion rule. A property qualifies if:
+  //   - It has at least one signal from an autoInclude=true source, OR
+  //   - It has signals from 2+ distinct source TYPES (regardless of
+  //     autoInclude). Multiple records from the SAME type only count
+  //     as one signal type (a property with 3 CCLN liens is still
+  //     just one "CCLN signal" for inclusion purposes — though it
+  //     does still show as 3 in the signal count).
+  const autoIncludeTypes = new Set(
+    STACK_SOURCES.filter(s => s.autoInclude).map(s => s.type)
+  );
+
+  const list = [];
+  for (const [key, g] of groups.entries()) {
+    const distinctTypes = Object.keys(g.byType);
+    const hasAuto = distinctTypes.some(t => autoIncludeTypes.has(t));
+    const multiType = distinctTypes.length >= 2;
+    if (!hasAuto && !multiType) continue;   // doesn't qualify
+
+    // Build the consolidated stack row
+    const entry = _stackBuildEntry(key, g);
+    if (entry) list.push(entry);
+  }
+  return list;
+}
+
+// Consolidate a group of signals into a single Stack row entry.
+// Picks the "best" address/owner/ncad among the constituent records,
+// and pre-computes sort keys.
+function _stackBuildEntry(key, group) {
+  const types = Object.keys(group.byType);
+  const signalCount = group.signals.length;
+  // Choose a representative address: prefer one with a street
+  // suffix (suggests it's the most complete), otherwise the first
+  // non-empty one we find.
+  let propAddress = "";
+  let bestAddrScore = -1;
+  for (const sig of group.signals) {
+    const a = sig.source.addressKey ? sig.source.addressKey(sig.record) : "";
+    if (!a) continue;
+    const norm = _stackNormalizeAddress(a);
+    const score = norm.split(" ").length + (a.length > propAddress.length ? 0.5 : 0);
+    if (score > bestAddrScore) {
+      bestAddrScore = score;
+      propAddress = a;
+    }
+  }
+  // Owner: first non-empty
+  let owner = "";
+  for (const sig of group.signals) {
+    const o = sig.source.ownerKey ? sig.source.ownerKey(sig.record) : "";
+    if (o) { owner = o; break; }
+  }
+  // NCAD account: first non-empty
+  let ncad = "";
+  for (const sig of group.signals) {
+    const n = sig.source.ncadKey ? sig.source.ncadKey(sig.record) : "";
+    if (n) { ncad = n; break; }
+  }
+  // Latest filed date across all signals (for sorting)
+  let latestFiled = "";
+  for (const sig of group.signals) {
+    const f = sig.source.filedKey ? sig.source.filedKey(sig.record) : "";
+    if (f && f > latestFiled) latestFiled = f;
+  }
+  return {
+    key,
+    types,                  // distinct lead-type strings
+    byType: group.byType,   // type -> count
+    signalCount,            // total signals (multiple records of same type count separately)
+    distinctTypeCount: types.length,
+    signals: group.signals, // [{source, record}, ...]
+    prop_address: propAddress,
+    owner,
+    ncad_account_num: ncad,
+    latest_filed: latestFiled,
+  };
+}
+
+// ----------------------------------------------------------------
+// Sort + render
+// ----------------------------------------------------------------
+let STACK_SORT_KEY = "signal_count";
+let STACK_SORT_DIR = "desc";
+const STACK_SORT_TYPES = {
+  signal_count:     "num",
+  types:            "string",
+  prop_address:     "string",
+  owner:            "string",
+  latest_filed:     "string",
+  ncad_account_num: "string",
+};
+
+function _stackCompare(a, b, key, dir) {
+  let av, bv;
+  if (key === "signal_count") {
+    av = a.signalCount; bv = b.signalCount;
+  } else if (key === "types") {
+    av = (a.types || []).join(","); bv = (b.types || []).join(",");
+  } else {
+    av = a[key] || ""; bv = b[key] || "";
+  }
+  if (STACK_SORT_TYPES[key] === "num") {
+    const cmp = (av || 0) - (bv || 0);
+    return dir === "desc" ? -cmp : cmp;
+  }
+  const sa = String(av).toLowerCase();
+  const sb = String(bv).toLowerCase();
+  if (sa < sb) return dir === "desc" ? 1 : -1;
+  if (sa > sb) return dir === "desc" ? -1 : 1;
+  return 0;
+}
+
+function applyStack() {
+  const list = _stackBuildList();
+  // Stable secondary sort: latest_filed desc as tie-breaker after
+  // the user's chosen primary sort. Without this, ties (e.g. two
+  // properties both at signal_count=1) would flicker on re-render.
+  list.sort((a, b) => {
+    const p = _stackCompare(a, b, STACK_SORT_KEY, STACK_SORT_DIR);
+    if (p !== 0) return p;
+    return _stackCompare(a, b, "latest_filed", "desc");
+  });
+
+  // Update the sidebar count badge so the user can see at a glance
+  // how many stacked properties exist (matches the pattern of
+  // ccln-count, tfc-count, fc-count, etc).
+  const countEl = document.getElementById("stack-count");
+  if (countEl) countEl.textContent = list.length.toLocaleString();
+
+  // Render the stats line
+  _renderStackStats(list);
+
+  // Render the table body
+  const tbody = document.querySelector("#stack-table tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  const empty = document.getElementById("stack-empty");
+  if (list.length === 0) {
+    if (empty) empty.hidden = false;
+    return;
+  }
+  if (empty) empty.hidden = true;
+
+  for (const entry of list) {
+    tbody.appendChild(_buildStackRow(entry));
+  }
+}
+
+function _renderStackStats(list) {
+  const el = document.getElementById("stack-stats");
+  if (!el) return;
+  // Total count + breakdown by distinct type count
+  const total = list.length;
+  const byTypeCount = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  for (const e of list) {
+    const t = Math.min(e.distinctTypeCount, 4);
+    byTypeCount[t] = (byTypeCount[t] || 0) + 1;
+  }
+  el.innerHTML = `
+    <div class="stat-card">
+      <div class="num">${total.toLocaleString()}</div>
+      <div class="lbl">Total Stacked</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">${byTypeCount[1] || 0}</div>
+      <div class="lbl">1 Signal</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">${byTypeCount[2] || 0}</div>
+      <div class="lbl">2 Signals</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">${byTypeCount[3] || 0}</div>
+      <div class="lbl">3 Signals</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">${byTypeCount[4] || 0}</div>
+      <div class="lbl">4 Signals</div>
+    </div>`;
+}
+
+function _buildStackRow(entry) {
+  const tr = document.createElement("tr");
+
+  // Signal count pill — saturates with count for visual priority cue
+  const countClass = "count-" + Math.min(entry.distinctTypeCount, 4);
+  const countCell = `<span class="stack-signal-count ${countClass}">${entry.signalCount}</span>`;
+
+  // Type badges — one pill per source type present, ordered by
+  // STACK_SOURCES registry order (CCLN first, Vacant next, etc.)
+  // so the visual order is stable across rows
+  const badgeHtml = STACK_SOURCES
+    .filter(s => entry.byType[s.type])
+    .map(s => {
+      const count = entry.byType[s.type];
+      const label = count > 1 ? `${s.label} (${count})` : s.label;
+      return `<span class="stack-badge ${s.badgeClass}">${esc(label)}</span>`;
+    })
+    .join("");
+
+  // NCAD external icon — reuse the same helper that other tabs use.
+  // Pass a synthetic record-shaped object so ncadCellHtml works on it.
+  const ncadSyntheticRec = {
+    ncad_account_num: entry.ncad_account_num,
+    owner: entry.owner,
+    prop_address: entry.prop_address,
+  };
+  const ncadCell = (typeof ncadCellHtml === "function")
+    ? ncadCellHtml(ncadSyntheticRec)
+    : `<span style="color:var(--muted)">—</span>`;
+
+  tr.innerHTML = `
+    <td>${countCell}</td>
+    <td>${badgeHtml || '<span style="color:var(--muted)">—</span>'}</td>
+    <td>${esc(entry.prop_address || "—")}</td>
+    <td>${esc(entry.owner || "—")}</td>
+    <td>${esc(entry.latest_filed || "—")}</td>
+    <td>${esc(entry.ncad_account_num || "—")}</td>
+    <td style="text-align:center;">${ncadCell}</td>
+  `;
+
+  // Row click: open the CRM of the FIRST signal on this property.
+  // Today that's always CCLN. When Vacant Houses ships, a vacant-only
+  // property would open the Vacant CRM. If the property has multiple
+  // signal types, we prefer the auto-include types in registry order
+  // (CCLN → Vacant → ...) so the most authoritative CRM opens.
+  // Clicks on the NCAD icon or any inner link/button keep their own
+  // behavior (event.stopPropagation pattern).
+  const pickSig = (() => {
+    for (const src of STACK_SOURCES) {
+      const hit = entry.signals.find(s => s.source.type === src.type);
+      if (hit) return hit;
+    }
+    return entry.signals[0];
+  })();
+
+  tr.addEventListener("click", (ev) => {
+    if (ev.target.closest("a, button, .ext-icon, .ncad-icon")) return;
+    // Drag-select guard: if the user has highlighted text, don't open
+    const sel = window.getSelection && window.getSelection();
+    if (sel && !sel.isCollapsed && sel.toString().trim() !== "") {
+      const anchor = sel.anchorNode;
+      if (anchor && tr.contains(
+            anchor.nodeType === 1 ? anchor : anchor.parentNode))
+        return;
+    }
+    if (pickSig && pickSig.source.openCrm) {
+      try { pickSig.source.openCrm(pickSig.record); }
+      catch (e) { console.error("Stack openCrm failed:", e); }
+    }
+  });
+
+  return tr;
+}
+
+// Wire the Stack table's sort headers — same pattern as CCLN
+(function _wireStackSortHeaders() {
+  document.addEventListener("DOMContentLoaded", () => {
+    const ths = document.querySelectorAll("#stack-table thead th[data-sort]");
+    ths.forEach(th => {
+      th.style.cursor = "pointer";
+      th.addEventListener("click", () => {
+        const key = th.dataset.sort;
+        if (STACK_SORT_KEY === key) {
+          STACK_SORT_DIR = STACK_SORT_DIR === "asc" ? "desc" : "asc";
+        } else {
+          STACK_SORT_KEY = key;
+          STACK_SORT_DIR = STACK_SORT_TYPES[key] === "num" ? "desc" : "asc";
+        }
+        applyStack();
+      });
+    });
+  });
+})();
 
 // ---- CCLN status menu + dead flow ----
 let _cclnPendingDead = null;
