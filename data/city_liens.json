@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-25T18:08:09.423434+00:00",
+  "fetched_at": "2026-05-25T18:21:23.845510+00:00",
   "source": "Nueces County Clerk — CCLN cumulative",
   "total": 1902,
   "records": [
@@ -3637,14 +3637,14 @@
       "grantee": "THE CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision - Name: BOOTY AND ALLEN Lot: 15 Block: 3 (Lot 15, Block 3)",
-      "prop_address": "1529 7th ST",
+      "prop_address": "1529 7TH st",
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78404",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "440 LOUISIANA ST STE 952",
+      "mail_city": "HOUSTON",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "77002",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2025027153",
       "flags": [
         "LLC / corp owner"
@@ -3663,10 +3663,12 @@
         "demolition"
       ],
       "ccln_pdf_flags": [
-        "incomplete_extraction"
+        "zip_outside_cc",
+        "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:08:04.140414Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:18.757192Z",
+      "pdf_owner": "BHS CRIMSON HOMES LLC"
     },
     {
       "doc_num": "2025027157",
@@ -3708,7 +3710,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:08:08.141628Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:22.630998Z"
     },
     {
       "doc_num": "2025027154",
@@ -3763,7 +3765,7 @@
       "grantee": "THE CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision - Name: BAY TERR Lot: 38,39,40,41,42 (Lot 38,39,40,41,42)",
-      "prop_address": "1414 S 19th ST",
+      "prop_address": "1414 S 19TH ST",
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78404",
@@ -3788,10 +3790,11 @@
         "demolition"
       ],
       "ccln_pdf_flags": [
-        "incomplete_extraction"
+        "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:08:05.510174Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:20.075683Z",
+      "ncad_account_num": "0481-1601-0380"
     },
     {
       "doc_num": "2025000238",
@@ -13886,7 +13889,7 @@
       ],
       "ccln_pdf_flags": [],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:08:01.535448Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:16.243508Z"
     },
     {
       "doc_num": "2025027143",
@@ -13921,11 +13924,10 @@
         "filth",
         "demolition"
       ],
-      "ccln_pdf_flags": [
-        "incomplete_extraction"
-      ],
+      "ccln_pdf_flags": [],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:08:00.248654Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:15.018025Z",
+      "ncad_account_num": "1390-0002-0120"
     },
     {
       "doc_num": "2025027119",
@@ -31295,14 +31297,14 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision - Name: CHULA VISTA Lot: 43 Block: 4 (Lot 43, Block 4)",
-      "prop_address": "4009 BAHAMA DR",
+      "prop_address": "1605 SHERMAN ST",
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78411",
       "mail_address": "PO BOX 60405",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78466",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2025027149",
       "flags": [],
       "score": 35,
@@ -31320,11 +31322,10 @@
         "demolition"
       ],
       "ccln_pdf_flags": [
-        "absentee_owner",
-        "incomplete_extraction"
+        "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:07:58.946450Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:13.776787Z"
     },
     {
       "doc_num": "2025027148",
@@ -31336,7 +31337,7 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision - Name: SEIKEL Lot: 11 Block: 6 (Lot 11, Block 6)",
-      "prop_address": "812 CRAIG ST",
+      "prop_address": "621 ELEANOR",
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78404",
@@ -31364,7 +31365,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:07:57.574937Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:12.432288Z"
     },
     {
       "doc_num": "2025027101",
@@ -39479,7 +39480,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:08:02.776223Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:17.445085Z"
     },
     {
       "doc_num": "2025027126",
@@ -41999,14 +42000,14 @@
       "grantee": "THE CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision - Name: CALLICOATTE ESTATES Lot: 5 Block: 3 (Lot 5, Block 3)",
-      "prop_address": "2728 AIRLINE RD",
+      "prop_address": "11941 MESA DR",
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78414",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "11941 MESA AVE",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78410",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2025027160",
       "flags": [],
       "score": 35,
@@ -42019,10 +42020,12 @@
         "demolition"
       ],
       "ccln_pdf_flags": [
-        "incomplete_extraction"
+        "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:08:09.422196Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:23.844358Z",
+      "pdf_owner": "BARNETT DONNIE D",
+      "ncad_account_num": "1220-0003-0050"
     },
     {
       "doc_num": "2025000240",
@@ -42201,10 +42204,11 @@
         "demolition"
       ],
       "ccln_pdf_flags": [
-        "incomplete_extraction"
+        "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T18:08:06.789547Z"
+      "ccln_pdf_processed_at": "2026-05-25T18:21:21.359481Z",
+      "ncad_account_num": "3515-0012-0040"
     },
     {
       "doc_num": "2025000239",
