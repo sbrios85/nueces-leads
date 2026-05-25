@@ -89,6 +89,15 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+# Owner-classifier module — used to detect corporate owners on PDFs.
+# Lives next to this file in scraper/. The classifier returns
+# ("company"/"hoa"/etc, keep=False) for entities we want to filter
+# out, ("individual"/"estate"/"family_trust", keep=True) for leads
+# we want to retain. See ccln_owner_filter.py for the full taxonomy.
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from ccln_owner_filter import classify_owner, kind_label  # noqa: E402
+
 
 # ----------------------------------------------------------------
 # Logging setup
@@ -845,12 +854,39 @@ def process_pdf(pdf_path: Path,
     if record.get("ccln_pdf_processed") and not force:
         return True, f"already processed (skipped — use force=true to redo)"
 
-    # Step 7: run validation flags
+    # Step 7: check corporate-owner filter. Once OCR has confirmed the
+    # owner on the PDF, we have the most reliable owner name available
+    # (clerk-portal data sometimes mis-spells or truncates the owner).
+    # If the PDF says corporate, delete the record and the PDF.
+    # ``kind`` is one of: company, religious, school, government,
+    # nonprofit, hoa, trust_inst (all → keep=False); individual,
+    # estate, family_trust (keep=True).
+    #
+    # We check BOTH the PDF-extracted owner AND the clerk-portal owner.
+    # If EITHER says corporate, we exclude — this catches cases where
+    # OCR couldn't read the PDF owner clearly but the clerk record
+    # already had a clear corporate name.
+    pdf_owner = ex.pdf_owner or ""
+    clerk_owner = record.get("owner") or ""
+    pdf_kind, pdf_keep = classify_owner(pdf_owner) if pdf_owner else ("", True)
+    clerk_kind, clerk_keep = classify_owner(clerk_owner)
+    if not pdf_keep or not clerk_keep:
+        # Pick the more-actionable kind for the log message:
+        # prefer the PDF-derived classification when both flagged.
+        kind = pdf_kind if (pdf_owner and not pdf_keep) else clerk_kind
+        log.info("  corporate owner detected (%s = %s) — deleting record",
+                 kind, kind_label(kind))
+        # Signal deletion to the caller via the message convention.
+        # The caller looks for "DELETE_RECORD:{doc_num}" and removes
+        # the record from the records list (NOT just the lookup dict).
+        return True, f"DELETE_RECORD:{doc_num} (corporate: {kind})"
+
+    # Step 8: run validation flags
     validate(ex, record)
     if ex.flags:
         log.info("  flags: %s", ", ".join(ex.flags))
 
-    # Step 8: write fields onto the record
+    # Step 9: write fields onto the record
     apply_to_record(record, ex, force=force)
     log.info("  extracted: addr=%r ncad=%r owner=%r reason=%r",
              ex.prop_address, ex.ncad_account_num,
@@ -891,6 +927,11 @@ def main() -> int:
     n_ok = 0
     n_fail = 0
     n_skipped = 0
+    n_deleted = 0
+    # Track doc_nums marked for corporate deletion. We can't remove
+    # them mid-loop (we're iterating records_by_doc indirectly), so
+    # we collect them and apply the deletions after the loop.
+    delete_doc_nums: List[str] = []
     for pdf in pdfs:
         try:
             ok, msg = process_pdf(pdf, records_by_doc, force=force)
@@ -900,7 +941,23 @@ def main() -> int:
             ok, msg = False, f"exception: {exc}"
 
         if ok:
-            if "already processed" in msg:
+            if msg.startswith("DELETE_RECORD:"):
+                # Corporate-owner case. Extract the doc_num after the
+                # prefix and queue it for removal.
+                #   "DELETE_RECORD:2025027154 (corporate: company)"
+                rest = msg[len("DELETE_RECORD:"):].strip()
+                doc_to_delete = rest.split(" ", 1)[0]
+                delete_doc_nums.append(doc_to_delete)
+                n_deleted += 1
+                log.info("  → record %s marked for deletion (%s)",
+                         doc_to_delete, rest)
+                # PDF gets deleted too — no reason to keep it.
+                try:
+                    pdf.unlink()
+                    log.info("  PDF deleted: %s", pdf.name)
+                except OSError as exc:
+                    log.warning("could not delete %s: %s", pdf.name, exc)
+            elif "already processed" in msg:
                 n_skipped += 1
                 log.info("  → %s", msg)
                 # For already-processed: delete the PDF anyway so the
@@ -930,11 +987,25 @@ def main() -> int:
     if TMP_DIR.exists():
         shutil.rmtree(TMP_DIR, ignore_errors=True)
 
-    log.info("=== summary: %d ok, %d already-done, %d failed (of %d) ===",
-             n_ok, n_skipped, n_fail, len(pdfs))
+    # Apply queued corporate-owner deletions. The records list still
+    # contains the original record objects; we filter it down to
+    # only those whose doc_num is NOT in the delete set.
+    if delete_doc_nums:
+        delete_set = set(delete_doc_nums)
+        before = len(records)
+        records[:] = [r for r in records
+                      if str(r.get("doc_num")) not in delete_set]
+        after = len(records)
+        log.info("removed %d corporate records from JSON (%d → %d)",
+                 before - after, before, after)
 
-    # Save updated records only if we changed something.
-    if n_ok > 0 or force:
+    log.info("=== summary: %d ok, %d already-done, %d corporate-deleted, "
+             "%d failed (of %d) ===",
+             n_ok, n_skipped, n_deleted, n_fail, len(pdfs))
+
+    # Save updated records when anything changed: a fresh extraction,
+    # a force-flag override, OR a corporate deletion.
+    if n_ok > 0 or n_deleted > 0 or force:
         save_records(records, envelope)
     else:
         log.info("no changes — skipping save")
