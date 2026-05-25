@@ -283,6 +283,30 @@
     background: rgba(56,189,248,.18); color: var(--status-new);
     white-space: nowrap;
   }
+  /* CCLN PDF extraction markers — shown next to doc_num in the
+     City Lien table:
+       ⚠  one or more validators flagged this record (zip outside
+          CC range, amount mismatch with clerk-portal value, owner
+          name disagrees, etc). Tooltip lists the specific flags.
+          User should spot-check these.
+       ✓  PDF was extracted cleanly, no flags raised. Confidence
+          that the OCR fields are accurate.
+     Records with neither badge haven't been through PDF
+     extraction yet — they only have the data we got from the
+     clerk portal API. */
+  .ccln-pdf-flag {
+    display: inline-block; margin-left: 6px; cursor: help;
+    color: #f59e0b;  /* amber-500 */
+    font-weight: 700;
+    vertical-align: middle;
+  }
+  .ccln-pdf-ok {
+    display: inline-block; margin-left: 6px; cursor: help;
+    color: #22c55e;  /* green-500 */
+    font-weight: 700;
+    vertical-align: middle;
+    opacity: 0.6;  /* subtler than the flag — success is the default expectation */
+  }
   /* Loan modification flag: the PDF references a loan mod, so the
      scraped loan amount is likely stale and needs manual lookup.
      Clickable — clicking dismisses it (both copies) once the user
@@ -7666,7 +7690,7 @@ function buildCclnRow(r, isDead) {
     <td>${apprVal}</td>
     <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : "$" + Number(r.market_value).toLocaleString("en-US", {maximumFractionDigits: 0})}</td>
     <td class="legal">${esc((r.legal || "").replace(/^Subdivision\s*-\s*Name:\s*/i, ""))}</td>
-    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}</td>
+    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${(Array.isArray(r.ccln_pdf_flags) && r.ccln_pdf_flags.length > 0) ? `<span class="ccln-pdf-flag" title="${esc("PDF extraction flagged: " + r.ccln_pdf_flags.join(", "))}">⚠</span>` : (r.ccln_pdf_processed ? `<span class="ccln-pdf-ok" title="PDF processed cleanly">✓</span>` : "")}</td>
     <td style="text-align:center;">${ncadCell}</td>
     <td style="text-align:center;"><span style="color:var(--muted)">—</span></td>`;
 
