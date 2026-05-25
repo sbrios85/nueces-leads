@@ -135,8 +135,20 @@ RE_INTERNAL_ID = re.compile(
 )
 
 # NCAD account: "Account No. 0386-0005-0060"
+# Three OCR variabilities to tolerate:
+#   1. "No." can OCR as "No," (period misread as comma)
+#   2. Account # sometimes wraps across line breaks:
+#        "Account No. 0481-\n1601-0380"
+#        "Account No. 3515-\n0012-0040"
+#   3. Extra punctuation appears mid-number from scan artifacts:
+#        "Account No. 0481- .\n1601-0380"  (the city sometimes
+#         prints with extra dots between segments when the number
+#         wraps; OCR captures those)
+# After matching, the caller strips all whitespace/dots to recover
+# the clean "NNNN-NNNN-NNNN" form.
 RE_NCAD_ACCT = re.compile(
-    r"Account\s+No\.?\s+(?P<acct>\d{4}-\d{4}-\d{4})",
+    r"Account\s+No[.,]?\s+"
+    r"(?P<acct>\d{4}\s*-?\s*[.\s]*\s*\d{4}\s*-?\s*[.\s]*\s*\d{4})",
     re.I,
 )
 
@@ -162,20 +174,20 @@ RE_LEGAL = re.compile(
 # Property street: extracted from end of the legal/account line.
 # Format: "{LEGAL}, and further described in whole or in part by
 # Account No. {ACCOUNT}. {STREET}"
-# Three OCR variabilities to handle:
-#   1. Separator after account # can be "." OR "," (depending on
-#      scan quality / OCR misreading the period as comma).
-#   2. STREET may wrap to the next line when long:
+# OCR variabilities to handle:
+#   1. "No." vs "No," after "Account" (period misread as comma).
+#   2. Separator after account # can be "." OR "," .
+#   3. Account # itself can wrap across line breaks with extra
+#      punctuation (see RE_NCAD_ACCT comment for examples).
+#   4. STREET may wrap to the next line when long:
 #        "Account No. 0867-0003-0150, 1529 7TH\nST"
 #        "Account No. 5000-0008-0060. 121 PUEBLO\nAVE"
-#        "Account No. 5804-0003-0100. 11515\nHAVEN DR"
-#      We allow ONE optional continuation line containing ALL CAPS
-#      tokens (street suffix or remainder of street name).
-#   3. Some streets end with the city right on the same wrap line
-#      (rare). The continuation line is bounded to avoid swallowing
-#      "That said work was completed..." which always follows.
+#   5. STREET on the line AFTER the wrapped account #:
+#        "Account No. 0481-\n1601-0380. 1414 S 19TH ST"
 RE_PROP_STREET = re.compile(
-    r"Account\s+No\.?\s+\d{4}-\d{4}-\d{4}[.,]?\s+"
+    r"Account\s+No[.,]?\s+"
+    r"\d{4}\s*-?\s*[.\s]*\s*\d{4}\s*-?\s*[.\s]*\s*\d{4}"
+    r"[.,]?\s+"
     r"(?P<street>[A-Z0-9][^\n]+(?:\n[A-Z][A-Z ]{1,15})?)\s*(?:\n|$)",
     re.I,
 )
@@ -203,8 +215,17 @@ RE_WORK_AMOUNT = re.compile(
 # Owner block: 3 lines after "record owner...is:". The block is
 # terminated by the next "That said" paragraph (the legal-language
 # section that follows).
+# OCR variabilities to handle:
+#   1. The colon after "is" may be dropped/missing on some scans.
+#   2. "That said" sometimes OCRs as "That sald" (i→l confusion)
+#      because the cursive signature in the same line area smudges
+#      letters.
+#   3. A stray non-word character may prepend "That" (smart-quote
+#      artifact from OCR, e.g. "'That said").
 RE_OWNER_BLOCK = re.compile(
-    r"record\s+owner.*?is:\s*\n\s*\n?(?P<block>.+?)\n\s*\n?That\s+said",
+    r"record\s+owner.*?is:?\s*\n\s*\n?"
+    r"(?P<block>.+?)"
+    r"\n\s*\n?\W?That\s+s[ai][il]d",
     re.S | re.I,
 )
 
@@ -218,8 +239,12 @@ RE_SPOUSE = re.compile(
 )
 
 # City/state/zip on a single line: "CORPUS CHRISTI, TX 78404"
+# Allows optional zip+4 ("78404-1234") and optional trailing
+# punctuation (some OCR runs append a stray comma at end of the
+# line, especially when the scan picked up the period at end of
+# sentence on the next line).
 RE_CITY_STATE_ZIP = re.compile(
-    r"^(?P<city>.+?),\s*(?P<state>[A-Z]{2})\s+(?P<zip>\d{5})(?:-\d{4})?$",
+    r"^(?P<city>.+?),\s*(?P<state>[A-Z]{2})\s+(?P<zip>\d{5})(?:-\d{4})?[.,]?\s*$",
 )
 
 # Lien reason — the boilerplate sentence describes which violations
@@ -382,10 +407,19 @@ def parse_ocr_text(ocr: str) -> Extracted:
     if m:
         out.internal_lien_id = m.group("id")
 
-    # NCAD account
+    # NCAD account — normalize OCR-wrapped format back to canonical
+    # NNNN-NNNN-NNNN. The regex tolerates whitespace, newlines, and
+    # stray dots BETWEEN digit groups (see RE_NCAD_ACCT for why).
+    # Strip all non-digit characters, then re-insert the two dashes
+    # at fixed positions for the 12-digit account number.
     m = RE_NCAD_ACCT.search(ocr)
     if m:
-        out.ncad_account_num = m.group("acct")
+        digits = re.sub(r"\D", "", m.group("acct"))
+        if len(digits) == 12:
+            out.ncad_account_num = f"{digits[:4]}-{digits[4:8]}-{digits[8:]}"
+        else:
+            # Pass through whatever we captured — validator will flag.
+            out.ncad_account_num = m.group("acct").strip()
 
     # Legal description
     m = RE_LEGAL.search(ocr)
