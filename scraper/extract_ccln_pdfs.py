@@ -140,20 +140,57 @@ RE_NCAD_ACCT = re.compile(
     re.I,
 )
 
-# Legal description: starts a line, ALL CAPS subdivision name +
-# "BLK N LOT N(,N)*" pattern. We anchor to BLK/LOT to avoid false
-# positives — those keywords are reliable markers on CCLN forms.
+# Legal description: anchored to a lot/block pattern after an
+# ALL-CAPS subdivision name. CCLN affidavits use multiple syntaxes:
+#   "BALDWIN PARK BLK 5 LOT 6"        — BLK first, LOT second
+#   "MEADOW PARK BLK 8 LOT 6"          — same
+#   "BOOTY AND ALLEN LT 15 BK 3"      — LT first, BK second (abbreviated)
+#   "NUECES ACRES 2 LT 10 BK 3"       — same, with subdivision suffix number
+# The regex accepts all four orderings: BLK..LOT, LOT..BLK, LT..BK, BK..LT.
+# Stops at the comma that begins the trailing ", and further described..."
+# clause to avoid swallowing the boilerplate.
 RE_LEGAL = re.compile(
-    r"^(?P<legal>[A-Z][A-Z0-9 ]+?BLK\s+\d+\s+LOT\s+\d+(?:[,\s]+\d+)*)",
+    r"^(?P<legal>[A-Z][A-Z0-9 ]+?(?:"
+    r"BLK\s+\d+\s+LOT\s+\d+(?:[,\s]+\d+)*"
+    r"|LOT\s+\d+(?:[,\s]+\d+)*\s+BLK\s+\d+"
+    r"|LT\s+\d+(?:[,\s]+\d+)*\s+BK\s+\d+"
+    r"|BK\s+\d+\s+LT\s+\d+(?:[,\s]+\d+)*"
+    r"))",
     re.M,
 )
 
-# Property street comes at end of the legal/account line:
-#   "...Account No. 0386-0005-0060. 1822 KEYS"
+# Property street: extracted from end of the legal/account line.
+# Format: "{LEGAL}, and further described in whole or in part by
+# Account No. {ACCOUNT}. {STREET}"
+# Three OCR variabilities to handle:
+#   1. Separator after account # can be "." OR "," (depending on
+#      scan quality / OCR misreading the period as comma).
+#   2. STREET may wrap to the next line when long:
+#        "Account No. 0867-0003-0150, 1529 7TH\nST"
+#        "Account No. 5000-0008-0060. 121 PUEBLO\nAVE"
+#        "Account No. 5804-0003-0100. 11515\nHAVEN DR"
+#      We allow ONE optional continuation line containing ALL CAPS
+#      tokens (street suffix or remainder of street name).
+#   3. Some streets end with the city right on the same wrap line
+#      (rare). The continuation line is bounded to avoid swallowing
+#      "That said work was completed..." which always follows.
 RE_PROP_STREET = re.compile(
-    r"Account\s+No\.?\s+\d{4}-\d{4}-\d{4}\.?\s+(?P<street>[A-Z0-9][^\n]+?)\s*$",
-    re.M | re.I,
+    r"Account\s+No\.?\s+\d{4}-\d{4}-\d{4}[.,]?\s+"
+    r"(?P<street>[A-Z0-9][^\n]+(?:\n[A-Z][A-Z ]{1,15})?)\s*(?:\n|$)",
+    re.I,
 )
+
+# Street-suffix tokens — used by the address-quality validator to
+# decide if an extracted street looks like a real address.
+# (We don't reject these from the extraction itself, just flag.)
+STREET_SUFFIX_TOKENS = {
+    "ST", "AVE", "DR", "BLVD", "RD", "LN", "CT", "PL", "CIR",
+    "WAY", "PKWY", "TER", "TRL", "HWY", "ROW", "RUN", "PATH",
+    "PASS", "LOOP", "BEND", "GLEN", "PARK", "PLAZA", "POINT",
+    "RIDGE", "SQUARE", "WALK", "STREET", "AVENUE", "DRIVE",
+    "BOULEVARD", "ROAD", "LANE", "COURT", "PLACE", "CIRCLE",
+    "HIGHWAY", "TERRACE", "TRAIL", "PARKWAY",
+}
 
 # Work date + lien amount:
 #   "completed on or about 6/13/2025, at a total cost of $2,399.00"
@@ -355,10 +392,13 @@ def parse_ocr_text(ocr: str) -> Extracted:
     if m:
         out.legal_from_pdf = m.group("legal").strip()
 
-    # Property street
+    # Property street. The regex may capture across two lines when
+    # the city wraps the address — normalize newlines + extra spaces
+    # into a single space to get the full "1822 KEYS" or "1529 7TH ST".
     m = RE_PROP_STREET.search(ocr)
     if m:
-        out.prop_address = m.group("street").strip()
+        street = re.sub(r"\s+", " ", m.group("street").strip())
+        out.prop_address = street
         out.prop_city = "CORPUS CHRISTI"
         out.prop_state = "TX"
 
@@ -375,13 +415,27 @@ def parse_ocr_text(ocr: str) -> Extracted:
         except ValueError:
             pass
 
-    # Owner block (3 lines: name, street, city/state/zip)
+    # Owner block. Variable line count:
+    #   Owner-occupied (most common, 3 lines):
+    #     OWNER NAME
+    #     STREET
+    #     CITY, ST ZIP
+    #   LLC / corporate with suite (4+ lines):
+    #     COMPANY NAME LLC
+    #     STREET
+    #     STE 952       ← variable number of intermediate lines
+    #     CITY, ST ZIP
+    # Strategy: walk from the END of the block to find the city/state/
+    # zip line. Everything between line[0] (owner name) and that line
+    # joins together as the mailing street. This handles both shapes
+    # without needing to detect "STE"/"#"/etc. explicitly.
     m = RE_OWNER_BLOCK.search(ocr)
     if m:
         lines = [ln.strip() for ln in m.group("block").split("\n")
                  if ln.strip()]
         if lines:
-            # Line 1 is the owner. Try to split off a spouse name.
+            # Line 0: owner name. Try to split off a spouse if "AND
+            # WF/WIFE/HUS/HUSBAND/SPOUSE" appears.
             primary = lines[0]
             sm = RE_SPOUSE.match(primary)
             if sm:
@@ -389,21 +443,38 @@ def parse_ocr_text(ocr: str) -> Extracted:
                 out.pdf_spouse = sm.group("spouse").strip()
             else:
                 out.pdf_owner = primary
-        if len(lines) >= 2:
-            out.mail_address = lines[1]
-        if len(lines) >= 3:
-            csm = RE_CITY_STATE_ZIP.match(lines[2])
+
+        # Walk backward to find the city/state/zip line. We only
+        # consider lines AFTER line[0] so the owner name can't be
+        # mistakenly parsed as an address.
+        csz_idx = None
+        for i in range(len(lines) - 1, 0, -1):
+            csm = RE_CITY_STATE_ZIP.match(lines[i])
             if csm:
+                csz_idx = i
                 out.mail_city = csm.group("city").strip()
                 out.mail_state = csm.group("state")
                 out.mail_zip = csm.group("zip")
-                # If property address matches mailing address, the
-                # property ZIP is the same as mailing ZIP. That's the
-                # common case for owner-occupied (1822 KEYS = 1822 KEYS).
-                if (out.prop_address and out.mail_address
-                        and out.prop_address.upper().strip()
-                            == out.mail_address.upper().strip()):
-                    out.prop_zip = out.mail_zip
+                break
+
+        # Mailing street: everything between owner (line 0) and the
+        # city/state/zip line. Join with spaces (e.g. "440 LOUISIANA
+        # ST STE 952" for a corporate suite). For a 3-line block
+        # this is just lines[1].
+        if csz_idx is not None and csz_idx > 1:
+            out.mail_address = " ".join(lines[1:csz_idx])
+        elif len(lines) >= 2:
+            out.mail_address = lines[1]
+
+        # If property address matches mailing address, the property
+        # zip is the same as mailing zip. Common case for owner-
+        # occupied (1822 KEYS = 1822 KEYS). For absentee owners the
+        # property zip stays None and gets filled in later via NCAD
+        # or another source.
+        if (out.prop_address and out.mail_address and out.mail_zip
+                and out.prop_address.upper().strip()
+                    == out.mail_address.upper().strip()):
+            out.prop_zip = out.mail_zip
 
     # Lien reason — scan the boilerplate sentence for tagged keywords.
     m = RE_REASON_SENTENCE.search(ocr)
@@ -439,6 +510,38 @@ def validate(ex: Extracted, clerk_record: Dict[str, Any]) -> None:
             # We flag it for review either way; the user can confirm
             # whether it's a real out-of-town address.
             ex.flags.append("zip_outside_cc")
+
+    # Property address quality — flag if it's suspiciously short or
+    # lacks a recognized street suffix. CCLN PDFs sometimes truncate
+    # the address when OCR wraps mid-word; partial extractions like
+    # "11515" (just a number, no street name) or "PUEBLO" (street
+    # name without number) get caught here.
+    if ex.prop_address:
+        clean = ex.prop_address.strip().upper()
+        tokens = clean.split()
+        has_number = any(t.replace("-", "").isdigit() for t in tokens)
+        has_suffix = any(t.rstrip(".,") in STREET_SUFFIX_TOKENS
+                         for t in tokens)
+        # Real addresses look like "1822 KEYS DR" or "11515 HAVEN DR" —
+        # have both a number AND a recognizable street suffix. If we
+        # don't have a suffix it might be a "named property" without
+        # a street type (rare but real, e.g. "1822 KEYS" with no DR/ST),
+        # but if we don't even have a NUMBER something definitely went
+        # wrong. We use a 2-tier check: missing both → strong flag;
+        # missing just suffix → softer flag.
+        if not has_number or len(clean) < 6:
+            ex.flags.append("suspicious_short_address")
+
+    # Absentee-owner signal — not really an "error" flag, but useful
+    # lead-quality info: when prop_address differs from mail_address,
+    # the owner doesn't live at the lien property. Often correlates
+    # with stronger leads (out-of-state landlords, inherited estates,
+    # vacant properties). The dashboard can use this for sorting/
+    # filtering.
+    if (ex.prop_address and ex.mail_address
+            and ex.prop_address.strip().upper()
+                != ex.mail_address.strip().upper()):
+        ex.flags.append("absentee_owner")
 
     # NCAD account format
     if ex.ncad_account_num:
