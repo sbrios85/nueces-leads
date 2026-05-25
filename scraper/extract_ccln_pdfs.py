@@ -452,9 +452,39 @@ def parse_ocr_text(ocr: str) -> Extracted:
     m = RE_PROP_STREET.search(ocr)
     if m:
         street = re.sub(r"\s+", " ", m.group("street").strip())
-        out.prop_address = street
-        out.prop_city = "CORPUS CHRISTI"
-        out.prop_state = "TX"
+        # Some PDFs have NO property street address — the legal/account
+        # line is followed directly by the next paragraph ("That said
+        # work was completed..."). My regex greedily captures the
+        # next non-blank content, which in those cases is body text.
+        # Detect that case here and discard the capture rather than
+        # storing a paragraph as an address.
+        #
+        # Triggers:
+        #   - Starts with "That said" or its OCR variant "That sald"
+        #     (i↔l confusion documented elsewhere).
+        #   - Contains too many words to be a real street (>8 tokens).
+        #   - Looks like sentence text (contains "was completed" or
+        #     "at a total cost" or "invoiced").
+        #
+        # When we discard, prop_address stays None and the validator
+        # flags the record with `incomplete_extraction`. The record
+        # is still usable via NCAD account number — addresses that
+        # the city doesn't have on file can be manually added later
+        # if the user looks up the legal description.
+        looks_like_paragraph = (
+            re.match(r"^That\s+s[ai][il]d\b", street, re.I) or
+            len(street.split()) > 8 or
+            re.search(r"\b(was\s+completed|at\s+a\s+total\s+cost|"
+                      r"which\s+was\s+invoiced)\b", street, re.I)
+        )
+        if looks_like_paragraph:
+            log.info("  street capture rejected (looks like body text): "
+                     "%r — PDF likely has no property address", street[:60])
+            # Don't set prop_address; record will use NCAD only.
+        else:
+            out.prop_address = street
+            out.prop_city = "CORPUS CHRISTI"
+            out.prop_state = "TX"
 
     # Work date + amount
     m = RE_WORK_AMOUNT.search(ocr)
