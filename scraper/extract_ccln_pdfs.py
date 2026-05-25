@@ -848,6 +848,32 @@ def process_pdf(pdf_path: Path,
     # Step 5: find the matching CCLN record
     record = records_by_doc.get(doc_num)
     if record is None:
+        # Record not found in city_liens.json. Two possible reasons:
+        # (a) The record was filtered out by the corporate-owner
+        #     cleanup workflow (cleanup_corporate_ccln.py removed 155
+        #     records that classified as LLC/INC/CORP/etc.). PDFs
+        #     for those records are expected to "fail to match" here
+        #     because the records no longer exist. We should silently
+        #     delete the PDF, not error out.
+        # (b) A real bug — record went missing from city_liens.json
+        #     but the PDF is for a legitimate individual lead. We
+        #     should keep the PDF for investigation in this case.
+        #
+        # To distinguish, classify the OCR'd owner from the PDF. If
+        # it's corporate, treat as expected; otherwise, treat as
+        # real failure. Return a "SKIP_PDF" signal that the main
+        # loop will translate into PDF deletion + non-error path.
+        pdf_owner = ex.pdf_owner or ""
+        if pdf_owner:
+            kind, keep = classify_owner(pdf_owner)
+            if not keep:
+                log.info("  no CCLN record for doc_num %s — owner is "
+                         "%s (%s), record was filtered out by the "
+                         "corporate cleanup; deleting PDF",
+                         doc_num, pdf_owner, kind)
+                # Signal: PDF should be deleted, no record changes,
+                # NOT counted as a failure.
+                return True, f"SKIP_PDF:{doc_num} (corporate, no record exists)"
         return False, f"no CCLN record for doc_num {doc_num}"
 
     # Step 6: skip if already processed (unless force)
@@ -952,6 +978,20 @@ def main() -> int:
                 log.info("  → record %s marked for deletion (%s)",
                          doc_to_delete, rest)
                 # PDF gets deleted too — no reason to keep it.
+                try:
+                    pdf.unlink()
+                    log.info("  PDF deleted: %s", pdf.name)
+                except OSError as exc:
+                    log.warning("could not delete %s: %s", pdf.name, exc)
+            elif msg.startswith("SKIP_PDF:"):
+                # Record doesn't exist in city_liens.json AND the PDF's
+                # owner is corporate — meaning the record was already
+                # filtered out by the corporate-cleanup workflow. No
+                # error, no data change; just clear the PDF so it
+                # doesn't pile up in pdfs/ccln_pending/. Counted as a
+                # skip (not a failure, not a fresh extraction).
+                n_skipped += 1
+                log.info("  → %s", msg)
                 try:
                     pdf.unlink()
                     log.info("  PDF deleted: %s", pdf.name)
