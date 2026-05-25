@@ -307,6 +307,18 @@
     vertical-align: middle;
     opacity: 0.6;  /* subtler than the flag — success is the default expectation */
   }
+  /* Signal badge — distinct from error flag. Used for lead-quality
+     signals like "absentee owner" or "mailing zip outside CC" that
+     aren't extraction errors but are useful info. Blue + info-icon
+     style so user can tell at a glance: ⚠ = check this, ⓘ = good
+     to know.  */
+  .ccln-pdf-signal {
+    display: inline-block; margin-left: 6px; cursor: help;
+    color: #38bdf8;  /* sky-400, matches status-new */
+    font-weight: 700;
+    vertical-align: middle;
+    font-size: 13px;
+  }
   /* Loan modification flag: the PDF references a loan mod, so the
      scraped loan amount is likely stale and needs manual lookup.
      Clickable — clicking dismisses it (both copies) once the user
@@ -7643,6 +7655,67 @@ function renderCcln() {
 
 // Build one CCLN row. isDead → dimmed + "Restore" instead of the
 // status menu.
+// ============================================================
+// CCLN PDF flag badge renderer
+// ============================================================
+// Classifies the ccln_pdf_flags list on a record into visual
+// indicators next to the Doc# cell. Three categories:
+//
+//   ERROR flags (red ⚠) — extraction may be wrong:
+//     • bad_zip_format        — zip isn't 5 digits
+//     • bad_ncad_account      — account # isn't NNNN-NNNN-NNNN
+//     • amount_mismatch       — PDF amount differs from clerk
+//     • owner_mismatch        — PDF owner name doesn't match clerk
+//     • bad_work_date         — work date invalid or future-dated
+//     • incomplete_extraction — required fields missing
+//     • suspicious_short_addr — address too short / no street type
+//
+//   SIGNAL flags (blue ⓘ) — extraction OK, lead-quality info:
+//     • zip_outside_cc        — mailing zip not in 784xx range
+//                                (legitimate absentee owner)
+//     • absentee_owner        — prop address differs from mail
+//                                address (rental / inherited / etc.)
+//
+//   No flags + processed → green ✓ — clean extraction.
+//   No flags + not processed → nothing — record hasn't been PDF'd.
+//
+// Multiple badges show side-by-side. Each has a tooltip listing
+// which specific flags caused it to appear.
+// ============================================================
+const CCLN_ERROR_FLAGS = new Set([
+  "bad_zip_format", "bad_ncad_account", "amount_mismatch",
+  "owner_mismatch", "bad_work_date", "incomplete_extraction",
+  "suspicious_short_address",
+]);
+const CCLN_SIGNAL_FLAGS = new Set([
+  "zip_outside_cc", "absentee_owner",
+]);
+
+function cclnFlagBadges(r) {
+  if (!r) return "";
+  const flags = Array.isArray(r.ccln_pdf_flags) ? r.ccln_pdf_flags : [];
+  const errors  = flags.filter(f => CCLN_ERROR_FLAGS.has(f));
+  const signals = flags.filter(f => CCLN_SIGNAL_FLAGS.has(f));
+  const parts = [];
+  if (errors.length > 0) {
+    parts.push(`<span class="ccln-pdf-flag" title="${esc(
+      "PDF extraction errors: " + errors.join(", "))}">⚠</span>`);
+  }
+  if (signals.length > 0) {
+    // Friendlier signal-flag tooltip — explain in plain English.
+    const sigText = signals.map(s => {
+      if (s === "absentee_owner")  return "Owner doesn't live at lien property";
+      if (s === "zip_outside_cc")  return "Owner mailing address is outside Corpus Christi";
+      return s;
+    }).join("; ");
+    parts.push(`<span class="ccln-pdf-signal" title="${esc(sigText)}">⓵</span>`);
+  }
+  if (parts.length === 0 && r.ccln_pdf_processed) {
+    parts.push(`<span class="ccln-pdf-ok" title="PDF processed cleanly">✓</span>`);
+  }
+  return parts.join("");
+}
+
 function buildCclnRow(r, isDead) {
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
@@ -7690,7 +7763,7 @@ function buildCclnRow(r, isDead) {
     <td>${apprVal}</td>
     <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : "$" + Number(r.market_value).toLocaleString("en-US", {maximumFractionDigits: 0})}</td>
     <td class="legal">${esc((r.legal || "").replace(/^Subdivision\s*-\s*Name:\s*/i, ""))}</td>
-    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${(Array.isArray(r.ccln_pdf_flags) && r.ccln_pdf_flags.length > 0) ? `<span class="ccln-pdf-flag" title="${esc("PDF extraction flagged: " + r.ccln_pdf_flags.join(", "))}">⚠</span>` : (r.ccln_pdf_processed ? `<span class="ccln-pdf-ok" title="PDF processed cleanly">✓</span>` : "")}</td>
+    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${cclnFlagBadges(r)}</td>
     <td style="text-align:center;">${ncadCell}</td>
     <td style="text-align:center;"><span style="color:var(--muted)">—</span></td>`;
 
