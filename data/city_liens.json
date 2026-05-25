@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-25T22:08:59.899069+00:00",
+  "fetched_at": "2026-05-25T22:19:22.375578+00:00",
   "source": "Nueces County Clerk — CCLN cumulative",
   "total": 1747,
   "records": [
@@ -20276,11 +20276,10 @@
         "demolition"
       ],
       "ccln_pdf_flags": [
-        "suspicious_short_address",
-        "absentee_owner"
+        "incomplete_extraction"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T22:08:30.744845Z"
+      "ccln_pdf_processed_at": "2026-05-25T22:19:22.375009Z"
     },
     {
       "doc_num": "2025026239",
