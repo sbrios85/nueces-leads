@@ -1,0 +1,82 @@
+# =============================================================
+# Cleanup Corporate CCLN Leads
+# =============================================================
+# Sweeps data/city_liens.json and HARD-DELETES any CCLN record
+# whose owner classifies as corporate (LLC, INC, CORP, religious,
+# school, government, nonprofit, HOA, institutional trust).
+#
+# KEEPS individuals, estates (deceased owners), and family/personal
+# trusts (Living Trust, Family Trust, Revocable Trust).
+#
+# INPUTS
+# ------
+# dry_run (default: true) — preview what would be deleted without
+#   actually modifying the JSON. STRONGLY RECOMMENDED to run with
+#   dry_run=true first to spot-check the list before committing
+#   to a destructive cleanup.
+#
+# Set dry_run=false to actually delete + commit the changes.
+# =============================================================
+
+name: Cleanup corporate CCLN leads
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Preview only (true) or actually delete (false)?'
+        type: boolean
+        default: true
+        required: false
+
+# Needed so the script can commit the trimmed JSON back to main.
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run cleanup
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          LOG_LEVEL: INFO
+        run: python3 scraper/cleanup_corporate_ccln.py
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected:"
+            git status --short
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes — nothing to commit."
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Cleanup corporate CCLN leads (dry_run=${{ inputs.dry_run }})
+
+          Removed records whose owner classifies as corporate (LLC, INC,
+          CORP, religious, school, government, nonprofit, HOA, or
+          institutional trust). Individuals, estates, and family trusts
+          are kept. See workflow log for the per-record breakdown."
+          git push
