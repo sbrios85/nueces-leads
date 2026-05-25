@@ -2224,11 +2224,11 @@
   <table id="ccln-table">
     <thead><tr>
       <th data-sort="status"        style="width: 74px;">Status</th>
-      <th data-sort="filed"         style="width: 90px;">Filed</th>
+      <th data-sort="filed"         style="width: 110px;">Most Recent Filed</th>
       <th data-sort="owner"         style="width: 200px;">Owner</th>
       <th data-sort="prop_address"  style="width: 210px;">Property Address</th>
       <th data-sort="mail_address"  style="width: 200px;">Mailing Address</th>
-      <th data-sort="amount"        style="width: 110px;">Lien Amount</th>
+      <th data-sort="amount"        style="width: 130px;">Most Recent Lien Amount</th>
       <th data-sort="lien_count"    style="width: 80px;">Lien Count</th>
       <th data-sort="total_lien_amount" style="width: 130px;">Total Lien Amount</th>
       <th data-sort="appraised_value" style="width: 110px;">Appraised Value</th>
@@ -3025,30 +3025,34 @@ const CRM_CONFIG = {
   ccln: {
     storeKey: "nueces_ccln_crm_v2",
     label: "City of Corpus Christi Liens",
-    // readonly: [json field, display label]
+    // Read-only fields shown in the left card of the CRM page.
+    // These reflect the CONSOLIDATED entry (one entry per unique
+    // property), so values like "filed" and "amount" represent
+    // the MOST RECENT lien on this property. Aggregate fields
+    // (lien_count, total_lien_amount) come from the consolidation.
     readonly: [
-      ["owner", "Owner / Grantor"],
-      ["grantee", "Grantee"],
-      ["filed", "Filed"],
-      ["doc_type", "Document Type"],
-      ["doc_num", "Doc #"],
-      ["prop_address", "Property Address"],
-      ["prop_city", "Property City"],
-      ["prop_zip", "Property ZIP"],
-      ["mail_address", "Mailing Address"],
-      ["amount", "Lien Amount", "money"],
-      ["legal", "Legal Description"],
+      ["owner",             "Owner / Grantor"],
+      ["grantee",           "Grantee"],
+      ["filed",             "Most Recent Filed"],
+      ["doc_type",          "Document Type"],
+      ["doc_num",           "Most Recent Doc #"],
+      ["prop_address",      "Property Address"],
+      ["prop_city",         "Property City"],
+      ["prop_zip",          "Property ZIP"],
+      ["mail_address",      "Mailing Address"],
+      ["amount",            "Most Recent Lien Amount", "money"],
+      ["lien_count",        "Total Lien Count"],
+      ["total_lien_amount", "Total Lien Amount", "money"],
+      ["ncad_account_num",  "NCAD Account #"],
+      ["legal",             "Legal Description"],
     ],
-    // editable: [key, label, type, stub?]
-    editable: [
-      ["phone", "Phone", "text"],
-      ["email", "Email", "text"],
-      ["last_contact", "Last Contact", "date"],
-      ["next_followup", "Next Follow-up", "date"],
-      ["lien_payoff", "Lien payoff amount", "text", true],
-      ["owner_reached", "Owner reached?", "select-yn", true],
-      ["notes", "Notes", "textarea"],
-    ],
+    // No editable fields on consolidated CCLN entries. The CRM
+    // card on this view shows the full lien history (see the
+    // lien-history block injected by openCrm when type === "ccln").
+    // Adding contacts/notes/follow-ups back is a future feature
+    // once we decide how property-level vs. lien-level CRM data
+    // should be tracked.
+    editable: [],
   },
   mfc: {
     storeKey: "nueces_mfc_crm_v1",
@@ -7286,7 +7290,30 @@ function _mfcDeleteAttempt(docNum, attemptId) {
 function openCrm(type, docNum, sourceRecords) {
   const cfg = CRM_CONFIG[type];
   if (!cfg) return;
-  const rec = (sourceRecords || []).find(x => x.doc_num === docNum);
+
+  // CCLN is consolidated — sourceRecords are RAW lien filings, but
+  // we want to display one entry per unique property. Run the
+  // consolidation here so the CRM view always shows the latest
+  // grouping (handles the case where data was refreshed since the
+  // table was rendered). For CCLN, `docNum` is actually a
+  // property_key (e.g. "addr:1822 KEYS" or "ncad:0386-0005-0060").
+  // For other types, sourceRecords is used as-is and docNum is a
+  // raw doc_num.
+  let rec;
+  if (type === "ccln" && typeof _cclnConsolidate === "function") {
+    const consolidated = _cclnConsolidate(sourceRecords || []);
+    rec = consolidated.find(x => x.property_key === docNum);
+    // Fallback: if the caller passed a raw doc_num (e.g. older
+    // code path), find the consolidated entry containing that
+    // doc_num in its liens array.
+    if (!rec) {
+      rec = consolidated.find(x =>
+        Array.isArray(x.liens) &&
+        x.liens.some(l => l.doc_num === docNum));
+    }
+  } else {
+    rec = (sourceRecords || []).find(x => x.doc_num === docNum);
+  }
   if (!rec) return;
 
   // Remember where we came from so Back restores it exactly.
@@ -7356,16 +7383,32 @@ function openCrm(type, docNum, sourceRecords) {
   // styling). The generic CRM should always render in the centered
   // max-width column.
   delete _crmBodyEl.dataset.crmType;
+
+  // Build the right-hand card content. For CCLN consolidated
+  // entries, the right card is a LIEN HISTORY list (one row per
+  // source lien filing on this property) instead of editable
+  // form fields. Earlier the CRM had Phone/Email/Notes/etc. fields
+  // here, but those were per-record so duplicated across the same
+  // property's many liens; the consolidation moved CRM identity
+  // to the property level and replaced the form with the history.
+  let rightCardHtml;
+  if (type === "ccln" && Array.isArray(rec.liens) && rec.liens.length > 0) {
+    rightCardHtml = _cclnRenderLienHistoryCard(rec);
+  } else {
+    rightCardHtml = `
+      <div class="crm-card">
+        <h3>CRM <span class="crm-saved" id="crm-saved">Saved ✓</span></h3>
+        ${edRows}
+      </div>`;
+  }
+
   _crmBodyEl.innerHTML = `
     <div class="crm-grid">
       <div class="crm-card">
         <h3>Lead Info (read-only)</h3>
         ${roRows}
       </div>
-      <div class="crm-card">
-        <h3>CRM <span class="crm-saved" id="crm-saved">Saved ✓</span></h3>
-        ${edRows}
-      </div>
+      ${rightCardHtml}
     </div>
   `;
 
@@ -7667,22 +7710,44 @@ async function loadAll() {
 // CCLN / CRM rendering
 // ============================================================
 function renderCclnStats() {
-  const crm = loadCrm();
-  const counts = {new:0, contacted:0, interested:0, negotiating:0, closed:0, dead:0};
-  for (const r of CCLN_RAW) {
-    const e = crm[r.doc_num] || {status:"new"};
-    counts[e.status] = (counts[e.status] || 0) + 1;
+  // The sidebar's "City of Corpus Christi Liens" count badge and
+  // the stats line on the CCLN pane both reflect the CONSOLIDATED
+  // count (one entry per unique property), not the raw lien count.
+  // A property with 20 lien filings counts as 1 lead — it's one
+  // owner you'd contact, not 20.
+  //
+  // Status uses the live property-key system (getCclnStatus):
+  //   - "new":     never touched
+  //   - "working": user marked it as actively being worked
+  //   - "dead":    user marked it as a dead lead (moved to footer)
+  // Older status systems (contacted/interested/etc.) were never
+  // wired up on the consolidated table, so we don't show them.
+  const consolidated = (typeof _cclnConsolidate === "function")
+    ? _cclnConsolidate(CCLN_RAW || []) : (CCLN_RAW || []);
+
+  let nNew = 0, nWorking = 0, nDead = 0;
+  for (const r of consolidated) {
+    const st = getCclnStatus(r.property_key || r.doc_num);
+    if (st === "working") nWorking++;
+    else if (st === "dead") nDead++;
+    else nNew++;
   }
-  const totalLive = CCLN_RAW.length - counts.dead;
-  document.getElementById("ccln-stats").innerHTML = `
-    <div class="stat"><div class="v">${totalLive}</div><div class="k">Active leads</div></div>
-    <div class="stat"><div class="v">${counts.new}</div><div class="k">New</div></div>
-    <div class="stat"><div class="v">${counts.contacted}</div><div class="k">Contacted</div></div>
-    <div class="stat"><div class="v">${counts.interested}</div><div class="k">Interested</div></div>
-    <div class="stat"><div class="v">${counts.negotiating}</div><div class="k">Negotiating</div></div>
-    <div class="stat"><div class="v">${counts.closed}</div><div class="k">Closed</div></div>
-    <div class="stat"><div class="v">${counts.dead}</div><div class="k">Dead</div></div>
-  `;
+  const totalLive = consolidated.length - nDead;
+
+  // Sidebar count badge — show the live (non-dead) count.
+  const navCount = document.getElementById("ccln-count");
+  if (navCount) navCount.textContent = totalLive.toLocaleString();
+
+  // Stats line on the CCLN pane itself.
+  const el = document.getElementById("ccln-stats");
+  if (el) {
+    el.innerHTML = `
+      <div class="stat"><div class="v">${totalLive.toLocaleString()}</div><div class="k">Active leads</div></div>
+      <div class="stat"><div class="v">${nNew.toLocaleString()}</div><div class="k">New</div></div>
+      <div class="stat"><div class="v">${nWorking.toLocaleString()}</div><div class="k">Working</div></div>
+      <div class="stat"><div class="v">${nDead.toLocaleString()}</div><div class="k">Dead</div></div>
+    `;
+  }
 }
 // ============================================================
 // CCLN sort state — defaults to Filed, newest first. Not persisted.
@@ -7690,23 +7755,29 @@ function renderCclnStats() {
 let CCLN_SORT_KEY = "filed";
 let CCLN_SORT_DIR = "desc";
 const CCLN_SORT_TYPES = {
-  status:          "status",
-  filed:           "date",
-  owner:           "string",
-  prop_address:    "string",
-  mail_address:    "string",
-  amount:          "number",
-  appraised_value: "number",
-  legal:           "string",
-  doc_num:         "string",
+  status:            "status",
+  filed:             "date",
+  owner:             "string",
+  prop_address:      "string",
+  mail_address:      "string",
+  amount:            "number",
+  lien_count:        "number",
+  total_lien_amount: "number",
+  appraised_value:   "number",
+  market_value:      "number",
+  legal:             "string",
+  doc_num:           "string",
 };
 function _cclnCompare(a, b, key, dir, type) {
   if (type === "status") {
     // Order: new(0) → working(1) → dead(2). Dead always still
     // collected into the footer regardless of this ordering.
+    // Use property_key (consolidated identity) for status lookup,
+    // matching the new keying scheme; fall back to doc_num for
+    // safety on entries lacking a property_key.
     const rank = {new:0, working:1, dead:2};
-    const sa = rank[getCclnStatus(a.doc_num)] ?? 0;
-    const sb = rank[getCclnStatus(b.doc_num)] ?? 0;
+    const sa = rank[getCclnStatus(a.property_key || a.doc_num)] ?? 0;
+    const sb = rank[getCclnStatus(b.property_key || b.doc_num)] ?? 0;
     return dir === "asc" ? sa - sb : sb - sa;
   }
   let va = a[key], vb = b[key];
@@ -7735,8 +7806,15 @@ function _cclnCompare(a, b, key, dir, type) {
   return dir === "asc" ? sa.localeCompare(sb) : sb.localeCompare(sa);
 }
 function applyCcln() {
-  // No search/filter controls anymore — show all, sorted by column.
-  CCLN_FILTERED = CCLN_RAW.slice();
+  // Consolidate raw lien filings into one entry per unique property.
+  // CCLN data has many duplicate addresses (e.g. DREIER LAWRENCE's
+  // 1116-1120 LEOPARD ST has 20 separate lien filings, one per
+  // city cleanup). The table shows ONE row per property with the
+  // most-recent-filed values; the CRM card shows the full lien
+  // history. Property matching uses NCAD account # first, then
+  // normalized address (same logic as Stack tab).
+  const consolidated = _cclnConsolidate(CCLN_RAW);
+  CCLN_FILTERED = consolidated;
   const type = CCLN_SORT_TYPES[CCLN_SORT_KEY] || "string";
   CCLN_FILTERED.sort((a,b) =>
       _cclnCompare(a, b, CCLN_SORT_KEY, CCLN_SORT_DIR, type));
@@ -7747,6 +7825,216 @@ function applyCcln() {
       th.classList.add(CCLN_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
   });
 }
+
+// ============================================================
+// CCLN consolidation — one entry per unique property
+// ============================================================
+// Reduces N raw lien filings into a single consolidated entry per
+// property. Each consolidated entry exposes:
+//   property_key:           stable id used for CRM lookup + status
+//   liens:                  array of source records (one per filing)
+//   doc_num:                most-recent filing's doc_num
+//   filed:                  most-recent filed date
+//   amount:                 most-recent lien amount
+//   lien_count:             total number of liens
+//   total_lien_amount:      sum of all lien amounts
+//   owner, prop_address, prop_city, prop_zip, prop_state,
+//   mail_address, mail_city, mail_state, mail_zip,
+//   legal, grantee, doc_type, clerk_url, appraised_value,
+//   market_value, ncad_account_num, ncad_prop_id,
+//   ccln_pdf_flags, ccln_pdf_processed:
+//                           pulled from the most-recent record
+//                           with a non-empty value (most recent
+//                           wins on conflict — the city tends to
+//                           clean up missing data on later filings)
+//
+// Records that can't be property-keyed (no NCAD and no
+// prop_address) are still surfaced as standalone single-lien
+// entries so nothing falls through the cracks. Their keys are
+// "orphan:doc_num" so they remain unique.
+
+function _cclnPropertyKey(rec) {
+  // NCAD account # is the gold-standard match — same NCAD always
+  // means same property. Falls back to normalized address when
+  // NCAD isn't populated (most CCLN records, until PDF extraction
+  // catches them up).
+  const ncad = (rec.ncad_account_num || "").trim();
+  if (ncad) return "ncad:" + ncad;
+  const addr = rec.prop_address || "";
+  if (typeof _stackNormalizeAddress === "function") {
+    const norm = _stackNormalizeAddress(addr);
+    if (norm) return "addr:" + norm;
+  } else if (addr.trim()) {
+    return "addr:" + addr.trim().toUpperCase();
+  }
+  // Orphan — no address and no NCAD. Surface as a single-entry
+  // group so the user can still see the record.
+  return "orphan:" + (rec.doc_num || Math.random().toString(36).slice(2));
+}
+
+// ----------------------------------------------------------------
+// Lien history card renderer
+// ----------------------------------------------------------------
+// Replaces the editable CRM form on the right side of the CCLN
+// CRM page. Shows every source lien filing on this property in a
+// scrollable list. Each row displays:
+//   Doc ID    File Date    Lien Amount
+// Doc IDs link to the clerk portal (target=_blank) so the user
+// can pull up the underlying filing instantly. Rows are sorted
+// newest-first to match the consolidation's "most recent" ordering.
+function _cclnRenderLienHistoryCard(consolidatedEntry) {
+  const liens = Array.isArray(consolidatedEntry.liens)
+    ? consolidatedEntry.liens : [];
+  const count = liens.length;
+  // Already pre-sorted newest-first by _cclnConsolidate, but
+  // re-sort defensively in case any caller passes in raw records.
+  const sorted = liens.slice().sort((a, b) => {
+    const af = a.filed || "";
+    const bf = b.filed || "";
+    if (af < bf) return 1;
+    if (af > bf) return -1;
+    return 0;
+  });
+  // Sum for the header summary (matches consolidated entry, but
+  // re-computed defensively).
+  const total = sorted.reduce((sum, r) => {
+    const v = Number(r.amount);
+    return Number.isFinite(v) ? sum + v : sum;
+  }, 0);
+  const totalStr = total > 0
+    ? "$" + total.toLocaleString("en-US", {maximumFractionDigits: 2})
+    : "—";
+
+  const rowsHtml = sorted.map(l => {
+    const docCell = l.clerk_url
+      ? `<a href="${esc(l.clerk_url)}" target="_blank" rel="noopener">${esc(l.doc_num || "—")}</a>`
+      : esc(l.doc_num || "—");
+    const amountStr = l.amount
+      ? "$" + Number(l.amount).toLocaleString("en-US", {maximumFractionDigits: 2})
+      : '<span style="color:var(--muted)">—</span>';
+    return `<tr>
+      <td style="padding:8px 12px;">${docCell}</td>
+      <td style="padding:8px 12px; color:var(--fg);">${esc(l.filed || "—")}</td>
+      <td style="padding:8px 12px; text-align:right; font-variant-numeric:tabular-nums;">${amountStr}</td>
+    </tr>`;
+  }).join("");
+
+  return `
+    <div class="crm-card">
+      <h3>Lien History
+        <span style="color:var(--muted); font-weight:400; margin-left:8px;">
+          ${count} record${count === 1 ? "" : "s"} · total ${esc(totalStr)}
+        </span>
+      </h3>
+      <div style="overflow:auto; max-height: 70vh; border:1px solid var(--border); border-radius:8px;">
+        <table style="width:100%; border-collapse:collapse;">
+          <thead style="position:sticky; top:0; background:var(--bg); z-index:1;">
+            <tr style="border-bottom:1px solid var(--border);">
+              <th style="text-align:left; padding:10px 12px; font-size:12px;
+                         text-transform:uppercase; color:var(--muted);
+                         letter-spacing:0.05em;">Doc ID</th>
+              <th style="text-align:left; padding:10px 12px; font-size:12px;
+                         text-transform:uppercase; color:var(--muted);
+                         letter-spacing:0.05em;">File Date</th>
+              <th style="text-align:right; padding:10px 12px; font-size:12px;
+                         text-transform:uppercase; color:var(--muted);
+                         letter-spacing:0.05em;">Lien Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function _cclnConsolidate(rawRecords) {
+  if (!Array.isArray(rawRecords)) return [];
+  // Bucket records by property_key.
+  const groups = new Map();
+  for (const rec of rawRecords) {
+    const key = _cclnPropertyKey(rec);
+    let g = groups.get(key);
+    if (!g) {
+      g = { key, liens: [] };
+      groups.set(key, g);
+    }
+    g.liens.push(rec);
+  }
+
+  // Build one consolidated entry per group.
+  const out = [];
+  for (const g of groups.values()) {
+    // Sort the liens by filed date DESC (newest first) so liens[0]
+    // is always the most recent. Records without filed dates sink
+    // to the bottom.
+    g.liens.sort((a, b) => {
+      const af = a.filed || "";
+      const bf = b.filed || "";
+      if (af < bf) return 1;
+      if (af > bf) return -1;
+      return 0;
+    });
+    const newest = g.liens[0];
+    const totalAmount = g.liens.reduce((sum, r) => {
+      const v = Number(r.amount);
+      return Number.isFinite(v) ? sum + v : sum;
+    }, 0);
+    // Pull each field from the most-recent record with a non-empty
+    // value. Earlier filings sometimes have richer data than the
+    // most recent (or vice versa), so we walk both ends.
+    const pickField = (k) => {
+      for (const r of g.liens) {
+        if (r[k] != null && r[k] !== "") return r[k];
+      }
+      return undefined;
+    };
+    const entry = {
+      // Identity for CRM lookup, status storage, and click handlers
+      property_key:        g.key,
+      // Convenience: keep doc_num pointing at the most-recent
+      // filing's doc_num. Some helpers (the NCAD icon, the clerk
+      // URL link) want a single doc_num to act on; using the most
+      // recent makes the most sense as a "primary" doc.
+      doc_num:             newest.doc_num,
+      // Display columns reflect MOST RECENT lien:
+      filed:               newest.filed || "",
+      amount:              newest.amount,
+      // Plus aggregates for the additional columns / CRM card:
+      lien_count:          g.liens.length,
+      total_lien_amount:   totalAmount,
+      // Identity fields from the cohort:
+      owner:               pickField("owner"),
+      grantee:             pickField("grantee"),
+      doc_type:            pickField("doc_type"),
+      cat:                 pickField("cat"),
+      prop_address:        pickField("prop_address"),
+      prop_city:           pickField("prop_city"),
+      prop_state:          pickField("prop_state"),
+      prop_zip:            pickField("prop_zip"),
+      mail_address:        pickField("mail_address"),
+      mail_city:           pickField("mail_city"),
+      mail_state:          pickField("mail_state"),
+      mail_zip:            pickField("mail_zip"),
+      legal:               pickField("legal"),
+      appraised_value:     pickField("appraised_value"),
+      market_value:        pickField("market_value"),
+      ncad_account_num:    pickField("ncad_account_num"),
+      ncad_prop_id:        pickField("ncad_prop_id"),
+      ncad_owner_id:       pickField("ncad_owner_id"),
+      clerk_url:           newest.clerk_url || "",
+      // PDF-extraction badges show on the doc# cell. We use the
+      // most-recent record's flags (latest extraction state).
+      ccln_pdf_flags:      newest.ccln_pdf_flags || [],
+      ccln_pdf_processed:  !!newest.ccln_pdf_processed,
+      // Full lien history — preserved for the CRM card to render.
+      liens:               g.liens,
+    };
+    out.push(entry);
+  }
+  return out;
+}
 function renderCcln() {
   const tb = document.querySelector("#ccln-table tbody");
   const tf = document.getElementById("ccln-dead-foot");
@@ -7754,10 +8042,15 @@ function renderCcln() {
   tf.innerHTML = "";
   document.getElementById("ccln-empty").hidden = CCLN_FILTERED.length > 0;
 
-  // Split into active (new/working) vs dead.
+  // Split into active (new/working) vs dead. Status is keyed by
+  // property_key (post-consolidation), NOT doc_num — marking a
+  // property dead hides all of its liens at once, since they all
+  // live on the same physical address. Old per-doc_num status
+  // entries in localStorage are silently ignored after the switch
+  // to property-keyed status.
   const active = [], dead = [];
   for (const r of CCLN_FILTERED) {
-    if (getCclnStatus(r.doc_num) === "dead") dead.push(r);
+    if (getCclnStatus(r.property_key || r.doc_num) === "dead") dead.push(r);
     else active.push(r);
   }
 
@@ -7786,8 +8079,114 @@ function renderCcln() {
   }
 }
 
-// Build one CCLN row. isDead → dimmed + "Restore" instead of the
+// Build one CCLN row from a CONSOLIDATED entry (one per unique
+// property, see _cclnConsolidate). The entry has a .liens[] array
+// with all the source lien filings; the row shows most-recent
+// values + aggregates; clicking opens the CRM view showing the
+// full history. isDead → dimmed + "Restore" instead of the
 // status menu.
+function buildCclnRow(r, isDead) {
+  const tr = document.createElement("tr");
+  if (isDead) tr.classList.add("dead-lead");
+
+  // The status menu and CRM open are keyed by property_key
+  // (consolidated identity) rather than doc_num. Fall back to
+  // doc_num for safety on entries that somehow lack a property_key
+  // (shouldn't happen after consolidate, but defensive).
+  const propKey = r.property_key || r.doc_num;
+
+  const apprVal = r.appraised_value ?
+      "$" + Number(r.appraised_value).toLocaleString("en-US",
+                                                     {maximumFractionDigits: 0}) : "—";
+
+  // NCAD cell — uses the shared helper. CCLN records have no
+  // ncad_prop_id yet (no esearch lookup runs for the CCLN pipeline),
+  // so they get the copy-owner + open-search fallback.
+  let ncadCell = ncadCellHtml(r);
+
+  // Status cell. Active rows show a clickable pill that opens a small
+  // menu (Working / Dead Lead, or New / Dead Lead when already
+  // Working). Dead rows show a grey "Deleted" pill + Restore button.
+  let statusCell;
+  if (isDead) {
+    statusCell = `
+      <span class="pill status status-dead">Deleted</span>
+      <button class="restore-btn" style="margin-top:4px;"
+              title="Restore this lead"
+              onclick="restoreCclnLead('${esc(propKey)}'); event.stopPropagation();">
+        Restore</button>`;
+  } else {
+    const st = getCclnStatus(propKey);   // "new" or "working"
+    const pillClass = st === "working" ? "status-working" : "status-new";
+    const label = st === "working" ? "Working" : "New";
+    statusCell = `
+      <span class="pill status ${pillClass}" style="cursor:pointer;"
+            title="Click to change status"
+            onclick="openCclnStatusMenu(event, '${esc(propKey)}', '${st}')">
+        ${label} ▾</span>`;
+  }
+
+  // Lien Count + Total Lien Amount columns — populated from the
+  // consolidation. Earlier these were "—" placeholders; now they
+  // carry real aggregated data.
+  const lienCount = r.lien_count || (r.liens ? r.liens.length : 1);
+  const totalLien = Number(r.total_lien_amount) || 0;
+  const lienCountCell = lienCount > 1
+    ? `<span style="font-weight:600;">${lienCount}</span>`
+    : `<span style="color:var(--muted)">${lienCount}</span>`;
+  const totalLienCell = totalLien > 0
+    ? `$${totalLien.toLocaleString("en-US", {maximumFractionDigits: 0})}`
+    : `<span style="color:var(--muted)">—</span>`;
+
+  tr.innerHTML = `
+    <td>${statusCell}</td>
+    <td>${esc(r.filed || "")}</td>
+    <td>${esc(r.owner || "")}</td>
+    <td>${esc(r.prop_address || "")}${r.prop_city ? "<br><small>" + esc(r.prop_city + " " + (r.prop_zip||"")) + "</small>" : ""}</td>
+    <td>${esc(r.mail_address || "")}${r.mail_city ? "<br><small>" + esc(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||"")) + "</small>" : ""}</td>
+    <td>${r.amount ? "$" + Number(r.amount).toLocaleString() : ""}</td>
+    <td style="text-align:center;">${lienCountCell}</td>
+    <td>${totalLienCell}</td>
+    <td>${apprVal}</td>
+    <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : "$" + Number(r.market_value).toLocaleString("en-US", {maximumFractionDigits: 0})}</td>
+    <td class="legal">${esc((r.legal || "").replace(/^Subdivision\s*-\s*Name:\s*/i, ""))}</td>
+    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${cclnFlagBadges(r)}</td>
+    <td style="text-align:center;">${ncadCell}</td>
+    <td style="text-align:center;"><span style="color:var(--muted)">—</span></td>`;
+
+  // Whole-row click opens the CRM, EXCEPT when the click landed on an
+  // interactive element (status pill, links, buttons) which have their
+  // own behavior, or when the user was drag-selecting text to copy it.
+  // The CRM view receives the property_key so it can render the full
+  // lien history (all records grouped under this property).
+  tr.style.cursor = "pointer";
+  let _cDownX = 0, _cDownY = 0;
+  tr.addEventListener("mousedown", (ev) => {
+    _cDownX = ev.clientX; _cDownY = ev.clientY;
+  });
+  tr.addEventListener("click", (ev) => {
+    if (ev.target.closest(
+        "a, button, .pill.status, .ccln-status-menu, .ext-icon"))
+      return;
+    const moved = Math.abs(ev.clientX - _cDownX) > 5 ||
+                  Math.abs(ev.clientY - _cDownY) > 5;
+    if (moved) return;
+    const sel = window.getSelection && window.getSelection();
+    if (sel && !sel.isCollapsed && sel.toString().trim() !== "") {
+      const anchor = sel.anchorNode;
+      if (anchor && tr.contains(
+            anchor.nodeType === 1 ? anchor : anchor.parentNode))
+        return;
+    }
+    // Pass the property_key so openCrm can look up the
+    // consolidated entry (and its full lien history). The third
+    // arg stays CCLN_RAW so openCrm can re-run consolidation if
+    // it needs to (in case the user reloaded data mid-session).
+    openCrm("ccln", propKey, CCLN_RAW);
+  });
+  return tr;
+}
+
 // ============================================================
 // CCLN PDF flag badge renderer
 // ============================================================
@@ -7847,84 +8246,6 @@ function cclnFlagBadges(r) {
     parts.push(`<span class="ccln-pdf-ok" title="PDF processed cleanly">✓</span>`);
   }
   return parts.join("");
-}
-
-function buildCclnRow(r, isDead) {
-  const tr = document.createElement("tr");
-  if (isDead) tr.classList.add("dead-lead");
-
-  const apprVal = r.appraised_value ?
-      "$" + Number(r.appraised_value).toLocaleString("en-US",
-                                                     {maximumFractionDigits: 0}) : "—";
-
-  // NCAD cell — uses the shared helper. CCLN records have no
-  // ncad_prop_id yet (no esearch lookup runs for the CCLN pipeline),
-  // so they get the copy-owner + open-search fallback.
-  let ncadCell = ncadCellHtml(r);
-
-  // Status cell. Active rows show a clickable pill that opens a small
-  // menu (Working / Dead Lead, or New / Dead Lead when already
-  // Working). Dead rows show a grey "Deleted" pill + Restore button.
-  let statusCell;
-  if (isDead) {
-    statusCell = `
-      <span class="pill status status-dead">Deleted</span>
-      <button class="restore-btn" style="margin-top:4px;"
-              title="Restore this lead"
-              onclick="restoreCclnLead('${esc(r.doc_num)}'); event.stopPropagation();">
-        Restore</button>`;
-  } else {
-    const st = getCclnStatus(r.doc_num);   // "new" or "working"
-    const pillClass = st === "working" ? "status-working" : "status-new";
-    const label = st === "working" ? "Working" : "New";
-    statusCell = `
-      <span class="pill status ${pillClass}" style="cursor:pointer;"
-            title="Click to change status"
-            onclick="openCclnStatusMenu(event, '${esc(r.doc_num)}', '${st}')">
-        ${label} ▾</span>`;
-  }
-
-  tr.innerHTML = `
-    <td>${statusCell}</td>
-    <td>${esc(r.filed || "")}</td>
-    <td>${esc(r.owner || "")}</td>
-    <td>${esc(r.prop_address || "")}${r.prop_city ? "<br><small>" + esc(r.prop_city + " " + (r.prop_zip||"")) + "</small>" : ""}</td>
-    <td>${esc(r.mail_address || "")}${r.mail_city ? "<br><small>" + esc(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||"")) + "</small>" : ""}</td>
-    <td>${r.amount ? "$" + Number(r.amount).toLocaleString() : ""}</td>
-    <td style="text-align:center;"><span style="color:var(--muted)">—</span></td>
-    <td><span style="color:var(--muted)">—</span></td>
-    <td>${apprVal}</td>
-    <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : "$" + Number(r.market_value).toLocaleString("en-US", {maximumFractionDigits: 0})}</td>
-    <td class="legal">${esc((r.legal || "").replace(/^Subdivision\s*-\s*Name:\s*/i, ""))}</td>
-    <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${cclnFlagBadges(r)}</td>
-    <td style="text-align:center;">${ncadCell}</td>
-    <td style="text-align:center;"><span style="color:var(--muted)">—</span></td>`;
-
-  // Whole-row click opens the CRM, EXCEPT when the click landed on an
-  // interactive element (status pill, links, buttons) which have their
-  // own behavior, or when the user was drag-selecting text to copy it.
-  tr.style.cursor = "pointer";
-  let _cDownX = 0, _cDownY = 0;
-  tr.addEventListener("mousedown", (ev) => {
-    _cDownX = ev.clientX; _cDownY = ev.clientY;
-  });
-  tr.addEventListener("click", (ev) => {
-    if (ev.target.closest(
-        "a, button, .pill.status, .ccln-status-menu, .ext-icon"))
-      return;
-    const moved = Math.abs(ev.clientX - _cDownX) > 5 ||
-                  Math.abs(ev.clientY - _cDownY) > 5;
-    if (moved) return;
-    const sel = window.getSelection && window.getSelection();
-    if (sel && !sel.isCollapsed && sel.toString().trim() !== "") {
-      const anchor = sel.anchorNode;
-      if (anchor && tr.contains(
-            anchor.nodeType === 1 ? anchor : anchor.parentNode))
-        return;
-    }
-    openCrm("ccln", r.doc_num, CCLN_RAW);
-  });
-  return tr;
 }
 
 // ============================================================
