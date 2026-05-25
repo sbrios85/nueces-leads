@@ -2138,7 +2138,7 @@
       <th data-sort="prop_address"   style="width: 175px;">Property Address</th>
       <th data-sort="mail_address"   style="width: 150px;">Mailing Address</th>
       <th data-sort="loan_amount"    style="width: 112px;">Loan Amount</th>
-      <th data-sort="appraised_value" style="width: 92px;">Appraised Value</th>
+      <th data-sort="appraised_value" style="width: 92px;">Market Value</th>
       <th data-sort="deed_date"      style="width: 90px;">Loan Date</th>
       <th data-sort="loan_doc"       style="width: 108px;">Loan Document</th>
       <th data-sort="lender"         style="width: 150px;">Lender</th>
@@ -4421,7 +4421,7 @@ function openMfcCrm(docNum, sourceRecords) {
       ${_renderEditableRow("Loan", "loan_amount",
           moneyFmt(rec.loan_amount) + ` <span style="color:var(--muted)">(${esc(loanDate)})</span>`,
           rec.loan_amount == null ? "" : String(rec.loan_amount), "", false, false)}
-      ${_renderEditableRow("Appraised", "appraised_value",
+      ${_renderEditableRow("Market Value", "appraised_value",
           moneyFmt(rec.appraised_value),
           rec.appraised_value == null ? "" : String(rec.appraised_value),
           "", false, false)}
@@ -5210,6 +5210,181 @@ function openMfcCrm(docNum, sourceRecords) {
   // scrollHeight returns 0 on a hidden element, so this has to
   // happen post-show or pre-existing notes wouldn't size right.
   _mfcWireAutogrowTextareas("#crm-body .mfc-contact-fields textarea");
+}
+
+// ================================================================
+// TFC CRM (Upload 1 — shell that opens and shows the snapshot card)
+// ----------------------------------------------------------------
+// Pattern mirrors openMfcCrm: save return state, build innerHTML,
+// hide all panes, show #crm-view. The shared #crm-view container,
+// #crm-back button, and closeCrm() handler work the same for any
+// lead type — no need to duplicate them.
+//
+// Storage: tfc-crm-store (loadTfcCrm/saveTfcCrm/getTfcEntry/
+// setTfcEntry already defined earlier in this file). Same shape as
+// the MFC CRM eventually will be: stage, attempts[], contacts[],
+// skiptrace[], custom_fields, overrides, occupancy, photo_url,
+// notes, _updated_at. Upload 2 will add all those rich cards on
+// top of this shell.
+//
+// Why a snapshot card per lead type: TFC and MFC have different
+// data fields (TFC has sale_date, min_bid, market_value, cause_nbr;
+// MFC has loan_amount, deed_date, loan_doc, lender). Trying to
+// share one snapshot template would mean half-empty rows on every
+// lead. Easier and clearer to render the fields each lead type
+// actually has.
+function openTfcCrm(uid, sourceRecords) {
+  const rec = (sourceRecords || []).find(x => x.uid === uid);
+  if (!rec) return;
+
+  // Remember which pane/scroll we came from so closeCrm() can put
+  // the user back where they were. Same logic as openMfcCrm.
+  const _mainEl = document.querySelector(".main");
+  const activePane = document.querySelector(".pane.active");
+  _crmReturn = {
+    pane: activePane ? activePane.id : null,
+    scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY,
+  };
+
+  // --- Snapshot data ---
+  const entry = getTfcEntry(uid);
+  const _ownerEff = tfcFieldValue(rec, "owner") || "";
+  const _propEff = [
+        tfcFieldValue(rec, "prop_address") || rec.prop_address || "",
+      ].filter(Boolean).join(" ").trim();
+  const _mailOverride = tfcFieldValue(rec, "mail_address");
+  const _mailEff = _mailOverride ||
+      [rec.mail_address,
+       [rec.mail_city, rec.mail_state, rec.mail_zip]
+           .filter(Boolean).join(" ").trim()
+      ].filter(Boolean).join(" ").trim();
+  const _legalEff = tfcFieldValue(rec, "legal") || rec.legal || "";
+
+  // Sale date display + days-until.
+  const _saleYmd = rec.sale_date_only || rec.sale_date;
+  const saleDateText = _tfcFmtDate(_saleYmd) || "—";
+  const days = _tfcDaysUntil(_saleYmd);
+  let daysBadge = "";
+  if (days != null) {
+    if (days < 0) {
+      daysBadge = `<span style="color:var(--bad);font-weight:600">
+                   ${Math.abs(days)} days ago</span>`;
+    } else {
+      const tier = days <= 10 ? "bad" : days <= 30 ? "warn" : "good";
+      daysBadge = `<span style="color:var(--${tier});font-weight:600">
+                   ${days}d</span>`;
+    }
+  }
+
+  // NCAD link helper — same as the row uses, gives ↗ or 🔍.
+  const ncadHtml = ncadCellHtml(rec);
+
+  // FC status pill (Scheduled for Online Auction / Cancelled / etc).
+  const fcStatusHtml = _tfcFcStatusCell(rec.status);
+
+  // Build the snapshot card. Same .mfc-snapshot styles MFC uses so
+  // we get the same visual treatment for free.
+  const snapshotHtml = `
+    <div class="mfc-snapshot">
+      <h3 class="mfc-card-title">Property</h3>
+      <div class="mfc-snapshot-grid">
+        <div class="mfc-snapshot-label">Owner</div>
+        <div class="mfc-snapshot-value">
+          ${esc(_ownerEff) || '<span style="color:var(--muted)">—</span>'}
+        </div>
+
+        <div class="mfc-snapshot-label">Property Address</div>
+        <div class="mfc-snapshot-value">
+          ${esc(_propEff) || '<span style="color:var(--muted)">—</span>'}
+        </div>
+
+        <div class="mfc-snapshot-label">Mailing Address</div>
+        <div class="mfc-snapshot-value">
+          ${esc(_mailEff) || '<span style="color:var(--muted)">—</span>'}
+        </div>
+
+        <div class="mfc-snapshot-label">Sale Date</div>
+        <div class="mfc-snapshot-value">
+          ${esc(saleDateText)} ${daysBadge}
+        </div>
+
+        <div class="mfc-snapshot-label">Sales Type</div>
+        <div class="mfc-snapshot-value">
+          ${esc(rec.sale_type || "—")}
+        </div>
+
+        <div class="mfc-snapshot-label">FC Status</div>
+        <div class="mfc-snapshot-value">${fcStatusHtml}</div>
+
+        <div class="mfc-snapshot-label">Min Bid</div>
+        <div class="mfc-snapshot-value">
+          ${rec.minimum_bid == null
+              ? '<span style="color:var(--muted)">—</span>'
+              : moneyFmt(rec.minimum_bid)}
+        </div>
+
+        <div class="mfc-snapshot-label">Market Value</div>
+        <div class="mfc-snapshot-value">
+          ${(rec.market_value == null || rec.market_value === "")
+              ? '<span style="color:var(--muted)">—</span>'
+              : moneyFmt(rec.market_value)}
+        </div>
+
+        <div class="mfc-snapshot-label">Legal Description</div>
+        <div class="mfc-snapshot-value">
+          ${esc(_legalEff) || '<span style="color:var(--muted)">—</span>'}
+        </div>
+
+        <div class="mfc-snapshot-label">Cause #</div>
+        <div class="mfc-snapshot-value">
+          ${esc(rec.cause_nbr || "—")}
+        </div>
+
+        <div class="mfc-snapshot-label">NCAD</div>
+        <div class="mfc-snapshot-value">${ncadHtml}</div>
+      </div>
+    </div>`;
+
+  // The Upload-2 layout (cards) will replace this with a multi-
+  // column grid like MFC. For now, just render the snapshot in the
+  // shared CRM body and a placeholder for the rest.
+  const crmBody = document.getElementById("crm-body");
+  crmBody.dataset.crmType = "tfc";
+  crmBody.dataset.uid = uid;
+  crmBody.innerHTML = `
+    <div class="mfc-layout">
+      <div class="mfc-col mfc-col-1">
+        ${snapshotHtml}
+      </div>
+      <div class="mfc-col mfc-col-2">
+        <div class="mfc-snapshot">
+          <h3 class="mfc-card-title">Outreach</h3>
+          <p style="color:var(--muted); font-size:13px;">
+            Attempts log, contacts, and follow-up tracking
+            coming next.
+          </p>
+        </div>
+      </div>
+      <div class="mfc-col mfc-col-3">
+        <div class="mfc-snapshot">
+          <h3 class="mfc-card-title">Research</h3>
+          <p style="color:var(--muted); font-size:13px;">
+            Skiptrace, photos, and custom fields coming next.
+          </p>
+        </div>
+      </div>
+    </div>`;
+
+  // Show the CRM view. Same toggle MFC uses.
+  document.querySelectorAll(".pane").forEach(p =>
+      p.classList.remove("active"));
+  const crm = document.getElementById("crm-view");
+  crm.hidden = false;
+  // Always scroll to top when opening fresh (no re-render path yet
+  // since the shell has no editable fields). Upload 2 will need the
+  // _wasOpen / _prevScrollY preservation logic from MFC.
+  if (_mainEl) _mainEl.scrollTop = 0;
+  else window.scrollTo(0, 0);
 }
 
 // Stage handler — updates the stored stage AND logs an activity row,
@@ -6908,6 +7083,36 @@ function buildTfcRow(r, mode) {
     <td>${esc(causeNbr) || '<span style="color:var(--muted)">—</span>'}</td>
     <td style="text-align:center;">${ncadCellHtml(r)}</td>
   `;
+
+  // ---- Row click → open the TFC CRM ----
+  // Mirrors MFC's row-click logic. Clicks on interactive children
+  // (status pills, save button, editable cells, NCAD icon, etc.)
+  // keep their own behavior — only "blank" clicks open the CRM.
+  // Drag-select protection: if the pointer moved >5px between
+  // mousedown and click, or the user has highlighted text inside
+  // this row, treat it as a copy-text gesture, not a click.
+  tr.style.cursor = "pointer";
+  let _tfcDownX = 0, _tfcDownY = 0;
+  tr.addEventListener("mousedown", (ev) => {
+    _tfcDownX = ev.clientX; _tfcDownY = ev.clientY;
+  });
+  tr.addEventListener("click", (ev) => {
+    if (ev.target.closest(
+        "a, button, input, textarea, .pill.status, .ext-icon, "
+        + ".save-cell, .cell-edit"))
+      return;
+    const moved = Math.abs(ev.clientX - _tfcDownX) > 5 ||
+                  Math.abs(ev.clientY - _tfcDownY) > 5;
+    if (moved) return;
+    const sel = window.getSelection && window.getSelection();
+    if (sel && !sel.isCollapsed && sel.toString().trim() !== "") {
+      const anchor = sel.anchorNode;
+      if (anchor && tr.contains(
+            anchor.nodeType === 1 ? anchor : anchor.parentNode))
+        return;
+    }
+    openTfcCrm(r.uid, TFC_RAW);
+  });
   return tr;
 }
 
