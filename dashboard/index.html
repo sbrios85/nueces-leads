@@ -2594,6 +2594,46 @@
   </div>
 </div>
 
+<!-- ======== TFC log-attempt modal (Upload 2) ========
+     Same UI/behavior as the MFC attempt modal but bound to the
+     TFC CRM. Mirrors MFC's element IDs with tfc- prefix so the
+     two modals share zero state — saving an MFC attempt cannot
+     accidentally clobber a TFC one and vice versa. Method/Response
+     <select> options are populated on page load by
+     _tfcInitModalSelects() in JS below. -->
+<div class="mfc-attempt-modal-backdrop" id="tfc-attempt-modal-backdrop"
+     onclick="if(event.target===this)_tfcCloseAttemptModal()">
+  <div class="mfc-attempt-modal" role="dialog"
+       aria-labelledby="tfc-attempt-modal-title">
+    <h3 id="tfc-attempt-modal-title">Log outreach attempt</h3>
+    <div class="crm-field">
+      <label>Date</label>
+      <input type="date" id="tfc-attempt-date">
+    </div>
+    <div class="crm-field">
+      <label>Method</label>
+      <select id="tfc-attempt-method"></select>
+    </div>
+    <div class="crm-field">
+      <label>Response</label>
+      <select id="tfc-attempt-response"></select>
+    </div>
+    <div class="crm-field">
+      <label>Try again on <span class="modal-field-hint">(optional — leave blank if no follow-up planned)</span></label>
+      <input type="date" id="tfc-attempt-followup">
+    </div>
+    <div class="crm-field">
+      <label>Notes</label>
+      <textarea id="tfc-attempt-notes" rows="3"
+                placeholder="What happened? (optional)"></textarea>
+    </div>
+    <div class="mfc-attempt-modal-actions">
+      <button onclick="_tfcCloseAttemptModal()">Cancel</button>
+      <button class="primary" onclick="_tfcSaveAttempt()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- ======== MFC custom-field schema-manager modal ========
      Lets the user define which custom fields exist across all
      MFC leads. The list is dynamic — rows are added/removed by
@@ -5213,32 +5253,357 @@ function openMfcCrm(docNum, sourceRecords) {
 }
 
 // ================================================================
-// TFC CRM (Upload 1 — shell that opens and shows the snapshot card)
+// TFC CRM (Upload 2 — full CRM port from MFC)
 // ----------------------------------------------------------------
-// Pattern mirrors openMfcCrm: save return state, build innerHTML,
-// hide all panes, show #crm-view. The shared #crm-view container,
+// Pattern mirrors openMfcCrm. Storage: tfc-crm-store. All MFC
+// helpers (_mfcLogActivity, _mfcSaveAttempt, etc.) have parallel
+// TFC equivalents below. The shared #crm-view container,
 // #crm-back button, and closeCrm() handler work the same for any
 // lead type — no need to duplicate them.
 //
-// Storage: tfc-crm-store (loadTfcCrm/saveTfcCrm/getTfcEntry/
-// setTfcEntry already defined earlier in this file). Same shape as
-// the MFC CRM eventually will be: stage, attempts[], contacts[],
-// skiptrace[], custom_fields, overrides, occupancy, photo_url,
-// notes, _updated_at. Upload 2 will add all those rich cards on
-// top of this shell.
-//
-// Why a snapshot card per lead type: TFC and MFC have different
-// data fields (TFC has sale_date, min_bid, market_value, cause_nbr;
-// MFC has loan_amount, deed_date, loan_doc, lender). Trying to
-// share one snapshot template would mean half-empty rows on every
-// lead. Easier and clearer to render the fields each lead type
-// actually has.
+// Entry shape on tfc-crm-store (per-uid):
+//   {
+//     stage: "new" | "contacted" | "negotiating" | "under_contract"
+//          | "closed_won" | "watching" | "dead",
+//     attempts: [{id, date, method, notes, response, followup}, …],
+//     contacts: [{id, title, name, phone, email, followup, notes}, …],
+//     skiptrace: [],          // (Upload 3)
+//     custom_fields: {},      // (Upload 3)
+//     overrides: { fieldKey: stringValue, ... },  // already in use
+//     occupancy: "",          // (Upload 3 will surface in Research)
+//     photo_url: "",          // (Upload 3)
+//     photo_folder_url: "",   // (Upload 3)
+//     notes: "",
+//     last_contact: "YYYY-MM-DD",  // set automatically by attempts
+//     activity: [{ts, ev}, …],     // max 50, newest-first
+//     _updated_at: ISO,
+//   }
+// ================================================================
+
+// Pipeline stages — same labels and structure as MFC for visual
+// consistency. The "terminal" flag splits the row into in-progress
+// pills on the left and outcome pills on the right (separated by a
+// faint vertical line in CSS).
+const TFC_STAGES = [
+  { key: "new",            label: "New",            terminal: false },
+  { key: "contacted",      label: "Contacted",      terminal: false },
+  { key: "negotiating",    label: "Negotiating",    terminal: false },
+  { key: "under_contract", label: "Under Contract", terminal: false },
+  { key: "closed_won",     label: "Closed",         terminal: true, kind: "closed-won" },
+  { key: "watching",       label: "Watching",       terminal: true, kind: "watching" },
+  { key: "dead",           label: "Dead",           terminal: true, kind: "dead" },
+];
+
+// Outreach method dropdown values for the Log-Attempt modal.
+// Mirror MFC_METHODS so users see a familiar interface across
+// lead types.
+const TFC_METHODS = [
+  "Mailed",
+  "Knocked",
+  "Left Letter",
+  "Called",
+  "Texted",
+  "Called/Texted",
+  "Emailed",
+  "Drive-By",
+  "Other",
+];
+
+// Outreach response options. Same structure/labels as MFC_RESPONSES;
+// the `cls` value drives the colored pill in the attempts log
+// (.pos = green, .neg = red, empty = default).
+const TFC_RESPONSES = [
+  { key: "",           label: "—",                  cls: ""    },
+  { key: "no_answer",  label: "No answer",          cls: ""    },
+  { key: "no_response",label: "No response yet",    cls: ""    },
+  { key: "negative",   label: "Not interested",     cls: "neg" },
+  { key: "callback",   label: "Callback requested", cls: "pos" },
+  { key: "interested", label: "Interested",         cls: "pos" },
+];
+
+// Populate the TFC attempt modal's select dropdowns once when the
+// script loads. Same pattern as MFC — defer until DOMContentLoaded
+// so the modal HTML is in the DOM. Idempotent: skips work if the
+// options are already populated (page rehydration or hot reload).
+(function _tfcInitModalSelects() {
+  const populate = () => {
+    const ms = document.getElementById("tfc-attempt-method");
+    if (ms && !ms.options.length) {
+      TFC_METHODS.forEach(m => {
+        const o = document.createElement("option");
+        o.value = m; o.textContent = m;
+        ms.appendChild(o);
+      });
+    }
+    const rs = document.getElementById("tfc-attempt-response");
+    if (rs && !rs.options.length) {
+      TFC_RESPONSES.forEach(r => {
+        const o = document.createElement("option");
+        o.value = r.key; o.textContent = r.label;
+        rs.appendChild(o);
+      });
+    }
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", populate);
+  } else {
+    populate();
+  }
+})();
+
+// Append an activity log entry on a TFC CRM lead. Used by stage
+// changes, outreach edits, contact adds/removes, etc. Mirrors
+// _mfcLogActivity. Capped at 50 entries per lead to bound storage.
+function _tfcLogActivity(uid, eventText) {
+  const store = loadTfcCrm();
+  const entry = store[uid] || {};
+  const activity = Array.isArray(entry.activity) ? entry.activity : [];
+  activity.unshift({ ts: new Date().toISOString(), ev: eventText });
+  entry.activity = activity.slice(0, 50);
+  entry._updated_at = new Date().toISOString();
+  store[uid] = entry;
+  saveTfcCrm(store);
+}
+
+// Format an activity timestamp the same way MFC does — short
+// month/day plus 12-hour time with AM/PM.
+function _tfcFormatActivityTs(iso) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleString("en-US", {
+    month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit",
+  });
+}
+
+// Pending state for the TFC attempt modal so the Save button knows
+// which lead + attempt it's saving. Set by _tfcOpenAttemptModal,
+// cleared by _tfcCloseAttemptModal.
+let _tfcPendingAttempt = null;
+
+// Stage handler — sets the stored stage AND logs an activity row.
+// Re-renders the CRM so the active pill updates.
+function _tfcSetStage(uid, newStage) {
+  const entry = getTfcEntry(uid);
+  const oldStage = entry.stage || "new";
+  if (oldStage === newStage) return;  // no-op
+  setTfcEntry(uid, { stage: newStage });
+  const oldLbl = (TFC_STAGES.find(s => s.key === oldStage) || {}).label || oldStage;
+  const newLbl = (TFC_STAGES.find(s => s.key === newStage) || {}).label || newStage;
+  _tfcLogActivity(uid, `Stage: ${oldLbl} → ${newLbl}`);
+  openTfcCrm(uid, TFC_RAW);
+}
+
+// Open the Log-Attempt modal. If attemptId is provided, the modal
+// pre-fills with that existing attempt's values for editing;
+// otherwise it opens blank with today's date as default.
+function _tfcOpenAttemptModal(uid, attemptId) {
+  _tfcPendingAttempt = { uid, attemptId };
+  let existing = {};
+  if (attemptId) {
+    const entry = getTfcEntry(uid);
+    const a = (entry.attempts || []).find(x => x.id === attemptId);
+    if (a) existing = a;
+  }
+  const todayIso = new Date().toISOString().slice(0, 10);
+  document.getElementById("tfc-attempt-date").value =
+    existing.date || todayIso;
+  document.getElementById("tfc-attempt-method").value =
+    existing.method || "Mailed";
+  document.getElementById("tfc-attempt-notes").value =
+    existing.notes || "";
+  document.getElementById("tfc-attempt-response").value =
+    existing.response || "";
+  document.getElementById("tfc-attempt-followup").value =
+    existing.followup || "";
+  document.getElementById("tfc-attempt-modal-backdrop")
+    .classList.add("open");
+  document.getElementById("tfc-attempt-notes").focus();
+}
+
+function _tfcCloseAttemptModal() {
+  document.getElementById("tfc-attempt-modal-backdrop")
+    .classList.remove("open");
+  _tfcPendingAttempt = null;
+}
+
+// Save handler for the Log-Attempt modal. Either updates an
+// existing attempt (when attemptId is set) or prepends a new one.
+// Side effects: writes attempts[] back to the entry, logs an
+// activity row, and auto-updates last_contact if the attempt date
+// is more recent than what's already saved.
+function _tfcSaveAttempt() {
+  if (!_tfcPendingAttempt) return;
+  const { uid, attemptId } = _tfcPendingAttempt;
+  const date     = document.getElementById("tfc-attempt-date").value;
+  const method   = document.getElementById("tfc-attempt-method").value;
+  const notes    = document.getElementById("tfc-attempt-notes").value;
+  const response = document.getElementById("tfc-attempt-response").value;
+  const followup = document.getElementById("tfc-attempt-followup").value;
+
+  const entry = getTfcEntry(uid);
+  const attempts = Array.isArray(entry.attempts) ? entry.attempts.slice() : [];
+
+  if (attemptId) {
+    const i = attempts.findIndex(a => a.id === attemptId);
+    if (i >= 0) attempts[i] = { ...attempts[i], date, method, notes, response, followup };
+    _tfcLogActivity(uid, `Edited outreach: ${method} (${date})`);
+  } else {
+    const id = "att_" + Math.random().toString(36).slice(2, 10);
+    attempts.unshift({ id, date, method, notes, response, followup });
+    _tfcLogActivity(uid,
+      `Logged outreach: ${method} (${date})` +
+      (response ? ` — ${(TFC_RESPONSES.find(r=>r.key===response)||{}).label||response}` : "") +
+      (followup ? ` · follow-up ${followup}` : ""));
+    if (!entry.last_contact || date > entry.last_contact) {
+      setTfcEntry(uid, { last_contact: date });
+    }
+  }
+  setTfcEntry(uid, { attempts });
+  _tfcCloseAttemptModal();
+  openTfcCrm(uid, TFC_RAW);
+}
+
+function _tfcDeleteAttempt(uid, attemptId) {
+  if (!confirm("Delete this outreach attempt?")) return;
+  const entry = getTfcEntry(uid);
+  const attempts = (entry.attempts || []).filter(a => a.id !== attemptId);
+  setTfcEntry(uid, { attempts });
+  _tfcLogActivity(uid, "Deleted an outreach attempt");
+  openTfcCrm(uid, TFC_RAW);
+}
+
+// Contact helpers. Mirrors _mfcGenContactId / _mfcSetContactField /
+// _mfcAddContact / _mfcRemoveContact. Each contact lives in
+// entry.contacts[] with the shape:
+//   {id, title, name, phone, email, followup, notes}
+function _tfcGenContactId() {
+  return "c_" + Math.random().toString(36).slice(2, 10);
+}
+
+function _tfcSetContactField(uid, contactId, field, value) {
+  const store = loadTfcCrm();
+  const entry = store[uid] || {};
+  const contacts = Array.isArray(entry.contacts)
+    ? entry.contacts.slice() : [];
+  const i = contacts.findIndex(c => c.id === contactId);
+  if (i < 0) return;
+  contacts[i] = { ...contacts[i], [field]: value };
+  entry.contacts = contacts;
+  entry._updated_at = new Date().toISOString();
+  store[uid] = entry;
+  saveTfcCrm(store);
+}
+
+function _tfcAddContact(uid) {
+  const store = loadTfcCrm();
+  const entry = store[uid] || {};
+  const contacts = Array.isArray(entry.contacts)
+    ? entry.contacts.slice() : [];
+  contacts.push({
+    id: _tfcGenContactId(),
+    title: "", name: "",
+    phone: "", email: "",
+    followup: "", notes: "",
+  });
+  entry.contacts = contacts;
+  entry._updated_at = new Date().toISOString();
+  store[uid] = entry;
+  saveTfcCrm(store);
+  openTfcCrm(uid, TFC_RAW);
+}
+
+function _tfcRemoveContact(uid, contactId) {
+  const entry = getTfcEntry(uid);
+  const c = (entry.contacts || []).find(x => x.id === contactId);
+  const hasData = c && (c.name || c.phone || c.email);
+  if (hasData && !confirm("Delete this contact?")) return;
+  const store = loadTfcCrm();
+  const e2 = store[uid] || {};
+  e2.contacts = (e2.contacts || []).filter(x => x.id !== contactId);
+  e2._updated_at = new Date().toISOString();
+  store[uid] = e2;
+  saveTfcCrm(store);
+  if (hasData) {
+    _tfcLogActivity(uid,
+      `Removed contact "${(c.name || "(unnamed)")}"`);
+  }
+  openTfcCrm(uid, TFC_RAW);
+}
+
+// Compute the soonest follow-up across attempts + contacts for
+// the follow-up banner at the top of the CRM. Returns null if no
+// follow-ups are set. Same logic as _mfcComputeNextFollowup —
+// overdue items win (oldest first), then upcoming (earliest first).
+function _tfcComputeNextFollowup(entry) {
+  if (!entry) return null;
+  const items = [];
+  const attempts = Array.isArray(entry.attempts) ? entry.attempts : [];
+  for (const a of attempts) {
+    if (!a.followup) continue;
+    const respDef = TFC_RESPONSES.find(r => r.key === (a.response || ""));
+    const respTxt = respDef ? respDef.label : (a.response || "");
+    items.push({
+      date: a.followup,
+      source: "attempt",
+      label: "Try again — " + (a.method || "outreach") +
+             (respTxt ? ` (${respTxt})` : ""),
+    });
+  }
+  const contacts = Array.isArray(entry.contacts) ? entry.contacts : [];
+  for (const c of contacts) {
+    if (!c.followup) continue;
+    const who = c.name
+      ? (c.title ? `${c.name} (${c.title})` : c.name)
+      : (c.title || "Contact");
+    items.push({
+      date: c.followup,
+      source: "contact",
+      label: who,
+    });
+  }
+  if (items.length === 0) return null;
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const overdue = items.filter(i => i.date <= todayIso)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const upcoming = items.filter(i => i.date > todayIso)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const pick = overdue[0] || upcoming[0];
+  return {
+    date: pick.date,
+    source: pick.source,
+    label: pick.label,
+    count: items.length,
+    isDue: pick.date <= todayIso,
+  };
+}
+
+// Auto-grow textareas (mirrors _mfcWireAutogrowTextareas). Runs
+// once after the CRM HTML is in the DOM so pre-existing notes
+// size correctly; rewires on every input event.
+function _tfcWireAutogrowTextareas(selector) {
+  document.querySelectorAll(selector).forEach(ta => {
+    const resize = () => {
+      ta.style.height = "auto";
+      ta.style.height = ta.scrollHeight + "px";
+    };
+    if (!ta.dataset._autogrowBound) {
+      ta.addEventListener("input", resize);
+      ta.dataset._autogrowBound = "1";
+    }
+    resize();
+  });
+}
+
+// ----------------------------------------------------------------
+// openTfcCrm — render the full CRM view for a TFC lead
+// ----------------------------------------------------------------
 function openTfcCrm(uid, sourceRecords) {
   const rec = (sourceRecords || []).find(x => x.uid === uid);
   if (!rec) return;
 
-  // Remember which pane/scroll we came from so closeCrm() can put
-  // the user back where they were. Same logic as openMfcCrm.
+  // Save return state (which pane was active, where the scroll was)
+  // so closeCrm() can put the user back where they were.
   const _mainEl = document.querySelector(".main");
   const activePane = document.querySelector(".pane.active");
   _crmReturn = {
@@ -5246,12 +5611,25 @@ function openTfcCrm(uid, sourceRecords) {
     scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY,
   };
 
-  // --- Snapshot data ---
+  // Detect re-render vs fresh open — re-renders (stage change,
+  // attempt save, contact add, etc.) PRESERVE the user's current
+  // scroll position; fresh opens reset to top.
+  const crmEl = document.getElementById("crm-view");
+  const _wasOpen = crmEl && !crmEl.hidden;
+  const _prevScrollY = _mainEl ? _mainEl.scrollTop : window.scrollY;
+
+  // Pull the entry. Empty {} if this lead has never been touched —
+  // every field falls back to a sensible default below.
   const entry = getTfcEntry(uid);
+  const currentStage = entry.stage || "new";
+  const attempts = Array.isArray(entry.attempts) ? entry.attempts : [];
+  const contactsList = Array.isArray(entry.contacts) ? entry.contacts : [];
+  const activity = Array.isArray(entry.activity) ? entry.activity : [];
+  const _v = k => entry[k] != null ? entry[k] : "";
+
+  // -------- Snapshot data --------
   const _ownerEff = tfcFieldValue(rec, "owner") || "";
-  const _propEff = [
-        tfcFieldValue(rec, "prop_address") || rec.prop_address || "",
-      ].filter(Boolean).join(" ").trim();
+  const _propEff = tfcFieldValue(rec, "prop_address") || rec.prop_address || "";
   const _mailOverride = tfcFieldValue(rec, "mail_address");
   const _mailEff = _mailOverride ||
       [rec.mail_address,
@@ -5260,131 +5638,391 @@ function openTfcCrm(uid, sourceRecords) {
       ].filter(Boolean).join(" ").trim();
   const _legalEff = tfcFieldValue(rec, "legal") || rec.legal || "";
 
-  // Sale date display + days-until.
+  // Sale date with days-until badge.
   const _saleYmd = rec.sale_date_only || rec.sale_date;
   const saleDateText = _tfcFmtDate(_saleYmd) || "—";
   const days = _tfcDaysUntil(_saleYmd);
   let daysBadge = "";
   if (days != null) {
     if (days < 0) {
-      daysBadge = `<span style="color:var(--bad);font-weight:600">
-                   ${Math.abs(days)} days ago</span>`;
+      daysBadge = ` <span style="color:var(--bad);font-weight:600">
+                   (${Math.abs(days)} days ago)</span>`;
     } else {
       const tier = days <= 10 ? "bad" : days <= 30 ? "warn" : "good";
-      daysBadge = `<span style="color:var(--${tier});font-weight:600">
-                   ${days}d</span>`;
+      daysBadge = ` <span style="color:var(--${tier});font-weight:600">
+                   (${days}d)</span>`;
     }
   }
-
-  // NCAD link helper — same as the row uses, gives ↗ or 🔍.
+  // NCAD link helper — gives ↗ or 🔍 icon.
   const ncadHtml = ncadCellHtml(rec);
-
   // FC status pill (Scheduled for Online Auction / Cancelled / etc).
   const fcStatusHtml = _tfcFcStatusCell(rec.status);
 
-  // Build the snapshot card. Same .mfc-snapshot styles MFC uses so
-  // we get the same visual treatment for free.
+  // -------- Snapshot card (read-only display, uses MFC's grid CSS) --------
+  // Layout uses the same .mfc-snapshot grid as MFC: 2 columns,
+  // with .wide rows spanning the full width. .k is the label,
+  // .v is the value. This produces the proper label-left,
+  // value-right layout (fixing Upload 1's vertical-stacking bug).
   const snapshotHtml = `
     <div class="mfc-snapshot">
-      <h3 class="mfc-card-title">Property</h3>
-      <div class="mfc-snapshot-grid">
-        <div class="mfc-snapshot-label">Owner</div>
-        <div class="mfc-snapshot-value">
+      <div class="mfc-snap-row wide">
+        <span class="k">Owner</span>
+        <span class="v big">
           ${esc(_ownerEff) || '<span style="color:var(--muted)">—</span>'}
-        </div>
-
-        <div class="mfc-snapshot-label">Property Address</div>
-        <div class="mfc-snapshot-value">
-          ${esc(_propEff) || '<span style="color:var(--muted)">—</span>'}
-        </div>
-
-        <div class="mfc-snapshot-label">Mailing Address</div>
-        <div class="mfc-snapshot-value">
-          ${esc(_mailEff) || '<span style="color:var(--muted)">—</span>'}
-        </div>
-
-        <div class="mfc-snapshot-label">Sale Date</div>
-        <div class="mfc-snapshot-value">
-          ${esc(saleDateText)} ${daysBadge}
-        </div>
-
-        <div class="mfc-snapshot-label">Sales Type</div>
-        <div class="mfc-snapshot-value">
-          ${esc(rec.sale_type || "—")}
-        </div>
-
-        <div class="mfc-snapshot-label">FC Status</div>
-        <div class="mfc-snapshot-value">${fcStatusHtml}</div>
-
-        <div class="mfc-snapshot-label">Min Bid</div>
-        <div class="mfc-snapshot-value">
-          ${rec.minimum_bid == null
-              ? '<span style="color:var(--muted)">—</span>'
-              : moneyFmt(rec.minimum_bid)}
-        </div>
-
-        <div class="mfc-snapshot-label">Market Value</div>
-        <div class="mfc-snapshot-value">
-          ${(rec.market_value == null || rec.market_value === "")
-              ? '<span style="color:var(--muted)">—</span>'
-              : moneyFmt(rec.market_value)}
-        </div>
-
-        <div class="mfc-snapshot-label">Legal Description</div>
-        <div class="mfc-snapshot-value">
-          ${esc(_legalEff) || '<span style="color:var(--muted)">—</span>'}
-        </div>
-
-        <div class="mfc-snapshot-label">Cause #</div>
-        <div class="mfc-snapshot-value">
-          ${esc(rec.cause_nbr || "—")}
-        </div>
-
-        <div class="mfc-snapshot-label">NCAD</div>
-        <div class="mfc-snapshot-value">${ncadHtml}</div>
+        </span>
       </div>
-    </div>`;
+      <div class="mfc-snap-row wide">
+        <span class="k">Property</span>
+        <span class="v">
+          ${esc(_propEff) || '<span style="color:var(--muted)">—</span>'}
+        </span>
+      </div>
+      <div class="mfc-snap-row wide">
+        <span class="k">Mailing</span>
+        <span class="v">
+          ${esc(_mailEff) || '<span style="color:var(--muted)">—</span>'}
+        </span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Sale Date</span>
+        <span class="v big">${esc(saleDateText)}${daysBadge}</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Sales Type</span>
+        <span class="v">${esc(rec.sale_type || "—")}</span>
+      </div>
+      <div class="mfc-snap-row wide">
+        <span class="k">FC Status</span>
+        <span class="v">${fcStatusHtml}</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Min Bid</span>
+        <span class="v big">${rec.minimum_bid == null
+              ? '<span style="color:var(--muted)">—</span>'
+              : moneyFmt(rec.minimum_bid)}</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Market Value</span>
+        <span class="v big">${(rec.market_value == null || rec.market_value === "")
+              ? '<span style="color:var(--muted)">—</span>'
+              : moneyFmt(rec.market_value)}</span>
+      </div>
+      <div class="mfc-snap-row wide">
+        <span class="k">Legal</span>
+        <span class="v">
+          ${esc(_legalEff) || '<span style="color:var(--muted)">—</span>'}
+        </span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">Cause #</span>
+        <span class="v">${esc(rec.cause_nbr || "—")}</span>
+      </div>
+      <div class="mfc-snap-row">
+        <span class="k">NCAD</span>
+        <span class="v">${ncadHtml}</span>
+      </div>
+    </div>
+  `;
 
-  // The Upload-2 layout (cards) will replace this with a multi-
-  // column grid like MFC. For now, just render the snapshot in the
-  // shared CRM body and a placeholder for the rest.
+  // -------- Stage tracker pills --------
+  const stageHtml = `
+    <div class="mfc-stages">
+      <div class="mfc-stages-label">Stage</div>
+      <div class="mfc-stage-row">
+        ${TFC_STAGES.filter(s => !s.terminal).map(s => `
+          <button class="mfc-stage-pill ${s.key === currentStage ? "active" : ""}"
+                  onclick="_tfcSetStage('${esc(uid)}', '${s.key}')">
+            ${esc(s.label)}
+          </button>
+        `).join("")}
+        <div class="mfc-stage-sep"></div>
+        ${TFC_STAGES.filter(s => s.terminal).map(s => `
+          <button class="mfc-stage-pill ${s.key === currentStage ? "active " + (s.kind || "") : ""}"
+                  onclick="_tfcSetStage('${esc(uid)}', '${s.key}')">
+            ${esc(s.label)}
+          </button>
+        `).join("")}
+      </div>
+    </div>
+  `;
+
+  // -------- Follow-up banner (top of CRM) --------
+  const _fu = _tfcComputeNextFollowup(entry);
+  let followupBannerHtml = "";
+  if (_fu) {
+    const fuDateTxt = new Date(_fu.date + "T00:00:00").toLocaleDateString("en-US",
+      { weekday: "short", month: "short", day: "numeric" });
+    const moreTxt = _fu.count > 1
+      ? ` <span class="mfc-fu-banner-count">+${_fu.count - 1} more pending</span>`
+      : "";
+    followupBannerHtml = `
+      <div class="mfc-fu-banner ${_fu.isDue ? "mfc-fu-banner-due" : ""}">
+        <span class="mfc-fu-banner-icon">${_fu.isDue ? "⚠" : "📌"}</span>
+        <span class="mfc-fu-banner-text">
+          ${_fu.isDue ? "Follow-up due" : "Next follow-up"}:
+          <strong>${esc(fuDateTxt)}</strong> —
+          ${esc(_fu.label)}
+        </span>
+        ${moreTxt}
+      </div>
+    `;
+  }
+
+  // -------- Outreach attempts log --------
+  const _todayIso = new Date().toISOString().slice(0, 10);
+  const attemptsRowsHtml = attempts.length === 0
+    ? `<div class="mfc-attempts-empty">No outreach logged yet.</div>`
+    : attempts.map(a => {
+        const respDef = TFC_RESPONSES.find(r => r.key === (a.response || ""));
+        const respCls = respDef ? respDef.cls : "";
+        const respTxt = respDef ? respDef.label : "—";
+        const dateTxt = a.date
+          ? new Date(a.date + "T00:00:00").toLocaleDateString("en-US",
+              { month: "short", day: "numeric" })
+          : "—";
+        let followupBadge = "";
+        if (a.followup) {
+          const fuTxt = new Date(a.followup + "T00:00:00").toLocaleDateString("en-US",
+            { month: "short", day: "numeric" });
+          const isDue = a.followup <= _todayIso;
+          followupBadge = isDue
+            ? `<span class="mfc-followup-badge mfc-followup-due"
+                    title="Follow-up was due ${esc(a.followup)}">Follow-up due</span>`
+            : `<span class="mfc-followup-badge"
+                    title="Try again on ${esc(a.followup)}">Try ${esc(fuTxt)}</span>`;
+        }
+        return `
+          <div class="mfc-attempt-row">
+            <span class="date">${esc(dateTxt)}</span>
+            <span class="method">${esc(a.method || "—")}</span>
+            <span class="notes">${esc(a.notes || "")}${followupBadge}</span>
+            <span class="response ${respCls}">${esc(respTxt)}</span>
+            <button class="mfc-del-attempt"
+                    onclick="_tfcDeleteAttempt('${esc(uid)}', '${esc(a.id)}')"
+                    title="Delete this attempt">×</button>
+          </div>
+        `;
+      }).join("");
+
+  const attemptsHtml = `
+    <div class="mfc-attempts">
+      <div class="mfc-attempts-head">
+        <h3>Outreach Attempts <span class="mfc-attempts-count">${attempts.length}</span></h3>
+        <button class="mfc-add-attempt-btn"
+                onclick="_tfcOpenAttemptModal('${esc(uid)}')">
+          + Log attempt
+        </button>
+      </div>
+      ${attemptsRowsHtml}
+    </div>
+  `;
+
+  // -------- Contacts card --------
+  const contactsBlocksHtml = contactsList.length === 0
+    ? `<div class="mfc-contacts-empty">No contacts yet. Click <strong>+ Add</strong> to add the owner, co-borrower, realtor, neighbor, etc.</div>`
+    : contactsList.map(c => `
+        <div class="mfc-contact" data-contact-id="${esc(c.id)}">
+          <div class="mfc-contact-head">
+            <input class="mfc-contact-title" type="text"
+                   placeholder="Title"
+                   value="${esc(c.title || "")}"
+                   data-tfc-contact-field="title"
+                   data-tfc-contact-id="${esc(c.id)}">
+            <input class="mfc-contact-name" type="text"
+                   placeholder="Name"
+                   value="${esc(c.name || "")}"
+                   data-tfc-contact-field="name"
+                   data-tfc-contact-id="${esc(c.id)}">
+            <button class="mfc-contact-del"
+                    title="Remove this contact"
+                    onclick="_tfcRemoveContact('${esc(uid)}', '${esc(c.id)}')">×</button>
+          </div>
+          <div class="mfc-contact-fields">
+            <div class="crm-field">
+              <label>Phone</label>
+              <input type="text" value="${esc(c.phone || "")}"
+                     data-tfc-contact-field="phone"
+                     data-tfc-contact-id="${esc(c.id)}">
+            </div>
+            <div class="crm-field">
+              <label>Email</label>
+              <input type="text" value="${esc(c.email || "")}"
+                     data-tfc-contact-field="email"
+                     data-tfc-contact-id="${esc(c.id)}">
+            </div>
+            <div class="crm-field">
+              <label>Follow-up</label>
+              <input type="date" value="${esc(c.followup || "")}"
+                     data-tfc-contact-field="followup"
+                     data-tfc-contact-id="${esc(c.id)}">
+            </div>
+            <div class="crm-field mfc-contact-notes-field">
+              <label>Notes</label>
+              <textarea rows="2"
+                        placeholder="Notes about this contact…"
+                        data-tfc-contact-field="notes"
+                        data-tfc-contact-id="${esc(c.id)}">${esc(c.notes || "")}</textarea>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+  const contactsHtml = `
+    <div class="mfc-contacts">
+      <div class="mfc-contacts-head">
+        <h3>Contacts</h3>
+        <button class="mfc-contacts-add-btn"
+                onclick="_tfcAddContact('${esc(uid)}')">+ Add</button>
+      </div>
+      ${contactsBlocksHtml}
+    </div>
+  `;
+
+  // -------- Notes (full width) --------
+  const notesHtml = `
+    <div class="mfc-notes">
+      <h3>Notes <span class="crm-saved" id="crm-saved">Saved ✓</span></h3>
+      <textarea data-tfc-key="notes" placeholder="Free-form notes…">${esc(_v("notes"))}</textarea>
+    </div>
+  `;
+
+  // -------- Activity log --------
+  const activityHtml = `
+    <details class="mfc-activity">
+      <summary>Activity log (${activity.length})</summary>
+      <div class="mfc-activity-list">
+        ${activity.length === 0
+          ? `<div style="color:var(--muted);font-size:12px;font-style:italic">No activity yet.</div>`
+          : activity.map(e => `
+            <div class="mfc-activity-row">
+              <span class="ts">${esc(_tfcFormatActivityTs(e.ts))}</span>
+              <span class="ev">${esc(e.ev)}</span>
+            </div>
+          `).join("")
+        }
+      </div>
+    </details>
+  `;
+
+  // -------- Compose the layout (mirrors MFC's 3-col + full-row grid) --------
+  // Col 1: snapshot (and photo in Upload 3)
+  // Col 2: placeholder for research/custom fields (Upload 3)
+  // Col 3: contacts
+  // Full row: attempts, notes, activity
+  // Upload 3 will fill col 2 (custom fields) and add skiptrace + photo.
   const crmBody = document.getElementById("crm-body");
   crmBody.dataset.crmType = "tfc";
   crmBody.dataset.uid = uid;
   crmBody.innerHTML = `
+    ${stageHtml}
+    ${followupBannerHtml}
     <div class="mfc-layout">
       <div class="mfc-col mfc-col-1">
         ${snapshotHtml}
       </div>
       <div class="mfc-col mfc-col-2">
         <div class="mfc-snapshot">
-          <h3 class="mfc-card-title">Outreach</h3>
-          <p style="color:var(--muted); font-size:13px;">
-            Attempts log, contacts, and follow-up tracking
-            coming next.
-          </p>
+          <div class="mfc-snap-row wide">
+            <span class="k">Research</span>
+            <span class="v" style="color:var(--muted);font-size:12px;">
+              Custom fields, occupancy, and photos coming in Upload 3.
+            </span>
+          </div>
         </div>
       </div>
       <div class="mfc-col mfc-col-3">
-        <div class="mfc-snapshot">
-          <h3 class="mfc-card-title">Research</h3>
-          <p style="color:var(--muted); font-size:13px;">
-            Skiptrace, photos, and custom fields coming next.
-          </p>
-        </div>
+        ${contactsHtml}
       </div>
-    </div>`;
+      <div class="mfc-fullrow">
+        ${attemptsHtml}
+      </div>
+      <div class="mfc-fullrow">
+        ${notesHtml}
+      </div>
+      <div class="mfc-fullrow">
+        ${activityHtml}
+      </div>
+    </div>
+  `;
 
-  // Show the CRM view. Same toggle MFC uses.
+  // -------- Auto-save wiring (notes + entry fields) --------
+  // Mirrors MFC's pattern. Text inputs and textareas get a 400ms
+  // debounced save on each keystroke; selects/dates commit on change.
+  let saveTimer = null;
+  const flash = () => {
+    const s = document.getElementById("crm-saved");
+    if (!s) return;
+    s.classList.add("show");
+    clearTimeout(s._t);
+    s._t = setTimeout(() => s.classList.remove("show"), 1200);
+  };
+  document.querySelectorAll("#crm-body [data-tfc-key]").forEach(el => {
+    const key = el.dataset.tfcKey;
+    const tag = el.tagName.toLowerCase();
+    const isTextish = (tag === "textarea") ||
+                      (tag === "input" &&
+                       (el.type === "text" || el.type === "url" ||
+                        el.type === "email" || el.type === "tel" ||
+                        el.type === "number"));
+    if (isTextish) {
+      el.addEventListener("input", () => {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          setTfcEntry(uid, { [key]: el.value });
+          flash();
+        }, 400);
+      });
+    } else {
+      el.addEventListener("change", () => {
+        setTfcEntry(uid, { [key]: el.value });
+        flash();
+      });
+    }
+  });
+
+  // -------- Auto-save wiring (contact fields) --------
+  let contactSaveTimer = null;
+  document.querySelectorAll("#crm-body [data-tfc-contact-id]").forEach(el => {
+    const cid = el.dataset.tfcContactId;
+    const field = el.dataset.tfcContactField;
+    const tag = el.tagName.toLowerCase();
+    const isTextish = (tag === "textarea") ||
+                      (tag === "input" && (el.type === "text" || el.type === "number"));
+    if (isTextish) {
+      el.addEventListener("input", () => {
+        clearTimeout(contactSaveTimer);
+        contactSaveTimer = setTimeout(() => {
+          _tfcSetContactField(uid, cid, field, el.value);
+          flash();
+        }, 400);
+      });
+    } else {
+      // date / select: commit on change.
+      el.addEventListener("change", () => {
+        _tfcSetContactField(uid, cid, field, el.value);
+        flash();
+      });
+    }
+  });
+
+  // -------- Show CRM view --------
   document.querySelectorAll(".pane").forEach(p =>
       p.classList.remove("active"));
   const crm = document.getElementById("crm-view");
   crm.hidden = false;
-  // Always scroll to top when opening fresh (no re-render path yet
-  // since the shell has no editable fields). Upload 2 will need the
-  // _wasOpen / _prevScrollY preservation logic from MFC.
-  if (_mainEl) _mainEl.scrollTop = 0;
-  else window.scrollTo(0, 0);
+  // Preserve scroll on re-render; reset to top on fresh open.
+  if (_wasOpen) {
+    if (_mainEl) _mainEl.scrollTop = _prevScrollY;
+    else window.scrollTo(0, _prevScrollY);
+  } else {
+    if (_mainEl) _mainEl.scrollTop = 0;
+    else window.scrollTo(0, 0);
+  }
+
+  // Auto-grow contact note textareas. Has to run AFTER the CRM is
+  // visible — scrollHeight is 0 on hidden elements.
+  _tfcWireAutogrowTextareas("#crm-body .mfc-contact-fields textarea");
+  _tfcWireAutogrowTextareas("#crm-body .mfc-notes textarea");
 }
 
 // Stage handler — updates the stored stage AND logs an activity row,
