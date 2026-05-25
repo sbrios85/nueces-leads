@@ -1,0 +1,118 @@
+# =============================================================
+# CCLN PDF Extractor workflow
+# =============================================================
+# WHAT IT DOES
+# ------------
+# 1. User uploads CCLN affidavit PDFs to pdfs/ccln_pending/ in the
+#    repo (commit + push, or via the GitHub web UI).
+# 2. User triggers this workflow (Actions tab → "Extract CCLN PDFs"
+#    → Run workflow).
+# 3. The workflow:
+#    - Installs tesseract OCR + poppler-utils (pdftoppm) + Python deps
+#    - Runs scraper/extract_ccln_pdfs.py
+#    - Updates data/city_liens.json + dashboard/city_liens.json with
+#      newly extracted fields (NCAD account #, addresses, owner+spouse,
+#      lien reason, work date)
+#    - Deletes processed PDFs from pdfs/ccln_pending/
+#    - Commits everything back to main
+#
+# INPUTS
+# ------
+# force (default: false) — if true, reprocess PDFs even for records
+#   that have already been extracted previously. Useful if a PDF was
+#   re-OCRed with better quality or extractor regexes were improved.
+#
+# IDEMPOTENT
+# ----------
+# Re-runnable without harm. Already-processed records are skipped by
+# default (unless force=true). PDFs are deleted only after successful
+# extraction. Failed PDFs are left in pdfs/ccln_pending/ for retry
+# or manual investigation.
+# =============================================================
+
+name: Extract CCLN PDFs
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force reprocessing of already-extracted records?'
+        type: boolean
+        default: false
+        required: false
+
+# Required so the workflow can git push the JSON + PDF deletions
+# back to main. Default GITHUB_TOKEN is read-only.
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    # 30 minutes should comfortably handle 50 PDFs at ~3 seconds OCR each
+    # plus a few minutes of git/install overhead. Even 200 PDFs would
+    # fit in this window.
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          # The default token works for the commit-back step thanks to
+          # the permissions block above.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install OCR dependencies
+        # tesseract-ocr: the OCR engine itself
+        # poppler-utils: provides pdftoppm (PDF → image rasterizer)
+        # Both are standard Ubuntu packages, install in seconds.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+              tesseract-ocr poppler-utils
+          tesseract --version | head -1
+          pdftoppm -v 2>&1 | head -1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run extractor
+        # The extractor reads pdfs/ccln_pending/, processes everything,
+        # updates JSON, deletes processed PDFs in place. FORCE env var
+        # controls whether already-processed records get re-extracted.
+        env:
+          FORCE: ${{ inputs.force }}
+          LOG_LEVEL: INFO
+        run: python3 scraper/extract_ccln_pdfs.py
+
+      - name: Check for changes
+        # If the extractor ran but nothing changed (e.g., all PDFs were
+        # already processed and force=false), skip the commit step
+        # rather than making an empty commit.
+        id: changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected:"
+            git status --short
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes — nothing to commit."
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.has_changes == 'true'
+        # Stage the JSON updates AND the PDF deletions (git rm is
+        # implicit via `git add -A`). The dashboard JSON copy gets
+        # committed too so GitHub Pages picks up the updates.
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Extract CCLN PDFs: update city_liens.json + remove processed PDFs
+
+          Triggered by workflow_dispatch. force=${{ inputs.force }}.
+          See workflow run for per-PDF processing details."
+          git push
