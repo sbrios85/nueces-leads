@@ -600,56 +600,102 @@ def validate(ex: Extracted, clerk_record: Dict[str, Any]) -> None:
 #     for records where Phase 1/2 enrichment failed.
 # Mismatches don't overwrite either way; they just set a flag.
 
-# Fields we ADD (only when clerk doesn't have a value):
-ADDITIVE_FIELDS = [
-    "ncad_account_num",
-    "internal_lien_id",
-    "prop_address",
-    "prop_city",
-    "prop_state",
-    "prop_zip",
-    "mail_address",
-    "mail_city",
-    "mail_state",
-    "mail_zip",
-    "pdf_owner",
-    "pdf_spouse",
-    "work_date",
-    "legal_from_pdf",
-    "pdf_filed_date",
-    "pdf_amount",
-]
+# Fields the CLERK PORTAL populates. PDF extraction never overwrites
+# these — even on force=true. Clerk portal is the system of record
+# for these. Mismatches are surfaced as flags, not overwrites.
+CLERK_PROTECTED_FIELDS = {
+    "owner", "amount", "filed", "doc_num", "doc_type",
+    "cat", "cat_label", "grantee", "clerk_url", "score",
+    # 'legal' is special: the clerk portal has it, but the PDF
+    # version may be cleaner. We don't overwrite the clerk 'legal'
+    # field directly — we write the PDF version to 'legal_from_pdf'
+    # so the dashboard can pick whichever it wants to display.
+    "legal",
+}
+
+# Address fields that BOTH the clerk portal and the PDF may have.
+# Treatment depends on context:
+#   - If the record has no PDF extraction yet (ccln_pdf_processed
+#     is missing): write only if the existing value is empty.
+#     This is the "first time" case — don't trample any clerk data.
+#   - If the record HAS been PDF-processed (ccln_pdf_processed is
+#     True): the existing value is from a previous PDF run, so it's
+#     safe to overwrite with the current PDF run's value. This is
+#     what makes force=true useful for fixing bad extractions.
+SHARED_ADDRESS_FIELDS = {
+    "prop_address", "prop_city", "prop_state", "prop_zip",
+    "mail_address", "mail_city", "mail_state", "mail_zip",
+}
+
+# Pure PDF-source fields. The clerk portal never has these. Always
+# overwrite with the current extraction — re-runs are how you fix
+# bad regex output.
+PDF_ONLY_FIELDS = {
+    "ncad_account_num", "internal_lien_id",
+    "pdf_owner", "pdf_spouse",
+    "work_date", "legal_from_pdf",
+    "pdf_filed_date", "pdf_amount",
+}
 
 
-def apply_to_record(record: Dict[str, Any], ex: Extracted) -> None:
+def apply_to_record(record: Dict[str, Any], ex: Extracted,
+                    force: bool = False) -> None:
     """Merge extracted fields into a CCLN JSON record in place.
 
-    Fields are added when the record's existing value is falsy (empty
-    string, None, 0). Existing data is never overwritten — clerk-
-    portal data wins on conflict, and conflicts are surfaced via the
-    flags list.
+    Field-write policy:
+
+    - Clerk-portal fields (owner, amount, filed, legal, etc.):
+      NEVER written by the PDF extractor. Mismatches between clerk
+      and PDF are surfaced via flags only.
+
+    - PDF-only fields (ncad_account_num, pdf_owner, pdf_spouse,
+      work_date, etc.): always overwritten on every run. These
+      come from one source (the PDF), so re-running with improved
+      regexes is how you fix bad data.
+
+    - Shared address fields (prop_address, mail_*, etc.): handled
+      based on context:
+        * force=true: overwrite everything. This is what makes
+          force=true useful for fixing bad extractions from prior
+          runs that didn't get marked with ccln_pdf_processed
+          (or were marked but had truncated regex output).
+        * Otherwise was_processed=true: same — prior value is
+          ours, safe to refresh.
+        * Otherwise (first time, not forced): write only if cell
+          is empty. Preserves any clerk-portal-sourced data.
     """
-    for key in ADDITIVE_FIELDS:
+    was_processed = bool(record.get("ccln_pdf_processed"))
+    overwrite_shared = force or was_processed
+
+    # 1) PDF-only fields: write whatever we extracted (skip empties).
+    for key in PDF_ONLY_FIELDS:
         val = getattr(ex, key, None)
         if val in (None, "", 0, 0.0):
             continue
-        if not record.get(key):
+        record[key] = val
+
+    # 2) Shared address fields: depends on whether we've touched
+    #    this record before OR force is set.
+    for key in SHARED_ADDRESS_FIELDS:
+        val = getattr(ex, key, None)
+        if val in (None, "", 0, 0.0):
+            continue
+        if overwrite_shared or not record.get(key):
             record[key] = val
 
-    # reason_tags: write fresh (it's a list, not a scalar). Empty
-    # list means we couldn't detect any keywords — leave any existing
-    # value alone.
+    # 3) reason_tags: list, written fresh whenever we extract some.
     if ex.reason_tags:
         record["reason_tags"] = ex.reason_tags
 
-    # flags: write fresh; previous run's flags shouldn't persist if
-    # a re-extraction clears them.
+    # 4) Flags: always written fresh — a re-extraction may have
+    #    raised new flags or cleared old ones.
     record["ccln_pdf_flags"] = ex.flags
 
-    # Marker so the dashboard can show ✓ on processed records, and so
-    # this module can skip already-processed records on re-run.
+    # 5) Markers — set unconditionally on any successful processing.
+    #    The dashboard reads ccln_pdf_processed to render the ✓ badge.
     record["ccln_pdf_processed"] = True
-    record["ccln_pdf_processed_at"] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    record["ccln_pdf_processed_at"] = (
+        datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))
 
 
 # ----------------------------------------------------------------
@@ -771,7 +817,7 @@ def process_pdf(pdf_path: Path,
         log.info("  flags: %s", ", ".join(ex.flags))
 
     # Step 8: write fields onto the record
-    apply_to_record(record, ex)
+    apply_to_record(record, ex, force=force)
     log.info("  extracted: addr=%r ncad=%r owner=%r reason=%r",
              ex.prop_address, ex.ncad_account_num,
              ex.pdf_owner, ex.reason_tags)
