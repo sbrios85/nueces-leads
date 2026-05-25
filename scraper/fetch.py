@@ -822,6 +822,31 @@ async def fetch_clerk_records(start_iso: str, end_iso: str) -> List[ClerkRecord]
                     rec = _normalize_clerk_row(raw, default_cat=default_cat)
                     if rec is None:
                         continue
+
+                    # CCLN-specific corporate-owner filter. Skip any CCLN
+                    # record whose owner (grantee) classifies as a company,
+                    # religious org, school, government, nonprofit, HOA,
+                    # or institutional trust. We keep individuals, estates
+                    # (deceased; heirs are leads), and family/personal
+                    # trusts. See scraper/ccln_owner_filter.py for the
+                    # taxonomy. This filter runs at scrape time so corporate
+                    # records never enter the dashboard's JSON in the first
+                    # place. (Existing corporate records are removed by the
+                    # one-shot cleanup_corporate_ccln.py.)
+                    if default_cat == "CCLN" and rec.owner:
+                        try:
+                            from ccln_owner_filter import classify_owner
+                            _kind, _keep = classify_owner(rec.owner)
+                            if not _keep:
+                                log.debug("CCLN corporate owner skipped: "
+                                          "%s (%s)", rec.owner, _kind)
+                                continue
+                        except ImportError:
+                            # Module not yet deployed alongside fetch.py?
+                            # Fall through and keep the record — better
+                            # than crashing the daily scraper.
+                            pass
+
                     if rec.filed:
                         if rec.filed < start_iso or rec.filed > end_iso:
                             continue
