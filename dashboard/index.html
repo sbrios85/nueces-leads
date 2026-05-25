@@ -7915,7 +7915,7 @@ function _cclnRenderLienHistoryCard(consolidatedEntry) {
     return v != null ? sum + v : sum;
   }, 0);
   const totalStr = total > 0
-    ? "$" + total.toLocaleString("en-US", {maximumFractionDigits: 2})
+    ? "$" + total.toLocaleString("en-US", {maximumFractionDigits: 0})
     : "—";
 
   const rowsHtml = sorted.map(l => {
@@ -7924,7 +7924,7 @@ function _cclnRenderLienHistoryCard(consolidatedEntry) {
       : esc(l.doc_num || "—");
     const lienAmt = _lienAmt(l);
     const amountStr = lienAmt != null
-      ? "$" + lienAmt.toLocaleString("en-US", {maximumFractionDigits: 2})
+      ? "$" + lienAmt.toLocaleString("en-US", {maximumFractionDigits: 0})
       : '<span style="color:var(--muted)">—</span>';
     return `<tr>
       <td style="padding:8px 12px;">${docCell}</td>
@@ -8178,7 +8178,7 @@ function buildCclnRow(r, isDead) {
     <td>${esc(r.owner || "")}</td>
     <td>${esc(r.prop_address || "")}${r.prop_city ? "<br><small>" + esc(r.prop_city + " " + (r.prop_zip||"")) + "</small>" : ""}</td>
     <td>${esc(r.mail_address || "")}${r.mail_city ? "<br><small>" + esc(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||"")) + "</small>" : ""}</td>
-    <td>${r.amount ? "$" + Number(r.amount).toLocaleString() : ""}</td>
+    <td>${r.amount ? "$" + Number(r.amount).toLocaleString("en-US", {maximumFractionDigits: 0}) : ""}</td>
     <td style="text-align:center;">${lienCountCell}</td>
     <td>${totalLienCell}</td>
     <td>${apprVal}</td>
