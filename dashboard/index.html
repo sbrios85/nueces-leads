@@ -7897,9 +7897,22 @@ function _cclnRenderLienHistoryCard(consolidatedEntry) {
   });
   // Sum for the header summary (matches consolidated entry, but
   // re-computed defensively).
+  //
+  // CCLN-specific: r.amount is always null on records from the
+  // clerk portal (the city doesn't expose lien amounts via the
+  // public API). The real lien amount lives in r.pdf_amount,
+  // extracted from the affidavit PDF. Records that haven't had
+  // their PDF processed will still show "—" here — that's
+  // expected. See _cclnConsolidate for the same logic on the
+  // table's aggregate columns.
+  const _lienAmt = (r) => {
+    const a = r.pdf_amount != null ? r.pdf_amount : r.amount;
+    const n = Number(a);
+    return Number.isFinite(n) ? n : null;
+  };
   const total = sorted.reduce((sum, r) => {
-    const v = Number(r.amount);
-    return Number.isFinite(v) ? sum + v : sum;
+    const v = _lienAmt(r);
+    return v != null ? sum + v : sum;
   }, 0);
   const totalStr = total > 0
     ? "$" + total.toLocaleString("en-US", {maximumFractionDigits: 2})
@@ -7909,8 +7922,9 @@ function _cclnRenderLienHistoryCard(consolidatedEntry) {
     const docCell = l.clerk_url
       ? `<a href="${esc(l.clerk_url)}" target="_blank" rel="noopener">${esc(l.doc_num || "—")}</a>`
       : esc(l.doc_num || "—");
-    const amountStr = l.amount
-      ? "$" + Number(l.amount).toLocaleString("en-US", {maximumFractionDigits: 2})
+    const lienAmt = _lienAmt(l);
+    const amountStr = lienAmt != null
+      ? "$" + lienAmt.toLocaleString("en-US", {maximumFractionDigits: 2})
       : '<span style="color:var(--muted)">—</span>';
     return `<tr>
       <td style="padding:8px 12px;">${docCell}</td>
@@ -7977,9 +7991,28 @@ function _cclnConsolidate(rawRecords) {
       return 0;
     });
     const newest = g.liens[0];
+    // ------------------------------------------------------------
+    // Lien amount: CCLN records have TWO amount fields, and almost
+    // every record uses the second one:
+    //   - r.amount:      from the clerk-portal API. Always null on
+    //                    CCLN records — the city's portal doesn't
+    //                    expose lien amounts via the public API.
+    //   - r.pdf_amount:  extracted from the affidavit PDF by
+    //                    scraper/extract_ccln_pdfs.py. Populated
+    //                    after the PDF gets processed (10/13
+    //                    of currently-processed PDFs have this).
+    // So we always prefer pdf_amount when set, falling back to
+    // amount (which would only matter for records from a future
+    // data source that DOES populate amount directly).
+    // ------------------------------------------------------------
+    const lienAmount = (rec) => {
+      const a = rec.pdf_amount != null ? rec.pdf_amount : rec.amount;
+      const n = Number(a);
+      return Number.isFinite(n) ? n : null;
+    };
     const totalAmount = g.liens.reduce((sum, r) => {
-      const v = Number(r.amount);
-      return Number.isFinite(v) ? sum + v : sum;
+      const v = lienAmount(r);
+      return v != null ? sum + v : sum;
     }, 0);
     // Pull each field from the most-recent record with a non-empty
     // value. Earlier filings sometimes have richer data than the
@@ -8000,7 +8033,8 @@ function _cclnConsolidate(rawRecords) {
       doc_num:             newest.doc_num,
       // Display columns reflect MOST RECENT lien:
       filed:               newest.filed || "",
-      amount:              newest.amount,
+      // Lien amount on the newest record — prefer pdf_amount.
+      amount:              lienAmount(newest),
       // Plus aggregates for the additional columns / CRM card:
       lien_count:          g.liens.length,
       total_lien_amount:   totalAmount,
