@@ -1692,6 +1692,14 @@ def _normalize_clerk_row(raw: Dict[str, Any], default_cat: str) -> Optional[Cler
     legal = _stringy(g(
         "legalDescription", "legal_description", "legal", "description"
     ))
+    # Strip the "Subdivision - Name: " prefix the clerk API prepends to
+    # CCLN (and some other) legal descriptions. The prefix is verbose
+    # and wastes column space on the dashboard. Anchored to ^ and
+    # case-insensitive; tolerates whitespace variations around the dash
+    # and colon. Other doc types' legals don't typically have this
+    # prefix, but if one ever does, stripping it just gives a cleaner
+    # display anyway — no harm in being broad here.
+    legal = re.sub(r"^\s*Subdivision\s*-\s*Name:\s*", "", legal, flags=re.I)
 
     # Lot/block fields from the rendered table — append to legal if present.
     lot = _stringy(g("lot"))
