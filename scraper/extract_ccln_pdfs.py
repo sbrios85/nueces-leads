@@ -193,11 +193,22 @@ RE_LEGAL = re.compile(
 #        "Account No. 5000-0008-0060. 121 PUEBLO\nAVE"
 #   5. STREET on the line AFTER the wrapped account #:
 #        "Account No. 0481-\n1601-0380. 1414 S 19TH ST"
+#   6. STREET continuation line sometimes starts with a digit when
+#      OCR mis-prepends a stray character or when the address itself
+#      begins the continuation with a number (numbered streets):
+#        "Account No. 0481-1401-0630. 1462\n417TH ST"
+#        (truth here is "1462 17TH ST" — OCR added a stray "4" but
+#         we still want to capture the full line as a single street.)
+#      The continuation pattern accepts [A-Z0-9] as the first char
+#      and tightly limits length to avoid swallowing the next
+#      paragraph ("That said work was completed..."). Length cap is
+#      15 chars which covers street suffixes (ST/AVE/PKWY/FRONTAGE
+#      RD/etc.) plus a short street name.
 RE_PROP_STREET = re.compile(
     r"Account\s+No[.,]?\s+"
     r"\d{4}\s*-?\s*[.\s]*\s*\d{4}\s*-?\s*[.\s]*\s*\d{4}"
     r"[.,]?\s+"
-    r"(?P<street>[A-Z0-9][^\n]+(?:\n[A-Z][A-Z ]{1,15})?)\s*(?:\n|$)",
+    r"(?P<street>[A-Z0-9][^\n]+(?:\n[A-Z0-9][A-Z0-9 ]{1,15})?)\s*(?:\n|$)",
     re.I,
 )
 
