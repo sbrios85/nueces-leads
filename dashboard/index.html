@@ -2424,11 +2424,10 @@
   <div class="stats" id="stack-stats"></div>
   <table id="stack-table">
     <thead><tr>
-      <th data-sort="signal_count" style="width: 110px;">Signals</th>
-      <th data-sort="types"         style="width: 180px;">Lead Types</th>
-      <th data-sort="prop_address"  style="width: 240px;">Property Address</th>
-      <th data-sort="owner"         style="width: 220px;">Owner</th>
-      <th data-sort="latest_filed"  style="width: 110px;">Latest Filed</th>
+      <th data-sort="types"            style="width: 280px;">Lead Types</th>
+      <th data-sort="prop_address"     style="width: 260px;">Property Address</th>
+      <th data-sort="owner"            style="width: 240px;">Owner</th>
+      <th data-sort="latest_filed"     style="width: 120px;">Latest Filed</th>
       <th data-sort="ncad_account_num" style="width: 140px;">NCAD Account</th>
       <th style="width: 56px;">NCAD</th>
     </tr></thead>
@@ -8182,11 +8181,22 @@ function _stackBuildEntry(key, group) {
 // ----------------------------------------------------------------
 // Sort + render
 // ----------------------------------------------------------------
-let STACK_SORT_KEY = "signal_count";
+// Default sort: distinct lead-type count first, then total signals
+// within ties. This puts multi-source properties (CCLN+Vacant+CV)
+// above same-source-only properties even if the same-source one has
+// a higher raw count. Once other scrapers ship, a 4-type property
+// always ranks above a 1-type property with 50 records, because
+// cross-source signals are intrinsically stronger than same-source
+// repetition.
+//
+// "types" is the sort key for the Lead Types column. It compares by
+// distinct count first (primary), then by total signal count (tie-
+// breaker). On asc, that means fewest distinct types + fewest
+// total records appear first.
+let STACK_SORT_KEY = "types";
 let STACK_SORT_DIR = "desc";
 const STACK_SORT_TYPES = {
-  signal_count:     "num",
-  types:            "string",
+  types:            "num",       // distinct-type count + tie-breaker
   prop_address:     "string",
   owner:            "string",
   latest_filed:     "string",
@@ -8195,13 +8205,15 @@ const STACK_SORT_TYPES = {
 
 function _stackCompare(a, b, key, dir) {
   let av, bv;
-  if (key === "signal_count") {
-    av = a.signalCount; bv = b.signalCount;
-  } else if (key === "types") {
-    av = (a.types || []).join(","); bv = (b.types || []).join(",");
-  } else {
-    av = a[key] || ""; bv = b[key] || "";
+  if (key === "types") {
+    // Primary: distinct lead-type count.
+    // Tie-break: total signal count (records across all types).
+    const dt = (a.distinctTypeCount || 0) - (b.distinctTypeCount || 0);
+    if (dt !== 0) return dir === "desc" ? -dt : dt;
+    const ct = (a.signalCount || 0) - (b.signalCount || 0);
+    return dir === "desc" ? -ct : ct;
   }
+  av = a[key] || ""; bv = b[key] || "";
   if (STACK_SORT_TYPES[key] === "num") {
     const cmp = (av || 0) - (bv || 0);
     return dir === "desc" ? -cmp : cmp;
@@ -8253,7 +8265,13 @@ function applyStack() {
 function _renderStackStats(list) {
   const el = document.getElementById("stack-stats");
   if (!el) return;
-  // Total count + breakdown by distinct type count
+  // Total count + breakdown by distinct LEAD-TYPE count (e.g. CCLN +
+  // Vacant + Code Violation = 3 types). This is the dashboard's
+  // priority signal: a property in 3-4 distinct lead lists is a much
+  // stronger lead than 20 records of the same type. The leftmost
+  // pill on each row shows the per-type record count (e.g. "City
+  // Lien 20"), so these cards intentionally use the word "Type" to
+  // distinguish from that — same data viewed two different ways.
   const total = list.length;
   const byTypeCount = { 1: 0, 2: 0, 3: 0, 4: 0 };
   for (const e of list) {
@@ -8267,37 +8285,38 @@ function _renderStackStats(list) {
     </div>
     <div class="stat-card">
       <div class="num">${byTypeCount[1] || 0}</div>
-      <div class="lbl">1 Signal</div>
+      <div class="lbl">Single Type</div>
     </div>
     <div class="stat-card">
       <div class="num">${byTypeCount[2] || 0}</div>
-      <div class="lbl">2 Signals</div>
+      <div class="lbl">2 Types</div>
     </div>
     <div class="stat-card">
       <div class="num">${byTypeCount[3] || 0}</div>
-      <div class="lbl">3 Signals</div>
+      <div class="lbl">3 Types</div>
     </div>
     <div class="stat-card">
       <div class="num">${byTypeCount[4] || 0}</div>
-      <div class="lbl">4 Signals</div>
+      <div class="lbl">4 Types</div>
     </div>`;
 }
 
 function _buildStackRow(entry) {
   const tr = document.createElement("tr");
 
-  // Signal count pill — saturates with count for visual priority cue
-  const countClass = "count-" + Math.min(entry.distinctTypeCount, 4);
-  const countCell = `<span class="stack-signal-count ${countClass}">${entry.signalCount}</span>`;
-
   // Type badges — one pill per source type present, ordered by
   // STACK_SOURCES registry order (CCLN first, Vacant next, etc.)
-  // so the visual order is stable across rows
+  // so the visual order is stable across rows. When a property has
+  // multiple records of the SAME type (e.g. 20 separate CCLN liens
+  // on the same address), the count is appended inside the pill —
+  // "City Lien 20" instead of cluttering with a separate column.
+  // Single-record types show just the label ("City Lien"), keeping
+  // the pill compact when there's nothing extra to show.
   const badgeHtml = STACK_SOURCES
     .filter(s => entry.byType[s.type])
     .map(s => {
       const count = entry.byType[s.type];
-      const label = count > 1 ? `${s.label} (${count})` : s.label;
+      const label = count > 1 ? `${s.label} ${count}` : s.label;
       return `<span class="stack-badge ${s.badgeClass}">${esc(label)}</span>`;
     })
     .join("");
@@ -8314,7 +8333,6 @@ function _buildStackRow(entry) {
     : `<span style="color:var(--muted)">—</span>`;
 
   tr.innerHTML = `
-    <td>${countCell}</td>
     <td>${badgeHtml || '<span style="color:var(--muted)">—</span>'}</td>
     <td>${esc(entry.prop_address || "—")}</td>
     <td>${esc(entry.owner || "—")}</td>
