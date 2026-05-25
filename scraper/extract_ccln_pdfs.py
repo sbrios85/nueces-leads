@@ -552,27 +552,57 @@ def apply_to_record(record: Dict[str, Any], ex: Extracted) -> None:
 # ----------------------------------------------------------------
 # Main pipeline
 # ----------------------------------------------------------------
-def load_records() -> List[Dict[str, Any]]:
-    """Read city_liens.json. Returns the record list (or empty if
-    the file doesn't exist yet)."""
+def load_records() -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    """Read city_liens.json. Returns (records_list, original_envelope).
+
+    The file format from fetch.py is a wrapped dict:
+        {"fetched_at": ..., "source": ..., "total": N, "records": [...]}
+
+    We return both the records list (for processing) AND a copy of
+    the envelope metadata (for re-saving in the same format). If the
+    file is a bare list (older format), envelope is an empty dict.
+    """
     if not DATA_FILE.exists():
         log.warning("data file not found: %s", DATA_FILE)
-        return []
+        return [], {}
     try:
         with DATA_FILE.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-        # The file is a list of dicts (per backfill_city_liens.py).
-        return data if isinstance(data, list) else []
+            raw = json.load(f)
+        # New format: dict with "records" key + metadata wrapper.
+        if isinstance(raw, dict) and "records" in raw:
+            envelope = {k: v for k, v in raw.items() if k != "records"}
+            return raw["records"], envelope
+        # Legacy format: bare list.
+        if isinstance(raw, list):
+            return raw, {}
+        log.error("unexpected format in %s: top-level is %s",
+                  DATA_FILE, type(raw).__name__)
+        return [], {}
     except Exception as exc:
         log.error("failed to load %s: %s", DATA_FILE, exc)
-        return []
+        return [], {}
 
 
-def save_records(records: List[Dict[str, Any]]) -> None:
-    """Write city_liens.json AND mirror to dashboard/city_liens.json."""
+def save_records(records: List[Dict[str, Any]],
+                 envelope: Dict[str, Any]) -> None:
+    """Write city_liens.json AND mirror to dashboard/city_liens.json.
+
+    Preserves the wrapped-dict format from fetch.py (the source/
+    fetched_at/total envelope). Updates the total count and refreshes
+    fetched_at to the current time so dashboard "last updated" shows
+    when the PDF enrichment was last applied.
+    """
     DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
     DASHBOARD_FILE.parent.mkdir(parents=True, exist_ok=True)
-    payload = json.dumps(records, indent=2, ensure_ascii=False)
+    out_envelope = dict(envelope) if envelope else {}
+    out_envelope["fetched_at"] = (datetime.now(timezone.utc).isoformat()
+                                  .replace("+00:00", "+00:00"))
+    out_envelope.setdefault("source",
+                            "Nueces County Clerk — CCLN cumulative")
+    out_envelope["total"] = len(records)
+    out_envelope["records"] = records
+    payload = json.dumps(out_envelope, indent=2, default=str,
+                         ensure_ascii=False)
     DATA_FILE.write_text(payload, encoding="utf-8")
     DASHBOARD_FILE.write_text(payload, encoding="utf-8")
     log.info("saved %d records to %s + %s",
@@ -664,7 +694,7 @@ def main() -> int:
         return 0
     log.info("found %d PDFs to process", len(pdfs))
 
-    records = load_records()
+    records, envelope = load_records()
     if not records:
         log.error("no CCLN records in city_liens.json — run backfill first")
         return 1
@@ -722,7 +752,7 @@ def main() -> int:
 
     # Save updated records only if we changed something.
     if n_ok > 0 or force:
-        save_records(records)
+        save_records(records, envelope)
     else:
         log.info("no changes — skipping save")
 
