@@ -2168,7 +2168,6 @@
       <th data-sort="sale_type"      style="width: 90px;">Sales Type</th>
       <th data-sort="fc_status"      style="width: 130px;">FC Status</th>
       <th data-sort="sale_date"      style="width: 130px;">Sale Date</th>
-      <th data-sort="days_until_sale" style="width: 70px;" title="Days until the auction sale date">Days</th>
       <th data-sort="owner"          style="width: 165px;">Owner</th>
       <th data-sort="prop_address"   style="width: 195px;">Property Address</th>
       <th data-sort="mail_address"   style="width: 165px;">Mailing Address</th>
@@ -2189,7 +2188,6 @@
         <td>SALE</td>
         <td>Scheduled for Online Auction</td>
         <td>Jul 7, 2026</td>
-        <td><span style="color:var(--muted)">—</span></td>
         <td>SAMPLE OWNER NAME</td>
         <td>123 EXAMPLE ST<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78401</span></td>
         <td>456 MAILING DR<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78415</span></td>
@@ -2205,7 +2203,6 @@
         <td>FUTURE SALE</td>
         <td>Scheduled for Online Auction</td>
         <td>Jul 14, 2026</td>
-        <td><span style="color:var(--muted)">—</span></td>
         <td>ANOTHER SAMPLE</td>
         <td>456 PLACEHOLDER AVE<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78411</span></td>
         <td>456 PLACEHOLDER AVE<br><span style="color:var(--muted);font-size:11px">CORPUS CHRISTI TX 78411</span></td>
@@ -6717,6 +6714,71 @@ function buildTfcRow(r, mode) {
 
   const uid = r.uid || "";
   const saleDate = _tfcFmtDate(r.sale_date_only || r.sale_date);
+
+  // ---- Sale Date cell (merged Sale Date + Days Until Sale) ----
+  // Same rendering as MFC's foreclosureDateCell — three urgency tiers
+  // drive both the bar fill color and the "Xd" countdown text:
+  //   green (>30d)  → tier-far
+  //   amber (11–30d)→ tier-mid
+  //   red   (≤10d)  → tier-near
+  // Progress bar shows a faint gray track; the colored fill grows
+  // from left to right as the sale approaches (60-day baseline).
+  // Past sales: "X days ago" in red beside the date, no bar.
+  //
+  // TFC's data shape differs from MFC's: there's no r.days_until_sale
+  // field in tfc.json (yet), so we compute it on the fly with the
+  // existing _tfcDaysUntil helper. Same ISO date parsing as MFC.
+  const _tfcSaleYmd = r.sale_date_only || r.sale_date;
+  const _tfcDays = _tfcDaysUntil(_tfcSaleYmd);
+  const _tfcTierClass = _tfcDays == null ? "tier-far" :
+                        _tfcDays <= 10 ? "tier-near" :
+                        _tfcDays <= 30 ? "tier-mid"  : "tier-far";
+  let _tfcBarPct = 0;
+  if (_tfcDays != null && _tfcDays >= 0) {
+    const remaining = Math.max(0, Math.min(60, _tfcDays));
+    _tfcBarPct = Math.round(((60 - remaining) / 60) * 100);
+  }
+  // Format the sale_date: ISO "2026-06-02" or "2026-06-02T10:00:00"
+  // → "Jun 2". Strip the time portion if present, then apply MFC's
+  // exact month-name formatter.
+  const _tfcSaleDateDisplay = (() => {
+    if (!_tfcSaleYmd) return "—";
+    const ymdOnly = String(_tfcSaleYmd).slice(0, 10);
+    const m = ymdOnly.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return String(_tfcSaleYmd);
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun",
+                        "Jul","Aug","Sep","Oct","Nov","Dec"];
+    const mo = parseInt(m[2], 10);
+    const d  = parseInt(m[3], 10);
+    if (mo < 1 || mo > 12) return String(_tfcSaleYmd);
+    return monthNames[mo - 1] + " " + d;
+  })();
+  let tfcSaleDateCell;
+  if (!_tfcSaleYmd) {
+    tfcSaleDateCell = `<div class="fc-date-cell"><div class="fc-date-pill">—</div></div>`;
+  } else if (_tfcDays != null && _tfcDays < 0) {
+    const pastTxt = Math.abs(_tfcDays) + " days ago";
+    tfcSaleDateCell = `
+      <div class="fc-date-cell">
+        <div class="fc-date-row">
+          <div class="fc-date-pill">${esc(_tfcSaleDateDisplay)}</div>
+          <div class="fc-date-past">${esc(pastTxt)}</div>
+        </div>
+      </div>`;
+  } else {
+    const daysTxt = _tfcDays == null ? "" : _tfcDays + "d";
+    tfcSaleDateCell = `
+      <div class="fc-date-cell">
+        <div class="fc-date-row">
+          <div class="fc-date-pill">${esc(_tfcSaleDateDisplay)}</div>
+          ${daysTxt ? `<div class="fc-date-days ${_tfcTierClass}">${esc(daysTxt)}</div>` : ""}
+        </div>
+        <div class="fc-date-bar">
+          <div class="fc-date-bar-fill ${_tfcTierClass}"
+               style="width: ${_tfcBarPct}%"></div>
+        </div>
+      </div>`;
+  }
   // Owner + legal now come from NCAD enrichment
   // (scraper/enrich_tfc_ncad.py writes r.owner and r.legal into
   // tfc.json). Empty string fallback preserves behaviour for
@@ -6836,8 +6898,7 @@ function buildTfcRow(r, mode) {
     <td>${statusCell}</td>
     <td>${esc(r.sale_type || "") || '<span style="color:var(--muted)">—</span>'}</td>
     <td>${_tfcFcStatusCell(r.status)}</td>
-    <td>${esc(saleDate) || "—"}</td>
-    <td style="text-align:center;">${_tfcDaysCell(r.sale_date_only || r.sale_date)}</td>
+    <td>${tfcSaleDateCell}</td>
     <td>${_tfcEcell("owner", _ownerEff, true)}</td>
     <td class="addr-cell">${_tfcEcell("prop_address", _propEff, true)}</td>
     <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true)}</td>
