@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-25T05:53:58.639616+00:00",
+  "fetched_at": "2026-05-25T06:03:47.805533+00:00",
   "source": "Nueces County Clerk — CCLN cumulative",
   "total": 1902,
   "records": [
@@ -3690,9 +3690,9 @@
       "prop_state": "TX",
       "prop_zip": "78404",
       "mail_address": "440 LOUISIANA ST",
-      "mail_city": "",
+      "mail_city": "HOUSTON",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "77002",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2025027154",
       "flags": [
         "LLC / corp owner"
@@ -3711,10 +3711,12 @@
         "demolition"
       ],
       "ccln_pdf_flags": [
-        "incomplete_extraction"
+        "zip_outside_cc",
+        "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T05:53:56.110078Z"
+      "ccln_pdf_processed_at": "2026-05-25T06:03:45.334933Z",
+      "legal_from_pdf": "BOOTY AND ALLEN LT 15 BK 3"
     },
     {
       "doc_num": "2025027156",
@@ -41968,9 +41970,11 @@
         "filth",
         "demolition"
       ],
-      "ccln_pdf_flags": [],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T05:53:57.382160Z"
+      "ccln_pdf_processed_at": "2026-05-25T06:03:46.591880Z"
     },
     {
       "doc_num": "2025027159",
@@ -42007,7 +42011,8 @@
       ],
       "ccln_pdf_flags": [],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T05:53:58.638715Z"
+      "ccln_pdf_processed_at": "2026-05-25T06:03:47.804757Z",
+      "legal_from_pdf": "NUECES ACRES 2 LT 10 BK 3"
     },
     {
       "doc_num": "2025027155",
