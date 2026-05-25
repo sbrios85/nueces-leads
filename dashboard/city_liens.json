@@ -1,6 +1,6 @@
 {
-  "fetched_at": "2026-05-25T16:16:52.927938+00:00",
-  "source": "Nueces County Clerk \u2014 CCLN cumulative",
+  "fetched_at": "2026-05-25T17:59:31.645713+00:00",
+  "source": "Nueces County Clerk — CCLN cumulative",
   "total": 1902,
   "records": [
     {
@@ -3685,11 +3685,11 @@
       "grantee": "THE CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision - Name: BOOTY AND ALLEN Lot: 15 Block: 3 (Lot 15, Block 3)",
-      "prop_address": "1529 7th ST",
+      "prop_address": "1529 7TH ST",
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78404",
-      "mail_address": "440 LOUISIANA ST",
+      "mail_address": "440 LOUISIANA ST STE 952",
       "mail_city": "HOUSTON",
       "mail_state": "TX",
       "mail_zip": "77002",
@@ -3715,7 +3715,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T06:03:45.334933Z",
+      "ccln_pdf_processed_at": "2026-05-25T17:59:29.164767Z",
       "legal_from_pdf": "BOOTY AND ALLEN LT 15 BK 3"
     },
     {
@@ -41946,7 +41946,7 @@
       "grantee": "THE CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision - Name: MEADOW PARK Lot: 6 Block: 8 (Lot 6, Block 8)",
-      "prop_address": "121 PUEBLO",
+      "prop_address": "121 PUEBLO AVE",
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
@@ -41974,7 +41974,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T06:03:46.591880Z"
+      "ccln_pdf_processed_at": "2026-05-25T17:59:30.426916Z"
     },
     {
       "doc_num": "2025027159",
@@ -42011,7 +42011,7 @@
       ],
       "ccln_pdf_flags": [],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T06:03:47.804757Z",
+      "ccln_pdf_processed_at": "2026-05-25T17:59:31.644937Z",
       "legal_from_pdf": "NUECES ACRES 2 LT 10 BK 3"
     },
     {
