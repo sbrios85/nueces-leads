@@ -2663,6 +2663,33 @@
   </div>
 </div>
 
+<!-- ======== TFC custom-field schema-manager modal (Upload 3) ========
+     Same UI/behavior as MFC's schema modal but bound to TFC.
+     Element IDs use tfc- prefix for isolation. Storage key is
+     nueces_tfc_custom_field_schema_v1 (separate from MFC's). -->
+<div class="mfc-schema-modal-backdrop" id="tfc-schema-modal-backdrop"
+     onclick="if(event.target===this)_tfcCloseSchemaModal()">
+  <div class="mfc-schema-modal" role="dialog"
+       aria-labelledby="tfc-schema-modal-title">
+    <h3 id="tfc-schema-modal-title">Manage research fields</h3>
+    <p class="modal-sub">
+      Define the custom fields that appear in the Research section
+      of every Tax Foreclosure lead. Changes apply across all
+      TFC leads. Deleting a field removes its value from every lead.
+    </p>
+    <div class="mfc-schema-list" id="tfc-schema-list">
+      <!-- populated by _tfcOpenSchemaModal -->
+    </div>
+    <button class="mfc-schema-add-btn" onclick="_tfcSchemaAddRow()">
+      + Add field
+    </button>
+    <div class="mfc-schema-modal-actions">
+      <button onclick="_tfcCloseSchemaModal()">Cancel</button>
+      <button class="primary" onclick="_tfcSaveSchema()">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // CRM state — persisted in localStorage, keyed by doc_num
@@ -5351,6 +5378,642 @@ const TFC_RESPONSES = [
   }
 })();
 
+// ================================================================
+// TFC CRM Upload 3 — skiptrace + photos + custom fields + occupancy
+// ================================================================
+
+// ----------------------------------------------------------------
+// TFC skiptrace constants + helpers
+// ----------------------------------------------------------------
+// Family-tree style data: each entry is a person (owner, spouse,
+// parent, neighbor, realtor, etc.) with 14 phone slots + 2 email
+// slots. Each phone has a status pill (untested/no_answer/texted/
+// vm_left/confirmed/bad). Right-click a phone to change its status.
+// Duplicate detection flags any number appearing in more than one
+// slot across the lead.
+
+const TFC_SKIPTRACE_PHONE_COUNT = 14;
+const TFC_SKIPTRACE_EMAIL_COUNT = 2;
+
+// Phone-status tags. Mirror MFC_PHONE_STATUSES with identical
+// keys/labels/colors so the visual treatment matches across both
+// dashboards. Status drives a background-color tint on the phone
+// slot input.
+const TFC_PHONE_STATUSES = [
+  { key: "",          label: "Untested",         color: ""        },
+  { key: "no_answer", label: "Called, no answer", color: "#94a3b8" },  // slate-400
+  { key: "texted",    label: "Texted — waiting", color: "#facc15"  }, // yellow-400
+  { key: "vm_left",   label: "VM left — waiting", color: "#a78bfa" }, // violet-400
+  { key: "confirmed", label: "Confirmed contact", color: "#22c55e" }, // green-500
+  { key: "bad",       label: "Bad / Disconnected", color: "#ef4444" }, // red-500
+];
+
+function _tfcGenSkiptraceId() {
+  return "st_" + Math.random().toString(36).slice(2, 10);
+}
+
+function _tfcBlankSkiptraceEntry() {
+  return {
+    id: _tfcGenSkiptraceId(),
+    title: "",
+    name: "",
+    address: "",
+    facebook: "",
+    been_verified: "",
+    notes: "",
+    phones: Array.from({length: TFC_SKIPTRACE_PHONE_COUNT},
+      () => ({ value: "", status: "" })),
+    emails: Array(TFC_SKIPTRACE_EMAIL_COUNT).fill(""),
+  };
+}
+
+// Normalize a phones array — handles old string-array shape (from
+// schema migrations) and the new object-array shape. Always returns
+// 14 slots of { value, status }. No legacy data exists for TFC yet
+// but mirroring MFC keeps the shapes interchangeable.
+function _tfcNormalizePhones(phones) {
+  const out = [];
+  const arr = Array.isArray(phones) ? phones : [];
+  for (let i = 0; i < TFC_SKIPTRACE_PHONE_COUNT; i++) {
+    const p = arr[i];
+    if (p == null) {
+      out.push({ value: "", status: "" });
+    } else if (typeof p === "string") {
+      out.push({ value: p, status: "" });
+    } else {
+      out.push({
+        value: p.value || "",
+        status: p.status || "",
+      });
+    }
+  }
+  return out;
+}
+
+// Normalize a phone for duplicate detection (last 10 digits only).
+function _tfcPhoneDigits(raw) {
+  if (!raw) return "";
+  const digits = String(raw).replace(/\D/g, "");
+  return digits.length > 10 ? digits.slice(-10) : digits;
+}
+
+function _tfcSetSkiptraceField(uid, rowId, field, value) {
+  const store = loadTfcCrm();
+  const entry = store[uid] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  const i = rows.findIndex(r => r.id === rowId);
+  if (i < 0) return;
+  rows[i] = { ...rows[i], [field]: value };
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[uid] = entry;
+  saveTfcCrm(store);
+}
+
+function _tfcSetSkiptracePhone(uid, rowId, idx, value) {
+  const store = loadTfcCrm();
+  const entry = store[uid] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  const i = rows.findIndex(r => r.id === rowId);
+  if (i < 0) return;
+  const phones = _tfcNormalizePhones(rows[i].phones);
+  phones[idx] = { value, status: phones[idx].status };
+  rows[i] = { ...rows[i], phones };
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[uid] = entry;
+  saveTfcCrm(store);
+}
+
+function _tfcSetSkiptracePhoneStatus(uid, rowId, idx, status) {
+  const store = loadTfcCrm();
+  const entry = store[uid] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  const i = rows.findIndex(r => r.id === rowId);
+  if (i < 0) return;
+  const phones = _tfcNormalizePhones(rows[i].phones);
+  phones[idx] = { value: phones[idx].value, status };
+  rows[i] = { ...rows[i], phones };
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[uid] = entry;
+  saveTfcCrm(store);
+  // Log status changes to activity.
+  const stDef = TFC_PHONE_STATUSES.find(s => s.key === status);
+  const stLabel = stDef ? stDef.label : status || "Untested";
+  const phoneNum = phones[idx].value || `slot ${idx+1}`;
+  _tfcLogActivity(uid, `Phone ${phoneNum} → ${stLabel}`);
+  openTfcCrm(uid, TFC_RAW);
+}
+
+function _tfcSetSkiptraceEmail(uid, rowId, idx, value) {
+  const store = loadTfcCrm();
+  const entry = store[uid] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  const i = rows.findIndex(r => r.id === rowId);
+  if (i < 0) return;
+  const emails = Array.isArray(rows[i].emails)
+    ? rows[i].emails.slice()
+    : Array(TFC_SKIPTRACE_EMAIL_COUNT).fill("");
+  while (emails.length < TFC_SKIPTRACE_EMAIL_COUNT) emails.push("");
+  emails[idx] = value;
+  rows[i] = { ...rows[i], emails };
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[uid] = entry;
+  saveTfcCrm(store);
+}
+
+function _tfcAddSkiptrace(uid) {
+  const store = loadTfcCrm();
+  const entry = store[uid] || {};
+  const rows = Array.isArray(entry.skiptrace) ? entry.skiptrace.slice() : [];
+  rows.push(_tfcBlankSkiptraceEntry());
+  entry.skiptrace = rows;
+  entry._updated_at = new Date().toISOString();
+  store[uid] = entry;
+  saveTfcCrm(store);
+  openTfcCrm(uid, TFC_RAW);
+}
+
+function _tfcRemoveSkiptrace(uid, rowId) {
+  const entry = getTfcEntry(uid);
+  const r = (entry.skiptrace || []).find(x => x.id === rowId);
+  const hasData = r && (r.title || r.name || r.address || r.facebook ||
+    r.been_verified || r.notes ||
+    (r.phones || []).some(p => p && (typeof p === "string" ? p : p.value)) ||
+    (r.emails || []).some(e => e));
+  if (hasData && !confirm("Delete this skiptrace entry?")) return;
+  const store = loadTfcCrm();
+  const e2 = store[uid] || {};
+  e2.skiptrace = (e2.skiptrace || []).filter(x => x.id !== rowId);
+  e2._updated_at = new Date().toISOString();
+  store[uid] = e2;
+  saveTfcCrm(store);
+  if (hasData) {
+    _tfcLogActivity(uid,
+      `Removed skiptrace entry: ${r.title || r.name || "(unnamed)"}`);
+  }
+  openTfcCrm(uid, TFC_RAW);
+}
+
+// ----------------------------------------------------------------
+// TFC right-click phone status menu
+// ----------------------------------------------------------------
+// Floating menu opened at the cursor position when the user right-
+// clicks a phone slot. Single shared DOM node — created on first
+// use and kept around. Content rebuilt each open so the current
+// status is highlighted with a checkmark. Closes on outside click
+// or Escape.
+function _tfcEnsurePhoneStatusMenu() {
+  let menu = document.getElementById("tfc-phone-status-menu");
+  if (menu) return menu;
+  menu = document.createElement("div");
+  menu.id = "tfc-phone-status-menu";
+  menu.className = "mfc-phone-status-menu";
+  document.body.appendChild(menu);
+  document.addEventListener("click", (e) => {
+    if (!menu.classList.contains("open")) return;
+    if (!menu.contains(e.target)) menu.classList.remove("open");
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menu.classList.contains("open")) {
+      menu.classList.remove("open");
+    }
+  });
+  return menu;
+}
+
+function _tfcOpenPhoneStatusMenu(event, uid, rowId, slotIdx) {
+  event.preventDefault();
+  const menu = _tfcEnsurePhoneStatusMenu();
+  const entry = getTfcEntry(uid);
+  const row = (entry.skiptrace || []).find(r => r.id === rowId);
+  const phones = _tfcNormalizePhones(row ? row.phones : []);
+  const currentStatus = phones[slotIdx] ? phones[slotIdx].status : "";
+  menu.innerHTML = TFC_PHONE_STATUSES.map(s => {
+    const active = s.key === currentStatus;
+    const swatchStyle = s.color
+      ? `background-color: ${s.color};`
+      : "background: transparent; border: 1px dashed var(--border);";
+    return `
+      <div class="mfc-phone-status-item${active ? " active" : ""}"
+           data-st="${esc(s.key)}">
+        <span class="mfc-phone-status-swatch" style="${swatchStyle}"></span>
+        <span class="mfc-phone-status-label">${esc(s.label)}</span>
+        ${active ? '<span class="mfc-phone-status-check">✓</span>' : ""}
+      </div>
+    `;
+  }).join("");
+  menu.onclick = (e) => {
+    const item = e.target.closest(".mfc-phone-status-item");
+    if (!item) return;
+    const newStatus = item.dataset.st;
+    menu.classList.remove("open");
+    _tfcSetSkiptracePhoneStatus(uid, rowId, slotIdx, newStatus);
+  };
+  // Position at cursor, clamped to viewport.
+  const W = 200, H = TFC_PHONE_STATUSES.length * 30 + 8;
+  let x = event.clientX;
+  let y = event.clientY;
+  if (x + W > window.innerWidth)  x = window.innerWidth - W - 8;
+  if (y + H > window.innerHeight) y = window.innerHeight - H - 8;
+  menu.style.left = x + "px";
+  menu.style.top  = y + "px";
+  menu.classList.add("open");
+}
+
+// ----------------------------------------------------------------
+// TFC photo helpers
+// ----------------------------------------------------------------
+// House photo URL + Drive/Dropbox folder URL. Both stored as
+// top-level entry strings (photo_url, photo_folder_url). The
+// photo URL is rendered as an <img>; the folder URL becomes a ↗
+// link to the external folder.
+function _tfcSetPhotoUrl(uid, url) {
+  setTfcEntry(uid, { photo_url: url || "" });
+}
+
+// ----------------------------------------------------------------
+// TFC custom-field schema
+// ----------------------------------------------------------------
+// User-defined research fields. Schema (which fields exist) is
+// shared across ALL TFC leads — defined once, applies everywhere.
+// Per-lead VALUES live on the entry under entry.custom_fields[id].
+// Storage key kept separate from MFC's so the two pipelines can
+// evolve independently.
+const TFC_CUSTOM_SCHEMA_KEY = "nueces_tfc_custom_field_schema_v1";
+
+// SYSTEM fields: built-in research fields always present. Mirror
+// MFC_SYSTEM_FIELDS — same Occupancy field with the same options.
+// Stored on entry root (e.g. entry.occupancy), NOT in custom_fields.
+const TFC_SYSTEM_FIELDS = [
+  {
+    id: "_sys_occupancy",
+    label: "Occupancy",
+    type: "select",
+    key: "occupancy",
+    isSystem: true,
+    options: [
+      { value: "",        label: "—" },
+      { value: "owner",   label: "Owner-occupied" },
+      { value: "tenant",  label: "Tenant" },
+      { value: "vacant",  label: "Vacant" },
+      { value: "unknown", label: "Unknown" },
+    ],
+  },
+];
+
+function _tfcSystemFieldById(id) {
+  return TFC_SYSTEM_FIELDS.find(f => f.id === id) || null;
+}
+
+function loadTfcCustomSchema() {
+  try {
+    const raw = localStorage.getItem(TFC_CUSTOM_SCHEMA_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) { return []; }
+}
+function saveTfcCustomSchema(schema) {
+  localStorage.setItem(TFC_CUSTOM_SCHEMA_KEY,
+    JSON.stringify(Array.isArray(schema) ? schema : []));
+}
+
+// Build the merged schema (custom + system) for rendering. System
+// fields persist by id reference and are hydrated from the registry
+// at render time. Missing system fields are auto-prepended so they
+// always appear (e.g. Occupancy on a fresh dashboard load).
+function loadTfcSchemaForRender() {
+  let schema = loadTfcCustomSchema();
+  const presentIds = new Set(schema.map(f => f.id));
+  const missing = TFC_SYSTEM_FIELDS
+    .filter(sf => !presentIds.has(sf.id))
+    .map(sf => ({ id: sf.id }));
+  if (missing.length > 0) {
+    schema = [...missing, ...schema];
+  }
+  return schema.map(f => {
+    if (f.id && f.id.startsWith("_sys_")) {
+      const def = _tfcSystemFieldById(f.id);
+      return def ? { ...def } : null;
+    }
+    return f;
+  }).filter(Boolean);
+}
+
+function _tfcGenFieldId() {
+  return "cf_" + Math.random().toString(36).slice(2, 10);
+}
+
+// Set a custom-field value on a TFC entry. Empty value deletes the
+// key so the JSON stays clean.
+function _tfcSetCustom(uid, fieldId, value) {
+  const store = loadTfcCrm();
+  const entry = store[uid] || {};
+  const custom = Object.assign({}, entry.custom_fields || {});
+  if (value == null || String(value).trim() === "") {
+    delete custom[fieldId];
+  } else {
+    custom[fieldId] = String(value);
+  }
+  entry.custom_fields = custom;
+  entry._updated_at = new Date().toISOString();
+  store[uid] = entry;
+  saveTfcCrm(store);
+}
+
+// Format a raw money/percent value for display. Empty stays empty.
+function _tfcFormatCustomValue(raw, type) {
+  if (raw == null || String(raw).trim() === "") return "";
+  const n = Number(raw);
+  if (!isFinite(n)) return String(raw);
+  if (type === "money") {
+    const hasFrac = n % 1 !== 0;
+    return "$" + n.toLocaleString("en-US", {
+      minimumFractionDigits: hasFrac ? 2 : 0,
+      maximumFractionDigits: 2,
+    });
+  }
+  if (type === "percent") {
+    const hasFrac = n % 1 !== 0;
+    return n.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: hasFrac ? 3 : 0,
+    }) + "%";
+  }
+  return String(raw);
+}
+
+// Click-to-edit for money/percent custom fields. Swaps the
+// formatted display for a number input. Commits on blur/Enter,
+// cancels on Escape. Re-renders the CRM so the new formatted
+// value appears.
+function _tfcCustomStartEdit(displayEl) {
+  if (!displayEl || displayEl.dataset._editing === "1") return;
+  displayEl.dataset._editing = "1";
+  const uid = document.getElementById("crm-body").dataset.uid;
+  if (!uid) return;
+  const fieldId = displayEl.dataset.tfcCustomId;
+  const type    = displayEl.dataset.tfcCustomType;
+  const rawVal  = displayEl.dataset.rawVal || "";
+  if (!fieldId || !type) return;
+  const input = document.createElement("input");
+  input.type = "number";
+  input.step = "any";
+  input.inputMode = "decimal";
+  input.className = "mfc-custom-edit-input";
+  input.value = rawVal;
+  displayEl.style.display = "none";
+  displayEl.parentNode.insertBefore(input, displayEl);
+  input.focus();
+  input.select();
+  let committed = false;
+  const commit = () => {
+    if (committed) return;
+    committed = true;
+    const newVal = input.value;
+    _tfcSetCustom(uid, fieldId, newVal);
+    openTfcCrm(uid, TFC_RAW);
+  };
+  const cancel = () => {
+    if (committed) return;
+    committed = true;
+    input.remove();
+    displayEl.style.display = "";
+    delete displayEl.dataset._editing;
+  };
+  input.addEventListener("blur", commit);
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); commit(); }
+    else if (e.key === "Escape") { e.preventDefault(); cancel(); }
+  });
+}
+
+// ----------------------------------------------------------------
+// TFC schema-manager modal (open/render/add/update/delete/save)
+// ----------------------------------------------------------------
+let _tfcSchemaDraft = [];
+
+function _tfcOpenSchemaModal() {
+  _tfcSchemaDraft = loadTfcSchemaForRender().map(f => ({ ...f }));
+  const hasCustom = _tfcSchemaDraft.some(f => !f.isSystem);
+  if (!hasCustom) {
+    _tfcSchemaDraft.push({
+      id: _tfcGenFieldId(), label: "", type: "text",
+    });
+  }
+  _tfcRenderSchemaList();
+  document.getElementById("tfc-schema-modal-backdrop")
+    .classList.add("open");
+}
+
+function _tfcCloseSchemaModal() {
+  document.getElementById("tfc-schema-modal-backdrop")
+    .classList.remove("open");
+  _tfcSchemaDraft = [];
+}
+
+function _tfcRenderSchemaList() {
+  const list = document.getElementById("tfc-schema-list");
+  if (_tfcSchemaDraft.length === 0) {
+    list.innerHTML = `<div class="mfc-schema-empty">No fields. Click "+ Add field" below to create one.</div>`;
+    return;
+  }
+  list.innerHTML = _tfcSchemaDraft.map((f, i) => {
+    if (f.isSystem) {
+      return `
+        <div class="mfc-schema-row mfc-schema-row-system" data-schema-idx="${i}">
+          <span class="mfc-schema-grip" title="Drag to reorder">⋮⋮</span>
+          <div class="mfc-schema-system-label">
+            ${esc(f.label)}
+            <span class="mfc-systemfield-tag">SYSTEM</span>
+          </div>
+          <span class="mfc-schema-system-type">${esc(_tfcSystemTypeLabel(f.type))}</span>
+          <span class="mfc-schema-system-spacer" title="System fields can't be deleted"></span>
+        </div>
+      `;
+    }
+    return `
+    <div class="mfc-schema-row" data-schema-idx="${i}">
+      <span class="mfc-schema-grip" title="Drag to reorder">⋮⋮</span>
+      <input type="text" placeholder="Field name (e.g. ARV, Year Built)"
+             value="${esc(f.label || "")}"
+             oninput="_tfcSchemaUpdate(${i}, 'label', this.value)">
+      <select onchange="_tfcSchemaUpdate(${i}, 'type', this.value)">
+        <option value="text"${f.type==="text"?" selected":""}>Text</option>
+        <option value="number"${f.type==="number"?" selected":""}>Number</option>
+        <option value="money"${f.type==="money"?" selected":""}>Money ($)</option>
+        <option value="percent"${f.type==="percent"?" selected":""}>Percent (%)</option>
+        <option value="date"${f.type==="date"?" selected":""}>Date</option>
+        <option value="yesno"${f.type==="yesno"?" selected":""}>Yes / No</option>
+      </select>
+      <button class="del-btn" title="Delete this field"
+              onclick="_tfcSchemaDeleteRow(${i})">×</button>
+    </div>
+  `;}).join("");
+  _tfcWireSchemaDrag();
+}
+
+function _tfcSystemTypeLabel(type) {
+  if (type === "select") return "Choice";
+  return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+// HTML5 drag-and-drop on the schema modal's row list. Mirrors the
+// MFC implementation exactly — only difference is the selector
+// and the draft-buffer variable name. Rows aren't draggable by
+// default; grip-mousedown enables draggable for that row only.
+function _tfcWireSchemaDrag() {
+  const rows = document.querySelectorAll("#tfc-schema-list .mfc-schema-row");
+  let srcIdx = null;
+  const clearHover = () => {
+    rows.forEach(r => {
+      r.classList.remove("drag-over-top", "drag-over-bottom");
+    });
+  };
+  rows.forEach(row => {
+    const grip = row.querySelector(".mfc-schema-grip");
+    if (grip) {
+      grip.addEventListener("mousedown", () => {
+        row.setAttribute("draggable", "true");
+      });
+    }
+    row.addEventListener("mouseleave", () => {
+      if (!row.classList.contains("dragging")) {
+        row.removeAttribute("draggable");
+      }
+    });
+    row.addEventListener("dragstart", e => {
+      srcIdx = parseInt(row.dataset.schemaIdx, 10);
+      row.classList.add("dragging");
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", String(srcIdx));
+      }
+    });
+    row.addEventListener("dragend", () => {
+      row.classList.remove("dragging");
+      row.removeAttribute("draggable");
+      clearHover();
+      srcIdx = null;
+    });
+    row.addEventListener("dragover", e => {
+      e.preventDefault();
+      if (srcIdx == null) return;
+      const tgtIdx = parseInt(row.dataset.schemaIdx, 10);
+      if (tgtIdx === srcIdx) {
+        clearHover();
+        return;
+      }
+      const rect = row.getBoundingClientRect();
+      const isTop = (e.clientY - rect.top) < (rect.height / 2);
+      clearHover();
+      row.classList.add(isTop ? "drag-over-top" : "drag-over-bottom");
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+    });
+    row.addEventListener("dragleave", () => {
+      row.classList.remove("drag-over-top", "drag-over-bottom");
+    });
+    row.addEventListener("drop", e => {
+      e.preventDefault();
+      if (srcIdx == null) return;
+      const tgtIdx = parseInt(row.dataset.schemaIdx, 10);
+      const rect = row.getBoundingClientRect();
+      const isTop = (e.clientY - rect.top) < (rect.height / 2);
+      let insertAt = isTop ? tgtIdx : tgtIdx + 1;
+      if (srcIdx < insertAt) insertAt -= 1;
+      if (insertAt === srcIdx) {
+        clearHover();
+        return;
+      }
+      const [moved] = _tfcSchemaDraft.splice(srcIdx, 1);
+      _tfcSchemaDraft.splice(insertAt, 0, moved);
+      clearHover();
+      srcIdx = null;
+      _tfcRenderSchemaList();
+    });
+  });
+}
+
+function _tfcSchemaUpdate(idx, key, value) {
+  if (!_tfcSchemaDraft[idx]) return;
+  _tfcSchemaDraft[idx][key] = value;
+}
+
+function _tfcSchemaAddRow() {
+  _tfcSchemaDraft.push({
+    id: _tfcGenFieldId(), label: "", type: "text",
+  });
+  _tfcRenderSchemaList();
+}
+
+function _tfcSchemaDeleteRow(idx) {
+  if (!_tfcSchemaDraft[idx]) return;
+  const f = _tfcSchemaDraft[idx];
+  if (f.isSystem) return;
+  if (f.label && _tfcCustomFieldHasData(f.id)) {
+    if (!confirm(
+        `Delete field "${f.label}"?\n\n` +
+        `This will remove its value from EVERY lead that has it. ` +
+        `This cannot be undone.`)) {
+      return;
+    }
+  }
+  _tfcSchemaDraft.splice(idx, 1);
+  _tfcRenderSchemaList();
+}
+
+function _tfcCustomFieldHasData(fieldId) {
+  const store = loadTfcCrm();
+  return Object.values(store).some(e =>
+    e && e.custom_fields && e.custom_fields[fieldId]);
+}
+
+// Persist the draft schema. Validates labels, scrubs orphan data
+// from leads when fields are deleted, then re-renders the open CRM
+// so the Research card reflects the new schema.
+function _tfcSaveSchema() {
+  const cleaned = _tfcSchemaDraft
+    .filter(f => f.isSystem || (f.label && f.label.trim()))
+    .map(f => {
+      if (f.isSystem) {
+        return { id: f.id };
+      }
+      return {
+        id: f.id || _tfcGenFieldId(),
+        label: f.label.trim(),
+        type: f.type || "text",
+      };
+    });
+  const oldSchema = loadTfcCustomSchema();
+  const newIds = new Set(cleaned.map(f => f.id));
+  const deletedIds = oldSchema
+    .map(f => f.id)
+    .filter(id => id && !id.startsWith("_sys_") && !newIds.has(id));
+  if (deletedIds.length > 0) {
+    const store = loadTfcCrm();
+    let touched = false;
+    for (const e of Object.values(store)) {
+      if (!e || !e.custom_fields) continue;
+      for (const id of deletedIds) {
+        if (id in e.custom_fields) {
+          delete e.custom_fields[id];
+          touched = true;
+        }
+      }
+    }
+    if (touched) saveTfcCrm(store);
+  }
+  saveTfcCustomSchema(cleaned);
+  _tfcCloseSchemaModal();
+  const crmBody = document.getElementById("crm-body");
+  if (crmBody && crmBody.dataset.crmType === "tfc" && crmBody.dataset.uid) {
+    openTfcCrm(crmBody.dataset.uid, TFC_RAW);
+  }
+}
+
 // Append an activity log entry on a TFC CRM lead. Used by stage
 // changes, outreach edits, contact adds/removes, etc. Mirrors
 // _mfcLogActivity. Capped at 50 entries per lead to bound storage.
@@ -5904,12 +6567,288 @@ function openTfcCrm(uid, sourceRecords) {
     </details>
   `;
 
+  // -------- Research card (custom fields + system fields) --------
+  // Mixes user-defined custom fields with built-in SYSTEM fields
+  // (Occupancy). System-field values store on entry root
+  // (entry.occupancy); custom-field values store under
+  // entry.custom_fields[id]. The "Manage fields" button opens the
+  // schema modal where the user can add/remove/rename/reorder.
+  const rawCustomSchema = loadTfcCustomSchema();
+  const mergedSchema = loadTfcSchemaForRender();
+  const customValues = (entry.custom_fields || {});
+  const hasUserFields = rawCustomSchema.some(f =>
+    !(f.id && f.id.startsWith("_sys_")));
+  const fieldRowsHtml = mergedSchema.map(f => {
+    let control;
+    if (f.isSystem && f.type === "select") {
+      // System select (Occupancy).
+      const cur = entry[f.key] || "";
+      control = `<select data-tfc-key="${esc(f.key)}">
+        ${f.options.map(o =>
+          `<option value="${esc(o.value)}"${cur===o.value?" selected":""}>${esc(o.label)}</option>`
+        ).join("")}
+      </select>`;
+    } else {
+      // User-defined custom field.
+      const cur = customValues[f.id] || "";
+      if (f.type === "yesno") {
+        control = `<select data-tfc-custom-id="${esc(f.id)}">
+          <option value=""${cur===""?" selected":""}>—</option>
+          <option value="yes"${cur==="yes"?" selected":""}>Yes</option>
+          <option value="no"${cur==="no"?" selected":""}>No</option>
+          <option value="unknown"${cur==="unknown"?" selected":""}>Unknown</option>
+        </select>`;
+      } else if (f.type === "date") {
+        control = `<input type="date" data-tfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+      } else if (f.type === "money" || f.type === "percent") {
+        const formatted = _tfcFormatCustomValue(cur, f.type);
+        const emptyCls = cur === "" ? " empty" : "";
+        control = `<div class="mfc-custom-formatted${emptyCls}"
+                        data-tfc-custom-id="${esc(f.id)}"
+                        data-tfc-custom-type="${esc(f.type)}"
+                        data-raw-val="${esc(cur)}"
+                        onclick="_tfcCustomStartEdit(this)"
+                        title="Click to edit">${esc(formatted)}</div>`;
+      } else if (f.type === "number") {
+        control = `<input type="number" data-tfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+      } else {
+        control = `<input type="text" data-tfc-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+      }
+    }
+    const systemTag = f.isSystem
+      ? ` <span class="mfc-systemfield-tag" title="System field (always present)">SYSTEM</span>`
+      : "";
+    return `<div class="mfc-custom-field${f.isSystem ? " mfc-custom-systemfield" : ""}">
+      <label>${esc(f.label)}${systemTag}</label>
+      ${control}
+    </div>`;
+  }).join("");
+  const customFieldRowsHtml = `
+    <div class="mfc-custom-grid">
+      ${fieldRowsHtml}
+    </div>
+    ${!hasUserFields
+      ? `<div class="mfc-custom-empty">No custom research fields yet. Click <strong>Manage</strong> to add fields like ARV, Year Built, Sqft, Vacant?, etc.</div>`
+      : ""}
+  `;
+  const customHtml = `
+    <div class="mfc-custom">
+      <div class="mfc-custom-head">
+        <h3>Research</h3>
+        <button class="mfc-custom-manage-btn"
+                onclick="_tfcOpenSchemaModal()">Manage fields</button>
+      </div>
+      ${customFieldRowsHtml}
+    </div>
+  `;
+
+  // -------- Photo card (house photo URL + folder URL) --------
+  // User pastes a public URL (Drive/Dropbox/Imgur). The img element
+  // loads it; an onerror handler swaps in an error message. The
+  // folder URL is a separate input — gives a clickable ↗ to a
+  // folder where the rest of the property's photos live.
+  const photoUrl = entry.photo_url || "";
+  const folderUrl = entry.photo_folder_url || "";
+  const folderHrefUrl = folderUrl
+    ? (folderUrl.startsWith("http") ? folderUrl : "https://" + folderUrl)
+    : "";
+  const photoPreview = photoUrl
+    ? `<div class="mfc-photo-preview-wrap">
+         <img class="mfc-photo-preview" src="${esc(photoUrl)}"
+              alt="Property photo"
+              onerror="this.parentNode.innerHTML='<div class=\\'mfc-photo-error\\'>Couldn\\'t load image. Check that the URL is publicly accessible and points directly to the image file (ends in .jpg/.png/etc).</div>'">
+       </div>
+       <a class="mfc-photo-link" href="${esc(photoUrl)}" target="_blank" rel="noopener">Open original ↗</a>`
+    : `<div class="mfc-photo-empty">No photo yet. Paste a public image URL below (Drive/Dropbox/Imgur).</div>`;
+  const photoHtml = `
+    <div class="mfc-photo">
+      <div class="mfc-photo-head">
+        <h3>House Photo</h3>
+      </div>
+      <div class="mfc-photo-url-row">
+        <input type="url" class="mfc-photo-url-input"
+               data-tfc-key="photo_url"
+               placeholder="Image URL (Imgur/Drive/Dropbox)"
+               value="${esc(photoUrl)}">
+        <input type="url" class="mfc-photo-folder-input"
+               data-tfc-key="photo_folder_url"
+               placeholder="Folder URL (Drive/Dropbox)"
+               value="${esc(folderUrl)}">
+        <a class="mfc-photo-folder-link${folderUrl ? "" : " disabled"}"
+           href="${folderUrl ? esc(folderHrefUrl) : "javascript:void(0)"}"
+           target="_blank" rel="noopener"
+           title="${folderUrl ? "Open folder in new tab" : "(no folder URL yet)"}">↗</a>
+      </div>
+      ${photoPreview}
+    </div>
+  `;
+
+  // -------- Skiptrace card (family-tree style) --------
+  // Each entry = one person (owner, spouse, parent, neighbor,
+  // realtor, etc.) with 14 phone slots + 2 email slots + a few
+  // identity fields (title, name, address, facebook URL, been-
+  // verified URL, notes). Right-click a phone to set its status
+  // (untested/no_answer/texted/vm_left/confirmed/bad). The same
+  // number appearing in multiple slots flags with ⚠ + tooltip.
+  const skiptraceList = Array.isArray(entry.skiptrace) ? entry.skiptrace : [];
+  const _urlField = (rowId, field, value, placeholder) => {
+    const url = value || "";
+    const hasUrl = url.trim().length > 0;
+    const hrefUrl = hasUrl
+      ? (url.startsWith("http") ? url : "https://" + url)
+      : "#";
+    return `
+      <div class="mfc-skip-url">
+        <input type="text" placeholder="${esc(placeholder)}"
+               value="${esc(url)}"
+               data-tfc-skip-field="${esc(field)}"
+               data-tfc-skip-id="${esc(rowId)}">
+        <a class="mfc-skip-url-link${hasUrl ? "" : " disabled"}"
+           href="${hasUrl ? esc(hrefUrl) : "javascript:void(0)"}"
+           target="_blank" rel="noopener"
+           title="${hasUrl ? "Open in new tab" : "(no URL yet)"}">↗</a>
+      </div>
+    `;
+  };
+  // Build duplicate map: normalized digits → list of slot locations
+  // across ALL skiptrace entries on this lead. Used to flag dupes.
+  const _dupeMap = new Map();
+  for (let ei = 0; ei < skiptraceList.length; ei++) {
+    const r = skiptraceList[ei];
+    const phones = _tfcNormalizePhones(r.phones);
+    for (let pi = 0; pi < phones.length; pi++) {
+      const digits = _tfcPhoneDigits(phones[pi].value);
+      if (digits.length < 7) continue;
+      if (!_dupeMap.has(digits)) _dupeMap.set(digits, []);
+      _dupeMap.get(digits).push({
+        entryIdx: ei + 1,
+        slotIdx: pi + 1,
+        entryLabel: r.title || r.name || `Entry ${ei + 1}`,
+      });
+    }
+  }
+  const skiptraceRowsHtml = skiptraceList.length === 0
+    ? `<div class="mfc-skiptrace-empty">No skiptrace entries yet. Click <strong>+ Add</strong> to start a family tree — owner, spouse, parents, siblings, kids, neighbors, realtor, etc.</div>`
+    : `<div class="mfc-skiptrace-list">
+        ${skiptraceList.map((r, idx) => {
+          const phones = _tfcNormalizePhones(r.phones);
+          const emails = Array.isArray(r.emails) ? r.emails : [];
+          const phoneInputsHtml = [];
+          for (let i = 0; i < TFC_SKIPTRACE_PHONE_COUNT; i++) {
+            const p = phones[i];
+            const statusDef = TFC_PHONE_STATUSES.find(s => s.key === (p.status || "")) || TFC_PHONE_STATUSES[0];
+            const tintStyle = statusDef.color
+              ? `background-color: ${statusDef.color}33; border-color: ${statusDef.color}88;`
+              : "";
+            const digits = _tfcPhoneDigits(p.value);
+            const dupeLocs = (digits.length >= 7 && _dupeMap.has(digits))
+              ? _dupeMap.get(digits) : [];
+            let dupeBadge = "";
+            if (dupeLocs.length > 1) {
+              const others = dupeLocs.filter(
+                d => !(d.entryIdx === (idx + 1) && d.slotIdx === (i + 1))
+              );
+              const tooltip = others.length === 0
+                ? "Duplicate detected"
+                : "Also at: " + others.map(d =>
+                    `${d.entryLabel} (Phone ${d.slotIdx})`
+                  ).join("; ");
+              dupeBadge = `<span class="mfc-skip-phone-dupe"
+                title="${esc(tooltip)}">⚠</span>`;
+            }
+            phoneInputsHtml.push(`
+              <div class="mfc-skip-phone-slot">
+                <input type="text"
+                  placeholder="Phone ${i+1}"
+                  value="${esc(p.value || "")}"
+                  data-tfc-skip-phone-idx="${i}"
+                  data-tfc-skip-id="${esc(r.id)}"
+                  style="${tintStyle}"
+                  title="${esc(statusDef.label)} — right-click to set status"
+                  oncontextmenu="_tfcOpenPhoneStatusMenu(event, '${esc(uid)}', '${esc(r.id)}', ${i}); return false;">
+                ${dupeBadge}
+              </div>
+            `);
+          }
+          const emailInputsHtml = [];
+          for (let i = 0; i < TFC_SKIPTRACE_EMAIL_COUNT; i++) {
+            emailInputsHtml.push(`<input type="text"
+              placeholder="Email ${i+1}"
+              value="${esc(emails[i] || "")}"
+              data-tfc-skip-email-idx="${i}"
+              data-tfc-skip-id="${esc(r.id)}">`);
+          }
+          return `
+            <div class="mfc-skip-entry" data-skip-id="${esc(r.id)}">
+              <div class="mfc-skip-entry-label">Entry ${idx + 1}</div>
+              <div class="mfc-skip-header">
+                <input type="text" placeholder="Title"
+                       value="${esc(r.title || "")}"
+                       data-tfc-skip-field="title"
+                       data-tfc-skip-id="${esc(r.id)}"
+                       class="mfc-skip-title">
+                <input type="text" placeholder="Name"
+                       value="${esc(r.name || "")}"
+                       data-tfc-skip-field="name"
+                       data-tfc-skip-id="${esc(r.id)}"
+                       class="mfc-skip-name">
+                <input type="text" placeholder="Address"
+                       value="${esc(r.address || "")}"
+                       data-tfc-skip-field="address"
+                       data-tfc-skip-id="${esc(r.id)}"
+                       class="mfc-skip-address">
+                ${_urlField(r.id, "facebook", r.facebook, "Facebook")}
+                ${_urlField(r.id, "been_verified", r.been_verified, "Been Verified")}
+                <input type="text" placeholder="Notes"
+                       value="${esc(r.notes || "")}"
+                       data-tfc-skip-field="notes"
+                       data-tfc-skip-id="${esc(r.id)}"
+                       class="mfc-skip-notes">
+                ${emailInputsHtml.join("")}
+                <button class="mfc-skiptrace-del"
+                        title="Delete this entry"
+                        onclick="_tfcRemoveSkiptrace('${esc(uid)}', '${esc(r.id)}')">×</button>
+              </div>
+              <div class="mfc-skip-phones">${phoneInputsHtml.join("")}</div>
+            </div>
+          `;
+        }).join("")}
+      </div>`;
+  // Phone-status legend pills shown in the Skiptrace card header.
+  const skipLegendHtml = TFC_PHONE_STATUSES
+    .filter(s => s.color)
+    .map(s => {
+      const firstWord = s.label.split(/[—\s]/)[0].replace(/[,.;:]+$/, "");
+      return `
+      <span class="mfc-skip-legend-pill"
+            style="background-color: ${s.color}33; border-color: ${s.color}88;"
+            title="${esc(s.label)}">
+        ${esc(firstWord)}
+      </span>
+    `;
+    }).join("");
+  const skiptraceHtml = `
+    <div class="mfc-skiptrace">
+      <div class="mfc-skiptrace-head">
+        <div class="mfc-skiptrace-head-left">
+          <h3>Skiptrace <span class="mfc-attempts-count">${skiptraceList.length}</span></h3>
+          <div class="mfc-skip-legend"
+               title="Right-click a phone to set its status">
+            ${skipLegendHtml}
+          </div>
+        </div>
+        <button class="mfc-skiptrace-add-btn"
+                onclick="_tfcAddSkiptrace('${esc(uid)}')">+ Add</button>
+      </div>
+      ${skiptraceRowsHtml}
+    </div>
+  `;
+
   // -------- Compose the layout (mirrors MFC's 3-col + full-row grid) --------
-  // Col 1: snapshot (and photo in Upload 3)
-  // Col 2: placeholder for research/custom fields (Upload 3)
+  // Col 1: snapshot + photo card
+  // Col 2: Research card (custom fields + occupancy)
   // Col 3: contacts
-  // Full row: attempts, notes, activity
-  // Upload 3 will fill col 2 (custom fields) and add skiptrace + photo.
+  // Full row: skiptrace, attempts, notes, activity
   const crmBody = document.getElementById("crm-body");
   crmBody.dataset.crmType = "tfc";
   crmBody.dataset.uid = uid;
@@ -5919,19 +6858,16 @@ function openTfcCrm(uid, sourceRecords) {
     <div class="mfc-layout">
       <div class="mfc-col mfc-col-1">
         ${snapshotHtml}
+        ${photoHtml}
       </div>
       <div class="mfc-col mfc-col-2">
-        <div class="mfc-snapshot">
-          <div class="mfc-snap-row wide">
-            <span class="k">Research</span>
-            <span class="v" style="color:var(--muted);font-size:12px;">
-              Custom fields, occupancy, and photos coming in Upload 3.
-            </span>
-          </div>
-        </div>
+        ${customHtml}
       </div>
       <div class="mfc-col mfc-col-3">
         ${contactsHtml}
+      </div>
+      <div class="mfc-fullrow">
+        ${skiptraceHtml}
       </div>
       <div class="mfc-fullrow">
         ${attemptsHtml}
@@ -5970,6 +6906,12 @@ function openTfcCrm(uid, sourceRecords) {
         saveTimer = setTimeout(() => {
           setTfcEntry(uid, { [key]: el.value });
           flash();
+          // Re-render on photo URL changes so the preview/folder ↗
+          // link refresh. Other fields don't need a re-render —
+          // the value stays in the DOM.
+          if (key === "photo_url" || key === "photo_folder_url") {
+            openTfcCrm(uid, TFC_RAW);
+          }
         }, 400);
       });
     } else {
@@ -6002,6 +6944,81 @@ function openTfcCrm(uid, sourceRecords) {
         _tfcSetContactField(uid, cid, field, el.value);
         flash();
       });
+    }
+  });
+
+  // -------- Auto-save wiring (custom fields) --------
+  // Same debounce pattern but writes to entry.custom_fields[id]
+  // via _tfcSetCustom() instead of touching entry root.
+  let customSaveTimer = null;
+  document.querySelectorAll("#crm-body [data-tfc-custom-id]").forEach(el => {
+    const id = el.dataset.tfcCustomId;
+    const tag = el.tagName.toLowerCase();
+    const isText = (tag === "input" && (el.type === "text" || el.type === "number"));
+    if (isText) {
+      el.addEventListener("input", () => {
+        clearTimeout(customSaveTimer);
+        customSaveTimer = setTimeout(() => {
+          _tfcSetCustom(uid, id, el.value);
+          flash();
+        }, 400);
+      });
+    } else {
+      el.addEventListener("change", () => {
+        _tfcSetCustom(uid, id, el.value);
+        flash();
+      });
+    }
+  });
+
+  // -------- Auto-save wiring (skiptrace fields) --------
+  // Each input/select is tagged with data-tfc-skip-id plus one of:
+  //   data-tfc-skip-field      → top-level field (title/name/
+  //                              address/facebook/been_verified/notes)
+  //   data-tfc-skip-phone-idx  → phone slot (0..13)
+  //   data-tfc-skip-email-idx  → email slot (0..1)
+  // Dispatch picks the right setter. URL fields re-render on save
+  // so the ↗ link active state toggles. Phone fields re-render on
+  // blur so the duplicate ⚠ badges update without disrupting typing.
+  let skipSaveTimer = null;
+  document.querySelectorAll("#crm-body [data-tfc-skip-id]").forEach(el => {
+    const id = el.dataset.tfcSkipId;
+    const field   = el.dataset.tfcSkipField;
+    const phoneIdx = el.dataset.tfcSkipPhoneIdx;
+    const emailIdx = el.dataset.tfcSkipEmailIdx;
+    const save = () => {
+      if (field) {
+        _tfcSetSkiptraceField(uid, id, field, el.value);
+        if (field === "facebook" || field === "been_verified") {
+          openTfcCrm(uid, TFC_RAW);
+        }
+      } else if (phoneIdx != null) {
+        _tfcSetSkiptracePhone(uid, id, parseInt(phoneIdx, 10), el.value);
+      } else if (emailIdx != null) {
+        _tfcSetSkiptraceEmail(uid, id, parseInt(emailIdx, 10), el.value);
+      }
+      flash();
+    };
+    const tag = el.tagName.toLowerCase();
+    if (tag === "input" || tag === "textarea") {
+      el.addEventListener("input", () => {
+        clearTimeout(skipSaveTimer);
+        skipSaveTimer = setTimeout(save, 400);
+      });
+      // Phone fields: re-render on blur so dupe ⚠ badges update.
+      // Flush any pending save first so the freshly typed number
+      // isn't lost.
+      if (phoneIdx != null) {
+        el.addEventListener("blur", () => {
+          if (skipSaveTimer) {
+            clearTimeout(skipSaveTimer);
+            save();
+          }
+          openTfcCrm(uid, TFC_RAW);
+        });
+      }
+    } else {
+      el.addEventListener("change", save);
     }
   });
 
