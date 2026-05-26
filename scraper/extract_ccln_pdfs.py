@@ -964,6 +964,26 @@ def process_pdf(pdf_path: Path,
                 # Signal: PDF should be deleted, no record changes,
                 # NOT counted as a failure.
                 return True, f"SKIP_PDF:{doc_num} (corporate, no record exists)"
+            # Edge case: owner name contains explicit corporate entity
+            # markers (LLP, LLC, INC, CORP, LTD) but the overall
+            # classifier kept the record (e.g. "ESTATE OF X LLP" is
+            # both an estate AND a partnership — the estate prefix
+            # wins under current rules). If the record is missing
+            # from city_liens.json, that means a stricter prior pass
+            # (e.g. the cleanup sweep) already deleted it. Don't
+            # second-guess — treat as SKIP_PDF rather than failing.
+            entity_marker = re.search(
+                r"\b(LLP|L\.?L\.?P|LLC|L\.?L\.?C|INC|INCORPORATED|"
+                r"CORP|CORPORATION|LTD|LIMITED)\b\.?",
+                pdf_owner, re.I)
+            if entity_marker:
+                log.info("  no CCLN record for doc_num %s — owner is "
+                         "%s (kept as %s but contains entity marker "
+                         "%s); record was deleted by stricter prior "
+                         "pass, deleting PDF",
+                         doc_num, pdf_owner, kind,
+                         entity_marker.group(0))
+                return True, f"SKIP_PDF:{doc_num} (mixed entity, no record exists)"
         return False, f"no CCLN record for doc_num {doc_num}"
 
     # Step 6: skip if already processed (unless force)
