@@ -2191,7 +2191,8 @@
     <div class="nav-item" data-pane="mortgageoveragesraw">
       <span>Mortgage Overages</span></div>
     <div class="nav-item" data-pane="delinquenttaxes">
-      <span>Delinquent Taxes</span></div>
+      <span>Delinquent Taxes</span>
+      <span class="tab-count" id="delq-count">—</span></div>
     <div class="nav-item" data-pane="stack">
       <span>Stack</span>
       <span class="tab-count" id="stack-count">—</span></div>
@@ -2394,15 +2395,46 @@
 </div>
 
 <!-- ======== DELINQUENT TAXES PANE (raw) ======== -->
+<!-- ===================================================================
+     Properties with delinquent property taxes owed to Nueces County.
+     Distinct from CCLN (city of CC) and from tax foreclosures (these
+     are pre-foreclosure tax delinquencies — owner still owns, just
+     hasn't paid taxes). Source data comes from the tax assessor's
+     office, not the appraisal district, so we track BOTH:
+       - NCAD account num (appraisal district, same format as elsewhere)
+       - NCTAX account num (tax office identifier, NEW field — first
+         time we track tax-office IDs in this dashboard)
+     Status uses the same stage pipeline as MFC/TFC (New / Contacted /
+     Negotiating / Under Contract / Closed / Watching / Dead).
+     CRM panel (contacts, attempts log, skiptrace) is deferred to a
+     follow-up; this pane currently shows the read-only data table.
+     Column order is intentional — mirrors how Sergio scans rows:
+     status pill first, then who/where, then how-much-owed, then
+     IDs (legal, doc#, ncad, nctax) trailing on the right.
+     ============================================================ -->
 <div class="pane" id="pane-delinquenttaxes">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Delinquent Taxes coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      Raw list of properties with delinquent property taxes. Data
-      source to be wired up later.
-    </div>
+  <div class="stats" id="delq-stats"></div>
+  <table id="delq-table">
+    <thead><tr>
+      <th data-sort="status"          style="width: 74px;">Status</th>
+      <th data-sort="owner"           style="width: 200px;">Owner</th>
+      <th data-sort="prop_address"    style="width: 210px;">Property Address</th>
+      <th data-sort="mail_address"    style="width: 200px;">Mailing Address</th>
+      <th data-sort="delq_amount"     style="width: 130px;">Delinquent Taxes</th>
+      <th data-sort="years_behind"    style="width: 90px;">Years Behind</th>
+      <th data-sort="market_value"    style="width: 110px;">Market Value</th>
+      <th data-sort="legal"           style="width: 155px;">Legal Description</th>
+      <th data-sort="doc_id"          style="width: 100px;">Doc Id</th>
+      <th style="width: 50px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
+    </tr></thead>
+    <tbody></tbody>
+    <tfoot id="delq-dead-foot"></tfoot>
+  </table>
+  <div id="delq-empty" class="empty" hidden>
+    No delinquent tax records loaded yet.<br>
+    Upload <code>delq_records.json</code> to <code>dashboard/</code>
+    in your repo (data source wiring is pending).
   </div>
 </div>
 
@@ -5487,6 +5519,38 @@ const TFC_METHODS = [
   "Other",
 ];
 
+// ============================================================
+// DELQ stage pipeline (delinquent property taxes)
+// ============================================================
+// Stages mirror MFC_STAGES and TFC_STAGES exactly so that DELQ
+// leads look and behave like any other lead type. Future CRM
+// panel (deferred — table-only ships first) will read from
+// delq-crm-store using these same stage keys.
+const DELQ_STAGES = [
+  { key: "new",            label: "New",            terminal: false },
+  { key: "contacted",      label: "Contacted",      terminal: false },
+  { key: "negotiating",    label: "Negotiating",    terminal: false },
+  { key: "under_contract", label: "Under Contract", terminal: false },
+  { key: "closed_won",     label: "Closed",         terminal: true, kind: "closed-won" },
+  { key: "watching",       label: "Watching",       terminal: true, kind: "watching" },
+  { key: "dead",           label: "Dead",           terminal: true, kind: "dead" },
+];
+
+// Outreach method dropdown values (same list as MFC/TFC for cross-
+// lead-type familiarity). Used by the future Log-Attempt modal
+// once the CRM panel ships.
+const DELQ_METHODS = [
+  "Mailed",
+  "Knocked",
+  "Left Letter",
+  "Called",
+  "Texted",
+  "Called/Texted",
+  "Emailed",
+  "Drive-By",
+  "Other",
+];
+
 // Outreach response options. Same structure/labels as MFC_RESPONSES;
 // the `cls` value drives the colored pill in the attempts log
 // (.pos = green, .neg = red, empty = default).
@@ -7495,6 +7559,23 @@ let FC_RAW = [], FC_FILTERED = [];
 // TFC = Tax Foreclosures (Linebarger Goggan Blair & Sampson source).
 // Loaded from tfc.json — see scraper/scrape_tfc.py for the data shape.
 let TFC_RAW = [];
+// DELQ = Delinquent Taxes (Nueces County tax assessor source).
+// Distinct from TFC (a TFC record is a foreclosure already filed,
+// while a DELQ record is pre-foreclosure — owner still owns but
+// hasn't paid taxes). Loaded from delq_records.json. Data source
+// wiring is pending; the array stays empty until the file exists,
+// at which point the existing fetchJsonOptional() pattern below
+// will populate it and the lazy-render will kick in on first tab
+// click. Schema (per record):
+//   { ncad_account_num, nctax_account_num, owner, prop_address,
+//     mail_address, mail_city, mail_state, mail_zip, legal,
+//     delq_amount, years_behind, market_value, doc_id?,
+//     _updated_at, _status_history? }
+// Like CCLN, DELQ rows can carry per-field overrides set by the
+// user (nueces_delq_field_overrides_v1, parallel to the CCLN
+// override store). Status/stage lives on delq-crm-store and
+// matches the MFC/TFC pipeline (new/contacted/negotiating/...).
+let DELQ_RAW = [], DELQ_FILTERED = [];
 
 // ============================================================
 // Tab switching + lazy-render
@@ -7530,6 +7611,12 @@ function _renderPaneIfNeeded(paneId) {
     if (CCLN_RAW.length) applyCcln();
   } else if (paneId === "pane-foreclosures") {
     if (FC_RAW.length) applyFc();
+  } else if (paneId === "pane-delinquenttaxes") {
+    // DELQ renderer is a stub for now — the table is empty until
+    // delq_records.json exists. applyDelq() handles the empty-state
+    // display and will render rows once data lands. The empty-state
+    // path is cheap, so it's safe to call on every visit.
+    applyDelq();
   }
 }
 
@@ -7824,6 +7911,48 @@ function applyCcln() {
     if (th.dataset.sort === CCLN_SORT_KEY)
       th.classList.add(CCLN_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
   });
+}
+
+// ============================================================
+// DELQ apply — Delinquent Tax records pane
+// ============================================================
+// Currently a stub. When delq_records.json lands, this will:
+//   1. Load DELQ_RAW from /dashboard/delq_records.json (via the
+//      same fetchJsonOptional() pattern other lead types use).
+//   2. Sort/filter into DELQ_FILTERED.
+//   3. Call renderDelq() to build the tbody rows.
+// For now, the only job is to show the empty-state hint and keep
+// the tab count display honest. Once data ingestion is wired the
+// renderer body will mirror renderCcln()'s shape (consolidated
+// row per property if there are multiple tax-year filings on the
+// same parcel, full history available in the future CRM card).
+function applyDelq() {
+  const tbody  = document.querySelector("#delq-table tbody");
+  const emptyEl = document.getElementById("delq-empty");
+  const countEl = document.getElementById("delq-count");
+  const statsEl = document.getElementById("delq-stats");
+
+  // Sync the tab-count badge in the sidebar. Shows "—" until data
+  // exists, then the live record count.
+  if (countEl) countEl.textContent = DELQ_RAW.length || "—";
+
+  // Empty-state vs populated. Empty wins until we have raw rows.
+  if (!DELQ_RAW.length) {
+    if (tbody) tbody.innerHTML = "";
+    if (emptyEl) emptyEl.hidden = false;
+    if (statsEl) statsEl.innerHTML = "";
+    return;
+  }
+
+  // Populated branch — placeholder until ingestion is wired. We
+  // hide the empty hint and leave tbody untouched; renderDelq()
+  // will own row construction once it exists. Reaching this branch
+  // before renderDelq() ships means data was loaded into DELQ_RAW
+  // out-of-band (e.g. dev console), so log a heads-up instead of
+  // silently failing.
+  if (emptyEl) emptyEl.hidden = true;
+  console.warn("applyDelq: DELQ_RAW has", DELQ_RAW.length,
+               "records but renderDelq() is not implemented yet.");
 }
 
 // ============================================================
