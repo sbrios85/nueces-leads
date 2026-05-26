@@ -422,6 +422,25 @@ def parse_ocr_text(ocr: str) -> Extracted:
         except ValueError:
             pass
 
+    # Detect utility-lien PDFs early — these are a categorically
+    # different document type filed by the City of Corpus Christi
+    # Finance & Procurement department for unpaid water/sewer bills,
+    # NOT by Development Services for property abatement. They share
+    # the same county clerk filing system so they sometimes appear
+    # in CCLN PDF downloads, but their format (owner inline in a
+    # single sentence, no multi-line owner block, no NCAD format)
+    # is incompatible with the abatement-lien extractor.
+    #
+    # Title text to match: "AFFIDAVIT OF CITY OF CORPUS CHRISTI
+    # UTILITY LIEN" or "UTILITY LIEN ACCOUNT NUMBER". Set a flag
+    # on the extracted output so the caller can SKIP_PDF cleanly
+    # rather than treating it as a failure.
+    if re.search(r"AFFIDAVIT\s+OF\s+CITY\s+OF\s+CORPUS\s+CHRISTI\s+"
+                 r"UTILITY\s+LIEN|UTILITY\s+LIEN\s+ACCOUNT\s+NUMBER",
+                 ocr, re.I):
+        out.flags.append("utility_lien_not_abatement")
+        return out
+
     # Internal city lien id
     m = RE_INTERNAL_ID.search(ocr)
     if m:
@@ -920,6 +939,21 @@ def process_pdf(pdf_path: Path,
 
     # Step 3: parse all fields out of OCR text
     ex = parse_ocr_text(ocr)
+
+    # Step 3a: utility-lien short-circuit. If the PDF is a "City of
+    # Corpus Christi Utility Lien" (unpaid water/sewer bills, filed
+    # by Finance & Procurement) rather than an abatement lien (filed
+    # by Development Services), the extractor cannot parse it — it's
+    # a completely different document format. Silently SKIP_PDF
+    # rather than failing. These get mixed in with abatement-lien
+    # PDFs in the county clerk filing system but represent a
+    # different lien type we don't currently track.
+    if "utility_lien_not_abatement" in ex.flags:
+        doc_id = doc_num or ex.doc_num or "unknown"
+        log.info("  utility lien (City of Corpus Christi water/sewer "
+                 "department, not abatement) — deleting PDF, not a CCLN "
+                 "record")
+        return True, f"SKIP_PDF:{doc_id} (utility lien, different document type)"
 
     # Step 4: reconcile filename doc_num vs OCR doc_num. The PDF's
     # own header is authoritative — if the filename and OCR disagree,
