@@ -518,9 +518,56 @@ def parse_ocr_text(ocr: str) -> Extracted:
         lines = [ln.strip() for ln in m.group("block").split("\n")
                  if ln.strip()]
         if lines:
-            # Line 0: owner name. Try to split off a spouse if "AND
-            # WF/WIFE/HUS/HUSBAND/SPOUSE" appears.
+            # Line 0: owner name. Some corporate owners use a TWO-LINE
+            # name where the entity-type suffix is on line 1:
+            #   BFS RETAIL & COMMERCIAL          ← line 0
+            #   OPERATIONS LLC                   ← line 1 (continuation)
+            #   ATTN TAX DEPT 535 MARRIOTT DR    ← line 2 (mail street)
+            #   NASHVILLE, TN 37214-0000         ← line 3 (city/state/zip)
+            # If we only grab line 0, the classifier sees no LLC/INC
+            # suffix and treats the owner as individual. We need to
+            # detect the wrap and join lines 0+1 before classifying.
+            #
+            # Signals that line 1 is a corporate-name continuation:
+            #   (a) ends with an entity suffix (LLC / INC / CORP / LP /
+            #       LTD / CO / TRUST / FOUNDATION / etc.)
+            #   (b) starts with a corporate continuation word
+            #       (OPERATIONS / HOLDINGS / GROUP / ENTERPRISES /
+            #       PROPERTIES / INVESTMENTS / MANAGEMENT)
+            #   (c) is short (≤4 words) — wrapped names are usually brief
+            #
+            # Individual owner names DON'T wrap this way (they're one
+            # line; "AND WF/WIFE" patterns are spouse joins, handled by
+            # RE_SPOUSE below). Mailing addresses START with a digit
+            # (street number) so they're easy to exclude.
             primary = lines[0]
+            owner_lines_consumed = 1   # default: line 0 only
+            if len(lines) >= 2:
+                line1 = lines[1]
+                # Mailing address line — starts with digit → not a
+                # corporate name continuation. Skip the wrap-detection.
+                if not re.match(r"^\d", line1):
+                    corporate_suffix = re.search(
+                        r"\b(LLC|L\.?L\.?C|INC|INCORPORATED|CORP|"
+                        r"CORPORATION|LP|L\.?P|LTD|LIMITED|CO|COMPANY|"
+                        r"TRUST|FOUNDATION|ASSOCIATION|ASSN|"
+                        r"PARTNERS|PARTNERSHIP|HOLDINGS|"
+                        r"ENTERPRISES|PROPERTIES|INVESTMENTS)\b\.?\s*$",
+                        line1, re.I)
+                    corporate_prefix = re.match(
+                        r"^(OPERATIONS|HOLDINGS|GROUP|ENTERPRISES|"
+                        r"PROPERTIES|INVESTMENTS|MANAGEMENT|REAL\s+ESTATE|"
+                        r"DEVELOPMENT|VENTURES|PARTNERS|CAPITAL|"
+                        r"REALTY|HOMES|CONSTRUCTION|CONSTR)\b",
+                        line1, re.I)
+                    short_line = len(line1.split()) <= 4
+                    if corporate_suffix or (corporate_prefix and short_line):
+                        primary = lines[0] + " " + line1
+                        owner_lines_consumed = 2
+                        log.debug("  owner name wrap detected: joined "
+                                  "lines 0+1 into %r", primary)
+            # Try to split off a spouse if "AND WF/WIFE/HUS/HUSBAND/
+            # SPOUSE" appears anywhere in the joined primary.
             sm = RE_SPOUSE.match(primary)
             if sm:
                 out.pdf_owner = sm.group("primary").strip()
@@ -529,10 +576,10 @@ def parse_ocr_text(ocr: str) -> Extracted:
                 out.pdf_owner = primary
 
         # Walk backward to find the city/state/zip line. We only
-        # consider lines AFTER line[0] so the owner name can't be
-        # mistakenly parsed as an address.
+        # consider lines AFTER the owner-name lines (could be 1 or 2)
+        # so the owner name can't be mistakenly parsed as an address.
         csz_idx = None
-        for i in range(len(lines) - 1, 0, -1):
+        for i in range(len(lines) - 1, owner_lines_consumed - 1, -1):
             csm = RE_CITY_STATE_ZIP.match(lines[i])
             if csm:
                 csz_idx = i
@@ -541,14 +588,16 @@ def parse_ocr_text(ocr: str) -> Extracted:
                 out.mail_zip = csm.group("zip")
                 break
 
-        # Mailing street: everything between owner (line 0) and the
-        # city/state/zip line. Join with spaces (e.g. "440 LOUISIANA
-        # ST STE 952" for a corporate suite). For a 3-line block
-        # this is just lines[1].
-        if csz_idx is not None and csz_idx > 1:
-            out.mail_address = " ".join(lines[1:csz_idx])
-        elif len(lines) >= 2:
-            out.mail_address = lines[1]
+        # Mailing street: everything between the owner name lines
+        # and the city/state/zip line. Join with spaces (e.g.
+        # "440 LOUISIANA ST STE 952" for a corporate suite). For a
+        # 3-line block (single-line owner + street + city) this is
+        # just lines[1]. For a 4-line block with wrapped owner name
+        # it's lines[2] (since owner_lines_consumed == 2).
+        if csz_idx is not None and csz_idx > owner_lines_consumed:
+            out.mail_address = " ".join(lines[owner_lines_consumed:csz_idx])
+        elif len(lines) > owner_lines_consumed:
+            out.mail_address = lines[owner_lines_consumed]
 
         # If property address matches mailing address, the property
         # zip is the same as mailing zip. Common case for owner-
