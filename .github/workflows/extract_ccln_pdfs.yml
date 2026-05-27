@@ -82,6 +82,18 @@ jobs:
         # The extractor reads pdfs/ccln_pending/, processes everything,
         # updates JSON, deletes processed PDFs in place. FORCE env var
         # controls whether already-processed records get re-extracted.
+        #
+        # continue-on-error: the extractor exits with code 2 if ANY
+        # individual PDF failed extraction (e.g. OCR garble, no matching
+        # CCLN record). We don't want one bad PDF to prevent the
+        # successful work from being committed — failed PDFs are left
+        # in pdfs/ccln_pending/ for investigation, but the successes
+        # still get saved. The "Fail if extractor reported errors" step
+        # at the end of this workflow surfaces the non-zero exit so the
+        # operator still sees a red ❌ in the Actions tab and knows
+        # something needs attention.
+        id: extractor
+        continue-on-error: true
         env:
           FORCE: ${{ inputs.force }}
           LOG_LEVEL: INFO
@@ -116,3 +128,16 @@ jobs:
           Triggered by workflow_dispatch. force=${{ inputs.force }}.
           See workflow run for per-PDF processing details."
           git push
+
+      - name: Fail if extractor reported errors
+        # Re-surface the extractor's non-zero exit AFTER commit, so the
+        # workflow shows ❌ in the Actions tab (alerting the operator
+        # to investigate the failed PDFs in pdfs/ccln_pending/) while
+        # still preserving the successful extractions and deletions
+        # committed above.
+        if: steps.extractor.outcome == 'failure'
+        run: |
+          echo "::error::Extractor reported one or more PDF failures."
+          echo "Successful extractions were committed. Failed PDFs are"
+          echo "still in pdfs/ccln_pending/ for investigation."
+          exit 1
