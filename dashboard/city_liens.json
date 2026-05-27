@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-27T19:06:47.141695+00:00",
+  "fetched_at": "2026-05-27T19:19:45.529961+00:00",
   "source": "Nueces County Clerk — CCLN cumulative",
   "total": 1721,
   "records": [
@@ -19140,17 +19140,32 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: BAYSIDE ACRES #2 Lot: 5 Block: 6 (Lot 5, Block 6)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "3819 WAGNER LEE DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "prop_zip": "78418",
+      "mail_address": "3819 WAGNER LEE DR",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78418",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035047",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_filed_date": "2024-10-15",
+      "pdf_owner": "LUNDMARK CARL JAMES ET UX",
+      "internal_lien_id": "D69478",
+      "work_date": "2024-08-20",
+      "pdf_amount": 589.22,
+      "ncad_account_num": "0530-0006-0050",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:19:45.529276Z"
     },
     {
       "doc_num": "2024035028",
