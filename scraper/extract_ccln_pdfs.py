@@ -137,6 +137,19 @@ RE_HEADER = re.compile(
     re.M,
 )
 
+# Cover-sheet doc number (page 2): "Document Number: 2024033949"
+# This is the FALLBACK path for when the page-1 italic header is
+# OCR-misread (the "9 → 8" confusion seen in 2024033949 → 2024033849
+# and 2024033946 → 2024033846 on 2026-05-27). The page-2 clerk
+# certification sheet has the same number printed in a much larger,
+# cleaner sans-serif font that tesseract reads reliably.
+# We tolerate a few OCR variations: trailing colon vs period, an
+# optional space between "Number" and ":", and case insensitivity.
+RE_COVER_DOC_NUM = re.compile(
+    r"Document\s+Number\s*[:.]?\s*(?P<doc>20\d{8})\b",
+    re.I,
+)
+
 # Internal lien id: "AFFIDAVIT OF LIEN D70611"
 RE_INTERNAL_ID = re.compile(
     r"AFFIDAVIT\s+OF\s+LIEN\s+(?P<id>[A-Z]\d+)",
@@ -318,45 +331,63 @@ class Extracted:
 # ----------------------------------------------------------------
 # PDF → image → OCR pipeline
 # ----------------------------------------------------------------
-def rasterize_page1(pdf_path: Path, out_dir: Path) -> Optional[Path]:
-    """Rasterize the FIRST PAGE of a PDF to a JPEG at 150 DPI.
+def rasterize_page(pdf_path: Path, out_dir: Path,
+                   page_num: int = 1) -> Optional[Path]:
+    """Rasterize a SINGLE PAGE of a PDF to a JPEG at 150 DPI.
 
-    Page 1 is all we need — page 2 is the standard clerk certification
-    page with no extractable data we care about. Skipping page 2 cuts
-    OCR time roughly in half per PDF.
+    Page 1 is the affidavit body and what we normally need for full
+    extraction. Page 2 is the standard clerk certification page; we
+    don't normally parse it, but it contains a clean printed
+    "Document Number: NNNNNNNNNN" field that the cover-sheet
+    fallback uses when page-1 OCR misreads the small italic header.
 
     Returns the path to the resulting JPEG, or None if rasterization
     failed. ``out_dir`` is created if missing.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_prefix = out_dir / pdf_path.stem
+    out_prefix = out_dir / f"{pdf_path.stem}_p{page_num}"
     try:
         subprocess.run(
             ["pdftoppm", "-jpeg", "-r", "150",
-             "-f", "1", "-l", "1",
+             "-f", str(page_num), "-l", str(page_num),
              str(pdf_path), str(out_prefix)],
             check=True, capture_output=True, timeout=30,
         )
     except subprocess.CalledProcessError as exc:
-        log.error("pdftoppm failed for %s: %s",
-                  pdf_path.name, exc.stderr.decode("utf-8", "replace"))
+        log.error("pdftoppm failed for %s page %d: %s",
+                  pdf_path.name, page_num,
+                  exc.stderr.decode("utf-8", "replace"))
         return None
     except subprocess.TimeoutExpired:
-        log.error("pdftoppm timeout on %s", pdf_path.name)
+        log.error("pdftoppm timeout on %s page %d",
+                  pdf_path.name, page_num)
         return None
     # pdftoppm pads the suffix based on total page count:
     #   1-page PDF  → {stem}-1.jpg
     #   2-page PDF  → {stem}-1.jpg, {stem}-2.jpg
     #   100+ pages  → {stem}-001.jpg etc.
-    # CCLN PDFs are 2 pages so the suffix is "-1".
-    for candidate in (f"{pdf_path.stem}-1.jpg",
-                      f"{pdf_path.stem}-01.jpg",
-                      f"{pdf_path.stem}-001.jpg"):
+    # CCLN PDFs are 2 pages so the suffix is "-1" or "-2".
+    # When -f and -l are equal, pdftoppm uses that page number in
+    # the filename suffix (so page 2 produces "{prefix}-2.jpg").
+    for candidate in (f"{pdf_path.stem}_p{page_num}-{page_num}.jpg",
+                      f"{pdf_path.stem}_p{page_num}-{page_num:02d}.jpg",
+                      f"{pdf_path.stem}_p{page_num}-{page_num:03d}.jpg"):
         c = out_dir / candidate
         if c.exists():
             return c
-    log.error("rasterized output not found for %s", pdf_path.name)
+    log.error("rasterized output not found for %s page %d",
+              pdf_path.name, page_num)
     return None
+
+
+def rasterize_page1(pdf_path: Path, out_dir: Path) -> Optional[Path]:
+    """Backwards-compatible wrapper for rasterize_page(page_num=1).
+
+    Kept so existing callers don't need updating, and so the
+    "first page is the default, all you usually need" intent stays
+    visible at the call sites.
+    """
+    return rasterize_page(pdf_path, out_dir, page_num=1)
 
 
 def run_ocr(jpeg_path: Path) -> Optional[str]:
@@ -403,6 +434,46 @@ def match_filename_to_doc(filename: str) -> Optional[str]:
     """
     m = RE_FILENAME_DOC.search(filename)
     return m.group(1) if m else None
+
+
+def recover_doc_num_from_cover_sheet(
+        pdf_path: Path) -> Optional[str]:
+    """Fallback path for when page-1 doc_num lookup fails.
+
+    Rasterizes page 2 (the clerk certification cover sheet), runs
+    OCR, and extracts the "Document Number: NNNNNNNNNN" field. The
+    cover sheet's text is printed in a larger, cleaner font than the
+    page-1 italic header, so tesseract reads it reliably even when
+    page 1's header gets misread (e.g. 9 → 8 confusion).
+
+    Returns the recovered doc_num if found, None otherwise. The
+    rasterized page-2 JPEG is left in TMP_DIR; the next batch's
+    rasterizations will overwrite it.
+
+    This function is ONLY called when the primary path failed:
+    either the OCR'd doc_num doesn't exist in city_liens.json, or
+    we want to verify a suspicious extraction. It adds ~1.5s per
+    PDF that hits this path (page-2 rasterize + OCR) but only ~2%
+    of PDFs need it, so the amortized cost is negligible.
+    """
+    log.info("  recovering doc_num from page-2 cover sheet…")
+    jpeg = rasterize_page(pdf_path, TMP_DIR, page_num=2)
+    if jpeg is None:
+        log.warning("  cover-sheet recovery: page-2 rasterize failed")
+        return None
+    ocr = run_ocr(jpeg)
+    if ocr is None:
+        log.warning("  cover-sheet recovery: page-2 OCR failed")
+        return None
+    m = RE_COVER_DOC_NUM.search(ocr)
+    if not m:
+        log.warning("  cover-sheet recovery: no \"Document Number\" "
+                    "field found on page 2")
+        return None
+    recovered = m.group("doc")
+    log.info("  cover-sheet recovery: page-2 doc_num = %s",
+             recovered)
+    return recovered
 
 
 # ----------------------------------------------------------------
@@ -982,11 +1053,17 @@ def process_pdf(pdf_path: Path,
         # (b) A real bug — record went missing from city_liens.json
         #     but the PDF is for a legitimate individual lead. We
         #     should keep the PDF for investigation in this case.
+        # (c) Page-1 OCR misread the doc_num. The italic header on
+        #     page 1 sometimes gets "9 → 8" digit confusion. The
+        #     real record exists in ccln.json under a slightly
+        #     different doc_num. Fall back to reading page 2's
+        #     "Document Number" cover-sheet field, which uses a
+        #     larger/cleaner font.
         #
-        # To distinguish, classify the OCR'd owner from the PDF. If
-        # it's corporate, treat as expected; otherwise, treat as
-        # real failure. Return a "SKIP_PDF" signal that the main
-        # loop will translate into PDF deletion + non-error path.
+        # To distinguish (a) from (b)/(c), classify the OCR'd owner
+        # from the PDF. If it's corporate, treat as (a) and silently
+        # SKIP_PDF. Otherwise, try the (c) cover-sheet recovery
+        # path before giving up as (b).
         pdf_owner = ex.pdf_owner or ""
         if pdf_owner:
             kind, keep = classify_owner(pdf_owner)
@@ -1018,7 +1095,28 @@ def process_pdf(pdf_path: Path,
                          doc_num, pdf_owner, kind,
                          entity_marker.group(0))
                 return True, f"SKIP_PDF:{doc_num} (mixed entity, no record exists)"
-        return False, f"no CCLN record for doc_num {doc_num}"
+
+        # Reaching here means: owner is a real individual lead
+        # (or owner is missing entirely from page-1 OCR). Try the
+        # page-2 cover-sheet fallback before declaring failure.
+        # This catches the (c) case above.
+        recovered = recover_doc_num_from_cover_sheet(pdf_path)
+        if recovered and recovered != doc_num:
+            record = records_by_doc.get(recovered)
+            if record is not None:
+                log.info("  cover-sheet recovery succeeded: "
+                         "page-1 OCR said %s, page-2 says %s, "
+                         "and %s exists in ccln.json — using %s",
+                         doc_num, recovered, recovered, recovered)
+                doc_num = recovered
+                # Fall through into the normal success path below.
+            else:
+                log.warning("  cover-sheet recovery: page-2 doc_num "
+                            "%s also not in ccln.json — giving up",
+                            recovered)
+                return False, f"no CCLN record for doc_num {doc_num} (page-2 fallback {recovered} also missing)"
+        else:
+            return False, f"no CCLN record for doc_num {doc_num}"
 
     # Step 6: skip if already processed (unless force)
     if record.get("ccln_pdf_processed") and not force:
