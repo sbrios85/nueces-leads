@@ -92,6 +92,35 @@ MAX_MARKET_VALUE = 500_000
 
 
 # ------------------------------------------------------------
+# Geographic filter — Corpus Christi city limits only
+# ------------------------------------------------------------
+# Sergio only works leads inside the City of Corpus Christi.
+# Records with a prop_zip outside this allowlist are dropped
+# at ingestion. As of 2026-05-27 the county XLS contained ~29%
+# non-CC records (mostly Robstown 78380, Bishop 78343, Port
+# Aransas 78373, plus smaller ZIPs in Banquete/Driscoll/Agua
+# Dulce/Sandia/etc.) that are now excluded.
+#
+# Notable exclusion: 78410 (Calallen). Calallen residents often
+# self-identify as Corpus Christi, but the area is outside the
+# city limits proper and Sergio chose to exclude it.
+#
+# Blank prop_zip is KEPT (treated as unknown rather than non-CC).
+# Some legitimate CC properties have missing ZIPs in the source
+# file; next month's import usually populates them. Re-evaluate
+# if this turns out to add too much noise.
+#
+# 78403 and 78419 are included for completeness even though the
+# 2026-05 file had zero records in each — they're valid CC ZIPs
+# (78403 = downtown PO boxes only, 78419 = Naval Air Station).
+CC_ZIPS: frozenset[str] = frozenset({
+    "78401", "78402", "78403", "78404", "78405", "78406", "78407",
+    "78408", "78409", "78411", "78412", "78413", "78414", "78415",
+    "78416", "78417", "78418", "78419",
+})
+
+
+# ------------------------------------------------------------
 # Paths (resolved relative to repo root, which is the parent of
 # the scraper/ dir when invoked via the GitHub Action).
 # ------------------------------------------------------------
@@ -446,6 +475,7 @@ def _process_row(row: list[Any]) -> dict[str, Any] | None:
       - non-residential state code (per KEEP_CODES)
       - bankruptcy filed (Sergio doesn't work bankruptcy leads)
       - missing NCAD account number (can't track)
+      - non-CC ZIP code (per CC_ZIPS; blank ZIP is kept)
       - corporate / government / institutional owner (per CCLN
         owner classifier — same rules as CCLN ingestion)
       - market value at or above MAX_MARKET_VALUE (too expensive
@@ -462,6 +492,14 @@ def _process_row(row: list[Any]) -> dict[str, Any] | None:
 
     ncad = _ncad_canonical(row[COL_ACCOUNT_NUM])
     if not ncad:
+        return None
+
+    # Geographic filter — keep only City of Corpus Christi ZIPs.
+    # Blank ZIPs are kept (unknown, not non-CC). See CC_ZIPS comment.
+    # ~29% of the residential file in 2026-05 (Robstown / Bishop /
+    # Port Aransas / Calallen / Banquete / Driscoll / smaller).
+    prop_zip = _clean(row[COL_PROP_ZIP])
+    if prop_zip and prop_zip not in CC_ZIPS:
         return None
 
     # Corporate-owner filter — reuses the CCLN classifier (same
@@ -575,6 +613,7 @@ def _read_xls(path: Path) -> list[dict[str, Any]]:
     drop_non_residential = 0
     drop_bankruptcy = 0
     drop_no_ncad = 0
+    drop_non_cc_zip = 0
     drop_corporate = 0
     drop_high_value = 0
 
@@ -598,6 +637,10 @@ def _read_xls(path: Path) -> list[dict[str, Any]]:
         if not _ncad_canonical(row[COL_ACCOUNT_NUM]):
             drop_no_ncad += 1
             continue
+        prop_zip = _clean(row[COL_PROP_ZIP])
+        if prop_zip and prop_zip not in CC_ZIPS:
+            drop_non_cc_zip += 1
+            continue
         owner = _clean(row[COL_OWNER])
         if owner:
             _, keep_owner = classify_owner(owner)
@@ -613,13 +656,15 @@ def _read_xls(path: Path) -> list[dict[str, Any]]:
         drop_non_residential += 1   # closest catch-all bucket
 
     total_dropped = (drop_non_residential + drop_bankruptcy +
-                     drop_no_ncad + drop_corporate + drop_high_value)
+                     drop_no_ncad + drop_non_cc_zip +
+                     drop_corporate + drop_high_value)
     log.info("Processed %d data rows: %d kept", sheet.nrows - 1, len(records))
     log.info("  dropped: non-residential=%d, bankruptcy=%d, "
-             "no_ncad=%d, corporate=%d, market_value>=$%d=%d  "
-             "(total=%d)",
+             "no_ncad=%d, non_cc_zip=%d, corporate=%d, "
+             "market_value>=$%d=%d  (total=%d)",
              drop_non_residential, drop_bankruptcy, drop_no_ncad,
-             drop_corporate, MAX_MARKET_VALUE, drop_high_value,
+             drop_non_cc_zip, drop_corporate,
+             MAX_MARKET_VALUE, drop_high_value,
              total_dropped)
     return records
 
