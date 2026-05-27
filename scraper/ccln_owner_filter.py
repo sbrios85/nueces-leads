@@ -114,7 +114,22 @@ RE_GOVERNMENT = re.compile(
     r"|FEDERAL\s+GOVERNMENT"
     r"|DEPT\s+OF"
     r"|DEPARTMENT\s+OF"
-    r"|MUNICIPAL)\b",
+    r"|MUNICIPAL"
+    # Added 2026-05-27 — "<X> COUNTY" pattern. Texas counties
+    # (and others) own foreclosed properties through their
+    # appointed trustee. "NUECES COUNTY TRUSTEE", "TRAVIS COUNTY",
+    # etc. all need to be filtered. The pre-existing "COUNTY OF X"
+    # caught some but not the more common "X COUNTY" ordering.
+    # We use [A-Z]+ before COUNTY to avoid matching things like
+    # "MY COUNTY HOME" (which doesn't have a real county name).
+    r"|[A-Z]+\s+COUNTY\b"
+    # Common government-trustee patterns. We do NOT match bare
+    # "TRUSTEE" at end of name because in production data, many
+    # such records are real people acting as private trustees
+    # for family trusts (e.g. "BURKETT STEPHEN L TRUSTEE",
+    # "ROSENBERG JULIUS M TRUSTEE") and ARE valid leads.
+    r"|TAX\s+TRUSTEE"
+    r")\b",
     re.I,
 )
 
@@ -144,7 +159,9 @@ RE_HOA = re.compile(
 )
 
 RE_NONPROFIT = re.compile(
-    r"\b(ASSOCIATION"
+    # First alternation: word-boundary-anchored keywords that look
+    # like normal words (ASSOCIATION, FOUNDATION, etc).
+    r"(?:\b(?:ASSOCIATION"
     r"|FOUNDATION"
     r"|INSTITUTE"
     r"|SOCIETY"
@@ -153,7 +170,17 @@ RE_NONPROFIT = re.compile(
     r"|COMMUNITY\s+CENTER"
     r"|YMCA|YWCA"
     r"|GOODWILL"
-    r"|SALVATION\s+ARMY)\b",
+    r"|SALVATION\s+ARMY"
+    r"|TAX[\s-]?EXEMPT)\b"
+    # Second alternation: IRS tax-exempt classifications. These
+    # have literal parentheses which break \b word boundaries
+    # (paren isn't a word char), so they sit outside the \b
+    # wrapper. "501(C)(3)" / "501(C)(4)" / "501C3" all variants.
+    # Added 2026-05-27. Example: "EVERHOME CREATIVE HOUSING A
+    # 501(C)(3) NO" — clearly a nonprofit, was slipping by.
+    r"|501\s*\(\s*C\s*\)"
+    r"|\b501\s*C\s*3\b"
+    r")",
     re.I,
 )
 
@@ -177,6 +204,37 @@ RE_COMPANY = re.compile(
     r"|CREDIT\s+UNION"
     r"|FEDERAL\s+SAVINGS"
     r"|PARTNERSHIP"
+    # Added 2026-05-27 — patterns observed across CCLN+DELQ data
+    # that were slipping through classification as "individual"
+    # because they don't end in LLC/INC/CORP. All of these were
+    # documented in the "deferred classifier improvements" memory
+    # before being batched into this update.
+    r"|INVESTMENTS?"          # MARKMAN BROTHERS INVESTMENTS, HLN INVESTMENTS
+    r"|INVESTORS?"            # G&G TEXAS INVESTORS
+    r"|REALTY|REALITY"        # BAY AREA REALTY (and the OCR typo "REALITY")
+    r"|RAILROAD"              # UNION PACIFIC RAILROAD
+    r"|MAC\s+SLST"            # FREDDIE MAC SLST 2022-2 (Freddie Mac
+                              # securitization trusts) — be specific
+                              # so we don't trigger on names like
+                              # "MAC SMITH" (a person's name).
+    r"|LODGE"                 # FENIX LODGE 24 (fraternal orgs)
+    r"|TRAILER\s+PARK"        # SAN SIMEON TRAILER PARK
+    r"|MOBILE\s+HOME\s+PARK"  # variant for completeness
+    r"|COMMUNITY\s+IMPROVEMENT"  # CC COMMUNITY IMPROVEMENT
+    # Added 2026-05-27 — additional slip-through fixes:
+    # Fused INC suffix (data-entry error pattern in the county
+    # files): "OPERATINGINC" without a space. Match any 5+ char
+    # word ending in INC — the 5-char minimum avoids matching
+    # short personal names that happen to contain "inc" letters
+    # (VINCE, PRINCE, MINNIE are all <5 chars before the "inc",
+    # and don't actually END with INC anyway).
+    r"|\w{5,}INC\b"
+    # Industry-CO patterns: bare "CO" at the end of names like
+    # "ABTEX BRINKERHOFF OIL CO" without a period. Adding a
+    # generic \bCO\b would false-positive surnames (FELICIA CO),
+    # so we anchor on common industry/trade words before CO.
+    r"|\b(?:OIL|GAS|ENERGY|TRADING|SUPPLY|RANCH|CATTLE|TIMBER"
+    r"|DRILLING|MINING|LUMBER|LAND|REAL\s+ESTATE)\s+CO\b"
     r")\b",
     re.I,
 )
@@ -198,6 +256,19 @@ SURNAME_COLLISION_TOKENS = {
     "TEMPLE",
     "ACADEMY",
     "BISHOP",
+    # Added 2026-05-27 alongside the new company keywords:
+    # "LODGE" is a real surname (Henry Cabot Lodge), so we keep
+    # 2-token names like "LODGE CHARLES" as individuals.
+    #
+    # INVESTMENT/INVESTOR/REALTY are NOT in this allowlist on
+    # purpose — they're functionally never first/last names. A
+    # 2-token name like "HLN INVESTMENTS" is overwhelmingly a
+    # company, not a person. Adding them here was tried and
+    # produced false negatives (HLN INVESTMENTS got kept). If
+    # you ever find a real person whose name is "INVESTMENT
+    # WILLIAMS" or similar, mark them as Dead in the dashboard
+    # — it's far rarer than the companies these patterns catch.
+    "LODGE",
 }
 
 # Generational suffix — stripped before counting tokens so
