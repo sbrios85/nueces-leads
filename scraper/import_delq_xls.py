@@ -54,6 +54,42 @@ except ImportError:
     sys.stderr.write("xlrd is required: pip install 'xlrd>=2.0,<3.0'\n")
     sys.exit(2)
 
+# Reuse the CCLN owner classifier — it already knows how to detect
+# LLCs, trusts, churches, HOAs, government, schools, religious orgs,
+# nonprofits, etc. The same logic applies for delinquent-tax records:
+# Sergio doesn't pursue corporate-owned leads. The module also handles
+# tricky cases (ESTATE OF X LLP → keep as estate, FAMILY TRUST → keep,
+# REV LVG TRUST → keep but Berkshire/etc institutional → drop).
+#
+# Hard import — if the classifier is missing, fail loudly rather than
+# silently load corporate rows. The two scripts live in the same dir
+# so a relative import works regardless of how the file is invoked.
+try:
+    from ccln_owner_filter import classify_owner
+except ImportError:
+    # Fallback for when the importer is run from outside the scraper/
+    # dir (e.g. unit tests). Add the script's own dir to sys.path then
+    # retry.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from ccln_owner_filter import classify_owner
+
+
+# ------------------------------------------------------------
+# Filter thresholds
+# ------------------------------------------------------------
+# Maximum market value Sergio will work. Properties at or above this
+# threshold are dropped at ingestion. The $500K cap is set high
+# enough to leave room for legitimate multi-family leads (B1-B9):
+# a $400K duplex is two $200K units and a $480K fourplex is four
+# $120K units — totally normal stock in older neighborhoods. The
+# cap mostly catches luxury single-family homes (the $300-500K
+# Padre Island and Country Club tier) which aren't a fit for the
+# distressed-property strategy.
+#
+# Edit this number if the strategy changes; it's a one-line tweak
+# that takes effect on next import.
+MAX_MARKET_VALUE = 500_000
+
 
 # ------------------------------------------------------------
 # Paths (resolved relative to repo root, which is the parent of
@@ -408,36 +444,54 @@ def _process_row(row: list[Any]) -> dict[str, Any] | None:
     Convert one raw XLS row into a slim JSON record, OR return
     None if the row should be filtered out:
       - non-residential state code (per KEEP_CODES)
+      - bankruptcy filed (Sergio doesn't work bankruptcy leads)
       - missing NCAD account number (can't track)
-      - bankruptcy filed (Sergio doesn't work bankruptcy leads —
-        they're complicated, can't legally close while case is
-        active, and bankruptcy stays on file for months/years
-        after the case clears)
+      - corporate / government / institutional owner (per CCLN
+        owner classifier — same rules as CCLN ingestion)
+      - market value at or above MAX_MARKET_VALUE (too expensive
+        for the distressed-property strategy)
     """
     state_prop = _clean(row[COL_STATE_PROP]).upper()
     if state_prop not in KEEP_CODES:
         return None
 
-    # Bankruptcy filter — drop the entire row, don't even surface
-    # it to the dashboard. There were 67 such records in the
-    # residential filter as of 2026-05 (out of ~11.6k total).
+    # Bankruptcy filter — drop entirely. ~67 records out of 11.6k
+    # residential in the 2026-05 file.
     if _clean(row[COL_BANKRUPTCY]):
         return None
 
     ncad = _ncad_canonical(row[COL_ACCOUNT_NUM])
     if not ncad:
-        # Row has no NCAD account number — skip; can't track.
         return None
+
+    # Corporate-owner filter — reuses the CCLN classifier (same
+    # rules across the dashboard so behavior is consistent).
+    # classify_owner returns (kind, keep): we just need `keep`.
+    # Drops LLCs, INCs, churches, HOAs, government, schools,
+    # nonprofits, institutional trusts. ~1,219 records out of 11.5k
+    # residential in 2026-05 (10.6% of file).
+    owner = _clean(row[COL_OWNER])
+    if owner:
+        _, keep_owner = classify_owner(owner)
+        if not keep_owner:
+            return None
 
     del_years = _parse_del_years(row[COL_DEL_YEARS])
     current_levy = _num(row[COL_CURRENT_LEVY])
     back_levy = _num(row[COL_DEL_LEVY])
+    market_value = _market_value(row)
+
+    # Market-value cap — drop high-value properties before building
+    # the full record. ~7-8% of the residential file. See comment
+    # on MAX_MARKET_VALUE above for rationale.
+    if market_value >= MAX_MARKET_VALUE:
+        return None
 
     rec = {
         "ncad_account_num":   ncad,
         "ncad_prop_id":       _ncad_prop_id(row[COL_APPR_DIST_NUM]),
         "state_prop_code":    state_prop,
-        "owner":              _clean(row[COL_OWNER]),
+        "owner":              owner,
         "prop_address":       _clean(row[COL_PROP_ADDR]),
         "prop_zip":           _clean(row[COL_PROP_ZIP]),
         "mail_address":       _clean(row[COL_ADDR3]),
@@ -453,7 +507,7 @@ def _process_row(row: list[Any]) -> dict[str, Any] | None:
         "del_years":          del_years,
         "years_behind":       len(del_years),
         "oldest_year":        min(del_years) if del_years else None,
-        "market_value":       _market_value(row),
+        "market_value":       market_value,
         "exemptions":         _exemptions(row),
         "flags":              _flags(row),
     }
@@ -513,17 +567,60 @@ def _read_xls(path: Path) -> list[dict[str, Any]]:
     log.info("Header validated")
 
     records: list[dict[str, Any]] = []
-    filtered_out = 0
+    # Per-reason drop counters — surfaced in the log line at the end
+    # so the operator can see at a glance WHY rows were dropped each
+    # month. Counters are mutually exclusive (each row counts toward
+    # at most one bucket, evaluated in priority order matching the
+    # filter checks in _process_row).
+    drop_non_residential = 0
+    drop_bankruptcy = 0
+    drop_no_ncad = 0
+    drop_corporate = 0
+    drop_high_value = 0
+
     for r in range(1, sheet.nrows):
         row = sheet.row_values(r)
         rec = _process_row(row)
-        if rec is None:
-            filtered_out += 1
+        if rec is not None:
+            records.append(rec)
             continue
-        records.append(rec)
 
-    log.info("Processed %d data rows: %d kept (residential), %d dropped",
-             sheet.nrows - 1, len(records), filtered_out)
+        # Row was filtered — figure out why so we can report it.
+        # Mirrors the checks in _process_row in the same priority
+        # order. Cheap re-checks; no field parsing.
+        state_prop = _clean(row[COL_STATE_PROP]).upper()
+        if state_prop not in KEEP_CODES:
+            drop_non_residential += 1
+            continue
+        if _clean(row[COL_BANKRUPTCY]):
+            drop_bankruptcy += 1
+            continue
+        if not _ncad_canonical(row[COL_ACCOUNT_NUM]):
+            drop_no_ncad += 1
+            continue
+        owner = _clean(row[COL_OWNER])
+        if owner:
+            _, keep_owner = classify_owner(owner)
+            if not keep_owner:
+                drop_corporate += 1
+                continue
+        # If we got here, the only reason left is the value cap.
+        if _market_value(row) >= MAX_MARKET_VALUE:
+            drop_high_value += 1
+            continue
+        # Theoretically unreachable: _process_row returned None but
+        # none of the above filters triggered. Count it generically.
+        drop_non_residential += 1   # closest catch-all bucket
+
+    total_dropped = (drop_non_residential + drop_bankruptcy +
+                     drop_no_ncad + drop_corporate + drop_high_value)
+    log.info("Processed %d data rows: %d kept", sheet.nrows - 1, len(records))
+    log.info("  dropped: non-residential=%d, bankruptcy=%d, "
+             "no_ncad=%d, corporate=%d, market_value>=$%d=%d  "
+             "(total=%d)",
+             drop_non_residential, drop_bankruptcy, drop_no_ncad,
+             drop_corporate, MAX_MARKET_VALUE, drop_high_value,
+             total_dropped)
     return records
 
 
