@@ -84,6 +84,20 @@ jobs:
             git push
           fi
 
+      - name: Apply corporate-owner cleanup to CCLN
+        # Runs every scrape (idempotent: ~2s no-op when nothing to clean).
+        # Catches both newly-scraped corporate owners AND old records that
+        # match classifier patterns added since they were ingested.
+        # Script commits + pushes its own changes if any records are removed.
+        run: python scraper/cleanup_corporate_ccln.py
+
+      - name: Pull latest after cleanup (catch own push)
+        # cleanup_corporate_ccln.py may have pushed a commit; refresh local
+        # working tree so the Pages artifact upload sees the cleaned JSON.
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
       - name: Upload dashboard artifact
         uses: actions/upload-pages-artifact@v3
         with:
