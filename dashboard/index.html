@@ -320,6 +320,77 @@
     font-size: 13px;
   }
   /* ============================================================
+     DELQ PANE — Tax Status column badges
+     ============================================================
+     Up to 4 small badges per row, stacked vertically when more
+     than one is set. Color-coded by severity so the eye picks up
+     the worst case first:
+       JUDGMENT       red   — county won the suit, foreclosure imminent
+       SUIT FILED     orange — county sued, awaiting judgment
+       TAX DEFERRAL   amber — over-65 / disabled deferral
+       PAYMENT PLAN   green — owner actively paying down (skip these)
+     Stacking via column-direction flex so adjacent badges line up
+     under each other rather than wrapping mid-pill. */
+  .delq-tax-status {
+    display: flex; flex-direction: column;
+    gap: 3px; align-items: flex-start;
+  }
+  .delq-tax-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1.4;
+    white-space: nowrap;
+    cursor: help;
+  }
+  .delq-tax-judgment {
+    background: rgba(239, 68, 68, 0.18);  /* red-500 */
+    color: #ef4444;
+  }
+  .delq-tax-suit {
+    background: rgba(249, 115, 22, 0.18);  /* orange-500 */
+    color: #f97316;
+  }
+  .delq-tax-deferral {
+    background: rgba(245, 158, 11, 0.18);  /* amber-500 */
+    color: #f59e0b;
+  }
+  .delq-tax-payplan {
+    background: rgba(34, 197, 94, 0.18);  /* green-500 */
+    color: #22c55e;
+  }
+  /* Exemption badges next to owner name. Show as small grey pills
+     inline-block after the owner; multiple can stack horizontally
+     and wrap to the next line if needed. Greyer than the tax-status
+     badges since exemptions are informational, not actionable. */
+  .delq-exempt-badge {
+    display: inline-block;
+    margin-left: 4px;
+    margin-top: 2px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    background: rgba(148, 163, 184, 0.18);  /* slate-400 */
+    color: var(--muted);
+    vertical-align: middle;
+    text-transform: uppercase;
+  }
+  /* Bad-address warning icon next to mailing address. Subtle red
+     triangle, hover for tooltip. */
+  .delq-bad-addr {
+    display: inline-block;
+    margin-left: 4px;
+    color: #ef4444;
+    font-weight: 700;
+    cursor: help;
+    font-size: 12px;
+  }
+  /* ============================================================
      STACK PANE — lead-type badges
      ============================================================
      One badge per lead-type signal that's present on a property.
@@ -2410,7 +2481,18 @@
      follow-up; this pane currently shows the read-only data table.
      Column order is intentional — mirrors how Sergio scans rows:
      status pill first, then who/where, then how-much-owed, then
-     IDs (legal, doc#, ncad, nctax) trailing on the right.
+     property characteristics, then a Tax Status column carrying
+     up-to-4 county-flag badges (JUDGMENT, SUIT FILED, TAX DEF,
+     PAYMENT PLAN), and finally the two NCAD identifier columns.
+     The "NCAD Prop ID" column repurposes what was originally
+     labeled "NCTAX" in the early scaffolding; we discovered while
+     parsing the county XLS that the tax office uses the SAME
+     account number as NCAD (just stored without dashes), so a
+     separate NCTAX field would be redundant. The county XLS's
+     "APPR DIST #" column is NCAD's internal property PID — used
+     in NCAD URLs like /Property/View/{prop_id} — which is the
+     thing actually worth surfacing here. Both NCAD columns are
+     clickable into NCAD.
      ============================================================ -->
 <div class="pane" id="pane-delinquenttaxes">
   <div class="stats" id="delq-stats"></div>
@@ -2420,21 +2502,21 @@
       <th data-sort="owner"           style="width: 200px;">Owner</th>
       <th data-sort="prop_address"    style="width: 210px;">Property Address</th>
       <th data-sort="mail_address"    style="width: 200px;">Mailing Address</th>
-      <th data-sort="delq_amount"     style="width: 130px;">Delinquent Taxes</th>
+      <th data-sort="total_owed"      style="width: 130px;">Delinquent Taxes</th>
       <th data-sort="years_behind"    style="width: 90px;">Years Behind</th>
       <th data-sort="market_value"    style="width: 110px;">Market Value</th>
       <th data-sort="legal"           style="width: 155px;">Legal Description</th>
-      <th data-sort="doc_id"          style="width: 100px;">Doc Id</th>
+      <th data-sort="tax_status"      style="width: 110px;">Tax Status</th>
       <th style="width: 50px;">NCAD</th>
-      <th style="width: 50px;">NCTAX</th>
+      <th style="width: 50px;">NCAD Prop ID</th>
     </tr></thead>
     <tbody></tbody>
     <tfoot id="delq-dead-foot"></tfoot>
   </table>
   <div id="delq-empty" class="empty" hidden>
     No delinquent tax records loaded yet.<br>
-    Upload <code>delq_records.json</code> to <code>dashboard/</code>
-    in your repo (data source wiring is pending).
+    Upload the monthly XLS to <code>data/delq_uploads/</code> and
+    run the <strong>Import Delinquent Tax XLS</strong> workflow.
   </div>
 </div>
 
@@ -2965,6 +3047,41 @@ function setCclnStatus(docNum, status) {
     updated_at: new Date().toISOString()
   });
   saveCclnStatus(s);
+}
+
+// ============================================================
+// DELQ status — lead stage on delinquent-tax records
+// ============================================================
+// Same pattern as loadCclnStatus / getCclnStatus / setCclnStatus
+// above, but keyed by NCAD account number (the only stable
+// identifier the county XLS gives us across monthly imports).
+// Records absent from the store implicitly have status "new" —
+// we only write to localStorage once the user changes the stage,
+// which keeps the store small.
+//
+// This is the "delq-crm-store" referenced in the import pipeline
+// and the DELQ pane comments. Future CRM panel (contacts log,
+// attempts, notes — currently deferred) will live on the SAME
+// key but with a richer per-record shape.
+const DELQ_STATUS_KEY = "nueces_delq_status_v1";
+function loadDelqStatus() {
+  try { return JSON.parse(localStorage.getItem(DELQ_STATUS_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveDelqStatus(s) {
+  localStorage.setItem(DELQ_STATUS_KEY, JSON.stringify(s));
+}
+function getDelqStatus(ncad) {
+  const s = loadDelqStatus();
+  return (s[ncad] && s[ncad].status) || "new";
+}
+function setDelqStatus(ncad, status) {
+  const s = loadDelqStatus();
+  s[ncad] = Object.assign({}, s[ncad], {
+    status: status,
+    updated_at: new Date().toISOString()
+  });
+  saveDelqStatus(s);
 }
 
 // ============================================================
@@ -7728,6 +7845,32 @@ async function loadAll() {
     }
   } catch (e) { /* tfc.json optional — table keeps its stub rows */ }
 
+  // --- DELQ (delinquent property taxes from Nueces County) ---
+  // Imported monthly from the county tax-office XLS via the
+  // scraper/import_delq_xls.py workflow. JSON shape:
+  //   { records: [...], record_count: N, total_owed: $,
+  //     filter_codes: [...], import_date: "YYYY-MM-DD",
+  //     source_filename: "..." }
+  // First-deploy case: file may not exist yet. Silently fall back
+  // to the empty-table state. The sidebar count badge still shows
+  // "—" until the file lands.
+  try {
+    const r = await fetch("delq_records.json", {cache:"no-store"});
+    if (r.ok) {
+      const data = await r.json();
+      DELQ_RAW = data.records || [];
+      renderDelqStats();
+      // Same lazy-render pattern as CCLN/FC: only build the table
+      // rows if the DELQ pane is the active one at page-load time.
+      // Otherwise the renderer is deferred until the user clicks
+      // into the tab via _renderPaneIfNeeded.
+      if (_activePane === "pane-delinquenttaxes") {
+        _renderedPanes.add("pane-delinquenttaxes");
+        applyDelq();
+      }
+    }
+  } catch (e) { /* delq_records.json optional — empty-state covers it */ }
+
   // Compute "last PDF upload" timestamp: the max `pdf_parsed_at` across
   // foreclosure records. This tells the user when they last uploaded
   // a foreclosure-notice PDF batch via the "Parse uploaded foreclosure
@@ -7916,43 +8059,455 @@ function applyCcln() {
 // ============================================================
 // DELQ apply — Delinquent Tax records pane
 // ============================================================
-// Currently a stub. When delq_records.json lands, this will:
-//   1. Load DELQ_RAW from /dashboard/delq_records.json (via the
-//      same fetchJsonOptional() pattern other lead types use).
-//   2. Sort/filter into DELQ_FILTERED.
-//   3. Call renderDelq() to build the tbody rows.
-// For now, the only job is to show the empty-state hint and keep
-// the tab count display honest. Once data ingestion is wired the
-// renderer body will mirror renderCcln()'s shape (consolidated
-// row per property if there are multiple tax-year filings on the
-// same parcel, full history available in the future CRM card).
+// Top-level entry point: sort DELQ_RAW per the current sort key,
+// then call renderDelq() to build the tbody. Stats + sidebar
+// count are refreshed via renderDelqStats(). Records absent from
+// the delq-crm-store are implicitly "new" — we only persist on
+// user stage changes, like the CCLN pattern above.
+//
+// Status keying: NCAD account number (12-digit dashed). It's the
+// only identifier that's stable across monthly XLS re-imports —
+// the county's ACCOUNT # column IS the NCAD number minus the
+// dashes, verified by cross-referencing known CCLN leads.
+//
+// Empty-state path is cheap; we call applyDelq() on every visit
+// to the tab to keep the count/stats fresh as DELQ_RAW arrives
+// asynchronously on initial page load.
 function applyDelq() {
-  const tbody  = document.querySelector("#delq-table tbody");
   const emptyEl = document.getElementById("delq-empty");
+  const tbody   = document.querySelector("#delq-table tbody");
   const countEl = document.getElementById("delq-count");
-  const statsEl = document.getElementById("delq-stats");
 
-  // Sync the tab-count badge in the sidebar. Shows "—" until data
-  // exists, then the live record count.
-  if (countEl) countEl.textContent = DELQ_RAW.length || "—";
+  // Sidebar tab-count badge: shows "—" until data, then live count.
+  if (countEl) countEl.textContent = DELQ_RAW.length
+      ? DELQ_RAW.length.toLocaleString() : "—";
 
-  // Empty-state vs populated. Empty wins until we have raw rows.
+  // Empty-state branch: blank table, show the helper text.
   if (!DELQ_RAW.length) {
     if (tbody) tbody.innerHTML = "";
     if (emptyEl) emptyEl.hidden = false;
-    if (statsEl) statsEl.innerHTML = "";
+    renderDelqStats();   // clears the stats bar to "—" values
     return;
   }
 
-  // Populated branch — placeholder until ingestion is wired. We
-  // hide the empty hint and leave tbody untouched; renderDelq()
-  // will own row construction once it exists. Reaching this branch
-  // before renderDelq() ships means data was loaded into DELQ_RAW
-  // out-of-band (e.g. dev console), so log a heads-up instead of
-  // silently failing.
+  // Populated branch: sort, render rows, render stats.
   if (emptyEl) emptyEl.hidden = true;
-  console.warn("applyDelq: DELQ_RAW has", DELQ_RAW.length,
-               "records but renderDelq() is not implemented yet.");
+  DELQ_FILTERED = DELQ_RAW.slice();
+  const type = DELQ_SORT_TYPES[DELQ_SORT_KEY] || "string";
+  DELQ_FILTERED.sort((a, b) =>
+      _delqCompare(a, b, DELQ_SORT_KEY, DELQ_SORT_DIR, type));
+  renderDelq();
+  renderDelqStats();
+
+  // Update sort-arrow indicators on the active header cell.
+  document.querySelectorAll("#delq-table th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === DELQ_SORT_KEY)
+      th.classList.add(DELQ_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
+  });
+}
+
+// ============================================================
+// DELQ stats bar
+// ============================================================
+// Numbers shown on the pane: total active leads (excluding dead),
+// the per-stage breakdown for the active subset, total dollars
+// owed across active records, and how many have a JUDGMENT or
+// SUIT FILED flag (the urgent sub-cohorts).
+function renderDelqStats() {
+  const statsEl = document.getElementById("delq-stats");
+  if (!statsEl) return;
+
+  // Zero-state when no data has loaded.
+  if (!DELQ_RAW.length) {
+    statsEl.innerHTML = `
+      <div class="stat"><div class="v">—</div><div class="k">Active leads</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Total owed</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Judgment</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Suit filed</div></div>
+    `;
+    return;
+  }
+
+  let nActive = 0, nDead = 0, totalOwed = 0;
+  let nJudgment = 0, nSuit = 0;
+  for (const r of DELQ_RAW) {
+    const st = getDelqStatus(r.ncad_account_num);
+    if (st === "dead") nDead++;
+    else {
+      nActive++;
+      totalOwed += Number(r.total_owed) || 0;
+      if (r.flags && r.flags.has_judgment) nJudgment++;
+      if (r.flags && r.flags.in_suit) nSuit++;
+    }
+  }
+
+  // Sidebar count = active (non-dead). Matches the convention
+  // already used by CCLN.
+  const navCount = document.getElementById("delq-count");
+  if (navCount) navCount.textContent = nActive.toLocaleString();
+
+  statsEl.innerHTML = `
+    <div class="stat"><div class="v">${nActive.toLocaleString()}</div><div class="k">Active leads</div></div>
+    <div class="stat"><div class="v">$${Math.round(totalOwed).toLocaleString()}</div><div class="k">Total owed</div></div>
+    <div class="stat"><div class="v">${nJudgment.toLocaleString()}</div><div class="k">Judgment</div></div>
+    <div class="stat"><div class="v">${nSuit.toLocaleString()}</div><div class="k">Suit filed</div></div>
+  `;
+}
+
+// ============================================================
+// DELQ sort state — defaults to total_owed descending (biggest
+// distress first). Not persisted across sessions.
+// ============================================================
+let DELQ_SORT_KEY = "total_owed";
+let DELQ_SORT_DIR = "desc";
+const DELQ_SORT_TYPES = {
+  status:        "status",
+  owner:         "string",
+  prop_address:  "string",
+  mail_address:  "string",
+  total_owed:    "number",
+  years_behind:  "number",
+  market_value:  "number",
+  legal:         "string",
+  tax_status:    "tax_status",
+};
+function _delqCompare(a, b, key, dir, type) {
+  if (type === "status") {
+    // Order: new(0) → contacted(1) → negotiating(2) → under_contract(3)
+    //        → watching(4) → closed_won(5) → dead(6). Dead always sinks
+    // to the bottom regardless of sort direction since terminal states
+    // are deprioritized for active work. We use the canonical stage
+    // ordering from DELQ_STAGES so this stays consistent if the stage
+    // list is reordered.
+    const rank = {};
+    DELQ_STAGES.forEach((s, i) => { rank[s.key] = i; });
+    const sa = rank[getDelqStatus(a.ncad_account_num)] ?? 0;
+    const sb = rank[getDelqStatus(b.ncad_account_num)] ?? 0;
+    return dir === "asc" ? sa - sb : sb - sa;
+  }
+  if (type === "tax_status") {
+    // Severity ranking for the Tax Status column:
+    //   3 = judgment (most urgent)
+    //   2 = suit filed
+    //   1 = tax deferral
+    //   0 = payment plan or nothing
+    // Descending = most urgent first.
+    const sev = r => {
+      const f = r.flags || {};
+      if (f.has_judgment) return 3;
+      if (f.in_suit) return 2;
+      if (f.tax_deferral) return 1;
+      return 0;
+    };
+    const sa = sev(a), sb = sev(b);
+    return dir === "asc" ? sa - sb : sb - sa;
+  }
+  let va = a[key], vb = b[key];
+  const aE = va == null || va === "";
+  const bE = vb == null || vb === "";
+  if (aE && bE) return 0;
+  if (aE) return 1;
+  if (bE) return -1;
+  if (type === "number") {
+    const na = Number(va), nb = Number(vb);
+    if (isNaN(na) && isNaN(nb)) return 0;
+    if (isNaN(na)) return 1;
+    if (isNaN(nb)) return -1;
+    return dir === "asc" ? na - nb : nb - na;
+  }
+  const sa = String(va).toLowerCase(), sb = String(vb).toLowerCase();
+  return dir === "asc" ? sa.localeCompare(sb) : sb.localeCompare(sa);
+}
+
+// ============================================================
+// DELQ table render — build the tbody from DELQ_FILTERED
+// ============================================================
+// Mirrors the CCLN renderer's structure: dead records collapse
+// into a tfoot "X deleted leads — click to expand" footer.
+function renderDelq() {
+  const tb = document.querySelector("#delq-table tbody");
+  const tf = document.getElementById("delq-dead-foot");
+  if (!tb || !tf) return;
+  tb.innerHTML = "";
+  tf.innerHTML = "";
+
+  const active = [], dead = [];
+  for (const r of DELQ_FILTERED) {
+    if (getDelqStatus(r.ncad_account_num) === "dead") dead.push(r);
+    else active.push(r);
+  }
+
+  for (const r of active) tb.appendChild(buildDelqRow(r, false));
+
+  if (dead.length > 0) {
+    const expanded =
+        localStorage.getItem("delq_dead_expanded") === "true";
+    const toggleTr = document.createElement("tr");
+    toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
+    toggleTr.innerHTML = `
+      <td colspan="11">
+        <span class="chev">▶</span>
+        <span>${dead.length} deleted lead${dead.length === 1 ? "" : "s"}</span>
+        <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
+          — click to ${expanded ? "collapse" : "expand"}
+        </span>
+      </td>`;
+    toggleTr.onclick = () => {
+      localStorage.setItem("delq_dead_expanded",
+          toggleTr.classList.contains("expanded") ? "false" : "true");
+      renderDelq();
+    };
+    tf.appendChild(toggleTr);
+    if (expanded) for (const r of dead) tf.appendChild(buildDelqRow(r, true));
+  }
+}
+
+// ============================================================
+// Build a single DELQ row
+// ============================================================
+// Each row gets:
+//   Status pill (clickable to change stage; same UX as CCLN)
+//   Owner with optional exemption badges below
+//   Property address + zip + acres tooltip
+//   Mailing address + city/state/zip + bad-address warning
+//   Delinquent Taxes with current/back breakdown tooltip
+//   Years Behind with del_years tooltip
+//   Market Value
+//   Legal Description (truncated)
+//   Tax Status badges (judgment / suit / tax def / payment plan)
+//   NCAD (clickable to NCAD via ncadCellHtml)
+//   NCAD Prop ID (clickable to NCAD direct URL)
+function buildDelqRow(r, isDead) {
+  const tr = document.createElement("tr");
+  if (isDead) tr.classList.add("dead-lead");
+  const ncad = r.ncad_account_num || "";
+
+  // --- Status cell -------------------------------------------------
+  let statusCell;
+  if (isDead) {
+    statusCell = `
+      <span class="pill status status-dead">Dead</span>
+      <button class="restore-btn" style="margin-top:4px;"
+              title="Restore this lead"
+              onclick="setDelqStatus('${esc(ncad)}', 'new'); applyDelq(); event.stopPropagation();">
+        Restore</button>`;
+  } else {
+    const st = getDelqStatus(ncad);
+    const stageDef = DELQ_STAGES.find(s => s.key === st) || DELQ_STAGES[0];
+    // Pill color uses the same status-* classes already defined for
+    // MFC/TFC/CCLN, so a "Negotiating" stage looks identical across
+    // lead types. status-new/contacted/negotiating/closed/dead are
+    // already in the stylesheet; new entries below map any DELQ-
+    // specific stages to a status-* class.
+    const pillClassMap = {
+      new:            "status-new",
+      contacted:      "status-contacted",
+      negotiating:    "status-negotiating",
+      under_contract: "status-negotiating",
+      closed_won:     "status-closed",
+      watching:       "status-interested",
+      dead:           "status-dead",
+    };
+    const pillClass = pillClassMap[st] || "status-new";
+    statusCell = `
+      <span class="pill status ${pillClass}" style="cursor:pointer;"
+            title="Click to change status"
+            onclick="openDelqStatusMenu(event, '${esc(ncad)}', '${esc(st)}')">
+        ${esc(stageDef.label)} ▾</span>`;
+  }
+
+  // --- Owner cell with exemption badges ----------------------------
+  let ownerCell = esc(r.owner || "");
+  if (Array.isArray(r.exemptions) && r.exemptions.length) {
+    const badges = r.exemptions.map(e =>
+      `<span class="delq-exempt-badge" title="${esc(e)}">${esc(
+        // Short label fits the small badge: HOMESTEAD → HS, OVER 65 →
+        // 65+, DISABLED → DIS, VETERAN → VET. Unknown exemptions show
+        // the first word truncated to 6 chars. Full text on hover.
+        ((e.match(/^HOMESTEAD/i) && "HS") ||
+         (e.match(/^OVER\s*65/i) && "65+") ||
+         (e.match(/^DISABLED/i) && "DIS") ||
+         (e.match(/^VETERAN/i) && "VET") ||
+         (e.match(/^CAPPED/i) && "CAP") ||
+         (e.match(/^NHS\s*CAP/i) && "NHS") ||
+         (e.match(/SURVIVING/i) && "SURV") ||
+         (e.match(/EXEMPT$/i) && "EX") ||
+         (e.match(/SOLAR/i) && "SOL") ||
+         (e.split(/\s+/)[0] || "").slice(0, 6))
+      )}</span>`).join("");
+    ownerCell += badges;
+  }
+
+  // --- Property address with zip on line 2, acres tooltip ----------
+  let propCell = esc(r.prop_address || "");
+  if (r.acres) {
+    propCell = `<span title="${r.acres.toFixed(3)} acres">${propCell}</span>`;
+  }
+  if (r.prop_zip) {
+    propCell += `<br><small>${esc(r.prop_zip)}</small>`;
+  }
+  // Empty property addresses (vacant-lot listings sometimes have no
+  // street, just "X ST @ Y AVE" or similar) — show a placeholder
+  // dash so the cell isn't oddly empty.
+  if (!r.prop_address) propCell = `<span style="color:var(--muted)">—</span>` +
+                                  (r.prop_zip ? "<br><small>" + esc(r.prop_zip) + "</small>" : "");
+
+  // --- Mailing address with city/state/zip on line 2 + bad-addr ----
+  const mailLines = [];
+  const mailLine1Parts = [r.mail_address, r.mail_address2].filter(Boolean);
+  if (mailLine1Parts.length) mailLines.push(esc(mailLine1Parts.join(" ")));
+  const mailLine2Parts = [r.mail_city, r.mail_state, r.mail_zip].filter(Boolean);
+  if (mailLine2Parts.length) mailLines.push(`<small>${esc(mailLine2Parts.join(" "))}</small>`);
+  let mailCell = mailLines.join("<br>") ||
+                 `<span style="color:var(--muted)">—</span>`;
+  if (r.flags && r.flags.bad_address) {
+    mailCell += ` <span class="delq-bad-addr" title="Tax office flagged this mailing address as bad — letters may bounce">⚠</span>`;
+  }
+
+  // --- Delinquent Taxes with current/back breakdown tooltip --------
+  const totalOwed = Number(r.total_owed) || 0;
+  let owedCell = `<span style="color:var(--muted)">—</span>`;
+  if (totalOwed > 0) {
+    const current = Number(r.current_levy_owed) || 0;
+    const back = Number(r.back_levy_owed) || 0;
+    const tip = `Current year: $${current.toLocaleString()}\nPrior years: $${back.toLocaleString()}\nTotal: $${totalOwed.toLocaleString()}`;
+    owedCell = `<span title="${esc(tip)}">$${totalOwed.toLocaleString("en-US", {maximumFractionDigits: 0})}</span>`;
+  }
+
+  // --- Years Behind with del_years tooltip -------------------------
+  const yearsBehind = Number(r.years_behind) || 0;
+  let yearsCell = `<span style="color:var(--muted)">—</span>`;
+  if (yearsBehind > 0) {
+    const dys = Array.isArray(r.del_years) && r.del_years.length
+      ? r.del_years.map(y => "20" + String(y).padStart(2, "0")).join(", ")
+      : null;
+    const tip = dys ? `Behind for: ${dys}` : `${yearsBehind} year${yearsBehind === 1 ? "" : "s"} behind`;
+    // Bold formatting kicks in at 3+ years (chronic distress).
+    const fmt = yearsBehind >= 3 ? "font-weight:700;color:var(--warn)" : "";
+    yearsCell = `<span title="${esc(tip)}" style="${fmt}">${yearsBehind}</span>`;
+  }
+
+  // --- Market Value ------------------------------------------------
+  const mv = Number(r.market_value) || 0;
+  const mvCell = mv > 0
+    ? `$${mv.toLocaleString("en-US", {maximumFractionDigits: 0})}`
+    : `<span style="color:var(--muted)">—</span>`;
+
+  // --- Legal Description (truncated; full on hover) ----------------
+  const legal = r.legal || "";
+  const legalCell = legal
+    ? `<span title="${esc(legal)}">${esc(legal)}</span>`
+    : `<span style="color:var(--muted)">—</span>`;
+
+  // --- Tax Status badges -------------------------------------------
+  // Severity-stacked: most-serious flag on top.
+  const taxBadges = [];
+  const f = r.flags || {};
+  if (f.has_judgment) {
+    taxBadges.push(`<span class="delq-tax-badge delq-tax-judgment" title="Judgment entered — county has won a tax suit. Foreclosure imminent.">JUDGMENT</span>`);
+  }
+  if (f.in_suit) {
+    taxBadges.push(`<span class="delq-tax-badge delq-tax-suit" title="Lawsuit filed — county has sued, awaiting judgment.">SUIT FILED</span>`);
+  }
+  if (f.tax_deferral) {
+    taxBadges.push(`<span class="delq-tax-badge delq-tax-deferral" title="Tax deferral on file (over-65 or disabled — taxes deferred until property sells or owner dies)">TAX DEF</span>`);
+  }
+  if (f.payment_agreement) {
+    taxBadges.push(`<span class="delq-tax-badge delq-tax-payplan" title="Active payment plan (code: ${esc(f.payment_agreement)}) — owner is paying down the balance">PAYMENT PLAN</span>`);
+  }
+  const taxStatusCell = taxBadges.length
+    ? `<div class="delq-tax-status">${taxBadges.join("")}</div>`
+    : `<span style="color:var(--muted)">—</span>`;
+
+  // --- NCAD account # cell -----------------------------------------
+  // ncadCellHtml() expects r.ncad_prop_id; the DELQ schema provides
+  // that, so the shared helper renders a direct deep-link into NCAD.
+  // Defensive fallback: if ncad_prop_id is missing, the helper does
+  // owner-flip + clipboard + opens the NCAD search form.
+  const ncadCell = ncadCellHtml(r);
+
+  // --- NCAD Prop ID cell -------------------------------------------
+  // Distinct from the main NCAD account # column: this surfaces the
+  // internal property PID used in NCAD URLs. Same destination as the
+  // NCAD column above, just shows the raw number so the user can
+  // copy it for cross-referencing.
+  let propIdCell;
+  if (r.ncad_prop_id) {
+    const url = "https://esearch.nuecescad.net/Property/View/" +
+                encodeURIComponent(r.ncad_prop_id);
+    propIdCell = `<a href="${esc(url)}" target="_blank" rel="noopener"
+                     title="Open NCAD property page (PID ${esc(r.ncad_prop_id)})"
+                     onclick="event.stopPropagation()"
+                     style="font-family:monospace;font-size:11px;">
+                     ${esc(r.ncad_prop_id)}</a>`;
+  } else {
+    propIdCell = `<span style="color:var(--muted)">—</span>`;
+  }
+
+  tr.innerHTML = `
+    <td>${statusCell}</td>
+    <td>${ownerCell}</td>
+    <td>${propCell}</td>
+    <td>${mailCell}</td>
+    <td>${owedCell}</td>
+    <td style="text-align:center;">${yearsCell}</td>
+    <td>${mvCell}</td>
+    <td class="legal">${legalCell}</td>
+    <td>${taxStatusCell}</td>
+    <td style="text-align:center;">${ncadCell}</td>
+    <td style="text-align:center;">${propIdCell}</td>`;
+
+  return tr;
+}
+
+// ============================================================
+// DELQ status menu — same shape as openCclnStatusMenu
+// ============================================================
+// Opens a floating menu near the clicked pill with the available
+// stage transitions. The current stage is excluded from the menu
+// (no-op self-transition). Click outside closes the menu.
+function openDelqStatusMenu(ev, ncad, currentStatus) {
+  ev.stopPropagation();
+  closeDelqStatusMenu();
+  const menu = document.createElement("div");
+  menu.className = "ccln-status-menu";   // reuse CCLN's menu styling
+  menu.id = "delq-status-menu";
+
+  // Render all stages except the current one as menu items.
+  const items = DELQ_STAGES
+    .filter(s => s.key !== currentStatus)
+    .map(s => `<button class="status-menu-item" data-stage="${esc(s.key)}">${esc(s.label)}</button>`)
+    .join("");
+  menu.innerHTML = items;
+
+  // Position the menu just below the clicked pill.
+  const rect = ev.currentTarget.getBoundingClientRect();
+  menu.style.position = "fixed";
+  menu.style.left = rect.left + "px";
+  menu.style.top  = (rect.bottom + 4) + "px";
+  menu.style.zIndex = "1000";
+  document.body.appendChild(menu);
+
+  // Wire up click handlers on each menu item.
+  menu.querySelectorAll(".status-menu-item").forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const newStage = btn.dataset.stage;
+      setDelqStatus(ncad, newStage);
+      closeDelqStatusMenu();
+      applyDelq();
+    };
+  });
+
+  // Click outside to close.
+  setTimeout(() => {
+    document.addEventListener("click", closeDelqStatusMenu, {once: true});
+  }, 0);
+}
+function closeDelqStatusMenu() {
+  const m = document.getElementById("delq-status-menu");
+  if (m) m.remove();
 }
 
 // ============================================================
@@ -10931,6 +11486,28 @@ document.querySelectorAll("#tfc-table th[data-sort]").forEach(th => {
       TFC_SORT_DIR = "asc";
     }
     renderTfcTable();
+  });
+});
+
+// Delinquent Tax column headers: same pattern. Toggling on the same
+// column flips direction; clicking a new column starts ascending,
+// EXCEPT for total_owed and years_behind where descending is a
+// more useful default (biggest distress first).
+document.querySelectorAll("#delq-table th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (DELQ_SORT_KEY === key) {
+      DELQ_SORT_DIR = DELQ_SORT_DIR === "asc" ? "desc" : "asc";
+    } else {
+      DELQ_SORT_KEY = key;
+      // Money + years columns default to descending — bigger numbers
+      // are usually what the user wants to see first. Other columns
+      // default to ascending (A→Z for names, addresses, status).
+      DELQ_SORT_DIR = (key === "total_owed" || key === "years_behind" ||
+                       key === "market_value" || key === "tax_status")
+                      ? "desc" : "asc";
+    }
+    applyDelq();
   });
 });
 
