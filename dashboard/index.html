@@ -130,19 +130,17 @@
   }
   /* Map gets its own visual treatment — distinct utility, not a lead
      type or work view. Thin divider above it, subtle accent-tinted
-     background, pin icon, slightly bolder text. */
+     background, slightly bolder text. Left-aligned (overrides
+     .nav-item's space-between which is for tab-counts). */
   .sidebar-map {
     margin-top: 20px; padding-top: 16px;
     border-top: 1px solid var(--border);
   }
   .nav-item-map {
+    justify-content: flex-start;
     color: var(--fg); font-weight: 600;
     background: rgba(56,189,248,0.06);
     border-left-color: rgba(56,189,248,0.35);
-  }
-  .nav-item-map .map-icon {
-    margin-right: 8px; font-size: 14px;
-    filter: saturate(1.2);
   }
   .nav-item-map:hover {
     background: rgba(56,189,248,0.12);
@@ -2310,7 +2308,6 @@
 
   <div class="sidebar-map">
     <div class="nav-item nav-item-map" data-pane="map">
-      <span class="map-icon" aria-hidden="true">📍</span>
       <span>Map</span>
     </div>
   </div>
