@@ -1,0 +1,79 @@
+# ============================================================
+# Nueces County Delinquent Tax — monthly XLS importer
+# ============================================================
+# Manually triggered each month after Sandra Rocha publishes the
+# latest delinquent-tax file. Workflow steps:
+#
+#   1. Operator uploads the new .xls (or .xlsx) to the repo at
+#      data/delq_uploads/ — any filename, any month.
+#   2. Operator runs this workflow (Actions tab → "Import
+#      Delinquent Tax XLS" → Run workflow).
+#   3. Workflow reads the most-recent file in data/delq_uploads/,
+#      filters to residential codes only, merges with the prior
+#      snapshot (preserving _first_seen dates), and writes
+#      delq_records.json into BOTH data/ and dashboard/.
+#   4. Workflow auto-commits the updated JSON files back to main
+#      so the dashboard picks them up on next page load.
+#
+# The .xls file itself is also kept in data/delq_uploads/ for
+# history — they're small enough (~15 MB each) that retaining a
+# year of monthly snapshots costs almost nothing in repo space.
+# ============================================================
+name: Import Delinquent Tax XLS
+
+on:
+  # Manual only — there's no remote source to poll; operator
+  # downloads the file from the county and uploads it via the
+  # GitHub web UI to data/delq_uploads/ first.
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (process file but don't commit changes)"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+# Required so the workflow can commit the updated JSON back to
+# the repo. (Default GITHUB_TOKEN is read-only — see memory note
+# about this in the project's other workflows.)
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install xlrd
+        run: pip install "xlrd>=2.0,<3.0"
+
+      - name: Run importer (dry run)
+        if: ${{ inputs.dry_run == 'true' }}
+        run: python scraper/import_delq_xls.py --dry-run
+
+      - name: Run importer
+        if: ${{ inputs.dry_run != 'true' }}
+        run: python scraper/import_delq_xls.py
+
+      - name: Commit updated JSON
+        if: ${{ inputs.dry_run != 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/delq_records.json dashboard/delq_records.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Import Delinquent Tax XLS (auto)"
+          git push
