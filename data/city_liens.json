@@ -1,6 +1,6 @@
 {
-  "fetched_at": "2026-05-27T18:14:12.854371+00:00",
-  "source": "Nueces County Clerk \u2014 CCLN cumulative",
+  "fetched_at": "2026-05-27T19:06:47.141695+00:00",
+  "source": "Nueces County Clerk — CCLN cumulative",
   "total": 1721,
   "records": [
     {
@@ -4048,13 +4048,31 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78401",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "526 PEERMAN PL",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78411",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035657",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "DREIER LAWRENCE",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68125",
+      "legal_from_pdf": "CULLEN PLACE 7 BLK 30 LOT 30",
+      "pdf_amount": 288.4,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "2000-0030-0300",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:10.670214Z"
     },
     {
       "doc_num": "2024035010",
@@ -5097,13 +5115,32 @@
       "prop_city": "Corpus Christi",
       "prop_state": "TX",
       "prop_zip": "78412",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "1724 CAPRI LN",
+      "mail_city": "SEABROOK",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "77586",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037549",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "GARZA ABEL JR",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69496",
+      "legal_from_pdf": "LOMA ALTA LT 31 BK 1",
+      "pdf_amount": 235.0,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "4528-0001-0310",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "zip_outside_cc",
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:33.492216Z"
     },
     {
       "doc_num": "2024032682",
@@ -6431,13 +6468,31 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78401",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "526 PEERMAN PL",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78411",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037584",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "DREIER LAWRENCE",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69551",
+      "legal_from_pdf": "CULLEN PLACE 7 BLK 30 LOT 30",
+      "pdf_amount": 297.42,
+      "work_date": "2024-09-13",
+      "ncad_account_num": "2000-0030-0300",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:42.911694Z"
     },
     {
       "doc_num": "2024020284",
@@ -9110,13 +9165,31 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78408",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "% DOMINGA L VALDEZ 1918 DELGADO ST",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78416",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037556",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "CASTILLO BEATRICE LISCANO ETALS",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69503",
+      "legal_from_pdf": "VANCURA ADD LT 4 BK 1",
+      "pdf_amount": 345.85,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "8990-0001-0040",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:25.491702Z"
     },
     {
       "doc_num": "2024032873",
@@ -10055,7 +10128,7 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78416",
-      "mail_address": "GUADALUPE \u00a7 FLORES PO BOX 9041",
+      "mail_address": "GUADALUPE § FLORES PO BOX 9041",
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78469",
@@ -10253,7 +10326,7 @@
       "prop_city": "BISHOP",
       "prop_state": "TX",
       "prop_zip": "78343",
-      "mail_address": "\u00a7522 BURTON LANE",
+      "mail_address": "§522 BURTON LANE",
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78411",
@@ -11493,7 +11566,7 @@
       "prop_state": "TX",
       "prop_zip": "78411",
       "mail_address": "4841 ORCHID LANE",
-      "mail_city": "\u2018 CORPUS CHRISTI",
+      "mail_city": "‘ CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78416",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2025004106",
@@ -13254,7 +13327,7 @@
       "prop_state": "TX",
       "prop_zip": "78407",
       "mail_address": "weir : 7305 S OSBORNE RD",
-      "mail_city": "ties \u201csetae UPPER MARLBORO",
+      "mail_city": "ties “setae UPPER MARLBORO",
       "mail_state": "TX",
       "mail_zip": "20772",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2025020674",
@@ -14658,7 +14731,23 @@
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035676",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68145",
+      "pdf_amount": 544.0,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "9841-0001-0100",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "incomplete_extraction"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:51.092994Z"
     },
     {
       "doc_num": "2024035656",
@@ -14674,13 +14763,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78401",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "725 VILLA DR APT #12",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78408",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035656",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "HINES ELIDA CHAVEZ",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68123",
+      "pdf_amount": 200.0,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "1695-0006-0060",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:09.373315Z"
     },
     {
       "doc_num": "2024035677",
@@ -14696,13 +14802,32 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78404",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "P 0 BOX 7631",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78467",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035677",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "MEDINA VALENTINO JR",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68146",
+      "legal_from_pdf": "SOUTHSIDE 4 BLK 38 LOT 12",
+      "pdf_amount": 274.0,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "8294-0038-0120",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "suspicious_short_address",
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:53.645459Z"
     },
     {
       "doc_num": "2024035674",
@@ -14718,13 +14843,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78418",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "MARVIN H WHEELER 4425 LEOPARD ST",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78408",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035674",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "SOUTHERN OIL SALES &",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68142",
+      "pdf_amount": 1502.0,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "9841-0001-0100",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:54.978535Z"
     },
     {
       "doc_num": "2024035665",
@@ -15180,13 +15322,29 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78410",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "4917 CYNTHIA",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78410",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037550",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "CABRIALES ERNESTO.",
+      "pdf_filed_date": "2024-11-04",
+      "pdf_amount": 261.5,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "7257-0002-0040",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:34.785928Z"
     },
     {
       "doc_num": "2024035637",
@@ -17528,7 +17686,7 @@
       "score": 35,
       "pdf_amount": 652.0,
       "ncad_account_num": "8539-0001-0100",
-      "pdf_owner": "eda a Ue \u201d AREVALOS DAVID",
+      "pdf_owner": "eda a Ue ” AREVALOS DAVID",
       "internal_lien_id": "D70522",
       "work_date": "2025-05-19",
       "pdf_filed_date": "2025-07-23",
@@ -17601,7 +17759,7 @@
       "prop_state": "TX",
       "prop_zip": "78412",
       "mail_address": "x 4329 GERTIE ST",
-      "mail_city": "\u201c CORPUS CHRISTI",
+      "mail_city": "“ CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78412",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2025026256",
@@ -19070,17 +19228,33 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: BARATARIA BAY NO 3 Lot: 23 Block: 706 (Lot 23, Block 706)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "13999 JACKTAR ST",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "9034 SARASOTA WOODS",
+      "mail_city": "SAN ANTONIO",
+      "mail_state": "TX",
+      "mail_zip": "78250",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035671",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "MANRIQUE CRISTINA DE LA PENA",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68139",
+      "legal_from_pdf": "BARATARIA BAY NO 3 LOT 23 BLK 706",
+      "ncad_account_num": "0427-0706-0230",
+      "reason_tags": [
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "zip_outside_cc",
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:57.619489Z"
     },
     {
       "doc_num": "2024035675",
@@ -19092,17 +19266,35 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: TIERRA ALTA Lot: 19 Block: 5 (Lot 19, Block 5)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "918 BLUNTZER",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "918 S 24TH ST",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78405",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035675",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "MENDEZ FRANCES, OLIVIA MENDEZ AND RAFAEL",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68143",
+      "legal_from_pdf": "TIERRA ALTA BLK 5 LOT 19",
+      "pdf_amount": 1675.0,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "8764-0005-0190",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:56.295855Z"
     },
     {
       "doc_num": "2024035662",
@@ -19448,13 +19640,31 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78408",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "2303 RUTH ST",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78405",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037547",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "FLORES MARIA HERMINIA AND LEONOR BOLANO",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69494",
+      "legal_from_pdf": "LOMA ALTA LT 26 BK 2",
+      "pdf_amount": 235.0,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "4528-0002-0260",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:17.320717Z"
     },
     {
       "doc_num": "2024037596",
@@ -22701,7 +22911,7 @@
       "legal_from_pdf": "SAN PEDRO BLK 1 LOT 25",
       "internal_lien_id": "D70190",
       "pdf_amount": 684.0,
-      "pdf_owner": "\u2018CAPELO RAYMOND:",
+      "pdf_owner": "‘CAPELO RAYMOND:",
       "pdf_filed_date": "2025-03-21",
       "reason_tags": [
         "substandard_building",
@@ -27048,13 +27258,31 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78414",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "11941 MESA AVE",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78410",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037555",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "BARNETT DONNIE D",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69502",
+      "legal_from_pdf": "CALLICOATTE ESTATES BLK 3 LOT 5",
+      "pdf_amount": 325.08,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "1220-0003-0050",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:24.108073Z"
     },
     {
       "doc_num": "2025010162",
@@ -27801,13 +28029,31 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78410",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "AMELIA DOMINGUEZ WFE 4302 CALLICOATTE RD",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78410",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037569",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "DOMINGUEZ ROBERT AND",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69537",
+      "legal_from_pdf": "PINEDA PK LT 10 BK 5",
+      "pdf_amount": 287.59,
+      "work_date": "2024-09-09",
+      "ncad_account_num": "6745-0005-0100",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:38.854551Z"
     },
     {
       "doc_num": "2024037574",
@@ -27823,13 +28069,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78405",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "C/O SANTOS CANTU 4014 ITURBIDE ST",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78405",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037574",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "CANTU ANDREA P",
+      "pdf_filed_date": "2024-11-04",
+      "legal_from_pdf": "KOSAR LT 7 BK 2",
+      "pdf_amount": 276.75,
+      "work_date": "2024-09-09",
+      "ncad_account_num": "4007-0002-0070",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:45.745313Z"
     },
     {
       "doc_num": "2024037576",
@@ -27845,13 +28108,29 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78415",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "1502 CAMBRIDGE DR",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78415",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037576",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "SLITER RACHEL P",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69543",
+      "legal_from_pdf": "SAM HOUSTON LT 26 BK 9",
+      "pdf_amount": 264.6,
+      "work_date": "2024-09-13",
+      "ncad_account_num": "7594-0009-0260",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:44.342199Z"
     },
     {
       "doc_num": "2024037583",
@@ -27867,13 +28146,31 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78401",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "2012 COTTONWOOD DR",
+      "mail_city": "PORTLAND",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78374",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037583",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "WOLF DONNA",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69550",
+      "pdf_amount": 246.0,
+      "work_date": "2024-09-13",
+      "ncad_account_num": "0797-0066-0070",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "zip_outside_cc",
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:40.243066Z"
     },
     {
       "doc_num": "2024037581",
@@ -27889,13 +28186,31 @@
       "prop_city": "ROBSTOWN",
       "prop_state": "TX",
       "prop_zip": "78380",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "ANTONIO MORENO JR 2941 DAVID",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78405",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037581",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "GARZA GLORIA AND",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69548",
+      "legal_from_pdf": "BROADMOOR PK LT 11 BK 6",
+      "pdf_amount": 293.4,
+      "work_date": "2024-09-13",
+      "ncad_account_num": "1010-0006-0110",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:41.565432Z"
     },
     {
       "doc_num": "2024037566",
@@ -27907,17 +28222,35 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: SEA PINES NO 1 Lot: 38 Block: 10 (Lot 38, Block 10)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "16101 PIONCIANA ST",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "13937 SKYSAIL ST",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78410",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037566",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "TOSCANO ARNOLD J",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69532",
+      "legal_from_pdf": "SEA PINES NO 1 LOT 38 BLK 10",
+      "pdf_amount": 224.63,
+      "work_date": "2024-09-09",
+      "ncad_account_num": "7856-0010-0380",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:37.501784Z"
     },
     {
       "doc_num": "2024037598",
@@ -27955,13 +28288,28 @@
       "prop_city": "ROBSTOWN",
       "prop_state": "TX",
       "prop_zip": "78380",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "4917 CYNTHIA",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78410",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037552",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "CABRIALES JUAN AND WFE",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69499",
+      "pdf_amount": 286.8,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "7609-0002-0090",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:29.517424Z"
     },
     {
       "doc_num": "2024037557",
@@ -27977,13 +28325,31 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78405",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "4052 US HIGHWAY 84",
+      "mail_city": "BLACKSHEAR",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "31516",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037557",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "AKHI ARO",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69504",
+      "pdf_amount": 257.52,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "7634-0002-0230",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "zip_outside_cc",
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:26.773171Z"
     },
     {
       "doc_num": "2024037546",
@@ -27999,13 +28365,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78414",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "TENCHA 105 RIVIERA",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78418",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037546",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "MITCHELL DENNIS J ET UX",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69493",
+      "pdf_amount": 382.76,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "4130-0012-0010",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:11.990893Z"
     },
     {
       "doc_num": "2024034275",
@@ -30657,13 +31040,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78412",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "6326 BEECHWOOD",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78412",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035672",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "DENNIS FLORENCE JUNE",
+      "pdf_filed_date": "2024-10-18",
+      "legal_from_pdf": "CANDLEWOOD UNIT 6 LT 6 BK 3",
+      "pdf_amount": 229.29,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "1235-0003-0060",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:58.961949Z"
     },
     {
       "doc_num": "2024031547",
@@ -34548,13 +34948,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78405",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "5302 GATERIDGE DR",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78413",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037572",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "TELLEZ ANDREA",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69534",
+      "pdf_amount": 255.0,
+      "work_date": "2024-09-09",
+      "ncad_account_num": "5324-0006-0040",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:47.137928Z"
     },
     {
       "doc_num": "2025000307",
@@ -35957,13 +36374,29 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78415",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "2510 VIOLA AVE",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78415",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035653",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "CASTILLO JUAN D",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68120",
+      "legal_from_pdf": "FERRELL BLK 1 LOT 32",
+      "pdf_amount": 340.2,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "2420-0001-0320",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:47.176870Z"
     },
     {
       "doc_num": "2024032854",
@@ -37657,7 +38090,7 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2025004147",
       "flags": [],
       "score": 35,
-      "pdf_owner": "\u2018 NAVA TERESA MORENO",
+      "pdf_owner": "‘ NAVA TERESA MORENO",
       "pdf_amount": 430.22,
       "legal_from_pdf": "EXT TO S END LT 5 BK 10",
       "internal_lien_id": "D70058",
@@ -38359,7 +38792,7 @@
       "ncad_account_num": "3515-0019-0010",
       "work_date": "2025-04-14",
       "legal_from_pdf": "HOME PLACE BLK 19 LOT 1",
-      "pdf_owner": "\u00ae GONZALEZ GENEVIEVE B.",
+      "pdf_owner": "® GONZALEZ GENEVIEVE B.",
       "reason_tags": [
         "substandard_building",
         "carrion",
@@ -38786,7 +39219,7 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78417",
-      "mail_address": "\u2019 MARIA OLGA R 2033 CAROLYN",
+      "mail_address": "’ MARIA OLGA R 2033 CAROLYN",
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78417",
@@ -39064,7 +39497,7 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78415",
-      "mail_address": "\u2018% CHRISTOPHER B FLORES 762 CHASE DR",
+      "mail_address": "‘% CHRISTOPHER B FLORES 762 CHASE DR",
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78412",
@@ -39499,13 +39932,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78405",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "207 SPRUCE",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78408",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035659",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "ALVAREZ SANTOS S",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68127",
+      "pdf_amount": 289.42,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "9640-0001-0130",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:08.030623Z"
     },
     {
       "doc_num": "2024032622",
@@ -40947,17 +41397,35 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: COUNTRY CLUB ESTATES 1 Lot: 7 Block: 2 (Lot 7, Block 2)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "4825 WOOLDRIDGE RD",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "MARLENE A TACKETT 4825 WOOLDRIDGE RD",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78413",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035646",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "TACKETT STEVEN AND WF",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68099",
+      "legal_from_pdf": "COUNTRY CLUB ESTATES 1 BLK 2 LOT 7",
+      "pdf_amount": 1074.73,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "1843-0002-0070",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:44.598481Z"
     },
     {
       "doc_num": "2024035648",
@@ -40969,17 +41437,35 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: VILLAGE AT STONY BROOK Lot: 12 Block: 8 (Lot 12, Block 8)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "7605 COLD SPRING DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "7605 COLD SPRINGS DR",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78413",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035648",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "APARICIO CATRINA MORIN",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68097",
+      "legal_from_pdf": "VILLAGE AT STONY BROOK BLK 8 LOT 12",
+      "pdf_amount": 536.4,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "9060-0008-0120",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:43.327761Z"
     },
     {
       "doc_num": "2024035663",
@@ -40991,17 +41477,35 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: PARKSIDE Lot: 14 Block: 5 (Lot 14, Block 5)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "3938 REDWOOD",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "GUADALUPE G FALCON 3938 REDWOOD",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78411",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035663",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "FALCON RALPH R ETUX",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68132",
+      "legal_from_pdf": "PARKSIDE BLK 5 LOT 14",
+      "pdf_amount": 320.01,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "6443-0005-0140",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:04.152845Z"
     },
     {
       "doc_num": "2024035668",
@@ -41017,13 +41521,29 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78412",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "8229 ARGONNE OR",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78412",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035668",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "BURDETTE NADINE",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68136",
+      "legal_from_pdf": "PEARY PLACE 1 BLK 4 LOT 13",
+      "pdf_amount": 451.98,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "6528-0004-0130",
+      "reason_tags": [
+        "substandard_building",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:02.824007Z"
     },
     {
       "doc_num": "2024035678",
@@ -41035,17 +41555,34 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: PRIOUR TR K",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "1927 COMANCHE",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "1927 COMANCHE ST",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78408",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035678",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "RODRIGUEZ ALEJANDRA C ETALS",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68148",
+      "pdf_amount": 295.62,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "7048-0000-0170",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:52.349137Z"
     },
     {
       "doc_num": "2024035670",
@@ -41057,17 +41594,33 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: DON PATRICIO Lot: 45,46,47 Block: R (Lot 45,46,47, Block R)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "1921 LYNHURST DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "1921 LYNHURST ST",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78418",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035670",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "COCHRAN LINDA SUE",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68138",
+      "pdf_amount": 754.1,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "2127-0018-0450",
+      "reason_tags": [
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:00.266073Z"
     },
     {
       "doc_num": "2024031493",
@@ -41695,17 +42248,35 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: DONA PK Lot: 1B,1 Block: 1 (Lot 1B,1, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "1278 DONA DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "C/O JOHN T YOUNG JR 3017 N 46TH ST",
+      "mail_city": "MCALLEN",
+      "mail_state": "TX",
+      "mail_zip": "78501",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037545",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "RINCONES JOSE",
+      "pdf_filed_date": "2024-11-04",
+      "legal_from_pdf": "DONA PK LT 1B RE SUB OF OF LT 1 BK 1",
+      "pdf_amount": 733.72,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "2132-0001-0015",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "zip_outside_cc",
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:15.995325Z"
     },
     {
       "doc_num": "2024032629",
@@ -43033,7 +43604,7 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "\u00a5 4901 OCEAN VIEW BLVD",
+      "mail_address": "¥ 4901 OCEAN VIEW BLVD",
       "mail_city": "me . SAN DIEGO",
       "mail_state": "CA",
       "mail_zip": "92113",
@@ -44609,13 +45180,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78408",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "318 CHEYENNE ST",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78405",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037542",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "SARINANA MARIA ANTONIA",
+      "pdf_filed_date": "2024-11-04",
+      "legal_from_pdf": "MEADOW PARK LT 17 BK 17",
+      "pdf_amount": 300.0,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "5000-0017-0170",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:14.675152Z"
     },
     {
       "doc_num": "2024043241",
@@ -44886,13 +45474,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78416",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "JANIE M LOPEZ WFE 4630 PRESCOTT",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78416",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035669",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "LOPEZ CALIXTO AND",
+      "pdf_filed_date": "2024-10-18",
+      "legal_from_pdf": "INWOOD VILLAGE BLK 3 LOT 21",
+      "pdf_amount": 211.46,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "3700-0003-0210",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:01.556343Z"
     },
     {
       "doc_num": "2024035651",
@@ -44908,13 +45513,31 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78413",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "526 PEERMAN PLACE",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "78414",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035651",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "DREIER LAWRENCE E",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68094",
+      "legal_from_pdf": "CLUB ESTATES SOUTH BLK 1 LOT 16",
+      "pdf_amount": 271.73,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "1653-0001-0160",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:45.889471Z"
     },
     {
       "doc_num": "2024035661",
@@ -44926,17 +45549,34 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: EBONY AC 1 Lot: 120 (Lot 120)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "5895 HALL AVE",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "ELIZABETH F BOLT 5895 HALL AVE",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78408",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035661",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "DE LA CRUZ LAURA J AND",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68130",
+      "pdf_amount": 994.0,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "2230-0000-1200",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:05.451191Z"
     },
     {
       "doc_num": "2024035647",
@@ -44948,17 +45588,31 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: MARETTA TERRACE Lot: 5 Block: B (Lot 5, Block B)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "2529 TERRACE",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "prop_zip": "78404",
+      "mail_address": "2529 TERRACE",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78404",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035647",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "ROSALES SANTOS V",
+      "pdf_filed_date": "2024-10-18",
+      "internal_lien_id": "D68098",
+      "pdf_amount": 219.82,
+      "work_date": "2024-07-08",
+      "ncad_account_num": "4772-0002-0050",
+      "reason_tags": [
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:05:48.537713Z"
     },
     {
       "doc_num": "2024043228",
@@ -47520,13 +48174,30 @@
       "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "78415",
-      "mail_address": "",
-      "mail_city": "",
+      "mail_address": "219 W GAY AVE",
+      "mail_city": "GLADEWATER",
       "mail_state": "TX",
-      "mail_zip": "",
+      "mail_zip": "75647",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037551",
       "flags": [],
-      "score": 35
+      "score": 35,
+      "pdf_owner": "MARTIN MICHAEL & DEBRA MARTIN",
+      "pdf_filed_date": "2024-11-04",
+      "pdf_amount": 297.36,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "2127-0013-0180",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "zip_outside_cc",
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:32.196202Z"
     },
     {
       "doc_num": "2024037558",
@@ -47538,17 +48209,34 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision-  Name: PORTMOOR Lot: 10 Block: 1 (Lot 10, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "2737 BUFORD.",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
+      "mail_address": "502 HARRISON",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78404",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037558",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "BULLAJIAN MARTHA",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69505",
+      "legal_from_pdf": "PORTMOOR ADD LT 10 BK 1",
+      "pdf_amount": 529.53,
+      "work_date": "2024-08-26",
+      "ncad_account_num": "6978-0001-0100",
+      "reason_tags": [
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:22.735662Z"
     },
     {
       "doc_num": "2024034984",
@@ -52799,17 +53487,36 @@
       "grantee": "CITY OF CORPUS CHRISTI",
       "amount": null,
       "legal": "Subdivision - Name: PADRE ISLAND NO 4 Lot: 12 Block: 192 (Lot 12, Block 192)",
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "14314 CRUISER ST",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
       "prop_zip": "",
-      "mail_address": "",
+      "mail_address": "LAMARTINE #617 APT 10",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024037564",
       "flags": [],
-      "score": 30
+      "score": 30,
+      "pdf_owner": "ESNAL GUILLERMO",
+      "pdf_filed_date": "2024-11-04",
+      "internal_lien_id": "D69530",
+      "legal_from_pdf": "PADRE ISLAND NO 4 LOT 12 BLK 192",
+      "pdf_amount": 279.0,
+      "work_date": "2024-09-09",
+      "ncad_account_num": "6129-0192-0120",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "absentee_owner",
+        "incomplete_extraction"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-27T19:06:36.180197Z"
     }
   ]
 }
