@@ -1598,24 +1598,60 @@ def _normalize_address_for_legal_match(addr: str) -> str:
     The same physical property often appears with cosmetic variations
     between data sources:
       foreclosure clerk: "838 ERWIN AVE"
-      NCAD esearch:      "838 ERWIN"
+      NCAD esearch list: "838 ERWIN, CORPUS CHRISTI TX 78408"
+      NCAD detail page:  "838 ERWIN CORPUS CHRISTI, TX 78408"
       tax office:        "838 Erwin Ave"
-    All three are the same house. This normalizer collapses such
-    differences:
+    All four are the same house. This normalizer reduces each to the
+    bare street-number + street-name ("838 ERWIN") so they compare
+    equal:
       - uppercase + whitespace collapse
-      - strip common street-type suffixes (AVE/ST/DR/RD/LN/BLVD/CT/PL/CIR/
-        WAY/TRL/PKWY) and their long-form synonyms
-      - strip punctuation
-    Returns "" if input is empty. Does NOT attempt sophisticated address
-    matching — this is a "do they look the same?" check, deliberately
-    conservative to avoid false positives like "838 ERWIN" matching
-    "8380 ERWIN".
+      - DROP the city/state/zip tail. NCAD situs strings carry the full
+        "STREET, CITY ST ZIP" form; the foreclosure clerk address is
+        just the street line. We keep only the leading street portion:
+          * cut at the first comma if present (NCAD list format), then
+          * cut at a trailing ", CITY ST ZIP" or " CITY ST ZIP" pattern
+            (detail-page format with no street/city comma), then
+          * cut at a bare 5-digit ZIP and anything after it
+      - strip common street-type suffixes (AVE/ST/DR/RD/LN/BLVD/CT/PL/
+        CIR/WAY/TRL/PKWY) and long-form synonyms
+      - strip unit/apt suffix and cosmetic punctuation
+    Returns "" if input is empty. Deliberately conservative on the
+    street number — "838 ERWIN" will NOT match "8380 ERWIN" because the
+    number token must match exactly.
     """
     if not addr:
         return ""
     s = str(addr).upper().strip()
     # Collapse multi-space
     s = " ".join(s.split())
+
+    # --- Drop the city/state/zip tail ---------------------------------
+    # NCAD renders situs in two comma placements:
+    #   list format:   "838 ERWIN, CORPUS CHRISTI TX 78408"
+    #   detail format: "838 ERWIN CORPUS CHRISTI, TX 78408"
+    # We must reduce both to "838 ERWIN". Strategy: work from the RIGHT,
+    # peeling off zip → state → city, so comma placement doesn't matter.
+    # Drop all commas first (they're inconsistent between the two forms).
+    s = s.replace(",", " ")
+    s = " ".join(s.split())
+    # 1. Drop a trailing 5-digit (or zip+4) ZIP and everything after it.
+    m = re.search(r"\b\d{5}(?:-\d{4})?\b", s)
+    if m:
+        s = s[:m.start()].strip()
+    # 2. Drop a trailing 2-letter state token (TX etc.).
+    s = re.sub(r"\s+[A-Z]{2}$", "", s).strip()
+    # 3. Drop a trailing city name. Nueces situs is almost always
+    #    CORPUS CHRISTI; strip it explicitly. Other Nueces cities
+    #    (PORTLAND, ROBSTOWN, AGUA DULCE, BISHOP, DRISCOLL, BANQUETE,
+    #    PT ARANSAS / PORT ARANSAS) handled by name too. Only strips
+    #    when the token appears at the END, so a street literally named
+    #    after a town (rare) before more tokens is unaffected.
+    s = re.sub(
+        r"\s+(CORPUS\s+CHRISTI|PORT\s+ARANSAS|PT\s+ARANSAS|PORTLAND|"
+        r"ROBSTOWN|AGUA\s+DULCE|BISHOP|DRISCOLL|BANQUETE|"
+        r"GREGORY|TAFT|SINTON|INGLESIDE|ARANSAS\s+PASS)$",
+        "", s).strip()
+
     # Strip trailing street-type suffix (and its long form)
     s = re.sub(
         r"\s+(AVE?|AVENUE|ST|STREET|DR|DRIVE|RD|ROAD|LN|LANE|BLVD|"
@@ -1628,7 +1664,7 @@ def _normalize_address_for_legal_match(addr: str) -> str:
     s = re.sub(r"[.,]", "", s)
     # Strip unit/apt suffix — same building
     s = re.sub(r"\s+(UNIT|APT|SUITE|STE|#)\s*[\w\d-]+$", "", s)
-    return s
+    return s.strip()
 
 
 def legal_descriptions_match(a: str, b: str,
