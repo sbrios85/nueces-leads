@@ -861,6 +861,83 @@ PDF_ONLY_FIELDS = {
 }
 
 
+def build_new_record_from_extracted(
+        doc_num: str, ex: Extracted) -> Dict[str, Any]:
+    """Synthesize a fresh CCLN record from a PDF when no clerk-portal
+    record exists for this doc_num.
+
+    Use case: pre-window filings. The clerk scraper has a date window;
+    when the user downloads PDFs from the county clerk site directly,
+    some filings predate that window and have no record in ccln.json.
+    But the PDF itself is the AUTHORITATIVE document — it contains the
+    affidavit of lien, the owner, the property, the work date, the
+    NCAD account, and the reason tags. Everything a clerk-portal
+    record would contain (and more), with the exception of an `amount`
+    field (which the clerk portal sometimes has populated separately).
+
+    Returned record has the same shape as a real clerk-portal record
+    so it indexes cleanly into the dashboard, the cleanup workflows,
+    and the matchers — including the same fields enumerated in
+    CLERK_PROTECTED_FIELDS. Synthesized values:
+
+      - grantee: "CITY OF CORPUS CHRISTI" (every CCLN goes to the
+        city legal dept; this is invariant)
+      - cat / cat_label: "CCLN" / "City of Corpus Christi Lien"
+      - doc_type: "LIEN" (matches what the clerk portal sets for
+        affidavit-of-lien filings)
+      - clerk_url: templated from doc_num, identical to how the
+        clerk scraper would build it for a real record
+      - amount: None (PDF affidavit doesn't directly populate this
+        — pdf_amount has the cost figure; setting `amount` to None
+        keeps the schema aligned with clerk-portal records that
+        also sometimes have amount=null)
+      - score: 35 (default for newly-synthesized leads; matches
+        the score the clerk scraper assigns to CCLN affidavits)
+      - filed: ISO date from the PDF header (pdf_filed_date)
+
+    apply_to_record() can THEN be called on the returned dict to
+    layer all the PDF-extracted fields (ncad_account_num, work_date,
+    address fields, flags, etc.) and set ccln_pdf_processed=True.
+    Caller is responsible for inserting the returned record into the
+    records list AND the records_by_doc lookup dict.
+    """
+    record: Dict[str, Any] = {
+        "doc_num": doc_num,
+        "doc_type": "LIEN",
+        "filed": ex.pdf_filed_date or "",
+        "cat": "CCLN",
+        "cat_label": "City of Corpus Christi Lien",
+        "owner": ex.pdf_owner or "",
+        "grantee": "CITY OF CORPUS CHRISTI",
+        "amount": None,
+        # Note: 'legal' is normally a clerk-portal field. For
+        # synthesized records, the PDF's parsed legal description is
+        # the only source we have, so use it directly. The dashboard
+        # also reads legal_from_pdf as a fallback so it doesn't matter
+        # much which slot it lives in, but populating 'legal' is
+        # closest to the clerk-portal shape.
+        "legal": ex.legal_from_pdf or "",
+        "prop_address": "",
+        "prop_city": "",
+        "prop_state": "TX",
+        "prop_zip": "",
+        "mail_address": "",
+        "mail_city": "",
+        "mail_state": "TX",
+        "mail_zip": "",
+        "clerk_url": (
+            f"https://nueces.tx.publicsearch.us/results"
+            f"?department=RP&searchValue={doc_num}"
+        ),
+        "flags": [],
+        "score": 35,
+        # Marker so downstream consumers can tell this came from a
+        # PDF rather than from the clerk scraper.
+        "ccln_pdf_synthesized": True,
+    }
+    return record
+
+
 def apply_to_record(record: Dict[str, Any], ex: Extracted,
                     force: bool = False) -> None:
     """Merge extracted fields into a CCLN JSON record in place.
@@ -1111,12 +1188,71 @@ def process_pdf(pdf_path: Path,
                 doc_num = recovered
                 # Fall through into the normal success path below.
             else:
-                log.warning("  cover-sheet recovery: page-2 doc_num "
-                            "%s also not in ccln.json — giving up",
-                            recovered)
-                return False, f"no CCLN record for doc_num {doc_num} (page-2 fallback {recovered} also missing)"
-        else:
-            return False, f"no CCLN record for doc_num {doc_num}"
+                log.info("  cover-sheet recovery: page-2 doc_num "
+                         "%s also not in ccln.json — using %s as "
+                         "the authoritative doc_num for synthesis",
+                         recovered, recovered)
+                # The page-2 cover sheet's "Document Number" field
+                # is more reliable than page-1 OCR, so use the
+                # recovered value as the synthesis doc_num.
+                doc_num = recovered
+
+        # At this point doc_num is the most reliable value we can
+        # produce and the record still isn't in ccln.json. This is
+        # the "pre-window filing" case: the PDF is for a legitimate
+        # individual lead, the doc_num is genuine (often verified
+        # via page-2 cover sheet), and the scraper just didn't pull
+        # the corresponding record because the filing predates its
+        # date window. Synthesize a fresh record from the PDF.
+        #
+        # SAFETY: only synthesize when we have enough field data to
+        # form a coherent lead. Minimum bar: PDF owner is present
+        # AND (prop_address OR ncad_account_num) is present. With
+        # neither, the record would be unhelpful — better to keep
+        # the PDF for investigation than create a record that says
+        # nothing.
+        has_owner = bool(ex.pdf_owner)
+        has_locator = bool(ex.prop_address or ex.ncad_account_num)
+        if not (has_owner and has_locator):
+            missing = []
+            if not has_owner:
+                missing.append("owner")
+            if not has_locator:
+                missing.append("prop_address or ncad_account_num")
+            log.warning("  cannot synthesize new record for doc_num "
+                        "%s — extraction is missing: %s",
+                        doc_num, ", ".join(missing))
+            return False, (f"no CCLN record for doc_num {doc_num} "
+                           f"and PDF extraction too sparse to synthesize")
+
+        # Build the new record. The DELETE_RECORD path corporate
+        # check still applies below — we want to run that against
+        # the synthesized record just like an existing one, so the
+        # corporate filter has a chance to catch anything that
+        # slipped through the early classify_owner() check above.
+        # (In practice it won't fire here because we already verified
+        # keep=True above, but defense-in-depth is cheap.)
+        log.info("  no CCLN record for doc_num %s — synthesizing "
+                 "new record from PDF (owner=%r, "
+                 "addr=%r, ncad=%r)",
+                 doc_num, ex.pdf_owner,
+                 ex.prop_address, ex.ncad_account_num)
+        record = build_new_record_from_extracted(doc_num, ex)
+        # Make the synthesized record visible to the rest of this
+        # process_pdf invocation. The main loop has its own logic
+        # that appends synthesized records to the `records` list
+        # (signaled via the "ok (synthesized: ...)" return message).
+        # records_by_doc serves as a "saw this doc_num" guard so
+        # later PDFs in the same batch that target the same doc_num
+        # don't synthesize again.
+        records_by_doc[doc_num] = record
+        # Tag with the synthesis flag so the main loop knows to
+        # append this record to the records list. apply_to_record()
+        # below will be called on this record like any other, so
+        # all the PDF fields get layered on top.
+        synthesized = True
+    else:
+        synthesized = False
 
     # Step 6: skip if already processed (unless force)
     if record.get("ccln_pdf_processed") and not force:
@@ -1160,6 +1296,11 @@ def process_pdf(pdf_path: Path,
              ex.prop_address, ex.ncad_account_num,
              ex.pdf_owner, ex.reason_tags)
 
+    # Step 10: signal whether this was a synthesized record so the
+    # main loop knows to append it to the records list. Existing
+    # records are already in the list; synthesized ones are not.
+    if synthesized:
+        return True, f"CREATE_RECORD:{doc_num} (synthesized from PDF)"
     return True, "ok"
 
 
@@ -1196,10 +1337,17 @@ def main() -> int:
     n_fail = 0
     n_skipped = 0
     n_deleted = 0
+    n_synthesized = 0
     # Track doc_nums marked for corporate deletion. We can't remove
     # them mid-loop (we're iterating records_by_doc indirectly), so
     # we collect them and apply the deletions after the loop.
     delete_doc_nums: List[str] = []
+    # Track doc_nums whose records were synthesized from PDFs (for
+    # pre-window filings missing from the clerk scrape). We append
+    # them to the records list AFTER the loop, both to avoid
+    # mutating during iteration and to keep mutation logic in one
+    # place at the main-loop boundary.
+    synthesized_doc_nums: List[str] = []
     for pdf in pdfs:
         try:
             ok, msg = process_pdf(pdf, records_by_doc, force=force)
@@ -1220,6 +1368,27 @@ def main() -> int:
                 log.info("  → record %s marked for deletion (%s)",
                          doc_to_delete, rest)
                 # PDF gets deleted too — no reason to keep it.
+                try:
+                    pdf.unlink()
+                    log.info("  PDF deleted: %s", pdf.name)
+                except OSError as exc:
+                    log.warning("could not delete %s: %s", pdf.name, exc)
+            elif msg.startswith("CREATE_RECORD:"):
+                # Pre-window-filing case. The doc_num was missing
+                # from ccln.json (the scraper had a narrower date
+                # window than the PDFs we downloaded), but the PDF
+                # is authoritative for everything in a CCLN record
+                # so a fresh record was synthesized from it.
+                # Queue the doc_num for append after the loop.
+                #   "CREATE_RECORD:2024014392 (synthesized from PDF)"
+                rest = msg[len("CREATE_RECORD:"):].strip()
+                doc_to_create = rest.split(" ", 1)[0]
+                synthesized_doc_nums.append(doc_to_create)
+                n_synthesized += 1
+                n_ok += 1
+                log.info("  → record %s synthesized (%s)",
+                         doc_to_create, rest)
+                # The PDF served its purpose — delete it.
                 try:
                     pdf.unlink()
                     log.info("  PDF deleted: %s", pdf.name)
@@ -1281,13 +1450,39 @@ def main() -> int:
         log.info("removed %d corporate records from JSON (%d → %d)",
                  before - after, before, after)
 
-    log.info("=== summary: %d ok, %d already-done, %d corporate-deleted, "
-             "%d failed (of %d) ===",
-             n_ok, n_skipped, n_deleted, n_fail, len(pdfs))
+    # Apply queued synthesizations. The synthesized record objects
+    # already live in records_by_doc (process_pdf put them there so
+    # later PDFs in the same batch could see them), so we look them
+    # up and append. This is one-directional: we never remove from
+    # records_by_doc here.
+    if synthesized_doc_nums:
+        before = len(records)
+        for doc_num in synthesized_doc_nums:
+            new_record = records_by_doc.get(doc_num)
+            if new_record is None:
+                # Shouldn't happen — process_pdf only signals
+                # CREATE_RECORD after writing to records_by_doc.
+                # Log and skip rather than crash.
+                log.warning("synthesis bookkeeping: doc_num %s "
+                            "missing from records_by_doc after "
+                            "CREATE_RECORD signal — skipping",
+                            doc_num)
+                continue
+            records.append(new_record)
+        after = len(records)
+        log.info("synthesized %d new records from pre-window PDFs "
+                 "(%d → %d)", after - before, before, after)
+
+    log.info("=== summary: %d ok (%d synthesized), %d already-done, "
+             "%d corporate-deleted, %d failed (of %d) ===",
+             n_ok, n_synthesized, n_skipped, n_deleted, n_fail,
+             len(pdfs))
 
     # Save updated records when anything changed: a fresh extraction,
-    # a force-flag override, OR a corporate deletion.
-    if n_ok > 0 or n_deleted > 0 or force:
+    # a synthesized record, a force-flag override, or a corporate
+    # deletion. (n_ok already counts synthesizations, but checking
+    # the explicit counter makes the intent self-documenting.)
+    if n_ok > 0 or n_deleted > 0 or n_synthesized > 0 or force:
         save_records(records, envelope)
     else:
         log.info("no changes — skipping save")
