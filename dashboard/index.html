@@ -2544,6 +2544,7 @@
       <th data-sort="legal"           style="width: 155px;">Legal Description</th>
       <th data-sort="tax_status"      style="width: 110px;">Tax Status</th>
       <th style="width: 50px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
     <tfoot id="delq-dead-foot"></tfoot>
@@ -8281,7 +8282,7 @@ function renderDelq() {
     const toggleTr = document.createElement("tr");
     toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
     toggleTr.innerHTML = `
-      <td colspan="10">
+      <td colspan="11">
         <span class="chev">▶</span>
         <span>${dead.length} deleted lead${dead.length === 1 ? "" : "s"}</span>
         <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
@@ -8460,6 +8461,11 @@ function buildDelqRow(r, isDead) {
   // Defensive fallback: if ncad_prop_id is missing, the helper does
   // owner-flip + clipboard + opens the NCAD search form.
   const ncadCell = ncadCellHtml(r);
+  // --- NCTAX (tax office) cell -------------------------------------
+  // DELQ data IS the tax office's own export, so ncad_account_num is
+  // always present — this builds a direct deep-link to the property's
+  // tax-balance page (the page that actually shows what's owed).
+  const nctaxCell = nctaxCellHtml(r);
 
   tr.innerHTML = `
     <td>${statusCell}</td>
@@ -8471,7 +8477,8 @@ function buildDelqRow(r, isDead) {
     <td>${mvCell}</td>
     <td class="legal">${legalCell}</td>
     <td>${taxStatusCell}</td>
-    <td style="text-align:center;">${ncadCell}</td>`;
+    <td style="text-align:center;">${ncadCell}</td>
+    <td style="text-align:center;">${nctaxCell}</td>`;
 
   return tr;
 }
@@ -9042,6 +9049,10 @@ function buildCclnRow(r, isDead) {
   // ncad_prop_id yet (no esearch lookup runs for the CCLN pipeline),
   // so they get the copy-owner + open-search fallback.
   let ncadCell = ncadCellHtml(r);
+  // NCTAX cell — tax-office deep-link. CCLN records DO carry
+  // ncad_account_num (the dashed 12-digit form), so this builds a
+  // direct link to the property's tax-balance page.
+  let nctaxCell = nctaxCellHtml(r);
 
   // Status cell. Active rows show a clickable pill that opens a small
   // menu (Working / Dead Lead, or New / Dead Lead when already
@@ -9091,7 +9102,7 @@ function buildCclnRow(r, isDead) {
     <td class="legal">${esc((r.legal || "").replace(/^Subdivision\s*-\s*Name:\s*/i, ""))}</td>
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${cclnFlagBadges(r)}</td>
     <td style="text-align:center;">${ncadCell}</td>
-    <td style="text-align:center;"><span style="color:var(--muted)">—</span></td>`;
+    <td style="text-align:center;">${nctaxCell}</td>`;
 
   // Whole-row click opens the CRM, EXCEPT when the click landed on an
   // interactive element (status pill, links, buttons) which have their
@@ -11640,6 +11651,48 @@ function ncadCellHtml(r) {
                target="_blank" rel="noopener"
                class="ncad-search-link"
                title="Copy &quot;${esc(flipped)}&quot; &amp; open NCAD search (paste with Ctrl+V)"
+               onclick="${esc(handler)}">
+               <i class="ext-icon">🔍</i></a>`;
+  }
+  return "—";
+}
+
+// NCTAX (Nueces County Tax Office) link helper — parallels ncadCellHtml.
+// The tax office (actweb.acttax.com) uses the SAME NCAD account number,
+// just stripped of dashes, as the `can=` URL parameter. Verified
+// 2026-05-28 against the live site: account 6855-0012-0170 (Peters Earl,
+// 506 Pasadena Pl) → https://actweb.acttax.com/nueces/nueces/
+// account-details.jsp?can=685500120170.
+//
+// When we have a dashed account number we build a direct deep-link to
+// the property's tax-balance page. When we don't, we fall back to the
+// tax office search form with the owner name copied to the clipboard
+// (their search needs "LAST FIRST" order, same convention as NCAD).
+function nctaxCellHtml(r) {
+  const acct = r && r.ncad_account_num ? String(r.ncad_account_num) : "";
+  const can = acct.replace(/\D/g, "");   // strip dashes/spaces → digits
+  if (can) {
+    const url = "https://actweb.acttax.com/nueces/nueces/" +
+                "account-details.jsp?can=" + encodeURIComponent(can);
+    return `<a href="${esc(url)}" target="_blank" rel="noopener"
+               title="Open this property on the Nueces County Tax Office (NCTAX)"
+               onclick="event.stopPropagation()">
+               <i class="ext-icon">↗</i></a>`;
+  }
+  if (r && r.owner) {
+    // No account number — copy owner (LAST FIRST) and open the tax
+    // office search form. User pastes, picks "Owner Name", hits Search.
+    const flipped = flipOwnerForNcad(r.owner);
+    const handler =
+      "event.stopPropagation();" +
+      "try{navigator.clipboard&&navigator.clipboard.writeText(" +
+      JSON.stringify(flipped) + ");}catch(e){}" +
+      "window.open('https://actweb.acttax.com/nueces/nueces/','_blank','noopener');" +
+      "return false;";
+    return `<a href="https://actweb.acttax.com/nueces/nueces/"
+               target="_blank" rel="noopener"
+               class="ncad-search-link"
+               title="Copy &quot;${esc(flipped)}&quot; &amp; open NCTAX search (paste with Ctrl+V)"
                onclick="${esc(handler)}">
                <i class="ext-icon">🔍</i></a>`;
   }
