@@ -2688,7 +2688,18 @@ def enrich_via_ncad_search(records: List[ClerkRecord],
         ncad_legal = (info.get("ncad_legal") or "").strip()
         if _legal_match is not None and rec_legal and ncad_legal:
             try:
-                cache_corroborated = _legal_match(rec_legal, ncad_legal)
+                # Pass addresses as an extra corroboration signal. When
+                # the strict lot/block/subdivision check would reject
+                # (e.g. lot disagreement from a replatted parcel or PDF
+                # OCR error on a lot digit), but BOTH addresses agree,
+                # the matcher will accept the pair. See fix for case
+                # 2026000258 (Sanchez / WOODLAWN). Empty addresses
+                # default to strict behavior — no surprise rescues.
+                rec_addr = (getattr(rec, "prop_address", "") or "").strip()
+                ncad_addr = (info.get("site_addr") or "").strip()
+                cache_corroborated = _legal_match(
+                    rec_legal, ncad_legal,
+                    address_a=rec_addr, address_b=ncad_addr)
             except Exception:
                 cache_corroborated = "optimistic"
         elif not rec_legal:
@@ -3095,7 +3106,8 @@ async def _esearch_one(page, name: str, token: str,
 
         # Pick the best row. Appraised value comes from the result-list
         # page directly via the `_appraisedValueDisplay` cell.
-        best = _pick_best_esearch_row(rows, candidate, record_legal)
+        best = _pick_best_esearch_row(rows, candidate, record_legal,
+                                       record_address=record_addr)
         if not best:
             continue
 
@@ -3231,7 +3243,8 @@ async def _esearch_one(page, name: str, token: str,
                         # situs-vs-situs sanity check still applies even
                         # when legal is absent.
                         best = _pick_best_esearch_row(
-                            a_rows, record_addr, record_legal)
+                            a_rows, record_addr, record_legal,
+                            record_address=record_addr)
                         if best:
                             log.info("  esearch: matched %r via ADDRESS "
                                      "search (%s %s)", name, st_num,
@@ -3392,7 +3405,8 @@ def _parse_esearch_result_list(html: str) -> List[Dict[str, str]]:
 
 def _pick_best_esearch_row(rows: List[Dict[str, str]],
                             query_name: str,
-                            record_legal: str = "") -> Optional[Dict[str, str]]:
+                            record_legal: str = "",
+                            record_address: str = "") -> Optional[Dict[str, str]]:
     """Choose the best result row for a given query name.
 
     Preferences (in order):
@@ -3409,6 +3423,12 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
     apart from a genuine match (all score 2), so legal corroboration
     is the only reliable discriminator. If no record_legal is given
     (or the matcher is unavailable), behaviour is unchanged.
+
+    Address corroboration (2026-05-28): when `record_address` is also
+    provided, it serves as a tiebreaker for the legal_descriptions_match
+    call — allowing a match when lot numbers disagree but the addresses
+    are identical (e.g. replatted parcel, OCR mislabel on lot digit).
+    See fix for case 2026000258 (Sanchez / WOODLAWN).
 
     Returns a normalized address dict or None if nothing usable.
     """
@@ -3457,7 +3477,15 @@ def _pick_best_esearch_row(rows: List[Dict[str, str]],
             if not cand_legal:
                 continue
             try:
-                if _legal_match(record_legal, cand_legal):
+                # Pass record_address + candidate situs as the
+                # address corroboration pair. When the legal
+                # comparison would normally reject on lot disagreement
+                # but both addresses match, the matcher accepts. See
+                # 2026000258 (Sanchez / WOODLAWN) fix.
+                cand_situs = (cand.get("situs") or "").strip()
+                if _legal_match(record_legal, cand_legal,
+                                address_a=record_address,
+                                address_b=cand_situs):
                     corroborated = cand
                     break
             except Exception:
