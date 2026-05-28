@@ -1,13 +1,38 @@
 {
-  "fetched_at": "2026-05-28T03:07:21.396339+00:00",
+  "fetched_at": "2026-05-28T03:44:11.583573+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
     "start": "2026-04-28",
     "end": "2026-05-28"
   },
-  "total": 78,
-  "with_address": 36,
+  "total": 79,
+  "with_address": 37,
   "records": [
+    {
+      "doc_num": "2026017684",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-05-21",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "GARZA ANITA PEREZ",
+      "grantee": "BANUELOS DEBORAH",
+      "amount": null,
+      "legal": "CAUSE NO 2025-DCV-3784-F (Lot 14, Block 1)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017684",
+      "flags": [
+        "Lis pendens",
+        "New this week"
+      ],
+      "score": 55
+    },
     {
       "doc_num": "2026016583",
       "doc_type": "FEDERAL TAX LIEN",
@@ -276,6 +301,30 @@
       "score": 45
     },
     {
+      "doc_num": "2026017104",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "PINEDA LORI A JONES",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "AMENDMENT TO CORRECT SERIAL NO 540414726 ON DOC  TO  SERIAL NO 489613924",
+      "prop_address": "5280 COUNTY RD 73",
+      "prop_city": "ROBSTOWN",
+      "prop_state": "TX",
+      "prop_zip": "78380",
+      "mail_address": "C/O BOB & JULIA GEORGE PO Box 5010 Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78465",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017104",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 45
+    },
+    {
       "doc_num": "2026016208",
       "doc_type": "JUDGMENT",
       "filed": "2026-05-11",
@@ -444,30 +493,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026014900",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-04-29",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "BAUTISTA RICARDO D",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NUMBER 539053426",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014900",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026016582",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-13",
@@ -486,6 +511,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016582",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026014900",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-04-29",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "BAUTISTA RICARDO D",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NUMBER 539053426",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014900",
       "flags": [
         "Tax lien"
       ],
@@ -540,6 +589,30 @@
       "score": 40
     },
     {
+      "doc_num": "2026016165",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-11",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "JONES LINDA",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NO 539861126",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016165",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
       "doc_num": "2026015766",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-06",
@@ -588,15 +661,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026016165",
+      "doc_num": "2026017106",
       "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-11",
+      "filed": "2026-05-18",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "JONES LINDA",
-      "grantee": "USA INTERNAL REVENUE",
+      "owner": "GARCIA ARTURO",
+      "grantee": "INTERNAL REVENUE SERVICE",
       "amount": null,
-      "legal": "SERIAL NO 539861126",
+      "legal": "SERIAL NO 540661526",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -605,7 +678,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016165",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017106",
       "flags": [
         "Tax lien"
       ],
@@ -636,30 +709,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026017106",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-18",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "GARCIA ARTURO",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 540661526",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017106",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026015398",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-04",
@@ -678,30 +727,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026015398",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026017104",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-18",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "PINEDA LORI A JONES",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "AMENDMENT TO CORRECT SERIAL NO 540414726 ON DOC  TO  SERIAL NO 489613924",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017104",
       "flags": [
         "Tax lien"
       ],

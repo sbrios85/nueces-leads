@@ -8220,7 +8220,21 @@
       "ncad_year": "2026",
       "ncad_owner_id": "746735"
     },
-    "Jenny Sanchez": null,
+    "Jenny Sanchez": {
+      "site_addr": "838 ERWIN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408",
+      "mail_addr": "5701 SARATOGA BLVD Apt 531 CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "appraised_value": 36464.0,
+      "ncad_legal": "WOODLAWN S74' X 135' OUT OF LT 5 BLK 2",
+      "ncad_prop_id": "200072779",
+      "ncad_year": "2026",
+      "ncad_owner_id": "836310"
+    },
     "JESSE HASTEY": {
       "site_addr": "7477 STAR HARBOR DR",
       "site_city": "CORPUS CHRISTI",
@@ -8475,7 +8489,21 @@
       "ncad_year": "2026",
       "ncad_owner_id": "439593"
     },
-    "PINEDA LORI A JONES": null,
+    "PINEDA LORI A JONES": {
+      "site_addr": "5280 COUNTY RD 73",
+      "site_city": "ROBSTOWN",
+      "site_state": "TX",
+      "site_zip": "78380",
+      "mail_addr": "C/O BOB & JULIA GEORGE PO Box 5010 Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78465",
+      "appraised_value": 38270.0,
+      "ncad_legal": "MANUFACTURED HOME LOC 5280-5282 COUNTY ROAD 73; SERIAL #N212300, LABLEL #TEX0411315",
+      "ncad_prop_id": "200145187",
+      "ncad_year": "2026",
+      "ncad_owner_id": "596492"
+    },
     "CLEM ESMERALDA": null,
     "SOLIZ JAMES": {
       "site_addr": "8166 LUZ DE LUNA ST",
