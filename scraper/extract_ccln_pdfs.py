@@ -512,6 +512,37 @@ def parse_ocr_text(ocr: str) -> Extracted:
         out.flags.append("utility_lien_not_abatement")
         return out
 
+    # Detect HOME Rehab Program loan-note PDFs. The City of Corpus
+    # Christi runs a homeowner rehabilitation loan program where
+    # eligible owner-occupants borrow money from the City to rehab
+    # their property. The loan is secured by a deed of trust, and
+    # both the loan note and corresponding lien documents get
+    # recorded with the county clerk. The recorded "REAL ESTATE
+    # LIEN NOTE" is the loan agreement itself — it's NOT an
+    # abatement-lien CCLN and does NOT represent a code-enforcement
+    # action against a substandard property. Production examples:
+    #   - doc 2024035696 PENA LIONEL & CARMEN 604 DUNCAN ST
+    #     ($206,099 / 20-year term / maturity 2044)
+    #   - doc 2024015008 same owners, second recording of same loan
+    # These show up because they share the LIEN document_type code
+    # in the county filing system, but the page-1 title is the
+    # invariant tell. Match the centered title text "REAL ESTATE
+    # LIEN NOTE" — this phrase does NOT appear in legitimate
+    # abatement-lien PDFs (those say "AFFIDAVIT OF LIEN").
+    if re.search(r"REAL\s+ESTATE\s+LIEN\s+NOTE", ocr, re.I):
+        out.flags.append("real_estate_lien_note_not_abatement")
+        return out
+
+    # Detect "CORRECTING DOCUMENT" filings — these are recorder
+    # cleanup filings that correct typos / metadata in a previously
+    # filed document. They share the same LIEN document type code
+    # but contain no new lien data themselves; the substantive
+    # filing was already captured under its original doc_num. Skip
+    # silently rather than fail.
+    if re.search(r"CORRECTING\s+DOCUMENT", ocr, re.I):
+        out.flags.append("correcting_document_not_abatement")
+        return out
+
     # Internal city lien id
     m = RE_INTERNAL_ID.search(ocr)
     if m:
@@ -1102,6 +1133,36 @@ def process_pdf(pdf_path: Path,
                  "department, not abatement) — deleting PDF, not a CCLN "
                  "record")
         return True, f"SKIP_PDF:{doc_id} (utility lien, different document type)"
+
+    # Step 3b: real-estate-lien-note short-circuit. The City's HOME
+    # Rehab Program generates "REAL ESTATE LIEN NOTE" recordings
+    # when homeowners borrow money for property rehabilitation.
+    # These are owner-occupied loan agreements (the homeowner IS
+    # the borrower), NOT code-enforcement liens — a property with a
+    # HOME Rehab loan is NOT a motivated-seller signal, it's the
+    # opposite (the owner just made a 20-year financial commitment
+    # to keep and improve the property). Silently SKIP_PDF. These
+    # are detected by the "REAL ESTATE LIEN NOTE" title text on
+    # page 1 (legitimate CCLNs say "AFFIDAVIT OF LIEN" instead).
+    if "real_estate_lien_note_not_abatement" in ex.flags:
+        doc_id = doc_num or ex.doc_num or "unknown"
+        log.info("  HOME Rehab Program loan note (REAL ESTATE LIEN "
+                 "NOTE — owner-occupied rehab loan, not abatement) "
+                 "— deleting PDF, not a CCLN record")
+        return True, (f"SKIP_PDF:{doc_id} (HOME Rehab loan note, "
+                      f"different document type)")
+
+    # Step 3c: correcting-document short-circuit. Recorder cleanup
+    # filings that correct typos / metadata in a previously filed
+    # document. No new lien data; the substantive filing was already
+    # captured under its original doc_num.
+    if "correcting_document_not_abatement" in ex.flags:
+        doc_id = doc_num or ex.doc_num or "unknown"
+        log.info("  correcting document (recorder cleanup for a "
+                 "previously-filed lien — no new data) — deleting "
+                 "PDF, not a CCLN record")
+        return True, (f"SKIP_PDF:{doc_id} (correcting document, "
+                      f"different document type)")
 
     # Step 4: reconcile filename doc_num vs OCR doc_num. The PDF's
     # own header is authoritative — if the filename and OCR disagree,
