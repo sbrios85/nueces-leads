@@ -84,6 +84,31 @@ RE_ESTATE = re.compile(
 # Family/personal trusts. The keywords here are SPECIFIC trust types
 # associated with individuals' estate planning. Generic "TRUST" alone
 # doesn't qualify — see RE_TRUST_ANY below.
+#
+# Abbreviated forms (added 2026-05-28): the County Appraisal District
+# truncates names to fit fixed-width data columns, producing common
+# abbreviations:
+#   "LVG TRST"     — Living Trust (both words abbreviated)
+#   "LVG TRUST"    — Living Trust (LIVING abbreviated, TRUST full)
+#   "REV LVG TRST" — Revocable Living Trust (all three abbreviated)
+#   "FAM TRUST"    — Family Trust (FAMILY abbreviated)
+#   "FAM TRST"     — Family Trust (both abbreviated)
+#   "REV TRUST"    — Revocable Trust (REVOCABLE abbreviated)
+# These are PERSONAL estate-planning vehicles, same as the
+# unabbreviated forms; classifying them as institutional trusts
+# (the prior behavior) threw away legitimate leads.
+#
+# Example 1: "SETHI RAJAT LVG TRST" at 7425 VAQUERO DR — a real
+# individual whose property is held by his personal revocable living
+# trust for estate planning. Before this patch, classified as
+# "individual" (because no trust regex matched — "TRST" without the
+# U didn't catch RE_TRUST_ANY either). Now correctly classified as
+# "family_trust" (KEEP=True).
+#
+# Example 2: "BURRIS FRANCES REV LVG TRUST" — classified as
+# "trust_inst" (SKIP) before patch because "LVG TRUST" didn't match
+# the full "LIVING TRUST" pattern but did match the generic
+# RE_TRUST_ANY. Now classified as "family_trust" (KEEP).
 RE_TRUST_FAMILY = re.compile(
     r"\b(REVOCABLE\s+LIVING\s+TRUST"
     r"|LIVING\s+TRUST"
@@ -93,7 +118,23 @@ RE_TRUST_FAMILY = re.compile(
     r"|INTER\s+VIVOS\s+TRUST"
     r"|MARITAL\s+TRUST"
     r"|BYPASS\s+TRUST"
-    r"|SURVIVOR'?S?\s+TRUST)\b",
+    r"|SURVIVOR'?S?\s+TRUST"
+    # Abbreviated personal-trust forms. Both abbreviation positions
+    # (LIVING → LVG, TRUST → TRST) are common in county data, so we
+    # match each combination explicitly to be unambiguous.
+    r"|REV\s+LVG\s+TRUST"
+    r"|REV\s+LVG\s+TRST"
+    r"|LVG\s+TRUST"
+    r"|LVG\s+TRST"
+    r"|FAM\s+TRUST"
+    r"|FAM\s+TRST"
+    r"|FAMILY\s+TRST"
+    r"|LIVING\s+TRST"
+    # "REV TRUST" / "REV TRST" — revocable trust abbreviation
+    # without "LIVING" middle word.
+    r"|REV\s+TRUST"
+    r"|REV\s+TRST"
+    r")\b",
     re.I,
 )
 
