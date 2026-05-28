@@ -7822,6 +7822,7 @@ async function loadAll() {
     const r = await fetch("city_liens.json", {cache:"no-store"});
     const data = await r.json();
     CCLN_RAW = data.records || [];
+    _invalidateAmbiguousAccounts();   // CCLN data changed — rebuild guard
     document.getElementById("ccln-count").textContent = data.total || 0;
     renderCclnStats();
     // Only build the CCLN table rows if CCLN is the active pane on
@@ -7895,6 +7896,7 @@ async function loadAll() {
     if (r.ok) {
       const data = await r.json();
       DELQ_RAW = data.records || [];
+      _invalidateAmbiguousAccounts();   // DELQ data changed — rebuild guard
       renderDelqStats();
       // Same lazy-render pattern as CCLN/FC: only build the table
       // rows if the DELQ pane is the active one at page-load time.
@@ -11657,6 +11659,113 @@ function ncadCellHtml(r) {
   return "—";
 }
 
+// ----------------------------------------------------------------
+// Ambiguous-account index (data-quality guard for NCTAX/NCAD links)
+// ----------------------------------------------------------------
+// Some records carry an ncad_account_num that was OCR-read off a
+// lien PDF and is WRONG — the same account string ends up on two
+// genuinely different properties (different addresses). Example
+// found 2026-05-28: both "1321 FLORIDA AVE" (Soliz) and "3025 ELGIN"
+// (Soliz) carry account 2277-0001-0220, which actually belongs ONLY
+// to 3025 Elgin. Deep-linking the Florida row by that account sends
+// the user to the wrong property.
+//
+// This index scans the loaded CCLN + DELQ datasets and flags any
+// account number that appears on MORE THAN ONE distinct (normalized)
+// address. Those accounts are "ambiguous" — link helpers must NOT
+// trust them for a direct deep-link, and should fall back to an
+// address-based search instead. Lazily computed and cached; call
+// _invalidateAmbiguousAccounts() if a dataset is reloaded.
+let _AMBIGUOUS_ACCT_CACHE = null;
+function _ambiguousAccounts() {
+  if (_AMBIGUOUS_ACCT_CACHE) return _AMBIGUOUS_ACCT_CACHE;
+  const byAcct = new Map();   // can(digits) -> Set(normalized addr)
+  const scan = (recs) => {
+    if (!Array.isArray(recs)) return;
+    for (const r of recs) {
+      const can = String(r && r.ncad_account_num || "").replace(/\D/g, "");
+      if (!can) continue;
+      const addr = _cclnNormalizeAddrForGrouping(r.prop_address || "");
+      if (!addr) continue;
+      if (!byAcct.has(can)) byAcct.set(can, new Set());
+      byAcct.get(can).add(addr);
+    }
+  };
+  try { scan(typeof CCLN_RAW !== "undefined" ? CCLN_RAW : null); } catch (e) {}
+  try { scan(typeof DELQ_RAW !== "undefined" ? DELQ_RAW : null); } catch (e) {}
+  const ambiguous = new Set();
+  for (const [can, addrs] of byAcct) {
+    if (addrs.size > 1) ambiguous.add(can);
+  }
+  _AMBIGUOUS_ACCT_CACHE = ambiguous;
+  return ambiguous;
+}
+function _invalidateAmbiguousAccounts() { _AMBIGUOUS_ACCT_CACHE = null; }
+
+// Build an address-search term the way the actttax site wants it.
+// The site's own instructions (Property Search page) say to OMIT
+// street-type words ("street", "lane", "boulevard", etc.) because
+// the appraisal district may abbreviate them, and to keep just the
+// number + street name (e.g. "8907 Park St" → "8907 park"). We also
+// strip unit/apt and the city/state/zip tail.
+function _nctaxAddressSearchTerm(addr) {
+  if (!addr) return "";
+  let s = String(addr).toUpperCase().trim();
+  s = s.split(/\s+/).filter(Boolean).join(" ");
+  // Cut a city/state/zip tail if present (rare on CCLN prop_address,
+  // but defensive): drop from a 5-digit ZIP onward.
+  s = s.replace(/\s+\d{5}(?:-\d{4})?\b.*$/, "");
+  // Strip unit/apt/suite suffix.
+  s = s.replace(/\s+(UNIT|APT|SUITE|STE|#)\s*[\w\d-]+\b.*$/, "");
+  // Strip trailing street-type suffix word(s).
+  s = s.replace(
+    /\s+(AVE?|AVENUE|ST|STREET|DR|DRIVE|RD|ROAD|LN|LANE|BLVD|BOULEVARD|CT|COURT|PL|PLACE|CIR|CIRCLE|WAY|TRL|TRAIL|PKWY|PARKWAY|HWY|HIGHWAY|TER|TERRACE|PARK)\.?$/,
+    "");
+  s = s.replace(/[.,]/g, "").trim();
+  return s;
+}
+
+// Build the copy-address-and-open-search-form link for NCTAX. Used
+// when there's no usable account number OR the account is ambiguous
+// (shared across multiple addresses). The user pastes the address
+// into the form, leaves the dropdown on "Property Address", and
+// hits Search.
+function _nctaxAddressSearchLink(r, reason) {
+  const term = _nctaxAddressSearchTerm(r && r.prop_address || "");
+  if (!term) {
+    // No address either — last-ditch: copy owner, open form.
+    if (r && r.owner) {
+      const flipped = flipOwnerForNcad(r.owner);
+      const h =
+        "event.stopPropagation();" +
+        "try{navigator.clipboard&&navigator.clipboard.writeText(" +
+        JSON.stringify(flipped) + ");}catch(e){}" +
+        "window.open('https://actweb.acttax.com/nueces/nueces/','_blank','noopener');" +
+        "return false;";
+      return `<a href="https://actweb.acttax.com/nueces/nueces/"
+                 target="_blank" rel="noopener" class="ncad-search-link"
+                 title="Copy &quot;${esc(flipped)}&quot; &amp; open NCTAX search (paste with Ctrl+V)"
+                 onclick="${esc(h)}"><i class="ext-icon">🔍</i></a>`;
+    }
+    return "—";
+  }
+  const tip = reason === "ambiguous"
+    ? "Account number is shared by multiple properties — search by address instead. Copies \"" + term + "\" & opens NCTAX search (paste with Ctrl+V, keep dropdown on Property Address)"
+    : "Copy \"" + term + "\" & open NCTAX search (paste with Ctrl+V, keep dropdown on Property Address)";
+  const handler =
+    "event.stopPropagation();" +
+    "try{navigator.clipboard&&navigator.clipboard.writeText(" +
+    JSON.stringify(term) + ");}catch(e){}" +
+    "window.open('https://actweb.acttax.com/nueces/nueces/','_blank','noopener');" +
+    "return false;";
+  // Use a distinct magnifier so ambiguous rows are visually flagged.
+  return `<a href="https://actweb.acttax.com/nueces/nueces/"
+             target="_blank" rel="noopener" class="ncad-search-link"
+             title="${esc(tip)}"
+             onclick="${esc(handler)}">
+             <i class="ext-icon">🔍</i></a>`;
+}
+
 // NCTAX (Nueces County Tax Office) link helper — parallels ncadCellHtml.
 // The tax office (actweb.acttax.com) uses the SAME NCAD account number,
 // just stripped of dashes, as the `can=` URL parameter. Verified
@@ -11664,20 +11773,30 @@ function ncadCellHtml(r) {
 // 506 Pasadena Pl) → https://actweb.acttax.com/nueces/nueces/
 // account-details.jsp?can=685500120170.
 //
-// When we have a dashed account number we build a direct deep-link to
-// the property's tax-balance page. When we don't, we fall back to the
-// tax office search form with the owner name copied to the clipboard
-// (their search needs "LAST FIRST" order, same convention as NCAD).
+// Link strategy:
+//   1. Account present AND unambiguous → direct deep-link to the
+//      property's tax-balance page (one click, exact property).
+//   2. Account present BUT ambiguous (shared across >1 address —
+//      OCR error on the lien PDF) → DON'T trust it; fall back to an
+//      address search (copy cleaned address + open the search form).
+//      The form POSTs, so we can't build a direct results URL; the
+//      user pastes & hits Search. Verified the form is POST-only
+//      2026-05-28 (search-result.jsp shows no query string).
+//   3. No account → address search if we have one, else owner search.
 function nctaxCellHtml(r) {
   const acct = r && r.ncad_account_num ? String(r.ncad_account_num) : "";
   const can = acct.replace(/\D/g, "");   // strip dashes/spaces → digits
-  if (can) {
+  if (can && !_ambiguousAccounts().has(can)) {
     const url = "https://actweb.acttax.com/nueces/nueces/" +
                 "account-details.jsp?can=" + encodeURIComponent(can);
     return `<a href="${esc(url)}" target="_blank" rel="noopener"
                title="Open this property on the Nueces County Tax Office (NCTAX)"
                onclick="event.stopPropagation()">
                <i class="ext-icon">↗</i></a>`;
+  }
+  // Ambiguous account OR no account: prefer an address search.
+  if (r && r.prop_address) {
+    return _nctaxAddressSearchLink(r, can ? "ambiguous" : "no-account");
   }
   if (r && r.owner) {
     // No account number — copy owner (LAST FIRST) and open the tax
