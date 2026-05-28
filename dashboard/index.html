@@ -8662,23 +8662,204 @@ function _cclnRenderLienHistoryCard(consolidatedEntry) {
     </div>`;
 }
 
+// ----------------------------------------------------------------
+// Super-grouping helpers — merge multi-parcel buildings into one row
+// ----------------------------------------------------------------
+// Many CCLN-tracked properties are buildings that span multiple
+// parcels (e.g. a corner building with 2 separate NCAD lots, or a
+// duplex listed under "813-817 ALAMEDA" that the appraiser indexes
+// as 4 separate parcel IDs). Pass-1 grouping by NCAD account splits
+// these into multiple table rows, which fragments the user's view
+// of a single physical lead.
+//
+// Pass-2 super-grouping addresses this: after the NCAD-based Pass-1
+// grouping, we compute a (canonical_owner, normalized_address)
+// signature for each parcel group. Pass-1 groups that share the
+// same signature are merged into a single consolidated entry.
+//
+// "Same signature" = same owner (fuzzy-matched) AND same normalized
+// address. Different addresses on the same lot ID stay separate
+// (e.g. Peters Earl's corner property with frontages on both
+// ALAMEDA and MALDEN — those legitimately ARE two different
+// addresses from the city's perspective, so they remain 2 rows).
+
+// Canonicalize owner names for fuzzy matching:
+//   - Uppercase, strip punctuation
+//   - Strip generational suffixes (JR/SR/II/III), life-estate
+//     markers ((LE)/LE), co-tenancy markers (ET UX/ET AL/ETALS),
+//     estate prefix/suffix (ESTATE OF/EST OF/DECD)
+//   - Strip co-trustee phrases (CO-TR/CO TR/CO-TRUSTEE OF X)
+//   - Collapse "&" and "AND" connectors
+//   - Sort remaining tokens alphabetically — this makes
+//     "DREIER LAWRENCE" and "LAWRENCE DREIER" match
+//
+// Limitation: this canonicalization treats name initials as
+// significant. "DREIER LAWRENCE" and "DREIER LAWRENCE E" will NOT
+// merge. This is intentional — the appraisal district usually
+// uses initials consistently per owner, so a mismatch is more
+// likely to indicate two different people than a data variation.
+function _cclnNormalizeOwner(name) {
+  if (!name) return "";
+  let s = String(name).toUpperCase();
+  // Strip generational + tenancy + estate qualifiers
+  s = s.replace(/\b(JR|SR|II|III|IV|V|\(LE\)|LE|ET\s+UX|ET\s+AL|ET\s+ALS|ETALS?|EST\s+OF|ESTATE\s+OF|DECD)\b/g, " ");
+  // Strip "CO-TR(USTEE) OF <rest>" — co-trustee designation
+  s = s.replace(/\s+CO[\s-]?TR(?:USTEE)?\s+OF.*$/i, " ");
+  // Replace "&" and "AND" connectors with space
+  s = s.replace(/\s*&\s*|\s+AND\s+/g, " ");
+  // Strip remaining punctuation
+  s = s.replace(/[^\w\s]/g, " ");
+  // Collapse whitespace
+  s = s.split(/\s+/).filter(Boolean).join(" ");
+  // Sort tokens alphabetically — LASTNAME FIRSTNAME == FIRSTNAME LASTNAME
+  return s.split(" ").sort().join(" ");
+}
+
+// Normalize a street address for grouping. Different from the
+// general-purpose _stackNormalizeAddress: this one is designed to
+// collapse the cosmetic variations seen in clerk-portal data so
+// the same physical building maps to the same key, while keeping
+// genuinely different addresses distinct.
+function _cclnNormalizeAddrForGrouping(addr) {
+  if (!addr) return "";
+  let s = String(addr).toUpperCase().trim();
+  // Collapse multi-space sequences
+  s = s.split(/\s+/).filter(Boolean).join(" ");
+  // Strip unit/apt/suite suffixes — same building, different units
+  // are still the same code-enforcement target
+  s = s.replace(/\s+(UNIT|APT|SUITE|STE|#)\s*[\w\d-]+\b/g, "");
+  // Strip leading/trailing punctuation
+  s = s.replace(/^[.,;\s]+|[.,;\s]+$/g, "");
+  // Normalize spaced hyphens: "813 -817" → "813-817"
+  s = s.replace(/(\d)\s+-\s*(\d)/g, "$1-$2");
+  s = s.replace(/(\d)\s*-\s+(\d)/g, "$1-$2");
+  // Move trailing direction (N/S/E/W) to after the street number
+  // so "2911 PORT AVE S" == "2911 S PORT AVE"
+  s = s.replace(/^(\d+)\s+(.*?)\s+(N|S|E|W)$/, "$1 $3 $2");
+  // Strip "@ <crossstreet>" suffix
+  s = s.replace(/\s*@\s*.+$/, "");
+  return s;
+}
+
+// Compute the super-group signature for one record. Returns null
+// when the record has insufficient data to form a signature
+// (no owner OR no address) — such records stay as solo groups.
+function _cclnRecordSignature(rec) {
+  const ow = _cclnNormalizeOwner(rec.owner || rec.pdf_owner || "");
+  const ad = _cclnNormalizeAddrForGrouping(rec.prop_address || "");
+  if (!ow || !ad) return null;
+  return ow + "||" + ad;
+}
+
+// ============================================================
+// CCLN consolidation — one entry per unique property
+// ============================================================
+// Two-pass grouping:
+//
+//   Pass 1: Bucket raw records by _cclnPropertyKey (NCAD-account,
+//   or address fallback). This is the gold-standard match: same
+//   NCAD = same parcel = same property, period.
+//
+//   Pass 2: For each Pass-1 group, compute a per-record
+//   (canonical_owner, normalized_address) signature. The MAJORITY
+//   signature wins as the group's signature. Pass-1 groups that
+//   share the same winning signature get merged into one super-
+//   group. This catches the multi-parcel-same-building case
+//   (Dreier's 6 NCAD lots at 1116-1120 LEOPARD all become one
+//   row showing 20 liens total).
+//
+//   Records inside a super-group whose individual signature
+//   DIFFERS from the winning signature stay attached (so the lien
+//   count and total stay accurate) but are silently flagged in
+//   the lien-history detail card. This handles dirty data where
+//   the same NCAD account appears on records with different
+//   addresses (likely OCR error on one of them).
+//
+// Each consolidated entry exposes:
+//   property_key:           stable id used for CRM lookup + status
+//                           (this is now the super-group signature
+//                           for merged groups, or the original
+//                           pass-1 key for solo groups)
+//   liens:                  array of source records (one per filing)
+//   doc_num:                most-recent filing's doc_num
+//   filed:                  most-recent filed date
+//   amount:                 most-recent lien amount
+//   lien_count:             total number of liens (post-merge)
+//   total_lien_amount:      sum of all lien amounts (post-merge)
+//   parcel_count:           # of distinct NCAD parcels merged in
+//                           (1 for single-parcel groups, >1 when
+//                           super-grouping merged multi-parcel
+//                           buildings)
+//   owner, prop_address, ...etc: pulled from the majority-signature
+//                           record with non-empty value
+//
+// Records that can't be property-keyed (no NCAD and no
+// prop_address) are still surfaced as standalone single-lien
+// entries so nothing falls through the cracks.
+
 function _cclnConsolidate(rawRecords) {
   if (!Array.isArray(rawRecords)) return [];
-  // Bucket records by property_key.
-  const groups = new Map();
+
+  // -----------------------------------------------------------
+  // Pass 1: bucket records by NCAD-or-address key
+  // -----------------------------------------------------------
+  const pass1Groups = new Map();
   for (const rec of rawRecords) {
     const key = _cclnPropertyKey(rec);
-    let g = groups.get(key);
+    let g = pass1Groups.get(key);
     if (!g) {
       g = { key, liens: [] };
-      groups.set(key, g);
+      pass1Groups.set(key, g);
     }
     g.liens.push(rec);
   }
 
-  // Build one consolidated entry per group.
+  // -----------------------------------------------------------
+  // Pass 2: for each pass-1 group, compute majority signature
+  // and merge pass-1 groups that share a signature
+  // -----------------------------------------------------------
+  // For each pass-1 group, tally how many of its records produce
+  // which signature. The winner is the most common; ties broken
+  // by insertion order.
+  const groupSignature = new Map();  // pass-1 key → winning sig (or null)
+  for (const [key, g] of pass1Groups) {
+    const counts = new Map();
+    let bestSig = null;
+    let bestCount = 0;
+    for (const r of g.liens) {
+      const sig = _cclnRecordSignature(r);
+      if (!sig) continue;
+      const n = (counts.get(sig) || 0) + 1;
+      counts.set(sig, n);
+      if (n > bestCount) {
+        bestSig = sig;
+        bestCount = n;
+      }
+    }
+    groupSignature.set(key, bestSig);
+  }
+
+  // Now merge pass-1 groups by their winning signature. Groups
+  // with no signature (no owner / no address) stay solo under
+  // their pass-1 key.
+  const superGroups = new Map();  // signature-or-solo-key → { key, pass1Keys[], liens[] }
+  for (const [pass1Key, g] of pass1Groups) {
+    const sig = groupSignature.get(pass1Key);
+    const sgKey = sig ? sig : "_solo_" + pass1Key;
+    let sg = superGroups.get(sgKey);
+    if (!sg) {
+      sg = { key: sgKey, pass1Keys: [], liens: [] };
+      superGroups.set(sgKey, sg);
+    }
+    sg.pass1Keys.push(pass1Key);
+    sg.liens.push(...g.liens);
+  }
+
+  // -----------------------------------------------------------
+  // Build one consolidated entry per super-group
+  // -----------------------------------------------------------
   const out = [];
-  for (const g of groups.values()) {
+  for (const g of superGroups.values()) {
     // Sort the liens by filed date DESC (newest first) so liens[0]
     // is always the most recent. Records without filed dates sink
     // to the bottom.
@@ -8713,17 +8894,41 @@ function _cclnConsolidate(rawRecords) {
       const v = lienAmount(r);
       return v != null ? sum + v : sum;
     }, 0);
-    // Pull each field from the most-recent record with a non-empty
-    // value. Earlier filings sometimes have richer data than the
-    // most recent (or vice versa), so we walk both ends.
+    // For super-grouped entries, prefer field values from records
+    // that match the majority signature. This avoids displaying
+    // (e.g.) the MALDEN address on a row that's really the
+    // ALAMEDA group, when one of the Pass-1 groups inside it has
+    // a minority-address contaminated record. Falls back to any
+    // non-empty value if no majority record carries the field.
+    const winningSig = g.key.startsWith("_solo_") ? null : g.key;
+    const majorityLiens = winningSig
+      ? g.liens.filter(r => _cclnRecordSignature(r) === winningSig)
+      : g.liens;
     const pickField = (k) => {
+      // Try majority records first (most-recent of them, by sort order)
+      for (const r of majorityLiens) {
+        if (r[k] != null && r[k] !== "") return r[k];
+      }
+      // Fall back to any record
       for (const r of g.liens) {
         if (r[k] != null && r[k] !== "") return r[k];
       }
       return undefined;
     };
+    // parcel_count: how many distinct NCAD accounts are merged
+    // into this super-group? Treat empty NCAD as its own "parcel"
+    // for counting purposes so an addr-only record still counts
+    // as 1 parcel.
+    const distinctNcads = new Set();
+    for (const r of g.liens) {
+      distinctNcads.add((r.ncad_account_num || "").trim());
+    }
     const entry = {
-      // Identity for CRM lookup, status storage, and click handlers
+      // Identity for CRM lookup, status storage, and click handlers.
+      // For merged super-groups, this is the super-group signature
+      // so the status "stays" with the building even as parcels
+      // come and go. For solo groups, it's the original pass-1
+      // key (which IS the existing behavior).
       property_key:        g.key,
       // Convenience: keep doc_num pointing at the most-recent
       // filing's doc_num. Some helpers (the NCAD icon, the clerk
@@ -8737,7 +8942,8 @@ function _cclnConsolidate(rawRecords) {
       // Plus aggregates for the additional columns / CRM card:
       lien_count:          g.liens.length,
       total_lien_amount:   totalAmount,
-      // Identity fields from the cohort:
+      parcel_count:        distinctNcads.size,
+      // Identity fields from the cohort (majority-signature first):
       owner:               pickField("owner"),
       grantee:             pickField("grantee"),
       doc_type:            pickField("doc_type"),
