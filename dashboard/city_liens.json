@@ -1,7 +1,7 @@
 {
-  "fetched_at": "2026-05-28T01:13:15.318619+00:00",
+  "fetched_at": "2026-05-28T01:47:59.394881+00:00",
   "source": "Nueces County Clerk — CCLN cumulative",
-  "total": 1760,
+  "total": 1761,
   "records": [
     {
       "doc_num": "2025004041",
@@ -67659,6 +67659,47 @@
       ],
       "ccln_pdf_processed": true,
       "ccln_pdf_processed_at": "2026-05-28T01:13:11.937736Z"
+    },
+    {
+      "doc_num": "2024032755",
+      "doc_type": "LIEN",
+      "filed": "2024-09-27",
+      "cat": "CCLN",
+      "cat_label": "City of Corpus Christi Lien",
+      "owner": "SETHI RAJAT LVG TRST",
+      "grantee": "CITY OF CORPUS CHRISTI",
+      "amount": null,
+      "legal": "RANCHO VISTA UNIT 1 BLK 3 LOT 7",
+      "prop_address": "7425 VAQUERO DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "C/ORAJAT SETHI & VISHAL SETHI, CO-TRSTES 2825 REAGAN ST APT B",
+      "mail_city": "DALLAS",
+      "mail_state": "TX",
+      "mail_zip": "75219",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024032755",
+      "flags": [],
+      "score": 35,
+      "ccln_pdf_synthesized": true,
+      "work_date": "2024-05-21",
+      "legal_from_pdf": "RANCHO VISTA UNIT 1 BLK 3 LOT 7",
+      "pdf_amount": 252.0,
+      "pdf_owner": "SETHI RAJAT LVG TRST",
+      "ncad_account_num": "7104-0003-0070",
+      "pdf_filed_date": "2024-09-27",
+      "reason_tags": [
+        "substandard_building",
+        "carrion",
+        "filth",
+        "demolition"
+      ],
+      "ccln_pdf_flags": [
+        "zip_outside_cc",
+        "absentee_owner"
+      ],
+      "ccln_pdf_processed": true,
+      "ccln_pdf_processed_at": "2026-05-28T01:47:59.394085Z"
     }
   ]
 }
