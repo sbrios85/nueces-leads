@@ -1591,8 +1591,83 @@ def normalize_legal_for_match(legal: str) -> Tuple[str, str, str]:
     return (sub.lower(), lot, block)
 
 
-def legal_descriptions_match(a: str, b: str) -> bool:
-    """True if two legal descriptions probably refer to the same property."""
+def _normalize_address_for_legal_match(addr: str) -> str:
+    """Loose address normalization used as a corroboration signal in
+    legal_descriptions_match.
+
+    The same physical property often appears with cosmetic variations
+    between data sources:
+      foreclosure clerk: "838 ERWIN AVE"
+      NCAD esearch:      "838 ERWIN"
+      tax office:        "838 Erwin Ave"
+    All three are the same house. This normalizer collapses such
+    differences:
+      - uppercase + whitespace collapse
+      - strip common street-type suffixes (AVE/ST/DR/RD/LN/BLVD/CT/PL/CIR/
+        WAY/TRL/PKWY) and their long-form synonyms
+      - strip punctuation
+    Returns "" if input is empty. Does NOT attempt sophisticated address
+    matching — this is a "do they look the same?" check, deliberately
+    conservative to avoid false positives like "838 ERWIN" matching
+    "8380 ERWIN".
+    """
+    if not addr:
+        return ""
+    s = str(addr).upper().strip()
+    # Collapse multi-space
+    s = " ".join(s.split())
+    # Strip trailing street-type suffix (and its long form)
+    s = re.sub(
+        r"\s+(AVE?|AVENUE|ST|STREET|DR|DRIVE|RD|ROAD|LN|LANE|BLVD|"
+        r"BOULEVARD|CT|COURT|PL|PLACE|CIR|CIRCLE|WAY|TRL|TRAIL|"
+        r"PKWY|PARKWAY|HWY|HIGHWAY|TER|TERRACE)\.?$",
+        "",
+        s,
+    )
+    # Strip remaining punctuation that's purely cosmetic
+    s = re.sub(r"[.,]", "", s)
+    # Strip unit/apt suffix — same building
+    s = re.sub(r"\s+(UNIT|APT|SUITE|STE|#)\s*[\w\d-]+$", "", s)
+    return s
+
+
+def legal_descriptions_match(a: str, b: str,
+                             *,
+                             address_a: str = "",
+                             address_b: str = "") -> bool:
+    """True if two legal descriptions probably refer to the same property.
+
+    Optional address corroboration (address_a / address_b, keyword-only):
+    when the strict lot/block/subdivision comparison would normally
+    REJECT the pair because the lot numbers disagree, addresses can
+    serve as a tiebreaker. If both addresses are provided AND they
+    normalize to the same string AND the subdivision tokens agree AND
+    the block tokens agree (or are both empty), accept the match
+    despite the lot disagreement.
+
+    Real case that motivated this (foreclosure 2026000258, Jenny Sanchez):
+      foreclosure legal: "WOODLAWN LOT 2 BLOCK 2, 2007063008"
+        → ('woodlawn ..., 2007063008', '2', '2')
+      ncad legal:        "WOODLAWN S74' X 135' OUT OF LT 5 BLK 2"
+        → ("woodlawn s74' x 135' out of", '5', '2')
+      both at "838 ERWIN AVE"
+    Same subdivision (WOODLAWN), same block (2), same address — but the
+    lot disagrees (2 vs 5). Without the address corroboration, this
+    legitimate match was rejected and the foreclosure ended up with no
+    NCAD parcel attached.
+
+    Why this is safe: the disagreement-on-lot rejection exists to
+    protect against surname-collision false matches (REYNOLDS RICHARD
+    vs REYNOLDS THERESA). Those collisions virtually NEVER share a
+    street address — they're different houses with different owners
+    who happen to share a surname. Requiring identical addresses
+    eliminates that risk while accepting the genuine "same parcel,
+    different lot numbering" case (replatted lots, OCR errors on lot
+    digits, alternate plat references in the foreclosure document).
+
+    Addresses default to "" — callers that don't supply them get the
+    historical strict behavior, no surprise regressions.
+    """
     sa, la, ba = normalize_legal_for_match(a)
     sb, lb, bb = normalize_legal_for_match(b)
     if not sa or not sb:
@@ -1607,7 +1682,8 @@ def legal_descriptions_match(a: str, b: str) -> bool:
     #   clerk "LOT 22,23"  vs ncad "LT 22"               (doc 243)
     #   clerk "LOTS 7,8"   vs ncad "LOT 7&8"              (doc 264)
     #   clerk "LOT 1,2"    vs ncad "LT 1 AND N .50 OF LT 2" (doc 247)
-    # Empty intersection still rejects (e.g. clerk LOT 15 vs ncad LOT 18).
+    # Empty intersection still rejects (e.g. clerk LOT 15 vs ncad LOT 18)
+    # — UNLESS address corroboration is provided and matches.
     def _lot_set(lot_str: str) -> set:
         return {p.strip(" ,-")
                 for p in re.split(r"[,&\s]+", lot_str)
@@ -1626,9 +1702,28 @@ def legal_descriptions_match(a: str, b: str) -> bool:
     # the clerk just didn't include a lot.
     if la and lb:
         if not (_lot_set(la) & _lot_set(lb)):
-            return False
-        if ba and bb and ba != bb:
-            return False
+            # Lot intersection is empty. Normally a reject. BUT: if
+            # the caller provided addresses AND they match, AND block
+            # agrees, this is the "replatted lot / OCR mislabel"
+            # case (foreclosure 2026000258). Accept the match.
+            #
+            # Required for the address-rescue path: BOTH addresses
+            # must be present and normalize to identical strings;
+            # block agreement (or both empty); subdivision token
+            # overlap will be checked below the same way as the
+            # normal flow.
+            addr_na = _normalize_address_for_legal_match(address_a)
+            addr_nb = _normalize_address_for_legal_match(address_b)
+            block_agrees = (not ba or not bb) or (ba == bb)
+            address_rescues = bool(addr_na) and addr_na == addr_nb \
+                              and block_agrees
+            if not address_rescues:
+                return False
+            # Fall through to subdivision-token check below.
+        else:
+            # Lot intersection non-empty — normal flow.
+            if ba and bb and ba != bb:
+                return False
     else:
         # At least one side has no lot. Fall back to subdivision-only
         # match, but require strong subdivision agreement and no block
