@@ -311,10 +311,25 @@ def _parse_result_html(html: str, default_year: str) -> List[EsearchRow]:
         soup = BeautifulSoup(html, "html.parser")
 
     rows: List[EsearchRow] = []
+    diagnosed = False
     for tr in soup.find_all("tr"):
         if not tr.find("td"):
             # header row
             continue
+
+        # One-time diagnostic dump: log every CSS class found on
+        # <td> cells of the first data row, so we can see what fields
+        # NCAD exposes besides the ones we use (e.g. _geoId would give
+        # us the account_num for free, sparing the detail-page fetch).
+        # Toggle via env var so we don't spam normal runs.
+        if (not diagnosed
+                and os.environ.get("CCLN_ENRICH_DIAG_CELLS", "")
+                    .lower() in ("1", "true", "yes")):
+            diagnosed = True
+            for td in tr.find_all("td"):
+                classes = td.get("class") or []
+                text = td.get_text(" ", strip=True)[:50]
+                log.info("    DIAG td class=%s text=%r", classes, text)
 
         def cell(cls: str) -> str:
             c = tr.find("td", class_=cls)
