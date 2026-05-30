@@ -37,6 +37,10 @@ on:
         description: "Re-attempt addresses previously cached as misses."
         type: boolean
         default: false
+      diag_cells:
+        description: "Diagnostic: log every CSS class on the first result row's <td> cells. Use ONCE to discover whether NCAD exposes Geo ID (account number) on the result list. Then leave off."
+        type: boolean
+        default: false
 
 permissions:
   contents: write             # commit enriched city_liens.json + audit log
@@ -91,6 +95,7 @@ jobs:
           CCLN_ENRICH_LIMIT: ${{ inputs.limit }}
           CCLN_ENRICH_DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
           CCLN_ENRICH_RETRY_MISSES: ${{ inputs.retry_misses && '1' || '' }}
+          CCLN_ENRICH_DIAG_CELLS: ${{ inputs.diag_cells && '1' || '' }}
         run: python scraper/enrich_ccln_ncad.py
 
       - name: Upload debug artifacts
