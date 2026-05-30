@@ -1,0 +1,135 @@
+name: Enrich CCLN with NCAD
+
+# Manual-only backfill that attaches ncad_prop_id, ncad_owner_id, and
+# the CORRECT ncad_account_num to CCLN records by looking each property
+# up on NCAD esearch by address. Fixes:
+#   (1) NCAD ↗ deep-links in the dashboard (CCLN rows had no prop_id)
+#   (2) ~79 OCR'd account numbers that were wrong (shared across
+#       multiple addresses — see Soliz 1321 Florida vs 3025 Elgin)
+#
+# The script dedupes by normalized address so ~1761 records collapse
+# to ~745 actual NCAD lookups. With fetch_mail enabled the full backfill
+# is ~45-50 min; without, ~20 min. Both fit inside the 60-min cap.
+#
+# Mirrors enrich_tfc_ncad.yml. Shares the .cache/ncad_search_cache.json
+# with the foreclosure pipeline so neither repeats the other's lookups.
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Re-enrich records that already have ncad_prop_id (use after schema changes)."
+        type: boolean
+        default: false
+      fetch_mail:
+        description: "Also fetch the NCAD detail page for mailing address (doubles runtime). Recommend false on first pass."
+        type: boolean
+        default: false
+      limit:
+        description: "Cap addresses processed per run (0 = no limit). Useful for trial runs."
+        type: number
+        default: 0
+      dry_run:
+        description: "Run lookups, log results, but DO NOT write JSON or commit."
+        type: boolean
+        default: false
+      retry_misses:
+        description: "Re-attempt addresses previously cached as misses."
+        type: boolean
+        default: false
+
+permissions:
+  contents: write             # commit enriched city_liens.json + audit log
+  pages: write                # for the dashboard rebuild
+  id-token: write             # for the Pages deploy
+
+# Share the cache-write lock with the daily scrape so we never race on
+# .cache/ncad_search_cache.json (same pattern as enrich_tfc_ncad.yml).
+concurrency:
+  group: "ncad-cache-write"
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pull latest (catch checkout race)
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      - name: Install Playwright + Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run CCLN NCAD enrichment
+        env:
+          LOG_LEVEL: INFO
+          PYTHONUNBUFFERED: "1"
+          # Env-var bridges — script reads these and overrides args
+          CCLN_ENRICH_FORCE: ${{ inputs.force && '1' || '' }}
+          # fetch_mail is opt-IN here, so when input is false we pass the disable
+          CCLN_ENRICH_NO_MAIL: ${{ inputs.fetch_mail && '' || '1' }}
+          CCLN_ENRICH_LIMIT: ${{ inputs.limit }}
+          CCLN_ENRICH_DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+          CCLN_ENRICH_RETRY_MISSES: ${{ inputs.retry_misses && '1' || '' }}
+        run: python scraper/enrich_ccln_ncad.py
+
+      - name: Upload debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ccln-enrichment-debug
+          path: debug/
+          if-no-files-found: ignore
+
+      - name: Commit enriched records + audit
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name  "nueces-leads-bot"
+          git config user.email "actions@github.com"
+          mkdir -p .cache
+          git add \
+            dashboard/city_liens.json data/city_liens.json \
+            data/ccln_enrichment_audit_*.json \
+            .cache/ncad_search_cache.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit (all addresses may already have been enriched, or all misses)"
+          else
+            git commit -m "chore: CCLN NCAD enrichment $(date -u +'%Y-%m-%dT%H:%MZ')"
+            git push
+          fi
+
+      - name: Upload dashboard artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    needs: enrich
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
