@@ -8175,6 +8175,4142 @@
       "year": "2026"
     }
   },
+  "ccln_addr::4405 MARIE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3164-0006-0270",
+      "appraised": "$268,817",
+      "legal": "HAMLIN PLACE #2 BLK 6 LOT 27",
+      "owner_id": "817961",
+      "owner_name": "PELAEZ ERIKA & SP JOSEPH GARZA",
+      "prop_id": "241254",
+      "situs": "4405 MARIE, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4407 ANGELA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5281-0006-0225",
+      "appraised": "$80,000",
+      "legal": "MOLINA #2 BLK 6 LOT 22A",
+      "owner_id": "837913",
+      "owner_name": "SOUTHERN BAYBERRY PROPERTIES LLC",
+      "prop_id": "268138",
+      "situs": "4407 ANGELA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4409 VALDEZ": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0007-0420",
+      "appraised": "$129,916",
+      "legal": "LA PASCUA #2 BLK 7 LOT 42",
+      "owner_id": "828082",
+      "owner_name": "FGMS HOLDINGS LLC",
+      "prop_id": "252740",
+      "situs": "4409 VALDEZ DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4410 BLUEFIELD DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1855-0044-0030",
+      "appraised": "$212,362",
+      "legal": "COUNTRY CLUB ESTATES #11 BLK 44 LOT 3",
+      "owner_id": "358630",
+      "owner_name": "SKURKA MARK ET UX ZITA GARZA",
+      "prop_id": "218524",
+      "situs": "4410 BLUEFIELD DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4410 DINN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6936-0005-0030",
+      "appraised": "$23,681",
+      "legal": "PORTAIRS ADDITION BLK 5 LOT 3",
+      "owner_id": "540193",
+      "owner_name": "OLIVO GLORIA L & DOMINGO LUCIO JR",
+      "prop_id": "287722",
+      "situs": "4410 DINN, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4410 ELVIRA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0003-0110",
+      "appraised": "$84,209",
+      "legal": "LA PASCUA #2 BLK 3 LOT 11",
+      "owner_id": "668276",
+      "owner_name": "LONGORIA ANITA A",
+      "prop_id": "252549",
+      "situs": "4410 ELVIRA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4417 DINN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6936-0006-0280",
+      "appraised": "$91,548",
+      "legal": "PORTAIRS ADDITION BLK 6 LOT 28",
+      "owner_id": "528459",
+      "owner_name": "ANTUNEZ JOSE C",
+      "prop_id": "287768",
+      "situs": "4417 DINN, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4422 BARRERA": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5281-0006-0045",
+      "appraised": "$35,856",
+      "legal": "MOLINA #2 BLK 6 LOT 4A",
+      "owner_id": "773922",
+      "owner_name": "XP CONSTRUCTION LLC",
+      "prop_id": "268079",
+      "situs": "4422 BARRERA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4425 HACKBERRY LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3015-0000-0040",
+      "appraised": "$76,266",
+      "legal": "GRIFFIN W R BLUEBONNET 1.062 ACS OUT OF LT 4",
+      "owner_id": "758683",
+      "owner_name": "TARBLE SHIRLEY J & GEORGIA MAE MATULA",
+      "prop_id": "239948",
+      "situs": "4425 HACKBERRY LN, CORPUS CHRISTI TX 78410",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4425 LEOPARD ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9841-0001-0100",
+      "appraised": "$259,067",
+      "legal": "WOODLAND HEIGHTS LT C BLK 1",
+      "owner_id": "258930",
+      "owner_name": "SOUTHERN OIL SALES &",
+      "prop_id": "200067042",
+      "situs": "4425 LEOPARD ST, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4425 VALDEZ": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0007-0460",
+      "appraised": "$112,230",
+      "legal": "LA PASCUA #2 BLK 7 LOT 46",
+      "owner_id": "364633",
+      "owner_name": "QUINTANILLA GLORIA G ET AL",
+      "prop_id": "252744",
+      "situs": "4425 VALDEZ DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4425 VALDEZ DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0007-0460",
+      "appraised": "$112,230",
+      "legal": "LA PASCUA #2 BLK 7 LOT 46",
+      "owner_id": "364633",
+      "owner_name": "QUINTANILLA GLORIA G ET AL",
+      "prop_id": "252744",
+      "situs": "4425 VALDEZ DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4426 DEVON DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2255-0005-0040",
+      "appraised": "$118,297",
+      "legal": "EDGEWOOD PARK BLK 5 LOT 4",
+      "owner_id": "796029",
+      "owner_name": "ONTIVEROS LUIS ALBERTO R & MARIA ELENA MORALES RODRIGUEZ",
+      "prop_id": "228658",
+      "situs": "4426 DEVON DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4430 DEVON DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2255-0005-0030",
+      "appraised": "$96,012",
+      "legal": "EDGEWOOD PARK BLK 5 LOT 3",
+      "owner_id": "336909",
+      "owner_name": "SALINAS FRED & WF CARMEL",
+      "prop_id": "228657",
+      "situs": "4430 DEVON DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4434 VALDEZ": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0009-0050",
+      "appraised": "$30,250",
+      "legal": "LA PASCUA #2 BLK 9 LOT 5",
+      "owner_id": "189714",
+      "owner_name": "GARZA GUMARO ET UX",
+      "prop_id": "252807",
+      "situs": "4434 VALDEZ DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4434 VALDEZ DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0009-0050",
+      "appraised": "$30,250",
+      "legal": "LA PASCUA #2 BLK 9 LOT 5",
+      "owner_id": "189714",
+      "owner_name": "GARZA GUMARO ET UX",
+      "prop_id": "252807",
+      "situs": "4434 VALDEZ DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4442 VALDEZ": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0009-0030",
+      "appraised": "$30,250",
+      "legal": "LA PASCUA #2 BLK 9 LOT 3",
+      "owner_id": "482563",
+      "owner_name": "DELEON ABEL N",
+      "prop_id": "252805",
+      "situs": "4442 VALDEZ DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4442 VALDEZ DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0009-0030",
+      "appraised": "$30,250",
+      "legal": "LA PASCUA #2 BLK 9 LOT 3",
+      "owner_id": "482563",
+      "owner_name": "DELEON ABEL N",
+      "prop_id": "252805",
+      "situs": "4442 VALDEZ DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::445 GLENMORE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9289-0002-0060",
+      "appraised": "$211,626",
+      "legal": "WAVERLY ESTS 3 LT 6 & S 1.5' OF LT 7  BK 2",
+      "owner_id": "736923",
+      "owner_name": "RINK ISAAC MICHAEL",
+      "prop_id": "200055129",
+      "situs": "445 GLENMORE, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4455 S PADRE ISLAND DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6802-0002-0020",
+      "appraised": "$307,626",
+      "legal": "THE PLAINS UNIT 2 LT 2 BLK 2",
+      "owner_id": "702370",
+      "owner_name": "LARA LORENZO",
+      "prop_id": "372632",
+      "situs": "4455 SOUTH OAK CIR, BANQUETE TX 78339",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::446 AIRPORT RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1795-0001-0320",
+      "appraised": "$68,778",
+      "legal": "CORONADO LT 32 BK 1",
+      "owner_id": "522773",
+      "owner_name": "GARZA JOSE ROBERTO  AND SANTOS WFE",
+      "prop_id": "217329",
+      "situs": "446 AIRPORT RD, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::446 SKIPPER LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2523-0003-0100",
+      "appraised": "$24,819",
+      "legal": "FLOUR BLUFF HGTS LT 10 BK 3",
+      "owner_id": "798535",
+      "owner_name": "DEVEREUX DAVID",
+      "prop_id": "234518",
+      "situs": "446 SKIPPER LN, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::446 VERA CRUZ ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1795-0002-0260",
+      "appraised": "$25,074",
+      "legal": "CORONADO LT 26 BK 2",
+      "owner_id": "664263",
+      "owner_name": "GALLARDO ANGELICA DELEON",
+      "prop_id": "217363",
+      "situs": "446 VERA CRUZ ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::447 CLIFFORD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2050-0024-0210",
+      "appraised": "$191,572",
+      "legal": "DEL MAR LT 21 BK 24",
+      "owner_id": "762053",
+      "owner_name": "MARTINEZ MARIA DE LOS ANGELES",
+      "prop_id": "224695",
+      "situs": "447 CLIFFORD, CORPUS CHRISTI TX 78404",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4501 MOKRY DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1492-0002-0010",
+      "appraised": "$29,400",
+      "legal": "CENTRAL PARK BLK 2 LOT 1",
+      "owner_id": "551428",
+      "owner_name": "RODRIGUEZ BEATRICE A",
+      "prop_id": "211524",
+      "situs": "4501 MOKRY DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4501 RAMONA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0006-0270",
+      "appraised": "$206,846",
+      "legal": "LA PASCUA #2 BLK 6 LOT 27",
+      "owner_id": "410371",
+      "owner_name": "WATSON ROBERT AND",
+      "prop_id": "252696",
+      "situs": "4501 RAMONA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4501 TOTTON DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6365-0012-0070",
+      "appraised": "$165,720",
+      "legal": "PARKDALE VILLAGE #2 BLK 12 LOT 7",
+      "owner_id": "217897",
+      "owner_name": "KELLY H E",
+      "prop_id": "280987",
+      "situs": "4501 TOTTON DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4510 STONEGATE WAY": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8446-0006-0070",
+      "appraised": "$33,939",
+      "legal": "STONEGATE NORTH #2 BLK 6 LOT 7",
+      "owner_id": "793865",
+      "owner_name": "BOX RE HOLDINGS LLC",
+      "prop_id": "200035226",
+      "situs": "4510 STONEGATE WY, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4510 STONEGATE WY": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8446-0006-0070",
+      "appraised": "$33,939",
+      "legal": "STONEGATE NORTH #2 BLK 6 LOT 7",
+      "owner_id": "793865",
+      "owner_name": "BOX RE HOLDINGS LLC",
+      "prop_id": "200035226",
+      "situs": "4510 STONEGATE WY, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4513 MOKRY DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1492-0002-0040",
+      "appraised": "$8,435",
+      "legal": "CENTRAL PARK BLK 2 LOT 4, Undivided Interest 33.3330000000%",
+      "owner_id": "653571",
+      "owner_name": "HALL ELAINE",
+      "prop_id": "211527",
+      "situs": "4513 MOKRY DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4517 ANGELA": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5281-0011-0160",
+      "appraised": "$114,227",
+      "legal": "MOLINA #2 BLK 11 LOT 16A",
+      "owner_id": "205375",
+      "owner_name": "MOLINA FELIPE & WFE JOSEFINA",
+      "prop_id": "268465",
+      "situs": "4517 ANGELA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4517 ANGELA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5281-0011-0160",
+      "appraised": "$114,227",
+      "legal": "MOLINA #2 BLK 11 LOT 16A",
+      "owner_id": "205375",
+      "owner_name": "MOLINA FELIPE & WFE JOSEFINA",
+      "prop_id": "268465",
+      "situs": "4517 ANGELA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4517 RAMONA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0006-0310",
+      "appraised": "$28,875",
+      "legal": "LA PASCUA 2 LT 31 BK 6",
+      "owner_id": "312159",
+      "owner_name": "CARTER WILLIE MAE AND",
+      "prop_id": "252700",
+      "situs": "4517 RAMONA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4522 TOWNSEND": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1579-0002-0170",
+      "appraised": "$127,468",
+      "legal": "CHRISTI PARK  #3 BLK 2 LOT 17",
+      "owner_id": "829802",
+      "owner_name": "MARTIN MICHAEL & JANE MARTIN (CD)",
+      "prop_id": "212845",
+      "situs": "4522 TOWNSEND, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4526 ELVIRA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0004-0200",
+      "appraised": "$87,013",
+      "legal": "LA PASCUA 2 LT 2O BK 4",
+      "owner_id": "561770",
+      "owner_name": "GREEN RONALD",
+      "prop_id": "252608",
+      "situs": "4526 ELVIRA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4530 SILVER HOLLOW DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8523-0015-0080",
+      "appraised": "$258,069",
+      "legal": "SUGAR RIDGE UNIT 2 LT 8 BLK 15",
+      "owner_id": "591402",
+      "owner_name": "MONDRAGON MATTHEW",
+      "prop_id": "200038251",
+      "situs": "4530 SILVER HOLLOW DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4534 TOWNSEND": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1579-0002-0140",
+      "appraised": "$144,320",
+      "legal": "CHRISTI PARK  #3 BLK 2 LOT 14",
+      "owner_id": "788969",
+      "owner_name": "CASTILLO BRIANNA ELVA (LE)",
+      "prop_id": "212842",
+      "situs": "4534 TOWNSEND, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4538 BARRERA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5281-0011-0096",
+      "appraised": "$83,779",
+      "legal": "MOLINA #2 BLK 11 LOT 9A",
+      "owner_id": "746727",
+      "owner_name": "ORTIZ CATALINA",
+      "prop_id": "268442",
+      "situs": "4538 BARRERA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::454 OHIO AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2055-0001-0290",
+      "appraised": "$155,872",
+      "legal": "DEL MONTE W40' OF LT 29 & E/2 OF LT 30 BK 1",
+      "owner_id": "763933",
+      "owner_name": "MORRIS LYFORD",
+      "prop_id": "225114",
+      "situs": "454 OHIO AVE, CORPUS CHRISTI TX 78404",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::45TH STW": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::4610 SANDY RIDGE RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7680-0001-0040",
+      "appraised": "$41,262",
+      "legal": "SANDY RIDGE S/D LT 4 BK 1",
+      "owner_id": "234731",
+      "owner_name": "MOORE HAROLD & D",
+      "prop_id": "297821",
+      "situs": "4610 SANDY RIDGE RD, CORPUS CHRISTI TX 78410",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4613 JOSE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0004-0430",
+      "appraised": "$82,078",
+      "legal": "LA PASCUA #2 BLK 4 LOT 43",
+      "owner_id": "531041",
+      "owner_name": "PESINA APOLINAR G",
+      "prop_id": "252631",
+      "situs": "4613 JOSE DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4613 MONETTE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1035-0009-0085",
+      "appraised": "$231,615",
+      "legal": "BROOKDALE PARK LT 8 BLK 9",
+      "owner_id": "793698",
+      "owner_name": "RICHTER THOMAS E & MARTA P GALVIS",
+      "prop_id": "200104412",
+      "situs": "4613 MONETTE DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4614 ELVIRA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0004-0100",
+      "appraised": "$73,937",
+      "legal": "LA PASCUA 2 LT 1O BK 4",
+      "owner_id": "358990",
+      "owner_name": "BERNAL JUAN G ET UX",
+      "prop_id": "252598",
+      "situs": "4614 ELVIRA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4617 JOSE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0004-0440",
+      "appraised": "$95,837",
+      "legal": "LA PASCUA #2 BLK 4 LOT 44",
+      "owner_id": "189539",
+      "owner_name": "MOSLEY LEROY",
+      "prop_id": "252632",
+      "situs": "4617 JOSE DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4618 KIRKWOOD DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1492-0004-0220",
+      "appraised": "$215,109",
+      "legal": "CENTRAL PARK BLK 4 LOT 22",
+      "owner_id": "119514",
+      "owner_name": "RAMIREZ RICARDO",
+      "prop_id": "211617",
+      "situs": "4618 KIRKWOOD DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4621 BRANSCOMB DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6364-0005-0220",
+      "appraised": "$28,318",
+      "legal": "PARKDALE VILLAGE BLK 5 LOT 22",
+      "owner_id": "808137",
+      "owner_name": "CALZADILLAS VICTOR",
+      "prop_id": "280852",
+      "situs": "4621 BRANSCOMB DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4625 COVENTRY LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8449-0003-0070",
+      "appraised": "$184,745",
+      "legal": "STONEGATE SOUTH UNIT 1 LT 7 BK 3",
+      "owner_id": "746035",
+      "owner_name": "NIOLET SHERRON ANNE",
+      "prop_id": "200035820",
+      "situs": "4625 COVENTRY LN, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4630 PRESCOTT": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3700-0003-0210",
+      "appraised": "$25,371",
+      "legal": "INWOOD VILLAGE BLK 3 LOT 21",
+      "owner_id": "427204",
+      "owner_name": "LOPEZ CALIXTO AND",
+      "prop_id": "246794",
+      "situs": "4630 PRESCOTT, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4633 NEWBURY LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1359-0023-0090",
+      "appraised": "$206,088",
+      "legal": "CARROLL WOODS  #8 BLK 23 LOT 9",
+      "owner_id": "759280",
+      "owner_name": "YORK FAMILY TRUST",
+      "prop_id": "209247",
+      "situs": "4633 NEWBURY LN, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4641 SHEFFIELD LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8445-0002-0110",
+      "appraised": "$212,079",
+      "legal": "STONEGATE NORTH BLK 2 LOT 11",
+      "owner_id": "713165",
+      "owner_name": "SHERMAN THOMAS",
+      "prop_id": "200035080",
+      "situs": "4641 SHEFFIELD LN, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4642 ARCHER DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2360-0002-0110",
+      "appraised": "$75,915",
+      "legal": "FAIRFIELD BLK 2 LOT 11",
+      "owner_id": "387437",
+      "owner_name": "ALVAREZ JACINTO A",
+      "prop_id": "229839",
+      "situs": "4642 ARCHER DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4642 HAKEL DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4695-0004-0200",
+      "appraised": "$42,875",
+      "legal": "MAHAN ACRES BLK 4 LOT 20-B",
+      "owner_id": "561845",
+      "owner_name": "AVILA RODOLFO AND WFE",
+      "prop_id": "262655",
+      "situs": "4642 HAKEL DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4646 BROOKDALE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1050-0002-0240",
+      "appraised": "$25,550",
+      "legal": "BROOKLAWN BLK 2 LOT 24",
+      "owner_id": "669742",
+      "owner_name": "GONZALEZ PABLO",
+      "prop_id": "201881",
+      "situs": "4646 BROOKDALE DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4646 VALDEZ": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4072-0010-0020",
+      "appraised": "$74,073",
+      "legal": "LA PASCUA #2 BLK 10 LOT 2",
+      "owner_id": "823141",
+      "owner_name": "BORDER SIGN COMPANY INC",
+      "prop_id": "252853",
+      "situs": "4646 VALDEZ DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4649 CHRISTIE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7511-0001-0030",
+      "appraised": "$162,615",
+      "legal": "ROSEMARY PLACE BLK 1 LOT 3",
+      "owner_id": "767157",
+      "owner_name": "MORRIS MICHAEL W",
+      "prop_id": "294793",
+      "situs": "4649 CHRISTIE, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4653 HAKEL DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4695-0001-0105",
+      "appraised": "$42,875",
+      "legal": "MAHAN ACRES LT 10A BLK 1",
+      "owner_id": "579582",
+      "owner_name": "AYALA LYDIA",
+      "prop_id": "262473",
+      "situs": "4653 HAKEL DR, Corpus Christi TX",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4661 CINDY LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4762-0250-2270",
+      "appraised": "$164,981",
+      "legal": "MANTOR BRIGGS-KUYKENDALL OUT LT 25 AKA CYNDIE PARK UNIT 2 TR 27 & SW/4 TR 28",
+      "owner_id": "711909",
+      "owner_name": "BARRERA CRYSTAL LYNN",
+      "prop_id": "263393",
+      "situs": "4661 CINDY LN, ROBSTOWN TX 78380",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4662 STONEGATE WY": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8447-0006-0300",
+      "appraised": "$237,937",
+      "legal": "STONEGATE NORTH #3 BLK 6 LOT 30",
+      "owner_id": "244617",
+      "owner_name": "KOECKRITZ FRED P",
+      "prop_id": "200035565",
+      "situs": "4662 STONEGATE WY, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4710 MOLINA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1690-0006-0065",
+      "appraised": "$130,239",
+      "legal": "COLONIA HIDALGO LT 6-B BK 6",
+      "owner_id": "781238",
+      "owner_name": "NAVARO CYNTHIA",
+      "prop_id": "214821",
+      "situs": "4710 MOLINA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4714 LARKSPUR LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3701-0010-0040",
+      "appraised": "$137,717",
+      "legal": "INWOOD VILLAGE #2 BLK 10 LOT 4",
+      "owner_id": "183904",
+      "owner_name": "PEREZ ELISEO C",
+      "prop_id": "246997",
+      "situs": "4714 LARKSPUR LN, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4714 ROGERSON DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8294-0037-0080",
+      "appraised": "$122,641",
+      "legal": "SOUTHSIDE #4 BLK 37 LOT 8",
+      "owner_id": "738316",
+      "owner_name": "SANCHEZ GENARO AND DIANA G SANCHEZ",
+      "prop_id": "200031087",
+      "situs": "4714 ROGERSON DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::472 CLAREMORE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8969-0002-0280",
+      "appraised": "$263,729",
+      "legal": "UNIVERSITY PLACE BLK 2 LOT 28",
+      "owner_id": "407244",
+      "owner_name": "HENDERSON TED ET UX",
+      "prop_id": "200047458",
+      "situs": "472 CLAREMORE, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4720 BARRERA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1690-0009-0050",
+      "appraised": "$27,897",
+      "legal": "COLONIA HIDALGO LT 5-A BK 9",
+      "owner_id": "335135",
+      "owner_name": "ESQUIVEL DAVID C AND",
+      "prop_id": "214867",
+      "situs": "4720 BARRERA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4721 PRINSTON DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9767-0031-0290",
+      "appraised": "$102,024",
+      "legal": "WINDSOR PARK #4 BLK 31 LOT 29",
+      "owner_id": "393910",
+      "owner_name": "LEWIS DIANA",
+      "prop_id": "200064412",
+      "situs": "4721 PRINSTON DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4722 FOX TROT DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2611-0001-0150",
+      "appraised": "$235,757",
+      "legal": "FOXWOOD ESTATES PHASE IV BLK 1 LOT 15",
+      "owner_id": "792320",
+      "owner_name": "ALFRED TEON & WF VALERIE",
+      "prop_id": "378812",
+      "situs": "4722 FOX TROT DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4726 EASTER DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8289-0011-0030",
+      "appraised": "$113,393",
+      "legal": "SOUTHSIDE BLK 11 LOT 3",
+      "owner_id": "586251",
+      "owner_name": "MARTINEZ JOSE A",
+      "prop_id": "200029522",
+      "situs": "4726 EASTER DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::475 W AVENUE G": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::4805 FERN FOREST CIR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1653-0003-0250",
+      "appraised": "$303,750",
+      "legal": "CLUB ESTATES SOUTH LT 25 BK 3",
+      "owner_id": "770965",
+      "owner_name": "REYNA ROBERT R",
+      "prop_id": "214246",
+      "situs": "4805 FERN FOREST CIR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4806 JEAN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4465-0004-0080",
+      "appraised": "$162,494",
+      "legal": "LINCOLN TERRACE BLK 4 LOT 8",
+      "owner_id": "691765",
+      "owner_name": "PEREZ JOSEPH",
+      "prop_id": "259638",
+      "situs": "4806 JEAN, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4806 MABLE ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4465-0010-0020",
+      "appraised": "$249,532",
+      "legal": "LINCOLN TERR LT 2 BK 10",
+      "owner_id": "800725",
+      "owner_name": "ELIAS IGNACIA (LE)",
+      "prop_id": "259799",
+      "situs": "4806 MABLE ST, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4814 FRENCH DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6336-0005-0080",
+      "appraised": "$201,210",
+      "legal": "PARK TERRACE BLK 5 LOT 8",
+      "owner_id": "701931",
+      "owner_name": "SIMS TRADE PROPERTIES LLC",
+      "prop_id": "280569",
+      "situs": "4814 FRENCH DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4825 LARCADE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8289-0024-0120",
+      "appraised": "$21,900",
+      "legal": "SOUTHSIDE BLK 24 LOT 12",
+      "owner_id": "242865",
+      "owner_name": "HERNANDEZ JUAN B ET UX",
+      "prop_id": "200030404",
+      "situs": "4825 LARCADE DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4825 WOOLDRIDGE RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1843-0002-0070",
+      "appraised": "$286,104",
+      "legal": "COUNTRY CLUB ESTATES #1 BLK 2 LOT 7",
+      "owner_id": "830625",
+      "owner_name": "PALACE SAMUEL",
+      "prop_id": "217916",
+      "situs": "4825 WOOLDRIDGE RD, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4830 ANDOVER DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9767-0027-0110",
+      "appraised": "$125,913",
+      "legal": "WINDSOR PARK #4 BLK 27 LOT 11R",
+      "owner_id": "802397",
+      "owner_name": "COPELAND PATRICIA SHANNAN ETALS",
+      "prop_id": "200064178",
+      "situs": "4830 ANDOVER DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4833 ALICE ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4465-0007-0320",
+      "appraised": "$222,176",
+      "legal": "LINCOLN TERR LT 32 BK 7",
+      "owner_id": "781178",
+      "owner_name": "LOPEZ EPIMENIO MEDINA",
+      "prop_id": "259750",
+      "situs": "4833 ALICE ST, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4841 EASTER DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8289-0010-0200",
+      "appraised": "$135,671",
+      "legal": "SOUTHSIDE BLK 10 LOT 20",
+      "owner_id": "591318",
+      "owner_name": "MEDINA ARTURO JR",
+      "prop_id": "200029507",
+      "situs": "4841 EASTER DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4843 RAMOS": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::4901 DODY": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5615-0004-0150",
+      "appraised": "$275,077",
+      "legal": "NANJEAN PARK LT 15 BLK 4",
+      "owner_id": "830057",
+      "owner_name": "PEREZ EVA",
+      "prop_id": "271556",
+      "situs": "4901 DODY, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4906 CAIN DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2702-0003-0155",
+      "appraised": "$101,568",
+      "legal": "GARDENDALE LT 15C BLK 3",
+      "owner_id": "760972",
+      "owner_name": "BENITEZ ANGELICA",
+      "prop_id": "236243",
+      "situs": "4906 CAIN DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4910 WEXFORD DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5426-0007-0030",
+      "appraised": "$144,276",
+      "legal": "MOUNT VERNON #2 BLK 7 LOT 3",
+      "owner_id": "433324",
+      "owner_name": "MENDEZ ANTONIO JR ET UX",
+      "prop_id": "269891",
+      "situs": "4910 WEXFORD DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4917 ANTHONY ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8187-0001-0270",
+      "appraised": "$85,000",
+      "legal": "SOUTH PARK BLK 1 LOT 27",
+      "owner_id": "837657",
+      "owner_name": "GONZALEZ JESUS JR & WF CHRISTINA M GONZALEZ",
+      "prop_id": "200025108",
+      "situs": "4917 ANTHONY ST, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4918 RIVER LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7257-0002-0040",
+      "appraised": "$23,403",
+      "legal": "RIO VISTA LT 4 BLK 2",
+      "owner_id": "228297",
+      "owner_name": "CABRIALES ERNESTO",
+      "prop_id": "291387",
+      "situs": "4918 RIVER LN, CORPUS CHRISTI TX 78410",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4926 HOLLY RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2702-0007-0120",
+      "appraised": "$186,229",
+      "legal": "GARDENDALE NW/2 LT 12 BLK 7",
+      "owner_id": "173375",
+      "owner_name": "BALBOA FAUSTINO D",
+      "prop_id": "236469",
+      "situs": "4926 HOLLY RD, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4926 MABLE ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6430-0002-0070",
+      "appraised": "$179,199",
+      "legal": "PARKLANE BLK 2 LOT 7",
+      "owner_id": "770367",
+      "owner_name": "SUAREZ EVANGELINA",
+      "prop_id": "281235",
+      "situs": "4926 MABLE ST, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4929 COSNER DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4403-0004-0160",
+      "appraised": "$123,604",
+      "legal": "LEXINGTON ESTATES REPLAT LT 16A BK 4",
+      "owner_id": "195826",
+      "owner_name": "MARTINEZ FRANK H",
+      "prop_id": "258919",
+      "situs": "4929 COSNER DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4929 SHADOWBEND DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1650-0004-0440",
+      "appraised": "$241,843",
+      "legal": "CLUB ESTATES  #3 BLK 4 LOT 44",
+      "owner_id": "687977",
+      "owner_name": "GARCIA RODOLFO",
+      "prop_id": "214038",
+      "situs": "4929 SHADOWBEND DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::4957 NELL": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5615-0001-0300",
+      "appraised": "$135,363",
+      "legal": "NANJEAN PARK BLK 1 LOT 30",
+      "owner_id": "89652",
+      "owner_name": "CARTER EARL G",
+      "prop_id": "271483",
+      "situs": "4957 NELL, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::500 PEARSON ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6515-0000-0010",
+      "appraised": "$147,360",
+      "legal": "PEARSON ADD LT 1 BLK 1",
+      "owner_id": "456072",
+      "owner_name": "WALLACE EARL R ETUX",
+      "prop_id": "283733",
+      "situs": "500 PEARSON ST, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5002 MOKRY DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4403-0008-0060",
+      "appraised": "$40,163",
+      "legal": "LEXINGTON ESTATES NE 75 FT OF LT 6 BK 8",
+      "owner_id": "195998",
+      "owner_name": "LONGORIA RAUL AND WF CARMEN",
+      "prop_id": "259091",
+      "situs": "5002 MOKRY DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5013 ROMFORD DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7224-0008-0210",
+      "appraised": "$242,726",
+      "legal": "RIDGEWOOD #2 BLK 8 LOT 21",
+      "owner_id": "754752",
+      "owner_name": "VARGAS VALENTIN & WF NORA L",
+      "prop_id": "291164",
+      "situs": "5013 ROMFORD DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5014 MERGANSER DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1649-0002-0070",
+      "appraised": "$229,915",
+      "legal": "CLUB ESTATES UNIT 2 BK 2 LT 7",
+      "owner_id": "453237",
+      "owner_name": "HEUER WILHELM E",
+      "prop_id": "213753",
+      "situs": "5014 MERGANSER DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::502 CROSSTOWN EXPY": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3515-0012-0040",
+      "appraised": "$12,240",
+      "legal": "HOME PLACE E40' OF LTS 5 & 6 & E40' OF S36' OF LT 4 BLK 12 LESS POR TO ROW",
+      "owner_id": "181874",
+      "owner_name": "GUERRERO PEDRO",
+      "prop_id": "244967",
+      "situs": "502 CROSSTOWN EXPY, CORPUS CHRISTI TX 78401",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::502 E 2ND ST": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::502 N BROWNLEE BLVD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3795-0003-0060",
+      "appraised": "$20,891",
+      "legal": "JONES .0872 ACS OUT OF BLK 3 LOT 6",
+      "owner_id": "739934",
+      "owner_name": "BRYAN MARGARET MONTEZ ETALS",
+      "prop_id": "249024",
+      "situs": "502 N BROWNLEE BLVD, CORPUS CHRISTI TX 78401",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5030 KOSAREK DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4403-0007-0030",
+      "appraised": "$37,485",
+      "legal": "LEXINGTON ESTATES S 7O FT OF LT 3 BK 7",
+      "owner_id": "374784",
+      "owner_name": "ADAMEIT ROBERT C ET UX MARIA",
+      "prop_id": "259040",
+      "situs": "5030 KOSAREK DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::505 PUEBLO": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0315-0003-0150",
+      "appraised": "$74,499",
+      "legal": "AUSTIN BLK 3 LOT 15",
+      "owner_id": "769977",
+      "owner_name": "MARTINEZ MARIA DE LOS ANGELES",
+      "prop_id": "186816",
+      "situs": "505 PUEBLO, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::505 VALERIE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2523-0001-0050",
+      "appraised": "$11,063",
+      "legal": "FLOUR BLUFF HGTS LT 5 BK 1",
+      "owner_id": "828210",
+      "owner_name": "SOUTHERN BUILDERS ENCORE LLC",
+      "prop_id": "234489",
+      "situs": "505 VALERIE, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5101 MARGARET AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9579-0001-0090",
+      "appraised": "$47,025",
+      "legal": "WHELAN ADD LT 9 BK 1",
+      "owner_id": "100772",
+      "owner_name": "JOHNSON GEORGE",
+      "prop_id": "200060780",
+      "situs": "5101 MARGARET AVE, CORPUS CHRISTI TX 78407",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::511 N HARRELL ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1416-0000-0440",
+      "appraised": "$57,180",
+      "legal": "CASA COURTS #2-BISHOP N/2 LT 44 & S/2 LT 45",
+      "owner_id": "815822",
+      "owner_name": "BURRIS SEAN",
+      "prop_id": "210143",
+      "situs": "511 N HARRELL ST, BISHOP TX 78343",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5117 MARGARET AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9579-0001-0030",
+      "appraised": "$89,054",
+      "legal": "WHELAN ADD E25' OF LT 2 & W25' OF LT 3 BK 1",
+      "owner_id": "444784",
+      "owner_name": "ALVAREZ FRANCISCO G ETALS",
+      "prop_id": "200060766",
+      "situs": "5117 MARGARET AVE, CORPUS CHRISTI TX 78407",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::512 ELMORE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7750-0008-0280",
+      "appraised": "$124,204",
+      "legal": "SAXET HTS 2 LT 28 BK 8",
+      "owner_id": "235713",
+      "owner_name": "ALVAREZ ROBERTO L & WF LAURA",
+      "prop_id": "298803",
+      "situs": "512 ELMORE DR, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::514 FRANCESCA ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7634-0004-0310",
+      "appraised": "$67,446",
+      "legal": "SAN PEDRO BLK 4 LOT 31",
+      "owner_id": "671821",
+      "owner_name": "ARGUELLES ELIUD",
+      "prop_id": "296455",
+      "situs": "514 FRANCESCA ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::515 EAST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1532-0004-0120",
+      "appraised": "$1,297,026",
+      "legal": "CHANNEL VIEW  - P A BLK 4 LOT 12",
+      "owner_id": "676883",
+      "owner_name": "ENGLAND DIANE B & GREGORY GRANT",
+      "prop_id": "212568",
+      "situs": "515 EAST, PORT ARANSAS TX 78373",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5209 FLYNN PKWY": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4825-0004-0010",
+      "appraised": "$136,542",
+      "legal": "MARKS TRACT LT 1-A BK 4",
+      "owner_id": "200866",
+      "owner_name": "ROACH JAMES E TR FOR",
+      "prop_id": "263959",
+      "situs": "5209 FLYNN PKWY, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::522 19TH ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3775-0000-0080",
+      "appraised": "$20,218",
+      "legal": "JASMIN LT 8",
+      "owner_id": "323153",
+      "owner_name": "SERNA JUANITA C",
+      "prop_id": "248907",
+      "situs": "522 19th ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::522 SANTA MONICA PL": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::522 WEBB": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2487-0009-0230",
+      "appraised": "$29,535",
+      "legal": "FLOUR BLUFF ESTATES #2 BLK 9 LOT 23B",
+      "owner_id": "714411",
+      "owner_name": "ROME MELODY D",
+      "prop_id": "234155",
+      "situs": "522 WEBB, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5222 CURTIS CLARK DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2709-0003-0320",
+      "appraised": "$111,276",
+      "legal": "GARDENDALE 2 LT 32 BK 3",
+      "owner_id": "755054",
+      "owner_name": "SANCHEZ MOISES",
+      "prop_id": "236787",
+      "situs": "5222 CURTIS CLARK DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::530 COLE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2050-0035-0070",
+      "appraised": "$376,534",
+      "legal": "DEL MAR BLK 35 LOT 8R",
+      "owner_id": "828210",
+      "owner_name": "SOUTHERN BUILDERS ENCORE LLC",
+      "prop_id": "224955",
+      "situs": "530 COLE ST, CORPUS CHRISTI TX 78404",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5341 MALDEN DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7223-0001-0300",
+      "appraised": "$264,596",
+      "legal": "RIDGEWOOD BLK 1 LOT 30",
+      "owner_id": "668420",
+      "owner_name": "PETERS JAMES BOYD V",
+      "prop_id": "291030",
+      "situs": "5341 MALDEN DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5402 ERIN DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4135-0000-0080",
+      "appraised": "$114,515",
+      "legal": "LAIRD S/D LT 8",
+      "owner_id": "397130",
+      "owner_name": "PRICE FLOYD AND",
+      "prop_id": "254008",
+      "situs": "5402 ERIN DR, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5409 HITCHING POST LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8635-0002-0130",
+      "appraised": "$127,455",
+      "legal": "SURREY PLACE BLK 2 LOT 13",
+      "owner_id": "583319",
+      "owner_name": "CORNEJO JOLIE JACQUELINE",
+      "prop_id": "200040404",
+      "situs": "5409 HITCHING POST LN, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5410 NICOLE CT": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2327-0002-0120",
+      "appraised": "$221,964",
+      "legal": "ESPERANZA ESTATES BLK 2 LOT 12",
+      "owner_id": "538069",
+      "owner_name": "CONTIVAL AUDELIA",
+      "prop_id": "229452",
+      "situs": "5410 NICOLE CT, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5426 CURTIS CLARK DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2709-0004-0310",
+      "appraised": "$430,261",
+      "legal": "GARDENDALE 2 LTS  31 & 32  BK 4",
+      "owner_id": "204623",
+      "owner_name": "VASQUEZ JOSE E",
+      "prop_id": "236838",
+      "situs": "5426 CURTIS CLARK DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5437 CROCKETT": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5360-0001-0190",
+      "appraised": "$43,015",
+      "legal": "MORAVIAN VILLAGE BLK 1 LOT 19",
+      "owner_id": "206290",
+      "owner_name": "SASSIN ADOLPH",
+      "prop_id": "269380",
+      "situs": "5437 CROCKETT, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5446 BULLDOG LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0420-0050-0400",
+      "appraised": "$120,032",
+      "legal": "BANQUETE T/S-HERRERA GRT S POR .287 AC OUT OF BLK D",
+      "owner_id": "515674",
+      "owner_name": "PENA MIGUEL AND OFELIA T PENA",
+      "prop_id": "187695",
+      "situs": "5446 BULLDOG LN,  TX",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5453 WHARTON": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5362-0005-0150",
+      "appraised": "$120,178",
+      "legal": "MORAVIAN VILLAGE #3 BLK 5 LOT 15",
+      "owner_id": "206343",
+      "owner_name": "TORRES SANTOS ET UX",
+      "prop_id": "269433",
+      "situs": "5453 WHARTON, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5488 S PADRE ISLAND DR": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::5505 BONNER DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2702-0006-0060",
+      "appraised": "$162,560",
+      "legal": "GARDENDALE BLK 6 LOT 6B",
+      "owner_id": "173303",
+      "owner_name": "REYES BERTA M",
+      "prop_id": "236397",
+      "situs": "5505 BONNER DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5509 CURTIS CLARK DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2709-0005-0120",
+      "appraised": "$176,603",
+      "legal": "GARDENDALE #2 BLK 5 LOT 12",
+      "owner_id": "709797",
+      "owner_name": "WESTBROOK DARRELL W",
+      "prop_id": "236870",
+      "situs": "5509 CURTIS CLARK DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5513 GREENWOOD DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1466-0002-0010",
+      "appraised": "$370,330",
+      "legal": "CEDAR GROVE LT 1 BK 2",
+      "owner_id": "453592",
+      "owner_name": "GARCIA NOE WF IRIS",
+      "prop_id": "211072",
+      "situs": "5513 GREENWOOD DR, CORPUS CHRISTI TX 78417",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5514 LEOPARD ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2230-0000-0731",
+      "appraised": "$100,074",
+      "legal": "EBONY ACRES LT 73 C",
+      "owner_id": "807998",
+      "owner_name": "SPENTZOS TATIANA ETALS",
+      "prop_id": "228082",
+      "situs": "5514 LEOPARD ST, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5518 FOX RUN DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3652-0101-0150",
+      "appraised": "$397,748",
+      "legal": "HUNTERS POINT #2 BLK 101 LOT 15",
+      "owner_id": "832177",
+      "owner_name": "ADAMS THOMAS ANTHONY & WF AMANDA M",
+      "prop_id": "246034",
+      "situs": "5518 FOX RUN DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5524 LEOPARD ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2230-0000-0733",
+      "appraised": "$421,468",
+      "legal": "EBONY ACRES BLK 0 LOT 73D",
+      "owner_id": "811037",
+      "owner_name": "FOCUSED EMPOWERED INVEST LLC",
+      "prop_id": "228084",
+      "situs": "5524 LEOPARD ST, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5550 SUNRISE TRL": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9908-0001-0110",
+      "appraised": "$339,524",
+      "legal": "WRIGHT PLACE LT 11 BLK 1",
+      "owner_id": "324868",
+      "owner_name": "HILLIARD JOHN VAN III ET UX",
+      "prop_id": "200068736",
+      "situs": "5550 SUNRISE TRL, ROBSTOWN TX 78380",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5605 PALO BLANCO": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4050-0003-0340",
+      "appraised": "$200,807",
+      "legal": "LA JOYA ESTS UNIT 2 BLK 3 LOT 34",
+      "owner_id": "732365",
+      "owner_name": "ZAMUDIO JAZMIN MARIE",
+      "prop_id": "252059",
+      "situs": "5605 PALO BLANCO, CORPUS CHRISTI TX 78417",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5773 HALL AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2230-0000-1060",
+      "appraised": "$150,079",
+      "legal": "EBONY AC 1 LT 1O6",
+      "owner_id": "274334",
+      "owner_name": "RUIZ FREDDA M",
+      "prop_id": "228132",
+      "situs": "5773 HALL AVE, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5825 HALL AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2230-0000-1110",
+      "appraised": "$141,878",
+      "legal": "EBONY AC 1 LT 111",
+      "owner_id": "340375",
+      "owner_name": "REYES ANTONIO ETUX JANET R",
+      "prop_id": "228142",
+      "situs": "5825 HALL AVE, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5888 HALL AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2232-0000-2170",
+      "appraised": "$110,561",
+      "legal": "EBONY AC 3 LT 217",
+      "owner_id": "753336",
+      "owner_name": "SARINANA GERARDO AVILA",
+      "prop_id": "228264",
+      "situs": "5888 HALL AVE, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5895 HALL AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2230-0000-1200",
+      "appraised": "$157,537",
+      "legal": "EBONY AC 1 LT 12O",
+      "owner_id": "843328",
+      "owner_name": "BARBA GENERAL CONSTRUCTION LLC",
+      "prop_id": "228151",
+      "situs": "5895 HALL AVE, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5902 STAPLES STS": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4046-0001-0010",
+      "appraised": "$817,049",
+      "legal": "LA COSTA CENTER UNIT 1 LT 1 BK 1",
+      "owner_id": "759804",
+      "owner_name": "SHAFINUARY MORTEZA",
+      "prop_id": "251808",
+      "situs": "5902 S STAPLES ST, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5917 LAGO VISTA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1952-0002-0100",
+      "appraised": "$283,973",
+      "legal": "THE COVES AT LAGO VISTA UNIT 1 LT 10 BLK 2",
+      "owner_id": "661300",
+      "owner_name": "AZALI ELHAM",
+      "prop_id": "372154",
+      "situs": "5917 LAGO VISTA DR, CORPUS CHRISTI TX 78414",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::5938 KIMBROUGH DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1994-0010-0180",
+      "appraised": "$164,086",
+      "legal": "CULLEN PLACE UNIT 1 LT 18 BLK 10",
+      "owner_id": "394053",
+      "owner_name": "BURNES CHARLES B",
+      "prop_id": "223392",
+      "situs": "5938 KIMBROUGH DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6001 CIR": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::6005 PINEHURST DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1843-0002-0200",
+      "appraised": "$322,449",
+      "legal": "COUNTRY CLUB ESTATES #1 BLK 2 LOT 20",
+      "owner_id": "355100",
+      "owner_name": "DAVIDSON JOHN MARK & WF LAURA RENEE",
+      "prop_id": "217929",
+      "situs": "6005 PINEHURST DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6014 PENDLETON DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1979-0001-0060",
+      "appraised": "$181,420",
+      "legal": "CRESTMONT UNIT 10R LT 6 BLK 1",
+      "owner_id": "739956",
+      "owner_name": "ACOSTA DAVID JR AND DANIELLE T ACOSTA",
+      "prop_id": "222334",
+      "situs": "6014 PENDLETON DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6037 SKYLINE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5260-0001-0780",
+      "appraised": "$34,325",
+      "legal": "MOBILE ESTS BLK 1 LOT 78",
+      "owner_id": "407360",
+      "owner_name": "WELLS JOYCE L AND JOHN V WELLS",
+      "prop_id": "267555",
+      "situs": "6037 SKYLINE DR, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6110 SIR JACK ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3968-0005-0200",
+      "appraised": "$335,410",
+      "legal": "KINGS POINT UNIT 5 BLK 5 LOT 20",
+      "owner_id": "765118",
+      "owner_name": "GUERRERO RENE A & WF MARTHA",
+      "prop_id": "200113960",
+      "situs": "6110 SIR JACK ST, CORPUS CHRISTI TX 78414",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::613 CHASE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9766-0013-0140",
+      "appraised": "$189,077",
+      "legal": "WINDSOR PK 3 LT 14 BK 13",
+      "owner_id": "776049",
+      "owner_name": "MARTINEZ ALFRED",
+      "prop_id": "320266",
+      "situs": "613 CHASE DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6150 BIRCHWOOD DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1233-0001-0140",
+      "appraised": "$162,749",
+      "legal": "CANDLEWOOD  #4 BLK 1 LOT 14",
+      "owner_id": "378457",
+      "owner_name": "TREVINO DANIEL ETUX",
+      "prop_id": "204419",
+      "situs": "6150 BIRCHWOOD DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::617 DUNCAN ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7634-0001-0250",
+      "appraised": "$55,821",
+      "legal": "SAN PEDRO BLK 1 LOT 25",
+      "owner_id": "531566",
+      "owner_name": "CAPELO RAYMOND",
+      "prop_id": "296295",
+      "situs": "617 DUNCAN ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6207 HIDDEN COVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4155-0000-0354",
+      "appraised": "$121,923",
+      "legal": "LAKEWOOD VILLAGE, BUILDING II, UNIT 4, 0.532% COMMON AREA INTEREST",
+      "owner_id": "763256",
+      "owner_name": "GARZA ABEL JR",
+      "prop_id": "254904",
+      "situs": "6207 HIDDEN COVE, Corpus Christi TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::621 ELEANOR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7891-0006-0110",
+      "appraised": "$15,373",
+      "legal": "SEIKEL LT 11 BK 6",
+      "owner_id": "398286",
+      "owner_name": "VASQUEZ JOSE M DEC'D",
+      "prop_id": "200018105",
+      "situs": "621 ELEANOR, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6214 BREWTON DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7791-0008-0100",
+      "appraised": "$201,661",
+      "legal": "SCHANEN ESTS WEST #11 BLK 8 LOT 10",
+      "owner_id": "817774",
+      "owner_name": "HARPER ROBERT",
+      "prop_id": "200013911",
+      "situs": "6214 BREWTON DR, CORPUS CHRISTI TX 78415",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::625 ATLANTIC ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2050-0040-0160",
+      "appraised": "$167,216",
+      "legal": "DEL MAR LT 16 BK 4O",
+      "owner_id": "161943",
+      "owner_name": "DE LOS SANTOS ARMANDO B",
+      "prop_id": "225038",
+      "situs": "625 ATLANTIC ST, CORPUS CHRISTI TX 78404",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::625 EAST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1532-0004-0080",
+      "appraised": "$1,015,316",
+      "legal": "CHANNEL VIEW  - P A BLK 4 LOT 8",
+      "owner_id": "744402",
+      "owner_name": "AMOS LYNN MEREDITH",
+      "prop_id": "212564",
+      "situs": "625 EAST, PORT ARANSAS TX 78373",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6317 TRAILMASTER": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7097-0005-0010",
+      "appraised": "$35,880",
+      "legal": "THE RANCH-UNREC LT 1 BK E",
+      "owner_id": "622663",
+      "owner_name": "URDIALES JOSEFINA D",
+      "prop_id": "289875",
+      "situs": "6317 TRAILMASTER, ROBSTOWN TX 78380",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6326 BEECHWOOD DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1235-0003-0060",
+      "appraised": "$162,918",
+      "legal": "CANDLEWOOD UNIT 6 LT 6 BK 3",
+      "owner_id": "141567",
+      "owner_name": "DENNIS FLORENCE JUNE",
+      "prop_id": "204662",
+      "situs": "6326 BEECHWOOD DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::633 ROBERT DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0095-0004-0250",
+      "appraised": "$24,180",
+      "legal": "ALAMEDA PARK BLK 4 LOT 25",
+      "owner_id": "345817",
+      "owner_name": "RODRIGUEZ MARTHA M",
+      "prop_id": "183017",
+      "situs": "633 ROBERT DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6370 FITZHUGH DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9896-0006-0140",
+      "appraised": "$239,219",
+      "legal": "WOOLDRIDGE CREEK 2 LT 14 BK 6",
+      "owner_id": "672283",
+      "owner_name": "DE LA CRUZ LAURA ANN",
+      "prop_id": "200068420",
+      "situs": "6370 FITZHUGH DR, CORPUS CHRISTI TX 78414",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::638 AIRPORT RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0316-0004-0100",
+      "appraised": "$104,476",
+      "legal": "AUSTIN 2 LT 10 BK D",
+      "owner_id": "657550",
+      "owner_name": "GALVAN CARLOS",
+      "prop_id": "187098",
+      "situs": "638 AIRPORT RD, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::640 CHEYENNE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6458-0000-0056",
+      "appraised": "$22,856",
+      "legal": "PATRICK GARDENS LT 5-A",
+      "owner_id": "711398",
+      "owner_name": "CONSTANTE SAN JOSE",
+      "prop_id": "281562",
+      "situs": "640 CHEYENNE, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::640 GULF VILLAGE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3071-0000-0060",
+      "appraised": "$740,000",
+      "legal": "GULF VILLAGE - PA LOT 6",
+      "owner_id": "742954",
+      "owner_name": "BALLYHOO! INVESTMENTS LLC",
+      "prop_id": "541025",
+      "situs": "640 GULF VILLAGE DR, PORT ARANSAS TX 78373",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::640 SANTANA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7675-0001-0190",
+      "appraised": "$32,544",
+      "legal": "SANDY OAKS LT 19 BK 1",
+      "owner_id": "490034",
+      "owner_name": "BROOKS BRIAN JAMES",
+      "prop_id": "297695",
+      "situs": "640 SANTANA DR, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6422 BIRMINGHAM ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0062-0003-0060",
+      "appraised": "$99,373",
+      "legal": "AIRLINE #2 LT 6 BK C (FORMERLY 0063-0003-0060)",
+      "owner_id": "739569",
+      "owner_name": "COLE JEFFREY TODD",
+      "prop_id": "182296",
+      "situs": "6422 BIRMINGHAM ST, CORPUS CHRISTI TX 78414",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::658 VERA CRUZ ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0316-0001-0030",
+      "appraised": "$147,230",
+      "legal": "AUSTIN 2 LTS 3 & 4 BK A",
+      "owner_id": "412479",
+      "owner_name": "MENA SUSIE HEWITT & HUSB RAUL ALCALA MENA",
+      "prop_id": "187049",
+      "situs": "658 VERA CRUZ ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6610 BELVOIR AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0871-0004-0140",
+      "appraised": "$321,971",
+      "legal": "BORDEAUX PLACE UNIT 2 LT 14 BLK 4",
+      "owner_id": "517976",
+      "owner_name": "ROBERTS RICHARD M",
+      "prop_id": "200108026",
+      "situs": "6610 BELVOIR AVE, CORPUS CHRISTI TX 78414",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6709 WHITEWING DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3651-0108-0310",
+      "appraised": "$306,829",
+      "legal": "HUNTERS POINT BLK 108 LOT 31",
+      "owner_id": "783655",
+      "owner_name": "LEE DAVID K & WFE LARA E SCHUMACHER",
+      "prop_id": "245968",
+      "situs": "6709 WHITEWING DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6749 LEOPARD ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0132-0002-0070",
+      "appraised": "$376,900",
+      "legal": "ALLEN & CAMERON UNIT 6 LT 7 BLK 2",
+      "owner_id": "416592",
+      "owner_name": "CAMERON COMMERCIAL &",
+      "prop_id": "183354",
+      "situs": "6749 LEOPARD ST, CORPUS CHRISTI TX 78409",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6778 COUNTY RD 48": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1910-0001-0110",
+      "appraised": "$119,098",
+      "legal": "COUNTRY CLUB ESTS WEST UNREC LT 11 BK 1",
+      "owner_id": "559394",
+      "owner_name": "CABRIALES JUAN",
+      "prop_id": "219827",
+      "situs": "6778 COUNTY RD 48, ROBSTOWN TX 78380",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6825 ELBA CT": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2603-0001-0160",
+      "appraised": "$272,730",
+      "legal": "FOX RUN ESTATES BLK 1 LOT 16",
+      "owner_id": "743440",
+      "owner_name": "MIRANDA LEDEZMA JOSE & WF BELINDA T MIRANDA",
+      "prop_id": "376045",
+      "situs": "6825 ELBA CT, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::686 KAIPO DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0591-0003-0170",
+      "appraised": "$69,444",
+      "legal": "BEL AIR ESTS #2 LT 17 BK 3",
+      "owner_id": "277382",
+      "owner_name": "SMITH VERNON T",
+      "prop_id": "192840",
+      "situs": "686 KAIPO DR, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::6909 FRUITWOOD DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3698-0007-0030",
+      "appraised": "$270,338",
+      "legal": "INVERNESS UNIT B LT 3 BK 7",
+      "owner_id": "589351",
+      "owner_name": "LAWRENCE MATTHEW R",
+      "prop_id": "246622",
+      "situs": "6909 FRUITWOOD DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7001 ASHDOWN DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1116-0002-0360",
+      "appraised": "$51,200",
+      "legal": "BUCKINGHAM ESTATES #1 LT 36 & .588523 PERCENT INT IN GCE BK 2",
+      "owner_id": "766701",
+      "owner_name": "LEGENDARY BUILDERS LLC",
+      "prop_id": "202866",
+      "situs": "7001 ASHDOWN DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7005 TAOS DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0944-0003-0620",
+      "appraised": "$234,608",
+      "legal": "BRECKENRIDGE  #3 BLK 3 LOT 62",
+      "owner_id": "808707",
+      "owner_name": "MCKINNEY CONNIE JAYNE",
+      "prop_id": "199535",
+      "situs": "7005 TAOS DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::701 W POINT RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1690-0003-0070",
+      "appraised": "$19,472",
+      "legal": "COLONIA HIDALGO LT 7-D BK 3",
+      "owner_id": "815871",
+      "owner_name": "MOREAU ANDRE K",
+      "prop_id": "214764",
+      "situs": "701 W POINT RD, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7013 EDGEBROOK DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1653-0001-0160",
+      "appraised": "$210,670",
+      "legal": "CLUB ESTATES SOUTH BLK 1 LOT 16",
+      "owner_id": "489783",
+      "owner_name": "DREIER LAWRENCE E",
+      "prop_id": "214196",
+      "situs": "7013 EDGEBROOK DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::703 S PORT AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9039-0002-0290",
+      "appraised": "$42,506",
+      "legal": "VILLA GREEN LTS 28 &  29 BK 2",
+      "owner_id": "836431",
+      "owner_name": "HESSBUILD LLC",
+      "prop_id": "200050732",
+      "situs": "703 S PORT AVE, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::705 CAPRICE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7675-0005-0220",
+      "appraised": "$42,571",
+      "legal": "SANDY OAKS BLK 5 LOT 22",
+      "owner_id": "840272",
+      "owner_name": "AVERY ROSE MARY",
+      "prop_id": "297789",
+      "situs": "705 CAPRICE DR, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::705 RUBEN CHAVEZ RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5130-0010-0130",
+      "appraised": "$14,600",
+      "legal": "MESSER DAN L-RBST LTS 13 & 14 BLK 10",
+      "owner_id": "774115",
+      "owner_name": "HARDY ROSEMARY C & LUIS A MENDOZA",
+      "prop_id": "266845",
+      "situs": "705 RUBEN CHAVEZ RD, ROBSTOWN TX 78380",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::706 ELEANOR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7891-0005-0530",
+      "appraised": "$30,950",
+      "legal": "SEIKEL LTS 53 & 54 BK 5",
+      "owner_id": "688627",
+      "owner_name": "ESCOBAR GRACE",
+      "prop_id": "200018042",
+      "situs": "706 ELEANOR, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::706 S PORT AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9039-0002-0130",
+      "appraised": "$14,284",
+      "legal": "VILLA GREEN LT 13 BK 2",
+      "owner_id": "800320",
+      "owner_name": "CHAMPION DIANA",
+      "prop_id": "200050684",
+      "situs": "706 S PORT AVE, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::709 S PORT AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9039-0002-0310",
+      "appraised": "$21,259",
+      "legal": "VILLA GREEN LT 31 BK 2",
+      "owner_id": "520001",
+      "owner_name": "TONG DON NHAT & RAMONA HERNANDEZ & JUAN MALDONADO",
+      "prop_id": "200050737",
+      "situs": "709 S PORT AVE, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::709 W POINT RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1690-0003-0076",
+      "appraised": "$87,770",
+      "legal": "COLONIA HIDALGO BLK 3 LOT 7B",
+      "owner_id": "386745",
+      "owner_name": "GALVAN DOLORES",
+      "prop_id": "214769",
+      "situs": "709 W POINT RD, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7118 TAOS DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0948-0007-0050",
+      "appraised": "$214,939",
+      "legal": "BRECKENRIDGE  #4 BLK 7 LOT 5",
+      "owner_id": "702110",
+      "owner_name": "SALAZAR JOSE LUIS II",
+      "prop_id": "199735",
+      "situs": "7118 TAOS DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7145 WOOLDRIDGE RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7455-0017-0080",
+      "appraised": "$52,525",
+      "legal": "RODD EAST .55 AC OUT LT 8 BLK 17",
+      "owner_id": "224319",
+      "owner_name": "BURDETTE MOLLY L",
+      "prop_id": "294109",
+      "situs": "7145 WOOLDRIDGE RD, CORPUS CHRISTI TX 78414",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::717 CROWN HARBOR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6979-0001-0760",
+      "appraised": "$268,742",
+      "legal": "PORTO BELLO BLK 1 LOT 76",
+      "owner_id": "801786",
+      "owner_name": "PIKE CAROLYN L",
+      "prop_id": "288508",
+      "situs": "717 CROWN HARBOR, CORPUS CHRISTI TX 78402",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::717 OSAGE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8077-0001-0080",
+      "appraised": "$123,313",
+      "legal": "P R SMITH LT 8 BK 1 A",
+      "owner_id": "687149",
+      "owner_name": "GARCIA GUADALUPE G",
+      "prop_id": "200021403",
+      "situs": "717 OSAGE, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::721 CLEVELAND": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3390-0001-0080",
+      "appraised": "$13,215",
+      "legal": "HIGHLAND PK LTS 8 AND 9 BK 1",
+      "owner_id": "651559",
+      "owner_name": "SALAZAR LUIS H",
+      "prop_id": "243544",
+      "situs": "721 CLEVELAND, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::721 FLOUR BLUFF DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2540-0005-0060",
+      "appraised": "$43,000",
+      "legal": "FLOUR BLUFF PARK BK 5 LOT 6",
+      "owner_id": "432575",
+      "owner_name": "BUSTILLOS EMILIANO E ETUX",
+      "prop_id": "235012",
+      "situs": "721 FLOUR BLUFF DR, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::723 ELEANOR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7891-0006-0230",
+      "appraised": "$18,606",
+      "legal": "SEIKEL LTS 22 & 23 BK 6",
+      "owner_id": "565444",
+      "owner_name": "MARTINEZ SILVESTRE RIVERA",
+      "prop_id": "200018135",
+      "situs": "723 ELEANOR, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::740 CHEYENNE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6458-0000-0125",
+      "appraised": "$260,886",
+      "legal": "PATRICK GARDENS LT 12-C",
+      "owner_id": "810436",
+      "owner_name": "ACOSTA LUIS JR",
+      "prop_id": "281597",
+      "situs": "740 CHEYENNE, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7425 VAQUERO DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7104-0003-0070",
+      "appraised": "$539,279",
+      "legal": "RANCHO VISTA UNIT 1 BLK 3 LOT 7",
+      "owner_id": "752358",
+      "owner_name": "SETHI RAJAT LVG TRST",
+      "prop_id": "200117734",
+      "situs": "7425 VAQUERO DR, CORPUS CHRISTI TX 78414",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7441 PIPER DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7460-0002-0090",
+      "appraised": "$188,291",
+      "legal": "RODD PLACE BLK 2 LOT 9",
+      "owner_id": "696841",
+      "owner_name": "GUERRERO ELIZABETH",
+      "prop_id": "294149",
+      "situs": "7441 PIPER DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::749 POST AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0072-0004-0130",
+      "appraised": "$142,473",
+      "legal": "AIRPORT PARK BLK 4 LOT 13",
+      "owner_id": "119327",
+      "owner_name": "MARTINEZ JOE B & WF ESPERANZA EST OF",
+      "prop_id": "182423",
+      "situs": "749 POST AVE, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::753 POST AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0072-0004-0140",
+      "appraised": "$33,825",
+      "legal": "AIRPORT PARK BLK 4 LOT 14",
+      "owner_id": "312545",
+      "owner_name": "PEREZ JUAN J ET UX",
+      "prop_id": "182424",
+      "situs": "753 POST AVE, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7605 COLD SPRING DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9060-0008-0120",
+      "appraised": "$274,956",
+      "legal": "VILLAGE AT STONY BROOK BLK 8 LOT 12",
+      "owner_id": "569422",
+      "owner_name": "NAVY FEDERAL CREDIT UNION",
+      "prop_id": "200098382",
+      "situs": "7605 COLD SPRING DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7713 COUNTY RD 7B CIR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2476-0026-2110",
+      "appraised": "$72,691",
+      "legal": "FLOUR BLUFF & ENC FRM GDN TRACT BLK 26 LOT 21 .7260",
+      "owner_id": "824040",
+      "owner_name": "SOSA ANDRES N",
+      "prop_id": "232086",
+      "situs": "7713 COUNTY RD 7B CIR, CORPUS CHRISTI TX 78414",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::781 SHARON DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9764-0008-0210",
+      "appraised": "$27,960",
+      "legal": "WINDSOR PARK BLK 8 LOT 21",
+      "owner_id": "256996",
+      "owner_name": "LIMERICK PATRICK E",
+      "prop_id": "200063294",
+      "situs": "781 SHARON DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::7921 ETIENNE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3943-0010-0290",
+      "appraised": "$447,369",
+      "legal": "KINGS CROSSING UNIT 1 PH 2 BLK 10 LOT 29",
+      "owner_id": "828168",
+      "owner_name": "GREENSPRING CAPITAL MANAGEMENT LLC",
+      "prop_id": "250252",
+      "situs": "7921 ETIENNE DR, CORPUS CHRISTI TX 78414",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::8 DUNWICK PL": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3548-0000-0050",
+      "appraised": "$187,757",
+      "legal": "HOPPER ADDITION UNIT 3 LT 5",
+      "owner_id": "772457",
+      "owner_name": "ZEPEDA ADAMINA PENA",
+      "prop_id": "245385",
+      "situs": "8 DUNWICK PL, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::801 AIRLINE RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4002-0008-0070",
+      "appraised": "$218,922",
+      "legal": "KOOLSIDE BLK 8 LOT 7",
+      "owner_id": "803585",
+      "owner_name": "VATANKHAH MINA",
+      "prop_id": "251198",
+      "situs": "801 AIRLINE RD, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::801 POST AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0072-0004-0190",
+      "appraised": "$33,825",
+      "legal": "AIRPORT PARK BLK 4 LOT 19",
+      "owner_id": "806259",
+      "owner_name": "HINDSIGHT PROPERTIES LLC",
+      "prop_id": "182429",
+      "situs": "801 POST AVE, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::804 14TH ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2350-0010-0050",
+      "appraised": "$29,271",
+      "legal": "EXT TO S END LT 5 BK 1O",
+      "owner_id": "327179",
+      "owner_name": "NAVA TERESA MORENO",
+      "prop_id": "229773",
+      "situs": "804 14th ST, CORPUS CHRISTI TX 78404",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::804 FRANCESCA": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7634-0003-0570",
+      "appraised": "$15,875",
+      "legal": "SAN PEDRO LT 57 BK 3",
+      "owner_id": "808137",
+      "owner_name": "CALZADILLAS VICTOR",
+      "prop_id": "296423",
+      "situs": "804 FRANCESCA ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::804 FRANCESCA ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7634-0003-0570",
+      "appraised": "$15,875",
+      "legal": "SAN PEDRO LT 57 BK 3",
+      "owner_id": "808137",
+      "owner_name": "CALZADILLAS VICTOR",
+      "prop_id": "296423",
+      "situs": "804 FRANCESCA ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::806 14TH ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2350-0010-0060",
+      "appraised": "$28,447",
+      "legal": "EXT TO S END LT 6 BK 1O",
+      "owner_id": "166680",
+      "owner_name": "NAVA ABUNDIO WF",
+      "prop_id": "229774",
+      "situs": "806 14th ST, CORPUS CHRISTI TX 78404",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::808 MCBRIDE LN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4135-0000-0010",
+      "appraised": "$1,900",
+      "legal": "LAIRD S/D LT 1",
+      "owner_id": "692073",
+      "owner_name": "BECKA EDMUND E JR",
+      "prop_id": "254001",
+      "situs": "808 MCBRIDE LN, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::809 ARTESIAN ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0797-0035-0020",
+      "appraised": "$78,760",
+      "legal": "BLUFF N/2 OF LT 2 & ALL LT 3 BK 35",
+      "owner_id": "671247",
+      "owner_name": "QUINN MICHAEL S",
+      "prop_id": "196964",
+      "situs": "809 ARTESIAN ST, CORPUS CHRISTI TX 78401",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::810 11TH ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2350-0013-0060",
+      "appraised": "$153,158",
+      "legal": "EXTENSION TO SOUTH END W84' BLK 13 LOT 6",
+      "owner_id": "764939",
+      "owner_name": "BAKER RICARDO",
+      "prop_id": "229800",
+      "situs": "810 11TH ST, CORPUS CHRISTI TX 78404",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::810 ARTESIAN ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0797-0023-0110",
+      "appraised": "$22,500",
+      "legal": "BLUFF LT 11 BK 23",
+      "owner_id": "595808",
+      "owner_name": "QUINN GERALD M AND",
+      "prop_id": "196894",
+      "situs": "810 ARTESIAN ST, CORPUS CHRISTI TX 78401",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::813 BLOOMINGTON ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5281-0006-0137",
+      "appraised": "$70,789",
+      "legal": "MOLINA 2 LT 13E BK 6",
+      "owner_id": "205021",
+      "owner_name": "SALAZAR ADELA G",
+      "prop_id": "268111",
+      "situs": "813 BLOOMINGTON ST, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::813 VAN CURA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8990-0001-0040",
+      "appraised": "$19,221",
+      "legal": "VANCURA ADD LT 4 BK 1",
+      "owner_id": "474732",
+      "owner_name": "CASTILLO BEATRICE LISCANO ETALS",
+      "prop_id": "200047604",
+      "situs": "813 VAN CURA DR, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::813-817 ALAMEDA ST S": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0480-0011-0110",
+      "appraised": "$41,622",
+      "legal": "BAY TERRACE N4' OF LT 9 & ALL OF LTS 10 THRU 13 BLK 11",
+      "owner_id": "438929",
+      "owner_name": "PETERS EARL & WF BERNICE CO-TR OF PETERS LIVING TRUST",
+      "prop_id": "189330",
+      "situs": "813-817 ALAMEDA ST S, CORPUS CHRISTI TX 78404",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::814 CORN PRODUCTS RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3695-0005-0045",
+      "appraised": "$283,999",
+      "legal": "INTERSTATE IND COMPLEX LT 4A BK 5",
+      "owner_id": "683775",
+      "owner_name": "MORENO JOHN EDWARD",
+      "prop_id": "200079314",
+      "situs": "814 CORN PRODUCTS RD, CORPUS CHRISTI TX 78409",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::815 FRANCESCA": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7891-0004-0300",
+      "appraised": "$15,875",
+      "legal": "SEIKEL LT 30 BK 4",
+      "owner_id": "435011",
+      "owner_name": "ROBLES MRS MANUEL",
+      "prop_id": "200017811",
+      "situs": "815 FRANCESCA, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::818 ERWIN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9866-0002-0041",
+      "appraised": "$17,812",
+      "legal": "WOODLAWN LT 4-B BLK 2",
+      "owner_id": "768558",
+      "owner_name": "CARTER ALBERT BENSON AND DOROTHY MAE CARTER",
+      "prop_id": "200072767",
+      "situs": "818 ERWIN, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::818 FRANCESCA ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7634-0003-0640",
+      "appraised": "$49,114",
+      "legal": "SAN PEDRO LT 64 BK 3",
+      "owner_id": "233340",
+      "owner_name": "GARCIA BASILIA REYNA",
+      "prop_id": "296430",
+      "situs": "818 FRANCESCA ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::8229 ARGONNE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6528-0004-0130",
+      "appraised": "$21,146",
+      "legal": "PEARY PLACE #1 BLK 4 LOT 13",
+      "owner_id": "220719",
+      "owner_name": "BURDETTE NADINE",
+      "prop_id": "283809",
+      "situs": "8229 ARGONNE DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::825 FLOUR BLUFF DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2540-0005-0200",
+      "appraised": "$53,416",
+      "legal": "FLOUR BLUFF PARK LT 2O BK 5",
+      "owner_id": "789264",
+      "owner_name": "KONET TONJA S",
+      "prop_id": "235026",
+      "situs": "825 FLOUR BLUFF DR, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::825 WEAVER": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2540-0007-0200",
+      "appraised": "$47,600",
+      "legal": "FLOUR BLUFF PARK BLK 7 LOT 20",
+      "owner_id": "458780",
+      "owner_name": "LAURENTS LANI",
+      "prop_id": "235098",
+      "situs": "825 WEAVER, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::834 PURDUE RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8437-0001-0010",
+      "appraised": "$166,090",
+      "legal": "STODDART SMITH UNIT 1 LT 1 BK 1",
+      "owner_id": "244394",
+      "owner_name": "ALMAGUER JOE JERRY AND WFE OLGA ALMAGUER",
+      "prop_id": "200034897",
+      "situs": "834 PURDUE RD, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::846 W POINT RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5281-0012-0015",
+      "appraised": "$93,647",
+      "legal": "MOLINA #2 BLK 12 LOT 1B",
+      "owner_id": "205410",
+      "owner_name": "SLIDER LEROY & KATIE MAE",
+      "prop_id": "268500",
+      "situs": "846 W POINT RD, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::867 GONZALES ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7639-0003-0490",
+      "appraised": "$64,064",
+      "legal": "SAN PEDRO - RBST BLK 3 LOT 49&50",
+      "owner_id": "524269",
+      "owner_name": "CISNEROS CELIA G",
+      "prop_id": "296629",
+      "situs": "867 GONZALES ST, ROBSTOWN TX 78380",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::8837 IRIS AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1613-0005-0030",
+      "appraised": "$7,280",
+      "legal": "CLARKWOOD BLK 5 LOT 3",
+      "owner_id": "150199",
+      "owner_name": "JARAMILLO CARLOS",
+      "prop_id": "213294",
+      "situs": "8837 IRIS AVE, CORPUS CHRISTI TX 78406",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::8914 MCGLOIN RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0280-0080-0500",
+      "appraised": "$15,006",
+      "legal": "ASSESSORS MAP 148 1 AC OUT OF TR H TR 4",
+      "owner_id": "831251",
+      "owner_name": "SOLIS ERICK ROCHA",
+      "prop_id": "186426",
+      "situs": "8914 MCGLOIN RD, CORPUS CHRISTI TX 78406",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::902 E LAKESIDE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2486-0011-0410",
+      "appraised": "$201,130",
+      "legal": "FLOUR BLUFF ESTATES LT 41 BK K",
+      "owner_id": "688683",
+      "owner_name": "ALLEN THOMAS L",
+      "prop_id": "233825",
+      "situs": "902 E LAKESIDE DR, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::902 MCDONALD ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2540-0011-0260",
+      "appraised": "$55,110",
+      "legal": "FLOUR BLUFF PARK BLK 11 LOT 26",
+      "owner_id": "809439",
+      "owner_name": "ZHANG PENG",
+      "prop_id": "235245",
+      "situs": "902 MCDONALD ST, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::9021 CAROLINE RD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4984-0006-0050",
+      "appraised": "$49,429",
+      "legal": "MCNORTON #2 BLK 6 LOT 5",
+      "owner_id": "201647",
+      "owner_name": "SETTLE CLARA",
+      "prop_id": "264738",
+      "situs": "9021 CAROLINE RD, CORPUS CHRISTI TX 78409",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::9032 CAROLINE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4985-0009-0040",
+      "appraised": "$38,136",
+      "legal": "MCNORTON #3 BLK 9 LOT 4",
+      "owner_id": "699673",
+      "owner_name": "RODRIGUEZ NANCY MARTINEZ & PEDRO L RODRIGUEZ",
+      "prop_id": "264778",
+      "situs": "9032 CAROLINE RD, CORPUS CHRISTI TX 78409",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::905 WHITAKER. DR": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::9062 SCAPULAR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7626-0006-0160",
+      "appraised": "$7,395",
+      "legal": "SAN JUAN NO 3-CLARKWOOD LT 16 BLK 6",
+      "owner_id": "575010",
+      "owner_name": "SALINAS MAURICIA G",
+      "prop_id": "296183",
+      "situs": "9062 SCAPULAR, CORPUS CHRISTI TX 78406",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::908 N TO 916 ALAMEDA ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0797-0049-0090",
+      "appraised": "$147,293",
+      "legal": "BLUFF BLK 49 LOT 9 & 10",
+      "owner_id": "837737",
+      "owner_name": "GONZALEZ GENEVIEVE B EST OF",
+      "prop_id": "197097",
+      "situs": "908 TO 916 ALAMEDA ST N, CORPUS CHRISTI TX 78401",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::910 ROSEDALE DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1760-0001-0130",
+      "appraised": "$25,277",
+      "legal": "COOPERDALE BLK 1 LOT 13",
+      "owner_id": "153306",
+      "owner_name": "ROBERTS L L",
+      "prop_id": "216401",
+      "situs": "910 ROSEDALE DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::9117 SCAPULAR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7626-0005-0050",
+      "appraised": "$13,630",
+      "legal": "SAN JUAN NO 3-CLARKWOOD LTS 4 & 5 BLK 5",
+      "owner_id": "690053",
+      "owner_name": "SMITH SYLVIA ETALS",
+      "prop_id": "296143",
+      "situs": "9117 SCAPULAR, CORPUS CHRISTI TX 78406",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::913 HALLMARK PL": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "5260-0001-0520",
+      "appraised": "$15,876",
+      "legal": "MOBILE ESTS BLK 1 LOT 52",
+      "owner_id": "575644",
+      "owner_name": "KIMMEL PAUL/CAROLINE KIMMEL",
+      "prop_id": "267529",
+      "situs": "913 HALLMARK PL, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::915 BOOTY ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0481-0703-0115",
+      "appraised": "$92,035",
+      "legal": "BAY TERR 2 E 1/3 OF LT 10 & E 1/3 OF N35.56' & N14.44' OF LT 11 BK 703 AKA TR C",
+      "owner_id": "720873",
+      "owner_name": "MALDONADO DAVID EDWARD",
+      "prop_id": "189814",
+      "situs": "915 BOOTY ST, CORPUS CHRISTI TX 78404",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::915 GREEN BAY DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2550-0001-0290",
+      "appraised": "$35,000",
+      "legal": "FLOUR BLUFF POINT LT 29 BK 1",
+      "owner_id": "811152",
+      "owner_name": "JOHNSON ROBERT BRYAN",
+      "prop_id": "235496",
+      "situs": "915 GREEN BAY DR, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::918 BLUNTZER": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8764-0005-0190",
+      "appraised": "$42,280",
+      "legal": "TIERRA ALTA BLK 5 LOT 19",
+      "owner_id": "733368",
+      "owner_name": "MENDEZ FRANCES, OLIVIA MENDEZ AND RAFAEL MENDEZ",
+      "prop_id": "200042542",
+      "situs": "918 S BLUNTZER ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::918 DOLORES": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4007-0002-0170",
+      "appraised": "$25,394",
+      "legal": "KOSAR LT 17 BK 2",
+      "owner_id": "337887",
+      "owner_name": "MARTINEZ ANSELMO ET AL",
+      "prop_id": "251331",
+      "situs": "918 DOLORES, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::918 S BLUNTZER ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8764-0005-0190",
+      "appraised": "$42,280",
+      "legal": "TIERRA ALTA BLK 5 LOT 19",
+      "owner_id": "733368",
+      "owner_name": "MENDEZ FRANCES, OLIVIA MENDEZ AND RAFAEL MENDEZ",
+      "prop_id": "200042542",
+      "situs": "918 S BLUNTZER ST, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::921 DODDRIDGE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6854-0002-0030",
+      "appraised": "$174,144",
+      "legal": "POPE PLACE BLK 2 LOT 3",
+      "owner_id": "510775",
+      "owner_name": "BOYD JAMES E SR",
+      "prop_id": "286702",
+      "situs": "921 DODDRIDGE, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::921 DUNCAN": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4007-0002-0070",
+      "appraised": "$25,394",
+      "legal": "KOSAR LT 7 BK 2",
+      "owner_id": "188228",
+      "owner_name": "CANTU ANDREA P",
+      "prop_id": "251321",
+      "situs": "921 DUNCAN, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::922 CUNNINGHAM": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8659-0004-0310",
+      "appraised": "$37,293",
+      "legal": "SWANTNER PLACE LT 31 BLK 4",
+      "owner_id": "671259",
+      "owner_name": "CHAVEZ OFELIA",
+      "prop_id": "200040826",
+      "situs": "922 CUNNINGHAM, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::922 LINDA VISTA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "9253-0001-0410",
+      "appraised": "$110,630",
+      "legal": "WASHINGTON LT 41 BK 1",
+      "owner_id": "703358",
+      "owner_name": "PENA HECTOR G & ROLAND PENA",
+      "prop_id": "200054436",
+      "situs": "922 LINDA VISTA DR, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::923 MESQUIE ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0792-0007-0120",
+      "appraised": "$48,188",
+      "legal": "BLUEBONNET #1 - RBST BLK 7 LOT 12",
+      "owner_id": "484790",
+      "owner_name": "ANZALDUA ALBERT",
+      "prop_id": "196651",
+      "situs": "923 MESQUIE ST, ROBSTOWN TX 78380",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::926 AZALEA DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2164-0007-0240",
+      "appraised": "$133,853",
+      "legal": "DRISCOLL VILLAGE LT 24 BLK 7",
+      "owner_id": "178522",
+      "owner_name": "GONZALES JOE G",
+      "prop_id": "227284",
+      "situs": "926 AZALEA DR, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::929 ELEANOR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4007-0006-0250",
+      "appraised": "$87,725",
+      "legal": "KOSAR LT 25 BK 6",
+      "owner_id": "188282",
+      "owner_name": "BASALDUA DOMITILA",
+      "prop_id": "251375",
+      "situs": "929 ELEANOR, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::929 SUSAN DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6075-0007-0200",
+      "appraised": "$105,402",
+      "legal": "OSO PLACE #3 BLK 7 LOT 20",
+      "owner_id": "668621",
+      "owner_name": "PEARL CONTRERAS LIVING TRUST",
+      "prop_id": "275469",
+      "situs": "929 SUSAN DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::929 WEAVER": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2540-0013-0080",
+      "appraised": "$47,600",
+      "legal": "FLOUR BLUFF PARK LT 8 BK 13",
+      "owner_id": "481580",
+      "owner_name": "CHATHAM JAY LEE AND",
+      "prop_id": "235303",
+      "situs": "929 WEAVER, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::934 ERWIN AVE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2164-0002-0100",
+      "appraised": "$24,210",
+      "legal": "DRISCOLL VILLAGE LT 10 BLK 2",
+      "owner_id": "466564",
+      "owner_name": "MERRIWEATHER N W",
+      "prop_id": "227117",
+      "situs": "934 ERWIN AVE, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::934 ZARSKY DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2943-0001-0090",
+      "appraised": "$122,485",
+      "legal": "GREEN ACRES VILLAGE LT 9 BK 1",
+      "owner_id": "694340",
+      "owner_name": "PENNINGTON TRAVIS COLLIN",
+      "prop_id": "239056",
+      "situs": "934 ZARSKY DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::938 MENDOZA ST": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4100-0005-0211",
+      "appraised": "$29,393",
+      "legal": "LAGUNA ACRES LT 21B BK 5",
+      "owner_id": "451719",
+      "owner_name": "CANTU MARIA H ESTATE OF",
+      "prop_id": "253385",
+      "situs": "938 MENDOZA ST, CORPUS CHRISTI TX 78416",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::9402 HUNTINGTON DR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0245-0007-0210",
+      "appraised": "$238,492",
+      "legal": "ARLINGTON HEIGHTS BLK 7 LOT 21",
+      "owner_id": "822581",
+      "owner_name": "ELIZALDE ZEKE WILLIAM",
+      "prop_id": "185489",
+      "situs": "9402 HUNTINGTON DR, CORPUS CHRISTI TX 78410",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::941 ROSE": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "2899-0003-0110",
+      "appraised": "$9,534",
+      "legal": "GRAND VIEW MOBILE HOME S/D LT 11 BLK 3",
+      "owner_id": "587972",
+      "owner_name": "PRINCE BRIDGET F",
+      "prop_id": "238867",
+      "situs": "941 ROSE, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::9510 SNOWFINCH CIR": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8928-0007-0800",
+      "appraised": "$265,740",
+      "legal": "TURTLE COVE UNIT 2 LT 80-A BK 7",
+      "owner_id": "794891",
+      "owner_name": "RAMIREZ REBECCA MARTINEZ",
+      "prop_id": "200046020",
+      "situs": "9510 SNOWFINCH CIR, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::9566 LOVEBIRD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "8928-0009-0070",
+      "appraised": "$179,883",
+      "legal": "TURTLE COVE UNIT 2 LT 7 BK 9",
+      "owner_id": "678887",
+      "owner_name": "THOMAS DAVID J & CYNTHIA E",
+      "prop_id": "200046040",
+      "situs": "9566 LOVEBIRD, CORPUS CHRISTI TX 78418",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
+  "ccln_addr::9850 S PADRE ISLAND DR": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::COUNTY RD 105": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::FM RD 666": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::LAKE SHORE DR (NO RD)": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::MAIN DR": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::SHARPSBURG RD": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
   "data": {
     "219 MARSHALL LLC": null,
     "247 ON SITE LLC": null,

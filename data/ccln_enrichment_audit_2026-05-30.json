@@ -1,2575 +1,1455 @@
 {
-  "generated_at": "2026-05-30T21:44:45Z",
-  "total_changes": 367,
+  "generated_at": "2026-05-30T22:32:47Z",
+  "total_changes": 207,
   "changes": [
     {
-      "doc_num": "2025004149",
-      "prop_address": "2848 S ALAMEDA ST",
-      "old_account": "6103-0808-0590",
-      "new_account": "6103-0808-0560",
-      "norm_address": "2848 S ALAMEDA ST"
-    },
-    {
-      "doc_num": "2025004166",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "old_account": "9019-0030-3300",
-      "new_account": "9019-0010-1118",
-      "norm_address": "3938 SURFSIDE BLVD"
-    },
-    {
-      "doc_num": "2025023839",
-      "prop_address": "4317 TEAK",
-      "old_account": "7886-0018-0090",
-      "new_account": "6443-0001-0200",
-      "norm_address": "4317 TEAK"
-    },
-    {
-      "doc_num": "2025020679",
-      "prop_address": "1816 ELIZABETH",
-      "old_account": "7886-0019-0120",
-      "new_account": "0481-1301-0640",
-      "norm_address": "1816 ELIZABETH"
-    },
-    {
-      "doc_num": "2025020607",
-      "prop_address": "4109 RAMSEY",
-      "old_account": "4032-0006-0110",
-      "new_account": "1989-0011-0230",
-      "norm_address": "4109 RAMSEY"
-    },
-    {
-      "doc_num": "2025004098",
-      "prop_address": "4109 RAMSEY",
-      "old_account": "",
-      "new_account": "1989-0011-0230",
-      "norm_address": "4109 RAMSEY"
-    },
-    {
-      "doc_num": "2024032633",
-      "prop_address": "4109 RAMSEY",
-      "old_account": "4032-0006-0110",
-      "new_account": "1989-0011-0230",
-      "norm_address": "4109 RAMSEY"
-    },
-    {
-      "doc_num": "2024020333",
-      "prop_address": "4109 RAMSEY",
-      "old_account": "4032-0006-0110",
-      "new_account": "1989-0011-0230",
-      "norm_address": "4109 RAMSEY"
-    },
-    {
-      "doc_num": "2024020356",
-      "prop_address": "15501 DYNA ST",
-      "old_account": "6150-0073-0060",
-      "new_account": "6129-0235-0110",
-      "norm_address": "15501 DYNA ST"
-    },
-    {
-      "doc_num": "2024020314",
-      "prop_address": "1938 YALE",
-      "old_account": "2277-0002-0110",
-      "new_account": "3810-0002-0250",
-      "norm_address": "1938 YALE"
-    },
-    {
-      "doc_num": "2024031556",
-      "prop_address": "3818 Colima St",
-      "old_account": "5938-0007-0050",
-      "new_account": "5938-0006-0010",
-      "norm_address": "3818 COLIMA ST"
-    },
-    {
-      "doc_num": "2024031569",
-      "prop_address": "1511 CRAIG ST",
-      "old_account": "5324-0005-0040",
-      "new_account": "0487-0004-0195",
-      "norm_address": "1511 CRAIG ST"
-    },
-    {
-      "doc_num": "2024034359",
-      "prop_address": "146 HEINSHOHN RD",
-      "old_account": "3515-0003-0010",
-      "new_account": "0068-0002-0025",
-      "norm_address": "146 HEINSHOHN RD"
-    },
-    {
-      "doc_num": "2024032707",
-      "prop_address": "1762 TRIPLE CROWN DR",
-      "old_account": "7719-0005-0410",
-      "new_account": "7719-0005-0110",
-      "norm_address": "1762 TRIPLE CROWN DR"
-    },
-    {
-      "doc_num": "2024032708",
-      "prop_address": "13144 OGLETHORPE DR",
-      "old_account": "3443-0025-0190",
-      "new_account": "1937-0002-0250",
-      "norm_address": "13144 OGLETHORPE DR"
-    },
-    {
-      "doc_num": "2024032604",
-      "prop_address": "1225 12TH ST",
-      "old_account": "0487-0007-0040",
-      "new_account": "0487-0004-0070",
-      "norm_address": "1225 12TH ST"
-    },
-    {
-      "doc_num": "2024032616",
-      "prop_address": "4109 RAMSEY",
-      "old_account": "3810-0002-0380",
-      "new_account": "1989-0011-0230",
-      "norm_address": "4109 RAMSEY"
-    },
-    {
-      "doc_num": "2024016587",
-      "prop_address": "4305 JACQUELYN DR",
-      "old_account": "2495-0002-0070",
-      "new_account": "1603-0005-0060",
-      "norm_address": "4305 JACQUELYN DR"
-    },
-    {
-      "doc_num": "2024017244",
-      "prop_address": "4305 JACQUELYN DR",
-      "old_account": "2495-0002-0070",
-      "new_account": "1603-0005-0060",
-      "norm_address": "4305 JACQUELYN DR"
-    },
-    {
-      "doc_num": "2024033970",
-      "prop_address": "3636 EASTERN",
-      "old_account": "0315-0011-0160",
-      "new_account": "0073-0000-0100",
-      "norm_address": "3636 EASTERN"
-    },
-    {
-      "doc_num": "2024033999",
-      "prop_address": "1104 S BROWNLEE BLVD",
-      "old_account": "6463-0005-0020",
-      "new_account": "0487-0005-0150",
-      "norm_address": "1104 S BROWNLEE BLVD"
-    },
-    {
-      "doc_num": "2024033989",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "1494-0019-0070",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024034297",
-      "prop_address": "2214 CARDINALES LN",
-      "old_account": "7048-0000-0170",
-      "new_account": "5304-0001-0150",
-      "norm_address": "2214 CARDINALES LN"
-    },
-    {
-      "doc_num": "2024034350",
-      "prop_address": "2213 MARGUERITE",
-      "old_account": "2245-0002-0200",
-      "new_account": "2245-0002-0190",
-      "norm_address": "2213 MARGUERITE"
-    },
-    {
-      "doc_num": "2024016581",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "8294-0035-0010",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2024016608",
-      "prop_address": "2637 WAINWRIGHT",
-      "old_account": "4007-0009-0095",
-      "new_account": "4032-0004-0420",
-      "norm_address": "2637 WAINWRIGHT"
-    },
-    {
-      "doc_num": "2024017228",
-      "prop_address": "1141 CLARE DR",
-      "old_account": "0316-0001-0030",
-      "new_account": "6077-0017-0290",
-      "norm_address": "1141 CLARE DR"
-    },
-    {
-      "doc_num": "2024017253",
-      "prop_address": "11126 ANNAVILLE RD",
-      "old_account": "2780-0001-0110",
-      "new_account": "0213-0003-0022",
-      "norm_address": "11126 ANNAVILLE RD"
-    },
-    {
-      "doc_num": "2024017237",
-      "prop_address": "3636 EASTERN",
-      "old_account": "2132-0006-0200",
-      "new_account": "0073-0000-0100",
-      "norm_address": "3636 EASTERN"
-    },
-    {
-      "doc_num": "2024039611",
-      "prop_address": "365 HIAWATHA",
-      "old_account": "3837-0001-0340",
-      "new_account": "0315-0008-0010",
-      "norm_address": "365 HIAWATHA"
-    },
-    {
-      "doc_num": "2024039614",
-      "prop_address": "1441 16th ST",
-      "old_account": "4570-0006-0140",
-      "new_account": "0481-1401-0110",
-      "norm_address": "1441 16TH ST"
-    },
-    {
-      "doc_num": "2025003994",
-      "prop_address": "1419 SAM RANKIN",
-      "old_account": "1695-0006-0230",
-      "new_account": "1695-0006-0220",
-      "norm_address": "1419 SAM RANKIN"
-    },
-    {
-      "doc_num": "2025004021",
-      "prop_address": "2917 S PORT AVE",
-      "old_account": "0115-0001-0050",
-      "new_account": "0115-0001-0040",
-      "norm_address": "2917 S PORT AVE"
-    },
-    {
-      "doc_num": "2025020700",
-      "prop_address": "2213 MARGUERITE",
-      "old_account": "2245-0002-0200",
-      "new_account": "2245-0002-0190",
-      "norm_address": "2213 MARGUERITE"
-    },
-    {
-      "doc_num": "2024020285",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "4162-0013-0080",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2024035657",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2000-0030-0300",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024035010",
-      "prop_address": "1213 MARYLAND DR",
-      "old_account": "",
-      "new_account": "0595-0013-0130",
-      "norm_address": "1213 MARYLAND DR"
-    },
-    {
-      "doc_num": "2024034320",
-      "prop_address": "1104 S BROWNLEE BLVD",
-      "old_account": "6463-0005-0020",
-      "new_account": "0487-0005-0150",
-      "norm_address": "1104 S BROWNLEE BLVD"
-    },
-    {
-      "doc_num": "2025000211",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2055-0001-0300",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2025000297",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "1494-0019-0070",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2025000181",
-      "prop_address": "3636 EASTERN",
-      "old_account": "0315-0011-0160",
-      "new_account": "0073-0000-0100",
-      "norm_address": "3636 EASTERN"
-    },
-    {
-      "doc_num": "2024033959",
-      "prop_address": "3636 EASTERN",
-      "old_account": "0315-0041-0160",
-      "new_account": "0073-0000-0100",
-      "norm_address": "3636 EASTERN"
-    },
-    {
-      "doc_num": "2024034284",
-      "prop_address": "11126 ANNAVILLE RD",
-      "old_account": "2780-0001-0100",
-      "new_account": "0213-0003-0022",
-      "norm_address": "11126 ANNAVILLE RD"
-    },
-    {
-      "doc_num": "2024035032",
-      "prop_address": "11126 ANNAVILLE RD",
-      "old_account": "",
-      "new_account": "0213-0003-0022",
-      "norm_address": "11126 ANNAVILLE RD"
-    },
-    {
-      "doc_num": "2024035045",
-      "prop_address": "325 WAVERLY DR",
-      "old_account": "",
-      "new_account": "9289-0007-0050",
-      "norm_address": "325 WAVERLY DR"
-    },
-    {
-      "doc_num": "2024016605",
-      "prop_address": "2917 S PORT AVE",
-      "old_account": "0115-0001-0050",
-      "new_account": "0115-0001-0040",
-      "norm_address": "2917 S PORT AVE"
-    },
-    {
-      "doc_num": "2024032682",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "9895-0006-0160",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024032664",
-      "prop_address": "1225 12TH ST",
-      "old_account": "0487-0006-0040",
-      "new_account": "0487-0004-0070",
-      "norm_address": "1225 12TH ST"
-    },
-    {
-      "doc_num": "2024032816",
-      "prop_address": "2917 S PORT AVE",
-      "old_account": "0115-0001-0050",
-      "new_account": "0115-0001-0040",
-      "norm_address": "2917 S PORT AVE"
-    },
-    {
-      "doc_num": "2024032790",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "1494-0019-0070",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024032853",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "8294-0035-0010",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2024032588",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2055-0001-0300",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2025004802",
-      "prop_address": "1201 N STAPLES ST",
-      "old_account": "0797-0052-0080",
-      "new_account": "0797-0052-0010",
-      "norm_address": "1201 N STAPLES ST"
-    },
-    {
-      "doc_num": "2025004015",
-      "prop_address": "13144 OGLETHORPE DR",
-      "old_account": "3443-0025-0190",
-      "new_account": "1937-0002-0250",
-      "norm_address": "13144 OGLETHORPE DR"
-    },
-    {
-      "doc_num": "2025004112",
-      "prop_address": "1441 16th ST",
-      "old_account": "4570-0006-0140",
-      "new_account": "0481-1401-0110",
-      "norm_address": "1441 16TH ST"
-    },
-    {
-      "doc_num": "2025027109",
-      "prop_address": "3636 EASTERN",
-      "old_account": "2132-0006-0200",
-      "new_account": "0073-0000-0100",
-      "norm_address": "3636 EASTERN"
-    },
-    {
-      "doc_num": "2024017239",
-      "prop_address": "1441 16th ST",
-      "old_account": "4570-0006-0140",
-      "new_account": "0481-1401-0110",
-      "norm_address": "1441 16TH ST"
-    },
-    {
-      "doc_num": "2024031563",
-      "prop_address": "2917 S PORT AVE",
-      "old_account": "0115-0001-0050",
-      "new_account": "0115-0001-0040",
-      "norm_address": "2917 S PORT AVE"
-    },
-    {
-      "doc_num": "2024037584",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2000-0030-0300",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024020284",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "4162-0013-0080",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2024020303",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2711-0012-0140",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2025000319",
-      "prop_address": "1363 NORMANDY DR",
-      "old_account": "6365-0008-0110",
-      "new_account": "0232-0017-0170",
-      "norm_address": "1363 NORMANDY DR"
-    },
-    {
-      "doc_num": "2024035026",
-      "prop_address": "1553 14th ST",
-      "old_account": "",
-      "new_account": "0481-1202-0060",
-      "norm_address": "1553 14TH ST"
-    },
-    {
-      "doc_num": "2024033957",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "8294-0035-0010",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2024034001",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "4162-0013-0080",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2024034290",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2055-0001-0300",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024034329",
-      "prop_address": "2809 NIAGARA",
-      "old_account": "5410-0001-0020",
-      "new_account": "1011-0002-0030",
-      "norm_address": "2809 NIAGARA"
-    },
-    {
-      "doc_num": "2025020668",
-      "prop_address": "1225 12TH ST",
-      "old_account": "9563-0002-0190",
-      "new_account": "0487-0004-0070",
-      "norm_address": "1225 12TH ST"
-    },
-    {
-      "doc_num": "2025008653",
-      "prop_address": "1363 NORMANDY DR",
-      "old_account": "6365-0008-0110",
-      "new_account": "0232-0017-0170",
-      "norm_address": "1363 NORMANDY DR"
-    },
-    {
-      "doc_num": "2025026224",
-      "prop_address": "1225 12TH ST",
-      "old_account": "0487-0006-0040",
-      "new_account": "0487-0004-0070",
-      "norm_address": "1225 12TH ST"
-    },
-    {
-      "doc_num": "2025004053",
-      "prop_address": "4317 TEAK",
-      "old_account": "7886-0018-0090",
-      "new_account": "6443-0001-0200",
-      "norm_address": "4317 TEAK"
-    },
-    {
-      "doc_num": "2025004037",
-      "prop_address": "1511 CRAIG ST",
-      "old_account": "5324-0005-0040",
-      "new_account": "0487-0004-0195",
-      "norm_address": "1511 CRAIG ST"
-    },
-    {
-      "doc_num": "2024035020",
-      "prop_address": "2809 NIAGARA",
-      "old_account": "",
-      "new_account": "1011-0002-0030",
-      "norm_address": "2809 NIAGARA"
-    },
-    {
-      "doc_num": "2025004812",
-      "prop_address": "1816 ELIZABETH",
-      "old_account": "7886-0019-0120",
-      "new_account": "0481-1301-0640",
-      "norm_address": "1816 ELIZABETH"
-    },
-    {
-      "doc_num": "2025027083",
-      "prop_address": "13144 OGLETHORPE DR",
-      "old_account": "3443-0025-0190",
-      "new_account": "1937-0002-0250",
-      "norm_address": "13144 OGLETHORPE DR"
-    },
-    {
-      "doc_num": "2024016585",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "8294-0035-0010",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2024016586",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2000-0030-0300",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024020313",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "1494-0019-0070",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024032606",
-      "prop_address": "1225 12TH ST",
-      "old_account": "0487-0007-0040",
-      "new_account": "0487-0004-0070",
-      "norm_address": "1225 12TH ST"
-    },
-    {
-      "doc_num": "2024032762",
-      "prop_address": "11126 ANNAVILLE RD",
-      "old_account": "2780-0001-0100",
-      "new_account": "0213-0003-0022",
-      "norm_address": "11126 ANNAVILLE RD"
-    },
-    {
-      "doc_num": "2024032740",
-      "prop_address": "11126 ANNAVILLE RD",
-      "old_account": "2780-0001-0110",
-      "new_account": "0213-0003-0022",
-      "norm_address": "11126 ANNAVILLE RD"
-    },
-    {
-      "doc_num": "2024035632",
-      "prop_address": "365 HIAWATHA",
-      "old_account": "",
-      "new_account": "0315-0008-0010",
-      "norm_address": "365 HIAWATHA"
-    },
-    {
-      "doc_num": "2024031542",
-      "prop_address": "1441 16th ST",
-      "old_account": "4570-0006-0140",
-      "new_account": "0481-1401-0110",
-      "norm_address": "1441 16TH ST"
-    },
-    {
-      "doc_num": "2024035016",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024034983",
-      "prop_address": "2213 MARGUERITE",
-      "old_account": "",
-      "new_account": "2245-0002-0190",
-      "norm_address": "2213 MARGUERITE"
-    },
-    {
-      "doc_num": "2024032873",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "8294-0035-0010",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2024020348",
-      "prop_address": "4305 JACQUELYN DR",
-      "old_account": "2495-0002-0070",
-      "new_account": "1603-0005-0060",
-      "norm_address": "4305 JACQUELYN DR"
-    },
-    {
-      "doc_num": "2025000305",
-      "prop_address": "1225 12TH ST",
-      "old_account": "0487-0007-0040",
-      "new_account": "0487-0004-0070",
-      "norm_address": "1225 12TH ST"
-    },
-    {
-      "doc_num": "2025003958",
-      "prop_address": "3636 EASTERN",
-      "old_account": "2132-0006-0200",
-      "new_account": "0073-0000-0100",
-      "norm_address": "3636 EASTERN"
-    },
-    {
-      "doc_num": "2025010183",
-      "prop_address": "13144 OGLETHORPE DR",
-      "old_account": "3443-0025-0190",
-      "new_account": "1937-0002-0250",
-      "norm_address": "13144 OGLETHORPE DR"
-    },
-    {
-      "doc_num": "2025010845",
-      "prop_address": "2917 S PORT AVE",
-      "old_account": "5820-0005-0230",
-      "new_account": "0115-0001-0040",
-      "norm_address": "2917 S PORT AVE"
-    },
-    {
-      "doc_num": "2024033968",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2000-0030-0300",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024034328",
-      "prop_address": "1511 CRAIG ST",
-      "old_account": "9841-0003-0020",
-      "new_account": "0487-0004-0195",
-      "norm_address": "1511 CRAIG ST"
-    },
-    {
-      "doc_num": "2024034308",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "1653-0001-0160",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2025027104",
-      "prop_address": "2917 S PORT AVE",
-      "old_account": "5820-0005-0230",
-      "new_account": "0115-0001-0040",
-      "norm_address": "2917 S PORT AVE"
-    },
-    {
-      "doc_num": "2025027108",
-      "prop_address": "1363 NORMANDY DR",
-      "old_account": "6365-0008-0110",
-      "new_account": "0232-0017-0170",
-      "norm_address": "1363 NORMANDY DR"
-    },
-    {
-      "doc_num": "2025000277",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2711-0012-0140",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2025000296",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "1494-0019-0070",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024032767",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "4162-0013-0080",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2024032802",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2711-0012-0140",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024043259",
-      "prop_address": "1816 ELIZABETH",
-      "old_account": "7886-0019-0120",
-      "new_account": "0481-1301-0640",
-      "norm_address": "1816 ELIZABETH"
-    },
-    {
-      "doc_num": "2025020591",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "2055-0001-0300",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2025000243",
-      "prop_address": "1116-1120 LEOPARD ST",
-      "old_account": "9895-0006-0160",
-      "new_account": "0797-0039-0120",
-      "norm_address": "1116-1120 LEOPARD ST"
-    },
-    {
-      "doc_num": "2024033963",
-      "prop_address": "2950 RIVER BEND CT",
-      "old_account": "3443-0023-0220",
-      "new_account": "1975-0015-0130",
-      "norm_address": "2950 RIVER BEND CT"
-    },
-    {
-      "doc_num": "2024032698",
-      "prop_address": "1115 YORK AVE",
-      "old_account": "0486-0013-0080",
-      "new_account": "0232-0007-0040",
-      "norm_address": "1115 YORK AVE"
-    },
-    {
-      "doc_num": "2024032675",
-      "prop_address": "1625 COMANCHE ST",
-      "old_account": "6463-0009-0080",
-      "new_account": "6463-0009-0070",
-      "norm_address": "1625 COMANCHE ST"
-    },
-    {
-      "doc_num": "2025003999",
-      "prop_address": "4009 BAHAMA DR",
-      "old_account": "1585-0004-0430",
-      "new_account": "4712-0003-0030",
-      "norm_address": "4009 BAHAMA DR"
-    },
-    {
-      "doc_num": "2025004093",
-      "prop_address": "2734 GUADALUPE",
-      "old_account": "1390-0002-0120",
-      "new_account": "1390-0002-0110",
-      "norm_address": "2734 GUADALUPE"
-    },
-    {
-      "doc_num": "2025004105",
-      "prop_address": "1321 FLORIDA AVE",
-      "old_account": "2277-0001-0220",
-      "new_account": "0232-0014-0140",
-      "norm_address": "1321 FLORIDA AVE"
-    },
-    {
-      "doc_num": "2025004163",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "old_account": "9019-0030-3303",
-      "new_account": "9019-0010-1118",
-      "norm_address": "3938 SURFSIDE BLVD"
-    },
-    {
-      "doc_num": "2025004137",
-      "prop_address": "2918 WINTERS",
-      "old_account": "1518-0000-0050",
-      "new_account": "1518-0000-0060",
-      "norm_address": "2918 WINTERS"
-    },
-    {
-      "doc_num": "2025004747",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "old_account": "9019-0030-3103",
-      "new_account": "9019-0010-1118",
-      "norm_address": "3938 SURFSIDE BLVD"
-    },
-    {
-      "doc_num": "2025004816",
-      "prop_address": "407 E 9th ST",
-      "old_account": "6365-0012-0070",
-      "new_account": "8902-0007-0180",
-      "norm_address": "407 E 9TH ST"
-    },
-    {
-      "doc_num": "2025020674",
-      "prop_address": "2304 HATCH ST",
-      "old_account": "8013-0005-0080",
-      "new_account": "8013-0005-0070",
-      "norm_address": "2304 HATCH ST"
-    },
-    {
-      "doc_num": "2025027078",
-      "prop_address": "2304 HATCH ST",
-      "old_account": "8013-0005-0080",
-      "new_account": "8013-0005-0070",
-      "norm_address": "2304 HATCH ST"
-    },
-    {
-      "doc_num": "2025027143",
-      "prop_address": "2734 GUADALUPE",
-      "old_account": "1390-0002-0120",
-      "new_account": "1390-0002-0110",
-      "norm_address": "2734 GUADALUPE"
-    },
-    {
-      "doc_num": "2024039610",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "4162-0013-0080",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2025004765",
-      "prop_address": "2802 CLOYDE",
-      "old_account": "4267-0003-0010",
-      "new_account": "0386-0006-0250",
-      "norm_address": "2802 CLOYDE"
-    },
-    {
-      "doc_num": "2025000266",
-      "prop_address": "2009 S STAPLES ST",
-      "old_account": "0095-0008-0100",
-      "new_account": "6103-1406-0330",
-      "norm_address": "2009 S STAPLES ST"
-    },
-    {
-      "doc_num": "2024016623",
-      "prop_address": "2009 S STAPLES ST",
-      "old_account": "0095-0008-0100",
-      "new_account": "6103-1406-0330",
-      "norm_address": "2009 S STAPLES ST"
-    },
-    {
-      "doc_num": "2024034231",
-      "prop_address": "2009 S STAPLES ST",
-      "old_account": "0095-0008-0100",
-      "new_account": "6103-1406-0330",
-      "norm_address": "2009 S STAPLES ST"
-    },
-    {
-      "doc_num": "2024016627",
-      "prop_address": "434 AIRPORT RD",
-      "old_account": "1984-0001-0060",
-      "new_account": "1795-0001-0290",
-      "norm_address": "434 AIRPORT RD"
-    },
-    {
-      "doc_num": "2025026262",
-      "prop_address": "2021 CRAIG ST",
-      "old_account": "5361-0004-0010",
-      "new_account": "0488-0010-0050",
-      "norm_address": "2021 CRAIG ST"
-    },
-    {
-      "doc_num": "2024035627",
-      "prop_address": "4106 BRAWNER PKWY",
-      "old_account": "",
-      "new_account": "1685-0001-0180",
-      "norm_address": "4106 BRAWNER PKWY"
-    },
-    {
-      "doc_num": "2024035677",
-      "prop_address": "1540 17th ST",
-      "old_account": "8294-0038-0120",
-      "new_account": "0481-1402-0530",
-      "norm_address": "1540 17TH ST"
-    },
-    {
-      "doc_num": "2024035665",
-      "prop_address": "234 LOLA JOHNSON",
-      "old_account": "",
-      "new_account": "0606-0000-0150",
-      "norm_address": "234 LOLA JOHNSON"
-    },
-    {
-      "doc_num": "2024034997",
-      "prop_address": "1421 ORMOND DR",
-      "old_account": "",
-      "new_account": "4261-0003-0340",
-      "norm_address": "1421 ORMOND DR"
-    },
-    {
-      "doc_num": "2024035001",
-      "prop_address": "1609 PAMONA",
-      "old_account": "",
-      "new_account": "4049-0002-0030",
-      "norm_address": "1609 PAMONA"
-    },
-    {
-      "doc_num": "2024035039",
-      "prop_address": "1730 YALE ST",
-      "old_account": "",
-      "new_account": "1585-0002-0070",
-      "norm_address": "1730 YALE ST"
-    },
-    {
-      "doc_num": "2024035043",
-      "prop_address": "2112 HOWARD",
-      "old_account": "",
-      "new_account": "9640-0001-0080",
-      "norm_address": "2112 HOWARD"
-    },
-    {
-      "doc_num": "2024035006",
-      "prop_address": "2836 HIGHLAND AVE",
-      "old_account": "",
-      "new_account": "5324-0006-0370",
-      "norm_address": "2836 HIGHLAND AVE"
-    },
-    {
-      "doc_num": "2024035038",
-      "prop_address": "4101 LOWMAN",
-      "old_account": "",
-      "new_account": "1685-0003-0170",
-      "norm_address": "4101 LOWMAN"
-    },
-    {
-      "doc_num": "2024035021",
-      "prop_address": "2917 MARGUERITE",
-      "old_account": "",
-      "new_account": "8409-0009-0260",
-      "norm_address": "2917 MARGUERITE"
-    },
-    {
-      "doc_num": "2024035637",
-      "prop_address": "4106 FONVILLA CIR",
-      "old_account": "",
-      "new_account": "1220-0005-0060",
-      "norm_address": "4106 FONVILLA CIR"
-    },
-    {
-      "doc_num": "2024043247",
-      "prop_address": "3602 TIGER LN",
-      "old_account": "7750-0008-0290",
-      "new_account": "1311-0004-0290",
-      "norm_address": "3602 TIGER LN"
-    },
-    {
-      "doc_num": "2024043227",
-      "prop_address": "2917 ADA ST",
-      "old_account": "1585-0004-0080",
-      "new_account": "3232-0006-0050",
-      "norm_address": "2917 ADA ST"
-    },
-    {
-      "doc_num": "2024043253",
-      "prop_address": "3602 TIGER LN",
-      "old_account": "7750-0008-0290",
-      "new_account": "1311-0004-0290",
-      "norm_address": "3602 TIGER LN"
-    },
-    {
-      "doc_num": "2025000225",
-      "prop_address": "2926 SANTA ANA ST",
-      "old_account": "4756-0003-0020",
-      "new_account": "9122-0003-0120",
-      "norm_address": "2926 SANTA ANA ST"
-    },
-    {
-      "doc_num": "2025000180",
-      "prop_address": "2841 DAVID",
-      "old_account": "1613-0005-0090",
-      "new_account": "1010-0007-0110",
-      "norm_address": "2841 DAVID"
-    },
-    {
-      "doc_num": "2025000206",
-      "prop_address": "1215 WINNEBAGO ST",
-      "old_account": "9253-0002-0030",
-      "new_account": "0797-0049-0070",
-      "norm_address": "1215 WINNEBAGO ST"
-    },
-    {
-      "doc_num": "2025000249",
-      "prop_address": "1654 16th ST",
-      "old_account": "8802-0002-0040",
-      "new_account": "2451-1303-0590",
-      "norm_address": "1654 16TH ST"
-    },
-    {
-      "doc_num": "2024032791",
-      "prop_address": "3715 MACLEOD DR",
-      "old_account": "4403-0004-0160",
-      "new_account": "7750-0007-0040",
-      "norm_address": "3715 MACLEOD DR"
-    },
-    {
-      "doc_num": "2025010184",
-      "prop_address": "417 ANGELO DR",
-      "old_account": "8013-0007-0010",
-      "new_account": "0686-0001-0040",
-      "norm_address": "417 ANGELO DR"
-    },
-    {
-      "doc_num": "2025008662",
-      "prop_address": "1134 NANCY DR",
-      "old_account": "0086-0003-0013",
-      "new_account": "6076-0011-0080",
-      "norm_address": "1134 NANCY DR"
-    },
-    {
-      "doc_num": "2024032829",
-      "prop_address": "14881 LIGHTHOUSE DR",
-      "old_account": "2996-0004-0170",
-      "new_account": "0429-0716-0190",
-      "norm_address": "14881 LIGHTHOUSE DR"
-    },
-    {
-      "doc_num": "2025004117",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "8294-0035-0010",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2025010125",
-      "prop_address": "1210 18th ST",
-      "old_account": "2828-0003-0120",
-      "new_account": "0488-0010-0110",
-      "norm_address": "1210 18TH ST"
-    },
-    {
-      "doc_num": "2025026230",
-      "prop_address": "1207 VERBENA",
-      "old_account": "8539-0001-0100",
-      "new_account": "4062-0001-0120",
-      "norm_address": "1207 VERBENA"
-    },
-    {
-      "doc_num": "2025026261",
-      "prop_address": "121 MARTHA DR",
-      "old_account": "9827-0003-0040",
-      "new_account": "4120-0000-0060",
-      "norm_address": "121 MARTHA DR"
-    },
-    {
-      "doc_num": "2025020721",
-      "prop_address": "3617 MENDENHALL DR",
-      "old_account": "3380-0004-0500",
-      "new_account": "1290-0010-0520",
-      "norm_address": "3617 MENDENHALL DR"
-    },
-    {
-      "doc_num": "2024033984",
-      "prop_address": "2730 BLAKE",
-      "old_account": "4062-0003-0010",
-      "new_account": "7038-0001-0080",
-      "norm_address": "2730 BLAKE"
-    },
-    {
-      "doc_num": "2024033975",
-      "prop_address": "42 ROCK CREEK DR",
-      "old_account": "1989-0014-0280",
-      "new_account": "7445-0002-0420",
-      "norm_address": "42 ROCK CREEK DR"
-    },
-    {
-      "doc_num": "2024034285",
-      "prop_address": "2926 SANTA ANA ST",
-      "old_account": "4756-0003-0020",
-      "new_account": "9122-0003-0120",
-      "norm_address": "2926 SANTA ANA ST"
-    },
-    {
-      "doc_num": "2024034305",
-      "prop_address": "3137 TOPEKA ST",
-      "old_account": "0987-0005-0050",
-      "new_account": "0105-0001-0230",
-      "norm_address": "3137 TOPEKA ST"
-    },
-    {
-      "doc_num": "2024034342",
-      "prop_address": "13802 JOLLY ROGER ST",
-      "old_account": "3415-0002-0030",
-      "new_account": "0426-0002-0150",
-      "norm_address": "13802 JOLLY ROGER ST"
-    },
-    {
-      "doc_num": "2024034358",
-      "prop_address": "3001 TOPEKA ST",
-      "old_account": "7594-0008-0120",
-      "new_account": "0105-0006-0130",
-      "norm_address": "3001 TOPEKA ST"
-    },
-    {
-      "doc_num": "2024034982",
-      "prop_address": "3636 EASTERN",
-      "old_account": "2132-0006-0200",
-      "new_account": "0073-0000-0100",
-      "norm_address": "3636 EASTERN"
-    },
-    {
-      "doc_num": "2024035007",
-      "prop_address": "4241 SHAW",
-      "old_account": "",
-      "new_account": "1585-0005-0180",
-      "norm_address": "4241 SHAW"
-    },
-    {
-      "doc_num": "2024034980",
-      "prop_address": "1149 FLORIDA AVE",
-      "old_account": "0315-0008-0140",
-      "new_account": "0232-0004-0100",
-      "norm_address": "1149 FLORIDA AVE"
-    },
-    {
-      "doc_num": "2024035036",
-      "prop_address": "1210 7th ST",
-      "old_account": "",
-      "new_account": "0486-0011-0180",
-      "norm_address": "1210 7TH ST"
-    },
-    {
-      "doc_num": "2024035031",
-      "prop_address": "286 W VANDERBILT DR",
-      "old_account": "",
-      "new_account": "0239-0003-0040",
-      "norm_address": "286 W VANDERBILT DR"
-    },
-    {
-      "doc_num": "2024035004",
-      "prop_address": "2841 DAVID",
-      "old_account": "",
-      "new_account": "1010-0007-0110",
-      "norm_address": "2841 DAVID"
-    },
-    {
-      "doc_num": "2024035028",
-      "prop_address": "2209 SOLEDAD",
-      "old_account": "",
-      "new_account": "7615-0004-0030",
-      "norm_address": "2209 SOLEDAD"
-    },
-    {
-      "doc_num": "2024035633",
-      "prop_address": "2304 HATCH ST",
-      "old_account": "",
-      "new_account": "8013-0005-0070",
-      "norm_address": "2304 HATCH ST"
-    },
-    {
-      "doc_num": "2024016595",
-      "prop_address": "14881 LIGHTHOUSE DR",
-      "old_account": "2996-0004-0170",
-      "new_account": "0429-0716-0190",
-      "norm_address": "14881 LIGHTHOUSE DR"
-    },
-    {
-      "doc_num": "2024020352",
-      "prop_address": "2802 CLOYDE",
-      "old_account": "4267-0003-0010",
-      "new_account": "0386-0006-0250",
-      "norm_address": "2802 CLOYDE"
-    },
-    {
-      "doc_num": "2024020339",
-      "prop_address": "3353 CRESTHILL DR",
-      "old_account": "0595-0011-0120",
-      "new_account": "1971-0006-0150",
-      "norm_address": "3353 CRESTHILL DR"
-    },
-    {
-      "doc_num": "2024037596",
-      "prop_address": "1601 MARY ST",
-      "old_account": "8414-0005-0011",
-      "new_account": "8414-0005-0010",
-      "norm_address": "1601 MARY ST"
-    },
-    {
-      "doc_num": "2024037597",
-      "prop_address": "1601 MARY ST",
-      "old_account": "8414-0005-0011",
-      "new_account": "8414-0005-0010",
-      "norm_address": "1601 MARY ST"
-    },
-    {
-      "doc_num": "2024032689",
-      "prop_address": "111 LAKE SHORE DR",
-      "old_account": "5820-0007-0030",
-      "new_account": "1918-0000-1110",
-      "norm_address": "111 LAKE SHORE DR"
-    },
-    {
-      "doc_num": "2024032659",
-      "prop_address": "2734 GUADALUPE",
-      "old_account": "1390-0002-0120",
-      "new_account": "1390-0002-0110",
-      "norm_address": "2734 GUADALUPE"
-    },
-    {
-      "doc_num": "2024032627",
-      "prop_address": "3217 SANTA CRUZ DR",
-      "old_account": "4130-0012-0010",
-      "new_account": "9098-0003-0110",
-      "norm_address": "3217 SANTA CRUZ DR"
-    },
-    {
-      "doc_num": "2024032613",
-      "prop_address": "286 W VANDERBILT DR",
-      "old_account": "4984-0006-0070",
-      "new_account": "0239-0003-0040",
-      "norm_address": "286 W VANDERBILT DR"
-    },
-    {
-      "doc_num": "2024032809",
-      "prop_address": "3150 CREST VEIL DR",
-      "old_account": "6936-0005-0210",
-      "new_account": "1974-0004-0040",
-      "norm_address": "3150 CREST VEIL DR"
-    },
-    {
-      "doc_num": "2024032780",
-      "prop_address": "2802 CLOYDE",
-      "old_account": "4267-0003-0010",
-      "new_account": "0386-0006-0250",
-      "norm_address": "2802 CLOYDE"
-    },
-    {
-      "doc_num": "2024032850",
-      "prop_address": "1520 LAZY LN",
-      "old_account": "9921-0006-0040",
-      "new_account": "9921-0006-0030",
-      "norm_address": "1520 LAZY LN"
-    },
-    {
-      "doc_num": "2024032584",
-      "prop_address": "3715 MACLEOD DR",
+      "doc_num": "2025004744",
+      "prop_address": "4410 BLUEFIELD DR",
+      "old_account": "9019-0030-3201",
+      "new_account": "1855-0044-0030",
+      "norm_address": "4410 BLUEFIELD DR"
+    },
+    {
+      "doc_num": "2024020293",
+      "prop_address": "749 POST AVE",
       "old_account": "6074-0005-0190",
-      "new_account": "7750-0007-0040",
-      "norm_address": "3715 MACLEOD DR"
+      "new_account": "0072-0004-0130",
+      "norm_address": "749 POST AVE"
     },
     {
-      "doc_num": "2024032577",
-      "prop_address": "4040 VIOLET RD",
-      "old_account": "6745-0005-0100",
-      "new_account": "5860-0000-0060",
-      "norm_address": "4040 VIOLET RD"
+      "doc_num": "2024020351",
+      "prop_address": "813-817 ALAMEDA ST S",
+      "old_account": "0487-0004-0060",
+      "new_account": "0480-0011-0110",
+      "norm_address": "813-817 ALAMEDA ST S"
     },
     {
-      "doc_num": "2024032593",
-      "prop_address": "3137 TOPEKA ST",
+      "doc_num": "2024020302",
+      "prop_address": "472 CLAREMORE",
+      "old_account": "2996-0006-0090",
+      "new_account": "8969-0002-0280",
+      "norm_address": "472 CLAREMORE"
+    },
+    {
+      "doc_num": "2024031536",
+      "prop_address": "749 POST AVE",
+      "old_account": "9827-0003-0040",
+      "new_account": "0072-0004-0130",
+      "norm_address": "749 POST AVE"
+    },
+    {
+      "doc_num": "2024032715",
+      "prop_address": "5505 BONNER DR",
+      "old_account": "7614-0005-0020",
+      "new_account": "2702-0006-0060",
+      "norm_address": "5505 BONNER DR"
+    },
+    {
+      "doc_num": "2024032669",
+      "prop_address": "934 ERWIN AVE",
+      "old_account": "3232-0004-0310",
+      "new_account": "2164-0002-0100",
+      "norm_address": "934 ERWIN AVE"
+    },
+    {
+      "doc_num": "2024032861",
+      "prop_address": "5341 MALDEN DR",
+      "old_account": "0487-0004-0060",
+      "new_account": "7223-0001-0300",
+      "norm_address": "5341 MALDEN DR"
+    },
+    {
+      "doc_num": "2024032732",
+      "prop_address": "511 N HARRELL ST",
+      "old_account": "2702-0006-0017",
+      "new_account": "1416-0000-0440",
+      "norm_address": "511 N HARRELL ST"
+    },
+    {
+      "doc_num": "2024032619",
+      "prop_address": "613 CHASE DR",
+      "old_account": "9881-0002-0040",
+      "new_account": "9766-0013-0140",
+      "norm_address": "613 CHASE DR"
+    },
+    {
+      "doc_num": "2024033974",
+      "prop_address": "705 RUBEN CHAVEZ RD",
+      "old_account": "0239-0001-0070",
+      "new_account": "5130-0010-0130",
+      "norm_address": "705 RUBEN CHAVEZ RD"
+    },
+    {
+      "doc_num": "2024034307",
+      "prop_address": "7118 TAOS DR",
+      "old_account": "2385-0040-0015",
+      "new_account": "0948-0007-0050",
+      "norm_address": "7118 TAOS DR"
+    },
+    {
+      "doc_num": "2024017260",
+      "prop_address": "6207 HIDDEN COVE",
+      "old_account": "4528-0001-0310",
+      "new_account": "4155-0000-0354",
+      "norm_address": "6207 HIDDEN COVE"
+    },
+    {
+      "doc_num": "2024017236",
+      "prop_address": "6825 ELBA CT",
+      "old_account": "0488-0003-0060",
+      "new_account": "2603-0001-0160",
+      "norm_address": "6825 ELBA CT"
+    },
+    {
+      "doc_num": "2025004743",
+      "prop_address": "923 MESQUIE ST",
+      "old_account": "1977-0004-0180",
+      "new_account": "0792-0007-0120",
+      "norm_address": "923 MESQUIE ST"
+    },
+    {
+      "doc_num": "2024035035",
+      "prop_address": "472 CLAREMORE",
+      "old_account": "",
+      "new_account": "8969-0002-0280",
+      "norm_address": "472 CLAREMORE"
+    },
+    {
+      "doc_num": "2025027103",
+      "prop_address": "813-817 ALAMEDA ST S",
+      "old_account": "0487-0004-0060",
+      "new_account": "0480-0011-0110",
+      "norm_address": "813-817 ALAMEDA ST S"
+    },
+    {
+      "doc_num": "2024034990",
+      "prop_address": "705 RUBEN CHAVEZ RD",
+      "old_account": "",
+      "new_account": "5130-0010-0130",
+      "norm_address": "705 RUBEN CHAVEZ RD"
+    },
+    {
+      "doc_num": "2024043244",
+      "prop_address": "5505 BONNER DR",
+      "old_account": "7614-0005-0020",
+      "new_account": "2702-0006-0060",
+      "norm_address": "5505 BONNER DR"
+    },
+    {
+      "doc_num": "2024032831",
+      "prop_address": "749 POST AVE",
+      "old_account": "6074-0005-0190",
+      "new_account": "0072-0004-0130",
+      "norm_address": "749 POST AVE"
+    },
+    {
+      "doc_num": "2025010182",
+      "prop_address": "705 RUBEN CHAVEZ RD",
+      "old_account": "0239-0001-0070",
+      "new_account": "5130-0010-0130",
+      "norm_address": "705 RUBEN CHAVEZ RD"
+    },
+    {
+      "doc_num": "2025004140",
+      "prop_address": "613 CHASE DR",
+      "old_account": "1585-0001-0100",
+      "new_account": "9766-0013-0140",
+      "norm_address": "613 CHASE DR"
+    },
+    {
+      "doc_num": "2025023854",
+      "prop_address": "6207 HIDDEN COVE",
+      "old_account": "4528-0001-0310",
+      "new_account": "4155-0000-0354",
+      "norm_address": "6207 HIDDEN COVE"
+    },
+    {
+      "doc_num": "2024033964",
+      "prop_address": "446 SKIPPER LN",
+      "old_account": "8077-0002-0020",
+      "new_account": "2523-0003-0100",
+      "norm_address": "446 SKIPPER LN"
+    },
+    {
+      "doc_num": "2024035639",
+      "prop_address": "446 SKIPPER LN",
+      "old_account": "",
+      "new_account": "2523-0003-0100",
+      "norm_address": "446 SKIPPER LN"
+    },
+    {
+      "doc_num": "2024037549",
+      "prop_address": "6207 HIDDEN COVE",
+      "old_account": "4528-0001-0310",
+      "new_account": "4155-0000-0354",
+      "norm_address": "6207 HIDDEN COVE"
+    },
+    {
+      "doc_num": "2024032777",
+      "prop_address": "5341 MALDEN DR",
+      "old_account": "9563-0002-0210",
+      "new_account": "7223-0001-0300",
+      "norm_address": "5341 MALDEN DR"
+    },
+    {
+      "doc_num": "2024032859",
+      "prop_address": "813-817 ALAMEDA ST S",
+      "old_account": "2350-0014-0010",
+      "new_account": "0480-0011-0110",
+      "norm_address": "813-817 ALAMEDA ST S"
+    },
+    {
+      "doc_num": "2025004751",
+      "prop_address": "813-817 ALAMEDA ST S",
+      "old_account": "5096-1305-0410",
+      "new_account": "0480-0011-0110",
+      "norm_address": "813-817 ALAMEDA ST S"
+    },
+    {
+      "doc_num": "2025004006",
+      "prop_address": "923 MESQUIE ST",
+      "old_account": "1977-0004-0180",
+      "new_account": "0792-0007-0120",
+      "norm_address": "923 MESQUIE ST"
+    },
+    {
+      "doc_num": "2025000283",
+      "prop_address": "813-817 ALAMEDA ST S",
+      "old_account": "0487-0004-0060",
+      "new_account": "0480-0011-0110",
+      "norm_address": "813-817 ALAMEDA ST S"
+    },
+    {
+      "doc_num": "2024035014",
+      "prop_address": "5773 HALL AVE",
+      "old_account": "",
+      "new_account": "2230-0000-1060",
+      "norm_address": "5773 HALL AVE"
+    },
+    {
+      "doc_num": "2024035022",
+      "prop_address": "638 AIRPORT RD",
+      "old_account": "",
+      "new_account": "0316-0004-0100",
+      "norm_address": "638 AIRPORT RD"
+    },
+    {
+      "doc_num": "2025004766",
+      "prop_address": "813-817 ALAMEDA ST S",
+      "old_account": "0487-0006-0040",
+      "new_account": "0480-0011-0110",
+      "norm_address": "813-817 ALAMEDA ST S"
+    },
+    {
+      "doc_num": "2025004100",
+      "prop_address": "6207 HIDDEN COVE",
+      "old_account": "4528-0001-0310",
+      "new_account": "4155-0000-0354",
+      "norm_address": "6207 HIDDEN COVE"
+    },
+    {
+      "doc_num": "2025004768",
+      "prop_address": "813-817 ALAMEDA ST S",
+      "old_account": "2350-0014-0010",
+      "new_account": "0480-0011-0110",
+      "norm_address": "813-817 ALAMEDA ST S"
+    },
+    {
+      "doc_num": "2025026246",
+      "prop_address": "6825 ELBA CT",
+      "old_account": "0488-0003-0060",
+      "new_account": "2603-0001-0160",
+      "norm_address": "6825 ELBA CT"
+    },
+    {
+      "doc_num": "2025026213",
+      "prop_address": "511 N HARRELL ST",
+      "old_account": "2702-0006-0017",
+      "new_account": "1416-0000-0440",
+      "norm_address": "511 N HARRELL ST"
+    },
+    {
+      "doc_num": "2024032624",
+      "prop_address": "749 POST AVE",
+      "old_account": "8324-0003-0050",
+      "new_account": "0072-0004-0130",
+      "norm_address": "749 POST AVE"
+    },
+    {
+      "doc_num": "2024035029",
+      "prop_address": "5341 MALDEN DR",
+      "old_account": "",
+      "new_account": "7223-0001-0300",
+      "norm_address": "5341 MALDEN DR"
+    },
+    {
+      "doc_num": "2024035005",
+      "prop_address": "6207 HIDDEN COVE",
+      "old_account": "",
+      "new_account": "4155-0000-0354",
+      "norm_address": "6207 HIDDEN COVE"
+    },
+    {
+      "doc_num": "2025004089",
+      "prop_address": "705 RUBEN CHAVEZ RD",
+      "old_account": "0239-0001-0070",
+      "new_account": "5130-0010-0130",
+      "norm_address": "705 RUBEN CHAVEZ RD"
+    },
+    {
+      "doc_num": "2024033960",
+      "prop_address": "749 POST AVE",
+      "old_account": "9827-0003-0040",
+      "new_account": "0072-0004-0130",
+      "norm_address": "749 POST AVE"
+    },
+    {
+      "doc_num": "2024034344",
+      "prop_address": "511 N HARRELL ST",
+      "old_account": "2702-0006-0017",
+      "new_account": "1416-0000-0440",
+      "norm_address": "511 N HARRELL ST"
+    },
+    {
+      "doc_num": "2024035030",
+      "prop_address": "9021 CAROLINE RD",
+      "old_account": "",
+      "new_account": "4984-0006-0050",
+      "norm_address": "9021 CAROLINE RD"
+    },
+    {
+      "doc_num": "2025000286",
+      "prop_address": "511 N HARRELL ST",
+      "old_account": "2702-0006-0017",
+      "new_account": "1416-0000-0440",
+      "norm_address": "511 N HARRELL ST"
+    },
+    {
+      "doc_num": "2024032765",
+      "prop_address": "5341 MALDEN DR",
+      "old_account": "5096-1305-0410",
+      "new_account": "7223-0001-0300",
+      "norm_address": "5341 MALDEN DR"
+    },
+    {
+      "doc_num": "2024032858",
+      "prop_address": "813-817 ALAMEDA ST S",
+      "old_account": "0487-0004-0060",
+      "new_account": "0480-0011-0110",
+      "norm_address": "813-817 ALAMEDA ST S"
+    },
+    {
+      "doc_num": "2024032643",
+      "prop_address": "749 POST AVE",
+      "old_account": "7685-0005-0020",
+      "new_account": "0072-0004-0130",
+      "norm_address": "749 POST AVE"
+    },
+    {
+      "doc_num": "2024032879",
+      "prop_address": "5341 MALDEN DR",
+      "old_account": "0480-0011-0110",
+      "new_account": "7223-0001-0300",
+      "norm_address": "5341 MALDEN DR"
+    },
+    {
+      "doc_num": "2025023823",
+      "prop_address": "705 RUBEN CHAVEZ RD",
+      "old_account": "0239-0001-0070",
+      "new_account": "5130-0010-0130",
+      "norm_address": "705 RUBEN CHAVEZ RD"
+    },
+    {
+      "doc_num": "2024033942",
+      "prop_address": "4455 S PADRE ISLAND DR STE 45C",
+      "old_account": "2540-0011-0290",
+      "new_account": "6802-0002-0020",
+      "norm_address": "4455 S PADRE ISLAND DR"
+    },
+    {
+      "doc_num": "2025004115",
+      "prop_address": "686 KAIPO DR",
+      "old_account": "0591-0003-0190",
+      "new_account": "0591-0003-0170",
+      "norm_address": "686 KAIPO DR"
+    },
+    {
+      "doc_num": "2025004109",
+      "prop_address": "5518 FOX RUN DR",
+      "old_account": "3416-0010-0180",
+      "new_account": "3652-0101-0150",
+      "norm_address": "5518 FOX RUN DR"
+    },
+    {
+      "doc_num": "2025004155",
+      "prop_address": "6014 PENDLETON DR",
+      "old_account": "6458-0000-0045",
+      "new_account": "1979-0001-0060",
+      "norm_address": "6014 PENDLETON DR"
+    },
+    {
+      "doc_num": "2025004164",
+      "prop_address": "6005 PINEHURST DR",
+      "old_account": "9019-0030-3302",
+      "new_account": "1843-0002-0200",
+      "norm_address": "6005 PINEHURST DR"
+    },
+    {
+      "doc_num": "2025004752",
+      "prop_address": "5426 CURTIS CLARK DR",
+      "old_account": "4240-0003-0140",
+      "new_account": "2709-0004-0310",
+      "norm_address": "5426 CURTIS CLARK DR"
+    },
+    {
+      "doc_num": "2025020594",
+      "prop_address": "5550 SUNRISE TRL",
+      "old_account": "8304-0002-0180",
+      "new_account": "9908-0001-0110",
+      "norm_address": "5550 SUNRISE TRL"
+    },
+    {
+      "doc_num": "2025020593",
+      "prop_address": "5550 SUNRISE TRL",
+      "old_account": "8304-0002-0190",
+      "new_account": "9908-0001-0110",
+      "norm_address": "5550 SUNRISE TRL"
+    },
+    {
+      "doc_num": "2024032775",
+      "prop_address": "749 POST AVE",
+      "old_account": "9880-0006-0185",
+      "new_account": "0072-0004-0130",
+      "norm_address": "749 POST AVE"
+    },
+    {
+      "doc_num": "2024035634",
+      "prop_address": "640 CHEYENNE",
+      "old_account": "",
+      "new_account": "6458-0000-0056",
+      "norm_address": "640 CHEYENNE"
+    },
+    {
+      "doc_num": "2024035624",
+      "prop_address": "6909 FRUITWOOD DR",
+      "old_account": "",
+      "new_account": "3698-0007-0030",
+      "norm_address": "6909 FRUITWOOD DR"
+    },
+    {
+      "doc_num": "2024035676",
+      "prop_address": "505 VALERIE",
+      "old_account": "9841-0001-0100",
+      "new_account": "2523-0001-0050",
+      "norm_address": "505 VALERIE"
+    },
+    {
+      "doc_num": "2024035674",
+      "prop_address": "505 VALERIE",
+      "old_account": "9841-0001-0100",
+      "new_account": "2523-0001-0050",
+      "norm_address": "505 VALERIE"
+    },
+    {
+      "doc_num": "2024035655",
+      "prop_address": "4430 DEVON DR",
+      "old_account": "",
+      "new_account": "2255-0005-0030",
+      "norm_address": "4430 DEVON DR"
+    },
+    {
+      "doc_num": "2024034976",
+      "prop_address": "915 BOOTY ST",
+      "old_account": "",
+      "new_account": "0481-0703-0115",
+      "norm_address": "915 BOOTY ST"
+    },
+    {
+      "doc_num": "2024035013",
+      "prop_address": "5101 MARGARET AVE",
+      "old_account": "",
+      "new_account": "9579-0001-0090",
+      "norm_address": "5101 MARGARET AVE"
+    },
+    {
+      "doc_num": "2024035049",
+      "prop_address": "6037 SKYLINE DR",
+      "old_account": "",
+      "new_account": "5260-0001-0780",
+      "norm_address": "6037 SKYLINE DR"
+    },
+    {
+      "doc_num": "2024020332",
+      "prop_address": "5605 PALO BLANCO",
+      "old_account": "2277-0006-0140",
+      "new_account": "4050-0003-0340",
+      "norm_address": "5605 PALO BLANCO"
+    },
+    {
+      "doc_num": "2024043251",
+      "prop_address": "4806 MABLE ST",
+      "old_account": "7886-0007-0030",
+      "new_account": "4465-0010-0020",
+      "norm_address": "4806 MABLE ST"
+    },
+    {
+      "doc_num": "2025000183",
+      "prop_address": "902 MCDONALD ST",
+      "old_account": "2540-0011-0290",
+      "new_account": "2540-0011-0260",
+      "norm_address": "902 MCDONALD ST"
+    },
+    {
+      "doc_num": "2025000202",
+      "prop_address": "4513 MOKRY DR",
+      "old_account": "1492-0002-0041",
+      "new_account": "1492-0002-0040",
+      "norm_address": "4513 MOKRY DR"
+    },
+    {
+      "doc_num": "2025008659",
+      "prop_address": "4425 LEOPARD ST",
+      "old_account": "",
+      "new_account": "9841-0001-0100",
+      "norm_address": "4425 LEOPARD ST"
+    },
+    {
+      "doc_num": "2025023829",
+      "prop_address": "908 TO 916 ALAMEDA ST N",
+      "old_account": "1695-0013-0070",
+      "new_account": "0797-0049-0090",
+      "norm_address": "908 N TO 916 ALAMEDA ST"
+    },
+    {
+      "doc_num": "2025020634",
+      "prop_address": "6110 SIR JACK ST",
       "old_account": "0987-0005-0050",
-      "new_account": "0105-0001-0230",
-      "norm_address": "3137 TOPEKA ST"
+      "new_account": "3968-0005-0200",
+      "norm_address": "6110 SIR JACK ST"
     },
     {
-      "doc_num": "2024031482",
-      "prop_address": "3715 MACLEOD DR",
-      "old_account": "8324-0004-0050",
-      "new_account": "7750-0007-0040",
-      "norm_address": "3715 MACLEOD DR"
+      "doc_num": "2024032721",
+      "prop_address": "640 GULF VILLAGE DR",
+      "old_account": "0530-0004-0050",
+      "new_account": "3071-0000-0060",
+      "norm_address": "640 GULF VILLAGE DR"
     },
     {
-      "doc_num": "2024031501",
-      "prop_address": "2214 CARDINALES LN",
-      "old_account": "3593-0004-0410",
-      "new_account": "5304-0001-0150",
-      "norm_address": "2214 CARDINALES LN"
+      "doc_num": "2025026258",
+      "prop_address": "4649 CHRISTIE",
+      "old_account": "9764-0007-0280",
+      "new_account": "7511-0001-0030",
+      "norm_address": "4649 CHRISTIE"
     },
     {
-      "doc_num": "2024035052",
-      "prop_address": "1625 COMANCHE ST",
+      "doc_num": "2025026257",
+      "prop_address": "4649 CHRISTIE",
+      "old_account": "9764-0007-0280",
+      "new_account": "7511-0001-0030",
+      "norm_address": "4649 CHRISTIE"
+    },
+    {
+      "doc_num": "2024031483",
+      "prop_address": "4405 MARIE",
+      "old_account": "2077-0001-0010",
+      "new_account": "3164-0006-0270",
+      "norm_address": "4405 MARIE"
+    },
+    {
+      "doc_num": "2024020338",
+      "prop_address": "8 DUNWICK PL",
+      "old_account": "5281-0006-0030",
+      "new_account": "3548-0000-0050",
+      "norm_address": "8 DUNWICK PL"
+    },
+    {
+      "doc_num": "2024033947",
+      "prop_address": "514 FRANCESCA ST",
+      "old_account": "8284-0017-0030",
+      "new_account": "7634-0004-0310",
+      "norm_address": "514 FRANCESCA ST"
+    },
+    {
+      "doc_num": "2024033972",
+      "prop_address": "6749 LEOPARD ST",
+      "old_account": "1760-0001-0160",
+      "new_account": "0132-0002-0070",
+      "norm_address": "6749 LEOPARD ST"
+    },
+    {
+      "doc_num": "2024034006",
+      "prop_address": "5505 BONNER DR",
+      "old_account": "5463-0004-0060",
+      "new_account": "2702-0006-0060",
+      "norm_address": "5505 BONNER DR"
+    },
+    {
+      "doc_num": "2024034246",
+      "prop_address": "6749 LEOPARD ST",
+      "old_account": "1760-0001-0160",
+      "new_account": "0132-0002-0070",
+      "norm_address": "6749 LEOPARD ST"
+    },
+    {
+      "doc_num": "2024034248",
+      "prop_address": "4538 BARRERA DR",
+      "old_account": "8724-0009-0040",
+      "new_account": "5281-0011-0096",
+      "norm_address": "4538 BARRERA DR"
+    },
+    {
+      "doc_num": "2024034299",
+      "prop_address": "4722 FOX TROT DR",
+      "old_account": "9046-0007-0040",
+      "new_account": "2611-0001-0150",
+      "norm_address": "4722 FOX TROT DR"
+    },
+    {
+      "doc_num": "2024035033",
+      "prop_address": "5505 BONNER DR",
       "old_account": "",
-      "new_account": "6463-0009-0070",
-      "norm_address": "1625 COMANCHE ST"
+      "new_account": "2702-0006-0060",
+      "norm_address": "5505 BONNER DR"
     },
     {
-      "doc_num": "2025000248",
-      "prop_address": "1654 16th ST",
-      "old_account": "8802-0002-0040",
-      "new_account": "2451-1303-0590",
-      "norm_address": "1654 16TH ST"
-    },
-    {
-      "doc_num": "2025000256",
-      "prop_address": "2109 CAROLYN DR",
-      "old_account": "9495-0002-0160",
-      "new_account": "1185-0004-0200",
-      "norm_address": "2109 CAROLYN DR"
-    },
-    {
-      "doc_num": "2024043233",
-      "prop_address": "2918 WINTERS",
-      "old_account": "1518-0000-0050",
-      "new_account": "1518-0000-0060",
-      "norm_address": "2918 WINTERS"
-    },
-    {
-      "doc_num": "2024043245",
-      "prop_address": "3818 Colima St",
-      "old_account": "5938-0007-0050",
-      "new_account": "5938-0006-0010",
-      "norm_address": "3818 COLIMA ST"
-    },
-    {
-      "doc_num": "2024017256",
-      "prop_address": "15933 CUTTYSARK ST",
-      "old_account": "8187-0006-0200",
-      "new_account": "1780-0016-0200",
-      "norm_address": "15933 CUTTYSARK ST"
-    },
-    {
-      "doc_num": "2025004753",
-      "prop_address": "4106 SIERRA",
-      "old_account": "8013-0007-0120",
-      "new_account": "9446-0006-0180",
-      "norm_address": "4106 SIERRA"
-    },
-    {
-      "doc_num": "2024032782",
-      "prop_address": "3353 CRESTHILL DR",
-      "old_account": "0595-0011-0120",
-      "new_account": "1971-0006-0150",
-      "norm_address": "3353 CRESTHILL DR"
-    },
-    {
-      "doc_num": "2025004773",
-      "prop_address": "3317 WASHINGTON",
-      "old_account": "5820-0018-0230",
-      "new_account": "3232-0009-0050",
-      "norm_address": "3317 WASHINGTON"
-    },
-    {
-      "doc_num": "2025004782",
-      "prop_address": "1321 W BROADWAY BLVD",
-      "old_account": "0797-0069-0040",
-      "new_account": "0797-0069-0030",
-      "norm_address": "1321 W BROADWAY BLVD"
-    },
-    {
-      "doc_num": "2025008641",
-      "prop_address": "1014 COLLINGSWOOD DR",
-      "old_account": "7470-0000-0065",
-      "new_account": "9767-0018-0080",
-      "norm_address": "1014 COLLINGSWOOD DR"
-    },
-    {
-      "doc_num": "2025008678",
-      "prop_address": "2304 HATCH ST",
-      "old_account": "8013-0005-0080",
-      "new_account": "8013-0005-0070",
-      "norm_address": "2304 HATCH ST"
-    },
-    {
-      "doc_num": "2025010137",
-      "prop_address": "14605 POWELL DR",
-      "old_account": "6745-0002-0020",
-      "new_account": "5774-0008-0060",
-      "norm_address": "14605 POWELL DR"
-    },
-    {
-      "doc_num": "2025010136",
-      "prop_address": "1002 LUXOR DR",
-      "old_account": "6745-0002-0020",
-      "new_account": "6637-0004-0080",
-      "norm_address": "1002 LUXOR DR"
-    },
-    {
-      "doc_num": "2024017261",
-      "prop_address": "3306 CHARLOTTE DR",
-      "old_account": "9028-0001-0150",
-      "new_account": "1261-0007-0150",
-      "norm_address": "3306 CHARLOTTE DR"
-    },
-    {
-      "doc_num": "2025004005",
-      "prop_address": "1901 SUNTIDE RD",
-      "old_account": "9767-0029-0230",
-      "new_account": "2142-0001-0350",
-      "norm_address": "1901 SUNTIDE RD"
-    },
-    {
-      "doc_num": "2025014023",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "0232-0017-0090",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2025010850",
-      "prop_address": "14961 CANADIAN MIST DR",
-      "old_account": "4528-0002-0260",
-      "new_account": "3730-0030-0160",
-      "norm_address": "14961 CANADIAN MIST DR"
-    },
-    {
-      "doc_num": "2025008656",
-      "prop_address": "2730 BLAKE",
-      "old_account": "4062-0003-0010",
-      "new_account": "7038-0001-0080",
-      "norm_address": "2730 BLAKE"
-    },
-    {
-      "doc_num": "2025014055",
-      "prop_address": "2304 HATCH ST",
-      "old_account": "8013-0005-0080",
-      "new_account": "8013-0005-0070",
-      "norm_address": "2304 HATCH ST"
-    },
-    {
-      "doc_num": "2024032867",
-      "prop_address": "4305 WOOD RIVER DR",
-      "old_account": "4162-0013-0080",
-      "new_account": "9818-0028-0010",
-      "norm_address": "4305 WOOD RIVER DR"
-    },
-    {
-      "doc_num": "2025004059",
-      "prop_address": "1207 VERBENA",
-      "old_account": "8539-0001-0100",
-      "new_account": "4062-0001-0120",
-      "norm_address": "1207 VERBENA"
-    },
-    {
-      "doc_num": "2025004029",
-      "prop_address": "3042 GREENWOOD DR",
-      "old_account": "4032-0001-0250",
-      "new_account": "4032-0001-0260",
-      "norm_address": "3042 GREENWOOD DR"
-    },
-    {
-      "doc_num": "2025004035",
-      "prop_address": "1149 FLORIDA AVE",
-      "old_account": "0315-0008-0140",
-      "new_account": "0232-0004-0100",
-      "norm_address": "1149 FLORIDA AVE"
-    },
-    {
-      "doc_num": "2025003988",
-      "prop_address": "1609 PAMONA",
-      "old_account": "6285-0002-0110",
-      "new_account": "4049-0002-0030",
-      "norm_address": "1609 PAMONA"
-    },
-    {
-      "doc_num": "2025004116",
-      "prop_address": "1006 19th ST",
-      "old_account": "0480-0005-0030",
-      "new_account": "0489-0003-0060",
-      "norm_address": "1006 19TH ST"
-    },
-    {
-      "doc_num": "2025004122",
-      "prop_address": "406 KING AVE",
-      "old_account": "4380-0000-0410",
-      "new_account": "0043-0004-0180",
-      "norm_address": "406 KING AVE"
-    },
-    {
-      "doc_num": "2025004097",
-      "prop_address": "1518 CRAIG ST",
-      "old_account": "8289-0024-0120",
-      "new_account": "0487-0005-0093",
-      "norm_address": "1518 CRAIG ST"
-    },
-    {
-      "doc_num": "2025023832",
-      "prop_address": "425 HOMECREST",
-      "old_account": "1391-0006-0010",
-      "new_account": "0038-0000-0260",
-      "norm_address": "425 HOMECREST"
-    },
-    {
-      "doc_num": "2025027088",
-      "prop_address": "1601 MARY ST",
-      "old_account": "8414-0005-0011",
-      "new_account": "8414-0005-0010",
-      "norm_address": "1601 MARY ST"
-    },
-    {
-      "doc_num": "2025027077",
-      "prop_address": "4106 SIERRA",
-      "old_account": "8013-0007-0120",
-      "new_account": "9446-0006-0180",
-      "norm_address": "4106 SIERRA"
-    },
-    {
-      "doc_num": "2024032618",
-      "prop_address": "3122 SOUTHERN SUN DR",
-      "old_account": "3810-0002-0380",
-      "new_account": "1976-0009-0380",
-      "norm_address": "3122 SOUTHERN SUN DR"
-    },
-    {
-      "doc_num": "2024024735",
-      "prop_address": "3637 CUB ST",
-      "old_account": "9039-0002-0290",
-      "new_account": "0072-0006-0040",
-      "norm_address": "3637 CUB ST"
-    },
-    {
-      "doc_num": "2025026235",
-      "prop_address": "3818 Colima St",
-      "old_account": "5938-0007-0050",
-      "new_account": "5938-0006-0010",
-      "norm_address": "3818 COLIMA ST"
-    },
-    {
-      "doc_num": "2025026211",
-      "prop_address": "434 AIRPORT RD",
-      "old_account": "7634-0003-0650",
-      "new_account": "1795-0001-0290",
-      "norm_address": "434 AIRPORT RD"
-    },
-    {
-      "doc_num": "2025026267",
-      "prop_address": "311 ASHBURN AVE",
-      "old_account": "1010-0006-0110",
-      "new_account": "8466-0003-0060",
-      "norm_address": "311 ASHBURN AVE"
-    },
-    {
-      "doc_num": "2024037555",
-      "prop_address": "2728 AIRLINE RD",
-      "old_account": "1220-0003-0050",
-      "new_account": "0465-0030-0010",
-      "norm_address": "2728 AIRLINE RD"
-    },
-    {
-      "doc_num": "2025010162",
-      "prop_address": "1441 CLODAH DR",
-      "old_account": "5310-0005-0010",
-      "new_account": "2020-0002-0200",
-      "norm_address": "1441 CLODAH DR"
-    },
-    {
-      "doc_num": "2025010231",
-      "prop_address": "419 MACLEOD DR",
+      "doc_num": "2024035046",
+      "prop_address": "4825 LARCADE DR",
       "old_account": "",
-      "new_account": "7750-0005-0100",
-      "norm_address": "419 MACLEOD DR"
+      "new_account": "8289-0024-0120",
+      "norm_address": "4825 LARCADE DR"
     },
     {
-      "doc_num": "2025023852",
-      "prop_address": "434 AIRPORT RD",
-      "old_account": "1984-0001-0060",
-      "new_account": "1795-0001-0290",
-      "norm_address": "434 AIRPORT RD"
+      "doc_num": "2024020326",
+      "prop_address": "7005 TAOS DR",
+      "old_account": "8163-0001-0180",
+      "new_account": "0944-0003-0620",
+      "norm_address": "7005 TAOS DR"
     },
     {
-      "doc_num": "2024017255",
-      "prop_address": "15933 CUTTYSARK ST",
-      "old_account": "8187-0006-0200",
-      "new_account": "1780-0016-0200",
-      "norm_address": "15933 CUTTYSARK ST"
+      "doc_num": "2024017241",
+      "prop_address": "5410 NICOLE CT",
+      "old_account": "5000-0010-0130",
+      "new_account": "2327-0002-0120",
+      "norm_address": "5410 NICOLE CT"
     },
     {
-      "doc_num": "2024031480",
-      "prop_address": "2918 WINTERS",
-      "old_account": "1518-0000-0050",
-      "new_account": "1518-0000-0060",
-      "norm_address": "2918 WINTERS"
+      "doc_num": "2024037578",
+      "prop_address": "686 KAIPO DR",
+      "old_account": "0591-0003-0180",
+      "new_account": "0591-0003-0170",
+      "norm_address": "686 KAIPO DR"
     },
     {
-      "doc_num": "2024031485",
-      "prop_address": "1520 MESTINA",
-      "old_account": "7891-0004-0310",
-      "new_account": "3795-0009-0050",
-      "norm_address": "1520 MESTINA"
+      "doc_num": "2024032711",
+      "prop_address": "4522 TOWNSEND",
+      "old_account": "2127-0013-0180",
+      "new_account": "1579-0002-0170",
+      "norm_address": "4522 TOWNSEND"
     },
     {
-      "doc_num": "2024031502",
-      "prop_address": "2501 TERRACE ST",
-      "old_account": "4570-0002-0010",
-      "new_account": "0481-1703-0010",
-      "norm_address": "2501 TERRACE ST"
+      "doc_num": "2024032632",
+      "prop_address": "5446 BULLDOG LN",
+      "old_account": "0481-1601-0470",
+      "new_account": "0420-0050-0400",
+      "norm_address": "5446 BULLDOG LN"
     },
     {
-      "doc_num": "2024031503",
-      "prop_address": "2501 TERRACE ST",
-      "old_account": "4570-0002-0010",
-      "new_account": "0481-1703-0010",
-      "norm_address": "2501 TERRACE ST"
+      "doc_num": "2024032639",
+      "prop_address": "5888 HALL AVE",
+      "old_account": "5000-0017-0170",
+      "new_account": "2232-0000-2170",
+      "norm_address": "5888 HALL AVE"
     },
     {
-      "doc_num": "2024031557",
-      "prop_address": "4009 COLUMBIA RIVER DR",
-      "old_account": "2335-0003-0090",
-      "new_account": "5784-0002-0020",
-      "norm_address": "4009 COLUMBIA RIVER DR"
+      "doc_num": "2024032615",
+      "prop_address": "6214 BREWTON DR",
+      "old_account": "2451-1503-0630",
+      "new_account": "7791-0008-0100",
+      "norm_address": "6214 BREWTON DR"
     },
     {
-      "doc_num": "2024037569",
-      "prop_address": "4040 VIOLET RD",
-      "old_account": "6745-0005-0100",
-      "new_account": "5860-0000-0060",
-      "norm_address": "4040 VIOLET RD"
+      "doc_num": "2024032851",
+      "prop_address": "6317 TRAILMASTER",
+      "old_account": "1974-0003-0150",
+      "new_account": "7097-0005-0010",
+      "norm_address": "6317 TRAILMASTER"
     },
     {
-      "doc_num": "2024037581",
-      "prop_address": "311 ASHBURN AVE",
-      "old_account": "1010-0006-0110",
-      "new_account": "8466-0003-0060",
-      "norm_address": "311 ASHBURN AVE"
+      "doc_num": "2024032751",
+      "prop_address": "625 EAST",
+      "old_account": "2996-0005-0210",
+      "new_account": "1532-0004-0080",
+      "norm_address": "625 EAST"
     },
     {
-      "doc_num": "2024037598",
-      "prop_address": "1609 PAMONA",
-      "old_account": "3795-0009-0060",
-      "new_account": "4049-0002-0030",
-      "norm_address": "1609 PAMONA"
+      "doc_num": "2024039608",
+      "prop_address": "515 EAST",
+      "old_account": "2050-0020-0200",
+      "new_account": "1532-0004-0120",
+      "norm_address": "515 EAST"
     },
     {
-      "doc_num": "2024037546",
-      "prop_address": "3217 SANTA CRUZ DR",
-      "old_account": "4130-0012-0010",
-      "new_account": "9098-0003-0110",
-      "norm_address": "3217 SANTA CRUZ DR"
+      "doc_num": "2025000321",
+      "prop_address": "834 PURDUE RD",
+      "old_account": "2833-0002-0020",
+      "new_account": "8437-0001-0010",
+      "norm_address": "834 PURDUE RD"
     },
     {
-      "doc_num": "2024020347",
-      "prop_address": "29 TOWNHOUSE LN",
-      "old_account": "9957-0000-0030",
-      "new_account": "1305-0001-0290",
-      "norm_address": "29 TOWNHOUSE LN"
+      "doc_num": "2025004750",
+      "prop_address": "717 CROWN HARBOR",
+      "old_account": "9019-0030-3100",
+      "new_account": "6979-0001-0760",
+      "norm_address": "717 CROWN HARBOR"
     },
     {
-      "doc_num": "2024020329",
-      "prop_address": "3325 BRAWNER PKWY",
-      "old_account": "4985-0007-0110",
-      "new_account": "4240-0003-0207",
-      "norm_address": "3325 BRAWNER PKWY"
+      "doc_num": "2025010135",
+      "prop_address": "4618 KIRKWOOD DR",
+      "old_account": "0596-0004-0230",
+      "new_account": "1492-0004-0220",
+      "norm_address": "4618 KIRKWOOD DR"
     },
     {
-      "doc_num": "2025000200",
-      "prop_address": "1102 GREENLANE DR",
-      "old_account": "4072-0009-0030",
-      "new_account": "9046-0007-0110",
-      "norm_address": "1102 GREENLANE DR"
+      "doc_num": "2025010152",
+      "prop_address": "7013 EDGEBROOK DR",
+      "old_account": "1863-0019-0070",
+      "new_account": "1653-0001-0160",
+      "norm_address": "7013 EDGEBROOK DR"
     },
     {
-      "doc_num": "2025000208",
-      "prop_address": "3638 FAIRCHILD",
-      "old_account": "5140-0003-0010",
-      "new_account": "0072-0006-0230",
-      "norm_address": "3638 FAIRCHILD"
+      "doc_num": "2025010196",
+      "prop_address": "4805 FERN FOREST CIR",
+      "old_account": "4032-0002-0370",
+      "new_account": "1653-0003-0250",
+      "norm_address": "4805 FERN FOREST CIR"
     },
     {
-      "doc_num": "2025000221",
-      "prop_address": "1009 S BROWNLEE BLVD",
-      "old_account": "8163-0002-0080",
-      "new_account": "0487-0007-0030",
-      "norm_address": "1009 S BROWNLEE BLVD"
+      "doc_num": "2025014025",
+      "prop_address": "7713 COUNTY RD 7B CIR",
+      "old_account": "5758-0001-0020",
+      "new_account": "2476-0026-2110",
+      "norm_address": "7713 COUNTY RD 7B CIR"
     },
     {
-      "doc_num": "2025000258",
-      "prop_address": "3601 PECAN",
-      "old_account": "7675-0005-0220",
-      "new_account": "1324-0002-0010",
-      "norm_address": "3601 PECAN"
+      "doc_num": "2025010844",
+      "prop_address": "5101 MARGARET AVE",
+      "old_account": "9579-0001-0180",
+      "new_account": "9579-0001-0090",
+      "norm_address": "5101 MARGARET AVE"
     },
     {
-      "doc_num": "2024032657",
-      "prop_address": "3602 TIGER LN",
-      "old_account": "7750-0008-0290",
-      "new_account": "1311-0004-0290",
-      "norm_address": "3602 TIGER LN"
+      "doc_num": "2024032855",
+      "prop_address": "4633 NEWBURY LN",
+      "old_account": "7977-0003-0120",
+      "new_account": "1359-0023-0090",
+      "norm_address": "4633 NEWBURY LN"
     },
     {
-      "doc_num": "2024032697",
-      "prop_address": "1609 PAMONA",
-      "old_account": "3795-0009-0060",
-      "new_account": "4049-0002-0030",
-      "norm_address": "1609 PAMONA"
+      "doc_num": "2024031558",
+      "prop_address": "740 CHEYENNE",
+      "old_account": "2682-0003-0170",
+      "new_account": "6458-0000-0125",
+      "norm_address": "740 CHEYENNE"
     },
     {
-      "doc_num": "2024032614",
-      "prop_address": "2730 BLAKE",
-      "old_account": "4062-0003-0010",
-      "new_account": "7038-0001-0080",
-      "norm_address": "2730 BLAKE"
+      "doc_num": "2025000186",
+      "prop_address": "740 CHEYENNE",
+      "old_account": "2682-0003-0170",
+      "new_account": "6458-0000-0125",
+      "norm_address": "740 CHEYENNE"
     },
     {
-      "doc_num": "2024032640",
-      "prop_address": "2637 WAINWRIGHT",
-      "old_account": "4007-0009-0095",
-      "new_account": "4032-0004-0420",
-      "norm_address": "2637 WAINWRIGHT"
+      "doc_num": "2025004091",
+      "prop_address": "4726 EASTER DR",
+      "old_account": "8724-0013-0080",
+      "new_account": "8289-0011-0030",
+      "norm_address": "4726 EASTER DR"
     },
     {
-      "doc_num": "2024032822",
-      "prop_address": "29 TOWNHOUSE LN",
-      "old_account": "6458-0000-0338",
-      "new_account": "1305-0001-0290",
-      "norm_address": "29 TOWNHOUSE LN"
+      "doc_num": "2025004038",
+      "prop_address": "4455 S PADRE ISLAND DR STE 45C",
+      "old_account": "2540-0011-0260",
+      "new_account": "6802-0002-0020",
+      "norm_address": "4455 S PADRE ISLAND DR"
     },
     {
-      "doc_num": "2024032793",
-      "prop_address": "3602 TIGER LN",
-      "old_account": "7750-0008-0290",
-      "new_account": "1311-0004-0290",
-      "norm_address": "3602 TIGER LN"
+      "doc_num": "2025004013",
+      "prop_address": "934 ERWIN AVE",
+      "old_account": "3232-0004-0310",
+      "new_account": "2164-0002-0100",
+      "norm_address": "934 ERWIN AVE"
     },
     {
-      "doc_num": "2024035023",
-      "prop_address": "1425 ORMOND DR",
+      "doc_num": "2025004162",
+      "prop_address": "717 CROWN HARBOR",
+      "old_account": "9019-0030-3304",
+      "new_account": "6979-0001-0760",
+      "norm_address": "717 CROWN HARBOR"
+    },
+    {
+      "doc_num": "2025023833",
+      "prop_address": "7441 PIPER DR",
+      "old_account": "7615-0002-0200",
+      "new_account": "7460-0002-0090",
+      "norm_address": "7441 PIPER DR"
+    },
+    {
+      "doc_num": "2024028986",
+      "prop_address": "6150 BIRCHWOOD DR",
+      "old_account": "4403-0003-0140",
+      "new_account": "1233-0001-0140",
+      "norm_address": "6150 BIRCHWOOD DR"
+    },
+    {
+      "doc_num": "2024016602",
+      "prop_address": "6709 WHITEWING DR",
+      "old_account": "3380-0002-0130",
+      "new_account": "3651-0108-0310",
+      "norm_address": "6709 WHITEWING DR"
+    },
+    {
+      "doc_num": "2025003983",
+      "prop_address": "7013 EDGEBROOK DR",
+      "old_account": "1974-0004-0060",
+      "new_account": "1653-0001-0160",
+      "norm_address": "7013 EDGEBROOK DR"
+    },
+    {
+      "doc_num": "2024035642",
+      "prop_address": "6370 FITZHUGH DR",
       "old_account": "",
-      "new_account": "4261-0003-0330",
-      "norm_address": "1425 ORMOND DR"
+      "new_account": "9896-0006-0140",
+      "norm_address": "6370 FITZHUGH DR"
     },
     {
-      "doc_num": "2024035002",
-      "prop_address": "1520 LAZY LN",
+      "doc_num": "2024017246",
+      "prop_address": "5426 CURTIS CLARK DR",
+      "old_account": "4240-0003-0140",
+      "new_account": "2709-0004-0310",
+      "norm_address": "5426 CURTIS CLARK DR"
+    },
+    {
+      "doc_num": "2024031528",
+      "prop_address": "5513 GREENWOOD DR",
+      "old_account": "8990-0002-0080",
+      "new_account": "1466-0002-0010",
+      "norm_address": "5513 GREENWOOD DR"
+    },
+    {
+      "doc_num": "2024031559",
+      "prop_address": "4910 WEXFORD DR",
+      "old_account": "2277-0004-0100",
+      "new_account": "5426-0007-0030",
+      "norm_address": "4910 WEXFORD DR"
+    },
+    {
+      "doc_num": "2024031564",
+      "prop_address": "9402 HUNTINGTON DR",
+      "old_account": "8409-0010-0375",
+      "new_account": "0245-0007-0210",
+      "norm_address": "9402 HUNTINGTON DR"
+    },
+    {
+      "doc_num": "2024037552",
+      "prop_address": "6778 COUNTY RD 48",
+      "old_account": "7609-0002-0090",
+      "new_account": "1910-0001-0110",
+      "norm_address": "6778 COUNTY RD 48"
+    },
+    {
+      "doc_num": "2024034275",
+      "prop_address": "6422 BIRMINGHAM ST",
+      "old_account": "2828-0010-0020",
+      "new_account": "0062-0003-0060",
+      "norm_address": "6422 BIRMINGHAM ST"
+    },
+    {
+      "doc_num": "2024020343",
+      "prop_address": "5938 KIMBROUGH DR",
+      "old_account": "2164-0004-0060",
+      "new_account": "1994-0010-0180",
+      "norm_address": "5938 KIMBROUGH DR"
+    },
+    {
+      "doc_num": "2024020357",
+      "prop_address": "4641 SHEFFIELD LN",
+      "old_account": "5281-0012-0016",
+      "new_account": "8445-0002-0110",
+      "norm_address": "4641 SHEFFIELD LN"
+    },
+    {
+      "doc_num": "2025000195",
+      "prop_address": "4806 JEAN",
+      "old_account": "4072-0007-0420",
+      "new_account": "4465-0004-0080",
+      "norm_address": "4806 JEAN"
+    },
+    {
+      "doc_num": "2024032860",
+      "prop_address": "6825 ELBA CT",
+      "old_account": "0488-0003-0060",
+      "new_account": "2603-0001-0160",
+      "norm_address": "6825 ELBA CT"
+    },
+    {
+      "doc_num": "2024032579",
+      "prop_address": "749 POST AVE",
+      "old_account": "9880-0006-0185",
+      "new_account": "0072-0004-0130",
+      "norm_address": "749 POST AVE"
+    },
+    {
+      "doc_num": "2024035025",
+      "prop_address": "4501 TOTTON DR",
       "old_account": "",
-      "new_account": "9921-0006-0030",
-      "norm_address": "1520 LAZY LN"
+      "new_account": "6365-0012-0070",
+      "norm_address": "4501 TOTTON DR"
     },
     {
-      "doc_num": "2024034993",
-      "prop_address": "42 ROCK CREEK DR",
-      "old_account": "1989-0014-0280",
-      "new_account": "7445-0002-0420",
-      "norm_address": "42 ROCK CREEK DR"
-    },
-    {
-      "doc_num": "2024034999",
-      "prop_address": "2917 ADA ST",
+      "doc_num": "2024035041",
+      "prop_address": "4661 CINDY LN",
       "old_account": "",
-      "new_account": "3232-0006-0050",
-      "norm_address": "2917 ADA ST"
+      "new_account": "4762-0250-2270",
+      "norm_address": "4661 CINDY LN"
     },
     {
-      "doc_num": "2024035040",
-      "prop_address": "4009 BAHAMA DR",
+      "doc_num": "2024035012",
+      "prop_address": "913 HALLMARK PL",
       "old_account": "",
-      "new_account": "4712-0003-0030",
-      "norm_address": "4009 BAHAMA DR"
+      "new_account": "5260-0001-0520",
+      "norm_address": "913 HALLMARK PL"
     },
     {
-      "doc_num": "2024035042",
-      "prop_address": "220 N PORT AVE",
+      "doc_num": "2024034998",
+      "prop_address": "867 GONZALES ST",
       "old_account": "",
-      "new_account": "4565-0001-0460",
-      "norm_address": "220 N PORT AVE"
+      "new_account": "7639-0003-0490",
+      "norm_address": "867 GONZALES ST"
     },
     {
-      "doc_num": "2024035654",
-      "prop_address": "3934 NAPLES",
+      "doc_num": "2024035000",
+      "prop_address": "6610 BELVOIR AVE",
       "old_account": "",
-      "new_account": "0239-0012-0170",
-      "norm_address": "3934 NAPLES"
+      "new_account": "0871-0004-0140",
+      "norm_address": "6610 BELVOIR AVE"
     },
     {
-      "doc_num": "2024035660",
-      "prop_address": "2109 HOWARD",
+      "doc_num": "2024034051",
+      "prop_address": "902 MCDONALD ST",
+      "old_account": "2540-0011-0270",
+      "new_account": "2540-0011-0260",
+      "norm_address": "902 MCDONALD ST"
+    },
+    {
+      "doc_num": "2024034052",
+      "prop_address": "902 MCDONALD ST",
+      "old_account": "2540-0011-0280",
+      "new_account": "2540-0011-0260",
+      "norm_address": "902 MCDONALD ST"
+    },
+    {
+      "doc_num": "2024035629",
+      "prop_address": "5402 ERIN DR",
       "old_account": "",
-      "new_account": "9640-0002-0090",
-      "norm_address": "2109 HOWARD"
+      "new_account": "4135-0000-0080",
+      "norm_address": "5402 ERIN DR"
     },
     {
-      "doc_num": "2024031547",
-      "prop_address": "119 E DRAGON ST",
-      "old_account": "0762-0002-0020",
-      "new_account": "2154-0026-0010",
-      "norm_address": "119 E DRAGON ST"
-    },
-    {
-      "doc_num": "2024043231",
-      "prop_address": "3602 TIGER LN",
-      "old_account": "7750-0008-0290",
-      "new_account": "1311-0004-0290",
-      "norm_address": "3602 TIGER LN"
-    },
-    {
-      "doc_num": "2024039615",
-      "prop_address": "1520 MESTINA",
-      "old_account": "7891-0004-0310",
-      "new_account": "3795-0009-0050",
-      "norm_address": "1520 MESTINA"
-    },
-    {
-      "doc_num": "2024043254",
-      "prop_address": "2917 ADA ST",
-      "old_account": "1585-0004-0080",
-      "new_account": "3232-0006-0050",
-      "norm_address": "2917 ADA ST"
-    },
-    {
-      "doc_num": "2025000304",
-      "prop_address": "15129 CANE HARBOR BLVD",
-      "old_account": "8928-0007-0540",
-      "new_account": "1240-0038-0130",
-      "norm_address": "15129 CANE HARBOR BLVD"
-    },
-    {
-      "doc_num": "2025008639",
-      "prop_address": "3602 TIGER LN",
-      "old_account": "7750-0008-0290",
-      "new_account": "1311-0004-0290",
-      "norm_address": "3602 TIGER LN"
-    },
-    {
-      "doc_num": "2025008637",
-      "prop_address": "2730 BLAKE",
-      "old_account": "4062-0003-0010",
-      "new_account": "7038-0001-0080",
-      "norm_address": "2730 BLAKE"
-    },
-    {
-      "doc_num": "2025013994",
-      "prop_address": "318 JUNIPER DR",
-      "old_account": "4135-0000-0080",
-      "new_account": "5943-0002-0230",
-      "norm_address": "318 JUNIPER DR"
-    },
-    {
-      "doc_num": "2025026260",
-      "prop_address": "333 HIAWATHA",
-      "old_account": "9495-0003-0030",
-      "new_account": "0315-0008-0090",
-      "norm_address": "333 HIAWATHA"
-    },
-    {
-      "doc_num": "2024020336",
-      "prop_address": "4109 RAMSEY",
-      "old_account": "4032-0006-0110",
-      "new_account": "1989-0011-0230",
-      "norm_address": "4109 RAMSEY"
-    },
-    {
-      "doc_num": "2025010178",
-      "prop_address": "434 AIRPORT RD",
-      "old_account": "1984-0001-0060",
-      "new_account": "1795-0001-0290",
-      "norm_address": "434 AIRPORT RD"
-    },
-    {
-      "doc_num": "2025026203",
-      "prop_address": "2728 AIRLINE RD",
-      "old_account": "1220-0003-0050",
-      "new_account": "0465-0030-0010",
-      "norm_address": "2728 AIRLINE RD"
-    },
-    {
-      "doc_num": "2024032750",
-      "prop_address": "2728 AIRLINE RD",
-      "old_account": "1220-0003-0050",
-      "new_account": "0465-0030-0010",
-      "norm_address": "2728 AIRLINE RD"
-    },
-    {
-      "doc_num": "2025003968",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "old_account": "2277-0002-0010",
-      "new_account": "9019-0010-1118",
-      "norm_address": "3938 SURFSIDE BLVD"
-    },
-    {
-      "doc_num": "2025004068",
-      "prop_address": "2304 HATCH ST",
-      "old_account": "8013-0005-0080",
-      "new_account": "8013-0005-0070",
-      "norm_address": "2304 HATCH ST"
-    },
-    {
-      "doc_num": "2025004010",
-      "prop_address": "3317 WASHINGTON",
-      "old_account": "5820-0001-0170",
-      "new_account": "3232-0009-0050",
-      "norm_address": "3317 WASHINGTON"
-    },
-    {
-      "doc_num": "2025000299",
-      "prop_address": "2503 GOLIAD DR",
-      "old_account": "1989-0014-0280",
-      "new_account": "3380-0004-0090",
-      "norm_address": "2503 GOLIAD DR"
-    },
-    {
-      "doc_num": "2025004746",
-      "prop_address": "15201 LEEWARD DR",
-      "old_account": "9019-0030-3104",
-      "new_account": "4343-0000-0101",
-      "norm_address": "15201 LEEWARD DR"
-    },
-    {
-      "doc_num": "2025004740",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "old_account": "9019-0030-3204",
-      "new_account": "9019-0010-1118",
-      "norm_address": "3938 SURFSIDE BLVD"
-    },
-    {
-      "doc_num": "2025004779",
-      "prop_address": "3106 CREST VEIL DR",
-      "old_account": "9640-0002-0050",
-      "new_account": "1974-0004-0150",
-      "norm_address": "3106 CREST VEIL DR"
-    },
-    {
-      "doc_num": "2024037572",
-      "prop_address": "353 HIAWATHA",
-      "old_account": "5324-0006-0040",
-      "new_account": "0315-0008-0040",
-      "norm_address": "353 HIAWATHA"
-    },
-    {
-      "doc_num": "2025004144",
-      "prop_address": "333 HIAWATHA",
-      "old_account": "9495-0003-0030",
-      "new_account": "0315-0008-0090",
-      "norm_address": "333 HIAWATHA"
-    },
-    {
-      "doc_num": "2025004094",
-      "prop_address": "3238 GREENWOOD DR",
-      "old_account": "1396-0007-0160",
-      "new_account": "1396-0002-0040",
-      "norm_address": "3238 GREENWOOD DR"
-    },
-    {
-      "doc_num": "2025004165",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "old_account": "9019-0030-3301",
-      "new_account": "9019-0010-1118",
-      "norm_address": "3938 SURFSIDE BLVD"
-    },
-    {
-      "doc_num": "2025010158",
-      "prop_address": "1917 SHERMAN ST",
-      "old_account": "8289-0012-0150",
-      "new_account": "3810-0004-0150",
-      "norm_address": "1917 SHERMAN ST"
-    },
-    {
-      "doc_num": "2025004132",
-      "prop_address": "4030 HERNDON",
-      "old_account": "3417-0017-0010",
-      "new_account": "1685-0004-0020",
-      "norm_address": "4030 HERNDON"
-    },
-    {
-      "doc_num": "2025008679",
-      "prop_address": "4030 HERNDON",
-      "old_account": "3417-0017-0010",
-      "new_account": "1685-0004-0020",
-      "norm_address": "4030 HERNDON"
-    },
-    {
-      "doc_num": "2024034292",
-      "prop_address": "2009 S STAPLES ST",
-      "old_account": "0095-0008-0100",
-      "new_account": "6103-1406-0330",
-      "norm_address": "2009 S STAPLES ST"
-    },
-    {
-      "doc_num": "2024016616",
-      "prop_address": "3246 BRIARHURST",
-      "old_account": "0982-0002-0190",
-      "new_account": "0987-0010-0140",
-      "norm_address": "3246 BRIARHURST"
-    },
-    {
-      "doc_num": "2024020345",
-      "prop_address": "3409 MAHAN DR",
-      "old_account": "1760-0001-0130",
-      "new_account": "1670-0000-0120",
-      "norm_address": "3409 MAHAN DR"
-    },
-    {
-      "doc_num": "2024020301",
-      "prop_address": "3317 WASHINGTON",
-      "old_account": "5820-0018-0230",
-      "new_account": "3232-0009-0050",
-      "norm_address": "3317 WASHINGTON"
-    },
-    {
-      "doc_num": "2025004749",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "old_account": "9019-0030-3101",
-      "new_account": "9019-0010-1118",
-      "norm_address": "3938 SURFSIDE BLVD"
-    },
-    {
-      "doc_num": "2025004745",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "old_account": "9019-0030-3105",
-      "new_account": "9019-0010-1118",
-      "norm_address": "3938 SURFSIDE BLVD"
-    },
-    {
-      "doc_num": "2025004741",
-      "prop_address": "3129 SOUTHERN SUN DR",
-      "old_account": "9019-0030-3203",
-      "new_account": "1976-0009-0250",
-      "norm_address": "3129 SOUTHERN SUN DR"
-    },
-    {
-      "doc_num": "2025004789",
-      "prop_address": "1225 18th ST",
-      "old_account": "0486-0014-0060",
-      "new_account": "0489-0001-0170",
-      "norm_address": "1225 18TH ST"
-    },
-    {
-      "doc_num": "2025004788",
-      "prop_address": "1006 19th ST",
-      "old_account": "0480-0005-0030",
-      "new_account": "0489-0003-0060",
-      "norm_address": "1006 19TH ST"
-    },
-    {
-      "doc_num": "2025004764",
-      "prop_address": "353 HIAWATHA",
-      "old_account": "4565-0002-0630",
-      "new_account": "0315-0008-0040",
-      "norm_address": "353 HIAWATHA"
-    },
-    {
-      "doc_num": "2025003965",
-      "prop_address": "286 W VANDERBILT DR",
-      "old_account": "4984-0006-0070",
-      "new_account": "0239-0003-0040",
-      "norm_address": "286 W VANDERBILT DR"
-    },
-    {
-      "doc_num": "2025003986",
-      "prop_address": "1609 PAMONA",
-      "old_account": "6285-0002-0110",
-      "new_account": "4049-0002-0030",
-      "norm_address": "1609 PAMONA"
-    },
-    {
-      "doc_num": "2025004060",
-      "prop_address": "2958 SABINAS ST",
-      "old_account": "2277-0002-0020",
-      "new_account": "2277-0002-0010",
-      "norm_address": "2958 SABINAS ST"
-    },
-    {
-      "doc_num": "2025014033",
-      "prop_address": "3317 WASHINGTON",
-      "old_account": "5820-0015-0210",
-      "new_account": "3232-0009-0050",
-      "norm_address": "3317 WASHINGTON"
-    },
-    {
-      "doc_num": "2024034250",
-      "prop_address": "4009 COLUMBIA RIVER DR",
-      "old_account": "2335-0003-0090",
-      "new_account": "5784-0002-0020",
-      "norm_address": "4009 COLUMBIA RIVER DR"
-    },
-    {
-      "doc_num": "2025026204",
-      "prop_address": "2304 HATCH ST",
-      "old_account": "8013-0005-0080",
-      "new_account": "8013-0005-0070",
-      "norm_address": "2304 HATCH ST"
-    },
-    {
-      "doc_num": "2025026228",
-      "prop_address": "3317 WASHINGTON",
-      "old_account": "5820-0015-0210",
-      "new_account": "3232-0009-0050",
-      "norm_address": "3317 WASHINGTON"
-    },
-    {
-      "doc_num": "2025010148",
-      "prop_address": "3845 COBB LN",
-      "old_account": "8299-0006-0030",
-      "new_account": "7102-0000-1130",
-      "norm_address": "3845 COBB LN"
-    },
-    {
-      "doc_num": "2025010122",
-      "prop_address": "3818 Colima St",
-      "old_account": "5938-0007-0050",
-      "new_account": "5938-0006-0010",
-      "norm_address": "3818 COLIMA ST"
-    },
-    {
-      "doc_num": "2024043243",
-      "prop_address": "1006 19th ST",
-      "old_account": "0488-0001-0030",
-      "new_account": "0489-0003-0060",
-      "norm_address": "1006 19TH ST"
-    },
-    {
-      "doc_num": "2024035659",
-      "prop_address": "2009 CRAIG ST",
-      "old_account": "9640-0001-0130",
-      "new_account": "0488-0010-0030",
-      "norm_address": "2009 CRAIG ST"
-    },
-    {
-      "doc_num": "2024032622",
-      "prop_address": "13802 JOLLY ROGER ST",
-      "old_account": "3415-0002-0030",
-      "new_account": "0426-0002-0150",
-      "norm_address": "13802 JOLLY ROGER ST"
-    },
-    {
-      "doc_num": "2024032788",
-      "prop_address": "13938 JIBSTAY ST",
-      "old_account": "8163-0002-0080",
-      "new_account": "0427-0710-0120",
-      "norm_address": "13938 JIBSTAY ST"
-    },
-    {
-      "doc_num": "2024032771",
-      "prop_address": "3317 WASHINGTON",
-      "old_account": "5820-0018-0230",
-      "new_account": "3232-0009-0050",
-      "norm_address": "3317 WASHINGTON"
-    },
-    {
-      "doc_num": "2024032761",
-      "prop_address": "1108 WHISPERING SANDS ST",
-      "old_account": "3134-0002-0160",
-      "new_account": "7986-0006-0050",
-      "norm_address": "1108 WHISPERING SANDS ST"
-    },
-    {
-      "doc_num": "2024032789",
-      "prop_address": "4009 BAHAMA DR",
-      "old_account": "1585-0004-0430",
-      "new_account": "4712-0003-0030",
-      "norm_address": "4009 BAHAMA DR"
-    },
-    {
-      "doc_num": "2024032871",
-      "prop_address": "4009 BAHAMA DR",
-      "old_account": "1585-0004-0430",
-      "new_account": "4712-0003-0030",
-      "norm_address": "4009 BAHAMA DR"
-    },
-    {
-      "doc_num": "2024032857",
-      "prop_address": "29 TOWNHOUSE LN",
-      "old_account": "6458-0000-0338",
-      "new_account": "1305-0001-0290",
-      "norm_address": "29 TOWNHOUSE LN"
-    },
-    {
-      "doc_num": "2024032845",
-      "prop_address": "2958 SABINAS ST",
-      "old_account": "2277-0002-0020",
-      "new_account": "2277-0002-0010",
-      "norm_address": "2958 SABINAS ST"
-    },
-    {
-      "doc_num": "2024032843",
-      "prop_address": "2734 GUADALUPE",
-      "old_account": "1390-0002-0120",
-      "new_account": "1390-0002-0110",
-      "norm_address": "2734 GUADALUPE"
-    },
-    {
-      "doc_num": "2024032781",
-      "prop_address": "3353 CRESTHILL DR",
-      "old_account": "0595-0011-0120",
-      "new_account": "1971-0006-0150",
-      "norm_address": "3353 CRESTHILL DR"
-    },
-    {
-      "doc_num": "2024032783",
-      "prop_address": "4106 SIERRA",
-      "old_account": "8013-0007-0120",
-      "new_account": "9446-0006-0180",
-      "norm_address": "4106 SIERRA"
-    },
-    {
-      "doc_num": "2024033954",
-      "prop_address": "14881 LIGHTHOUSE DR",
-      "old_account": "2996-0004-0170",
-      "new_account": "0429-0716-0190",
-      "norm_address": "14881 LIGHTHOUSE DR"
-    },
-    {
-      "doc_num": "2024034334",
-      "prop_address": "1301 15th ST",
-      "old_account": "0481-4300-0090",
-      "new_account": "0481-1300-0090",
-      "norm_address": "1301 15TH ST"
-    },
-    {
-      "doc_num": "2024034332",
-      "prop_address": "2950 RIVER BEND CT",
-      "old_account": "3443-0023-0220",
-      "new_account": "1975-0015-0130",
-      "norm_address": "2950 RIVER BEND CT"
-    },
-    {
-      "doc_num": "2024033976",
-      "prop_address": "42 ROCK CREEK DR",
-      "old_account": "1989-0014-0280",
-      "new_account": "7445-0002-0420",
-      "norm_address": "42 ROCK CREEK DR"
-    },
-    {
-      "doc_num": "2024034303",
-      "prop_address": "3106 CREST VEIL DR",
-      "old_account": "9640-0002-0050",
-      "new_account": "1974-0004-0150",
-      "norm_address": "3106 CREST VEIL DR"
-    },
-    {
-      "doc_num": "2024035628",
-      "prop_address": "1041 VERNON DR",
+      "doc_num": "2024035636",
+      "prop_address": "512 ELMORE DR",
       "old_account": "",
-      "new_account": "2132-0005-0130",
-      "norm_address": "1041 VERNON DR"
+      "new_account": "7750-0008-0280",
+      "norm_address": "512 ELMORE DR"
     },
     {
-      "doc_num": "2024035019",
-      "prop_address": "220 N PORT AVE",
+      "doc_num": "2024035652",
+      "prop_address": "5030 KOSAREK DR",
       "old_account": "",
-      "new_account": "4565-0001-0460",
-      "norm_address": "220 N PORT AVE"
+      "new_account": "4403-0007-0030",
+      "norm_address": "5030 KOSAREK DR"
     },
     {
-      "doc_num": "2024035053",
-      "prop_address": "3137 HUISACHE",
+      "doc_num": "2024035664",
+      "prop_address": "445 GLENMORE",
       "old_account": "",
-      "new_account": "0515-0000-1090",
-      "norm_address": "3137 HUISACHE"
+      "new_account": "9289-0002-0060",
+      "norm_address": "445 GLENMORE"
     },
     {
-      "doc_num": "2024034992",
-      "prop_address": "3009 SABINAS",
+      "doc_num": "2024033987",
+      "prop_address": "4625 COVENTRY LN",
+      "old_account": "5983-0005-0070",
+      "new_account": "8449-0003-0070",
+      "norm_address": "4625 COVENTRY LN"
+    },
+    {
+      "doc_num": "2024043258",
+      "prop_address": "6825 ELBA CT",
+      "old_account": "0488-0003-0060",
+      "new_account": "2603-0001-0160",
+      "norm_address": "6825 ELBA CT"
+    },
+    {
+      "doc_num": "2025020597",
+      "prop_address": "5550 SUNRISE TRL",
+      "old_account": "8304-0002-0210",
+      "new_account": "9908-0001-0110",
+      "norm_address": "5550 SUNRISE TRL"
+    },
+    {
+      "doc_num": "2025020592",
+      "prop_address": "5550 SUNRISE TRL",
+      "old_account": "8304-0002-0200",
+      "new_account": "9908-0001-0110",
+      "norm_address": "5550 SUNRISE TRL"
+    },
+    {
+      "doc_num": "2025008635",
+      "prop_address": "5410 NICOLE CT",
+      "old_account": "5000-0010-0130",
+      "new_account": "2327-0002-0120",
+      "norm_address": "5410 NICOLE CT"
+    },
+    {
+      "doc_num": "2025014046",
+      "prop_address": "6909 FRUITWOOD DR",
+      "old_account": "2000-0030-0300",
+      "new_account": "3698-0007-0030",
+      "norm_address": "6909 FRUITWOOD DR"
+    },
+    {
+      "doc_num": "2025026247",
+      "prop_address": "4613 MONETTE DR",
+      "old_account": "6103-0015-0015",
+      "new_account": "1035-0009-0085",
+      "norm_address": "4613 MONETTE DR"
+    },
+    {
+      "doc_num": "2025010842",
+      "prop_address": "7013 EDGEBROOK DR",
+      "old_account": "1974-0004-0060",
+      "new_account": "1653-0001-0160",
+      "norm_address": "7013 EDGEBROOK DR"
+    },
+    {
+      "doc_num": "2025004034",
+      "prop_address": "902 MCDONALD ST",
+      "old_account": "2540-0011-0270",
+      "new_account": "2540-0011-0260",
+      "norm_address": "902 MCDONALD ST"
+    },
+    {
+      "doc_num": "2024020354",
+      "prop_address": "7005 TAOS DR",
+      "old_account": "8163-0001-0180",
+      "new_account": "0944-0003-0620",
+      "norm_address": "7005 TAOS DR"
+    },
+    {
+      "doc_num": "2024031512",
+      "prop_address": "6214 BREWTON DR",
+      "old_account": "2451-1503-0630",
+      "new_account": "7791-0008-0100",
+      "norm_address": "6214 BREWTON DR"
+    },
+    {
+      "doc_num": "2025000307",
+      "prop_address": "505 PUEBLO",
+      "old_account": "4130-0017-0090",
+      "new_account": "0315-0003-0150",
+      "norm_address": "505 PUEBLO"
+    },
+    {
+      "doc_num": "2025004114",
+      "prop_address": "686 KAIPO DR",
+      "old_account": "0591-0003-0180",
+      "new_account": "0591-0003-0170",
+      "norm_address": "686 KAIPO DR"
+    },
+    {
+      "doc_num": "2025004101",
+      "prop_address": "4910 WEXFORD DR",
+      "old_account": "2277-0004-0100",
+      "new_account": "5426-0007-0030",
+      "norm_address": "4910 WEXFORD DR"
+    },
+    {
+      "doc_num": "2025010190",
+      "prop_address": "454 OHIO AVE",
+      "old_account": "5820-0005-0250",
+      "new_account": "2055-0001-0290",
+      "norm_address": "454 OHIO AVE"
+    },
+    {
+      "doc_num": "2025008654",
+      "prop_address": "4649 CHRISTIE",
+      "old_account": "9764-0007-0280",
+      "new_account": "7511-0001-0030",
+      "norm_address": "4649 CHRISTIE"
+    },
+    {
+      "doc_num": "2024020353",
+      "prop_address": "7005 TAOS DR",
+      "old_account": "8163-0001-0180",
+      "new_account": "0944-0003-0620",
+      "norm_address": "7005 TAOS DR"
+    },
+    {
+      "doc_num": "2024017247",
+      "prop_address": "5426 CURTIS CLARK DR",
+      "old_account": "4240-0003-0140",
+      "new_account": "2709-0004-0310",
+      "norm_address": "5426 CURTIS CLARK DR"
+    },
+    {
+      "doc_num": "2024017245",
+      "prop_address": "5426 CURTIS CLARK DR",
+      "old_account": "4240-0003-0140",
+      "new_account": "2709-0004-0310",
+      "norm_address": "5426 CURTIS CLARK DR"
+    },
+    {
+      "doc_num": "2024035653",
+      "prop_address": "4534 TOWNSEND",
+      "old_account": "2420-0001-0320",
+      "new_account": "1579-0002-0140",
+      "norm_address": "4534 TOWNSEND"
+    },
+    {
+      "doc_num": "2024032854",
+      "prop_address": "4633 NEWBURY LN",
+      "old_account": "7977-0003-0120",
+      "new_account": "1359-0023-0090",
+      "norm_address": "4633 NEWBURY LN"
+    },
+    {
+      "doc_num": "2025004778",
+      "prop_address": "4929 SHADOWBEND DR",
+      "old_account": "0945-0004-0010",
+      "new_account": "1650-0004-0440",
+      "norm_address": "4929 SHADOWBEND DR"
+    },
+    {
+      "doc_num": "2025004025",
+      "prop_address": "902 MCDONALD ST",
+      "old_account": "2540-0011-0280",
+      "new_account": "2540-0011-0260",
+      "norm_address": "902 MCDONALD ST"
+    },
+    {
+      "doc_num": "2025004154",
+      "prop_address": "6014 PENDLETON DR",
+      "old_account": "6458-0000-0045",
+      "new_account": "1979-0001-0060",
+      "norm_address": "6014 PENDLETON DR"
+    },
+    {
+      "doc_num": "2025004161",
+      "prop_address": "717 CROWN HARBOR",
+      "old_account": "9019-0030-3305",
+      "new_account": "6979-0001-0760",
+      "norm_address": "717 CROWN HARBOR"
+    },
+    {
+      "doc_num": "2025004141",
+      "prop_address": "808 MCBRIDE LN",
+      "old_account": "4135-0000-0015",
+      "new_account": "4135-0000-0010",
+      "norm_address": "808 MCBRIDE LN"
+    },
+    {
+      "doc_num": "2025014049",
+      "prop_address": "5513 GREENWOOD DR",
+      "old_account": "8990-0002-0080",
+      "new_account": "1466-0002-0010",
+      "norm_address": "5513 GREENWOOD DR"
+    },
+    {
+      "doc_num": "2025014019",
+      "prop_address": "5505 BONNER DR",
+      "old_account": "5463-0004-0060",
+      "new_account": "2702-0006-0060",
+      "norm_address": "5505 BONNER DR"
+    },
+    {
+      "doc_num": "2024032642",
+      "prop_address": "749 POST AVE",
+      "old_account": "7685-0001-0050",
+      "new_account": "0072-0004-0130",
+      "norm_address": "749 POST AVE"
+    },
+    {
+      "doc_num": "2025020596",
+      "prop_address": "5550 SUNRISE TRL",
+      "old_account": "8304-0002-0160",
+      "new_account": "9908-0001-0110",
+      "norm_address": "5550 SUNRISE TRL"
+    },
+    {
+      "doc_num": "2025020707",
+      "prop_address": "5513 GREENWOOD DR",
+      "old_account": "8990-0002-0080",
+      "new_account": "1466-0002-0010",
+      "norm_address": "5513 GREENWOOD DR"
+    },
+    {
+      "doc_num": "2025020706",
+      "prop_address": "908 TO 916 ALAMEDA ST N",
+      "old_account": "3515-0019-0010",
+      "new_account": "0797-0049-0090",
+      "norm_address": "908 N TO 916 ALAMEDA ST"
+    },
+    {
+      "doc_num": "2025010846",
+      "prop_address": "6778 COUNTY RD 48",
+      "old_account": "7609-0002-0090",
+      "new_account": "1910-0001-0110",
+      "norm_address": "6778 COUNTY RD 48"
+    },
+    {
+      "doc_num": "2024032877",
+      "prop_address": "740 CHEYENNE",
+      "old_account": "2682-0003-0170",
+      "new_account": "6458-0000-0125",
+      "norm_address": "740 CHEYENNE"
+    },
+    {
+      "doc_num": "2024032580",
+      "prop_address": "686 KAIPO DR",
+      "old_account": "0591-0003-0190",
+      "new_account": "0591-0003-0170",
+      "norm_address": "686 KAIPO DR"
+    },
+    {
+      "doc_num": "2024032578",
+      "prop_address": "686 KAIPO DR",
+      "old_account": "0591-0003-0180",
+      "new_account": "0591-0003-0170",
+      "norm_address": "686 KAIPO DR"
+    },
+    {
+      "doc_num": "2024033946",
+      "prop_address": "514 FRANCESCA ST",
+      "old_account": "8284-0017-0030",
+      "new_account": "7634-0004-0310",
+      "norm_address": "514 FRANCESCA ST"
+    },
+    {
+      "doc_num": "2024034277",
+      "prop_address": "8837 IRIS AVE",
+      "old_account": "1613-0005-0100",
+      "new_account": "1613-0005-0030",
+      "norm_address": "8837 IRIS AVE"
+    },
+    {
+      "doc_num": "2024034287",
+      "prop_address": "5518 FOX RUN DR",
+      "old_account": "3416-0010-0180",
+      "new_account": "3652-0101-0150",
+      "norm_address": "5518 FOX RUN DR"
+    },
+    {
+      "doc_num": "2024034291",
+      "prop_address": "9402 HUNTINGTON DR",
+      "old_account": "8409-0010-0375",
+      "new_account": "0245-0007-0210",
+      "norm_address": "9402 HUNTINGTON DR"
+    },
+    {
+      "doc_num": "2024031546",
+      "prop_address": "4641 SHEFFIELD LN",
+      "old_account": "5281-0012-0016",
+      "new_account": "8445-0002-0110",
+      "norm_address": "4641 SHEFFIELD LN"
+    },
+    {
+      "doc_num": "2024035027",
+      "prop_address": "514 FRANCESCA ST",
       "old_account": "",
-      "new_account": "2175-0001-0150",
-      "norm_address": "3009 SABINAS"
+      "new_account": "7634-0004-0310",
+      "norm_address": "514 FRANCESCA ST"
     },
     {
-      "doc_num": "2024035018",
-      "prop_address": "1006 19th ST",
+      "doc_num": "2024035034",
+      "prop_address": "5505 BONNER DR",
       "old_account": "",
-      "new_account": "0489-0003-0060",
-      "norm_address": "1006 19TH ST"
+      "new_account": "2702-0006-0060",
+      "norm_address": "5505 BONNER DR"
     },
     {
-      "doc_num": "2024037563",
-      "prop_address": "3601 PECAN",
-      "old_account": "7675-0005-0220",
-      "new_account": "1324-0002-0010",
-      "norm_address": "3601 PECAN"
+      "doc_num": "2024032753",
+      "prop_address": "4625 COVENTRY LN",
+      "old_account": "5983-0005-0070",
+      "new_account": "8449-0003-0070",
+      "norm_address": "4625 COVENTRY LN"
     },
     {
-      "doc_num": "2024037588",
-      "prop_address": "1006 19th ST",
-      "old_account": "0480-0005-0030",
-      "new_account": "0489-0003-0060",
-      "norm_address": "1006 19TH ST"
+      "doc_num": "2025000326",
+      "prop_address": "8837 IRIS AVE",
+      "old_account": "1613-0005-0100",
+      "new_account": "1613-0005-0030",
+      "norm_address": "8837 IRIS AVE"
     },
     {
-      "doc_num": "2024037571",
-      "prop_address": "4009 BAHAMA DR",
-      "old_account": "1585-0004-0430",
-      "new_account": "4712-0003-0030",
-      "norm_address": "4009 BAHAMA DR"
+      "doc_num": "2025014002",
+      "prop_address": "7013 EDGEBROOK DR",
+      "old_account": "1974-0004-0060",
+      "new_account": "1653-0001-0160",
+      "norm_address": "7013 EDGEBROOK DR"
     },
     {
-      "doc_num": "2024032649",
-      "prop_address": "4009 BAHAMA DR",
-      "old_account": "1585-0004-0430",
-      "new_account": "4712-0003-0030",
-      "norm_address": "4009 BAHAMA DR"
+      "doc_num": "2025020713",
+      "prop_address": "4405 MARIE",
+      "old_account": "2077-0001-0010",
+      "new_account": "3164-0006-0270",
+      "norm_address": "4405 MARIE"
     },
     {
-      "doc_num": "2024032678",
-      "prop_address": "1609 PAMONA",
-      "old_account": "3795-0009-0060",
-      "new_account": "4049-0002-0030",
-      "norm_address": "1609 PAMONA"
+      "doc_num": "2024037542",
+      "prop_address": "5888 HALL AVE",
+      "old_account": "5000-0017-0170",
+      "new_account": "2232-0000-2170",
+      "norm_address": "5888 HALL AVE"
     },
     {
-      "doc_num": "2024043257",
-      "prop_address": "4106 FONVILLA CIR",
-      "old_account": "7891-0006-0290",
-      "new_account": "1220-0005-0060",
-      "norm_address": "4106 FONVILLA CIR"
+      "doc_num": "2024043265",
+      "prop_address": "7013 EDGEBROOK DR",
+      "old_account": "4137-0019-0130",
+      "new_account": "1653-0001-0160",
+      "norm_address": "7013 EDGEBROOK DR"
     },
     {
-      "doc_num": "2025000260",
-      "prop_address": "2109 CAROLYN DR",
-      "old_account": "9495-0002-0160",
-      "new_account": "1185-0004-0200",
-      "norm_address": "2109 CAROLYN DR"
+      "doc_num": "2024043264",
+      "prop_address": "7013 EDGEBROOK DR",
+      "old_account": "6320-0007-0110",
+      "new_account": "1653-0001-0160",
+      "norm_address": "7013 EDGEBROOK DR"
     },
     {
-      "doc_num": "2025000259",
-      "prop_address": "3217 SANTA CRUZ DR",
-      "old_account": "4130-0012-0010",
-      "new_account": "9098-0003-0110",
-      "norm_address": "3217 SANTA CRUZ DR"
+      "doc_num": "2025003996",
+      "prop_address": "5505 BONNER DR",
+      "old_account": "5463-0004-0060",
+      "new_account": "2702-0006-0060",
+      "norm_address": "5505 BONNER DR"
     },
     {
-      "doc_num": "2025004110",
-      "prop_address": "2728 AIRLINE RD",
-      "old_account": "1220-0003-0050",
-      "new_account": "0465-0030-0010",
-      "norm_address": "2728 AIRLINE RD"
+      "doc_num": "2025004039",
+      "prop_address": "4522 TOWNSEND",
+      "old_account": "2127-0013-0180",
+      "new_account": "1579-0002-0170",
+      "norm_address": "4522 TOWNSEND"
     },
     {
-      "doc_num": "2024032623",
-      "prop_address": "434 AIRPORT RD",
-      "old_account": "1984-0001-0060",
-      "new_account": "1795-0001-0290",
-      "norm_address": "434 AIRPORT RD"
+      "doc_num": "2024033944",
+      "prop_address": "515 EAST",
+      "old_account": "2050-0020-0200",
+      "new_account": "1532-0004-0120",
+      "norm_address": "515 EAST"
     },
     {
-      "doc_num": "2024020323",
-      "prop_address": "434 AIRPORT RD",
-      "old_account": "1984-0001-0060",
-      "new_account": "1795-0001-0290",
-      "norm_address": "434 AIRPORT RD"
+      "doc_num": "2024034247",
+      "prop_address": "6749 LEOPARD ST",
+      "old_account": "1760-0001-0160",
+      "new_account": "0132-0002-0070",
+      "norm_address": "6749 LEOPARD ST"
     },
     {
-      "doc_num": "2025010179",
-      "prop_address": "2009 S STAPLES ST",
-      "old_account": "0095-0008-0100",
-      "new_account": "6103-1406-0330",
-      "norm_address": "2009 S STAPLES ST"
+      "doc_num": "2024037577",
+      "prop_address": "686 KAIPO DR",
+      "old_account": "0591-0003-0190",
+      "new_account": "0591-0003-0170",
+      "norm_address": "686 KAIPO DR"
     },
     {
-      "doc_num": "2025000223",
-      "prop_address": "3637 CUB ST",
-      "old_account": "9039-0002-0290",
-      "new_account": "0072-0006-0040",
-      "norm_address": "3637 CUB ST"
+      "doc_num": "2024037551",
+      "prop_address": "4522 TOWNSEND",
+      "old_account": "2127-0013-0180",
+      "new_account": "1579-0002-0170",
+      "norm_address": "4522 TOWNSEND"
     },
     {
-      "doc_num": "2024037594",
-      "prop_address": "3637 CUB ST",
-      "old_account": "9039-0002-0290",
-      "new_account": "0072-0006-0040",
-      "norm_address": "3637 CUB ST"
-    },
-    {
-      "doc_num": "2024043255",
-      "prop_address": "2021 CRAIG ST",
-      "old_account": "5361-0004-0010",
-      "new_account": "0488-0010-0050",
-      "norm_address": "2021 CRAIG ST"
-    },
-    {
-      "doc_num": "2024016618",
-      "prop_address": "3246 BRIARHURST",
-      "old_account": "0982-0002-0190",
-      "new_account": "0987-0010-0140",
-      "norm_address": "3246 BRIARHURST"
-    },
-    {
-      "doc_num": "2024034271",
-      "prop_address": "1108 WHISPERING SANDS ST",
-      "old_account": "3134-0002-0160",
-      "new_account": "7986-0006-0050",
-      "norm_address": "1108 WHISPERING SANDS ST"
-    },
-    {
-      "doc_num": "2024035050",
-      "prop_address": "1625 COMANCHE ST",
+      "doc_num": "2024035003",
+      "prop_address": "617 DUNCAN ST",
       "old_account": "",
-      "new_account": "6463-0009-0070",
-      "norm_address": "1625 COMANCHE ST"
+      "new_account": "7634-0001-0250",
+      "norm_address": "617 DUNCAN ST"
     },
     {
-      "doc_num": "2024032602",
-      "prop_address": "15933 CUTTYSARK ST",
-      "old_account": "8187-0006-0200",
-      "new_account": "1780-0016-0200",
-      "norm_address": "15933 CUTTYSARK ST"
-    },
-    {
-      "doc_num": "2024035626",
-      "prop_address": "1205 NAGLE",
+      "doc_num": "2024034977",
+      "prop_address": "8837 IRIS AVE",
       "old_account": "",
-      "new_account": "2775-0008-0230",
-      "norm_address": "1205 NAGLE"
+      "new_account": "1613-0005-0030",
+      "norm_address": "8837 IRIS AVE"
     },
     {
-      "doc_num": "2024035625",
-      "prop_address": "1654 16th ST",
+      "doc_num": "2025027105",
+      "prop_address": "4522 TOWNSEND",
+      "old_account": "2127-0013-0180",
+      "new_account": "1579-0002-0170",
+      "norm_address": "4522 TOWNSEND"
+    },
+    {
+      "doc_num": "2025026222",
+      "prop_address": "808 MCBRIDE LN",
+      "old_account": "4135-0000-0015",
+      "new_account": "4135-0000-0010",
+      "norm_address": "808 MCBRIDE LN"
+    },
+    {
+      "doc_num": "2024032833",
+      "prop_address": "445 GLENMORE",
+      "old_account": "1495-0025-0130",
+      "new_account": "9289-0002-0060",
+      "norm_address": "445 GLENMORE"
+    },
+    {
+      "doc_num": "2024032645",
+      "prop_address": "6778 COUNTY RD 48",
+      "old_account": "7609-0002-0090",
+      "new_account": "1910-0001-0110",
+      "norm_address": "6778 COUNTY RD 48"
+    },
+    {
+      "doc_num": "2024032800",
+      "prop_address": "7441 PIPER DR",
+      "old_account": "7615-0002-0200",
+      "new_account": "7460-0002-0090",
+      "norm_address": "7441 PIPER DR"
+    },
+    {
+      "doc_num": "2025020678",
+      "prop_address": "908 TO 916 ALAMEDA ST N",
+      "old_account": "1695-0013-0070",
+      "new_account": "0797-0049-0090",
+      "norm_address": "908 N TO 916 ALAMEDA ST"
+    },
+    {
+      "doc_num": "2025020595",
+      "prop_address": "5550 SUNRISE TRL",
+      "old_account": "8304-0002-0170",
+      "new_account": "9908-0001-0110",
+      "norm_address": "5550 SUNRISE TRL"
+    },
+    {
+      "doc_num": "2025000210",
+      "prop_address": "4641 SHEFFIELD LN",
+      "old_account": "5281-0012-0016",
+      "new_account": "8445-0002-0110",
+      "norm_address": "4641 SHEFFIELD LN"
+    },
+    {
+      "doc_num": "2025000240",
+      "prop_address": "5513 GREENWOOD DR",
+      "old_account": "8990-0002-0080",
+      "new_account": "1466-0002-0010",
+      "norm_address": "5513 GREENWOOD DR"
+    },
+    {
+      "doc_num": "2024035643",
+      "prop_address": "818 ERWIN",
       "old_account": "",
-      "new_account": "2451-1303-0590",
-      "norm_address": "1654 16TH ST"
-    },
-    {
-      "doc_num": "2025020631",
-      "prop_address": "15129 CANE HARBOR BLVD",
-      "old_account": "8928-0007-0540",
-      "new_account": "1240-0038-0130",
-      "norm_address": "15129 CANE HARBOR BLVD"
-    },
-    {
-      "doc_num": "2024016584",
-      "prop_address": "2917 ADA ST",
-      "old_account": "1585-0004-0080",
-      "new_account": "3232-0006-0050",
-      "norm_address": "2917 ADA ST"
-    },
-    {
-      "doc_num": "2025004055",
-      "prop_address": "29 TOWNHOUSE LN",
-      "old_account": "6458-0000-0338",
-      "new_account": "1305-0001-0290",
-      "norm_address": "29 TOWNHOUSE LN"
-    },
-    {
-      "doc_num": "2025008636",
-      "prop_address": "4101 LOWMAN",
-      "old_account": "1795-0012-0140",
-      "new_account": "1685-0003-0170",
-      "norm_address": "4101 LOWMAN"
-    },
-    {
-      "doc_num": "2025008640",
-      "prop_address": "13802 JOLLY ROGER ST",
-      "old_account": "3415-0002-0030",
-      "new_account": "0426-0002-0150",
-      "norm_address": "13802 JOLLY ROGER ST"
-    },
-    {
-      "doc_num": "2025010161",
-      "prop_address": "1441 CLODAH DR",
-      "old_account": "5310-0005-0010",
-      "new_account": "2020-0002-0200",
-      "norm_address": "1441 CLODAH DR"
-    },
-    {
-      "doc_num": "2024034269",
-      "prop_address": "1006 19th ST",
-      "old_account": "0480-0005-0030",
-      "new_account": "0489-0003-0060",
-      "norm_address": "1006 19TH ST"
-    },
-    {
-      "doc_num": "2024034346",
-      "prop_address": "1006 19th ST",
-      "old_account": "0480-0005-0030",
-      "new_account": "0489-0003-0060",
-      "norm_address": "1006 19TH ST"
-    },
-    {
-      "doc_num": "2024034361",
-      "prop_address": "1901 SUNTIDE RD",
-      "old_account": "9767-0029-0230",
-      "new_account": "2142-0001-0350",
-      "norm_address": "1901 SUNTIDE RD"
-    },
-    {
-      "doc_num": "2024037573",
-      "prop_address": "2730 BLAKE",
-      "old_account": "4062-0003-0010",
-      "new_account": "7038-0001-0080",
-      "norm_address": "2730 BLAKE"
-    },
-    {
-      "doc_num": "2024035051",
-      "prop_address": "410 DIXON DR",
-      "old_account": "",
-      "new_account": "9028-0004-0150",
-      "norm_address": "410 DIXON DR"
-    },
-    {
-      "doc_num": "2024020298",
-      "prop_address": "2917 ADA ST",
-      "old_account": "1585-0004-0080",
-      "new_account": "3232-0006-0050",
-      "norm_address": "2917 ADA ST"
-    },
-    {
-      "doc_num": "2025004742",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "old_account": "9019-0030-3202",
-      "new_account": "9019-0010-1118",
-      "norm_address": "3938 SURFSIDE BLVD"
-    },
-    {
-      "doc_num": "2025004783",
-      "prop_address": "1321 W BROADWAY BLVD",
-      "old_account": "0797-0069-0040",
-      "new_account": "0797-0069-0030",
-      "norm_address": "1321 W BROADWAY BLVD"
-    },
-    {
-      "doc_num": "2025027117",
-      "prop_address": "13802 JOLLY ROGER ST",
-      "old_account": "3415-0002-0030",
-      "new_account": "0426-0002-0150",
-      "norm_address": "13802 JOLLY ROGER ST"
-    },
-    {
-      "doc_num": "2024032653",
-      "prop_address": "2734 GUADALUPE",
-      "old_account": "1390-0002-0120",
-      "new_account": "1390-0002-0110",
-      "norm_address": "2734 GUADALUPE"
-    },
-    {
-      "doc_num": "2024032636",
-      "prop_address": "4101 LOWMAN",
-      "old_account": "1795-0012-0140",
-      "new_account": "1685-0003-0170",
-      "norm_address": "4101 LOWMAN"
-    },
-    {
-      "doc_num": "2024032766",
-      "prop_address": "1210 7th ST",
-      "old_account": "3593-0001-0110",
-      "new_account": "0486-0011-0180",
-      "norm_address": "1210 7TH ST"
-    },
-    {
-      "doc_num": "2024032582",
-      "prop_address": "1215 WINNEBAGO ST",
-      "old_account": "9253-0002-0030",
-      "new_account": "0797-0049-0070",
-      "norm_address": "1215 WINNEBAGO ST"
-    },
-    {
-      "doc_num": "2024032637",
-      "prop_address": "3637 CUB ST",
-      "old_account": "9039-0002-0290",
-      "new_account": "0072-0006-0040",
-      "norm_address": "3637 CUB ST"
-    },
-    {
-      "doc_num": "2025023851",
-      "prop_address": "2958 SABINAS ST",
-      "old_account": "2277-0002-0020",
-      "new_account": "2277-0002-0010",
-      "norm_address": "2958 SABINAS ST"
-    },
-    {
-      "doc_num": "2025020681",
-      "prop_address": "3106 CREST VEIL DR",
-      "old_account": "9640-0002-0050",
-      "new_account": "1974-0004-0150",
-      "norm_address": "3106 CREST VEIL DR"
-    },
-    {
-      "doc_num": "2025004042",
-      "prop_address": "434 AIRPORT RD",
-      "old_account": "1984-0001-0060",
-      "new_account": "1795-0001-0290",
-      "norm_address": "434 AIRPORT RD"
-    },
-    {
-      "doc_num": "2024033958",
-      "prop_address": "2021 CRAIG ST",
-      "old_account": "5361-0004-0010",
-      "new_account": "0488-0010-0050",
-      "norm_address": "2021 CRAIG ST"
-    },
-    {
-      "doc_num": "2025000242",
-      "prop_address": "4040 VIOLET RD",
-      "old_account": "6745-0005-0100",
-      "new_account": "5860-0000-0060",
-      "norm_address": "4040 VIOLET RD"
-    },
-    {
-      "doc_num": "2024031522",
-      "prop_address": "2021 CRAIG ST",
-      "old_account": "5361-0004-0010",
-      "new_account": "0488-0010-0050",
-      "norm_address": "2021 CRAIG ST"
+      "new_account": "9866-0002-0041",
+      "norm_address": "818 ERWIN"
     }
   ]
 }
