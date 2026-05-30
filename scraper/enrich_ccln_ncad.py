@@ -50,6 +50,11 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlencode
+
+# BeautifulSoup parses the result-page HTML. lxml is fastest; html.parser
+# is the fallback when lxml isn't available.
+from bs4 import BeautifulSoup
 
 # We rely on the matcher we hardened for the Sanchez fix. It lives in
 # the same scraper/ dir so an in-process import is fine.
@@ -155,6 +160,14 @@ def parse_address_for_query(addr: str) -> Optional[Tuple[str, str]]:
     # Strip a city/state/zip tail if any slipped through (NCAD wants
     # just the street portion).
     s = re.sub(r",\s*[A-Z\s]+(?:\s+[A-Z]{2})?\s+\d{5}.*$", "", s)
+    # Strip trailing bare unit numbers (e.g. "1002 FRANCESCA ST 12" →
+    # "1002 FRANCESCA ST"). The grouping-normalizer only catches
+    # explicit UNIT/APT/STE/# prefixes; bare trailing digit suffixes on
+    # apartment buildings slip through and they prevent NCAD matching.
+    # Conservative: only strip if there's a 4+ char alpha street name
+    # word before the trailing number, so we don't accidentally chop
+    # the "2" from real addresses like "100 STATE HWY 2".
+    s = re.sub(r"^(\d+(?:-\d+)?\s+.+?[A-Z]{4}.*?)\s+\d{1,4}$", r"\1", s)
     m = re.match(r"^(\d+)(?:-\d+)?\s+(.+)$", s)
     if not m:
         return None
@@ -240,15 +253,20 @@ async def run_query(page: Page, token: str, street_num: str,
     """Run one esearch query and parse the result rows. Returns []
     when esearch shows the no-results panel (NOT for transport errors —
     those bubble as exceptions).
+
+    Mirrors fetch.py's proven query construction: build the URL with
+    `urlencode` (spaces inside the keywords value become '+', NOT '%20'
+    — the latter returns empty results, learned the hard way 2026-05-30
+    on the first dry-run of this script). Trailing space inside the
+    `keywords` value is preserved because fetch.py's version has it and
+    fetch.py works in production.
     """
-    # NB: NCAD uses spaces inside the `keywords` value, not %20.
-    # Playwright will URL-encode this for us, which is what the live
-    # site accepts; proven by fetch.py.
-    url = (
-        f"{ESEARCH_RESULT}?keywords="
-        f"StreetNumber:{street_num} StreetName:{street_name} Year:{year}"
-        f"&searchSessionToken={token}"
-    )
+    kw = (f"StreetNumber:{street_num} "
+          f"StreetName:{street_name} Year:{year} ")
+    params = {"keywords": kw}
+    if token:
+        params["searchSessionToken"] = token
+    url = f"{ESEARCH_RESULT}?{urlencode(params)}"
     await page.goto(url, wait_until="domcontentloaded",
                     timeout=PAGE_TIMEOUT_MS)
     # Wait for either a result row or the no-results panel.
@@ -258,32 +276,84 @@ async def run_query(page: Page, token: str, street_num: str,
             timeout=RESULT_WAIT_TIMEOUT_MS,
         )
     except Exception:
-        return []
+        # Selector timeout doesn't necessarily mean no rows — fall
+        # through to HTML parsing, which is the source of truth.
+        pass
     await page.wait_for_timeout(SETTLE_MS)
-    # Parse rows using BIS's stable CSS class names (memory note 16).
-    rows = await page.evaluate("""
-        () => {
-          const out = [];
-          const trs = document.querySelectorAll('table tbody tr');
-          trs.forEach(tr => {
-            const cell = (cls) => tr.querySelector('.' + cls)?.innerText?.trim() || '';
-            const onclickStr = tr.getAttribute('onclick') || '';
-            const ymatch = onclickStr.match(/redirectToPropertyDetails\\([^,]+,\\s*'?(\\d{4})'?/);
-            out.push({
-              prop_id:     cell('_propertyId'),
-              owner_id:    cell('_ownerId'),
-              owner_name:  cell('_ownerName'),
-              situs:       cell('_address'),
-              legal:       cell('_legalDescription'),
-              appraised:   cell('_appraisedValueDisplay'),
-              type_code:   cell('_propertyType'),
-              year:        ymatch ? ymatch[1] : '',
-            });
-          });
-          return out;
-        }
-    """)
-    return [EsearchRow(**{**r, "year": r.get("year") or year}) for r in rows]
+    html = await page.content()
+    return _parse_result_html(html, year)
+
+
+def _parse_money(s: str) -> str:
+    """Extract a clean dollar string from '$294,474' etc. Empty on
+    failure. Returns the original string format (without re-formatting)
+    so the dashboard can display it as-is."""
+    if not s:
+        return ""
+    m = re.search(r"\$?\s*[\d,]+(?:\.\d{1,2})?", s)
+    return m.group(0).strip() if m else ""
+
+
+def _parse_result_html(html: str, default_year: str) -> List[EsearchRow]:
+    """Parse the esearch result-list HTML into EsearchRow objects.
+
+    The BIS Consultants result table uses stable per-cell CSS class
+    names: `_propertyId`, `_ownerId`, `_ownerName`, `_address`,
+    `_propertyType`, `_legalDescription`, `_appraisedValueDisplay`.
+    The detail-page year comes out of the row's `onclick` JS handler:
+        redirectToPropertyDetails('200072779','2026','836310','false')
+    """
+    if not html:
+        return []
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
+
+    rows: List[EsearchRow] = []
+    for tr in soup.find_all("tr"):
+        if not tr.find("td"):
+            # header row
+            continue
+
+        def cell(cls: str) -> str:
+            c = tr.find("td", class_=cls)
+            return c.get_text(" ", strip=True) if c else ""
+
+        owner   = cell("_ownerName")
+        situs   = cell("_address")
+        ptype   = cell("_propertyType")
+        prop_id = cell("_propertyId")
+        legal   = cell("_legalDescription")
+        appr    = cell("_appraisedValueDisplay")
+        owner_id = cell("_ownerId")
+
+        detail_year = ""
+        onclick = tr.get("onclick") or ""
+        if onclick:
+            m = re.search(
+                r"redirectToPropertyDetails\(\s*'([^']*)'\s*,"
+                r"\s*'([^']*)'\s*,\s*'([^']*)'",
+                onclick)
+            if m:
+                detail_year = m.group(2)
+                if not owner_id:
+                    owner_id = m.group(3)
+
+        if not owner and not situs and not prop_id:
+            continue
+
+        rows.append(EsearchRow(
+            prop_id=prop_id,
+            owner_id=owner_id,
+            owner_name=owner,
+            situs=situs,
+            legal=legal,
+            appraised=_parse_money(appr),
+            type_code=ptype,
+            year=detail_year or default_year,
+        ))
+    return rows
 
 
 # ─── Mailing-address parsing (detail page) ──────────────────────────
