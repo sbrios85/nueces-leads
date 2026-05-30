@@ -342,6 +342,14 @@ def _parse_result_html(html: str, default_year: str) -> List[EsearchRow]:
         legal   = cell("_legalDescription")
         appr    = cell("_appraisedValueDisplay")
         owner_id = cell("_ownerId")
+        geo_id  = cell("_geoId")   # dashed canonical account number,
+                                   # e.g. "2540-0012-0140" — this is
+                                   # exactly the value we need for
+                                   # ncad_account_num. Confirmed via
+                                   # the cell-class diagnostic on the
+                                   # 2026-05-30 dry run. No detail-page
+                                   # fetch needed for the account; that
+                                   # cuts full-backfill runtime ~in half.
 
         detail_year = ""
         onclick = tr.get("onclick") or ""
@@ -367,6 +375,7 @@ def _parse_result_html(html: str, default_year: str) -> List[EsearchRow]:
             appraised=_parse_money(appr),
             type_code=ptype,
             year=detail_year or default_year,
+            account_num=geo_id,   # dashed canonical account from result page
         ))
     return rows
 
