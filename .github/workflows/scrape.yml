@@ -13,6 +13,10 @@ on:
         description: "One-time: re-attempt NCAD esearch lookups previously cached as misses (None). Use after matcher-logic changes to recover stale negatives. Leave OFF for normal runs."
         type: boolean
         default: false
+      skip_ccln_enrichment:
+        description: "Skip the daily CCLN→NCAD enrichment step (the one that attaches ncad_prop_id + corrects account numbers to new liens). Default OFF — enrichment runs every day, idempotent (already-enriched records skip in ~ms)."
+        type: boolean
+        default: false
 
 permissions:
   contents: write             # to commit records.json back to the repo
@@ -64,6 +68,32 @@ jobs:
           ESEARCH_RETRY_MISSES: ${{ inputs.esearch_retry_misses && '1' || '' }}
         run: python scraper/fetch.py
 
+      - name: Enrich new CCLN liens with NCAD (idempotent)
+        # Attaches ncad_prop_id / ncad_owner_id and CORRECTS the
+        # OCR'd ncad_account_num on any CCLN records the scraper just
+        # added. The script is fully idempotent: records that already
+        # have ncad_prop_id are skipped (unless force=true), and the
+        # shared NCAD cache (.cache/ncad_search_cache.json) means
+        # previously-seen addresses skip in ~ms. Typical daily
+        # incremental: <30 new addresses, ~1-2 min.
+        #
+        # continue-on-error: a NCAD hiccup must not block the scrape
+        # commit. New CCLN rows still ship with the OCR'd account
+        # number; the dashboard's _ambiguousAccounts guard catches
+        # any OCR collisions until next successful enrichment.
+        if: ${{ !inputs.skip_ccln_enrichment }}
+        continue-on-error: true
+        env:
+          LOG_LEVEL: INFO
+          PYTHONUNBUFFERED: "1"
+          # No fetch_mail in the daily auto-run — CCLN records already
+          # carry mail_address from the lien-PDF OCR, and the detail
+          # fetch ~doubles per-address time. Run the manual workflow
+          # with fetch_mail=true if you want to backfill mailing
+          # addresses for a specific batch.
+          CCLN_ENRICH_NO_MAIL: "1"
+        run: python scraper/enrich_ccln_ncad.py
+
       - name: Upload debug artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -81,6 +111,7 @@ jobs:
             dashboard/records.json data/records.json data/leads_for_ghl.csv \
             dashboard/foreclosures.json data/foreclosures.json data/foreclosures.csv \
             data/city_liens.json dashboard/city_liens.json \
+            data/ccln_enrichment_audit_*.json \
             .cache/ncad_search_cache.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no changes to commit"
