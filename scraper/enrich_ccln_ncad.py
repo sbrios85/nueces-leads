@@ -206,7 +206,13 @@ class EsearchRow:
     owner_name: str = ""
     situs: str = ""
     legal: str = ""
-    appraised: str = ""
+    appraised: float | None = None
+    # ^ from NCAD's _appraisedValueDisplay cell. NCAD displays a single
+    #   value in the esearch result list; the dashboard treats this as
+    #   market_value for CCLN records (path A, 2026-05-31 decision: the
+    #   esearch result-page number IS the market value for 95%+ of
+    #   residential properties — homestead caps and ag exemptions are
+    #   the rare exceptions, and CCLN leads are typically not homestead).
     type_code: str = ""   # 'R' real, 'P' personal
     year: str = DEFAULT_NCAD_YEAR
     account_num: str = ""   # geo/account ID (Geo ID col on detail)
@@ -284,14 +290,23 @@ async def run_query(page: Page, token: str, street_num: str,
     return _parse_result_html(html, year)
 
 
-def _parse_money(s: str) -> str:
-    """Extract a clean dollar string from '$294,474' etc. Empty on
-    failure. Returns the original string format (without re-formatting)
-    so the dashboard can display it as-is."""
+def _parse_money(s: str) -> float | None:
+    """Parse a dollar-formatted string like '$294,474' or '$1,234.50'
+    into a float. Returns None if no number can be extracted.
+
+    The dashboard expects raw numbers (not formatted strings) so it
+    can apply its own locale formatting via Number().toLocaleString().
+    This was the source of the 2026-05-31 '$NaN' bug — the old version
+    returned the original string format, which Number() coerced to NaN."""
     if not s:
-        return ""
-    m = re.search(r"\$?\s*[\d,]+(?:\.\d{1,2})?", s)
-    return m.group(0).strip() if m else ""
+        return None
+    m = re.search(r"\$?\s*([\d,]+(?:\.\d{1,2})?)", s)
+    if not m:
+        return None
+    try:
+        return float(m.group(1).replace(",", ""))
+    except ValueError:
+        return None
 
 
 def _parse_result_html(html: str, default_year: str) -> List[EsearchRow]:
@@ -653,7 +668,18 @@ async def enrich(
                     log.info("  retry_misses: re-attempting cached miss %r", norm)
                     # fall through to live lookup
                 elif "row" in cached:
-                    er.chosen = EsearchRow(**cached["row"])
+                    # Defensive: pre-2026-05-31 cache entries stored
+                    # `appraised` as a dollar-formatted string. Coerce
+                    # to float | None so downstream `r["market_value"]
+                    # = row.appraised` writes a number, never a string.
+                    # New cache entries already store floats (see
+                    # _parse_money), so this is a no-op on fresh data.
+                    cached_row = dict(cached["row"])
+                    if "appraised" in cached_row:
+                        v = cached_row["appraised"]
+                        if isinstance(v, str):
+                            cached_row["appraised"] = _parse_money(v)
+                    er.chosen = EsearchRow(**cached_row)
                     er.mail_address = cached.get("mail_address", "")
                     er.mail_city = cached.get("mail_city", "")
                     er.mail_state = cached.get("mail_state", "")
@@ -787,9 +813,13 @@ def apply_results_to_records(records: List[Dict[str, Any]],
             r["ncad_account_num"] = new_acct
         elif new_acct and not old_acct:
             r["ncad_account_num"] = new_acct
-        # Value fields — fill only if blank, don't overwrite user edits
-        if row.appraised and not r.get("appraised_value"):
-            r["appraised_value"] = row.appraised
+        # Value fields — fill only if blank, don't overwrite user edits.
+        # We write to `market_value` (not `appraised_value`) per the
+        # 2026-05-31 schema change. The value coming from NCAD's esearch
+        # result-page _appraisedValueDisplay cell IS the market value for
+        # 95%+ of residential properties; see EsearchRow.appraised comment.
+        if row.appraised is not None and r.get("market_value") in (None, ""):
+            r["market_value"] = row.appraised
         if res.mail_address and not r.get("mail_address"):
             r["mail_address"] = res.mail_address
         if res.mail_city and not r.get("mail_city"):
