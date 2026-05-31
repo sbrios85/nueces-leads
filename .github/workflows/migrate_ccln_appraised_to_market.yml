@@ -1,0 +1,78 @@
+# =============================================================
+# Migrate CCLN appraised_value → market_value
+# =============================================================
+# WHAT THIS DOES
+# --------------
+# Runs scraper/migrate_ccln_appraised_to_market.py once to fix records
+# where the CCLN NCAD enrichment (2026-05-30) wrote `appraised_value`
+# as a dollar-formatted string. The dashboard expected a number and
+# rendered "$NaN" on every row.
+#
+# This workflow:
+#   1. Parses each record's appraised_value string ("$28,315") to a number
+#   2. Writes the number to `market_value` (raw float, not a string)
+#   3. Deletes the orphan `appraised_value` field
+#   4. Commits data/city_liens.json AND dashboard/city_liens.json
+#
+# Idempotent — re-running on a clean file produces 0 changes and skips
+# the commit step. Safe to run multiple times.
+#
+# After running, hard-refresh the dashboard to confirm Market Value
+# renders correctly (you may also need to bump cache by running any
+# small backfill workflow).
+# =============================================================
+
+name: Migrate CCLN appraised→market
+
+on:
+  workflow_dispatch:
+
+# Need write to push the JSON updates back to main.
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run migration
+        run: python3 scraper/migrate_ccln_appraised_to_market.py
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected:"
+            git status --short
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes — nothing to commit."
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Migrate CCLN appraised_value→market_value
+
+          Fixes \$NaN render on CCLN Market Value column. Converts the
+          legacy dollar-formatted strings written by enrich_ccln_ncad.py
+          (2026-05-30) to raw float values and drops the appraised_value
+          field. See scraper/migrate_ccln_appraised_to_market.py for
+          details."
+          git push
