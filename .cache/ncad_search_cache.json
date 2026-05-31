@@ -1169,8 +1169,21 @@
     }
   },
   "ccln_addr::1218 HAYWARD DR": {
-    "miss": true,
-    "miss_reason": "no_corroboration"
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "7122-0001-0090",
+      "appraised": "$99,792",
+      "legal": "RAY W B HGTS UNDIV INT IN BLK 1 LOT 9",
+      "owner_id": "806856",
+      "owner_name": "RHODES ALYSON",
+      "prop_id": "290372",
+      "situs": "1218 HAYWARD DR, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
   },
   "ccln_addr::1218 MANCHESTER AVE": {
     "mail_address": "",
@@ -1241,8 +1254,21 @@
     }
   },
   "ccln_addr::1224 N STAPLES ST": {
-    "miss": true,
-    "miss_reason": "no_corroboration"
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1695-0015-0010",
+      "appraised": "$781",
+      "legal": "COLONIA MEXICANA LT 1 BLK SE/2 E",
+      "owner_id": "654814",
+      "owner_name": "HARDEMAN GATES",
+      "prop_id": "215041",
+      "situs": "1224 N STAPLES ST, CORPUS CHRISTI TX 78401",
+      "type_code": "R",
+      "year": "2026"
+    }
   },
   "ccln_addr::1225 12TH ST": {
     "mail_address": "",
@@ -1483,8 +1509,21 @@
     }
   },
   "ccln_addr::1318 W CHERRYSTONE": {
-    "miss": true,
-    "miss_reason": "no_corroboration"
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "3347-0004-0050",
+      "appraised": "$291,954",
+      "legal": "HERITAGE PARK BLK 4 LOT 5",
+      "owner_id": "723304",
+      "owner_name": "RUIZ SANDRA",
+      "prop_id": "242445",
+      "situs": "1318 W CHERRYSTONE, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
   },
   "ccln_addr::1320 STILLMAN AVE": {
     "mail_address": "",
@@ -7183,12 +7222,38 @@
     }
   },
   "ccln_addr::3949 BALDWIN BLVD": {
-    "miss": true,
-    "miss_reason": "no_corroboration"
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1795-0003-0120",
+      "appraised": "$37,680",
+      "legal": "CORONADO UNDIV INT IN LT 12 BK 3",
+      "owner_id": "674601",
+      "owner_name": "DALTON JERRY N",
+      "prop_id": "217382",
+      "situs": "3949 BALDWIN BLVD, CORPUS CHRISTI TX 78405",
+      "type_code": "R",
+      "year": "2026"
+    }
   },
   "ccln_addr::4005 ACUSHNET DR": {
-    "miss": true,
-    "miss_reason": "no_corroboration"
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1876-0001-0089",
+      "appraised": "$132,110",
+      "legal": "COUNTRY CLUB ESTATES #32 ACUSHNET TOWNHOMES UNIT A LOT 9-AR BK 1 & 1/10 UND INT IN COMMON AREA",
+      "owner_id": "156577",
+      "owner_name": "LOZANO JOHNNY M JR",
+      "prop_id": "219672",
+      "situs": "4005 ACUSHNET DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
   },
   "ccln_addr::4009 BAHAMA DR": {
     "mail_address": "",
@@ -7242,8 +7307,21 @@
     }
   },
   "ccln_addr::4016 OAK FOREST DR": {
-    "miss": true,
-    "miss_reason": "no_corroboration"
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "1876-0001-0127",
+      "appraised": "$139,080",
+      "legal": "COUNTRY CLUB ESTATES #32 LT 12-R UNIT G & 1/10 GCE BLK 1",
+      "owner_id": "832940",
+      "owner_name": "MORTON BRENDA K",
+      "prop_id": "219698",
+      "situs": "4016 OAK FOREST DR, CORPUS CHRISTI TX 78413",
+      "type_code": "R",
+      "year": "2026"
+    }
   },
   "ccln_addr::4018 W VANDERBILT DR": {
     "mail_address": "",
@@ -7824,8 +7902,21 @@
     }
   },
   "ccln_addr::425 ROBERT DR": {
-    "miss": true,
-    "miss_reason": "no_corroboration"
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0086-0003-0090",
+      "appraised": "$112,621",
+      "legal": "ALAMEDA ESTATES LT 9-C BLK 3",
+      "owner_id": "685189",
+      "owner_name": "GALVAN RODOLFO JR",
+      "prop_id": "182821",
+      "situs": "425 ROBERT DR, CORPUS CHRISTI TX 78412",
+      "type_code": "R",
+      "year": "2026"
+    }
   },
   "ccln_addr::426 MILITARY DR": {
     "mail_address": "",
@@ -9718,8 +9809,21 @@
     }
   },
   "ccln_addr::502 E 2ND ST": {
-    "miss": true,
-    "miss_reason": "no_corroboration"
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "0696-0044-0090",
+      "appraised": "$110,057",
+      "legal": "BISHOP T/S LT 9 BLK 44 & ADJ ST",
+      "owner_id": "687769",
+      "owner_name": "BROWN MARY L",
+      "prop_id": "195159",
+      "situs": "502 E 2nd ST, BISHOP TX 78343",
+      "type_code": "R",
+      "year": "2026"
+    }
   },
   "ccln_addr::502 N BROWNLEE BLVD": {
     "mail_address": "",
@@ -9926,8 +10030,21 @@
     }
   },
   "ccln_addr::522 SANTA MONICA PL": {
-    "miss": true,
-    "miss_reason": "no_corroboration"
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "6855-0014-0210",
+      "appraised": "$133,287",
+      "legal": "POPE PL 2 UNDIV INT IN LT 21 BK 14",
+      "owner_id": "824233",
+      "owner_name": "PENA RICHARD II & WF ERICA LUNA",
+      "prop_id": "287026",
+      "situs": "522 SANTA MONICA PL, CORPUS CHRISTI TX 78411",
+      "type_code": "R",
+      "year": "2026"
+    }
   },
   "ccln_addr::522 WEBB": {
     "mail_address": "",

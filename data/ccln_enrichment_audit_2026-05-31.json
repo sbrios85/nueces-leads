@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-05-31T03:25:39Z",
+  "total_changes": 16,
+  "changes": [
+    {
+      "doc_num": "2024033966",
+      "prop_address": "425 ROBERT DR",
+      "old_account": "4062-0002-0070",
+      "new_account": "0086-0003-0090",
+      "norm_address": "425 ROBERT DR"
+    },
+    {
+      "doc_num": "2024020324",
+      "prop_address": "522 SANTA MONICA PL",
+      "old_account": "1010-0005-0080",
+      "new_account": "6855-0014-0210",
+      "norm_address": "522 SANTA MONICA PL"
+    },
+    {
+      "doc_num": "2024031555",
+      "prop_address": "4005 ACUSHNET DR",
+      "old_account": "5623-0014-0070",
+      "new_account": "1876-0001-0089",
+      "norm_address": "4005 ACUSHNET DR"
+    },
+    {
+      "doc_num": "2024031560",
+      "prop_address": "522 SANTA MONICA PL",
+      "old_account": "1010-0005-0080",
+      "new_account": "6855-0014-0210",
+      "norm_address": "522 SANTA MONICA PL"
+    },
+    {
+      "doc_num": "2025000263",
+      "prop_address": "3949 BALDWIN BLVD",
+      "old_account": "8187-0004-0200",
+      "new_account": "1795-0003-0120",
+      "norm_address": "3949 BALDWIN BLVD"
+    },
+    {
+      "doc_num": "2024034286",
+      "prop_address": "1224 N STAPLES ST",
+      "old_account": "1695-0015-0150",
+      "new_account": "1695-0015-0010",
+      "norm_address": "1224 N STAPLES ST"
+    },
+    {
+      "doc_num": "2024034337",
+      "prop_address": "1318 W CHERRYSTONE",
+      "old_account": "8284-0013-0240",
+      "new_account": "3347-0004-0050",
+      "norm_address": "1318 W CHERRYSTONE"
+    },
+    {
+      "doc_num": "2024032744",
+      "prop_address": "4005 ACUSHNET DR",
+      "old_account": "5623-0014-0080",
+      "new_account": "1876-0001-0089",
+      "norm_address": "4005 ACUSHNET DR"
+    },
+    {
+      "doc_num": "2024031544",
+      "prop_address": "502 E 2nd ST",
+      "old_account": "9253-0003-0010",
+      "new_account": "0696-0044-0090",
+      "norm_address": "502 E 2ND ST"
+    },
+    {
+      "doc_num": "2024043235",
+      "prop_address": "4005 ACUSHNET DR",
+      "old_account": "5623-0014-0080",
+      "new_account": "1876-0001-0089",
+      "norm_address": "4005 ACUSHNET DR"
+    },
+    {
+      "doc_num": "2025026234",
+      "prop_address": "1218 HAYWARD DR",
+      "old_account": "5938-0014-0040",
+      "new_account": "7122-0001-0090",
+      "norm_address": "1218 HAYWARD DR"
+    },
+    {
+      "doc_num": "2025004084",
+      "prop_address": "1218 HAYWARD DR",
+      "old_account": "5938-0014-0040",
+      "new_account": "7122-0001-0090",
+      "norm_address": "1218 HAYWARD DR"
+    },
+    {
+      "doc_num": "2025004067",
+      "prop_address": "4016 OAK FOREST DR",
+      "old_account": "1613-0005-0070",
+      "new_account": "1876-0001-0127",
+      "norm_address": "4016 OAK FOREST DR"
+    },
+    {
+      "doc_num": "2024043241",
+      "prop_address": "4005 ACUSHNET DR",
+      "old_account": "5623-0014-0070",
+      "new_account": "1876-0001-0089",
+      "norm_address": "4005 ACUSHNET DR"
+    },
+    {
+      "doc_num": "2024035054",
+      "prop_address": "1218 HAYWARD DR",
+      "old_account": "",
+      "new_account": "7122-0001-0090",
+      "norm_address": "1218 HAYWARD DR"
+    },
+    {
+      "doc_num": "2025004066",
+      "prop_address": "4016 OAK FOREST DR",
+      "old_account": "1613-0005-0080",
+      "new_account": "1876-0001-0127",
+      "norm_address": "4016 OAK FOREST DR"
+    }
+  ]
+}
