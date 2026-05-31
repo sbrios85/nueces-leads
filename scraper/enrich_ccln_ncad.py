@@ -500,109 +500,30 @@ def parse_mail_lines(text: str) -> Tuple[str, str, str, str]:
 
 
 # ─── Picking the best result row ────────────────────────────────────
-def _geo_prefix(account: str) -> str:
-    """Return the first 3 dash-segments of a NCAD geo/account number.
-    Used to detect 'same parcel, different undivided-interest holders'
-    cases — those share '0001-0002-0010' through the lot identifier
-    and differ only on the trailing partition suffix."""
-    if not account:
-        return ""
-    parts = account.strip().split("-")
-    if len(parts) < 3:
-        return account.strip()
-    return "-".join(parts[:3])
-
-
-_RE_LEGAL_LOT_FIRST = re.compile(
-    r"\b(?:LT|LOT)\s*(\d+[A-Z\-]?)\s*(?:&\s*\d+[A-Z\-]?\s*)?"
-    r".*?\b(?:BK|BLK|BLOCK)\s*(\d+[A-Z\-]?)\b",
-    re.IGNORECASE)
-_RE_LEGAL_BLK_FIRST = re.compile(
-    r"\b(?:BK|BLK|BLOCK)\s*(\d+[A-Z\-]?)\s*"
-    r".*?\b(?:LT|LOT)\s*(\d+[A-Z\-]?)\b",
-    re.IGNORECASE)
-
-
-def _legal_lot_blk_key(legal: str) -> str:
-    """Extract a (subdivision-leading-word, lot, block) signature from
-    a NCAD legal description. Two candidates with the same signature
-    are very likely the same parcel under different owners (e.g.
-    'CORONADO UNDIV INT IN LT 12 BK 3' for 7 owners → all signature
-    ('CORONADO', '12', '3'). Empty string when we can't parse.
-
-    NCAD legals come in both orderings — 'CORONADO ... LT 12 BK 3' and
-    'RAY W B HGTS ... BLK 1 LOT 9' — so we try both and normalize to
-    (lot, block).
-    """
-    if not legal:
-        return ""
-    s = legal.upper().strip()
-    first_word = s.split()[0] if s.split() else ""
-    m = _RE_LEGAL_LOT_FIRST.search(s)
-    if m:
-        lot, blk = m.group(1), m.group(2)
-    else:
-        m = _RE_LEGAL_BLK_FIRST.search(s)
-        if not m:
-            return ""
-        blk, lot = m.group(1), m.group(2)
-    return f"{first_word}|{lot}|{blk}"
-
-
-def _addr_head(addr: str) -> Tuple[str, str]:
-    """Return (street_number, street_name_prefix) uppercased, for
-    situs-prefix matching. Includes direction prefix when present so
-    'W CHERRYSTONE' doesn't collide with 'E CHERRYSTONE'. Strips
-    trailing commas/punctuation so situs strings like '1318 W
-    CHERRYSTONE, CORPUS CHRISTI TX 78412' tokenize cleanly.
-
-    Examples:
-      '425 ROBERT DR'         → ('425', 'ROBERT')
-      '1318 W CHERRYSTONE'    → ('1318', 'W CHERRYSTONE')
-      '1224 N STAPLES ST'     → ('1224', 'N STAPLES')
-      '2917 S PORT AVE'       → ('2917', 'S PORT')
-    """
-    if not addr:
-        return ("", "")
-    # Replace commas with whitespace so 'CHERRYSTONE,' doesn't
-    # tokenize as 'CHERRYSTONE,'.
-    cleaned = addr.upper().replace(",", " ")
-    toks = cleaned.split()
-    # Strip remaining punctuation from each token's tail.
-    toks = [t.strip(".;:") for t in toks if t.strip(".;:")]
-    if not toks:
-        return ("", "")
-    num = toks[0]
-    if len(toks) > 2 and toks[1] in ("N", "S", "E", "W"):
-        name = f"{toks[1]} {toks[2]}"
-    else:
-        name = toks[1] if len(toks) > 1 else ""
-    return (num, name)
-
-
 def pick_best_row(rows: List[EsearchRow], record_legal: str,
                   record_address: str) -> Tuple[Optional[EsearchRow], str]:
     """Choose the row that corresponds to `record_address`. Returns
-    (row_or_None, miss_reason). When `record_legal` is provided, uses
-    legal-description corroboration (the Sanchez-fix matcher) to
-    disambiguate between multiple results.
+    (row_or_None, miss_reason).
 
-    Layered fallbacks (most specific first):
-      1. No rows → "no_results".
-      2. Exactly 1 candidate → take it.
-      3. Multi-candidate + legal corroborates → take that (Sanchez).
-      4. Multi-candidate + legal fails, but situs-prefix narrows to
-         one candidate matching `(street_num, street_name)` → take it.
-         (Recovers 425 ROBERT DR vs 425 E ROBERTS AVE Port Aransas.)
-      5. Multi-candidate + legal fails, all surviving candidates share
-         the same legal-lot/block signature OR same 3-segment geoId
-         prefix → take first. (Recovers undivided-interest cases like
-         3949 BALDWIN BLVD where 7 owners hold "CORONADO LT 12 BK 3".)
-      6. Otherwise → "no_corroboration".
+    STRICT POLICY: when multiple candidates exist, REQUIRE legal-
+    description corroboration. No prefix-narrow or same-legal-key
+    fallbacks — those were tried 2026-05-31 and produced false
+    positives in cases where the CCLN record's address pointed to
+    one property but its legal described a *different* one (e.g.
+    4005 ACUSHNET DR where CCLN's NAVAL CENTER 8/14 lien attached
+    by address to ACUSHNET TOWNHOMES via OCR/data error). The
+    address-mismatch is the signal something is wrong — not a case
+    to muscle through.
 
-    Condo buildings still fail step 5 because each unit has a distinct
-    geo_id AND distinct legal lot signature. The dashboard's
-    _ambiguousAccounts guard catches them.
+    The Sanchez fix (2026-05-28) is what we're honoring here: address
+    alone is not enough to disambiguate ownership when legals don't
+    agree. The corroboration step exists precisely to catch this.
+
+    Layered selection:
+      1. No rows → "no_results"
+      2. Exactly 1 R-type candidate at the queried address → take it
+      3. Multi-candidate + legal corroborates exactly one → take it
+      4. Otherwise → "no_corroboration"
     """
     if not rows:
         return None, "no_results"
@@ -610,9 +531,7 @@ def pick_best_row(rows: List[EsearchRow], record_legal: str,
     candidates = real or rows
     if len(candidates) == 1:
         return candidates[0], ""
-
-    # Step 3: legal corroboration (Sanchez anti-collision).
-    legal_failed = False
+    # Multiple candidates — require legal corroboration. No fallbacks.
     if record_legal:
         for cand in candidates:
             if not cand.legal:
@@ -626,52 +545,6 @@ def pick_best_row(rows: List[EsearchRow], record_legal: str,
             except Exception as exc:
                 log.debug("legal_match raised on cand %s: %s",
                           cand.prop_id, exc)
-        legal_failed = True
-
-    # Step 4: situs-prefix narrow on (street_number, street_name).
-    # This handles "425 ROBERT DR" returning two real situses (the
-    # actual 425 ROBERT in CC plus 425 E ROBERTS in Port Aransas)
-    # by keeping only those whose situs begins with the same number
-    # AND same first street-name token.
-    num, name = _addr_head(record_address)
-    narrowed: List[EsearchRow] = candidates
-    if num and name:
-        prefix_matches = []
-        for c in candidates:
-            cn, cname = _addr_head(c.situs)
-            if cn == num and cname == name:
-                prefix_matches.append(c)
-        if prefix_matches:
-            narrowed = prefix_matches
-    if len(narrowed) == 1:
-        if legal_failed:
-            log.debug("addr-prefix narrowed past failed legal: %s",
-                      narrowed[0].prop_id)
-        return narrowed[0], ""
-
-    # Step 5: same-property test on the narrowed set. Either:
-    #   (a) ALL candidates produce the same non-empty (subdiv,lot,blk)
-    #       signature, OR
-    #   (b) ALL candidates share the same non-empty 3-segment geo prefix.
-    # ALL-must-parse is important: condo legals like 'BEACH CLUB CONDOS
-    # UNIT 111' return '' from _legal_lot_blk_key, so condos that
-    # have one parseable straggler can't accidentally collapse onto
-    # it. Same for geo: an unset account_num returns ''.
-    if len(narrowed) > 1:
-        legal_keys = [_legal_lot_blk_key(c.legal) for c in narrowed]
-        geo_keys = [_geo_prefix(c.account_num) for c in narrowed]
-        same_legal = (
-            all(k for k in legal_keys) and len(set(legal_keys)) == 1
-        )
-        same_geo = (
-            all(k for k in geo_keys) and len(set(geo_keys)) == 1
-        )
-        if same_legal or same_geo:
-            log.debug("same-property fallback "
-                      "(legal_keys=%s geo_keys=%s) picking %s",
-                      legal_keys, geo_keys, narrowed[0].prop_id)
-            return narrowed[0], ""
-
     if os.environ.get("CCLN_ENRICH_DIAG_PICK", "").lower() in ("1","true","yes"):
         log.info("    DIAG no_corroboration record_addr=%r legal=%r:",
                  record_address, (record_legal or "")[:60])
