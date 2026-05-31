@@ -2430,7 +2430,8 @@
       <th data-sort="lender"         style="width: 150px;">Lender</th>
       <th data-sort="legal"          style="width: 170px;">Legal Description</th>
       <th data-sort="doc_num"        style="width: 82px;">Doc#</th>
-      <th style="width: 44px;">NCAD</th>
+      <th style="width: 50px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
     <tfoot id="fc-dead-foot"></tfoot>
@@ -2462,7 +2463,8 @@
       <th data-sort="market_value"   style="width: 100px;">Market Value</th>
       <th data-sort="legal"          style="width: 190px;">Legal Description</th>
       <th data-sort="cause_nbr"      style="width: 95px;">Cause #</th>
-      <th style="width: 44px;">NCAD</th>
+      <th style="width: 50px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
     </tr></thead>
     <tbody>
       <!-- Stub rows — placeholder data so column widths are
@@ -2484,6 +2486,7 @@
         <td>EXAMPLE SUBDIVISION LOT 1 BLOCK 2</td>
         <td>T-2026-001</td>
         <td><span style="color:var(--muted)">—</span></td>
+        <td><span style="color:var(--muted)">—</span></td>
       </tr>
       <tr>
         <td></td>
@@ -2499,6 +2502,7 @@
         <td><span style="color:var(--muted)">—</span></td>
         <td>SAMPLE SUB OUT OF TR 5</td>
         <td>T-2026-002</td>
+        <td><span style="color:var(--muted)">—</span></td>
         <td><span style="color:var(--muted)">—</span></td>
       </tr>
     </tbody>
@@ -2626,6 +2630,7 @@
       <th data-sort="cause_num"       style="width: 110px;">Cause #</th>
       <th data-sort="claim_deadline"  style="width: 110px;">Claim Deadline</th>
       <th style="width: 50px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -2746,7 +2751,8 @@
       <th data-sort="owner"            style="width: 240px;">Owner</th>
       <th data-sort="latest_filed"     style="width: 120px;">Latest Filed</th>
       <th data-sort="ncad_account_num" style="width: 140px;">NCAD Account</th>
-      <th style="width: 56px;">NCAD</th>
+      <th style="width: 50px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -9871,6 +9877,9 @@ function _buildStackRow(entry) {
   const ncadCell = (typeof ncadCellHtml === "function")
     ? ncadCellHtml(ncadSyntheticRec)
     : `<span style="color:var(--muted)">—</span>`;
+  const nctaxCell = (typeof nctaxCellHtml === "function")
+    ? nctaxCellHtml(ncadSyntheticRec)
+    : `<span style="color:var(--muted)">—</span>`;
 
   tr.innerHTML = `
     <td>${badgeHtml || '<span style="color:var(--muted)">—</span>'}</td>
@@ -9880,6 +9889,7 @@ function _buildStackRow(entry) {
     <td>${esc(entry.latest_filed || "—")}</td>
     <td>${esc(entry.ncad_account_num || "—")}</td>
     <td style="text-align:center;">${ncadCell}</td>
+    <td style="text-align:center;">${nctaxCell}</td>
   `;
 
   // Row click: open the CRM of the FIRST signal on this property.
@@ -10340,7 +10350,7 @@ function renderFc() {
     const toggleTr = document.createElement("tr");
     toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
     toggleTr.innerHTML = `
-      <td colspan="15">
+      <td colspan="17">
         <span class="chev">▶</span>
         <span>${deadRecords.length} dead lead${deadRecords.length === 1 ? "" : "s"}</span>
         <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
@@ -11013,6 +11023,7 @@ function buildTfcRow(r, mode) {
     <td>${_tfcEcell("legal", _legalEff, true)}</td>
     <td>${esc(causeNbr) || '<span style="color:var(--muted)">—</span>'}</td>
     <td style="text-align:center;">${ncadCellHtml(r)}</td>
+    <td style="text-align:center;">${nctaxCellHtml(r)}</td>
   `;
 
   // ---- Row click → open the TFC CRM ----
@@ -11590,6 +11601,7 @@ function buildFcRow(r, isDead) {
   // /Search/Result deep link was session-gated and bounced to
   // /Search/Expired site-wide).
   let ncadCell = ncadCellHtml(r);
+  let nctaxCell = nctaxCellHtml(r);
 
   // Editable text cell helper. Renders an input pre-filled with the
   // effective value; tags it with data-field so the Save button can
@@ -11651,6 +11663,7 @@ function buildFcRow(r, isDead) {
     <td class="legal">${isCondoRecord(r) ? '<span class="condo-badge" title="Condominium — not a typical door-knock lead">🏘️</span>' : ""}${_ecell("legal", _legalEff, true)}</td>
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${missingPdf ? `<span class="no-pdf-badge" title="No foreclosure PDF has been uploaded for this lead yet. Download it from the clerk portal and add it via the normal upload workflow to fill in owner / loan / lender.">NO PDF</span>` : ""}</td>
     <td style="text-align: center;">${ncadCell}</td>
+    <td style="text-align: center;">${nctaxCell}</td>
   `;
 
   // Whole-row click opens the CRM, except on interactive elements
