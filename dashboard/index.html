@@ -340,6 +340,19 @@
     transition: transform 0.12s ease;
   }
   td a:hover .map-icon { transform: translateY(-1px); }
+  /* NCAD / NCTAX column icons — blue house/magnifier (NCAD) and green
+     house/magnifier (NCTAX). Size is set inline on each SVG (22px per the
+     approved design); this class only handles inline-flow alignment and
+     the lift-on-hover used across the other linked-icon columns. The SVG
+     fills (#0f2a3f/#6bc6ff blue, #0d2818/#52c47d green) are hardcoded so
+     they read the same in light and dark themes. */
+  .ncad-icon {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+    transition: transform 0.12s ease;
+  }
+  td a:hover .ncad-icon { transform: translateY(-1px); }
   .pill.absentee { background: rgba(245,158,11,.20); color: var(--warn);
                    font-weight: 600; }
   /* Possible short sale: appraised value < loan amount AND deed < 1yr.
@@ -11922,7 +11935,7 @@ function ncadCellHtml(r) {
     return `<a href="${esc(url)}" target="_blank" rel="noopener"
                title="Open this property on NCAD"
                onclick="event.stopPropagation()">
-               <i class="ext-icon">↗</i></a>`;
+               <svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 17 L16 7 L27 17 L27 27 L20 27 L20 20 L12 20 L12 27 L5 27 Z" fill="#0f2a3f" stroke="#6bc6ff" stroke-width="1.3" stroke-linejoin="round"/></svg></a>`;
   }
   if (r && r.owner) {
     // Copy owner (flipped to NCAD's Last-First format) to clipboard,
@@ -11939,7 +11952,7 @@ function ncadCellHtml(r) {
                class="ncad-search-link"
                title="Copy &quot;${esc(flipped)}&quot; &amp; open NCAD search (paste with Ctrl+V)"
                onclick="${esc(handler)}">
-               <i class="ext-icon">🔍</i></a>`;
+               <svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="13" cy="13" r="8" fill="#0f2a3f" stroke="#6bc6ff" stroke-width="1.6"/><line x1="19" y1="19" x2="27" y2="27" stroke="#6bc6ff" stroke-width="2.4" stroke-linecap="round"/></svg></a>`;
   }
   return "—";
 }
@@ -12030,7 +12043,7 @@ function _nctaxAddressSearchLink(r, reason) {
       return `<a href="https://actweb.acttax.com/nueces/nueces/"
                  target="_blank" rel="noopener" class="ncad-search-link"
                  title="Copy &quot;${esc(flipped)}&quot; &amp; open NCTAX search (paste with Ctrl+V)"
-                 onclick="${esc(h)}"><i class="ext-icon">🔍</i></a>`;
+                 onclick="${esc(h)}"><svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="13" cy="13" r="8" fill="#0d2818" stroke="#52c47d" stroke-width="1.6"/><line x1="19" y1="19" x2="27" y2="27" stroke="#52c47d" stroke-width="2.4" stroke-linecap="round"/></svg></a>`;
     }
     return "—";
   }
@@ -12048,7 +12061,7 @@ function _nctaxAddressSearchLink(r, reason) {
              target="_blank" rel="noopener" class="ncad-search-link"
              title="${esc(tip)}"
              onclick="${esc(handler)}">
-             <i class="ext-icon">🔍</i></a>`;
+             <svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="13" cy="13" r="8" fill="#0d2818" stroke="#52c47d" stroke-width="1.6"/><line x1="19" y1="19" x2="27" y2="27" stroke="#52c47d" stroke-width="2.4" stroke-linecap="round"/></svg></a>`;
 }
 
 // NCTAX (Nueces County Tax Office) link helper — parallels ncadCellHtml.
@@ -12077,7 +12090,7 @@ function nctaxCellHtml(r) {
     return `<a href="${esc(url)}" target="_blank" rel="noopener"
                title="Open this property on the Nueces County Tax Office (NCTAX)"
                onclick="event.stopPropagation()">
-               <i class="ext-icon">↗</i></a>`;
+               <svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 17 L16 7 L27 17 L27 27 L20 27 L20 20 L12 20 L12 27 L5 27 Z" fill="#0d2818" stroke="#52c47d" stroke-width="1.3" stroke-linejoin="round"/></svg></a>`;
   }
   // Ambiguous account OR no account: prefer an address search.
   if (r && r.prop_address) {
@@ -12098,7 +12111,7 @@ function nctaxCellHtml(r) {
                class="ncad-search-link"
                title="Copy &quot;${esc(flipped)}&quot; &amp; open NCTAX search (paste with Ctrl+V)"
                onclick="${esc(handler)}">
-               <i class="ext-icon">🔍</i></a>`;
+               <svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="13" cy="13" r="8" fill="#0d2818" stroke="#52c47d" stroke-width="1.6"/><line x1="19" y1="19" x2="27" y2="27" stroke="#52c47d" stroke-width="2.4" stroke-linecap="round"/></svg></a>`;
   }
   return "—";
 }
