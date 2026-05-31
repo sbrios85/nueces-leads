@@ -162,7 +162,22 @@
     overflow: auto;
   }
   .stats { display: flex; gap: 24px; padding: 16px 28px;
-           border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+           border-bottom: 1px solid var(--border); flex-wrap: wrap;
+           align-items: center; }
+  /* Section title that prefixes each lead-type's stats row. Sits as
+     the first flex item and reads as the heading for the table below.
+     Distinct from .stat tiles so its weight pops without competing with
+     the metric numbers. The trailing border-right adds a vertical
+     separator that visually anchors the title to the stats that follow. */
+  .stats-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--fg);
+    padding-right: 20px;
+    border-right: 1px solid var(--border);
+    line-height: 1.2;
+    align-self: center;
+  }
   .stat { display: flex; flex-direction: column; gap: 2px; }
   .stat .v { font-size: 22px; font-weight: 600; }
   .stat .k { color: var(--muted); font-size: 12px;
@@ -2595,6 +2610,7 @@
     <thead><tr>
       <th data-sort="types"            style="width: 280px;">Lead Types</th>
       <th data-sort="prop_address"     style="width: 260px;">Property Address</th>
+      <th style="width: 50px;">Map</th>
       <th data-sort="owner"            style="width: 240px;">Owner</th>
       <th data-sort="latest_filed"     style="width: 120px;">Latest Filed</th>
       <th data-sort="ncad_account_num" style="width: 140px;">NCAD Account</th>
@@ -8029,6 +8045,7 @@ function renderCclnStats() {
   const el = document.getElementById("ccln-stats");
   if (el) {
     el.innerHTML = `
+      <div class="stats-title">City of Corpus Christi Liens</div>
       <div class="stat"><div class="v">${totalLive.toLocaleString()}</div><div class="k">Active leads</div></div>
       <div class="stat"><div class="v">${nNew.toLocaleString()}</div><div class="k">New</div></div>
       <div class="stat"><div class="v">${nWorking.toLocaleString()}</div><div class="k">Working</div></div>
@@ -8178,6 +8195,7 @@ function renderDelqStats() {
   // Zero-state when no data has loaded.
   if (!DELQ_RAW.length) {
     statsEl.innerHTML = `
+      <div class="stats-title">Delinquent Taxes</div>
       <div class="stat"><div class="v">—</div><div class="k">Active leads</div></div>
       <div class="stat"><div class="v">—</div><div class="k">Total owed</div></div>
       <div class="stat"><div class="v">—</div><div class="k">Judgment</div></div>
@@ -8205,6 +8223,7 @@ function renderDelqStats() {
   if (navCount) navCount.textContent = nActive.toLocaleString();
 
   statsEl.innerHTML = `
+    <div class="stats-title">Delinquent Taxes</div>
     <div class="stat"><div class="v">${nActive.toLocaleString()}</div><div class="k">Active leads</div></div>
     <div class="stat"><div class="v">$${Math.round(totalOwed).toLocaleString()}</div><div class="k">Total owed</div></div>
     <div class="stat"><div class="v">${nJudgment.toLocaleString()}</div><div class="k">Judgment</div></div>
@@ -9567,6 +9586,7 @@ function _renderStackStats(list) {
     byTypeCount[t] = (byTypeCount[t] || 0) + 1;
   }
   el.innerHTML = `
+    <div class="stats-title">Stacked Leads</div>
     <div class="stat-card">
       <div class="num">${total.toLocaleString()}</div>
       <div class="lbl">Total Stacked</div>
@@ -9623,6 +9643,7 @@ function _buildStackRow(entry) {
   tr.innerHTML = `
     <td>${badgeHtml || '<span style="color:var(--muted)">—</span>'}</td>
     <td>${esc(entry.prop_address || "—")}</td>
+    <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
     <td>${esc(entry.owner || "—")}</td>
     <td>${esc(entry.latest_filed || "—")}</td>
     <td>${esc(entry.ncad_account_num || "—")}</td>
@@ -9645,7 +9666,7 @@ function _buildStackRow(entry) {
   })();
 
   tr.addEventListener("click", (ev) => {
-    if (ev.target.closest("a, button, .ext-icon, .ncad-icon")) return;
+    if (ev.target.closest("a, button, .ext-icon, .ncad-icon, .map-icon")) return;
     // Drag-select guard: if the user has highlighted text, don't open
     const sel = window.getSelection && window.getSelection();
     if (sel && !sel.isCollapsed && sel.toString().trim() !== "") {
@@ -9897,6 +9918,7 @@ function renderFcStats(data) {
   const condoCount = (typeof FC_RAW !== "undefined" && FC_RAW)
       ? FC_RAW.filter(isCondoRecord).length : 0;
   document.getElementById("fc-stats").innerHTML = `
+    <div class="stats-title">Mortgage Foreclosures</div>
     <div class="stat"><div class="v">${data.total || 0}</div><div class="k">Total foreclosures</div></div>
     <div class="stat"><div class="v">${data.pre_foreclosure || 0}</div><div class="k">Pre-foreclosure</div></div>
     <div class="stat"><div class="v">${data.post_foreclosure || 0}</div><div class="k">Post-foreclosure</div></div>
@@ -10357,6 +10379,7 @@ function renderTfcStats() {
   const condoCount = (TFC_RAW || []).filter(isCondoRecord).length;
 
   stats.innerHTML = `
+    <div class="stats-title">Tax Foreclosures</div>
     <div class="stat"><div class="v">${total}</div><div class="k">Total Tax Foreclosures</div></div>
     <div class="stat"><div class="v">${active}</div><div class="k">Active Foreclosures</div></div>
     <div class="stat"><div class="v">${deadCanceled}</div><div class="k">Dead/Canceled</div></div>
