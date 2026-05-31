@@ -178,6 +178,31 @@
     line-height: 1.2;
     align-self: center;
   }
+  /* Per-tab freshness indicator — shows when each tab's data source
+     was last refreshed. Floats to the right of the stats row via
+     margin-left: auto so it sits at the opposite end from the title.
+     The colored "X days ago" badge matches the staleness ramp used
+     by the page-header meta-stats (green ≤3d, amber ≤7d, red 8d+),
+     so the user gets the same visual freshness cue per-tab that they
+     used to get globally. */
+  .stats-meta {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    line-height: 1.4;
+  }
+  .stats-meta .lbl {
+    color: var(--muted); font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+  .stats-meta .val {
+    color: var(--fg); font-weight: 500; font-size: 13px;
+  }
+  .stats-meta .ago {
+    font-weight: 500; margin-left: 6px; font-size: 13px;
+  }
   .stat { display: flex; flex-direction: column; gap: 2px; }
   .stat .v { font-size: 22px; font-weight: 600; }
   .stat .k { color: var(--muted); font-size: 12px;
@@ -7765,6 +7790,15 @@ let TFC_RAW = [];
 // matches the MFC/TFC pipeline (new/contacted/negotiating/...).
 let DELQ_RAW = [], DELQ_FILTERED = [];
 
+// Per-tab freshness metadata. Captured at JSON load time so the
+// per-tab "Last X" indicators can render without re-fetching.
+// DELQ stores the XLS import date (YYYY-MM-DD) from the JSON
+// wrapper; TFC stores the LGBS scrape timestamp (ISO datetime).
+// Both default to empty so the helper hides the indicator until
+// a file is loaded.
+let DELQ_IMPORT_DATE = "";
+let TFC_FETCHED_AT = "";
+
 // ============================================================
 // Tab switching + lazy-render
 // ============================================================
@@ -7912,6 +7946,7 @@ async function loadAll() {
     if (r.ok) {
       const data = await r.json();
       TFC_RAW = data.records || [];
+      TFC_FETCHED_AT = data.fetched_at || "";
       renderTfcStats();
       renderTfcTable();
     }
@@ -7931,6 +7966,7 @@ async function loadAll() {
     if (r.ok) {
       const data = await r.json();
       DELQ_RAW = data.records || [];
+      DELQ_IMPORT_DATE = data.import_date || "";
       _invalidateAmbiguousAccounts();   // DELQ data changed — rebuild guard
       renderDelqStats();
       // Same lazy-render pattern as CCLN/FC: only build the table
@@ -7944,47 +7980,14 @@ async function loadAll() {
     }
   } catch (e) { /* delq_records.json optional — empty-state covers it */ }
 
-  // Compute "last PDF upload" timestamp: the max `pdf_parsed_at` across
-  // foreclosure records. This tells the user when they last uploaded
-  // a foreclosure-notice PDF batch via the "Parse uploaded foreclosure
-  // PDFs" workflow, so they know whether they're current on PDFs or
-  // need to grab the latest batch from the clerk portal.
-  let mostRecentPdf = null;
-  for (const r of FC_RAW) {
-    if (!r.pdf_parsed_at) continue;
-    const t = new Date(r.pdf_parsed_at);
-    if (isNaN(t.getTime())) continue;
-    if (!mostRecentPdf || t > mostRecentPdf) mostRecentPdf = t;
-  }
-  let pdfDateText = "";
-  let pdfAgoHtml = "";
-  if (mostRecentPdf) {
-    pdfDateText = mostRecentPdf.toLocaleString();
-    // Compute "X days ago" suffix for at-a-glance staleness check.
-    const now = new Date();
-    const dayMs = 24 * 60 * 60 * 1000;
-    const daysAgo = Math.floor((now - mostRecentPdf) / dayMs);
-    let agoText;
-    if (daysAgo === 0) agoText = "today";
-    else if (daysAgo === 1) agoText = "1 day ago";
-    else agoText = daysAgo + " days ago";
-    // Color-code by staleness:
-    //   green = current (≤3 days)
-    //   amber = getting stale (4-7 days)
-    //   red   = overdue (8+ days)
-    let agoColor;
-    if (daysAgo <= 3) agoColor = "var(--good)";
-    else if (daysAgo <= 7) agoColor = "var(--warn)";
-    else agoColor = "var(--bad)";
-    pdfAgoHtml = `<span class="ago" style="color: ${agoColor};">` +
-                 `(${agoText})</span>`;
-  }
-
   // Render the meta block. We use innerHTML (not textContent) so the
   // colored "X days ago" badge renders. All inputs come from trusted
   // server-generated data — no XSS surface.
+  // (The per-tab "Last X PDF Upload" / "Last X Scrape" indicators
+  // were moved to each tab's own stats row 2026-05-31 — the page-
+  // header meta-stats now only carries the daily-clerk-scrape time.)
   const metaEl = document.getElementById("meta");
-  if (!scraperDateText && !pdfDateText) {
+  if (!scraperDateText) {
     metaEl.innerHTML = "Awaiting first scrape";
     return;
   }
@@ -7995,18 +7998,68 @@ async function loadAll() {
             `<span class="val">${scraperDateText}</span>` +
             `</div>`;
   }
-  if (pdfDateText) {
-    html += `<div class="meta-stat">` +
-            `<span class="lbl">Last PDF upload</span>` +
-            `<span class="val">${pdfDateText}</span>` +
-            ` ${pdfAgoHtml}` +
-            `</div>`;
-  }
   html += `</div>`;
   if (rangeText) {
     html += `<div class="meta-range">Range: ${rangeText}</div>`;
   }
   metaEl.innerHTML = html;
+}
+
+// ============================================================
+// Freshness indicator helper — shared by all lead-type tabs
+// ============================================================
+// Renders the "Last X — date (Y days ago)" block that sits at the
+// right edge of each tab's stats row. Returns HTML for inclusion in
+// the stats div. Returns "" when the input timestamp is missing or
+// unparseable so callers can omit the block entirely (rather than
+// showing "Last X — Invalid Date").
+//
+// `label`     human-readable label (e.g. "Last Mortgage Foreclosure PDF Upload")
+// `isoString` ISO timestamp string OR a "YYYY-MM-DD" date string
+//
+// Staleness color ramp mirrors the page-header meta-stats:
+//   ≤3 days   → green  (current)
+//   4-7 days  → amber  (getting stale)
+//   8+ days   → red    (overdue)
+// "today" / "1 day ago" / "N days ago" copy matches what the header
+// already shows. Date-only inputs (YYYY-MM-DD, like DELQ's import_date)
+// render as just the date — no time. Full ISO with time renders as
+// localized date + time, matching the header convention.
+function _freshnessHtml(label, isoString) {
+  if (!isoString) return "";
+  const t = new Date(isoString);
+  if (isNaN(t.getTime())) return "";
+
+  // Date-only input ("YYYY-MM-DD") → show just the date; full
+  // timestamp → show locale string with time. Distinguishes a
+  // monthly XLS import (no time) from a daily auto-scrape (has time).
+  const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(String(isoString).trim());
+  const valText = dateOnly
+    ? t.toLocaleDateString()
+    : t.toLocaleString();
+
+  // Days-ago calculation. Date-only timestamps are treated as
+  // midnight local time; the floor() below still gives a sensible
+  // "N days ago" because Date.parse("YYYY-MM-DD") is midnight UTC.
+  const now = new Date();
+  const dayMs = 24 * 60 * 60 * 1000;
+  const daysAgo = Math.floor((now - t) / dayMs);
+  let agoText;
+  if (daysAgo === 0) agoText = "today";
+  else if (daysAgo === 1) agoText = "1 day ago";
+  else if (daysAgo < 0) agoText = "future date";   // defensive
+  else agoText = daysAgo + " days ago";
+
+  let agoColor;
+  if (daysAgo <= 3) agoColor = "var(--good)";
+  else if (daysAgo <= 7) agoColor = "var(--warn)";
+  else agoColor = "var(--bad)";
+
+  return `<div class="stats-meta">` +
+         `<span class="lbl">${label}</span>` +
+         `<span><span class="val">${valText}</span>` +
+         ` <span class="ago" style="color: ${agoColor};">(${agoText})</span></span>` +
+         `</div>`;
 }
 
 // ============================================================
@@ -8044,12 +8097,28 @@ function renderCclnStats() {
   // Stats line on the CCLN pane itself.
   const el = document.getElementById("ccln-stats");
   if (el) {
+    // "Last CCLN PDF Upload" — the freshest ccln_pdf_processed_at
+    // across all CCLN records. Tracks when the most recent batch of
+    // CCLN affidavit PDFs was OCR-extracted via the
+    // extract_ccln_pdfs workflow.
+    let mostRecentCclnPdf = null;
+    for (const r of (CCLN_RAW || [])) {
+      if (!r.ccln_pdf_processed_at) continue;
+      const t = new Date(r.ccln_pdf_processed_at);
+      if (isNaN(t.getTime())) continue;
+      if (!mostRecentCclnPdf || t > mostRecentCclnPdf) mostRecentCclnPdf = t;
+    }
+    const cclnFreshHtml = _freshnessHtml(
+      "Last CCLN PDF Upload",
+      mostRecentCclnPdf ? mostRecentCclnPdf.toISOString() : "");
+
     el.innerHTML = `
       <div class="stats-title">City of Corpus Christi Liens</div>
       <div class="stat"><div class="v">${totalLive.toLocaleString()}</div><div class="k">Active leads</div></div>
       <div class="stat"><div class="v">${nNew.toLocaleString()}</div><div class="k">New</div></div>
       <div class="stat"><div class="v">${nWorking.toLocaleString()}</div><div class="k">Working</div></div>
       <div class="stat"><div class="v">${nDead.toLocaleString()}</div><div class="k">Dead</div></div>
+      ${cclnFreshHtml}
     `;
   }
 }
@@ -8192,6 +8261,13 @@ function renderDelqStats() {
   const statsEl = document.getElementById("delq-stats");
   if (!statsEl) return;
 
+  // "Last Delinquent Taxes Upload" — captured from the JSON wrapper's
+  // import_date (YYYY-MM-DD). Tracks when the monthly XLS was
+  // imported via the Import Delinquent Tax XLS workflow.
+  const delqFreshHtml = _freshnessHtml(
+    "Last Delinquent Taxes Upload",
+    DELQ_IMPORT_DATE);
+
   // Zero-state when no data has loaded.
   if (!DELQ_RAW.length) {
     statsEl.innerHTML = `
@@ -8200,6 +8276,7 @@ function renderDelqStats() {
       <div class="stat"><div class="v">—</div><div class="k">Total owed</div></div>
       <div class="stat"><div class="v">—</div><div class="k">Judgment</div></div>
       <div class="stat"><div class="v">—</div><div class="k">Suit filed</div></div>
+      ${delqFreshHtml}
     `;
     return;
   }
@@ -8228,6 +8305,7 @@ function renderDelqStats() {
     <div class="stat"><div class="v">$${Math.round(totalOwed).toLocaleString()}</div><div class="k">Total owed</div></div>
     <div class="stat"><div class="v">${nJudgment.toLocaleString()}</div><div class="k">Judgment</div></div>
     <div class="stat"><div class="v">${nSuit.toLocaleString()}</div><div class="k">Suit filed</div></div>
+    ${delqFreshHtml}
   `;
 }
 
@@ -9917,6 +9995,23 @@ function renderFcStats(data) {
   // this renders).
   const condoCount = (typeof FC_RAW !== "undefined" && FC_RAW)
       ? FC_RAW.filter(isCondoRecord).length : 0;
+
+  // "Last Mortgage Foreclosure PDF Upload" — the freshest
+  // pdf_parsed_at across all FC records. This replaces the page-
+  // header "Last PDF upload" line (removed 2026-05-31) so each tab
+  // shows its own freshness signal instead of one global one that
+  // was actually MFC-specific.
+  let mostRecentFcPdf = null;
+  for (const r of (FC_RAW || [])) {
+    if (!r.pdf_parsed_at) continue;
+    const t = new Date(r.pdf_parsed_at);
+    if (isNaN(t.getTime())) continue;
+    if (!mostRecentFcPdf || t > mostRecentFcPdf) mostRecentFcPdf = t;
+  }
+  const fcFreshHtml = _freshnessHtml(
+    "Last Mortgage Foreclosure PDF Upload",
+    mostRecentFcPdf ? mostRecentFcPdf.toISOString() : "");
+
   document.getElementById("fc-stats").innerHTML = `
     <div class="stats-title">Mortgage Foreclosures</div>
     <div class="stat"><div class="v">${data.total || 0}</div><div class="k">Total foreclosures</div></div>
@@ -9931,6 +10026,7 @@ function renderFcStats(data) {
         <span style="opacity:0.6;">(${condoCount})</span>
       </label>
     </div>
+    ${fcFreshHtml}
   `;
   // Wire up the toggle. Changing it re-runs applyFc() which re-
   // filters and re-renders the table.
@@ -10378,6 +10474,13 @@ function renderTfcStats() {
   // legal descriptions aren't populated yet (Phase 2 work).
   const condoCount = (TFC_RAW || []).filter(isCondoRecord).length;
 
+  // "Last Tax Foreclosure Scrape" — when scraper/scrape_tfc.py last
+  // pulled the LGBS Linebarger property-sales feed. Captured from
+  // the tfc.json wrapper's fetched_at field at load time.
+  const tfcFreshHtml = _freshnessHtml(
+    "Last Tax Foreclosure Scrape",
+    TFC_FETCHED_AT);
+
   stats.innerHTML = `
     <div class="stats-title">Tax Foreclosures</div>
     <div class="stat"><div class="v">${total}</div><div class="k">Total Tax Foreclosures</div></div>
@@ -10393,6 +10496,7 @@ function renderTfcStats() {
         <span style="opacity:0.6;">(${condoCount})</span>
       </label>
     </div>
+    ${tfcFreshHtml}
   `;
   // Wire the toggle. Re-renders the table (which re-applies the
   // filter) and re-renders stats so the parenthetical count is
