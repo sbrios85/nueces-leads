@@ -506,6 +506,26 @@ def pick_best_row(rows: List[EsearchRow], record_legal: str,
     (row_or_None, miss_reason). When `record_legal` is provided, uses
     legal-description corroboration (the Sanchez-fix matcher) to
     disambiguate between multiple results.
+
+    Layered selection (most specific first):
+
+      1. No rows → "no_results".
+      2. Exactly one R-type candidate → take it. Sole result at a
+         queried address has no collision to disambiguate.
+      3. Multiple candidates + record has a legal → legal_match loop
+         (Sanchez anti-collision protection).
+      4. If legal_match fails OR record has no legal, narrow by
+         situs-starts-with-our-street-number. If that leaves exactly
+         one, take it (logged as "" — successful via address narrow).
+         This recovers the "single R-type result among fuzzy-match
+         noise" case (e.g. NCAD returns 425 ROBERT + 4250 ROBERT for
+         a "425 ROBERT DR" query; narrow keeps only the real 425).
+      5. Otherwise "no_corroboration".
+
+    Step 4 is intentionally conservative: multi-parcel buildings where
+    several candidates share the same street number still bail out,
+    because picking arbitrarily would risk pointing the lien at the
+    wrong unit. The dashboard's _ambiguousAccounts guard catches those.
     """
     if not rows:
         return None, "no_results"
@@ -513,7 +533,10 @@ def pick_best_row(rows: List[EsearchRow], record_legal: str,
     candidates = real or rows
     if len(candidates) == 1:
         return candidates[0], ""
-    # Multiple candidates — corroborate by legal.
+
+    # Multiple candidates — try legal corroboration first when we have
+    # one. This is the Sanchez-anti-collision check.
+    legal_failed = False
     if record_legal:
         for cand in candidates:
             if not cand.legal:
@@ -526,17 +549,25 @@ def pick_best_row(rows: List[EsearchRow], record_legal: str,
                     return cand, ""
             except Exception as exc:
                 log.debug("legal_match raised on cand %s: %s", cand.prop_id, exc)
-        return None, "no_corroboration"
-    # No legal to corroborate with — fall back to the first real result
-    # whose situs starts with our address number. Conservative: only
-    # accept if there's exactly one such match.
+        legal_failed = True
+
+    # Legal didn't help (either absent or none matched). Try narrowing
+    # by street number: if only one candidate's situs starts with our
+    # query's lead number, that's almost certainly the right one and
+    # the others are fuzzy-match noise from NCAD.
     if record_address:
-        addr_match = [
-            c for c in candidates
-            if c.situs and c.situs.split()[0] == record_address.split()[0]
-        ]
-        if len(addr_match) == 1:
-            return addr_match[0], ""
+        head = record_address.split()[0] if record_address.split() else ""
+        if head:
+            addr_match = [
+                c for c in candidates
+                if c.situs and c.situs.split() and c.situs.split()[0] == head
+            ]
+            if len(addr_match) == 1:
+                if legal_failed:
+                    log.debug("addr-narrowed past failed legal match: %s",
+                              addr_match[0].prop_id)
+                return addr_match[0], ""
+
     return None, "no_corroboration"
 
 
