@@ -2496,69 +2496,163 @@
 
 <!-- ======== CODE VIOLATION PANE (raw) ======== -->
 <div class="pane" id="pane-codeviolation">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Code Violation coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      Raw list of properties with municipal code-enforcement violations.
-      Data source to be wired up later.
-    </div>
+  <!-- Phase-1 scaffolding: stats header + table column structure are
+       in place, but the data source is not yet wired up. The stats
+       writer emits placeholder dashes; the table body stays empty
+       and the .empty message below explains the status. When the
+       data source lands, replace the placeholder writer with a real
+       one (mirror renderCclnStats / renderDelqStats) and populate
+       the tbody via a buildXxxRow() function. -->
+  <div class="stats" id="cv-stats"></div>
+  <table id="cv-table">
+    <thead><tr>
+      <th data-sort="status"        style="width: 74px;">Status</th>
+      <th data-sort="cited"         style="width: 110px;">Cited</th>
+      <th data-sort="owner"         style="width: 200px;">Owner</th>
+      <th data-sort="prop_address"  style="width: 210px;">Property Address</th>
+      <th style="width: 50px;">Map</th>
+      <th data-sort="mail_address"  style="width: 200px;">Mailing Address</th>
+      <th data-sort="violation_type" style="width: 160px;">Violation Type</th>
+      <th data-sort="case_num"      style="width: 110px;">Case #</th>
+      <th data-sort="market_value"  style="width: 110px;">Market Value</th>
+      <th data-sort="legal"         style="width: 155px;">Legal Description</th>
+      <th style="width: 50px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="empty">
+    Code Violation data source not yet wired up.<br>
+    Once the city's code-enforcement feed is connected, this table will
+    populate automatically.
   </div>
 </div>
 
 <!-- ======== WATER SHUTOFF PANE (raw) ======== -->
 <div class="pane" id="pane-watershutoff">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Water Shutoff coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      Raw list of properties with water service shut off — a strong
-      signal of vacancy and owner distress. Data source to be wired
-      up later.
-    </div>
+  <!-- Phase-1 scaffolding: see Code Violation pane comment above for
+       the wire-up pattern. Days Since Shutoff is a computed column
+       (now - shutoff_date) and will be derived in the row builder,
+       not stored in the source data. -->
+  <div class="stats" id="ws-stats"></div>
+  <table id="ws-table">
+    <thead><tr>
+      <th data-sort="status"        style="width: 74px;">Status</th>
+      <th data-sort="shutoff_date"  style="width: 110px;">Shutoff Date</th>
+      <th data-sort="owner"         style="width: 200px;">Owner</th>
+      <th data-sort="prop_address"  style="width: 210px;">Property Address</th>
+      <th style="width: 50px;">Map</th>
+      <th data-sort="mail_address"  style="width: 200px;">Mailing Address</th>
+      <th data-sort="reason"        style="width: 140px;">Reason</th>
+      <th data-sort="days_since"    style="width: 90px;">Days Since</th>
+      <th data-sort="market_value"  style="width: 110px;">Market Value</th>
+      <th data-sort="legal"         style="width: 155px;">Legal Description</th>
+      <th style="width: 50px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="empty">
+    Water Shutoff data source not yet wired up.<br>
+    Once the city's utility-shutoff feed is connected, this table will
+    populate automatically.
   </div>
 </div>
 
 <!-- ======== VACANT HOUSES PANE (raw) ======== -->
 <div class="pane" id="pane-vacanthouses">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Vacant Houses coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      Raw list of properties identified as vacant or abandoned. Data
-      source to be wired up later.
-    </div>
+  <!-- Phase-1 scaffolding: see Code Violation pane comment above.
+       Vacancy "source" column captures how the property was
+       identified as vacant (postal-return, inspection, neighbor
+       report, etc.) — that distinction matters for lead quality. -->
+  <div class="stats" id="vh-stats"></div>
+  <table id="vh-table">
+    <thead><tr>
+      <th data-sort="status"        style="width: 74px;">Status</th>
+      <th data-sort="identified"    style="width: 110px;">Identified</th>
+      <th data-sort="owner"         style="width: 200px;">Owner</th>
+      <th data-sort="prop_address"  style="width: 210px;">Property Address</th>
+      <th style="width: 50px;">Map</th>
+      <th data-sort="mail_address"  style="width: 200px;">Mailing Address</th>
+      <th data-sort="source"        style="width: 130px;">Source</th>
+      <th data-sort="days_vacant"   style="width: 90px;">Days Vacant</th>
+      <th data-sort="market_value"  style="width: 110px;">Market Value</th>
+      <th data-sort="legal"         style="width: 155px;">Legal Description</th>
+      <th style="width: 50px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="empty">
+    Vacant Houses data source not yet wired up.<br>
+    Once the vacant-property feed is connected (postal returns,
+    inspection reports, etc.), this table will populate automatically.
   </div>
 </div>
 
 <!-- ======== TAX OVERAGES PANE (raw) ======== -->
 <div class="pane" id="pane-taxoveragesraw">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Tax Overages coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      Raw list of surplus funds remaining after tax foreclosure sales.
-      Data source to be wired up later. (The CRM view of this lives
-      under Work → Tax Overages.)
-    </div>
+  <!-- Phase-1 scaffolding: see Code Violation pane comment above.
+       Overage Amount is computed (sale_amount - taxes_owed) in the
+       row builder. Claim Deadline is critical for this lead type —
+       statute of limitations varies by jurisdiction (TX is typically
+       2 years from sale). Last-known mailing address from NCAD at
+       time of sale, often stale by definition. -->
+  <div class="stats" id="tov-stats"></div>
+  <table id="tov-table">
+    <thead><tr>
+      <th data-sort="status"          style="width: 74px;">Status</th>
+      <th data-sort="sale_date"       style="width: 110px;">Sale Date</th>
+      <th data-sort="prior_owner"     style="width: 200px;">Prior Owner</th>
+      <th data-sort="prop_address"    style="width: 210px;">Property Address</th>
+      <th style="width: 50px;">Map</th>
+      <th data-sort="last_known_addr" style="width: 200px;">Last Known Address</th>
+      <th data-sort="sale_amount"     style="width: 110px;">Sale Amount</th>
+      <th data-sort="taxes_owed"      style="width: 110px;">Taxes Owed</th>
+      <th data-sort="overage_amount"  style="width: 110px;">Overage</th>
+      <th data-sort="cause_num"       style="width: 110px;">Cause #</th>
+      <th data-sort="claim_deadline"  style="width: 110px;">Claim Deadline</th>
+      <th style="width: 50px;">NCAD</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="empty">
+    Tax Overages data source not yet wired up.<br>
+    Once the tax-foreclosure-surplus feed is connected (county clerk
+    or treasurer's office), this table will populate automatically.
+    The CRM view of these leads lives under Work → Tax Overages.
   </div>
 </div>
 
 <!-- ======== MORTGAGE OVERAGES PANE (raw) ======== -->
 <div class="pane" id="pane-mortgageoveragesraw">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Mortgage Overages coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      Raw list of surplus funds remaining after mortgage foreclosure
-      sales. Data source to be wired up later. (The CRM view of this
-      lives under Work → Mortgage Overages.)
-    </div>
+  <!-- Phase-1 scaffolding: see Code Violation pane comment above.
+       Mirrors Tax Overages structure but the surplus is loan-vs-sale
+       rather than tax-vs-sale. Lender column matters for follow-up
+       (some lenders retain a junior claim on the surplus). -->
+  <div class="stats" id="mov-stats"></div>
+  <table id="mov-table">
+    <thead><tr>
+      <th data-sort="status"          style="width: 74px;">Status</th>
+      <th data-sort="sale_date"       style="width: 110px;">Sale Date</th>
+      <th data-sort="prior_owner"     style="width: 200px;">Prior Owner</th>
+      <th data-sort="prop_address"    style="width: 210px;">Property Address</th>
+      <th style="width: 50px;">Map</th>
+      <th data-sort="last_known_addr" style="width: 200px;">Last Known Address</th>
+      <th data-sort="sale_amount"     style="width: 110px;">Sale Amount</th>
+      <th data-sort="loan_balance"    style="width: 110px;">Loan Balance</th>
+      <th data-sort="overage_amount"  style="width: 110px;">Overage</th>
+      <th data-sort="lender"          style="width: 160px;">Lender</th>
+      <th data-sort="fc_doc_num"      style="width: 110px;">Foreclosure Doc#</th>
+      <th style="width: 50px;">NCAD</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="empty">
+    Mortgage Overages data source not yet wired up.<br>
+    Once the mortgage-foreclosure-surplus feed is connected, this table
+    will populate automatically. The CRM view of these leads lives
+    under Work → Mortgage Overages.
   </div>
 </div>
 
@@ -7887,6 +7981,19 @@ async function loadAll() {
   // pane because those are cheap and visible from any tab.)
   const _activePane = (document.querySelector(".pane.active") || {}).id;
 
+  // Render placeholder stats headers for tabs whose data sources
+  // aren't wired up yet (Code Violation, Water Shutoff, Vacant
+  // Houses, Tax Overages raw, Mortgage Overages raw). These are
+  // static — no fetch needed — so they're called synchronously
+  // before any of the data fetches kick off. When a data source
+  // lands, replace the matching writer with a real one and the
+  // call here will start emitting real numbers automatically.
+  renderCodeViolationStats();
+  renderWaterShutoffStats();
+  renderVacantHousesStats();
+  renderTaxOveragesRawStats();
+  renderMortgageOveragesRawStats();
+
   try {
     const r = await fetch("city_liens.json", {cache:"no-store"});
     const data = await r.json();
@@ -8061,6 +8168,38 @@ function _freshnessHtml(label, isoString) {
          ` <span class="ago" style="color: ${agoColor};">(${agoText})</span></span>` +
          `</div>`;
 }
+
+// ============================================================
+// Placeholder stats writers for tabs whose data sources are
+// not yet wired up (Code Violation, Water Shutoff, Vacant Houses,
+// Tax Overages, Mortgage Overages). Each one emits the section
+// title and a four-tile placeholder stats row (—/—/—/—) so the
+// header looks consistent with the live tabs (CCLN, MFC, etc.).
+// When data wiring lands, replace each writer with a real one
+// that computes counts from the data source (mirror the pattern
+// in renderCclnStats / renderDelqStats above).
+//
+// Why explicit per-tab functions instead of one generic helper:
+// each tab will eventually need its OWN metric set (Tax Overages
+// will likely surface "$ total surplus" instead of "Working" once
+// real data lands), so a per-tab function makes the future
+// upgrade path a one-spot edit per tab.
+// ============================================================
+function _renderPlaceholderStats(elementId, title) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  el.innerHTML =
+    `<div class="stats-title">${title}</div>` +
+    `<div class="stat"><div class="v">—</div><div class="k">Active leads</div></div>` +
+    `<div class="stat"><div class="v">—</div><div class="k">New</div></div>` +
+    `<div class="stat"><div class="v">—</div><div class="k">Working</div></div>` +
+    `<div class="stat"><div class="v">—</div><div class="k">Dead</div></div>`;
+}
+function renderCodeViolationStats()    { _renderPlaceholderStats("cv-stats",  "Code Violation"); }
+function renderWaterShutoffStats()     { _renderPlaceholderStats("ws-stats",  "Water Shutoff"); }
+function renderVacantHousesStats()     { _renderPlaceholderStats("vh-stats",  "Vacant Houses"); }
+function renderTaxOveragesRawStats()   { _renderPlaceholderStats("tov-stats", "Tax Overages"); }
+function renderMortgageOveragesRawStats() { _renderPlaceholderStats("mov-stats", "Mortgage Overages"); }
 
 // ============================================================
 // CCLN / CRM rendering
