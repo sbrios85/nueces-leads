@@ -6,7 +6,7 @@ Pulls motivated-seller indicators (lis pendens, foreclosures, judgments, liens,
 tax deeds, probate, etc.) recorded with the Nueces County Clerk in the past 7
 days from https://nueces.tx.publicsearch.us/, then enriches each record with
 mailing/site address data from the Nueces Central Appraisal District (NCAD)
-bulk parcel export (https://nuecescad.net/downloads-reports/).
+owner-search portal at https://esearch.nuecescad.net/.
 
 Outputs:
   - dashboard/records.json
@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import asyncio
 import csv
-import io
+
 import json
 import logging
 import os
@@ -37,7 +37,6 @@ import re
 import sys
 import time
 import traceback
-import zipfile
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -50,15 +49,6 @@ from bs4 import BeautifulSoup
 # Playwright is imported lazily inside the async fetcher so the module can
 # still be imported (e.g. for unit testing the scoring logic) on machines
 # that don't have playwright + chromium installed.
-
-# dbfread is optional — only used if a .dbf actually appears inside the
-# NCAD bulk export. NCAD currently ships pipe-delimited text files, so the
-# fall-through CSV/TXT parser is the hot path in practice.
-try:
-    from dbfread import DBF  # type: ignore
-    _HAS_DBFREAD = True
-except Exception:  # pragma: no cover
-    _HAS_DBFREAD = False
 
 
 # --------------------------------------------------------------------------- #
@@ -74,16 +64,11 @@ CLERK_BASE = "https://nueces.tx.publicsearch.us"
 CLERK_RESULTS_API = f"{CLERK_BASE}/results"
 CLERK_DOC_URL = f"{CLERK_BASE}/doc"
 
-# NCAD ("Nueces Central Appraisal District") — official bulk parcel export.
-# This is the Preliminary or Certified roll, distributed as a ZIP of flat
-# pipe-delimited TXT files (Texas PTAD layout). The URL changes each year;
-# we discover the most-recent one by parsing the downloads page.
-NCAD_DOWNLOADS_PAGE = "https://nuecescad.net/downloads-reports/"
-
-# NCAD's owner-name search portal (BIS Consultants "esearch" platform).
-# Used to look up property + mailing addresses for owners who appear in
-# clerk records but whose addresses aren't in the legal-description text.
-# This is the path that fills in addresses on Judgments and Tax Liens.
+# NCAD ("Nueces Central Appraisal District") owner-name search portal
+# (BIS Consultants "esearch" platform). Used to look up property + mailing
+# addresses for owners who appear in clerk records but whose addresses
+# aren't in the legal-description text. This is the path that fills in
+# addresses on Judgments and Tax Liens.
 NCAD_ESEARCH_BASE = "https://esearch.nuecescad.net"
 
 # Cache file for esearch lookups. Keeps us from re-querying the same name
@@ -94,12 +79,11 @@ NCAD_SEARCH_CACHE = ".cache/ncad_search_cache.json"
 NCAD_SEARCH_MAX_LOOKUPS = 100      # per run — protects against runaway loops
 NCAD_SEARCH_DELAY_SEC   = 1.5      # between requests, polite to the server
 # Hard wall-clock cap for the esearch phase. The GitHub Actions job
-# timeout is 30 min; the clerk-scrape (~3 min) and NCAD bulk parse
-# (~2 min) run before this, so esearch realistically has ~20+ min of
-# headroom. The old 8-min cap meant only ~20 network lookups completed
-# per run (each lookup is ~15-30s with the polite delay), so records
-# late in the list (and any with broadened multi-variant searches that
-# fully miss) were perpetually starved. 18 min lets a full 100-record
+# timeout is 30 min and the clerk-scrape takes ~3 min, so esearch has
+# ~25+ min of headroom. The old 8-min cap meant only ~20 network lookups
+# completed per run (each lookup is ~15-30s with the polite delay), so
+# records late in the list (and any with broadened multi-variant searches
+# that fully miss) were perpetually starved. 18 min lets a full 100-record
 # pass complete in 1-2 runs while still leaving a safe margin under the
 # 30-min job timeout for the final commit/deploy steps.
 NCAD_SEARCH_PHASE_BUDGET_SEC = 18 * 60   # hard wall-clock cap
@@ -478,10 +462,11 @@ async def with_retries_async(coro_factory, attempts: int = 3, base_delay: float 
 # HTTP helpers — with Playwright fallback for WAF-protected sites
 # --------------------------------------------------------------------------- #
 #
-# NCAD's WordPress site sits behind a WAF that 403s requests it doesn't think
-# look "browser-like enough". The first attempt uses `requests` with a full
-# Chrome header set (works in many environments). If that still 403s, we fall
-# back to a real headless Chromium fetch.
+# General-purpose: 1st attempt uses `requests` with a full Chrome header set;
+# if that 403s (common against WAFs like the one on nuecescad.net), falls back
+# to a real headless Chromium fetch via Playwright. Currently unused — the
+# bulk-NCAD-export consumer was removed 2026-05-31 — but kept available for
+# future fetchers that need to talk to WAF-protected sites.
 
 def _http_get_text(url: str, timeout: int = 60) -> str:
     """GET → text. Tries requests first, then Playwright on 403/4xx."""
@@ -1953,524 +1938,17 @@ def _classify(doc_type_raw: str) -> Optional[str]:
 
 
 # --------------------------------------------------------------------------- #
-# Property Appraiser bulk parcel loader
-# --------------------------------------------------------------------------- #
-
-def fetch_ncad_parcels() -> Dict[str, Dict[str, str]]:
-    """Download the latest NCAD bulk parcel export and build an
-    owner-name → parcel-info lookup table.
-
-    Returns: dict[normalized_owner_name] -> {
-        site_addr, site_city, site_state, site_zip,
-        mail_addr, mail_city, mail_state, mail_zip,
-    }
-
-    Each owner name is registered in three normalization variants
-    ("FIRST LAST", "LAST FIRST", "LAST, FIRST") so a wide range of
-    grantor strings from the clerk side will still hit a match.
-
-    The NCAD export format is a ZIP of pipe-delimited TXT files (Texas
-    PTAD layout). We also support DBF if the ZIP happens to include any
-    .dbf files (some legacy exports do). Column names vary across years,
-    so we resolve them by candidate-name search.
-    """
-    try:
-        zip_url = _discover_ncad_export_url()
-    except Exception as exc:
-        log.error("could not discover NCAD export URL: %s", exc)
-        return {}
-
-    log.info("downloading NCAD bulk export: %s", zip_url)
-    try:
-        content = _http_get_bytes(zip_url, timeout=300)
-        log.info("NCAD export: %d MB", len(content) // (1024 * 1024))
-    except Exception as exc:
-        log.error("NCAD download failed: %s", exc)
-        return {}
-
-    try:
-        zf = zipfile.ZipFile(io.BytesIO(content))
-    except zipfile.BadZipFile as exc:
-        log.error("NCAD download is not a valid zip: %s", exc)
-        return {}
-
-    # Log everything in the ZIP — invaluable for diagnosing schema layout.
-    all_names = zf.namelist()
-    log.info("NCAD ZIP contents: %d files", len(all_names))
-    for n in all_names:
-        log.info("  • %s", n)
-
-    # Texas PTAD layout typically splits owner data across multiple files,
-    # joined by an account/property ID. Build the lookup by joining the
-    # APPRAISAL_INFO file (which contains property addresses) with whichever
-    # file actually contains owner names.
-    lookup = _build_owner_lookup_from_zip(zf, all_names)
-    log.info("NCAD owner-lookup: %d distinct name variants", len(lookup))
-    return lookup
-
-
-def _build_owner_lookup_from_zip(zf: zipfile.ZipFile,
-                                  names: List[str]) -> Dict[str, Dict[str, str]]:
-    """Parse the NCAD export and build owner_name_variant → parcel_info.
-
-    Strategy: read every text file once, indexing rows by account/property
-    ID. Files that have OWNER fields contribute owner data; files that have
-    SITE/MAIL address fields contribute address data. We then join on the
-    shared ID columns to produce a single row per parcel.
-
-    Note: NCAD's "Public Export" historically omits owner names for
-    privacy reasons, in which case this function will log the available
-    schema (so the operator can see what's there) and return an empty
-    lookup. The fall-back path in `enrich_with_parcels` will still
-    pull addresses from the legal-description field of clerk records.
-    """
-    parse_deadline = time.time() + 90    # 90 seconds total for NCAD parsing
-    PER_FILE_TIMEOUT = 25                # seconds before we abort a single file
-    MAX_FILE_BYTES = 80 * 1024 * 1024    # 80 MB - skip larger files entirely
-
-    # Substrings (uppercased) that identify columns by their semantic role.
-    # We match by substring rather than exact name because Texas PTAD column
-    # naming varies (OWNER, OWN1, FILE_AS_NAME, PY_OWNER_NAME, etc.).
-    ID_TOKENS    = ("PROP_ID", "PROPID", "PROPERTY_ID", "ACCOUNT_NUM",
-                    "ACCT_NUM", "PARCEL_ID", "PARCELID", "GEO_ID", "QUICK_REF")
-    OWNER_TOKENS = ("OWNER", "FILE_AS_NAME", "PY_OWNER")
-    SITE_TOKENS  = ("SITUS", "SITE_ADDR", "PROP_ADDR", "STREET")
-    MAIL_TOKENS  = ("MAIL_ADDR", "MAILING_ADDR", "ADDR_1", "ADDR1",
-                    "ADDR_LINE", "MAIL_LINE")
-    CITY_TOKENS  = ("CITY",)
-    STATE_TOKENS = ("STATE",)
-    ZIP_TOKENS   = ("ZIP", "POSTAL")
-
-    def find_col(headers: List[str], tokens: tuple, exclude: tuple = ()) -> str:
-        """Return the first header whose name contains any token (case-
-        insensitive) and none of the excludes."""
-        for h in headers:
-            up = h.upper()
-            if any(s in up for s in exclude):
-                continue
-            if any(t in up for t in tokens):
-                return h
-        return ""
-
-    owner_by_id: Dict[str, str] = {}
-    addr_by_id: Dict[str, Dict[str, str]] = {}
-
-    text_files = [n for n in names
-                  if n.lower().endswith((".txt", ".csv", ".tsv"))]
-    log.info("NCAD: %d text files to scan", len(text_files))
-
-    for name in text_files:
-        if time.time() > parse_deadline:
-            log.warning("NCAD overall parse budget exhausted at %s", name)
-            break
-        try:
-            # Skip oversize files — they're rarely the owner/address source
-            # and they burn the time budget for the smaller, useful files.
-            try:
-                file_size = zf.getinfo(name).file_size
-            except KeyError:
-                file_size = 0
-            if file_size > MAX_FILE_BYTES:
-                log.info("  skipping %s (%.0f MB > %.0f MB cap)",
-                         name, file_size / 1024 / 1024,
-                         MAX_FILE_BYTES / 1024 / 1024)
-                continue
-
-            file_deadline = time.time() + PER_FILE_TIMEOUT
-            with zf.open(name) as fh:
-                raw = fh.read()
-            text = _decode_loose(raw)
-            if not text.strip():
-                continue
-            delim = _sniff_delimiter(text)
-            reader = csv.DictReader(io.StringIO(text), delimiter=delim)
-            headers = [(h or "").strip() for h in (reader.fieldnames or [])]
-
-            # Skip files that have no real header row (header looks like data
-            # — purely numeric, or single column of opaque IDs). Common in
-            # PTAD's *_ENTITY.TXT files which are list-only with no schema.
-            looks_like_data = (
-                not headers
-                or len(headers) == 1
-                or all(re.match(r"^[\d\s\-_/]+$", h) for h in headers if h)
-            )
-            if looks_like_data:
-                log.info("  %s: no recognizable header — skipping", name)
-                continue
-
-            # Find which columns play which role.
-            id_col    = find_col(headers, ID_TOKENS)
-            owner_col = find_col(headers, OWNER_TOKENS)
-            site_col  = find_col(headers, SITE_TOKENS, exclude=("CITY", "ZIP", "STATE"))
-            mail_col  = find_col(headers, MAIL_TOKENS, exclude=("CITY", "ZIP", "STATE"))
-            site_city  = find_col(headers, CITY_TOKENS) if site_col else ""
-            site_state = find_col(headers, STATE_TOKENS)
-            site_zip   = find_col(headers, ZIP_TOKENS)
-
-            # Log a header sample so we can see schema in the log.
-            log.info("  %s: cols=%d size=%.1fMB delim=%r",
-                     name, len(headers), file_size / 1024 / 1024, delim)
-            log.info("    headers (first 25): %s", headers[:25])
-            log.info("    matched: id=%r owner=%r site=%r mail=%r",
-                     id_col, owner_col, site_col, mail_col)
-
-            # If we can't find an ID column, this file isn't useful for join.
-            # Don't burn time iterating its rows — skip directly.
-            if not id_col:
-                log.info("    (no ID column — skipping rows)")
-                continue
-            # If we can't find anything useful (no owner AND no addr), skip.
-            if not owner_col and not site_col and not mail_col:
-                log.info("    (no owner/address columns — skipping rows)")
-                continue
-
-            row_count = 0
-            owner_added = 0
-            addr_added = 0
-            for row in reader:
-                # Per-file deadline check (every 1000 rows to keep it cheap).
-                row_count += 1
-                if row_count % 1000 == 0 and time.time() > file_deadline:
-                    log.warning("    %s: per-file timeout at row %d",
-                                name, row_count)
-                    break
-                clean = _clean_row(row)
-                pid = clean.get(id_col.upper(), "")
-                if not pid:
-                    continue
-                if owner_col:
-                    name_val = clean.get(owner_col.upper(), "")
-                    if name_val and pid not in owner_by_id:
-                        owner_by_id[pid] = name_val
-                        owner_added += 1
-                site_val = clean.get(site_col.upper(), "") if site_col else ""
-                mail_val = clean.get(mail_col.upper(), "") if mail_col else ""
-                if (site_val or mail_val) and pid not in addr_by_id:
-                    addr_by_id[pid] = {
-                        "site_addr": site_val,
-                        "site_city": clean.get(site_city.upper(), "")
-                                     if site_city else "",
-                        "site_state": clean.get(site_state.upper(), "TX")
-                                      if site_state else "TX",
-                        "site_zip": clean.get(site_zip.upper(), "")
-                                    if site_zip else "",
-                        "mail_addr": mail_val,
-                        "mail_city": clean.get(site_city.upper(), "")
-                                     if site_city else "",
-                        "mail_state": clean.get(site_state.upper(), "TX")
-                                      if site_state else "TX",
-                        "mail_zip": clean.get(site_zip.upper(), "")
-                                    if site_zip else "",
-                    }
-                    addr_added += 1
-
-            log.info("    %d rows (+%d owner, +%d addr) [%.1fs]",
-                     row_count, owner_added, addr_added,
-                     time.time() - (file_deadline - PER_FILE_TIMEOUT))
-        except Exception as exc:
-            log.warning("text parse failed for %s: %s", name, exc)
-            continue
-
-    log.info("NCAD: %d unique owner records, %d unique address records",
-             len(owner_by_id), len(addr_by_id))
-
-    # Join owner ↔ address on the property ID.
-    lookup: Dict[str, Dict[str, str]] = {}
-    for pid, owner_name in owner_by_id.items():
-        info = addr_by_id.get(pid)
-        if not info:
-            info = {"site_addr": "", "site_city": "", "site_state": "TX",
-                    "site_zip": "", "mail_addr": "", "mail_city": "",
-                    "mail_state": "", "mail_zip": ""}
-        for variant in _owner_name_variants(owner_name):
-            if variant and variant not in lookup:
-                lookup[variant] = info
-    return lookup
-
-
-def _clean_row(row: Dict[str, Any]) -> Dict[str, str]:
-    """Coerce a csv.DictReader row to a clean upper-cased str→str dict.
-    Handles the case where DictReader returns a list value (overflow when
-    a row has more fields than the header — common in PTAD pipe files).
-    """
-    clean: Dict[str, str] = {}
-    for k, v in row.items():
-        key = (str(k) if k is not None else "").strip().upper()
-        if isinstance(v, list):
-            v = " ".join(str(x) for x in v if x is not None)
-        elif v is None:
-            v = ""
-        else:
-            v = str(v)
-        clean[key] = v.strip()
-    return clean
-
-
-def _discover_ncad_export_url() -> str:
-    """Scrape https://nuecescad.net/downloads-reports/ for the most
-    recent 'Public Export' ZIP link, with a known-good fallback if the
-    page can't be parsed (WAF, layout change, etc.).
-    """
-    # Last-known-good URL — used as a fallback if discovery fails. Update
-    # this once a year when NCAD posts the new preliminary roll.
-    KNOWN_GOOD = (
-        "https://nuecescad.net/wp-content/uploads/2026/04/"
-        "2026-Preliminary-Public-Export-20260402.zip"
-    )
-
-    try:
-        html = _http_get_text(NCAD_DOWNLOADS_PAGE)
-    except Exception as exc:
-        log.warning("NCAD page fetch failed (%s); using known-good URL", exc)
-        return KNOWN_GOOD
-
-    try:
-        soup = BeautifulSoup(html, "lxml")
-    except Exception:
-        soup = BeautifulSoup(html, "html.parser")
-
-    candidates: List[Tuple[str, str]] = []  # (year-key, url)
-    for a in soup.find_all("a", href=True):
-        href = a["href"]
-        text = a.get_text(" ", strip=True).lower()
-        if not href.lower().endswith(".zip"):
-            continue
-        # Skip GIS shapefiles and parcel-only exports — we want the full
-        # appraisal roll, which contains owner + situs + mailing addresses.
-        if "shapefile" in text or "ncad_parcels" in href.lower():
-            continue
-        # Match anything that looks like an appraisal-roll export.
-        href_low = href.lower()
-        if not any(tok in href_low for tok in (
-            "public-export", "public_export", "publicexport",
-            "appraisal-roll", "appraisal_roll", "certified-roll",
-            "preliminary-public", "preliminary_public",
-        )):
-            continue
-        # Extract a year-ish sort key (prefer the most recent).
-        m = re.search(r"(20\d{2})", href)
-        year = m.group(1) if m else "0000"
-        candidates.append((year, href))
-
-    if not candidates:
-        log.warning("no NCAD export link found on downloads page; "
-                    "using known-good URL")
-        return KNOWN_GOOD
-    candidates.sort(key=lambda x: (x[0], x[1]), reverse=True)
-    return candidates[0][1]
-
-
-def _iter_parcel_rows(zf: zipfile.ZipFile) -> Iterable[Dict[str, str]]:
-    """Yield row dicts from any plausible data file inside the NCAD ZIP."""
-    names = zf.namelist()
-
-    # Pass 1: any DBF files (rare, but supported per spec).
-    for name in names:
-        if name.lower().endswith(".dbf") and _HAS_DBFREAD:
-            try:
-                tmp_path = CACHE_DIR / Path(name).name
-                CACHE_DIR.mkdir(parents=True, exist_ok=True)
-                with zf.open(name) as src, open(tmp_path, "wb") as dst:
-                    dst.write(src.read())
-                table = DBF(str(tmp_path), load=False, ignore_missing_memofile=True,
-                            encoding="latin-1")
-                for rec in table:
-                    yield {k: ("" if v is None else str(v)).strip()
-                           for k, v in rec.items()}
-            except Exception as exc:
-                log.warning("dbf parse failed for %s: %s", name, exc)
-
-    # Pass 2: pipe-delimited or comma-delimited text/CSV files.
-    # NCAD's export ships ~30 files; we want the one that ties owners
-    # to addresses (typically APPRAISAL_INFO.TXT or PROPERTY_INFO.TXT).
-    text_candidates = [
-        n for n in names
-        if n.lower().endswith((".txt", ".csv", ".tsv"))
-        and not n.lower().endswith(".pdf.txt")
-    ]
-    # Heuristic ordering — most informative files first.
-    def rank(n: str) -> int:
-        ln = n.lower()
-        score = 0
-        for kw, w in [
-            ("appraisal_info", 100), ("appraisalinfo", 100),
-            ("property_info", 95),   ("propertyinfo", 95),
-            ("property", 80), ("prop", 60),
-            ("owner", 50), ("parcel", 40),
-        ]:
-            if kw in ln:
-                score = max(score, w)
-        # Skip files we know don't carry address/owner info.
-        for skip_kw in ("appraisal_agent", "deed_history", "land",
-                        "improvement", "exemption", "abatement",
-                        "entity", "arb_", "audit"):
-            if skip_kw in ln:
-                return -1
-        return score
-    text_candidates = [(n, rank(n)) for n in text_candidates]
-    text_candidates = [(n, r) for n, r in text_candidates if r >= 0]
-    text_candidates.sort(key=lambda nr: nr[1], reverse=True)
-
-    # Hard wall-clock budget for the parse phase — protects against
-    # pathological files. NCAD parsing should take < 2 minutes total.
-    parse_deadline = time.time() + 4 * 60   # 4 minutes
-    files_with_data = 0
-
-    for name, _ in text_candidates:
-        if time.time() > parse_deadline:
-            log.warning("NCAD parse time budget exhausted; stopping at %s", name)
-            break
-        try:
-            with zf.open(name) as fh:
-                raw = fh.read()
-            text = _decode_loose(raw)
-            if not text.strip():
-                continue
-            delim = _sniff_delimiter(text)
-            reader = csv.DictReader(io.StringIO(text), delimiter=delim)
-            row_count = 0
-            owner_rows = 0
-            for row in reader:
-                row_count += 1
-                # Be defensive: DictReader can return a list as a value when
-                # there are duplicate column headers (which Texas PTAD files
-                # sometimes have). Coerce everything to str safely.
-                clean = {}
-                for k, v in row.items():
-                    key = (str(k) if k is not None else "").strip().upper()
-                    if isinstance(v, list):
-                        v = " ".join(str(x) for x in v if x is not None)
-                    elif v is None:
-                        v = ""
-                    else:
-                        v = str(v)
-                    clean[key] = v.strip()
-                # Only yield rows that look like they contain owner/address
-                # data — otherwise we're mixing schemas from many files.
-                if any(c in clean for c in (
-                    "OWNER", "OWN1", "OWNER1", "OWNER_NAME",
-                    "PYOWNER", "PRIMARY_OWNER",
-                )):
-                    owner_rows += 1
-                    yield clean
-            log.info("  parsed %s: %d rows (%d with owner), delim=%r",
-                     name, row_count, owner_rows, delim)
-            if owner_rows > 0:
-                files_with_data += 1
-                # Once we've found owner data in a file, that's almost
-                # certainly the primary owner file. Don't keep parsing
-                # other files — they may have conflicting schemas.
-                if files_with_data >= 1 and owner_rows > 100:
-                    break
-        except Exception as exc:
-            log.warning("text parse failed for %s: %s", name, exc)
-            continue
-
-
-def _decode_loose(raw: bytes) -> str:
-    for enc in ("utf-8", "utf-8-sig", "cp1252", "latin-1"):
-        try:
-            return raw.decode(enc)
-        except UnicodeDecodeError:
-            continue
-    return raw.decode("latin-1", errors="replace")
-
-
-def _sniff_delimiter(text: str) -> str:
-    sample = text[:8192]
-    counts = {d: sample.count(d) for d in ("|", "\t", ",", ";")}
-    return max(counts, key=counts.get)
-
-
-# Column-name candidates per logical field.
-_COL_CANDIDATES = {
-    "owner":      ["OWNER", "OWN1", "OWNER1", "OWNER_NAME", "PYOWNER", "PRIMARY_OWNER"],
-    "site_addr":  ["SITE_ADDR", "SITEADDR", "SITUS_ADDR", "SITUS", "PROP_ADDR", "PROPADDR", "SITE_ADDRESS"],
-    "site_city":  ["SITE_CITY", "SITUS_CITY", "PROP_CITY"],
-    "site_state": ["SITE_STATE", "SITUS_STATE", "PROP_STATE"],
-    "site_zip":   ["SITE_ZIP", "SITUS_ZIP", "PROP_ZIP"],
-    "mail_addr":  ["MAIL_ADDR", "MAILADR1", "ADDR_1", "ADDR1", "MAIL_ADDRESS_1", "MAILING_ADDR"],
-    "mail_city":  ["MAIL_CITY", "MAILCITY", "CITY"],
-    "mail_state": ["MAIL_STATE", "STATE"],
-    "mail_zip":   ["MAIL_ZIP", "MAILZIP", "ZIP", "ZIPCODE"],
-}
-
-
-def _normalize_parcel_row(row: Dict[str, str]) -> Optional[Dict[str, str]]:
-    if not row:
-        return None
-    upper = {(k or "").upper(): (v or "") for k, v in row.items()}
-
-    def pick(key: str) -> str:
-        for cand in _COL_CANDIDATES[key]:
-            if cand in upper and upper[cand]:
-                return upper[cand].strip()
-        return ""
-
-    owner = pick("owner")
-    if not owner:
-        return None
-
-    return {
-        "_owner_raw":  owner,
-        "site_addr":  pick("site_addr"),
-        "site_city":  pick("site_city") or "CORPUS CHRISTI",
-        "site_state": pick("site_state") or "TX",
-        "site_zip":   pick("site_zip"),
-        "mail_addr":  pick("mail_addr"),
-        "mail_city":  pick("mail_city"),
-        "mail_state": pick("mail_state") or "TX",
-        "mail_zip":   pick("mail_zip"),
-    }
-
-
-def _owner_name_variants(name: str) -> List[str]:
-    """Generate normalized variants of an owner name for lookup matching."""
-    if not name:
-        return []
-    n = re.sub(r"\s+", " ", name.upper().strip())
-    # Strip trailing entity tags.
-    n = re.sub(r"\b(ETAL|ET\s*AL|ET\s*UX|JR|SR|II|III|IV|TRUSTEE|TR|EST(ATE)?)\b", "", n).strip()
-    # Strip punctuation except commas (we use commas to detect "LAST, FIRST").
-    cleaned = re.sub(r"[^A-Z0-9, ]", " ", n)
-    cleaned = re.sub(r"\s+", " ", cleaned).strip(" ,")
-
-    out: set[str] = {cleaned}
-
-    if "," in cleaned:
-        # "LAST, FIRST [MIDDLE]" → also produce "FIRST LAST" and "LAST FIRST".
-        last, _, rest = cleaned.partition(",")
-        last = last.strip()
-        rest = rest.strip()
-        if last and rest:
-            out.add(f"{rest} {last}")           # FIRST LAST
-            out.add(f"{last} {rest}")           # LAST FIRST
-            # Also strip middle names: "FIRST LAST"
-            first_only = rest.split()[0] if rest.split() else ""
-            if first_only:
-                out.add(f"{first_only} {last}")
-                out.add(f"{last} {first_only}")
-    else:
-        # No comma — guess. Texas appraisal data typically encodes individuals
-        # as "LAST FIRST [MIDDLE]" without punctuation. Generate the swap.
-        parts = cleaned.split()
-        if 2 <= len(parts) <= 4:
-            last = parts[0]
-            rest = " ".join(parts[1:])
-            out.add(f"{last}, {rest}")          # LAST, FIRST
-            out.add(f"{rest} {last}")           # FIRST LAST
-
-    return [v for v in out if v]
-
-
-# --------------------------------------------------------------------------- #
 # NCAD esearch (per-name property lookup)
 # --------------------------------------------------------------------------- #
 #
-# This complements the bulk-export path. For each owner we couldn't
-# enrich from the legal-description extractor, we hit NCAD's public
-# property-search portal at esearch.nuecescad.net and pull the
-# matching parcel's situs + mailing address.
+# For each owner we couldn't enrich from the legal-description extractor,
+# we hit NCAD's public property-search portal at esearch.nuecescad.net
+# and pull the matching parcel's situs + mailing address. This is the
+# primary NCAD enrichment path (the bulk-export ZIP loader that used to
+# run before this was removed 2026-05-31 — see git history if you need
+# to resurrect it; the export's two largest files exceed Actions runner
+# RAM, the smaller files have no recognizable headers, and the cumulative
+# result was always an empty lookup with ~110s of wasted runtime).
 #
 # The portal is a server-rendered ASP.NET app powered by BIS Consultants
 # (the same vendor used by Travis, Collin, Hays, Fort Bend and dozens
@@ -4048,38 +3526,27 @@ def _split_us_address(full: str) -> Tuple[str, str, str, str]:
 # Enrichment + scoring
 # --------------------------------------------------------------------------- #
 
-def enrich_with_parcels(records: List[ClerkRecord],
-                        owner_lookup: Dict[str, Dict[str, str]]) -> None:
+def enrich_with_parcels(records: List[ClerkRecord]) -> None:
     """Mutates `records` in place, filling in property + mailing address
-    fields. First tries the NCAD owner→parcel lookup. As a fallback,
-    extracts a Texas-shaped property address directly from the legal
-    description field — which the Nueces clerk often uses for the
-    site address on Lis Pendens, Foreclosure, and Mechanic Lien records.
+    fields by extracting a Texas-shaped property address directly from
+    the legal-description field — which the Nueces clerk often uses for
+    the site address on Lis Pendens, Foreclosure, and Mechanic Lien
+    records.
+
+    Previously this function ALSO tried a bulk NCAD owner→parcel lookup
+    as a first pass; that path was removed 2026-05-31 because the NCAD
+    public export's two largest files exceed Actions-runner RAM and the
+    remaining files have no recognizable headers, so the lookup was
+    always empty. NCAD esearch (in the next pipeline phase) does the
+    real owner→parcel work.
     """
-    matched_ncad = 0
     extracted_legal = 0
 
     for rec in records:
-        # Strategy A: NCAD owner-name match.
-        if owner_lookup and rec.owner:
-            for variant in _owner_name_variants(rec.owner):
-                info = owner_lookup.get(variant)
-                if info:
-                    rec.prop_address = info.get("site_addr", "")
-                    rec.prop_city    = info.get("site_city", "")
-                    rec.prop_state   = info.get("site_state", "TX")
-                    rec.prop_zip     = info.get("site_zip", "")
-                    rec.mail_address = info.get("mail_addr", "")
-                    rec.mail_city    = info.get("mail_city", "")
-                    rec.mail_state   = info.get("mail_state", "")
-                    rec.mail_zip     = info.get("mail_zip", "")
-                    matched_ncad += 1
-                    break
-
-        # Strategy B: extract address from legal description.
-        # The Nueces clerk often records the property's street address in
-        # the legal-description column for Lis Pendens, Foreclosures, and
-        # Mechanic Liens. Pull it if the property fields are still empty.
+        # Extract a street address from the legal description if the
+        # property fields are still empty. Common on Lis Pendens,
+        # Foreclosures, and Mechanic Liens where the clerk records the
+        # property's street address in the legal-description column.
         if not rec.prop_address and rec.legal:
             addr = _extract_tx_address(rec.legal)
             if addr:
@@ -4089,9 +3556,9 @@ def enrich_with_parcels(records: List[ClerkRecord],
                 rec.prop_zip     = addr["zip"]
                 extracted_legal += 1
 
-    log.info("address enrichment: NCAD=%d, legal-extract=%d / %d total (%d%% have address)",
-             matched_ncad, extracted_legal, len(records),
-             int(100 * (matched_ncad + extracted_legal) / max(1, len(records))))
+    log.info("address enrichment: legal-extract=%d / %d total (%d%% have address)",
+             extracted_legal, len(records),
+             int(100 * extracted_legal / max(1, len(records))))
 
 
 # Texas street types we recognize when sniffing addresses out of legal text.
@@ -4652,7 +4119,7 @@ def main() -> int:
 
     # 2) Pull addresses out of legal-description text where present
     #    (works without NCAD — important fallback path).
-    enrich_with_parcels(clerk_records, owner_lookup={})
+    enrich_with_parcels(clerk_records)
 
     # 3) Score.
     owner_idx = build_owner_cat_index(clerk_records)
@@ -4678,39 +4145,13 @@ def main() -> int:
     # Defer the city_liens.json write until AFTER esearch enrichment runs,
     # so newly-merged CCLN records get owner addresses too. See step 9.
 
-    # 5) WRITE OUTPUTS NOW — before NCAD, so even if NCAD hangs/fails the
-    #    clerk-side leads are committed and the dashboard refreshes.
+    # 5) WRITE OUTPUTS NOW — before NCAD esearch, so even if it hangs or
+    #    fails the clerk-side leads are committed and the dashboard refreshes.
     write_outputs(clerk_records, start_iso, end_iso)
     log.info("=== first-pass write done: %d records (no NCAD enrichment yet) ===",
              len(clerk_records))
 
-    # 6) NCAD bulk export — best-effort enrichment. If this hangs or fails,
-    #    we still have valid output from step 5.
-    owner_lookup: Dict[str, Dict[str, str]] = {}
-    ncad_start = time.time()
-    try:
-        owner_lookup = fetch_ncad_parcels()
-    except Exception as exc:
-        log.error("NCAD fetch failed: %s", exc)
-    ncad_elapsed = time.time() - ncad_start
-    log.info("NCAD phase took %.1fs (%d owner-name variants)",
-             ncad_elapsed, len(owner_lookup))
-
-    # 7) NCAD bulk-export enrichment. If this produced anything, redo
-    #    address pass and rewrite outputs.
-    if owner_lookup:
-        enrich_with_parcels(clerk_records, owner_lookup)
-        owner_idx = build_owner_cat_index(clerk_records)
-        for rec in clerk_records:
-            try:
-                compute_flags_and_score(rec, end_iso, owner_idx)
-            except Exception:
-                pass
-        clerk_records.sort(key=lambda r: r.score or 0, reverse=True)
-        write_outputs(clerk_records, start_iso, end_iso)
-        log.info("=== second-pass write done with NCAD bulk enrichment ===")
-
-    # 8) NCAD per-name esearch lookup — fills in addresses for owners
+    # 6) NCAD per-name esearch lookup — fills in addresses for owners
     #    whose legal-description didn't contain one (most judgments and
     #    tax liens). Best-effort with hard time budget.
     try:
@@ -4720,7 +4161,7 @@ def main() -> int:
                   exc, traceback.format_exc())
         gained = 0
 
-    # 9) If esearch gained any addresses, recompute scores & rewrite.
+    # 7) If esearch gained any addresses, recompute scores & rewrite.
     if gained > 0:
         owner_idx = build_owner_cat_index(clerk_records)
         for rec in clerk_records:
@@ -4733,7 +4174,7 @@ def main() -> int:
         log.info("=== final write done with esearch enrichment "
                  "(+%d addresses) ===", gained)
 
-    # 9b) NCAD esearch for FORECLOSURE records — pulls appraised value
+    # 7b) NCAD esearch for FORECLOSURE records — pulls appraised value
     #     and mailing address for every foreclosure where we can find
     #     the owner on NCAD. We work directly with the JSON file we
     #     just wrote (rather than the in-memory `foreclosures` list)
