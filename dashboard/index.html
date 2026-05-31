@@ -2343,7 +2343,6 @@
       <th data-sort="amount"        style="width: 130px;">Most Recent Lien Amount</th>
       <th data-sort="lien_count"    style="width: 80px;">Lien Count</th>
       <th data-sort="total_lien_amount" style="width: 130px;">Total Lien Amount</th>
-      <th data-sort="appraised_value" style="width: 110px;">Appraised Value</th>
       <th data-sort="market_value"  style="width: 110px;">Market Value</th>
       <th data-sort="legal"         style="width: 155px;">Legal Description</th>
       <th data-sort="doc_num"       style="width: 100px;">Doc#</th>
@@ -8981,7 +8980,6 @@ function _cclnConsolidate(rawRecords) {
       mail_state:          pickField("mail_state"),
       mail_zip:            pickField("mail_zip"),
       legal:               pickField("legal"),
-      appraised_value:     pickField("appraised_value"),
       market_value:        pickField("market_value"),
       ncad_account_num:    pickField("ncad_account_num"),
       ncad_prop_id:        pickField("ncad_prop_id"),
@@ -9025,7 +9023,7 @@ function renderCcln() {
     const toggleTr = document.createElement("tr");
     toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
     toggleTr.innerHTML = `
-      <td colspan="15">
+      <td colspan="14">
         <span class="chev">▶</span>
         <span>${dead.length} deleted lead${dead.length === 1 ? "" : "s"}</span>
         <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
@@ -9057,10 +9055,6 @@ function buildCclnRow(r, isDead) {
   // doc_num for safety on entries that somehow lack a property_key
   // (shouldn't happen after consolidate, but defensive).
   const propKey = r.property_key || r.doc_num;
-
-  const apprVal = r.appraised_value ?
-      "$" + Number(r.appraised_value).toLocaleString("en-US",
-                                                     {maximumFractionDigits: 0}) : "—";
 
   // NCAD cell — uses the shared helper. CCLN records have no
   // ncad_prop_id yet (no esearch lookup runs for the CCLN pipeline),
@@ -9115,7 +9109,6 @@ function buildCclnRow(r, isDead) {
     <td>${r.amount ? "$" + Number(r.amount).toLocaleString("en-US", {maximumFractionDigits: 0}) : ""}</td>
     <td style="text-align:center;">${lienCountCell}</td>
     <td>${totalLienCell}</td>
-    <td>${apprVal}</td>
     <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : "$" + Number(r.market_value).toLocaleString("en-US", {maximumFractionDigits: 0})}</td>
     <td class="legal">${esc((r.legal || "").replace(/^Subdivision\s*-\s*Name:\s*/i, ""))}</td>
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${cclnFlagBadges(r)}</td>
