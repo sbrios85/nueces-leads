@@ -507,25 +507,11 @@ def pick_best_row(rows: List[EsearchRow], record_legal: str,
     legal-description corroboration (the Sanchez-fix matcher) to
     disambiguate between multiple results.
 
-    Layered selection (most specific first):
-
-      1. No rows → "no_results".
-      2. Exactly one R-type candidate → take it. Sole result at a
-         queried address has no collision to disambiguate.
-      3. Multiple candidates + record has a legal → legal_match loop
-         (Sanchez anti-collision protection).
-      4. If legal_match fails OR record has no legal, narrow by
-         situs-starts-with-our-street-number. If that leaves exactly
-         one, take it (logged as "" — successful via address narrow).
-         This recovers the "single R-type result among fuzzy-match
-         noise" case (e.g. NCAD returns 425 ROBERT + 4250 ROBERT for
-         a "425 ROBERT DR" query; narrow keeps only the real 425).
-      5. Otherwise "no_corroboration".
-
-    Step 4 is intentionally conservative: multi-parcel buildings where
-    several candidates share the same street number still bail out,
-    because picking arbitrarily would risk pointing the lien at the
-    wrong unit. The dashboard's _ambiguousAccounts guard catches those.
+    Original logic preserved here. The address-narrowing fallback was
+    tried 2026-05-31 and recovered 0/33 no_corroboration misses — its
+    hypothesis (single R drowning in fuzzy-match noise) didn't match
+    reality. Need diag_pick output to see what NCAD is actually
+    returning before iterating again.
     """
     if not rows:
         return None, "no_results"
@@ -533,10 +519,7 @@ def pick_best_row(rows: List[EsearchRow], record_legal: str,
     candidates = real or rows
     if len(candidates) == 1:
         return candidates[0], ""
-
-    # Multiple candidates — try legal corroboration first when we have
-    # one. This is the Sanchez-anti-collision check.
-    legal_failed = False
+    # Multiple candidates — corroborate by legal (Sanchez protection).
     if record_legal:
         for cand in candidates:
             if not cand.legal:
@@ -549,12 +532,16 @@ def pick_best_row(rows: List[EsearchRow], record_legal: str,
                     return cand, ""
             except Exception as exc:
                 log.debug("legal_match raised on cand %s: %s", cand.prop_id, exc)
-        legal_failed = True
-
-    # Legal didn't help (either absent or none matched). Try narrowing
-    # by street number: if only one candidate's situs starts with our
-    # query's lead number, that's almost certainly the right one and
-    # the others are fuzzy-match noise from NCAD.
+        # Diagnostic dump — see what NCAD returned so we can tune.
+        if os.environ.get("CCLN_ENRICH_DIAG_PICK", "").lower() in ("1","true","yes"):
+            log.info("    DIAG no_corroboration (legal-fail) record_addr=%r legal=%r:",
+                     record_address, (record_legal or "")[:60])
+            for c in candidates:
+                log.info("      cand pid=%s type=%r situs=%r legal=%r",
+                         c.prop_id, c.type_code, c.situs[:70], c.legal[:70])
+        return None, "no_corroboration"
+    # No legal to corroborate with — fall back to the first real result
+    # whose situs starts with our address number. Conservative.
     if record_address:
         head = record_address.split()[0] if record_address.split() else ""
         if head:
@@ -563,11 +550,12 @@ def pick_best_row(rows: List[EsearchRow], record_legal: str,
                 if c.situs and c.situs.split() and c.situs.split()[0] == head
             ]
             if len(addr_match) == 1:
-                if legal_failed:
-                    log.debug("addr-narrowed past failed legal match: %s",
-                              addr_match[0].prop_id)
                 return addr_match[0], ""
-
+    if os.environ.get("CCLN_ENRICH_DIAG_PICK", "").lower() in ("1","true","yes"):
+        log.info("    DIAG no_corroboration (no-legal) record_addr=%r:", record_address)
+        for c in candidates:
+            log.info("      cand pid=%s type=%r situs=%r legal=%r",
+                     c.prop_id, c.type_code, c.situs[:70], c.legal[:70])
     return None, "no_corroboration"
 
 
