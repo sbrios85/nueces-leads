@@ -755,7 +755,7 @@
       "pdf_amount": 274.0,
       "internal_lien_id": "D68652",
       "work_date": "2024-04-22",
-      "ncad_account_num": "0086-0003-0090",
+      "ncad_account_num": "4062-0002-0070",
       "reason_tags": [
         "demolition"
       ],
@@ -763,11 +763,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-27T20:41:36.300821Z",
-      "ncad_prop_id": "182821",
-      "ncad_owner_id": "685189",
-      "ncad_year": "2026",
-      "appraised_value": "$112,621"
+      "ccln_pdf_processed_at": "2026-05-27T20:41:36.300821Z"
     },
     {
       "doc_num": "2024032817",
@@ -1826,7 +1822,7 @@
       "pdf_owner": "PENA RICHARD",
       "legal_from_pdf": "BROADMOOR PK E 135 FT OF LT 8 BK 5",
       "work_date": "2024-04-08",
-      "ncad_account_num": "6855-0014-0210",
+      "ncad_account_num": "1010-0005-0080",
       "pdf_amount": 236.25,
       "pdf_filed_date": "2024-06-13",
       "reason_tags": [
@@ -1840,11 +1836,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-28T00:48:46.933681Z",
-      "ncad_prop_id": "287026",
-      "ncad_owner_id": "824233",
-      "ncad_year": "2026",
-      "appraised_value": "$133,287"
+      "ccln_pdf_processed_at": "2026-05-28T00:48:46.933681Z"
     },
     {
       "doc_num": "2024020342",
@@ -2392,7 +2384,7 @@
       "legal_from_pdf": "NAVAL CENTER BLK 14 LOT 7",
       "pdf_amount": 203.75,
       "pdf_owner": "SANDOR MARGIE ET AL",
-      "ncad_account_num": "1876-0001-0089",
+      "ncad_account_num": "5623-0014-0070",
       "reason_tags": [
         "substandard_building",
         "carrion",
@@ -2403,11 +2395,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-28T00:33:48.494652Z",
-      "ncad_prop_id": "219672",
-      "ncad_owner_id": "156577",
-      "ncad_year": "2026",
-      "appraised_value": "$132,110"
+      "ccln_pdf_processed_at": "2026-05-28T00:33:48.494652Z"
     },
     {
       "doc_num": "2024034359",
@@ -15747,7 +15735,7 @@
       "legal_from_pdf": "BROADMOOR PK E 135 FT OF LT 8 BK 5",
       "pdf_amount": 236.25,
       "pdf_owner": "PENA RICHARD",
-      "ncad_account_num": "6855-0014-0210",
+      "ncad_account_num": "1010-0005-0080",
       "reason_tags": [
         "substandard_building",
         "carrion",
@@ -15759,11 +15747,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-28T00:33:40.825788Z",
-      "ncad_prop_id": "287026",
-      "ncad_owner_id": "824233",
-      "ncad_year": "2026",
-      "appraised_value": "$133,287"
+      "ccln_pdf_processed_at": "2026-05-28T00:33:40.825788Z"
     },
     {
       "doc_num": "2024031491",
@@ -22528,7 +22512,7 @@
       "flags": [],
       "score": 35,
       "work_date": "2024-10-25",
-      "ncad_account_num": "1795-0003-0120",
+      "ncad_account_num": "8187-0004-0200",
       "pdf_filed_date": "2025-01-02",
       "pdf_owner": "DALTON ROBERT M JR",
       "pdf_amount": 365.0,
@@ -22543,11 +22527,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-26T19:30:37.890841Z",
-      "ncad_prop_id": "217382",
-      "ncad_owner_id": "674601",
-      "ncad_year": "2026",
-      "appraised_value": "$37,680"
+      "ccln_pdf_processed_at": "2026-05-26T19:30:37.890841Z"
     },
     {
       "doc_num": "2024032791",
@@ -25497,7 +25477,7 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024034286",
       "flags": [],
       "score": 35,
-      "ncad_account_num": "1695-0015-0010",
+      "ncad_account_num": "1695-0015-0150",
       "work_date": "2024-07-29",
       "pdf_amount": 544.0,
       "pdf_owner": "HARDEMAN GATES",
@@ -25513,11 +25493,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-27T19:34:35.520098Z",
-      "ncad_prop_id": "215041",
-      "ncad_owner_id": "654814",
-      "ncad_year": "2026",
-      "appraised_value": "$781"
+      "ccln_pdf_processed_at": "2026-05-27T19:34:35.520098Z"
     },
     {
       "doc_num": "2024034281",
@@ -25801,7 +25777,7 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024034337",
       "flags": [],
       "score": 35,
-      "ncad_account_num": "3347-0004-0050",
+      "ncad_account_num": "8284-0013-0240",
       "work_date": "2024-08-09",
       "pdf_amount": 2912.0,
       "pdf_owner": "RUIZ MARY ALICE",
@@ -25817,11 +25793,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-27T19:35:03.717407Z",
-      "ncad_prop_id": "242445",
-      "ncad_owner_id": "723304",
-      "ncad_year": "2026",
-      "appraised_value": "$291,954"
+      "ccln_pdf_processed_at": "2026-05-27T19:35:03.717407Z"
     },
     {
       "doc_num": "2024034340",
@@ -28932,7 +28904,7 @@
       "score": 35,
       "work_date": "2024-05-21",
       "legal_from_pdf": "NAVAL CENTER BLK 14 LOT 8",
-      "ncad_account_num": "1876-0001-0089",
+      "ncad_account_num": "5623-0014-0080",
       "pdf_amount": 228.75,
       "internal_lien_id": "D69178",
       "pdf_owner": "SANDOR MARGIE",
@@ -28945,11 +28917,7 @@
       ],
       "ccln_pdf_flags": [],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-28T00:11:56.251316Z",
-      "ncad_prop_id": "219672",
-      "ncad_owner_id": "156577",
-      "ncad_year": "2026",
-      "appraised_value": "$132,110"
+      "ccln_pdf_processed_at": "2026-05-28T00:11:56.251316Z"
     },
     {
       "doc_num": "2024032875",
@@ -29540,7 +29508,7 @@
       "legal_from_pdf": "WASHINGTON BLK 3 LOT 1",
       "pdf_amount": 270.86,
       "pdf_owner": "BROWN VALARIE M",
-      "ncad_account_num": "0696-0044-0090",
+      "ncad_account_num": "9253-0003-0010",
       "reason_tags": [
         "substandard_building",
         "carrion",
@@ -29551,11 +29519,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-28T00:33:10.241453Z",
-      "ncad_prop_id": "195159",
-      "ncad_owner_id": "687769",
-      "ncad_year": "2026",
-      "appraised_value": "$110,057"
+      "ccln_pdf_processed_at": "2026-05-28T00:33:10.241453Z"
     },
     {
       "doc_num": "2024031533",
@@ -30340,7 +30304,7 @@
       "score": 35,
       "legal_from_pdf": "NAVAL CENTER BLK 14 LOT 8",
       "internal_lien_id": "D69593",
-      "ncad_account_num": "1876-0001-0089",
+      "ncad_account_num": "5623-0014-0080",
       "pdf_amount": 272.5,
       "pdf_filed_date": "2024-12-18",
       "work_date": "2024-10-04",
@@ -30353,11 +30317,7 @@
       ],
       "ccln_pdf_flags": [],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-26T23:05:20.444593Z",
-      "ncad_prop_id": "219672",
-      "ncad_owner_id": "156577",
-      "ncad_year": "2026",
-      "appraised_value": "$132,110"
+      "ccln_pdf_processed_at": "2026-05-26T23:05:20.444593Z"
     },
     {
       "doc_num": "2024043233",
@@ -36179,7 +36139,7 @@
       "flags": [],
       "score": 35,
       "pdf_amount": 205.0,
-      "ncad_account_num": "7122-0001-0090",
+      "ncad_account_num": "5938-0014-0040",
       "pdf_owner": "RHODES AG",
       "internal_lien_id": "D70484",
       "work_date": "2025-05-09",
@@ -36195,11 +36155,7 @@
         "incomplete_extraction"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-25T22:19:22.375009Z",
-      "ncad_prop_id": "290372",
-      "ncad_owner_id": "806856",
-      "ncad_year": "2026",
-      "appraised_value": "$99,792"
+      "ccln_pdf_processed_at": "2026-05-25T22:19:22.375009Z"
     },
     {
       "doc_num": "2025026239",
@@ -46262,7 +46218,7 @@
       "legal_from_pdf": "OAK PARK LT 4 BK 14",
       "internal_lien_id": "D69820",
       "pdf_filed_date": "2025-02-04",
-      "ncad_account_num": "7122-0001-0090",
+      "ncad_account_num": "5938-0014-0040",
       "work_date": "2024-11-01",
       "reason_tags": [
         "substandard_building",
@@ -46274,11 +46230,7 @@
         "incomplete_extraction"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-26T19:08:20.044268Z",
-      "ncad_prop_id": "290372",
-      "ncad_owner_id": "806856",
-      "ncad_year": "2026",
-      "appraised_value": "$99,792"
+      "ccln_pdf_processed_at": "2026-05-26T19:08:20.044268Z"
     },
     {
       "doc_num": "2025004040",
@@ -48029,7 +47981,7 @@
       "flags": [],
       "score": 35,
       "pdf_owner": "QUINTANILLA RIGOBERTO",
-      "ncad_account_num": "1876-0001-0127",
+      "ncad_account_num": "1613-0005-0070",
       "pdf_amount": 445.0,
       "pdf_filed_date": "2025-02-04",
       "work_date": "2024-11-01",
@@ -48045,11 +47997,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-26T19:23:17.353709Z",
-      "ncad_prop_id": "219698",
-      "ncad_owner_id": "832940",
-      "ncad_year": "2026",
-      "appraised_value": "$139,080"
+      "ccln_pdf_processed_at": "2026-05-26T19:23:17.353709Z"
     },
     {
       "doc_num": "2025027076",
@@ -61682,7 +61630,7 @@
       "flags": [],
       "score": 35,
       "legal_from_pdf": "NAVAL CENTER BLK 14 LOT 7",
-      "ncad_account_num": "1876-0001-0089",
+      "ncad_account_num": "5623-0014-0070",
       "pdf_amount": 228.75,
       "pdf_filed_date": "2024-12-18",
       "work_date": "2024-10-11",
@@ -61697,11 +61645,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-26T23:05:07.844843Z",
-      "ncad_prop_id": "219672",
-      "ncad_owner_id": "156577",
-      "ncad_year": "2026",
-      "appraised_value": "$132,110"
+      "ccln_pdf_processed_at": "2026-05-26T23:05:07.844843Z"
     },
     {
       "doc_num": "2024032811",
@@ -65800,12 +65744,7 @@
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2024035054",
       "flags": [],
-      "score": 35,
-      "ncad_prop_id": "290372",
-      "ncad_owner_id": "806856",
-      "ncad_year": "2026",
-      "ncad_account_num": "7122-0001-0090",
-      "appraised_value": "$99,792"
+      "score": 35
     },
     {
       "doc_num": "2024035051",
@@ -71037,7 +70976,7 @@
       "flags": [],
       "score": 35,
       "pdf_owner": "QUINTANILLA RIGOBERTO",
-      "ncad_account_num": "1876-0001-0127",
+      "ncad_account_num": "1613-0005-0080",
       "pdf_amount": 365.0,
       "pdf_filed_date": "2025-02-04",
       "work_date": "2024-11-01",
@@ -71054,11 +70993,7 @@
         "absentee_owner"
       ],
       "ccln_pdf_processed": true,
-      "ccln_pdf_processed_at": "2026-05-26T19:23:16.105001Z",
-      "ncad_prop_id": "219698",
-      "ncad_owner_id": "832940",
-      "ncad_year": "2026",
-      "appraised_value": "$139,080"
+      "ccln_pdf_processed_at": "2026-05-26T19:23:16.105001Z"
     },
     {
       "doc_num": "2024043239",
