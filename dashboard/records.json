@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-05-30T11:59:54.877890+00:00",
+  "fetched_at": "2026-05-31T04:24:33.293728+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-04-30",
-    "end": "2026-05-30"
+    "start": "2026-05-01",
+    "end": "2026-05-31"
   },
-  "total": 75,
+  "total": 74,
   "with_address": 34,
   "records": [
     {
@@ -390,30 +390,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017579",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026014918",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-04-30",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "U S BANK TRUST NATIONAL ASSOCIATION",
-      "grantee": "AUCTION COM LLC",
-      "amount": null,
-      "legal": "839 MOLINA ROBSTOWN TX 78380 (Lot 13, Block 5)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026014918",
       "flags": [
         "LLC / corp owner"
       ],
