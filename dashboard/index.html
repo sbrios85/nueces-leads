@@ -634,6 +634,20 @@
   /* When focused, allow scrolling so long values are fully reachable
      while editing — but still no visible scrollbar chrome. */
   textarea.cell-edit:focus { overflow: auto; }
+  /* Click-to-edit display: FC/TFC owner & address cells show the
+     formatted (read-only) text by default; clicking reveals the raw
+     editable control. The control keeps its data-field / dirty / save
+     wiring untouched, so editing and saving still write the RAW value
+     the user types — only the resting display is formatted. */
+  .fmt-cell .fmt-disp {
+    display: block; padding: 3px 5px; border: 1px solid transparent;
+    border-radius: 4px; cursor: text; white-space: pre-wrap;
+    word-break: break-word; overflow-wrap: anywhere; min-height: 22px;
+  }
+  .fmt-cell .fmt-disp:hover { border-color: var(--border); }
+  .fmt-cell.editing .fmt-disp { display: none; }
+  .fmt-cell .cell-edit { display: none; }
+  .fmt-cell.editing .cell-edit { display: block; }
   /* Save column: empty until the row has unsaved edits, then a save
      icon appears; on save it briefly flips to a green check. */
   .save-cell { text-align: center; width: 44px; }
@@ -8631,7 +8645,7 @@ function buildDelqRow(r, isDead) {
   }
 
   // --- Owner cell with exemption badges ----------------------------
-  let ownerCell = esc(r.owner || "");
+  let ownerCell = esc(fmtOwner(r.owner || ""));
   if (Array.isArray(r.exemptions) && r.exemptions.length) {
     const badges = r.exemptions.map(e =>
       `<span class="delq-exempt-badge" title="${esc(e)}">${esc(
@@ -8653,7 +8667,7 @@ function buildDelqRow(r, isDead) {
   }
 
   // --- Property address with zip on line 2, acres tooltip ----------
-  let propCell = esc(r.prop_address || "");
+  let propCell = esc(fmtTitle(r.prop_address || ""));
   if (r.acres) {
     propCell = `<span title="${r.acres.toFixed(3)} acres">${propCell}</span>`;
   }
@@ -8669,9 +8683,9 @@ function buildDelqRow(r, isDead) {
   // --- Mailing address with city/state/zip on line 2 + bad-addr ----
   const mailLines = [];
   const mailLine1Parts = [r.mail_address, r.mail_address2].filter(Boolean);
-  if (mailLine1Parts.length) mailLines.push(esc(mailLine1Parts.join(" ")));
+  if (mailLine1Parts.length) mailLines.push(esc(fmtTitle(mailLine1Parts.join(" "))));
   const mailLine2Parts = [r.mail_city, r.mail_state, r.mail_zip].filter(Boolean);
-  if (mailLine2Parts.length) mailLines.push(`<small>${esc(mailLine2Parts.join(" "))}</small>`);
+  if (mailLine2Parts.length) mailLines.push(`<small>${esc(fmtTitle(mailLine2Parts.join(" ")))}</small>`);
   let mailCell = mailLines.join("<br>") ||
                  `<span style="color:var(--muted)">—</span>`;
   if (r.flags && r.flags.bad_address) {
@@ -9365,10 +9379,10 @@ function buildCclnRow(r, isDead) {
   tr.innerHTML = `
     <td>${statusCell}</td>
     <td>${esc(r.filed || "")}</td>
-    <td>${esc(r.owner || "")}</td>
-    <td>${esc(r.prop_address || "")}${r.prop_city ? "<br><small>" + esc(r.prop_city + " " + (r.prop_zip||"")) + "</small>" : ""}</td>
+    <td>${esc(fmtOwner(r.owner || ""))}</td>
+    <td>${esc(fmtTitle(r.prop_address || ""))}${r.prop_city ? "<br><small>" + esc(fmtTitle(r.prop_city + " " + (r.prop_zip||""))) + "</small>" : ""}</td>
     <td style="text-align:center;">${mapCellHtml(r)}</td>
-    <td>${esc(r.mail_address || "")}${r.mail_city ? "<br><small>" + esc(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||"")) + "</small>" : ""}</td>
+    <td>${esc(fmtTitle(r.mail_address || ""))}${r.mail_city ? "<br><small>" + esc(fmtTitle(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||""))) + "</small>" : ""}</td>
     <td>${r.amount ? "$" + Number(r.amount).toLocaleString("en-US", {maximumFractionDigits: 0}) : ""}</td>
     <td style="text-align:center;">${lienCountCell}</td>
     <td>${totalLienCell}</td>
@@ -9883,9 +9897,9 @@ function _buildStackRow(entry) {
 
   tr.innerHTML = `
     <td>${badgeHtml || '<span style="color:var(--muted)">—</span>'}</td>
-    <td>${esc(entry.prop_address || "—")}</td>
+    <td>${esc(fmtTitle(entry.prop_address || "—"))}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
-    <td>${esc(entry.owner || "—")}</td>
+    <td>${esc(fmtOwner(entry.owner || "—"))}</td>
     <td>${esc(entry.latest_filed || "—")}</td>
     <td>${esc(entry.ncad_account_num || "—")}</td>
     <td style="text-align:center;">${ncadCell}</td>
@@ -10971,11 +10985,18 @@ function buildTfcRow(r, mode) {
       data-uid="${esc(uid)}"
       oninput="tfcMarkDirty(this)"
       onclick="event.stopPropagation();"`;
+    let ctrl;
     if (isLong)
-      return `<textarea ${common} rows="2"
+      ctrl = `<textarea ${common} rows="2"
               placeholder="—">${esc(val)}</textarea>`;
-    return `<input type="text" ${common}
+    else
+      ctrl = `<input type="text" ${common}
               value="${esc(val)}" placeholder="—">`;
+    if (key === "owner")
+      return _fmtCellWrap(ctrl, fmtOwner(val));
+    if (key === "prop_address" || key === "mail_address")
+      return _fmtCellWrap(ctrl, fmtTitle(val));
+    return ctrl;
   };
 
   // Effective values pull from overrides first, then JSON values
@@ -11612,9 +11633,11 @@ function buildFcRow(r, isDead) {
       data-doc="${esc(r.doc_num)}"
       oninput="fcMarkDirty(this)"
       onclick="event.stopPropagation();"`;
+    let ctrl;
     if (isLegal)
-      return `<textarea ${common} rows="2"
+      ctrl = `<textarea ${common} rows="2"
               placeholder="—">${esc(val)}</textarea>`;
+    else {
     /* Owner / Property / Mailing / Lender are long free-text fields.
        Render them as 2-row textareas so the value WRAPS onto a second
        line instead of being clipped by the fixed column width. A
@@ -11622,10 +11645,19 @@ function buildFcRow(r, isDead) {
     const _wrapKeys = ["owner", "prop_address",
                        "mail_address", "lender"];
     if (_wrapKeys.includes(key))
-      return `<textarea ${common} rows="2"
+      ctrl = `<textarea ${common} rows="2"
               placeholder="—">${esc(val)}</textarea>`;
-    return `<input type="text" ${common}
+    else
+      ctrl = `<input type="text" ${common}
               value="${esc(val)}" placeholder="—">`;
+    }
+    // Owner & address get a formatted click-to-edit display; legal and
+    // other fields render the raw control directly (legal stays caps).
+    if (key === "owner")
+      return _fmtCellWrap(ctrl, fmtOwner(val));
+    if (key === "prop_address" || key === "mail_address")
+      return _fmtCellWrap(ctrl, fmtTitle(val));
+    return ctrl;
   };
 
   tr.innerHTML = `
@@ -11856,6 +11888,179 @@ document.getElementById("fc-reason-backdrop").onclick = (e) => {
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g,
     c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+// ============================================================
+// Lead-row display formatting (DISPLAY-ONLY).
+//   fmtOwner(raw)  -> "First Last (Spouse/Co-owner)" from county
+//                     ALL-CAPS surname-first owner strings; mixed-case
+//                     (clerk-sourced) input passes through unchanged;
+//                     organizations / estates handled.
+//   fmtTitle(raw)  -> title-case for property / mailing address text;
+//                     2-letter state stays uppercase, ZIP untouched.
+// These NEVER alter the underlying data — callers pass the raw value
+// only for display. Sorting, NCAD/NCTAX links, the clipboard search
+// (flipOwnerForNcad), and the editable-cell SAVE path all keep the
+// original raw value. Legal Description is intentionally NOT routed
+// through these (it stays full caps).
+// ============================================================
+const _FMT_ENTITY_TOKENS = new Set(("LLC LLP INC LP LTD PC PLLC CORP COMPANY CO TRUST TRST TR LIVING REVOCABLE REV LVG FAMILY FAM PROPERTIES PROPERTY HOLDINGS INVESTMENTS ENTERPRISES ENTERPRISE CHURCH MINISTRIES MINISTRY ASSN ASSOCIATION FOUNDATION FUND PARTNERS PARTNERSHIP GROUP REALTY RENTALS MANAGEMENT MGMT BANK HOMES DEVELOPMENT CONSTRUCTION SERVICES SOLUTIONS CONSULTING OIL GAS SALES MARKETING MOTORS STORES MARKET CORPS EMS DBA ISD AUTHORITY HOUSING HSING SECTY SECRETARY URBAN HUD MORTGAGE FEDERAL FNMA FANNIE FREDDIE VETERANS VA").split(" "));
+const _FMT_ENTITY_PHRASES = ["LIVING TRUST","FAMILY TRUST","LVG TRST","REV TRUST","REV LVG","REVOCABLE","LAND TRUST","LAND TRUS","URBAN DEV","SECTY OF","SECRETARY OF"," LLP"," LLC"," INC"," LTD"," LP "," PC "," CO ","TRST"," DBA "," MAE"," MAC "];
+const _FMT_SUFFIXES = new Set(["JR","SR","II","III","IV","V"]);
+const _FMT_ROMAN = new Set(["II","III","IV","V"]);
+const _FMT_SPOUSE = ["ET UX","ETUX","ET VIR","ETVIR","& WFE","AND WFE","& WF","AND WF","& HUSB","AND HUSB","& HB","AND HB","& HUSBAND","AND HUSBAND","& WIFE","AND WIFE","& SP","AND SP","& SPOUSE","AND SPOUSE"];
+const _FMT_ROLE_TAIL = /\s*\b(CO-?TR|TRUSTEE|TR OF.*|TD|EXEC|EXECUTOR|ADMIN|GUARDIAN|POA|AIF)\b.*$/i;
+const _FMT_BARE_REL = /\s*\b(WFE|WF|HB|HUSB|HUSBAND|WIFE|SP|SPOUSE)\s*$/i;
+const _FMT_COMPOUND2 = new Set(["DE LA","DE LOS","DE LAS","VAN DER","VAN DEN"]);
+const _FMT_COMPOUND1 = new Set(["DE","DEL","DELA","LA","LOS","LAS","VAN","VON","MC","MAC","ST","SAN","SANTA"]);
+const _FMT_ORD = /^(\d+)(ST|ND|RD|TH)$/i;
+const _FMT_LOWER_CONN = new Set(["of","the","and","for","a"]);
+const _FMT_ALLCAP_KEEP = new Set(["LLC","LLP","INC","LP","LTD","PC","PLLC","CORP","EMS","ISD","DBA","TR","CO","VA","HUD"]);
+const _FMT_MAC_EXC = new Set(["macias","macklin","mackey","mackin","macedo","machado","macal","macy"]);
+const _FMT_US_STATE = new Set(("AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC").split(" "));
+
+function _fmtWord(w) {
+  const U = w.toUpperCase();
+  if (_FMT_ROMAN.has(U)) return U;
+  if (_FMT_ALLCAP_KEEP.has(U)) return U;
+  const m = _FMT_ORD.exec(w);
+  if (m) return m[1] + m[2].toLowerCase();
+  if (w.indexOf("-") >= 0) return w.split("-").filter(Boolean).map(_fmtWord).join("-");
+  if (w.indexOf(".") >= 0 && w.length <= 3) return w.toUpperCase();
+  let base = w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w;
+  let mc = /^(Mc)([a-z])(.*)$/.exec(base);
+  if (mc && base.length > 3) base = mc[1] + mc[2].toUpperCase() + mc[3];
+  let ma = /^(Mac)([a-z])(.*)$/.exec(base);
+  if (ma && base.length > 4 && !_FMT_MAC_EXC.has(base.toLowerCase())) base = ma[1] + ma[2].toUpperCase() + ma[3];
+  return base;
+}
+function _fmtTitleCore(s) {
+  const words = String(s).split(/\s+/).filter(Boolean);
+  return words.map((w, i) => (i > 0 && _FMT_LOWER_CONN.has(w.toLowerCase())) ? w.toLowerCase() : _fmtWord(w)).join(" ");
+}
+// Address title-case: like _fmtTitleCore but preserves a 2-letter US
+// state code and leaves ZIP-like tokens untouched.
+function fmtTitle(raw) {
+  if (raw == null) return "";
+  const s = String(raw);
+  if (!s.trim()) return s;
+  return s.split(/(\s+|,)/).map(tok => {
+    if (/^\s+$/.test(tok) || tok === ",") return tok;
+    const U = tok.toUpperCase();
+    if (_FMT_US_STATE.has(U) && tok.length === 2) return U;     // TX stays TX
+    if (/\d/.test(tok)) {                                        // 78405 / 78405-2802 / 3RD
+      const m = _FMT_ORD.exec(tok);
+      return m ? m[1] + m[2].toLowerCase() : tok;
+    }
+    return _fmtWord(tok);
+  }).join("");
+}
+function _fmtHasLower(s) { return /[a-z]/.test(s); }
+function _fmtStripEtal(core) {
+  const re = /\s+(?:AND\s+ET\s*ALS?|ET\s*ALS?|ET\s+AL|AND)\s*$/i;
+  const n = core.replace(re, "");
+  return [n.trim(), n !== core];
+}
+function _fmtSplitLast(toks) {
+  if (toks.length >= 3 && _FMT_COMPOUND2.has(toks.slice(0, 2).join(" ").toUpperCase())) return [toks.slice(0, 3), toks.slice(3)];
+  if (toks.length >= 2 && _FMT_COMPOUND1.has(toks[0].toUpperCase())) return [toks.slice(0, 2), toks.slice(2)];
+  return [toks.slice(0, 1), toks.slice(1)];
+}
+function _fmtFlip(core) {
+  core = core.trim();
+  if (!core) return core;
+  if (_fmtHasLower(core)) return core;
+  let toks = core.split(/\s+/).filter(Boolean), suffix = "";
+  if (toks.length && _FMT_SUFFIXES.has(toks[toks.length - 1].toUpperCase())) {
+    const s = toks[toks.length - 1].toUpperCase(); toks = toks.slice(0, -1);
+    suffix = _FMT_ROMAN.has(s) ? s : s[0] + s.slice(1).toLowerCase();
+  }
+  if (toks.length === 1) return (_fmtWord(toks[0]) + (suffix ? " " + suffix : "")).trim();
+  const [lastT, rest] = _fmtSplitLast(toks);
+  let out = (_fmtTitleCore(rest.join(" ")) + " " + _fmtTitleCore(lastT.join(" "))).trim();
+  if (suffix) out += " " + suffix;
+  return out;
+}
+function _fmtCoowner(s) {
+  s = s.trim();
+  if (!s) return "";
+  const extra = /\s*&\s*|\s+AND\s+/.test(s);
+  let first = s.split(/\s*&\s*|\s+AND\s+/)[0].trim();
+  first = first.replace(_FMT_ROLE_TAIL, "").trim().replace(_FMT_BARE_REL, "").trim();
+  if (!first) return "";
+  let out = (first === first.toUpperCase()) ? _fmtTitleCore(first) : first;
+  if (extra) out += ", et al";
+  return out;
+}
+function _fmtPersonBlock(name) {
+  const upper = name.toUpperCase();
+  let core = name, spouse = null;
+  for (const mk of _FMT_SPOUSE) {
+    const idx = upper.indexOf(" " + mk);
+    if (idx !== -1) { core = name.slice(0, idx).trim(); spouse = name.slice(idx + 1 + mk.length).trim(); break; }
+  }
+  let etAl; [core, etAl] = _fmtStripEtal(core);
+  let amp = null;
+  if (spouse === null) {
+    const m = /\s*&\s*|\s+AND\s+/.exec(core);
+    if (m) {
+      const a = core.slice(0, m.index).trim(), b = core.slice(m.index + m[0].length).trim();
+      if (a && b) { core = a; amp = b; }
+    }
+  }
+  let primary = _fmtFlip(core);
+  if (spouse !== null) {
+    spouse = spouse.replace(_FMT_ROLE_TAIL, "").trim().replace(_FMT_BARE_REL, "").trim();
+    if (spouse) {
+      const spToks = spouse.split(/\s+/).filter(Boolean);
+      const surname = _fmtSplitLast(core.split(/\s+/).filter(Boolean))[0].join(" ");
+      primary += " (" + (spToks.length >= 2 ? _fmtTitleCore(spouse) : _fmtTitleCore(spouse + " " + surname)) + ")";
+    } else primary += " (and spouse)";
+  } else if (amp) {
+    const co = _fmtCoowner(amp);
+    if (co) primary += " (" + co + ")";
+  } else if (etAl) { primary += " (et al)"; }
+  return primary;
+}
+function fmtOwner(raw) {
+  if (raw == null) return "";
+  const name = String(raw).trim();
+  if (!name) return name;
+  if (_fmtHasLower(name)) return name;             // already formatted (clerk-sourced)
+  if (_fmtIsEntity(name)) return _fmtTitleCore(name); // organization
+  const upper = name.toUpperCase();
+  const mSuf = /\s+EST(?:ATE)?\s+OF\s*$/.exec(upper);
+  const mPre = /^EST(?:ATE)?\s+OF\s+(.*)$/.exec(upper);
+  if (mSuf || mPre) {
+    const body = (mSuf ? name.slice(0, mSuf.index) : name.slice(upper.indexOf(mPre[1]))).trim();
+    return "Estate of " + _fmtPersonBlock(body);
+  }
+  return _fmtPersonBlock(name);
+}
+function _fmtIsEntity(name) {
+  const u = name.toUpperCase(), p = " " + u + " ";
+  for (const t of _FMT_ENTITY_TOKENS) if (p.indexOf(" " + t + " ") >= 0) return true;
+  for (const ph of _FMT_ENTITY_PHRASES) if (u.indexOf(ph) >= 0) return true;
+  return false;
+}
+
+// Wrap an editable cell control so it shows a formatted, read-only
+// display by default and reveals the raw editable control on click.
+// `controlHtml` is the existing <textarea>/<input> (unchanged, so its
+// data-field/dirty/save wiring is preserved). `dispText` is the
+// formatted text to show at rest. Clicking the display reveals + focuses
+// the control; the control's own value remains the RAW value to save.
+function _fmtCellWrap(controlHtml, dispText) {
+  const disp = dispText && dispText.trim() ? esc(dispText)
+    : '<span style="color:var(--muted)">—</span>';
+  return `<div class="fmt-cell" onclick="fmtCellReveal(this)">` +
+         `<span class="fmt-disp">${disp}</span>${controlHtml}</div>`;
+}
+function fmtCellReveal(wrap) {
+  if (wrap.classList.contains("editing")) return;
+  wrap.classList.add("editing");
+  const ctrl = wrap.querySelector(".cell-edit");
+  if (ctrl) { ctrl.focus(); try { ctrl.selectionStart = ctrl.value.length; } catch (e) {} }
 }
 
 // Title-case a string for human-readable display. Source data
