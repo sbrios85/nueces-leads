@@ -32,6 +32,10 @@ What we add to each TFC record on a match:
   * ncad_prop_id   — NCAD property ID
   * ncad_year      — tax-roll year
   * ncad_owner_id  — NCAD owner ID (powers dashboard ↗ URL)
+  * ncad_account_num
+                   — dashed 12-digit Geographic ID (powers the NCTAX
+                     direct-link house). Captured from the detail page,
+                     so it only fills in when FETCH_MAIL_ADDRESS=1.
   * mail_address / mail_city / mail_state / mail_zip
                    — only if detail-page fetch is enabled
                      (env FETCH_MAIL_ADDRESS=1; off by default since
@@ -530,6 +534,77 @@ async def _esearch_address(page,
     return best
 
 
+# ==================================================================
+# Account-number (Geographic ID) extraction — for the NCTAX column
+# ==================================================================
+#
+# On the BIS Consultants detail page the tax account number is shown
+# as the "Geographic ID" — a dashed 12-digit value like
+# "6855-0012-0170". It's the SAME number the Nueces County Tax Office
+# keys on, just dash-stripped for its `can=` parameter (verified
+# 2026-05-28: 6855-0012-0170 -> can=685500120170). We store the dashed
+# form to match how DELQ/CCLN store ncad_account_num; the dashboard
+# strips non-digits itself. Without it, every TFC row falls back to
+# the NCTAX address-search magnifier instead of the green "direct
+# link" house.
+
+# Canonical Nueces geo-id shape. Distinctive enough that a whole-page
+# scan rarely false-positives — a single property's detail page
+# carries exactly one geo id (its own).
+GEO_ID_RE = re.compile(r"\b(\d{4}-\d{4}-\d{4})\b")
+
+# Label tokens to look for, most specific first. Each tuple's
+# substrings must ALL appear (lowercased) in the field label.
+ACCOUNT_LABEL_TOKEN_SETS = [
+    ("geographic", "id"),
+    ("geo", "id"),
+    ("property", "account"),
+    ("account",),
+    ("parcel",),
+]
+
+
+def _extract_account_num(text_pairs: Dict[str, str],
+                          soup) -> str:
+    """Pull the dashed 12-digit Geographic ID from a detail page.
+
+    text_pairs is the label->value map already built by the caller
+    (reused so we don't re-parse). soup is the parsed page, used only
+    for the whole-page fallback. Strategy, in order:
+      1. Account-like label whose value matches the geo-id shape.
+      2. Any label/value pair whose value is a geo-id.
+      3. Whole page: if exactly one distinct geo-id appears, use it.
+    Returns the dashed form ("6855-0012-0170") or "" if nothing
+    confidently matched.
+    """
+    def labeled_value(token_set: Tuple[str, ...]) -> str:
+        for label, value in text_pairs.items():
+            if all(tok in label for tok in token_set):
+                return value
+        return ""
+
+    for token_set in ACCOUNT_LABEL_TOKEN_SETS:
+        value = labeled_value(token_set)
+        if value:
+            m = GEO_ID_RE.search(value)
+            if m:
+                return m.group(1)
+
+    for value in text_pairs.values():
+        m = GEO_ID_RE.search(value)
+        if m:
+            return m.group(1)
+
+    try:
+        page_text = soup.get_text(" ", strip=True)
+    except Exception:
+        page_text = ""
+    found = set(GEO_ID_RE.findall(page_text))
+    if len(found) == 1:
+        return next(iter(found))
+    return ""
+
+
 async def _esearch_detail_for_mail(page,
                                     prop_id: str,
                                     year: str,
@@ -623,9 +698,17 @@ async def _esearch_detail_for_mail(page,
     mail_full = (find_value("mailing", "address")
                   or find_value("mail", "address")
                   or find_value("owner", "address"))
-    if not mail_full:
-        return {}
-    return _split_us_address(mail_full)
+
+    # The account number lives on this same page; capture it whether
+    # or not a mailing address was found, so NCTAX can deep-link.
+    account = _extract_account_num(text_pairs, soup)
+
+    result: Dict[str, str] = {}
+    if mail_full:
+        result.update(_split_us_address(mail_full))
+    if account:
+        result["ncad_account_num"] = account
+    return result
 
 
 def _split_us_address(full: str) -> Dict[str, str]:
@@ -1006,6 +1089,11 @@ def _build_additions(best: Dict[str, Any],
         if mail_info.get(key):
             tfc_key = "mail_address" if key == "mail_addr" else key
             additions[tfc_key] = mail_info[key]
+
+    # NCTAX account number (Geographic ID) from the detail page —
+    # powers the green NCTAX direct-link house in the dashboard.
+    if mail_info.get("ncad_account_num"):
+        additions["ncad_account_num"] = mail_info["ncad_account_num"]
 
     return additions
 
