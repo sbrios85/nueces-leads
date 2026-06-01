@@ -1822,6 +1822,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "COASTAL BEND ONCOLOGY HEMATOLOGY P A": null,
     "COLE JAMES ROBERT": {
       "mail_addr": "",
       "mail_city": "",
@@ -2838,6 +2839,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "ESTATE OF WILLIAM ALAN MOECK DECD": null,
     "EUROPEAN BUSINESS CONNECTION INC": {
       "mail_addr": "",
       "mail_city": "",
@@ -5314,6 +5316,21 @@
       "ncad_prop_id": "297113",
       "ncad_year": "2026",
       "site_addr": "14898 GRANADA DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
+    },
+    "MACDONALD ROBERT": {
+      "appraised_value": 24703.0,
+      "mail_addr": "591 Tuna St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_legal": "MANUFACTURED HOME LOC 591 TUNA -MARINA VILLAGE MH PK SERIAL #H98674G LABEL #GEO0692667",
+      "ncad_owner_id": "794924",
+      "ncad_prop_id": "604560",
+      "ncad_year": "2026",
+      "site_addr": "591 TUNA",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78418"
@@ -8984,6 +9001,7 @@
       "site_state": "TX",
       "site_zip": "78406"
     },
+    "VALDEZ JOSE": null,
     "VALDEZ QUIRINO": {
       "mail_addr": "",
       "mail_city": "",
@@ -9258,6 +9276,7 @@
       "site_zip": "78418"
     },
     "WIMBERLY JEREMY": null,
+    "WIMBERLY JEREMY J": null,
     "WOLF DONNA": {
       "mail_addr": "",
       "mail_city": "",
