@@ -1,13 +1,13 @@
 {
-  "ran_at": "2026-06-01T00:58:37+00:00",
+  "ran_at": "2026-06-01T21:25:40+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
-    "matched": 73,
+    "matched": 44,
     "no_account_on_page": 0,
-    "no_prop_id": 59,
-    "skipped_already": 0,
-    "total": 132
+    "no_prop_id": 62,
+    "skipped_already": 29,
+    "total": 135
   },
   "entries": [
     {
@@ -88,18 +88,23 @@
       "ncad_account_num": "9063-0001-0690"
     },
     {
-      "doc_num": "2026000274",
-      "prop_address": "4914 CREEKBEND RD",
-      "result": "no-prop-id"
-    },
-    {
       "doc_num": "2026000288",
       "prop_address": "2534 DOGTOOTH CT",
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000274",
+      "prop_address": "4914 CREEKBEND RD",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000273",
       "prop_address": "7814 ELK DR",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000281",
+      "prop_address": "4302 VESTAL ST",
       "result": "no-prop-id"
     },
     {
@@ -110,16 +115,6 @@
     {
       "doc_num": "2026000278",
       "prop_address": "1041 BRAWNER PKWY",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000281",
-      "prop_address": "4302 VESTAL ST",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000289",
-      "prop_address": "10533 HEIZER DR",
       "result": "no-prop-id"
     },
     {
@@ -138,11 +133,6 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000283",
-      "prop_address": "4410 HAMLIN DR",
-      "result": "no-prop-id"
-    },
-    {
       "doc_num": "2026000290",
       "prop_address": "10533 HEIZER DR",
       "result": "no-prop-id"
@@ -153,11 +143,21 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000289",
+      "prop_address": "10533 HEIZER DR",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000280",
       "prop_address": "430 TROY DR",
       "ncad_prop_id": "274667",
       "result": "matched",
       "ncad_account_num": "5978-0003-0090"
+    },
+    {
+      "doc_num": "2026000283",
+      "prop_address": "4410 HAMLIN DR",
+      "result": "no-prop-id"
     },
     {
       "doc_num": "2026000267",
@@ -293,6 +293,13 @@
       "ncad_account_num": "9672-0014-0065"
     },
     {
+      "doc_num": "2026000238",
+      "prop_address": "125 AVALON DR",
+      "ncad_prop_id": "200069858",
+      "result": "matched",
+      "ncad_account_num": "9974-0005-0121"
+    },
+    {
       "doc_num": "2026000244",
       "prop_address": "4954 JO AN ST",
       "ncad_prop_id": "200025667",
@@ -300,11 +307,9 @@
       "ncad_account_num": "8187-0007-0020"
     },
     {
-      "doc_num": "2026000238",
-      "prop_address": "125 AVALON DR",
-      "ncad_prop_id": "200069858",
-      "result": "matched",
-      "ncad_account_num": "9974-0005-0121"
+      "doc_num": "2026000237",
+      "prop_address": "3157 VICKSBURG",
+      "result": "no-prop-id"
     },
     {
       "doc_num": "2026000240",
@@ -314,11 +319,6 @@
       "ncad_account_num": "1878-0002-0070"
     },
     {
-      "doc_num": "2026000237",
-      "prop_address": "3157 VICKSBURG",
-      "result": "no-prop-id"
-    },
-    {
       "doc_num": "2026000232",
       "prop_address": "7706 ARSHAN LANE",
       "ncad_prop_id": "535283",
@@ -326,212 +326,19 @@
       "ncad_account_num": "3947-0002-0050"
     },
     {
-      "doc_num": "2026000231",
-      "prop_address": "902 WEST LAKESIDE DRIVE",
-      "ncad_prop_id": "373507",
-      "result": "matched",
-      "ncad_account_num": "2486-0003-0124"
-    },
-    {
-      "doc_num": "2026000226",
-      "prop_address": "608 W 3rd ST",
-      "ncad_prop_id": "200065268",
-      "result": "matched",
-      "ncad_account_num": "9818-0018-0410"
-    },
-    {
-      "doc_num": "2026000230",
-      "prop_address": "5710 PALO BLANCO ST",
-      "ncad_prop_id": "252086",
-      "result": "matched",
-      "ncad_account_num": "4050-0005-0140"
-    },
-    {
-      "doc_num": "2026000222",
-      "prop_address": "5006 CASCADE DR",
-      "ncad_prop_id": "218711",
-      "result": "matched",
-      "ncad_account_num": "1857-0012-0020"
-    },
-    {
-      "doc_num": "2026000219",
-      "prop_address": "3002 NEWPORT DRIVE",
-      "ncad_prop_id": "297762",
-      "result": "matched",
-      "ncad_account_num": "7675-0004-0230"
-    },
-    {
-      "doc_num": "2026000214",
-      "prop_address": "1702 TIMROD DR",
-      "ncad_prop_id": "284964",
-      "result": "matched",
-      "ncad_account_num": "6745-0007-0060"
-    },
-    {
-      "doc_num": "2026000215",
-      "prop_address": "1810 KEYS STREET",
-      "ncad_prop_id": "187487",
-      "result": "matched",
-      "ncad_account_num": "0386-0005-0030"
-    },
-    {
-      "doc_num": "2026000212",
-      "prop_address": "630 WILSHIRE PLACE",
-      "ncad_prop_id": "286714",
-      "result": "matched",
-      "ncad_account_num": "6854-0002-0150"
-    },
-    {
-      "doc_num": "2026000210",
-      "prop_address": "3922 JAYDEN DRIVE",
-      "ncad_prop_id": "597441",
-      "result": "matched",
-      "ncad_account_num": "1239-0006-0020"
-    },
-    {
-      "doc_num": "2026000205",
-      "prop_address": "2465 STILL BROOK DR",
-      "ncad_prop_id": "200068062",
-      "result": "matched",
-      "ncad_account_num": "9895-0005-0010"
-    },
-    {
-      "doc_num": "2026000203",
-      "prop_address": "5517 S OSO PKWY",
-      "ncad_prop_id": "530217",
-      "result": "matched",
-      "ncad_account_num": "3926-0001-0070"
-    },
-    {
       "doc_num": "2026000204",
       "prop_address": "1717 ROBIN DR",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000208",
-      "prop_address": "1814 MERRIMAN AVE",
-      "ncad_prop_id": "283856",
-      "result": "matched",
-      "ncad_account_num": "6529-0006-0030"
+      "doc_num": "2026000329",
+      "prop_address": "",
+      "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000201",
-      "prop_address": "3837 WOODHOUSE LN",
-      "ncad_prop_id": "541042",
-      "result": "matched",
-      "ncad_account_num": "2905-0001-0100"
-    },
-    {
-      "doc_num": "2026000206",
-      "prop_address": "14014 HAWKSNEST BAY DR",
-      "ncad_prop_id": "288971",
-      "result": "matched",
-      "ncad_account_num": "6984-0010-0040"
-    },
-    {
-      "doc_num": "2026000193",
-      "prop_address": "7425 LAKE SUPERIOR DRIVE",
-      "ncad_prop_id": "200081202",
-      "result": "matched",
-      "ncad_account_num": "4142-0003-0180"
-    },
-    {
-      "doc_num": "2026000190",
-      "prop_address": "2002 ORANGE",
-      "ncad_prop_id": "226178",
-      "result": "matched",
-      "ncad_account_num": "2127-0013-0140"
-    },
-    {
-      "doc_num": "2026000191",
-      "prop_address": "10302 HILL COUNTRY LANE",
-      "ncad_prop_id": "376376",
-      "result": "matched",
-      "ncad_account_num": "3433-0002-0010"
-    },
-    {
-      "doc_num": "2026000195",
-      "prop_address": "4905 LAUREN DRIVE",
-      "ncad_prop_id": "200046983",
-      "result": "matched",
-      "ncad_account_num": "8951-0001-0020"
-    },
-    {
-      "doc_num": "2026000188",
-      "prop_address": "4205 COWHOUSE CREEK COURT",
-      "ncad_prop_id": "207485",
-      "result": "matched",
-      "ncad_account_num": "1288-0007-0030"
-    },
-    {
-      "doc_num": "2026000183",
-      "prop_address": "2522 WHIRLWIND ST",
-      "ncad_prop_id": "200117128",
-      "result": "matched",
-      "ncad_account_num": "4593-0009-0060"
-    },
-    {
-      "doc_num": "2026000182",
-      "prop_address": "6199 N SANDY HOLLOW",
-      "ncad_prop_id": "297648",
-      "result": "matched",
-      "ncad_account_num": "7670-0004-0010"
-    },
-    {
-      "doc_num": "2026000181",
-      "prop_address": "649 CHAMBERLAIN STREET",
-      "ncad_prop_id": "260472",
-      "result": "matched",
-      "ncad_account_num": "4473-0029-0150"
-    },
-    {
-      "doc_num": "2026000187",
-      "prop_address": "5830 LLANO DR",
-      "ncad_prop_id": "181881",
-      "result": "matched",
-      "ncad_account_num": "0023-0004-0160"
-    },
-    {
-      "doc_num": "2026000185",
-      "prop_address": "3145 CREST VEIL DRIVE",
-      "ncad_prop_id": "221561",
-      "result": "matched",
-      "ncad_account_num": "1974-0005-0370"
-    },
-    {
-      "doc_num": "2026000172",
-      "prop_address": "6129 ORANGEWOOD DR",
-      "ncad_prop_id": "204497",
-      "result": "matched",
-      "ncad_account_num": "1233-0003-0690"
-    },
-    {
-      "doc_num": "2026000176",
-      "prop_address": "1737 GALLOP TRAIL",
-      "ncad_prop_id": "200114704",
-      "result": "matched",
-      "ncad_account_num": "5778-0005-0340"
-    },
-    {
-      "doc_num": "2026000137",
-      "prop_address": "4121 KEVIN DR",
-      "ncad_prop_id": "299348",
-      "result": "matched",
-      "ncad_account_num": "7774-0028-0160"
-    },
-    {
-      "doc_num": "2026000141",
-      "prop_address": "636 ATLANTIC ST",
-      "ncad_prop_id": "225010",
-      "result": "matched",
-      "ncad_account_num": "2050-0039-0090"
-    },
-    {
-      "doc_num": "2026000115",
-      "prop_address": "3921 LOTT AVENUE",
-      "ncad_prop_id": "204040",
-      "result": "matched",
-      "ncad_account_num": "1221-0004-0230"
+      "doc_num": "2026000327",
+      "prop_address": "",
+      "result": "no-prop-id"
     },
     {
       "doc_num": "2026000326",
@@ -779,6 +586,11 @@
     {
       "doc_num": "2026000178",
       "prop_address": "9609 SEDALIA TRAIL",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000328",
+      "prop_address": "",
       "result": "no-prop-id"
     },
     {
