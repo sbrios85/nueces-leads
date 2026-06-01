@@ -11956,6 +11956,17 @@ function fmtTitle(raw) {
   }).join("");
 }
 function _fmtHasLower(s) { return /[a-z]/.test(s); }
+// A name counts as "already formatted" (clerk-sourced mixed case) ONLY
+// if a word OTHER than a lowercase connector ("and"/"or"/"of"/"the"/&)
+// contains a lowercase letter. This stops an all-caps name joined by a
+// lowercase "and" (e.g. "ISRAEL GOMEZ JR and LYDIA GOMEZ", an FC-source
+// pattern) from being mistaken for already-formatted and skipped.
+function _fmtGenuinelyMixed(s) {
+  for (const w of String(s).split(/\s+/)) {
+    if (/[a-z]/.test(w) && !/^(and|or|of|the|y|&)$/i.test(w)) return true;
+  }
+  return false;
+}
 function _fmtStripEtal(core) {
   const re = /\s+(?:AND\s+ET\s*ALS?|ET\s*ALS?|ET\s+AL|AND)\s*$/i;
   const n = core.replace(re, "");
@@ -11969,7 +11980,7 @@ function _fmtSplitLast(toks) {
 function _fmtFlip(core) {
   core = core.trim();
   if (!core) return core;
-  if (_fmtHasLower(core)) return core;
+  if (_fmtGenuinelyMixed(core)) return core;
   let toks = core.split(/\s+/).filter(Boolean), suffix = "";
   if (toks.length && _FMT_SUFFIXES.has(toks[toks.length - 1].toUpperCase())) {
     const s = toks[toks.length - 1].toUpperCase(); toks = toks.slice(0, -1);
@@ -11984,8 +11995,8 @@ function _fmtFlip(core) {
 function _fmtCoowner(s) {
   s = s.trim();
   if (!s) return "";
-  const extra = /\s*&\s*|\s+AND\s+/.test(s);
-  let first = s.split(/\s*&\s*|\s+AND\s+/)[0].trim();
+  const extra = /\s*&\s*|\s+AND\s+/i.test(s);
+  let first = s.split(/\s*&\s*|\s+AND\s+/i)[0].trim();
   first = first.replace(_FMT_ROLE_TAIL, "").trim().replace(_FMT_BARE_REL, "").trim();
   if (!first) return "";
   let out = (first === first.toUpperCase()) ? _fmtTitleCore(first) : first;
@@ -12000,15 +12011,28 @@ function _fmtPersonBlock(name) {
     if (idx !== -1) { core = name.slice(0, idx).trim(); spouse = name.slice(idx + 1 + mk.length).trim(); break; }
   }
   let etAl; [core, etAl] = _fmtStripEtal(core);
-  let amp = null;
+  let amp = null, ampLowerConn = false;
   if (spouse === null) {
-    const m = /\s*&\s*|\s+AND\s+/.exec(core);
+    const m = /\s*&\s*|\s+AND\s+/i.exec(core);
     if (m) {
       const a = core.slice(0, m.index).trim(), b = core.slice(m.index + m[0].length).trim();
-      if (a && b) { core = a; amp = b; }
+      if (a && b) {
+        core = a; amp = b;
+        // Was the connector a LOWERCASE "and"? That's the FC clerk-source
+        // pattern where names are already First-Last; county data uses
+        // uppercase "AND"/"&" and is Last-First.
+        ampLowerConn = m[0].includes("and");
+      }
     }
   }
-  let primary = _fmtFlip(core);
+  let primary;
+  if (amp && ampLowerConn) {
+    // FC-source pair (lowercase "and") — names are First-Last already,
+    // so title-case in place rather than flipping to "Rodriguez Leo".
+    primary = _fmtTitleCore(core);
+  } else {
+    primary = _fmtFlip(core);
+  }
   if (spouse !== null) {
     spouse = spouse.replace(_FMT_ROLE_TAIL, "").trim().replace(_FMT_BARE_REL, "").trim();
     if (spouse) {
@@ -12026,7 +12050,7 @@ function fmtOwner(raw) {
   if (raw == null) return "";
   const name = String(raw).trim();
   if (!name) return name;
-  if (_fmtHasLower(name)) return name;             // already formatted (clerk-sourced)
+  if (_fmtGenuinelyMixed(name)) return name;       // already formatted (clerk-sourced)
   if (_fmtIsEntity(name)) return _fmtTitleCore(name); // organization
   const upper = name.toUpperCase();
   const mSuf = /\s+EST(?:ATE)?\s+OF\s*$/.exec(upper);
