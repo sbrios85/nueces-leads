@@ -167,6 +167,39 @@ _RE_DOC_NUM = [
 #   - Square brackets [] (OCR misreads III as II])
 #   - Periods (middle initials, name suffixes)
 #   - Apostrophes (O'BRIEN), ampersands (& sons)
+# High-precedence June 2026 templates. Defined as named vars so they can
+# be inserted near the TOP of _RE_BORROWER (to beat looser "executed by"
+# / "as Grantor" fallbacks that would otherwise mis-capture) AND
+# registered as entity patterns by identity where applicable.
+#
+# 318 — 'with NAME, AN UNMARRIED MAN as Grantor(s)' (Jack O'Boyle subst-
+# trustee). OCR splits hyphenated surnames across a line break
+# ("MOHAMMAD AL-\nBARNAWI") and can inject a section label ("SECURED:")
+# mid-name; the capture is bounded by the marital descriptor, and the
+# name cleaner repairs the "-\n" join + drops the stray label.
+_PRIORITY_JUNE_318 = re.compile(
+    r"\bwith\s+([A-Z][A-Z\s.\u2018\u2019'-]+?)\s*,?\s*"
+    r"AN?\s+(?:UNMARRIED|MARRIED|SINGLE)[\w\s]*?as\s+Grantor",
+    re.IGNORECASE)
+# 328 — 'on DATE, ENTITY ("Borrower"), executed a Deed of Trust' (Sheils
+# Winnubst). ENTITY (LLC borrower).
+_PRIORITY_JUNE_328 = re.compile(
+    r"on\s+\w+\s+\d{1,2},?\s+\d{4},?\s+([A-Z][\w\s,.&'-]+?)\s*"
+    r"\(['\"\u2018\u2019\u201C\u201D]?Borrower",
+    re.IGNORECASE)
+# 327 — table-scrambled 'Trustor(s):' where OCR interleaves lender text
+# into the owner. Recover the clean joint-owner mention from the
+# obligations clause ("...future indebtedness of X to\nNAME AND ... JR.
+# Toorak..."). Tightly anchored: requires the "indebtedness ... to"
+# lead-in AND a joint "X AND Y" owner ending in JR, so it can't misfire
+# on generic "payable to <Lender>" prose. ENTITY (joint LLC + individual).
+_PRIORITY_JUNE_327 = re.compile(
+    r"indebtedness\s+of\s+[A-Z][\w\s,.&'-]+?\s+to\s+"
+    r"([A-Z][\w\s,.&'-]+?\s+AND\s+[A-Z][\w\s,.&'-]+?\s+JR)\.?\.?\s+"
+    r"[A-Z][\w\s]+?(?:Capital|Partners)",
+    re.IGNORECASE)
+
+
 _RE_BORROWER = [
     # 'executed by NAMES, ("Mortgagor")' / 'executed by NAMES
     # ("Borrower")' — Upton Mickits & Heymann template (248). The name
@@ -179,6 +212,11 @@ _RE_BORROWER = [
                 r"(?:Mortgagor|Borrower|Grantor)s?"
                 r"['\"\u2018\u2019\u201C\u201D]?\)",
                re.IGNORECASE),
+    # High-precedence June 2026 templates (inserted here to beat the
+    # looser "executed by" / "as Grantor" fallbacks further down).
+    _PRIORITY_JUNE_318,
+    _PRIORITY_JUNE_328,
+    _PRIORITY_JUNE_327,
     # OCR-jumbled "on or about NAMES DATE (\"Borrower\")" — the normal
     # template reads "on or about [DATE], [NAMES] (\"Borrower\")", but
     # some scans transpose the date and the names so the name list
@@ -360,7 +398,50 @@ _RE_BORROWER = [
     re.compile(r"(?:property\s+of|record\s+owner)[s]?[\s:]+"
                 r"([A-Z][A-Z0-9\s&'.\[\]()-]{3,80}?)(?=\s*,|\n)",
                re.IGNORECASE),
+    # ----- Appended templates (June 2026 batch: docs 312/326) -----
+    # Added at the END (low precedence) — these only fire when no earlier
+    # pattern matches, which is correct for these forms. The higher-
+    # precedence June patterns (318/327/328) are defined as named vars and
+    # inserted near the TOP of this list instead (see _PRIORITY_JUNE_*).
+    #
+    # [B] 326 — 'Clerk's File No. NNNN NAME, an unmarried man, executed a
+    # Deed of Trust' (Jeffrey Kane / Reyna Title template).
+    re.compile(r"\bNo\.?\s*\d+\s+([A-Z][a-zA-Z\s.'-]+?),\s+"
+                r"an?\s+(?:unmarried|married|single)\s+(?:man|woman|person),\s+"
+                r"executed\s+a\s+Deed",
+               re.IGNORECASE),
+    # [D] 312 — 'executed by ENTITY, a <state> limited liability company'
+    # (Notice of Foreclosure Sale, raw-acreage tract). ENTITY pattern.
+    re.compile(r"executed\s+by\s+([A-Z][\w\s,.&'-]+?"
+                r"(?:LLC|L\.?L\.?C\.?|INC\.?|L\.?P\.?|CORP\.?|"
+                r"LIMITED\s+LIABILITY\s+COMPANY))\s*,?\s*a\s+\w+\s+limited",
+               re.IGNORECASE),
 ]
+
+# Appended ENTITY borrower patterns (added June 2026). Tracked by object
+# identity so their indices in _RE_BORROWER are computed at runtime —
+# avoids the fragile hardcoded-index bookkeeping used for the original
+# entity patterns. The appended low-precedence one here is [D] 312 (LLC).
+_APPENDED_ENTITY_PATTERNS = {_RE_BORROWER[-1]}  # 312 'executed by ENTITY, a ... limited'
+
+# All ENTITY-borrower patterns, tracked by OBJECT IDENTITY (not index).
+# The original three are located by a distinctive substring of their
+# source (robust to insertions/reordering), joined with the high-
+# precedence June entity templates (328, 327) and the appended 312 LLC
+# template. Computed once at import.
+def _find_pattern(needle):
+    for rx in _RE_BORROWER:
+        if needle in rx.pattern:
+            return rx
+    raise RuntimeError(f"entity borrower pattern not found: {needle!r}")
+
+_ENTITY_BORROWER_PATTERNS = {
+    _find_pattern("hereinafter"),                       # Mortgagor-hereinafter
+    _find_pattern("LIMITED\\s+LIABILITY\\s+COMPANY|LLC|INC"),  # Grantor:LLC
+    _find_pattern("Trustee\\s+of"),                     # Trustee-of-Trust
+    _PRIORITY_JUNE_328,
+    _PRIORITY_JUNE_327,
+} | _APPENDED_ENTITY_PATTERNS
 
 # Lender / mortgagee / beneficiary.
 # Different templates use different labels. Anchor each pattern to a
@@ -1001,19 +1082,14 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
     # Some patterns explicitly capture entity borrowers (LLCs, trusts).
     # For those we skip the "_looks_like_lender" check, since the entity
     # is legitimately the borrower (e.g. Plutus Properties, LLC, or the
-    # Adam Keller 2016 Trust).
-    # NOTE: indices shifted +2 when the Upton-Mickits "executed by
-    # NAMES (Mortgagor)" pattern and the McCarthy "Grantor(s)/
-    # Mortgagor(s):" table pattern were prepended to _RE_BORROWER.
-    # Old {3,4,7} -> {5,6,9}. Then shifted +1 again when the OCR-
-    # jumbled "on or about NAMES DATE (Borrower)" pattern was inserted
-    # at index 1 (doc 2026000219 fix): {5,6,9} -> {6,7,10}. Verified
-    # the new indices point to the Mortgagor / Grantor:LLC /
-    # Trustee-of-Trust entity patterns.
-    ENTITY_BORROWER_PATTERN_INDICES = {6, 7, 10}  # Mortgagor / Grantor:LLC / Trustee-of-Trust
+    # Adam Keller 2016 Trust). Entity patterns are identified by OBJECT
+    # IDENTITY via _ENTITY_BORROWER_PATTERNS — no fragile index math, so
+    # patterns can be inserted/reordered freely.
     for idx, rx in enumerate(_RE_BORROWER):
         m = rx.search(text)
         if m:
+            # Is this an entity-borrower pattern? (by object identity)
+            is_entity = rx in _ENTITY_BORROWER_PATTERNS
             name = _clean_name_ocr(m.group(1))
             # Preserve the raw capture (before descriptor stripping) so
             # downstream code can store it as `owner_raw` for forensics
@@ -1021,7 +1097,7 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
             raw_name = name
             # Strip trailing descriptors like ", AN UNMARRIED MAN" etc.
             # (but not for entity borrowers — they keep their suffix)
-            if idx not in ENTITY_BORROWER_PATTERN_INDICES:
+            if not is_entity:
                 name = _strip_borrower_descriptors(name)
             else:
                 # Entity borrower: keep the LLC/LP/INC suffix but trim
@@ -1030,8 +1106,7 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
                 name = _strip_entity_boilerplate(name)
             if not name or len(name) < 4:
                 continue
-            if (idx not in ENTITY_BORROWER_PATTERN_INDICES
-                    and _looks_like_lender(name)):
+            if not is_entity and _looks_like_lender(name):
                 continue
             # Reject captures that are actually chunks of a legal
             # property description (permissive patterns like "NAMES
@@ -1040,8 +1115,7 @@ def parse_foreclosure_pdf_text(text: str) -> Dict[str, Any]:
             # labeled pattern (e.g. "Grantor(s): NAME"). Entity
             # borrowers are exempt — an LLC name won't trip the legal
             # tokens, and we don't want to over-filter.
-            if (idx not in ENTITY_BORROWER_PATTERN_INDICES
-                    and _looks_like_legal_description(name)):
+            if not is_entity and _looks_like_legal_description(name):
                 continue
             out["borrower"] = name
             # Only expose borrower_raw if cleanup actually changed
@@ -1309,6 +1383,10 @@ def _clean_name(s: str) -> str:
     """Trim whitespace and strip trailing punctuation/conjunctions."""
     if not s:
         return ""
+    # Repair hyphenated surnames split across an OCR line break:
+    # "MOHAMMAD AL-\nBARNAWI" -> "MOHAMMAD AL-BARNAWI". Do this before
+    # whitespace collapsing so the newline is still present to detect.
+    s = re.sub(r"-\s*\n\s*", "-", s)
     s = re.sub(r"\s+", " ", s).strip(" ,.;:&-")
     s = re.sub(r"\s+(and|to|in|the)\s*$", "", s, flags=re.IGNORECASE)
     return s.strip()
@@ -1344,6 +1422,22 @@ _BORROWER_BARE_MARITAL_SUFFIX = re.compile(
     r"[,\s]+(?:UNMARRIED|MARRIED|SINGLE|WIDOWED|WIDOW|DIVORCED)"
     r"(?:\s+as\s+(?:trustor|grantor|borrower|mortgagor))?"
     r"\.?\s*$",
+    re.IGNORECASE,
+)
+
+
+# Trailing role labels and bare relationship words that some templates
+# leave dangling after the name once the marital phrase is OCR-split.
+# Examples seen in the June 2026 batch:
+#   320: "Gerline J. Bray as mortgagor"  (HUD single-family template)
+#   324: "...ISHMAEL GONZALES PAIZ JR, WIFE"  (", WIFE AND\nHUSBAND"
+#        OCR-split, so the descriptor regex stops mid-phrase leaving
+#        a bare trailing ", WIFE")
+# Anchored to a leading comma/space + the role word at end-of-string so
+# it can't bite into a real surname.
+_BORROWER_TRAILING_ROLE_SUFFIX = re.compile(
+    r"[,\s]+(?:as\s+(?:mortgagor|grantor|trustor|borrower)|"
+    r"WIFE|HUSBAND)\s*$",
     re.IGNORECASE,
 )
 
@@ -1418,6 +1512,7 @@ def _strip_borrower_descriptors(s: str) -> str:
     for _ in range(3):
         new_s = _BORROWER_BARE_MARITAL_SUFFIX.sub("", s).strip(" ,.;:&-")
         new_s = _BORROWER_DESCRIPTOR_SUFFIXES.sub("", new_s).strip(" ,.;:&-")
+        new_s = _BORROWER_TRAILING_ROLE_SUFFIX.sub("", new_s).strip(" ,.;:&-")
         if new_s == s:
             break
         s = new_s
