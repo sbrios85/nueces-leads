@@ -1,0 +1,72 @@
+name: Enrich FC NCAD (account numbers)
+
+# Backfills the dashed 12-digit NCAD account number (Geographic ID)
+# onto mortgage-foreclosure records via the property detail page, so
+# the dashboard's NCTAX column can deep-link to the tax office.
+#
+# Manual trigger only. Defaults to a DRY-RUN: it commits the run log
+# (data/enrich_fc_ncad_log.json) so you can review the account numbers
+# it WOULD set, but does not touch foreclosures.json. Re-run with
+# apply=true once the log looks right.
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Write foreclosures.json (false = dry-run, log only)"
+        type: boolean
+        default: false
+      force:
+        description: "Re-read records that already have an account number"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # default GITHUB_TOKEN is read-only; needed to commit back
+
+concurrency:
+  group: enrich-fc-ncad
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install beautifulsoup4 lxml playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Run FC NCAD enricher
+        env:
+          ENRICH_FC_APPLY: ${{ inputs.apply && '1' || '0' }}
+          ENRICH_FC_FORCE: ${{ inputs.force && '1' || '0' }}
+        run: |
+          python scraper/enrich_fc_ncad.py
+
+      - name: Commit results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Stage the log always; stage the data files only when apply
+          # actually changed them. `git add` is safe on unchanged paths.
+          git add data/enrich_fc_ncad_log.json
+          git add dashboard/foreclosures.json data/foreclosures.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            MODE="dry-run (log only)"
+            if [ "${{ inputs.apply }}" = "true" ]; then MODE="apply"; fi
+            git commit -m "FC: NCAD account-number enrichment pass (${MODE})"
+            git push
+          fi
