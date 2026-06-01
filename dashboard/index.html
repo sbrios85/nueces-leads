@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nueces County — Lead Pipeline</title>
 <!-- Leaflet (interactive map) + markercluster, from cdnjs. Used only by
-     the Map view. CSS loads here; JS is deferred so it doesn't block the
-     rest of the page. The map initializes lazily the first time the Map
-     tab is opened (see initLeadMap). -->
+     the Map view. CSS loads here; JS is deferred. The map initializes
+     lazily the first time the Map tab is opened (see initLeadMap). -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css"/>
@@ -919,8 +918,6 @@
   .pane { display: none; padding: 4px 10px; }
   .pane.active { display: block; }
   /* ===== Map view ===== */
-  /* The map pane fills the available height. .main is the scroll
-     container; the map sizes to the viewport minus the controls bar. */
   #pane-map.active { display: flex; flex-direction: column; height: 100%; }
   .map-controls {
     display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
@@ -942,11 +939,18 @@
     flex: 1; min-height: 420px; width: 100%;
     background: var(--panel); border-radius: 6px; margin-top: 6px;
   }
-  /* Popup readability in dark theme */
-  .leaflet-popup-content { font: 13px/1.4 inherit; }
-  .map-pop-owner { font-weight: 600; margin-bottom: 2px; }
-  .map-pop-addr { color: #333; margin-bottom: 6px; }
-  .map-pop-link { color: #185FA5; cursor: pointer; text-decoration: underline; }
+  /* Popups render on Leaflet's light background, so use fixed dark text. */
+  .leaflet-popup-content { font: 13px/1.45 inherit; margin: 10px 12px; }
+  .map-pop-owner { font-weight: 600; color: #1a1a1a; }
+  .map-pop-addr { color: #555; margin-bottom: 7px; }
+  .map-pop-type { display: flex; align-items: center; gap: 6px; margin: 6px 0 2px; color: #222; }
+  .map-pop-liens { border-top: 1px solid #e2e2e2; margin-top: 6px; padding-top: 6px;
+                   max-height: 230px; overflow-y: auto; }
+  .map-pop-lien { margin-bottom: 7px; }
+  .map-pop-lien .l1 { color: #1a1a1a; }
+  .map-pop-lien .l2 { color: #777; font-size: 12px; }
+  .map-pop-more { color: #777; font-size: 12px; font-style: italic; }
+  .map-pop-link { color: #185FA5; text-decoration: underline; }
 
   /* ===== Full-screen CRM view ===== */
   #crm-view { padding: 0; }
@@ -7987,26 +7991,36 @@ let TFC_FETCHED_AT = "";
 // render per session.
 const _renderedPanes = new Set();
 // ============================================================
-// Map view (Leaflet + markercluster)
+// Map view (Leaflet + markercluster) — ONE PIN PER ADDRESS
 // ============================================================
-// Plots geocoded property addresses (prop_lat / prop_lng, written by
-// scraper/geocode_leads.py) for Mortgage Foreclosures, Tax
-// Foreclosures, and CCLN. Each lead type is its own toggleable
-// clustered layer with a distinct pin color. Records without
-// coordinates are skipped; a per-layer "X / Y plotted" coverage note
-// shows how many were mappable. Initializes lazily on first Map visit.
-const _MAP_LAYERS = [
-  { key: "fc",   color: "#378ADD", label: "Mortgage Foreclosures",
-    data: () => (typeof FC_RAW   !== "undefined" ? FC_RAW   : []) },
-  { key: "tfc",  color: "#EF9F27", label: "Tax Foreclosures",
-    data: () => (typeof TFC_RAW  !== "undefined" ? TFC_RAW  : []) },
-  { key: "ccln", color: "#1D9E75", label: "City Liens (CCLN)",
-    data: () => (typeof CCLN_RAW !== "undefined" ? CCLN_RAW : []) },
-];
+// Plots geocoded properties for Mortgage Foreclosures, Tax
+// Foreclosures, and CCLN. Records are GROUPED BY ADDRESS so a property
+// with several liens (or several lead types) is a single pin. The
+// popup lists each attached lead (up to 10, then "…and N more"),
+// organized by lead type, each with date / amount / reason where
+// available. Coordinates come from scraper/geocode_leads.py
+// (prop_lat / prop_lng); records without coords are skipped. Lazily
+// initialized on first Map visit.
+//
+// Pin color when an address has ONE lead type = that type's color.
+// When an address mixes types, the pin is neutral gray (the popup
+// breaks out each type). A property's layer membership for the toggles
+// is "any of its lead types is enabled".
+const _MAP_TYPES = {
+  fc:   { color: "#378ADD", label: "Mortgage Foreclosures", noun: "filing",
+          data: () => (typeof FC_RAW   !== "undefined" ? FC_RAW   : []) },
+  tfc:  { color: "#EF9F27", label: "Tax Foreclosures", noun: "filing",
+          data: () => (typeof TFC_RAW  !== "undefined" ? TFC_RAW  : []) },
+  ccln: { color: "#1D9E75", label: "City Liens (CCLN)", noun: "lien",
+          data: () => (typeof CCLN_RAW !== "undefined" ? CCLN_RAW : []) },
+};
+const _MAP_TYPE_ORDER = ["fc", "tfc", "ccln"];
+const _MAP_MIXED_COLOR = "#888780";    // neutral gray for multi-type pins
+const _MAP_LIEN_CAP = 10;              // max lien lines shown per type in a popup
 let _leadMap = null;
-const _mapClusters = {};   // key -> markerClusterGroup
+const _mapClusters = {};               // typeKey -> markerClusterGroup (for toggles)
+let _mapPlacesBuilt = false;
 
-// Colored circular pin via a divIcon (no image assets needed).
 function _mapPinIcon(color) {
   return L.divIcon({
     className: "lead-pin",
@@ -8017,7 +8031,6 @@ function _mapPinIcon(color) {
   });
 }
 
-// Pull a usable [lat,lng] from a record, or null.
 function _recLatLng(r) {
   const lat = parseFloat(r.prop_lat), lng = parseFloat(r.prop_lng);
   if (isNaN(lat) || isNaN(lng)) return null;
@@ -8025,94 +8038,172 @@ function _recLatLng(r) {
   return [lat, lng];
 }
 
-// Build (once) the clustered marker layer for one lead type and report
-// coverage. Returns {plotted, total}.
-function _buildMapLayer(layer) {
-  const recs = layer.data();
-  const cluster = L.markerClusterGroup({
-    chunkedLoading: true, maxClusterRadius: 50,
-    spiderfyOnMaxZoom: true, showCoverageOnHover: false,
+// Group key: rounded coordinates (so the same physical spot collapses
+// even if the address string differs slightly). 5 decimals ≈ 1 metre.
+function _mapGroupKey(ll) {
+  return ll[0].toFixed(5) + "," + ll[1].toFixed(5);
+}
+
+// Readable reason string from CCLN reason_tags array.
+function _cclnReasons(r) {
+  const t = r.reason_tags;
+  if (!Array.isArray(t) || !t.length) return "";
+  return t.map(x => String(x).replace(/_/g, " "))
+          .map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(", ");
+}
+
+// One "lien line" (l1 = primary, l2 = secondary) for a single record,
+// shaped per lead type.
+function _mapLeadLines(typeKey, r) {
+  const money = v => (v != null && v !== "" && !isNaN(v))
+      ? "$" + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 }) : "";
+  const date = formatDate(r.filed || r.recorded || r.sale_date || "");
+  if (typeKey === "ccln") {
+    const amt = money(r.amount != null ? r.amount : r.pdf_amount);
+    const l1 = ["Filed " + date, amt].filter(Boolean).join(" · ");
+    return { l1, l2: _cclnReasons(r) };
+  }
+  if (typeKey === "fc") {
+    const l1 = "Sale " + formatDate(r.sale_date) + (r.status ? " · " + r.status : "");
+    return { l1, l2: r.lender ? esc(r.lender) : "" };
+  }
+  // tfc
+  const l1 = "Sale " + formatDate(r.sale_date || r.sale_nbr || "");
+  return { l1, l2: r.cause_num ? "Cause " + esc(r.cause_num) : "" };
+}
+
+// Build the merged place index: key -> { ll, owner, addr, gmaps,
+// types: { typeKey: [records...] } }.
+function _buildMapPlaces() {
+  const places = {};
+  _MAP_TYPE_ORDER.forEach(typeKey => {
+    const recs = _MAP_TYPES[typeKey].data();
+    recs.forEach(r => {
+      const ll = _recLatLng(r);
+      if (!ll) return;
+      const key = _mapGroupKey(ll);
+      let p = places[key];
+      if (!p) {
+        const addrParts = [r.prop_address, r.prop_city, r.prop_state, r.prop_zip].filter(Boolean);
+        p = places[key] = {
+          ll, types: {},
+          owner: (typeof fmtOwner === "function" ? fmtOwner(r.owner || "") : (r.owner || "")) || "—",
+          addr:  (typeof fmtTitle === "function" ? fmtTitle(r.prop_address || "") : (r.prop_address || "")) || "—",
+          gmaps: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(addrParts.join(", ")),
+        };
+      }
+      (p.types[typeKey] = p.types[typeKey] || []).push(r);
+    });
   });
-  const icon = _mapPinIcon(layer.color);
-  let plotted = 0;
-  recs.forEach(r => {
-    const ll = _recLatLng(r);
-    if (!ll) return;
-    const owner = (typeof fmtOwner === "function" ? fmtOwner(r.owner || "") : (r.owner || "")) || "—";
-    const addr  = (typeof fmtTitle === "function" ? fmtTitle(r.prop_address || "") : (r.prop_address || "")) || "—";
-    const gmaps = "https://www.google.com/maps/search/?api=1&query="
-                + encodeURIComponent([r.prop_address, r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(", "));
-    const html =
-      '<div class="map-pop-owner">' + esc(owner) + '</div>' +
-      '<div class="map-pop-addr">' + esc(addr) + '</div>' +
-      '<div><span class="map-swatch" style="background:' + layer.color + ';vertical-align:middle"></span> ' +
-      esc(layer.label) + '</div>' +
-      '<div style="margin-top:6px"><a class="map-pop-link" href="' + esc(gmaps) +
-      '" target="_blank" rel="noopener">Open in Google Maps</a></div>';
-    L.marker(ll, { icon }).bindPopup(html).addTo(cluster);
-    plotted++;
+  return places;
+}
+
+function _mapPopupHtml(p) {
+  const typeKeys = _MAP_TYPE_ORDER.filter(k => p.types[k] && p.types[k].length);
+  let html = '<div class="map-pop-owner">' + esc(p.owner) + '</div>'
+           + '<div class="map-pop-addr">' + esc(p.addr) + '</div>';
+  typeKeys.forEach(typeKey => {
+    const t = _MAP_TYPES[typeKey];
+    const list = p.types[typeKey];
+    const noun = t.noun + (list.length === 1 ? "" : "s");
+    html += '<div class="map-pop-type"><span class="map-swatch" style="background:'
+          + t.color + '"></span><span>' + esc(t.label) + '</span>'
+          + '<span style="color:#777">· ' + list.length + ' ' + noun + '</span></div>';
+    html += '<div class="map-pop-liens">';
+    list.slice(0, _MAP_LIEN_CAP).forEach(r => {
+      const { l1, l2 } = _mapLeadLines(typeKey, r);
+      html += '<div class="map-pop-lien"><div class="l1">' + (l1 || "—") + '</div>'
+            + (l2 ? '<div class="l2">' + l2 + '</div>' : '') + '</div>';
+    });
+    if (list.length > _MAP_LIEN_CAP) {
+      html += '<div class="map-pop-more">…and ' + (list.length - _MAP_LIEN_CAP) + ' more</div>';
+    }
+    html += '</div>';
   });
-  _mapClusters[layer.key] = cluster;
-  return { plotted, total: recs.length };
+  html += '<div style="border-top:1px solid #e2e2e2;margin-top:8px;padding-top:7px">'
+        + '<a class="map-pop-link" href="' + esc(p.gmaps) + '" target="_blank" rel="noopener">Open in Google Maps</a></div>';
+  return html;
 }
 
 function initLeadMap() {
-  if (_leadMap) { _leadMap.invalidateSize(); return; }   // already built
-  if (typeof L === "undefined") {                        // Leaflet not loaded yet
+  if (_leadMap) { _leadMap.invalidateSize(); return; }
+  if (typeof L === "undefined") {
     const hint = document.getElementById("map-hint");
     if (hint) hint.textContent = "Loading map library…";
     setTimeout(initLeadMap, 200);
     return;
   }
-  // Corpus Christi, TX
   _leadMap = L.map("lead-map", { scrollWheelZoom: true }).setView([27.78, -97.40], 12);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
   }).addTo(_leadMap);
 
-  let anyPlotted = 0;
+  // One cluster group per type for the toggles. A multi-type place's
+  // marker is added to the cluster of EACH of its types, so toggling a
+  // type shows/hides places that include that type. (Markers are
+  // lightweight; duplicates across groups are fine and de-duplicate
+  // visually because they share the same lat/lng.)
+  _MAP_TYPE_ORDER.forEach(k => {
+    _mapClusters[k] = L.markerClusterGroup({
+      chunkedLoading: true, maxClusterRadius: 50,
+      spiderfyOnMaxZoom: true, showCoverageOnHover: false,
+    });
+  });
+
+  const places = _buildMapPlaces();
+  // Per-type place counts for the coverage labels.
+  const typeCount = { fc: 0, tfc: 0, ccln: 0 };
+  let placeCount = 0;
   const allBounds = [];
-  _MAP_LAYERS.forEach(layer => {
-    const { plotted, total } = _buildMapLayer(layer);
-    const covEl = document.getElementById("map-cov-" + layer.key);
-    if (covEl) covEl.textContent = "(" + plotted + " / " + total + ")";
-    const toggle = document.getElementById("map-layer-" + layer.key);
-    // Show layer if its toggle is checked.
-    if (toggle && toggle.checked) _leadMap.addLayer(_mapClusters[layer.key]);
+
+  Object.values(places).forEach(p => {
+    placeCount++;
+    const typeKeys = _MAP_TYPE_ORDER.filter(k => p.types[k] && p.types[k].length);
+    const color = typeKeys.length > 1 ? _MAP_MIXED_COLOR : _MAP_TYPES[typeKeys[0]].color;
+    const popup = _mapPopupHtml(p);
+    typeKeys.forEach(k => {
+      typeCount[k]++;
+      const m = L.marker(p.ll, { icon: _mapPinIcon(color) }).bindPopup(popup, { maxWidth: 300 });
+      m.addTo(_mapClusters[k]);
+    });
+    allBounds.push(p.ll);
+  });
+
+  // Coverage labels: "<places with this type> / <total records of type>".
+  _MAP_TYPE_ORDER.forEach(k => {
+    const totalRecs = _MAP_TYPES[k].data().length;
+    const el = document.getElementById("map-cov-" + k);
+    if (el) el.textContent = "(" + typeCount[k] + " mapped / " + totalRecs + ")";
+    const toggle = document.getElementById("map-layer-" + k);
+    if (toggle && toggle.checked) _leadMap.addLayer(_mapClusters[k]);
     if (toggle) toggle.onchange = () => {
-      if (toggle.checked) _leadMap.addLayer(_mapClusters[layer.key]);
-      else _leadMap.removeLayer(_mapClusters[layer.key]);
+      if (toggle.checked) _leadMap.addLayer(_mapClusters[k]);
+      else _leadMap.removeLayer(_mapClusters[k]);
     };
-    anyPlotted += plotted;
-    if (plotted) allBounds.push(_mapClusters[layer.key].getBounds());
   });
 
   const hint = document.getElementById("map-hint");
-  if (hint) {
-    hint.textContent = anyPlotted
-      ? anyPlotted.toLocaleString() + " properties plotted"
-      : "No coordinates yet — run the “Geocode leads (Census)” workflow to populate the map.";
-  }
-  // Fit to the plotted pins if we have any.
+  if (hint) hint.textContent = placeCount
+    ? placeCount.toLocaleString() + " properties plotted"
+    : "No coordinates yet — run the “Geocode leads (Census)” workflow to populate the map.";
+
   if (allBounds.length) {
-    let b = allBounds[0];
-    for (let i = 1; i < allBounds.length; i++) b = b.extend(allBounds[i]);
+    const b = L.latLngBounds(allBounds);
     if (b.isValid()) _leadMap.fitBounds(b, { padding: [30, 30], maxZoom: 14 });
   }
-  // The container was display:none until the pane activated, so Leaflet
-  // measured it at 0×0. Recompute now that it's visible.
   setTimeout(() => _leadMap.invalidateSize(), 50);
 }
 
 function _renderPaneIfNeeded(paneId) {
+  // Stack is special: it derives from multiple data sources whose
   // soft-delete state can change while the user is on other panes.
   // Always re-render on visit so dead records correctly disappear.
   if (paneId === "pane-stack") {
     applyStack();
     return;
   }
-  // Map initializes on first visit; on later visits initLeadMap() just
-  // recomputes size (Leaflet needs this since the pane was hidden).
+  // Map: init on first visit; on later visits recompute size (the pane
+  // was hidden, so Leaflet measured the container at 0×0).
   if (paneId === "pane-map") {
     initLeadMap();
     return;
