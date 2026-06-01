@@ -1,17 +1,17 @@
 name: Enrich TFC with NCAD
 
-# Manual trigger only at first. After a few clean runs you can add
-# a daily schedule to run after scrape_tfc.yml. Example:
-#   schedule:
-#     - cron: "45 7 * * *"   # 07:45 UTC, ~15 min after scrape_tfc
+# Triggers:
+#   1. Manual (workflow_dispatch) — choose apply / force / fetch_mail.
+#   2. Automatic (workflow_run) — fires the instant "Scrape Tax
+#      Foreclosures (LGBS)" finishes. The TFC scrape REBUILDS tfc.json
+#      from scratch every run (wiping any prior NCAD/NCTAX data), so
+#      the auto-run does a full re-enrich: apply ON, force ON, and
+#      fetch_mail ON (the NCTAX account number lives on the detail
+#      page, which is only fetched when fetch_mail is on).
 #
-# Inputs:
-#   apply       — false (dry-run, default) or true (write changes)
-#   force       — false (default; skip records that already have
-#                 ncad_prop_id) or true (re-enrich every record)
-#   fetch_mail  — false (default; result-list data only) or true
-#                 (also fetch each match's detail page for mailing
-#                 address — doubles run time)
+# Because Pages is served from a GitHub Actions deployment (not a
+# branch), committing isn't enough to update the live dashboard — this
+# workflow deploys Pages itself after an apply/auto run.
 
 on:
   workflow_dispatch:
@@ -31,25 +31,50 @@ on:
           - "false"
           - "true"
       fetch_mail:
-        description: "Also fetch mailing address (doubles request count)"
+        description: "Also fetch mailing address + NCTAX account number"
         type: choice
         default: "false"
         options:
           - "false"
           - "true"
+  workflow_run:
+    workflows: ["Scrape Tax Foreclosures (LGBS)"]
+    types:
+      - completed
+
+permissions:
+  contents: write            # commit enriched tfc.json
+  pages: write               # deploy the refreshed dashboard
+  id-token: write            # deploy the refreshed dashboard
+
+# Share the repo-push lock with the scrapers so two workflows never
+# push at once.
+concurrency:
+  group: "ncad-cache-write"
+  cancel-in-progress: false
 
 jobs:
   enrich:
     runs-on: ubuntu-latest
-    # Grant write permission so the workflow can commit and push the
-    # enriched JSON back to main. Without this, the bot gets a 403 on
-    # `git push` even though the JSON files are written locally on the
-    # runner. Default GITHUB_TOKEN permissions are read-only.
+    timeout-minutes: 30
+    # Manual runs always proceed. Auto-runs (workflow_run) only proceed
+    # if the triggering scrape actually succeeded — never enrich on top
+    # of a failed scrape.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pull latest (catch checkout race)
+        # Mirror the scrapers: a commit may have landed between the
+        # checkout ref resolving and this step. Sync to HEAD of main.
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -61,27 +86,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r scraper/requirements.txt
 
-      # Install the Chromium browser used by Playwright. The
-      # `playwright` Python package is in requirements.txt but the
-      # actual browser binary is downloaded separately by this
-      # command. Without this step, the script fails with
-      # "Executable doesn't exist".
       - name: Install Playwright Chromium
         run: python -m playwright install --with-deps chromium
 
       - name: Run TFC NCAD enrichment
         env:
-          ENRICH_TFC_APPLY:    ${{ github.event.inputs.apply == 'true' && '1' || '0' }}
-          ENRICH_TFC_FORCE:    ${{ github.event.inputs.force == 'true' && '1' || '0' }}
-          FETCH_MAIL_ADDRESS:  ${{ github.event.inputs.fetch_mail == 'true' && '1' || '0' }}
-        run: |
-          python scraper/enrich_tfc_ncad.py
+          # Auto-runs always apply + force + fetch_mail (the scrape
+          # wipes tfc.json, so a full re-enrich is correct, and the
+          # account number requires the detail-page fetch). Manual
+          # runs honor whatever was chosen.
+          ENRICH_TFC_APPLY:   ${{ (github.event_name == 'workflow_run' || github.event.inputs.apply == 'true') && '1' || '0' }}
+          ENRICH_TFC_FORCE:   ${{ (github.event_name == 'workflow_run' || github.event.inputs.force == 'true') && '1' || '0' }}
+          FETCH_MAIL_ADDRESS: ${{ (github.event_name == 'workflow_run' || github.event.inputs.fetch_mail == 'true') && '1' || '0' }}
+        run: python scraper/enrich_tfc_ncad.py
 
-      # Only commit when apply mode is on AND there are actual
-      # changes. The git diff check prevents empty commits on
-      # no-match runs.
       - name: Commit enriched JSON
-        if: github.event.inputs.apply == 'true'
+        # Commit on auto-runs and on manual apply runs (skip dry-runs).
+        if: ${{ github.event_name == 'workflow_run' || github.event.inputs.apply == 'true' }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -89,16 +110,33 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "TFC: NCAD enrichment pass"
+            git commit -m "TFC: NCAD enrichment pass (${{ github.event_name }})"
             git push
           fi
 
-      # Always upload the run log as an artifact so dry-run results
-      # are reviewable without checking it into the repo.
-      - name: Upload enrichment log
+      - name: Upload dashboard artifact for Pages deploy
+        if: ${{ github.event_name == 'workflow_run' || github.event.inputs.apply == 'true' }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+      - name: Upload enrichment log (always, for dry-run review)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: enrich-tfc-ncad-log
           path: data/enrich_tfc_ncad_log.json
           if-no-files-found: ignore
+
+  deploy:
+    needs: enrich
+    # Deploy only when the enrich job applied changes (artifact exists).
+    if: ${{ needs.enrich.result == 'success' && (github.event_name == 'workflow_run' || github.event.inputs.apply == 'true') }}
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
