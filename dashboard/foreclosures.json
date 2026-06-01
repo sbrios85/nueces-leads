@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-01T23:05:33.278465+00:00",
+  "fetched_at": "2026-06-01T23:48:27.006318+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-06-01",
@@ -2699,7 +2699,7 @@
       "sale_date": "2026-07-07",
       "legal": "Arcadi LOT 19 BLOCK 16",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000327",
-      "owner": "",
+      "owner": "VIZION247, LLC AND ARTHUR MARTINEZ JR",
       "loan_amount": 176150.0,
       "prop_address": "1333 LOGAN AVENUE",
       "prop_city": "CORPUS CHRISTI",
@@ -2720,7 +2720,7 @@
       "legal_lot": "19",
       "legal_block": "16",
       "legal_subdivision": "Arcadi",
-      "pdf_parsed_at": "2026-06-01T23:04:47.015304+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:44.485736+00:00"
     },
     {
       "doc_num": "2026000326",
@@ -2729,7 +2729,7 @@
       "sale_date": "2026-07-07",
       "legal": "CANDLEWOOD LOT 7 BLOCK 3 UNIT 6",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000326",
-      "owner": "",
+      "owner": "Mark S Schwabe",
       "loan_amount": null,
       "prop_address": "",
       "prop_city": "",
@@ -2750,7 +2750,7 @@
       "legal_lot": "7",
       "legal_block": "3",
       "legal_subdivision": "CANDLEWOOD",
-      "pdf_parsed_at": "2026-06-01T23:04:40.049384+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:37.588788+00:00"
     },
     {
       "doc_num": "2026000323",
@@ -2791,17 +2791,17 @@
       "sale_date": "2026-07-07",
       "legal": "ARCADIA -LOT 14, BLOCK 7",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000318",
-      "owner": "MOHAMMAD AL- SECURED: BARNAWI",
+      "owner": "MOHAMMAD AL-BARNAWI",
       "loan_amount": 100000.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "1153 YORK AVE",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78404",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 315842.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -2814,7 +2814,7 @@
       "legal_lot": "14",
       "legal_block": "7",
       "legal_subdivision": "ARCADIA OF PROPERTY",
-      "pdf_parsed_at": "2026-06-01T23:04:25.978171+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:23.600892+00:00"
     },
     {
       "doc_num": "2026000325",
@@ -2855,7 +2855,7 @@
       "sale_date": "2026-07-07",
       "legal": "COLLIER- LOT 2, BLOCK 1",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000320",
-      "owner": "Gerline J. Bray as mortgagor",
+      "owner": "Gerline J. Bray",
       "loan_amount": null,
       "prop_address": "4234 DAKIN PLACE",
       "prop_city": "CORPUS CHRISTI",
@@ -2878,7 +2878,8 @@
       "legal_lot": "2",
       "legal_block": "1",
       "legal_subdivision": "COLLIER",
-      "pdf_parsed_at": "2026-06-01T23:04:33.192712+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:30.748119+00:00",
+      "owner_raw": "Gerline J. Bray as mortgagor"
     },
     {
       "doc_num": "2026000322",
@@ -2919,7 +2920,7 @@
       "sale_date": "2026-07-07",
       "legal": "LINCOLN TERRACE- LOT 24, BLOCK 6",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000324",
-      "owner": "AMBER LEANNE PAIZ AND ISHMAEL GONZALES PAIZ JR, WIFE",
+      "owner": "AMBER LEANNE PAIZ AND ISHMAEL GONZALES PAIZ JR",
       "loan_amount": null,
       "prop_address": "4801 EDITH ST",
       "prop_city": "CORPUS CHRISTI",
@@ -2940,7 +2941,8 @@
       "legal_lot": "24",
       "legal_block": "6",
       "legal_subdivision": "LINCOLN TERRACE",
-      "pdf_parsed_at": "2026-06-01T23:04:05.808776+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:13.904720+00:00",
+      "owner_raw": "AMBER LEANNE PAIZ AND ISHMAEL GONZALES PAIZ JR, WIFE"
     },
     {
       "doc_num": "2026000315",
@@ -3077,17 +3079,17 @@
       "sale_date": "2026-07-07",
       "legal": "Merisol LOT 5 BLOCK 2",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000312",
-      "owner": "",
+      "owner": "Merisol Villages LLC",
       "loan_amount": 2550000.0,
-      "prop_address": "",
-      "prop_city": "",
+      "prop_address": "121 MERISOL DR",
+      "prop_city": "PORT ARANSAS",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78373",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "appraised_value": null,
+      "appraised_value": 225000.0,
       "ncad_prop_id": "",
       "ncad_year": "",
       "ncad_owner_id": "",
@@ -3100,7 +3102,7 @@
       "legal_lot": "5",
       "legal_block": "2",
       "legal_subdivision": "Merisol",
-      "pdf_parsed_at": "2026-06-01T23:03:08.940804+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:07.465307+00:00"
     },
     {
       "doc_num": "2026000311",
@@ -4131,7 +4133,7 @@
       "sale_date": "2026-08-04",
       "legal": "PADRE ISLAND CORPUS CHRISTI SECTION D LOTS 45A BLOCK 1 UNIT 102",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000328",
-      "owner": "naming Beneficiary as lienholder and Borrower",
+      "owner": "Pinery Partners, LLC",
       "loan_amount": 447750.0,
       "prop_address": "",
       "prop_city": "",
@@ -4150,7 +4152,7 @@
       "deed_date": "2026-05-19",
       "loan_doc": "2004055108",
       "has_loan_mod": false,
-      "pdf_parsed_at": "2026-06-01T23:04:52.926803+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:50.400071+00:00"
     },
     {
       "doc_num": "2026000319",
