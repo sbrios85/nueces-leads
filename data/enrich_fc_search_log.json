@@ -1,15 +1,327 @@
 {
-  "ran_at": "2026-06-02T06:04:01+00:00",
+  "ran_at": "2026-06-02T20:26:49+00:00",
   "apply_mode": true,
-  "force_mode": false,
+  "force_mode": true,
   "fetch_mail_address": true,
   "summary": {
-    "matched": 1,
-    "no_match": 5,
+    "matched": 118,
+    "no_match": 8,
     "skipped": 9,
-    "total_targets": 6
+    "total_targets": 126
   },
   "entries": [
+    {
+      "doc_num": "2026000295",
+      "prop_address": "15010 LEEWARD DR. 803",
+      "result": "matched",
+      "ncad_prop_id": "257987",
+      "ncad_account_num": "4341-0001-0101",
+      "ncad_owner": "SANDERS EVA",
+      "ncad_legal": "LEEWARD ISLES CONDO, BUILDING A, UNIT 101, 1.165% COMMON AREA INTEREST",
+      "market_value": 185615.0,
+      "additions": {
+        "ncad_prop_id": "257987",
+        "ncad_owner_id": "755871",
+        "ncad_year": "2026",
+        "ncad_account_num": "4341-0001-0101",
+        "ncad_owner": "SANDERS EVA",
+        "ncad_legal": "LEEWARD ISLES CONDO, BUILDING A, UNIT 101, 1.165% COMMON AREA INTEREST",
+        "mail_city": "Irving"
+      }
+    },
+    {
+      "doc_num": "2026000294",
+      "prop_address": "14898 GRANADA DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "297101",
+      "ncad_account_num": "7652-0000-0010",
+      "ncad_owner": "DENNIS ROBERT L",
+      "ncad_legal": "SAND DOLLAR II STUDIO CONDO, UNIT 1, 6.25% COMMON AREA INTEREST",
+      "market_value": 150739.0,
+      "additions": {
+        "ncad_prop_id": "297101",
+        "ncad_owner_id": "462835",
+        "ncad_year": "2026",
+        "ncad_account_num": "7652-0000-0010",
+        "ncad_owner": "DENNIS ROBERT L",
+        "ncad_legal": "SAND DOLLAR II STUDIO CONDO, UNIT 1, 6.25% COMMON AREA INTEREST",
+        "mail_city": "ROBSTOWN"
+      }
+    },
+    {
+      "doc_num": "2026000293",
+      "prop_address": "3710 MENDENHALL DR",
+      "result": "matched",
+      "ncad_prop_id": "207617",
+      "ncad_account_num": "1290-0011-0110",
+      "ncad_owner": "MIRELES RAUL M & WF BERTA",
+      "ncad_legal": "CAROLYN HEIGHTS  #7 BLK 11 LOT 11",
+      "market_value": 206637.0,
+      "additions": {
+        "ncad_prop_id": "207617",
+        "ncad_owner_id": "661513",
+        "ncad_year": "2026",
+        "ncad_account_num": "1290-0011-0110",
+        "ncad_owner": "MIRELES RAUL M & WF BERTA",
+        "ncad_legal": "CAROLYN HEIGHTS  #7 BLK 11 LOT 11",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000292",
+      "prop_address": "3442 XANADU",
+      "result": "matched",
+      "ncad_prop_id": "208647",
+      "ncad_account_num": "1336-0002-0280",
+      "ncad_owner": "MATA DAVID",
+      "ncad_legal": "CARROLL PLACE  #6 BLK 2 LOT 28",
+      "market_value": 183525.0,
+      "additions": {
+        "ncad_prop_id": "208647",
+        "ncad_owner_id": "503231",
+        "ncad_year": "2026",
+        "ncad_account_num": "1336-0002-0280",
+        "ncad_owner": "MATA DAVID",
+        "ncad_legal": "CARROLL PLACE  #6 BLK 2 LOT 28",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000286",
+      "prop_address": "3322 OTRANTO DR",
+      "result": "matched",
+      "ncad_prop_id": "207107",
+      "ncad_account_num": "1258-0009-0330",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CARIBBEAN PLACE  #3 BLK 9 LOT 33",
+      "market_value": 190523.0,
+      "additions": {
+        "ncad_prop_id": "207107",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "1258-0009-0330",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "CARIBBEAN PLACE  #3 BLK 9 LOT 33"
+      }
+    },
+    {
+      "doc_num": "2026000276",
+      "prop_address": "4306 BOROS DR",
+      "result": "matched",
+      "ncad_prop_id": "219344",
+      "ncad_account_num": "1871-0001-0070",
+      "ncad_owner": "PLUTUS PROEPRTIES LLC",
+      "ncad_legal": "COUNTRY CLUB ESTATES #27 BLK 1 LOT 7",
+      "market_value": 256785.0,
+      "additions": {
+        "ncad_prop_id": "219344",
+        "ncad_owner_id": "818400",
+        "ncad_year": "2026",
+        "ncad_account_num": "1871-0001-0070",
+        "ncad_owner": "PLUTUS PROEPRTIES LLC",
+        "ncad_legal": "COUNTRY CLUB ESTATES #27 BLK 1 LOT 7"
+      }
+    },
+    {
+      "doc_num": "2026000279",
+      "prop_address": "2534 DOGTOOTH CT",
+      "result": "matched",
+      "ncad_prop_id": "200115222",
+      "ncad_account_num": "9911-0001-0280",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28",
+      "market_value": 320254.0,
+      "additions": {
+        "ncad_prop_id": "200115222",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "9911-0001-0280",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28"
+      }
+    },
+    {
+      "doc_num": "2026000284",
+      "prop_address": "502 GREENWAY DR",
+      "result": "matched",
+      "ncad_prop_id": "223758",
+      "ncad_account_num": "1996-0032-0130",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CULLEN PLACE #3 BLK 32 LOT 13",
+      "market_value": 246862.0,
+      "additions": {
+        "ncad_prop_id": "223758",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "1996-0032-0130",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "CULLEN PLACE #3 BLK 32 LOT 13"
+      }
+    },
+    {
+      "doc_num": "2026000285",
+      "prop_address": "2930 RIVER CREST RD",
+      "result": "matched",
+      "ncad_prop_id": "221688",
+      "ncad_account_num": "1975-0014-0080",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CRESTMONT UNIT 6 LT 8 BK 14",
+      "market_value": 186846.0,
+      "additions": {
+        "ncad_prop_id": "221688",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "1975-0014-0080",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "CRESTMONT UNIT 6 LT 8 BK 14"
+      }
+    },
+    {
+      "doc_num": "2026000271",
+      "prop_address": "3210 CASA ROSA DR",
+      "result": "matched",
+      "ncad_prop_id": "210489",
+      "ncad_account_num": "1432-0007-0030",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CASA LINDA 2 LT 3 BLK 7",
+      "market_value": 198407.0,
+      "additions": {
+        "ncad_prop_id": "210489",
+        "ncad_owner_id": "812135",
+        "ncad_year": "2026",
+        "ncad_account_num": "1432-0007-0030",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "CASA LINDA 2 LT 3 BLK 7"
+      }
+    },
+    {
+      "doc_num": "2026000270",
+      "prop_address": "6633 SAHARA DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "284389",
+      "ncad_account_num": "6631-0022-0020",
+      "ncad_owner": "RICARDO ROBLES SILVA OF DUAL ACTION ENTERPRISE LLC",
+      "ncad_legal": "PHARAOH VALLEY NORTH #2 BLK 22 LOT 2",
+      "market_value": 255180.0,
+      "additions": {
+        "ncad_prop_id": "284389",
+        "ncad_owner_id": "825267",
+        "ncad_year": "2026",
+        "ncad_account_num": "6631-0022-0020",
+        "ncad_owner": "RICARDO ROBLES SILVA OF DUAL ACTION ENTERPRISE LLC",
+        "ncad_legal": "PHARAOH VALLEY NORTH #2 BLK 22 LOT 2",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000287",
+      "prop_address": "10533 HEIZER DR",
+      "result": "matched",
+      "ncad_prop_id": "194322",
+      "ncad_account_num": "0661-0002-0120",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "market_value": 238187.0,
+      "additions": {
+        "ncad_prop_id": "194322",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "0661-0002-0120",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12"
+      }
+    },
+    {
+      "doc_num": "2026000269",
+      "prop_address": "14916 PACKERY VIEW LOOP",
+      "result": "matched",
+      "ncad_prop_id": "542031",
+      "ncad_account_num": "9063-0001-0690",
+      "ncad_owner": "REYNOLDS MARY T ANNE-ALEXANDRIA",
+      "ncad_legal": "VILLAGE BY THE BEACH 2 PUD, BLOCK 1, LOT 69",
+      "market_value": 552477.0,
+      "additions": {
+        "ncad_prop_id": "542031",
+        "ncad_owner_id": "768989",
+        "ncad_year": "2026",
+        "ncad_account_num": "9063-0001-0690",
+        "ncad_owner": "REYNOLDS MARY T ANNE-ALEXANDRIA",
+        "ncad_legal": "VILLAGE BY THE BEACH 2 PUD, BLOCK 1, LOT 69",
+        "mail_city": "San Antonio"
+      }
+    },
+    {
+      "doc_num": "2026000274",
+      "prop_address": "4914 CREEKBEND RD",
+      "result": "matched",
+      "ncad_prop_id": "214077",
+      "ncad_account_num": "1650-0006-0050",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CLUB ESTATES UNIT 3 LT 5 BK 6",
+      "market_value": 296474.0,
+      "additions": {
+        "ncad_prop_id": "214077",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "1650-0006-0050",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "CLUB ESTATES UNIT 3 LT 5 BK 6"
+      }
+    },
+    {
+      "doc_num": "2026000288",
+      "prop_address": "2534 DOGTOOTH CT",
+      "result": "matched",
+      "ncad_prop_id": "200115222",
+      "ncad_account_num": "9911-0001-0280",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28",
+      "market_value": 320254.0,
+      "additions": {
+        "ncad_prop_id": "200115222",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "9911-0001-0280",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28"
+      }
+    },
+    {
+      "doc_num": "2026000273",
+      "prop_address": "7814 ELK DR",
+      "result": "matched",
+      "ncad_prop_id": "200090998",
+      "ncad_account_num": "1592-0012-0010",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CIMARRON CROSSING UNIT  3 BLK 12 LOT 1",
+      "market_value": 208707.0,
+      "additions": {
+        "ncad_prop_id": "200090998",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "1592-0012-0010",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "CIMARRON CROSSING UNIT  3 BLK 12 LOT 1"
+      }
+    },
+    {
+      "doc_num": "2026000281",
+      "prop_address": "4302 VESTAL ST",
+      "result": "matched",
+      "ncad_prop_id": "289163",
+      "ncad_account_num": "7004-0006-0010",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "PRESCOTT PK LT 1 & PT OF ADJ ST BK 6",
+      "market_value": 208630.0,
+      "additions": {
+        "ncad_prop_id": "289163",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "7004-0006-0010",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "PRESCOTT PK LT 1 & PT OF ADJ ST BK 6"
+      }
+    },
     {
       "doc_num": "2026000277",
       "prop_address": "4910 ETMHURST LN",
@@ -19,12 +331,1296 @@
       ]
     },
     {
+      "doc_num": "2026000278",
+      "prop_address": "1041 BRAWNER PKWY",
+      "result": "matched",
+      "ncad_prop_id": "245353",
+      "ncad_account_num": "3546-0009-0010",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "HOPPER #2 BLK 9 LOT 1",
+      "market_value": 163215.0,
+      "additions": {
+        "ncad_prop_id": "245353",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "3546-0009-0010",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "HOPPER #2 BLK 9 LOT 1"
+      }
+    },
+    {
+      "doc_num": "2026000272",
+      "prop_address": "10533 HEIZER DR",
+      "result": "matched",
+      "ncad_prop_id": "194322",
+      "ncad_account_num": "0661-0002-0120",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "market_value": 238187.0,
+      "additions": {
+        "ncad_prop_id": "194322",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "0661-0002-0120",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12"
+      }
+    },
+    {
+      "doc_num": "2026000275",
+      "prop_address": "2110 MEADOWVIEW DR",
+      "result": "matched",
+      "ncad_prop_id": "266138",
+      "ncad_account_num": "5037-0003-0180",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "MEADOWS #2 BLK 3 LOT 18",
+      "market_value": 188206.0,
+      "additions": {
+        "ncad_prop_id": "266138",
+        "ncad_owner_id": "779814",
+        "ncad_year": "2026",
+        "ncad_account_num": "5037-0003-0180",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "MEADOWS #2 BLK 3 LOT 18"
+      }
+    },
+    {
+      "doc_num": "2026000282",
+      "prop_address": "5730 FLYNN PKWY",
+      "result": "matched",
+      "ncad_prop_id": "299006",
+      "ncad_account_num": "7771-0013-0060",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "SCHANEN ESTS #2 BLK 13 LOT 6",
+      "market_value": 183443.0,
+      "additions": {
+        "ncad_prop_id": "299006",
+        "ncad_owner_id": "812135",
+        "ncad_year": "2026",
+        "ncad_account_num": "7771-0013-0060",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "SCHANEN ESTS #2 BLK 13 LOT 6"
+      }
+    },
+    {
+      "doc_num": "2026000290",
+      "prop_address": "10533 HEIZER DR",
+      "result": "matched",
+      "ncad_prop_id": "194322",
+      "ncad_account_num": "0661-0002-0120",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "market_value": 238187.0,
+      "additions": {
+        "ncad_prop_id": "194322",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "0661-0002-0120",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12"
+      }
+    },
+    {
+      "doc_num": "2026000291",
+      "prop_address": "535 ROCKPORT CHANNEL",
+      "result": "matched",
+      "ncad_prop_id": "212578",
+      "ncad_account_num": "1534-0001-0070",
+      "ncad_owner": "GARRETT JEFFERY S & WF TRICIA L",
+      "ncad_legal": "CHANNEL VISTA  - P A BLK 1 LOT 7",
+      "market_value": 513178.0,
+      "additions": {
+        "ncad_prop_id": "212578",
+        "ncad_owner_id": "780334",
+        "ncad_year": "2026",
+        "ncad_account_num": "1534-0001-0070",
+        "ncad_owner": "GARRETT JEFFERY S & WF TRICIA L",
+        "ncad_legal": "CHANNEL VISTA  - P A BLK 1 LOT 7"
+      }
+    },
+    {
+      "doc_num": "2026000289",
+      "prop_address": "10533 HEIZER DR",
+      "result": "matched",
+      "ncad_prop_id": "194322",
+      "ncad_account_num": "0661-0002-0120",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+      "market_value": 238187.0,
+      "additions": {
+        "ncad_prop_id": "194322",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "0661-0002-0120",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12"
+      }
+    },
+    {
+      "doc_num": "2026000280",
+      "prop_address": "430 TROY DR",
+      "result": "matched",
+      "ncad_prop_id": "274667",
+      "ncad_account_num": "5978-0003-0090",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "OCEAN TERRACE BLK 3 LOT 9",
+      "market_value": 224851.0,
+      "additions": {
+        "ncad_prop_id": "274667",
+        "ncad_owner_id": "783783",
+        "ncad_year": "2026",
+        "ncad_account_num": "5978-0003-0090",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "OCEAN TERRACE BLK 3 LOT 9",
+        "mail_city": "AUSTIN"
+      }
+    },
+    {
+      "doc_num": "2026000283",
+      "prop_address": "4410 HAMLIN DR",
+      "result": "matched",
+      "ncad_prop_id": "241209",
+      "ncad_account_num": "3163-0008-0030",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "HAMLIN PLACE UNIT 1 BLK 8 LOT 3",
+      "market_value": 232218.0,
+      "additions": {
+        "ncad_prop_id": "241209",
+        "ncad_owner_id": "812135",
+        "ncad_year": "2026",
+        "ncad_account_num": "3163-0008-0030",
+        "ncad_owner": "PLUTUS PROPERTIES LLC",
+        "ncad_legal": "HAMLIN PLACE UNIT 1 BLK 8 LOT 3"
+      }
+    },
+    {
+      "doc_num": "2026000267",
+      "prop_address": "14300 S PADRE ISLAND DR",
+      "result": "no-match",
+      "query": [
+        "StreetNumber:14300 StreetName:S PADRE ISLAND",
+        "StreetNumber:14300 StreetName:ISLAND"
+      ]
+    },
+    {
+      "doc_num": "2026000266",
+      "prop_address": "1941 YALE",
+      "result": "matched",
+      "ncad_prop_id": "249198",
+      "ncad_account_num": "3810-0003-0210",
+      "ncad_owner": "MARTINEZ EVA",
+      "ncad_legal": "JONES JOHN BLK 3 LOT 21",
+      "market_value": 125649.0,
+      "additions": {
+        "ncad_prop_id": "249198",
+        "ncad_owner_id": "676223",
+        "ncad_year": "2026",
+        "ncad_account_num": "3810-0003-0210",
+        "ncad_owner": "MARTINEZ EVA",
+        "ncad_legal": "JONES JOHN BLK 3 LOT 21",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000263",
+      "prop_address": "11626 TURKEY CREEK DR",
+      "result": "matched",
+      "ncad_prop_id": "200066716",
+      "ncad_account_num": "9838-0010-0150",
+      "ncad_owner": "RODRIGUEZ LEO AND WF",
+      "ncad_legal": "WOODLAND CREEK #5 BLK 10 LOT 15",
+      "market_value": 211778.0,
+      "additions": {
+        "ncad_prop_id": "200066716",
+        "ncad_owner_id": "556230",
+        "ncad_year": "2026",
+        "ncad_account_num": "9838-0010-0150",
+        "ncad_owner": "RODRIGUEZ LEO AND WF",
+        "ncad_legal": "WOODLAND CREEK #5 BLK 10 LOT 15",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000261",
+      "prop_address": "6305 SIR JACK ST",
+      "result": "matched",
+      "ncad_prop_id": "200112334",
+      "ncad_account_num": "3969-0002-0130",
+      "ncad_owner": "GUERRERO ANTHONY AND WF ERICA NICOLE DAVIS GUERRERO",
+      "ncad_legal": "KINGS POINT UNIT 4 LT 13 BLK 2",
+      "market_value": 359978.0,
+      "additions": {
+        "ncad_prop_id": "200112334",
+        "ncad_owner_id": "729206",
+        "ncad_year": "2026",
+        "ncad_account_num": "3969-0002-0130",
+        "ncad_owner": "GUERRERO ANTHONY AND WF ERICA NICOLE DAVIS GUERRERO",
+        "ncad_legal": "KINGS POINT UNIT 4 LT 13 BLK 2",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000260",
+      "prop_address": "3938 SURFSIDE BLVD",
+      "result": "matched",
+      "ncad_prop_id": "200048479",
+      "ncad_account_num": "9019-0010-1118",
+      "ncad_owner": "VELA JUAN DAVID",
+      "ncad_legal": "VILLA DEL SOL CONDO UNIT 1118 PHASE 1 .2374 PERCENT INT IN GCE",
+      "market_value": 99543.0,
+      "additions": {
+        "ncad_prop_id": "200048479",
+        "ncad_owner_id": "701660",
+        "ncad_year": "2026",
+        "ncad_account_num": "9019-0010-1118",
+        "ncad_owner": "VELA JUAN DAVID",
+        "ncad_legal": "VILLA DEL SOL CONDO UNIT 1118 PHASE 1 .2374 PERCENT INT IN GCE",
+        "mail_city": "Kingsville"
+      }
+    },
+    {
+      "doc_num": "2026000259",
+      "prop_address": "4610 E GRANADO DR",
+      "result": "matched",
+      "ncad_prop_id": "547950",
+      "ncad_account_num": "2903-0001-0340",
+      "ncad_owner": "AMARO JOHN BRUNO & WF SANDRA ANN",
+      "ncad_legal": "GRANADO ESTATES ADDITION BLK 1 LOT 34",
+      "market_value": 56628.0,
+      "additions": {
+        "ncad_prop_id": "547950",
+        "ncad_owner_id": "746735",
+        "ncad_year": "2026",
+        "ncad_account_num": "2903-0001-0340",
+        "ncad_owner": "AMARO JOHN BRUNO & WF SANDRA ANN",
+        "ncad_legal": "GRANADO ESTATES ADDITION BLK 1 LOT 34",
+        "mail_city": "Elmendorf"
+      }
+    },
+    {
+      "doc_num": "2026000258",
+      "prop_address": "838 ERWIN AVE",
+      "result": "matched",
+      "ncad_prop_id": "200072779",
+      "ncad_account_num": "9866-0002-0050",
+      "ncad_owner": "SANCHEZ JENNY",
+      "ncad_legal": "WOODLAWN S74' X 135' OUT OF LT 5 BLK 2",
+      "market_value": 36464.0,
+      "additions": {
+        "ncad_prop_id": "200072779",
+        "ncad_owner_id": "836310",
+        "ncad_year": "2026",
+        "ncad_account_num": "9866-0002-0050",
+        "ncad_owner": "SANCHEZ JENNY",
+        "ncad_legal": "WOODLAWN S74' X 135' OUT OF LT 5 BLK 2",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000252",
+      "prop_address": "7477 STAR HARBOR DR",
+      "result": "matched",
+      "ncad_prop_id": "381540",
+      "ncad_account_num": "5406-0005-0270",
+      "ncad_owner": "HASTEY JESSE",
+      "ncad_legal": "MORNINGSTAR ESTATES UNIT 3 LT 27 BLK 5",
+      "market_value": 217105.0,
+      "additions": {
+        "ncad_prop_id": "381540",
+        "ncad_owner_id": "685358",
+        "ncad_year": "2026",
+        "ncad_account_num": "5406-0005-0270",
+        "ncad_owner": "HASTEY JESSE",
+        "ncad_legal": "MORNINGSTAR ESTATES UNIT 3 LT 27 BLK 5",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000254",
+      "prop_address": "5718 VENTURA LN",
+      "result": "matched",
+      "ncad_prop_id": "378598",
+      "ncad_account_num": "1245-0012-0100",
+      "ncad_owner": "CHARLES OLGA L",
+      "ncad_legal": "CAP ESTATES II UNIT 2 BLK 12 LOT 10",
+      "market_value": 243173.0,
+      "additions": {
+        "ncad_prop_id": "378598",
+        "ncad_owner_id": "576577",
+        "ncad_year": "2026",
+        "ncad_account_num": "1245-0012-0100",
+        "ncad_owner": "CHARLES OLGA L",
+        "ncad_legal": "CAP ESTATES II UNIT 2 BLK 12 LOT 10",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000255",
+      "prop_address": "3690 REYNA ST",
+      "result": "matched",
+      "ncad_prop_id": "200032031",
+      "ncad_account_num": "8346-0000-0120",
+      "ncad_owner": "MARTINEZ JOHNNY P AND WFE MARIA",
+      "ncad_legal": "SPRING GARDENS UNIT 1 S/2 LT 12",
+      "market_value": 155408.0,
+      "additions": {
+        "ncad_prop_id": "200032031",
+        "ncad_owner_id": "461921",
+        "ncad_year": "2026",
+        "ncad_account_num": "8346-0000-0120",
+        "ncad_owner": "MARTINEZ JOHNNY P AND WFE MARIA",
+        "ncad_legal": "SPRING GARDENS UNIT 1 S/2 LT 12",
+        "mail_city": "ROBSTOWN"
+      }
+    },
+    {
+      "doc_num": "2026000249",
+      "prop_address": "5535 WARBONNET DR",
+      "result": "matched",
+      "ncad_prop_id": "246236",
+      "ncad_account_num": "3665-0001-0150",
+      "ncad_owner": "ELIZONDO ROGELIO O ETUX",
+      "ncad_legal": "INDIAN TRAILS BLK 1 LOT 15 1.11",
+      "market_value": 69659.0,
+      "additions": {
+        "ncad_prop_id": "246236",
+        "ncad_owner_id": "467278",
+        "ncad_year": "2026",
+        "ncad_account_num": "3665-0001-0150",
+        "ncad_owner": "ELIZONDO ROGELIO O ETUX",
+        "ncad_legal": "INDIAN TRAILS BLK 1 LOT 15 1.11",
+        "mail_city": "ROBSTOWN"
+      }
+    },
+    {
+      "doc_num": "2026000248",
+      "prop_address": "450 CLERK KARA SOUNTE COURT",
+      "result": "no-match",
+      "query": [
+        "StreetNumber:450 StreetName:CLERK KARA SOUNTE",
+        "StreetNumber:450 StreetName:SOUNTE",
+        "StreetNumber:450 StreetName:CLERK"
+      ]
+    },
+    {
+      "doc_num": "2026000236",
+      "prop_address": "7705 JACINTO CIRCLE",
+      "result": "matched",
+      "ncad_prop_id": "200089546",
+      "ncad_account_num": "7149-0001-0320",
+      "ncad_owner": "GONZALES JENNIFER R & RODOLFO JOSE BARRERA",
+      "ncad_legal": "REFLECTIONS UNIT 5 BLK 1 LOT 32",
+      "market_value": 465515.0,
+      "additions": {
+        "ncad_prop_id": "200089546",
+        "ncad_owner_id": "790298",
+        "ncad_year": "2026",
+        "ncad_account_num": "7149-0001-0320",
+        "ncad_owner": "GONZALES JENNIFER R & RODOLFO JOSE BARRERA",
+        "ncad_legal": "REFLECTIONS UNIT 5 BLK 1 LOT 32",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000241",
+      "prop_address": "4222 COTTAGE STREET",
+      "result": "matched",
+      "ncad_prop_id": "217756",
+      "ncad_account_num": "1810-0002-0050",
+      "ncad_owner": "NARVAEZ LUPITA",
+      "ncad_legal": "COTTAGE PARK BLK 2 LOT 5",
+      "market_value": 119091.0,
+      "additions": {
+        "ncad_prop_id": "217756",
+        "ncad_owner_id": "484853",
+        "ncad_year": "2026",
+        "ncad_account_num": "1810-0002-0050",
+        "ncad_owner": "NARVAEZ LUPITA",
+        "ncad_legal": "COTTAGE PARK BLK 2 LOT 5",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000234",
+      "prop_address": "3902 TARGARYEN WAY",
+      "result": "matched",
+      "ncad_prop_id": "597405",
+      "ncad_account_num": "1239-0004-0010",
+      "ncad_owner": "JOHNSTON GARRETT WAYNE & WF SUSANA",
+      "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE II BLK 4 LOT 1",
+      "market_value": 282430.0,
+      "additions": {
+        "ncad_prop_id": "597405",
+        "ncad_owner_id": "792083",
+        "ncad_year": "2026",
+        "ncad_account_num": "1239-0004-0010",
+        "ncad_owner": "JOHNSTON GARRETT WAYNE & WF SUSANA",
+        "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE II BLK 4 LOT 1",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000243",
+      "prop_address": "621 CHAMBERLAIN ST",
+      "result": "matched",
+      "ncad_prop_id": "260479",
+      "ncad_account_num": "4473-0029-0220",
+      "ncad_owner": "GUERRA ELIZABETH Z",
+      "ncad_legal": "LINDALE PARK 2-A E 50' LT 22 & W 15' LT 23 BLK 29",
+      "market_value": 146049.0,
+      "additions": {
+        "ncad_prop_id": "260479",
+        "ncad_owner_id": "732887",
+        "ncad_year": "2026",
+        "ncad_account_num": "4473-0029-0220",
+        "ncad_owner": "GUERRA ELIZABETH Z",
+        "ncad_legal": "LINDALE PARK 2-A E 50' LT 22 & W 15' LT 23 BLK 29",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000245",
+      "prop_address": "3225 ORLANDO DR",
+      "result": "matched",
+      "ncad_prop_id": "210587",
+      "ncad_account_num": "1436-0009-0150",
+      "ncad_owner": "CHAPA CORINA L AND GEORGE I LONGORIA",
+      "ncad_legal": "CASA LINDA ESTATES  #6 BLK 9 LOT 15",
+      "market_value": 184376.0,
+      "additions": {
+        "ncad_prop_id": "210587",
+        "ncad_owner_id": "790236",
+        "ncad_year": "2026",
+        "ncad_account_num": "1436-0009-0150",
+        "ncad_owner": "CHAPA CORINA L AND GEORGE I LONGORIA",
+        "ncad_legal": "CASA LINDA ESTATES  #6 BLK 9 LOT 15",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000235",
+      "prop_address": "6910 FRUITWOOD DR",
+      "result": "matched",
+      "ncad_prop_id": "246587",
+      "ncad_account_num": "3698-0006-0080",
+      "ncad_owner": "MUSQUIEZ  JENNIFER LEE EST OF",
+      "ncad_legal": "INVERNESS UNIT B BLK 6 LOT 8",
+      "market_value": 304941.0,
+      "additions": {
+        "ncad_prop_id": "246587",
+        "ncad_owner_id": "796517",
+        "ncad_year": "2026",
+        "ncad_account_num": "3698-0006-0080",
+        "ncad_owner": "MUSQUIEZ  JENNIFER LEE EST OF",
+        "ncad_legal": "INVERNESS UNIT B BLK 6 LOT 8",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000246",
+      "prop_address": "5977 CR 42",
+      "result": "matched",
+      "ncad_prop_id": "290139",
+      "ncad_account_num": "7102-0000-1010",
+      "ncad_owner": "GONZALES RICARDO ET UX",
+      "ncad_legal": "RANCHO BANQUETE #2 - UNREC LOT 101 1.501",
+      "market_value": 233980.0,
+      "additions": {
+        "ncad_prop_id": "290139",
+        "ncad_owner_id": "227049",
+        "ncad_year": "2026",
+        "ncad_account_num": "7102-0000-1010",
+        "ncad_owner": "GONZALES RICARDO ET UX",
+        "ncad_legal": "RANCHO BANQUETE #2 - UNREC LOT 101 1.501",
+        "mail_city": "P O BOX 127"
+      }
+    },
+    {
+      "doc_num": "2026000238",
+      "prop_address": "125 AVALON DR",
+      "result": "matched",
+      "ncad_prop_id": "200069858",
+      "ncad_account_num": "9974-0005-0121",
+      "ncad_owner": "ROJAS BENJAMIN",
+      "ncad_legal": "ZEKE SERNA ESTATES UNIT 1 LT 12-A BLK 5",
+      "market_value": 197773.0,
+      "additions": {
+        "ncad_prop_id": "200069858",
+        "ncad_owner_id": "759710",
+        "ncad_year": "2026",
+        "ncad_account_num": "9974-0005-0121",
+        "ncad_owner": "ROJAS BENJAMIN",
+        "ncad_legal": "ZEKE SERNA ESTATES UNIT 1 LT 12-A BLK 5",
+        "mail_city": "Robstown"
+      }
+    },
+    {
+      "doc_num": "2026000244",
+      "prop_address": "4954 JO AN ST",
+      "result": "matched",
+      "ncad_prop_id": "200025667",
+      "ncad_account_num": "8187-0007-0020",
+      "ncad_owner": "BROOKS GERALDINE R",
+      "ncad_legal": "SOUTH PARK BLK 7 LOT 2",
+      "market_value": 120431.0,
+      "additions": {
+        "ncad_prop_id": "200025667",
+        "ncad_owner_id": "534412",
+        "ncad_year": "2026",
+        "ncad_account_num": "8187-0007-0020",
+        "ncad_owner": "BROOKS GERALDINE R",
+        "ncad_legal": "SOUTH PARK BLK 7 LOT 2",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000237",
+      "prop_address": "3157 VICKSBURG",
+      "result": "matched",
+      "ncad_prop_id": "248778",
+      "ncad_account_num": "3760-0003-0150",
+      "ncad_owner": "CARDENAS ALFONSO GARCIA & WF LAMAR GARCIA CARDENAS",
+      "ncad_legal": "JACKSON WOODS #2 BLK 3 LOT 15",
+      "market_value": 279671.0,
+      "additions": {
+        "ncad_prop_id": "248778",
+        "ncad_owner_id": "819359",
+        "ncad_year": "2026",
+        "ncad_account_num": "3760-0003-0150",
+        "ncad_owner": "CARDENAS ALFONSO GARCIA & WF LAMAR GARCIA CARDENAS",
+        "ncad_legal": "JACKSON WOODS #2 BLK 3 LOT 15"
+      }
+    },
+    {
+      "doc_num": "2026000240",
+      "prop_address": "4217 MICHELLE LN",
+      "result": "matched",
+      "ncad_prop_id": "550531",
+      "ncad_account_num": "1878-0002-0070",
+      "ncad_owner": "ODEAY ALMENIA GREFAL",
+      "ncad_legal": "COUNTRY CLUB ESTATES UNIT 34 PUD BLK 2 LOT 7",
+      "market_value": 223642.0,
+      "additions": {
+        "ncad_prop_id": "550531",
+        "ncad_owner_id": "826194",
+        "ncad_year": "2026",
+        "ncad_account_num": "1878-0002-0070",
+        "ncad_owner": "ODEAY ALMENIA GREFAL",
+        "ncad_legal": "COUNTRY CLUB ESTATES UNIT 34 PUD BLK 2 LOT 7",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000232",
+      "prop_address": "7706 ARSHAN LANE",
+      "result": "matched",
+      "ncad_prop_id": "535283",
+      "ncad_account_num": "3947-0002-0050",
+      "ncad_owner": "HALL DAVID BRIAN & WF NANCY MARIE",
+      "ncad_legal": "KINGS CROSSING WEST UNIT 2 PUD BLK 2 LOT 5",
+      "market_value": 240877.0,
+      "additions": {
+        "ncad_prop_id": "535283",
+        "ncad_owner_id": "793133",
+        "ncad_year": "2026",
+        "ncad_account_num": "3947-0002-0050",
+        "ncad_owner": "HALL DAVID BRIAN & WF NANCY MARIE",
+        "ncad_legal": "KINGS CROSSING WEST UNIT 2 PUD BLK 2 LOT 5",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000231",
+      "prop_address": "902 WEST LAKESIDE DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "233825",
+      "ncad_account_num": "2486-0011-0410",
+      "ncad_owner": "ALLEN THOMAS L",
+      "ncad_legal": "FLOUR BLUFF ESTATES LT 41 BK K",
+      "market_value": 201130.0,
+      "additions": {
+        "ncad_prop_id": "233825",
+        "ncad_owner_id": "688683",
+        "ncad_year": "2026",
+        "ncad_account_num": "2486-0011-0410",
+        "ncad_owner": "ALLEN THOMAS L",
+        "ncad_legal": "FLOUR BLUFF ESTATES LT 41 BK K",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000226",
+      "prop_address": "608 W 3rd ST",
+      "result": "matched",
+      "ncad_prop_id": "200057276",
+      "ncad_account_num": "9377-0063-0180",
+      "ncad_owner": "TITLE IT LLC",
+      "ncad_legal": "WEST END-BISHOP LT 18 BLK 63",
+      "market_value": 104620.0,
+      "additions": {
+        "ncad_prop_id": "200057276",
+        "ncad_owner_id": "818528",
+        "ncad_year": "2026",
+        "ncad_account_num": "9377-0063-0180",
+        "ncad_owner": "TITLE IT LLC",
+        "ncad_legal": "WEST END-BISHOP LT 18 BLK 63",
+        "mail_city": "BURLINGTON"
+      }
+    },
+    {
+      "doc_num": "2026000230",
+      "prop_address": "5710 PALO BLANCO ST",
+      "result": "matched",
+      "ncad_prop_id": "252086",
+      "ncad_account_num": "4050-0005-0140",
+      "ncad_owner": "GRAY JOHN DAVID  & WFE LAURA GARCIA GRAY",
+      "ncad_legal": "LA JOYA ESTS UNIT 2 BLK 5 LOT 14",
+      "market_value": 215846.0,
+      "additions": {
+        "ncad_prop_id": "252086",
+        "ncad_owner_id": "782632",
+        "ncad_year": "2026",
+        "ncad_account_num": "4050-0005-0140",
+        "ncad_owner": "GRAY JOHN DAVID  & WFE LAURA GARCIA GRAY",
+        "ncad_legal": "LA JOYA ESTS UNIT 2 BLK 5 LOT 14",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000222",
+      "prop_address": "5006 CASCADE DR",
+      "result": "matched",
+      "ncad_prop_id": "218711",
+      "ncad_account_num": "1857-0012-0020",
+      "ncad_owner": "HMHY INVESTMENTS LLC",
+      "ncad_legal": "COUNTRY CLUB ESTATES #13 BLK 12 LOT 2",
+      "market_value": 307380.0,
+      "additions": {
+        "ncad_prop_id": "218711",
+        "ncad_owner_id": "787949",
+        "ncad_year": "2026",
+        "ncad_account_num": "1857-0012-0020",
+        "ncad_owner": "HMHY INVESTMENTS LLC",
+        "ncad_legal": "COUNTRY CLUB ESTATES #13 BLK 12 LOT 2",
+        "mail_city": "Ste 205-249"
+      }
+    },
+    {
+      "doc_num": "2026000219",
+      "prop_address": "3002 NEWPORT DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "297762",
+      "ncad_account_num": "7675-0004-0230",
+      "ncad_owner": "ORTEGA EDGAR O ETALS",
+      "ncad_legal": "SANDY OAKS LT 23 BK 4",
+      "market_value": 33750.0,
+      "additions": {
+        "ncad_prop_id": "297762",
+        "ncad_owner_id": "825850",
+        "ncad_year": "2026",
+        "ncad_account_num": "7675-0004-0230",
+        "ncad_owner": "ORTEGA EDGAR O ETALS",
+        "ncad_legal": "SANDY OAKS LT 23 BK 4",
+        "mail_city": "Trlr 11"
+      }
+    },
+    {
+      "doc_num": "2026000214",
+      "prop_address": "1702 TIMROD DR",
+      "result": "matched",
+      "ncad_prop_id": "284964",
+      "ncad_account_num": "6745-0007-0060",
+      "ncad_owner": "PEREZ ANNA MARIA",
+      "ncad_legal": "PINEDA PARK BLK 7 LOT 6",
+      "market_value": 223694.0,
+      "additions": {
+        "ncad_prop_id": "284964",
+        "ncad_owner_id": "660170",
+        "ncad_year": "2026",
+        "ncad_account_num": "6745-0007-0060",
+        "ncad_owner": "PEREZ ANNA MARIA",
+        "ncad_legal": "PINEDA PARK BLK 7 LOT 6",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000215",
+      "prop_address": "1810 KEYS STREET",
+      "result": "matched",
+      "ncad_prop_id": "187487",
+      "ncad_account_num": "0386-0005-0030",
+      "ncad_owner": "MARTINEZ RUBEN",
+      "ncad_legal": "BALDWIN PARK BLK 5 LOT 3",
+      "market_value": 177971.0,
+      "additions": {
+        "ncad_prop_id": "187487",
+        "ncad_owner_id": "589134",
+        "ncad_year": "2026",
+        "ncad_account_num": "0386-0005-0030",
+        "ncad_owner": "MARTINEZ RUBEN",
+        "ncad_legal": "BALDWIN PARK BLK 5 LOT 3",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000212",
+      "prop_address": "630 WILSHIRE PLACE",
+      "result": "matched",
+      "ncad_prop_id": "286714",
+      "ncad_account_num": "6854-0002-0150",
+      "ncad_owner": "BROADWICK CHARLES",
+      "ncad_legal": "POPE PLACE BLK 2 LOT 15",
+      "market_value": 220465.0,
+      "additions": {
+        "ncad_prop_id": "286714",
+        "ncad_owner_id": "223624",
+        "ncad_year": "2026",
+        "ncad_account_num": "6854-0002-0150",
+        "ncad_owner": "BROADWICK CHARLES",
+        "ncad_legal": "POPE PLACE BLK 2 LOT 15",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000210",
+      "prop_address": "3922 JAYDEN DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "597441",
+      "ncad_account_num": "1239-0006-0020",
+      "ncad_owner": "ALIVIO MARIA JIZA P & KENNETH C",
+      "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE II BLK 6 LOT 2",
+      "market_value": 269747.0,
+      "additions": {
+        "ncad_prop_id": "597441",
+        "ncad_owner_id": "798935",
+        "ncad_year": "2026",
+        "ncad_account_num": "1239-0006-0020",
+        "ncad_owner": "ALIVIO MARIA JIZA P & KENNETH C",
+        "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE II BLK 6 LOT 2",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000205",
+      "prop_address": "2465 STILL BROOK DR",
+      "result": "matched",
+      "ncad_prop_id": "200068062",
+      "ncad_account_num": "9895-0005-0010",
+      "ncad_owner": "DIAZ ROSE ANNA",
+      "ncad_legal": "WOOLDRIDGE CREEK #1 BLK 5 LOT 1",
+      "market_value": 174854.0,
+      "additions": {
+        "ncad_prop_id": "200068062",
+        "ncad_owner_id": "795173",
+        "ncad_year": "2026",
+        "ncad_account_num": "9895-0005-0010",
+        "ncad_owner": "DIAZ ROSE ANNA",
+        "ncad_legal": "WOOLDRIDGE CREEK #1 BLK 5 LOT 1",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000203",
+      "prop_address": "5517 S OSO PKWY",
+      "result": "matched",
+      "ncad_prop_id": "530217",
+      "ncad_account_num": "3926-0001-0070",
+      "ncad_owner": "VERA JULIAN J",
+      "ncad_legal": "KING ESTATES UNIT 4 BLK 1 LOT 7",
+      "market_value": 764227.0,
+      "additions": {
+        "ncad_prop_id": "530217",
+        "ncad_owner_id": "704411",
+        "ncad_year": "2026",
+        "ncad_account_num": "3926-0001-0070",
+        "ncad_owner": "VERA JULIAN J",
+        "ncad_legal": "KING ESTATES UNIT 4 BLK 1 LOT 7",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000204",
+      "prop_address": "1717 ROBIN DR",
+      "result": "matched",
+      "ncad_prop_id": "201414",
+      "ncad_account_num": "1014-0001-0200",
+      "ncad_owner": "FLORES EDDIE ET UX MARIA VIOLA",
+      "ncad_legal": "BROADMOOR PARK 3 LT 20 BK 1",
+      "market_value": 109632.0,
+      "additions": {
+        "ncad_prop_id": "201414",
+        "ncad_owner_id": "401510",
+        "ncad_year": "2026",
+        "ncad_account_num": "1014-0001-0200",
+        "ncad_owner": "FLORES EDDIE ET UX MARIA VIOLA",
+        "ncad_legal": "BROADMOOR PARK 3 LT 20 BK 1"
+      }
+    },
+    {
+      "doc_num": "2026000208",
+      "prop_address": "1814 MERRIMAN AVE",
+      "result": "matched",
+      "ncad_prop_id": "283856",
+      "ncad_account_num": "6529-0006-0030",
+      "ncad_owner": "ALVARADO CHRISTOPHER A",
+      "ncad_legal": "PEARY PLACE #2 BLK 6 LOT 3",
+      "market_value": 142803.0,
+      "additions": {
+        "ncad_prop_id": "283856",
+        "ncad_owner_id": "713186",
+        "ncad_year": "2026",
+        "ncad_account_num": "6529-0006-0030",
+        "ncad_owner": "ALVARADO CHRISTOPHER A",
+        "ncad_legal": "PEARY PLACE #2 BLK 6 LOT 3",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000201",
+      "prop_address": "3837 WOODHOUSE LN",
+      "result": "matched",
+      "ncad_prop_id": "541042",
+      "ncad_account_num": "2905-0001-0100",
+      "ncad_owner": "DUDLEY BRYCE & SP ASHTON DUDLEY",
+      "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 10",
+      "market_value": 348861.0,
+      "additions": {
+        "ncad_prop_id": "541042",
+        "ncad_owner_id": "780285",
+        "ncad_year": "2026",
+        "ncad_account_num": "2905-0001-0100",
+        "ncad_owner": "DUDLEY BRYCE & SP ASHTON DUDLEY",
+        "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 10",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000206",
+      "prop_address": "14014 HAWKSNEST BAY DR",
+      "result": "matched",
+      "ncad_prop_id": "288971",
+      "ncad_account_num": "6984-0010-0040",
+      "ncad_owner": "ROBERTS RICKY JR",
+      "ncad_legal": "PORTS O'CALL BLK 10 LOT 4",
+      "market_value": 532114.0,
+      "additions": {
+        "ncad_prop_id": "288971",
+        "ncad_owner_id": "688155",
+        "ncad_year": "2026",
+        "ncad_account_num": "6984-0010-0040",
+        "ncad_owner": "ROBERTS RICKY JR",
+        "ncad_legal": "PORTS O'CALL BLK 10 LOT 4",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000193",
+      "prop_address": "7425 LAKE SUPERIOR DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "200081202",
+      "ncad_account_num": "4142-0003-0180",
+      "ncad_owner": "WIMBERLY JEREMY JAMES",
+      "ncad_legal": "THE LAKES UNIT 5-B BLK 3 LOT 18",
+      "market_value": 473763.0,
+      "additions": {
+        "ncad_prop_id": "200081202",
+        "ncad_owner_id": "523672",
+        "ncad_year": "2026",
+        "ncad_account_num": "4142-0003-0180",
+        "ncad_owner": "WIMBERLY JEREMY JAMES",
+        "ncad_legal": "THE LAKES UNIT 5-B BLK 3 LOT 18",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000190",
+      "prop_address": "2002 ORANGE",
+      "result": "matched",
+      "ncad_prop_id": "226178",
+      "ncad_account_num": "2127-0013-0140",
+      "ncad_owner": "JONES JAMES P",
+      "ncad_legal": "DON PATRICIO LT 14 BK M",
+      "market_value": 217550.0,
+      "additions": {
+        "ncad_prop_id": "226178",
+        "ncad_owner_id": "776159",
+        "ncad_year": "2026",
+        "ncad_account_num": "2127-0013-0140",
+        "ncad_owner": "JONES JAMES P",
+        "ncad_legal": "DON PATRICIO LT 14 BK M",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000191",
+      "prop_address": "10302 HILL COUNTRY LANE",
+      "result": "matched",
+      "ncad_prop_id": "376376",
+      "ncad_account_num": "3433-0002-0010",
+      "ncad_owner": "BRULLOTHS BENJAMIN G",
+      "ncad_legal": "HILL COUNTRY ESTATES BLK 2 LOT 1",
+      "market_value": 333094.0,
+      "additions": {
+        "ncad_prop_id": "376376",
+        "ncad_owner_id": "818385",
+        "ncad_year": "2026",
+        "ncad_account_num": "3433-0002-0010",
+        "ncad_owner": "BRULLOTHS BENJAMIN G",
+        "ncad_legal": "HILL COUNTRY ESTATES BLK 2 LOT 1",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000195",
+      "prop_address": "4905 LAUREN DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "200046983",
+      "ncad_account_num": "8951-0001-0020",
+      "ncad_owner": "PAYNE KERRI",
+      "ncad_legal": "TWO FOUNTAINS UNIT 4 LT 2 BK 1",
+      "market_value": 107468.0,
+      "additions": {
+        "ncad_prop_id": "200046983",
+        "ncad_owner_id": "715039",
+        "ncad_year": "2026",
+        "ncad_account_num": "8951-0001-0020",
+        "ncad_owner": "PAYNE KERRI",
+        "ncad_legal": "TWO FOUNTAINS UNIT 4 LT 2 BK 1",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000188",
+      "prop_address": "4205 COWHOUSE CREEK COURT",
+      "result": "matched",
+      "ncad_prop_id": "200065216",
+      "ncad_account_num": "9818-0018-0150",
+      "ncad_owner": "RODRIGUEZ ANDREW & WF ALYSHA RODRIGUEZ",
+      "ncad_legal": "WOOD RIVER UNIT 2 LT 15 BLK 18",
+      "market_value": 337056.0,
+      "additions": {
+        "ncad_prop_id": "200065216",
+        "ncad_owner_id": "796977",
+        "ncad_year": "2026",
+        "ncad_account_num": "9818-0018-0150",
+        "ncad_owner": "RODRIGUEZ ANDREW & WF ALYSHA RODRIGUEZ",
+        "ncad_legal": "WOOD RIVER UNIT 2 LT 15 BLK 18",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000183",
+      "prop_address": "2522 WHIRLWIND ST",
+      "result": "matched",
+      "ncad_prop_id": "200117128",
+      "ncad_account_num": "4593-0009-0060",
+      "ncad_owner": "BALLI JESUS A & WF BRIJIDA ESCOBEDO",
+      "ncad_legal": "LOS VIENTOS AT TERRA MAR UNIT 1 LT 6 BLK 9",
+      "market_value": 258766.0,
+      "additions": {
+        "ncad_prop_id": "200117128",
+        "ncad_owner_id": "823353",
+        "ncad_year": "2026",
+        "ncad_account_num": "4593-0009-0060",
+        "ncad_owner": "BALLI JESUS A & WF BRIJIDA ESCOBEDO",
+        "ncad_legal": "LOS VIENTOS AT TERRA MAR UNIT 1 LT 6 BLK 9",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000182",
+      "prop_address": "6199 N SANDY HOLLOW",
+      "result": "no-match",
+      "query": [
+        "StreetNumber:6199 StreetName:N SANDY HOLLOW",
+        "StreetNumber:6199 StreetName:HOLLOW"
+      ]
+    },
+    {
+      "doc_num": "2026000181",
+      "prop_address": "649 CHAMBERLAIN STREET",
+      "result": "matched",
+      "ncad_prop_id": "260472",
+      "ncad_account_num": "4473-0029-0150",
+      "ncad_owner": "BENAVIDEZ MARIA RUBY",
+      "ncad_legal": "LINDALE PARK #2-A BLK 29 LOT 15",
+      "market_value": 210585.0,
+      "additions": {
+        "ncad_prop_id": "260472",
+        "ncad_owner_id": "667557",
+        "ncad_year": "2026",
+        "ncad_account_num": "4473-0029-0150",
+        "ncad_owner": "BENAVIDEZ MARIA RUBY",
+        "ncad_legal": "LINDALE PARK #2-A BLK 29 LOT 15",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000187",
+      "prop_address": "5830 LLANO DR",
+      "result": "matched",
+      "ncad_prop_id": "181881",
+      "ncad_account_num": "0023-0004-0160",
+      "ncad_owner": "LANDEROS JOSE ALBERTO JR & WF LAURA",
+      "ncad_legal": "ACADEMY HEIGHTS  #2 BLK 4 LOT 16",
+      "market_value": 192697.0,
+      "additions": {
+        "ncad_prop_id": "181881",
+        "ncad_owner_id": "738544",
+        "ncad_year": "2026",
+        "ncad_account_num": "0023-0004-0160",
+        "ncad_owner": "LANDEROS JOSE ALBERTO JR & WF LAURA",
+        "ncad_legal": "ACADEMY HEIGHTS  #2 BLK 4 LOT 16",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000185",
+      "prop_address": "3145 CREST VEIL DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "221561",
+      "ncad_account_num": "1974-0005-0370",
+      "ncad_owner": "GOMEZ RUBEN ET UX ELAINE G",
+      "ncad_legal": "CRESTMONT #5 BLK 5 LOT 37",
+      "market_value": 185683.0,
+      "additions": {
+        "ncad_prop_id": "221561",
+        "ncad_owner_id": "397756",
+        "ncad_year": "2026",
+        "ncad_account_num": "1974-0005-0370",
+        "ncad_owner": "GOMEZ RUBEN ET UX ELAINE G",
+        "ncad_legal": "CRESTMONT #5 BLK 5 LOT 37",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000172",
+      "prop_address": "6129 ORANGEWOOD DR",
+      "result": "matched",
+      "ncad_prop_id": "204497",
+      "ncad_account_num": "1233-0003-0690",
+      "ncad_owner": "HERNANDEZ EVELYN",
+      "ncad_legal": "CANDLEWOOD  #4 BLK 3 LOT 69",
+      "market_value": 180448.0,
+      "additions": {
+        "ncad_prop_id": "204497",
+        "ncad_owner_id": "792258",
+        "ncad_year": "2026",
+        "ncad_account_num": "1233-0003-0690",
+        "ncad_owner": "HERNANDEZ EVELYN",
+        "ncad_legal": "CANDLEWOOD  #4 BLK 3 LOT 69",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000176",
+      "prop_address": "1737 GALLOP TRAIL",
+      "result": "matched",
+      "ncad_prop_id": "200114704",
+      "ncad_account_num": "5778-0005-0340",
+      "ncad_owner": "HERNANDEZ ESMAEL JR AND VERONICA ROSSETTE",
+      "ncad_legal": "NORTHWEST CROSSING UNIT 4 LT 34 BLK 5",
+      "market_value": 240204.0,
+      "additions": {
+        "ncad_prop_id": "200114704",
+        "ncad_owner_id": "808588",
+        "ncad_year": "2026",
+        "ncad_account_num": "5778-0005-0340",
+        "ncad_owner": "HERNANDEZ ESMAEL JR AND VERONICA ROSSETTE",
+        "ncad_legal": "NORTHWEST CROSSING UNIT 4 LT 34 BLK 5",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000137",
+      "prop_address": "4121 KEVIN DR",
+      "result": "matched",
+      "ncad_prop_id": "299348",
+      "ncad_account_num": "7774-0028-0160",
+      "ncad_owner": "PAEZ NOE R AND NORA LEE WFE",
+      "ncad_legal": "SCHANEN ESTS #3B BLK 28 LOT 16",
+      "market_value": 169770.0,
+      "additions": {
+        "ncad_prop_id": "299348",
+        "ncad_owner_id": "531402",
+        "ncad_year": "2026",
+        "ncad_account_num": "7774-0028-0160",
+        "ncad_owner": "PAEZ NOE R AND NORA LEE WFE",
+        "ncad_legal": "SCHANEN ESTS #3B BLK 28 LOT 16",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000141",
+      "prop_address": "636 ATLANTIC ST",
+      "result": "matched",
+      "ncad_prop_id": "225010",
+      "ncad_account_num": "2050-0039-0090",
+      "ncad_owner": "RODRIGUEZ ANDREW T",
+      "ncad_legal": "DEL MAR BLK 39 LOT 9",
+      "market_value": 213374.0,
+      "additions": {
+        "ncad_prop_id": "225010",
+        "ncad_owner_id": "724595",
+        "ncad_year": "2026",
+        "ncad_account_num": "2050-0039-0090",
+        "ncad_owner": "RODRIGUEZ ANDREW T",
+        "ncad_legal": "DEL MAR BLK 39 LOT 9",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000115",
+      "prop_address": "3921 LOTT AVENUE",
+      "result": "matched",
+      "ncad_prop_id": "204040",
+      "ncad_account_num": "1221-0004-0230",
+      "ncad_owner": "MONTANTEZ MICHAEL C",
+      "ncad_legal": "CALLICOATTE ESTATES #2 BLK 4 LOT 23",
+      "market_value": 175954.0,
+      "additions": {
+        "ncad_prop_id": "204040",
+        "ncad_owner_id": "651168",
+        "ncad_year": "2026",
+        "ncad_account_num": "1221-0004-0230",
+        "ncad_owner": "MONTANTEZ MICHAEL C",
+        "ncad_legal": "CALLICOATTE ESTATES #2 BLK 4 LOT 23",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
       "doc_num": "2026000329",
       "result": "no-address"
     },
     {
+      "doc_num": "2026000327",
+      "prop_address": "1333 LOGAN AVENUE",
+      "result": "matched",
+      "ncad_prop_id": "184953",
+      "ncad_account_num": "0232-0016-0190",
+      "ncad_owner": "VIZION247 LLC",
+      "ncad_legal": "ARCADIA BLK 16 LOT 19",
+      "market_value": 275029.0,
+      "additions": {
+        "ncad_prop_id": "184953",
+        "ncad_owner_id": "802526",
+        "ncad_year": "2026",
+        "ncad_account_num": "0232-0016-0190",
+        "ncad_owner": "VIZION247 LLC",
+        "ncad_legal": "ARCADIA BLK 16 LOT 19"
+      }
+    },
+    {
       "doc_num": "2026000326",
       "result": "no-address"
+    },
+    {
+      "doc_num": "2026000323",
+      "prop_address": "3909 SHIVA DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "597353",
+      "ncad_account_num": "1238-0002-0200",
+      "ncad_owner": "CANO NATHAN MATTHEW",
+      "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20",
+      "market_value": 295796.0,
+      "additions": {
+        "ncad_prop_id": "597353",
+        "ncad_owner_id": "793355",
+        "ncad_year": "2026",
+        "ncad_account_num": "1238-0002-0200",
+        "ncad_owner": "CANO NATHAN MATTHEW",
+        "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20"
+      }
+    },
+    {
+      "doc_num": "2026000318",
+      "prop_address": "1153 YORK AVE",
+      "result": "matched",
+      "ncad_prop_id": "184763",
+      "ncad_account_num": "0232-0007-0140",
+      "ncad_owner": "AL-BARNAWI MOHAMMAD",
+      "ncad_legal": "ARCADIA BLK 7 LOT 14",
+      "market_value": 315842.0,
+      "additions": {
+        "ncad_prop_id": "184763",
+        "ncad_owner_id": "573242",
+        "ncad_year": "2026",
+        "ncad_account_num": "0232-0007-0140",
+        "ncad_owner": "AL-BARNAWI MOHAMMAD",
+        "ncad_legal": "ARCADIA BLK 7 LOT 14"
+      }
+    },
+    {
+      "doc_num": "2026000325",
+      "prop_address": "1030 SEA SECRET ST",
+      "result": "matched",
+      "ncad_prop_id": "297231",
+      "ncad_account_num": "7656-0001-0060",
+      "ncad_owner": "HALSTEAD ROBERT",
+      "ncad_legal": "SANDPIPER ESTATES BLK 1 LOT 6",
+      "market_value": 461252.0,
+      "additions": {
+        "ncad_prop_id": "297231",
+        "ncad_owner_id": "761964",
+        "ncad_year": "2026",
+        "ncad_account_num": "7656-0001-0060",
+        "ncad_owner": "HALSTEAD ROBERT",
+        "ncad_legal": "SANDPIPER ESTATES BLK 1 LOT 6"
+      }
+    },
+    {
+      "doc_num": "2026000320",
+      "prop_address": "4234 DAKIN PLACE",
+      "result": "matched",
+      "ncad_prop_id": "214528",
+      "ncad_account_num": "1685-0001-0020",
+      "ncad_owner": "BRAY GERLINE J",
+      "ncad_legal": "COLLIER BLK 1 LOT 2",
+      "market_value": 278907.0,
+      "additions": {
+        "ncad_prop_id": "214528",
+        "ncad_owner_id": "357352",
+        "ncad_year": "2026",
+        "ncad_account_num": "1685-0001-0020",
+        "ncad_owner": "BRAY GERLINE J",
+        "ncad_legal": "COLLIER BLK 1 LOT 2"
+      }
+    },
+    {
+      "doc_num": "2026000322",
+      "prop_address": "1037 SALEM DR",
+      "result": "matched",
+      "ncad_prop_id": "238991",
+      "ncad_account_num": "2938-0008-0020",
+      "ncad_owner": "PHILLIPS KAYLA MARIE & JOSE SANTIAGO ALCARAZ",
+      "ncad_legal": "GREEN ACRES VILLAGE #2 BLK 8 LOT 2",
+      "market_value": 197823.0,
+      "additions": {
+        "ncad_prop_id": "238991",
+        "ncad_owner_id": "813730",
+        "ncad_year": "2026",
+        "ncad_account_num": "2938-0008-0020",
+        "ncad_owner": "PHILLIPS KAYLA MARIE & JOSE SANTIAGO ALCARAZ",
+        "ncad_legal": "GREEN ACRES VILLAGE #2 BLK 8 LOT 2"
+      }
+    },
+    {
+      "doc_num": "2026000324",
+      "prop_address": "4801 EDITH ST",
+      "result": "matched",
+      "ncad_prop_id": "259709",
+      "ncad_account_num": "4465-0006-0240",
+      "ncad_owner": "PAIZ  AMBER LEANNE & ISHMAEL GONZALES PAIZ JR",
+      "ncad_legal": "LINCOLN TERRACE BLK 6 LOT 24",
+      "market_value": 209040.0,
+      "additions": {
+        "ncad_prop_id": "259709",
+        "ncad_owner_id": "800850",
+        "ncad_year": "2026",
+        "ncad_account_num": "4465-0006-0240",
+        "ncad_owner": "PAIZ  AMBER LEANNE & ISHMAEL GONZALES PAIZ JR",
+        "ncad_legal": "LINCOLN TERRACE BLK 6 LOT 24"
+      }
     },
     {
       "doc_num": "2026000315",
@@ -50,12 +1646,257 @@
       "result": "no-address"
     },
     {
+      "doc_num": "2026000312",
+      "prop_address": "121 MERISOL DR",
+      "result": "matched",
+      "ncad_prop_id": "596954",
+      "ncad_account_num": "5126-0002-0050",
+      "ncad_owner": "MERISOL VILLAGES LLC",
+      "ncad_legal": "MERISOL SUBDIVISION UNIT 1 BLK 2 LOT 5",
+      "market_value": 225000.0,
+      "additions": {
+        "ncad_prop_id": "596954",
+        "ncad_owner_id": "753882",
+        "ncad_year": "2026",
+        "ncad_account_num": "5126-0002-0050",
+        "ncad_owner": "MERISOL VILLAGES LLC",
+        "ncad_legal": "MERISOL SUBDIVISION UNIT 1 BLK 2 LOT 5"
+      }
+    },
+    {
+      "doc_num": "2026000311",
+      "prop_address": "7401 LAKE MAGGORIE",
+      "result": "matched",
+      "ncad_prop_id": "254235",
+      "ncad_account_num": "4137-0019-0010",
+      "ncad_owner": "HENDERSON JASON S & WF MEGAN M",
+      "ncad_legal": "THE LAKES UNIT 2 BLK 19 LOT 1",
+      "market_value": 396423.0,
+      "additions": {
+        "ncad_prop_id": "254235",
+        "ncad_owner_id": "830269",
+        "ncad_year": "2026",
+        "ncad_account_num": "4137-0019-0010",
+        "ncad_owner": "HENDERSON JASON S & WF MEGAN M",
+        "ncad_legal": "THE LAKES UNIT 2 BLK 19 LOT 1",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000301",
+      "prop_address": "15118 BOCA GRANDI DR",
+      "result": "matched",
+      "ncad_prop_id": "587211",
+      "ncad_account_num": "0291-0001-0290",
+      "ncad_owner": "ERWIN KIMBERLY L",
+      "ncad_legal": "ARUBA P.U.D. BLK 1 LOT 29",
+      "market_value": 316182.0,
+      "additions": {
+        "ncad_prop_id": "587211",
+        "ncad_owner_id": "360279",
+        "ncad_year": "2026",
+        "ncad_account_num": "0291-0001-0290",
+        "ncad_owner": "ERWIN KIMBERLY L",
+        "ncad_legal": "ARUBA P.U.D. BLK 1 LOT 29",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000304",
+      "prop_address": "3702 TOPEKA",
+      "result": "matched",
+      "ncad_prop_id": "266339",
+      "ncad_account_num": "5074-0001-0010",
+      "ncad_owner": "MORROW VICTORIA",
+      "ncad_legal": "MELDO PARK BLK 1 LOT 1",
+      "market_value": 376600.0,
+      "additions": {
+        "ncad_prop_id": "266339",
+        "ncad_owner_id": "796425",
+        "ncad_year": "2026",
+        "ncad_account_num": "5074-0001-0010",
+        "ncad_owner": "MORROW VICTORIA",
+        "ncad_legal": "MELDO PARK BLK 1 LOT 1",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000308",
+      "prop_address": "830 ST PETER",
+      "result": "matched",
+      "ncad_prop_id": "243452",
+      "ncad_account_num": "3388-0002-0230",
+      "ncad_owner": "KARG STEVEN J & WF APRIL R",
+      "ncad_legal": "HIGHLAND OAKS 2 LT 23 BLK 2",
+      "market_value": 260590.0,
+      "additions": {
+        "ncad_prop_id": "243452",
+        "ncad_owner_id": "538297",
+        "ncad_year": "2026",
+        "ncad_account_num": "3388-0002-0230",
+        "ncad_owner": "KARG STEVEN J & WF APRIL R",
+        "ncad_legal": "HIGHLAND OAKS 2 LT 23 BLK 2",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000302",
+      "prop_address": "10606 EMMORD LOOP",
+      "result": "matched",
+      "ncad_prop_id": "194374",
+      "ncad_account_num": "0661-0003-0140",
+      "ncad_owner": "GARZA JOSE SAMUEL",
+      "ncad_legal": "BERVONNE TERRACE E5O' OF LT 14 BK 3",
+      "market_value": 179996.0,
+      "additions": {
+        "ncad_prop_id": "194374",
+        "ncad_owner_id": "701066",
+        "ncad_year": "2026",
+        "ncad_account_num": "0661-0003-0140",
+        "ncad_owner": "GARZA JOSE SAMUEL",
+        "ncad_legal": "BERVONNE TERRACE E5O' OF LT 14 BK 3",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000300",
+      "prop_address": "6201 HARTACK CIR",
+      "result": "matched",
+      "ncad_prop_id": "298073",
+      "ncad_account_num": "7717-0001-0060",
+      "ncad_owner": "GOMEZ ISRAEL JR AND",
+      "ncad_legal": "SARATOGA DOWNS UNIT 1A BLK 1 LOT 6",
+      "market_value": 171411.0,
+      "additions": {
+        "ncad_prop_id": "298073",
+        "ncad_owner_id": "454202",
+        "ncad_year": "2026",
+        "ncad_account_num": "7717-0001-0060",
+        "ncad_owner": "GOMEZ ISRAEL JR AND",
+        "ncad_legal": "SARATOGA DOWNS UNIT 1A BLK 1 LOT 6",
+        "mail_city": "CORPUS CHRISTI"
+      }
+    },
+    {
+      "doc_num": "2026000303",
+      "prop_address": "9461 MORROW DR",
+      "result": "matched",
+      "ncad_prop_id": "240787",
+      "ncad_account_num": "3119-0001-0130",
+      "ncad_owner": "HAWKINS CURTIS EUGENE",
+      "ncad_legal": "GUTH PARKSIDE SUB LT 13 BK 1",
+      "market_value": 304692.0,
+      "additions": {
+        "ncad_prop_id": "240787",
+        "ncad_owner_id": "811803",
+        "ncad_year": "2026",
+        "ncad_account_num": "3119-0001-0130",
+        "ncad_owner": "HAWKINS CURTIS EUGENE",
+        "ncad_legal": "GUTH PARKSIDE SUB LT 13 BK 1",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000309",
+      "prop_address": "1233 RAY DR",
+      "result": "matched",
+      "ncad_prop_id": "290431",
+      "ncad_account_num": "7122-0005-0090",
+      "ncad_owner": "VASQUEZ ALBERT L & WF CRYSTAL B RAMOS",
+      "ncad_legal": "RAY W B HGTS BLK 5 LOT 9",
+      "market_value": 170388.0,
+      "additions": {
+        "ncad_prop_id": "290431",
+        "ncad_owner_id": "680650",
+        "ncad_year": "2026",
+        "ncad_account_num": "7122-0005-0090",
+        "ncad_owner": "VASQUEZ ALBERT L & WF CRYSTAL B RAMOS",
+        "ncad_legal": "RAY W B HGTS BLK 5 LOT 9",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000310",
+      "prop_address": "11537 PINTAS CREEK CIR",
+      "result": "matched",
+      "ncad_prop_id": "535213",
+      "ncad_account_num": "9708-0010-0080",
+      "ncad_owner": "DELGADO JOSE BENITO JR",
+      "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8",
+      "market_value": 291639.0,
+      "additions": {
+        "ncad_prop_id": "535213",
+        "ncad_owner_id": "405336",
+        "ncad_year": "2026",
+        "ncad_account_num": "9708-0010-0080",
+        "ncad_owner": "DELGADO JOSE BENITO JR",
+        "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8"
+      }
+    },
+    {
       "doc_num": "2026000299",
       "result": "no-address"
     },
     {
       "doc_num": "2026000298",
       "result": "no-address"
+    },
+    {
+      "doc_num": "2026000297",
+      "prop_address": "5306 HOLLY ROAD",
+      "result": "matched",
+      "ncad_prop_id": "236592",
+      "ncad_account_num": "2702-0009-0146",
+      "ncad_owner": "VENTAJA LLC",
+      "ncad_legal": "GARDENDALE LT 15 BLK 9 (LESS POR TO ROW)",
+      "market_value": 891030.0,
+      "additions": {
+        "ncad_prop_id": "236592",
+        "ncad_owner_id": "662523",
+        "ncad_year": "2026",
+        "ncad_account_num": "2702-0009-0146",
+        "ncad_owner": "VENTAJA LLC",
+        "ncad_legal": "GARDENDALE LT 15 BLK 9 (LESS POR TO ROW)",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000296",
+      "prop_address": "3833 WOODHOUSE LN",
+      "result": "matched",
+      "ncad_prop_id": "541041",
+      "ncad_account_num": "2905-0001-0090",
+      "ncad_owner": "NICHOLS ANDREW E II",
+      "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 9",
+      "market_value": 351112.0,
+      "additions": {
+        "ncad_prop_id": "541041",
+        "ncad_owner_id": "818860",
+        "ncad_year": "2026",
+        "ncad_account_num": "2905-0001-0090",
+        "ncad_owner": "NICHOLS ANDREW E II",
+        "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 9",
+        "mail_city": "CEDAR HILL"
+      }
+    },
+    {
+      "doc_num": "2026000268",
+      "prop_address": "1153 FLORIDA AVE",
+      "result": "matched",
+      "ncad_prop_id": "184686",
+      "ncad_account_num": "0232-0004-0090",
+      "ncad_owner": "VELLA JERRY AND",
+      "ncad_legal": "ARCADIA BLK 4 LOT 9",
+      "market_value": 146667.0,
+      "additions": {
+        "ncad_prop_id": "184686",
+        "ncad_owner_id": "395887",
+        "ncad_year": "2026",
+        "ncad_account_num": "0232-0004-0090",
+        "ncad_owner": "VELLA JERRY AND",
+        "ncad_legal": "ARCADIA BLK 4 LOT 9",
+        "mail_city": "CORPUS CHRISTI"
+      }
     },
     {
       "doc_num": "2026000265",
@@ -72,12 +1913,82 @@
         "ncad_year": "2026",
         "ncad_account_num": "1847-0010-0160",
         "ncad_owner": "HALL CHRISTOPHER WAYNE & WF RACHEL YOLANDA EATMON-HALL",
-        "ncad_legal": "COUNTRY CLUB ESTATES #5 BLK 10 LOT 16",
-        "appraised_value": 429930.0,
-        "mail_address": "6345 Saint Andrews Dr",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78413"
+        "ncad_legal": "COUNTRY CLUB ESTATES #5 BLK 10 LOT 16"
+      }
+    },
+    {
+      "doc_num": "2026000262",
+      "prop_address": "3717 WOODSTONE DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "200013844",
+      "ncad_account_num": "7790-0009-0090",
+      "ncad_owner": "US BANK NA ETAL",
+      "ncad_legal": "SCHANEN ESTS WEST #10 BLK 9 LOT 9",
+      "market_value": 198134.0,
+      "additions": {
+        "ncad_prop_id": "200013844",
+        "ncad_owner_id": "767087",
+        "ncad_year": "2026",
+        "ncad_account_num": "7790-0009-0090",
+        "ncad_owner": "US BANK NA ETAL",
+        "ncad_legal": "SCHANEN ESTS WEST #10 BLK 9 LOT 9",
+        "mail_city": "Ste 110"
+      }
+    },
+    {
+      "doc_num": "2026000264",
+      "prop_address": "211 W OAKES AVE",
+      "result": "matched",
+      "ncad_prop_id": "293036",
+      "ncad_account_num": "7410-0002-0071",
+      "ncad_owner": "SANDERS MELANIE",
+      "ncad_legal": "ROBERTS SARAH SUR #6 - PA BLK 2 LOT 7&8",
+      "market_value": 774216.0,
+      "additions": {
+        "ncad_prop_id": "293036",
+        "ncad_owner_id": "565591",
+        "ncad_year": "2026",
+        "ncad_account_num": "7410-0002-0071",
+        "ncad_owner": "SANDERS MELANIE",
+        "ncad_legal": "ROBERTS SARAH SUR #6 - PA BLK 2 LOT 7&8",
+        "mail_city": "PORT ARANSAS"
+      }
+    },
+    {
+      "doc_num": "2026000257",
+      "prop_address": "1305 TATES CREEK RD",
+      "result": "matched",
+      "ncad_prop_id": "523036",
+      "ncad_account_num": "0768-0001-0070",
+      "ncad_owner": "CORDELL BRANDON C AND WF",
+      "ncad_legal": "BLUE GRASS ESTATES BLK 1 LOT 7",
+      "market_value": 387644.0,
+      "additions": {
+        "ncad_prop_id": "523036",
+        "ncad_owner_id": "473020",
+        "ncad_year": "2026",
+        "ncad_account_num": "0768-0001-0070",
+        "ncad_owner": "CORDELL BRANDON C AND WF",
+        "ncad_legal": "BLUE GRASS ESTATES BLK 1 LOT 7",
+        "mail_city": "Corpus Christi"
+      }
+    },
+    {
+      "doc_num": "2026000251",
+      "prop_address": "1734 HUDSON",
+      "result": "matched",
+      "ncad_prop_id": "212944",
+      "ncad_account_num": "1585-0004-0180",
+      "ncad_owner": "SALAZAR GABREAL ROSE & SP ALBERT CANALES JR",
+      "ncad_legal": "CHULA VISTA BLK 4 LOT 18",
+      "market_value": 194024.0,
+      "additions": {
+        "ncad_prop_id": "212944",
+        "ncad_owner_id": "762253",
+        "ncad_year": "2026",
+        "ncad_account_num": "1585-0004-0180",
+        "ncad_owner": "SALAZAR GABREAL ROSE & SP ALBERT CANALES JR",
+        "ncad_legal": "CHULA VISTA BLK 4 LOT 18"
       }
     },
     {
@@ -87,6 +1998,150 @@
       "query": [
         "StreetNumber:4114 StreetName:NICKLAUS"
       ]
+    },
+    {
+      "doc_num": "2026000250",
+      "prop_address": "5013 ROMFORD DR",
+      "result": "matched",
+      "ncad_prop_id": "291164",
+      "ncad_account_num": "7224-0008-0210",
+      "ncad_owner": "VARGAS VALENTIN & WF NORA L",
+      "ncad_legal": "RIDGEWOOD #2 BLK 8 LOT 21",
+      "market_value": 242726.0,
+      "additions": {
+        "ncad_prop_id": "291164",
+        "ncad_owner_id": "754752",
+        "ncad_year": "2026",
+        "ncad_account_num": "7224-0008-0210",
+        "ncad_owner": "VARGAS VALENTIN & WF NORA L",
+        "ncad_legal": "RIDGEWOOD #2 BLK 8 LOT 21"
+      }
+    },
+    {
+      "doc_num": "2026000253",
+      "prop_address": "349 GLENOAK DR",
+      "result": "matched",
+      "ncad_prop_id": "238349",
+      "ncad_account_num": "2843-0000-0120",
+      "ncad_owner": "CASTLE BRANDON & WF CARMEN",
+      "ncad_legal": "GLENOAK S/D LT 12",
+      "market_value": 513892.0,
+      "additions": {
+        "ncad_prop_id": "238349",
+        "ncad_owner_id": "810846",
+        "ncad_year": "2026",
+        "ncad_account_num": "2843-0000-0120",
+        "ncad_owner": "CASTLE BRANDON & WF CARMEN",
+        "ncad_legal": "GLENOAK S/D LT 12"
+      }
+    },
+    {
+      "doc_num": "2026000242",
+      "prop_address": "6526 HIGH ARCH CT",
+      "result": "matched",
+      "ncad_prop_id": "200118578",
+      "ncad_account_num": "9810-0002-0110",
+      "ncad_owner": "GONZALES STEPHEN M AND REYNALDO GONZALES AND OFELIA WFE",
+      "ncad_legal": "WOODBEND LT 11 BLK 2",
+      "market_value": 346587.0,
+      "additions": {
+        "ncad_prop_id": "200118578",
+        "ncad_owner_id": "539881",
+        "ncad_year": "2026",
+        "ncad_account_num": "9810-0002-0110",
+        "ncad_owner": "GONZALES STEPHEN M AND REYNALDO GONZALES AND OFELIA WFE",
+        "ncad_legal": "WOODBEND LT 11 BLK 2"
+      }
+    },
+    {
+      "doc_num": "2026000247",
+      "prop_address": "361 BARTLETT DR",
+      "result": "matched",
+      "ncad_prop_id": "298471",
+      "ncad_account_num": "7749-0003-0010",
+      "ncad_owner": "ESTRADA XAVIER D",
+      "ncad_legal": "SAXET HTS 1 LT 1 AND N .50 OF LT 2 BK 3",
+      "market_value": 249615.0,
+      "additions": {
+        "ncad_prop_id": "298471",
+        "ncad_owner_id": "688421",
+        "ncad_year": "2026",
+        "ncad_account_num": "7749-0003-0010",
+        "ncad_owner": "ESTRADA XAVIER D",
+        "ncad_legal": "SAXET HTS 1 LT 1 AND N .50 OF LT 2 BK 3"
+      }
+    },
+    {
+      "doc_num": "2026000233",
+      "prop_address": "10321 HILL COUNTRY LN",
+      "result": "matched",
+      "ncad_prop_id": "376373",
+      "ncad_account_num": "3433-0001-0070",
+      "ncad_owner": "CALL JARED & WF KIMBERLY DUGDALE",
+      "ncad_legal": "HILL COUNTRY ESTATES BLK 1 LOT 7",
+      "market_value": 314079.0,
+      "additions": {
+        "ncad_prop_id": "376373",
+        "ncad_owner_id": "806883",
+        "ncad_year": "2026",
+        "ncad_account_num": "3433-0001-0070",
+        "ncad_owner": "CALL JARED & WF KIMBERLY DUGDALE",
+        "ncad_legal": "HILL COUNTRY ESTATES BLK 1 LOT 7"
+      }
+    },
+    {
+      "doc_num": "2026000239",
+      "prop_address": "4326 CHERRY ST",
+      "result": "matched",
+      "ncad_prop_id": "200060600",
+      "ncad_account_num": "9563-0005-0120",
+      "ncad_owner": "ALLMAN PATRICK",
+      "ncad_legal": "WESTWOOD VILLAGE BLK 5 LOT 12",
+      "market_value": 132336.0,
+      "additions": {
+        "ncad_prop_id": "200060600",
+        "ncad_owner_id": "792797",
+        "ncad_year": "2026",
+        "ncad_account_num": "9563-0005-0120",
+        "ncad_owner": "ALLMAN PATRICK",
+        "ncad_legal": "WESTWOOD VILLAGE BLK 5 LOT 12"
+      }
+    },
+    {
+      "doc_num": "2026000227",
+      "prop_address": "1229 THAMES CHASE DR",
+      "result": "matched",
+      "ncad_prop_id": "598351",
+      "ncad_account_num": "4557-0020-0170",
+      "ncad_owner": "MONTOYA MARISSA J",
+      "ncad_legal": "LONDON TOWNE SUBDIVISION UNIT 2 BLK 20 LOT 17",
+      "market_value": 286398.0,
+      "additions": {
+        "ncad_prop_id": "598351",
+        "ncad_owner_id": "786771",
+        "ncad_year": "2026",
+        "ncad_account_num": "4557-0020-0170",
+        "ncad_owner": "MONTOYA MARISSA J",
+        "ncad_legal": "LONDON TOWNE SUBDIVISION UNIT 2 BLK 20 LOT 17"
+      }
+    },
+    {
+      "doc_num": "2026000228",
+      "prop_address": "3909 SHIVA DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "597353",
+      "ncad_account_num": "1238-0002-0200",
+      "ncad_owner": "CANO NATHAN MATTHEW",
+      "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20",
+      "market_value": 295796.0,
+      "additions": {
+        "ncad_prop_id": "597353",
+        "ncad_owner_id": "793355",
+        "ncad_year": "2026",
+        "ncad_account_num": "1238-0002-0200",
+        "ncad_owner": "CANO NATHAN MATTHEW",
+        "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20"
+      }
     },
     {
       "doc_num": "2026000229",
@@ -109,8 +2164,152 @@
       "result": "no-address"
     },
     {
+      "doc_num": "2026000178",
+      "prop_address": "9609 SEDALIA TRAIL",
+      "result": "matched",
+      "ncad_prop_id": "546025",
+      "ncad_account_num": "5791-0010-0290",
+      "ncad_owner": "PEREZ JACOB",
+      "ncad_legal": "NORTHWEST CROSSING UNIT 8 BLK 10 LOT 29",
+      "market_value": 298208.0,
+      "additions": {
+        "ncad_prop_id": "546025",
+        "ncad_owner_id": "818614",
+        "ncad_year": "2026",
+        "ncad_account_num": "5791-0010-0290",
+        "ncad_owner": "PEREZ JACOB",
+        "ncad_legal": "NORTHWEST CROSSING UNIT 8 BLK 10 LOT 29"
+      }
+    },
+    {
       "doc_num": "2026000328",
       "result": "no-address"
+    },
+    {
+      "doc_num": "2026000319",
+      "prop_address": "1809 BRAZOS DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "259280",
+      "ncad_account_num": "4414-0004-0180",
+      "ncad_owner": "GONZALEZ RICHARD",
+      "ncad_legal": "LEXINGTON PK UNIT 2 LT 18 BK 4",
+      "market_value": 178716.0,
+      "additions": {
+        "ncad_prop_id": "259280",
+        "ncad_owner_id": "583526",
+        "ncad_year": "2026",
+        "ncad_account_num": "4414-0004-0180",
+        "ncad_owner": "GONZALEZ RICHARD",
+        "ncad_legal": "LEXINGTON PK UNIT 2 LT 18 BK 4"
+      }
+    },
+    {
+      "doc_num": "2026000321",
+      "prop_address": "413 E HENDERSON ST",
+      "result": "matched",
+      "ncad_prop_id": "200045303",
+      "ncad_account_num": "8902-0003-0200",
+      "ncad_owner": "ESPINOZA MATTHEW F & WF EBONY C",
+      "ncad_legal": "TRUE - BISHOP BLK 3 LOT 20",
+      "market_value": 200464.0,
+      "additions": {
+        "ncad_prop_id": "200045303",
+        "ncad_owner_id": "775834",
+        "ncad_year": "2026",
+        "ncad_account_num": "8902-0003-0200",
+        "ncad_owner": "ESPINOZA MATTHEW F & WF EBONY C",
+        "ncad_legal": "TRUE - BISHOP BLK 3 LOT 20"
+      }
+    },
+    {
+      "doc_num": "2026000317",
+      "prop_address": "4817 MOKRY DR",
+      "result": "matched",
+      "ncad_prop_id": "211801",
+      "ncad_account_num": "1493-0010-0240",
+      "ncad_owner": "DELEON ROGELIO",
+      "ncad_legal": "CENTRAL PARK  #2 BLK 10 LOT 24",
+      "market_value": 170035.0,
+      "additions": {
+        "ncad_prop_id": "211801",
+        "ncad_owner_id": "747600",
+        "ncad_year": "2026",
+        "ncad_account_num": "1493-0010-0240",
+        "ncad_owner": "DELEON ROGELIO",
+        "ncad_legal": "CENTRAL PARK  #2 BLK 10 LOT 24"
+      }
+    },
+    {
+      "doc_num": "2026000306",
+      "prop_address": "2801 JESSIE JAYE DR",
+      "result": "matched",
+      "ncad_prop_id": "200116312",
+      "ncad_account_num": "6102-0003-0010",
+      "ncad_owner": "ENCINIA TANIA & HUSBAND FRANCISCO C ALVAREZ",
+      "ncad_legal": "OVERLAND MEADOWS #4 BLK 3 LOT 1",
+      "market_value": 262242.0,
+      "additions": {
+        "ncad_prop_id": "200116312",
+        "ncad_owner_id": "687946",
+        "ncad_year": "2026",
+        "ncad_account_num": "6102-0003-0010",
+        "ncad_owner": "ENCINIA TANIA & HUSBAND FRANCISCO C ALVAREZ",
+        "ncad_legal": "OVERLAND MEADOWS #4 BLK 3 LOT 1"
+      }
+    },
+    {
+      "doc_num": "2026000307",
+      "prop_address": "4334 BRENTWOOD DRIVE",
+      "result": "matched",
+      "ncad_prop_id": "228569",
+      "ncad_account_num": "2255-0003-0030",
+      "ncad_owner": "CORDOVA FRANK",
+      "ncad_legal": "EDGEWOOD PK N 5FT OF 2 ALL OF 3 BK 3",
+      "market_value": 138743.0,
+      "additions": {
+        "ncad_prop_id": "228569",
+        "ncad_owner_id": "757692",
+        "ncad_year": "2026",
+        "ncad_account_num": "2255-0003-0030",
+        "ncad_owner": "CORDOVA FRANK",
+        "ncad_legal": "EDGEWOOD PK N 5FT OF 2 ALL OF 3 BK 3"
+      }
+    },
+    {
+      "doc_num": "2026000305",
+      "prop_address": "13250 WRANGLER ST",
+      "result": "matched",
+      "ncad_prop_id": "600557",
+      "ncad_account_num": "1204-0001-0220",
+      "ncad_owner": "COLLINGS GEORGINA & SP WILLIAM CAZARES",
+      "ncad_legal": "CALALLEN SOUTH UNIT 1 BLK 1 LOT 22",
+      "market_value": 244748.0,
+      "additions": {
+        "ncad_prop_id": "600557",
+        "ncad_owner_id": "808065",
+        "ncad_year": "2026",
+        "ncad_account_num": "1204-0001-0220",
+        "ncad_owner": "COLLINGS GEORGINA & SP WILLIAM CAZARES",
+        "ncad_legal": "CALALLEN SOUTH UNIT 1 BLK 1 LOT 22"
+      }
+    },
+    {
+      "doc_num": "2026000139",
+      "prop_address": "7530 BON SOIR DR",
+      "result": "matched",
+      "ncad_prop_id": "200106844",
+      "ncad_account_num": "3960-0001-0220",
+      "ncad_owner": "BALDEARENA MIGUEL J",
+      "ncad_legal": "KINGS CROSSING UNIT 13 LT 22 BLK 1",
+      "market_value": 250347.0,
+      "additions": {
+        "ncad_prop_id": "200106844",
+        "ncad_owner_id": "768028",
+        "ncad_year": "2026",
+        "ncad_account_num": "3960-0001-0220",
+        "ncad_owner": "BALDEARENA MIGUEL J",
+        "ncad_legal": "KINGS CROSSING UNIT 13 LT 22 BLK 1"
+      }
     }
   ]
 }

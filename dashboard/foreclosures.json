@@ -23,13 +23,13 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "15010 Leeward Dr Apt 803 Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Irving",
       "mail_state": "TX",
       "mail_zip": "78418",
       "appraised_value": 185121.0,
-      "ncad_prop_id": "258029",
+      "ncad_prop_id": "257987",
       "ncad_year": "2026",
-      "ncad_owner_id": "662288",
+      "ncad_owner_id": "755871",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "loan_doc": "2000042822",
@@ -37,7 +37,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.700053+00:00",
       "prop_lat": 27.60712,
       "prop_lng": -97.210667,
-      "ncad_account_num": "4341-0008-0803"
+      "ncad_account_num": "4341-0001-0101",
+      "ncad_owner": "SANDERS EVA",
+      "ncad_legal": "LEEWARD ISLES CONDO, BUILDING A, UNIT 101, 1.165% COMMON AREA INTEREST"
     },
     {
       "doc_num": "2026000294",
@@ -53,13 +55,13 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "14898 Granada Dr Unit 13 Corpus Christi",
-      "mail_city": "",
+      "mail_city": "ROBSTOWN",
       "mail_state": "TX",
       "mail_zip": "78418",
       "appraised_value": 156698.0,
-      "ncad_prop_id": "297113",
+      "ncad_prop_id": "297101",
       "ncad_year": "2026",
-      "ncad_owner_id": "793717",
+      "ncad_owner_id": "462835",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "1984-10-03",
@@ -68,7 +70,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.694811+00:00",
       "prop_lat": 27.60923,
       "prop_lng": -97.20974,
-      "ncad_account_num": "7652-0000-0130"
+      "ncad_account_num": "7652-0000-0010",
+      "ncad_owner": "DENNIS ROBERT L",
+      "ncad_legal": "SAND DOLLAR II STUDIO CONDO, UNIT 1, 6.25% COMMON AREA INTEREST"
     },
     {
       "doc_num": "2026000293",
@@ -84,7 +88,7 @@
       "prop_state": "TX",
       "prop_zip": "78415",
       "mail_address": "3710 Mendenhall Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78415",
       "appraised_value": 206637.0,
@@ -102,7 +106,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.691802+00:00",
       "prop_lat": 27.71282,
       "prop_lng": -97.410788,
-      "ncad_account_num": "1290-0011-0110"
+      "ncad_account_num": "1290-0011-0110",
+      "ncad_owner": "MIRELES RAUL M & WF BERTA",
+      "ncad_legal": "CAROLYN HEIGHTS  #7 BLK 11 LOT 11"
     },
     {
       "doc_num": "2026000292",
@@ -118,7 +124,7 @@
       "prop_state": "TX",
       "prop_zip": "78415",
       "mail_address": "AND MELVA LIZA MATA 3442 XANADU ST CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78415",
       "appraised_value": 183525.0,
@@ -134,7 +140,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.689052+00:00",
       "prop_lat": 27.719131,
       "prop_lng": -97.413095,
-      "ncad_account_num": "1336-0002-0280"
+      "ncad_account_num": "1336-0002-0280",
+      "ncad_owner": "MATA DAVID",
+      "ncad_legal": "CARROLL PLACE  #6 BLK 2 LOT 28"
     },
     {
       "doc_num": "2026000286",
@@ -154,9 +162,9 @@
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 238187.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "207107",
+      "ncad_year": "2026",
+      "ncad_owner_id": "783783",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2024-07-05",
@@ -167,7 +175,10 @@
       "legal_subdivision": "CARIBBEAN PLACE",
       "pdf_parsed_at": "2026-05-20T21:05:21.663582+00:00",
       "prop_lat": 27.631834,
-      "prop_lng": -97.302477
+      "prop_lng": -97.302477,
+      "ncad_account_num": "1258-0009-0330",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CARIBBEAN PLACE  #3 BLK 9 LOT 33"
     },
     {
       "doc_num": "2026000276",
@@ -187,9 +198,9 @@
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 238187.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "219344",
+      "ncad_year": "2026",
+      "ncad_owner_id": "818400",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2025-09-19",
@@ -200,7 +211,10 @@
       "legal_subdivision": "COUNTRY CLUB ESTATES",
       "pdf_parsed_at": "2026-05-20T21:05:21.631646+00:00",
       "prop_lat": 27.696075,
-      "prop_lng": -97.406547
+      "prop_lng": -97.406547,
+      "ncad_account_num": "1871-0001-0070",
+      "ncad_owner": "PLUTUS PROEPRTIES LLC",
+      "ncad_legal": "COUNTRY CLUB ESTATES #27 BLK 1 LOT 7"
     },
     {
       "doc_num": "2026000279",
@@ -220,9 +234,9 @@
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 238187.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "200115222",
+      "ncad_year": "2026",
+      "ncad_owner_id": "783783",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2025-08-13",
@@ -233,7 +247,10 @@
       "legal_subdivision": "WOOLDRIDGE CREEK",
       "pdf_parsed_at": "2026-05-20T21:05:21.640844+00:00",
       "prop_lat": 27.686006,
-      "prop_lng": -97.370562
+      "prop_lng": -97.370562,
+      "ncad_account_num": "9911-0001-0280",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28"
     },
     {
       "doc_num": "2026000284",
@@ -253,9 +270,9 @@
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 238187.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "223758",
+      "ncad_year": "2026",
+      "ncad_owner_id": "783783",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2024-11-21",
@@ -266,7 +283,10 @@
       "legal_subdivision": "CULLEN PLACE",
       "pdf_parsed_at": "2026-05-20T21:05:21.656210+00:00",
       "prop_lat": 27.720644,
-      "prop_lng": -97.354289
+      "prop_lng": -97.354289,
+      "ncad_account_num": "1996-0032-0130",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CULLEN PLACE #3 BLK 32 LOT 13"
     },
     {
       "doc_num": "2026000285",
@@ -286,9 +306,9 @@
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 238187.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "221688",
+      "ncad_year": "2026",
+      "ncad_owner_id": "783783",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2024-11-21",
@@ -296,7 +316,10 @@
       "lender": "Simmons Bank",
       "pdf_parsed_at": "2026-05-20T21:05:21.660543+00:00",
       "prop_lat": 27.717306,
-      "prop_lng": -97.427493
+      "prop_lng": -97.427493,
+      "ncad_account_num": "1975-0014-0080",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CRESTMONT UNIT 6 LT 8 BK 14"
     },
     {
       "doc_num": "2026000271",
@@ -316,9 +339,9 @@
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 238187.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "210489",
+      "ncad_year": "2026",
+      "ncad_owner_id": "812135",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2024-05-30",
@@ -329,7 +352,10 @@
       "legal_subdivision": "CASA LINDA ESTATES",
       "pdf_parsed_at": "2026-05-20T21:05:21.613123+00:00",
       "prop_lat": 27.748973,
-      "prop_lng": -97.39956
+      "prop_lng": -97.39956,
+      "ncad_account_num": "1432-0007-0030",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CASA LINDA 2 LT 3 BLK 7"
     },
     {
       "doc_num": "2026000270",
@@ -345,7 +371,7 @@
       "prop_state": "TX",
       "prop_zip": "78412",
       "mail_address": "6633 Sahara Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78412",
       "appraised_value": 255180.0,
@@ -361,7 +387,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.610050+00:00",
       "prop_lat": 27.707479,
       "prop_lng": -97.345258,
-      "ncad_account_num": "6631-0022-0020"
+      "ncad_account_num": "6631-0022-0020",
+      "ncad_owner": "RICARDO ROBLES SILVA OF DUAL ACTION ENTERPRISE LLC",
+      "ncad_legal": "PHARAOH VALLEY NORTH #2 BLK 22 LOT 2"
     },
     {
       "doc_num": "2026000287",
@@ -381,9 +409,9 @@
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 238187.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "194322",
+      "ncad_year": "2026",
+      "ncad_owner_id": "783783",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2024-06-26",
@@ -392,7 +420,10 @@
       "legal_lot": "12",
       "legal_block": "2",
       "legal_subdivision": "BERVONNE TERRACE",
-      "pdf_parsed_at": "2026-05-20T21:05:21.666609+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.666609+00:00",
+      "ncad_account_num": "0661-0002-0120",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12"
     },
     {
       "doc_num": "2026000269",
@@ -408,7 +439,7 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "5402 Leopard St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "San Antonio",
       "mail_state": "TX",
       "mail_zip": "78408",
       "appraised_value": 552477.0,
@@ -424,7 +455,9 @@
       "legal_block": "1",
       "legal_subdivision": "VILLAGE BY THE BEACH 2 P.U.D",
       "pdf_parsed_at": "2026-05-20T21:05:21.606702+00:00",
-      "ncad_account_num": "9063-0001-0690"
+      "ncad_account_num": "9063-0001-0690",
+      "ncad_owner": "REYNOLDS MARY T ANNE-ALEXANDRIA",
+      "ncad_legal": "VILLAGE BY THE BEACH 2 PUD, BLOCK 1, LOT 69"
     },
     {
       "doc_num": "2026000274",
@@ -444,9 +477,9 @@
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 238187.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "214077",
+      "ncad_year": "2026",
+      "ncad_owner_id": "783783",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2025-11-04",
@@ -457,7 +490,10 @@
       "legal_subdivision": "CLUB ESTATES",
       "pdf_parsed_at": "2026-05-20T21:05:21.625571+00:00",
       "prop_lat": 27.682007,
-      "prop_lng": -97.399777
+      "prop_lng": -97.399777,
+      "ncad_account_num": "1650-0006-0050",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "CLUB ESTATES UNIT 3 LT 5 BK 6"
     },
     {
       "doc_num": "2026000288",
@@ -477,9 +513,9 @@
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 238187.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "200115222",
+      "ncad_year": "2026",
+      "ncad_owner_id": "783783",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2024-12-20",
@@ -493,7 +529,10 @@
       "legal_subdivision": "WOOLDRIDGE CREEK",
       "pdf_parsed_at": "2026-05-20T21:05:21.670010+00:00",
       "prop_lat": 27.686006,
-      "prop_lng": -97.370562
+      "prop_lng": -97.370562,
+      "ncad_account_num": "9911-0001-0280",
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28"
     },
     {
       "doc_num": "2026000273",
@@ -845,7 +884,7 @@
       "prop_state": "TX",
       "prop_zip": "78412",
       "mail_address": "2909 CENTENNIAL OLYMPIC PARK AUSTIN",
-      "mail_city": "",
+      "mail_city": "AUSTIN",
       "mail_state": "TX",
       "mail_zip": "78732",
       "appraised_value": 224851.0,
@@ -863,7 +902,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.643892+00:00",
       "ncad_account_num": "5978-0003-0090",
       "prop_lat": 27.721235,
-      "prop_lng": -97.349432
+      "prop_lng": -97.349432,
+      "ncad_owner": "PLUTUS PROPERTIES LLC",
+      "ncad_legal": "OCEAN TERRACE BLK 3 LOT 9"
     },
     {
       "doc_num": "2026000283",
@@ -926,7 +967,7 @@
       "days_until_sale": 0,
       "deed_date": "1974-05-10",
       "loan_doc": "944313",
-      "lender": "Anchor Resort Co-Owner\u2019s Association, Inc",
+      "lender": "Anchor Resort Co-Owner’s Association, Inc",
       "pdf_parsed_at": "2026-05-20T21:05:21.594773+00:00",
       "ncad_account_num": "7060-0040-0134",
       "prop_lat": 27.631107,
@@ -946,22 +987,24 @@
       "prop_state": "TX",
       "prop_zip": "78416",
       "mail_address": "C/O JOSE S VIELMA 1941 Yale St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78416",
       "appraised_value": 204101.0,
-      "ncad_prop_id": "586156",
+      "ncad_prop_id": "249198",
       "ncad_year": "2026",
-      "ncad_owner_id": "754535",
+      "ncad_owner_id": "676223",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2019-12-19",
       "loan_doc": "2020000953",
       "legal_subdivision": "GEORGE H PAUL",
       "pdf_parsed_at": "2026-05-20T21:05:21.589016+00:00",
-      "ncad_account_num": "6479-0035-0040",
+      "ncad_account_num": "3810-0003-0210",
       "prop_lat": 27.75477,
-      "prop_lng": -97.425995
+      "prop_lng": -97.425995,
+      "ncad_owner": "MARTINEZ EVA",
+      "ncad_legal": "JONES JOHN BLK 3 LOT 21"
     },
     {
       "doc_num": "2026000263",
@@ -977,7 +1020,7 @@
       "prop_state": "TX",
       "prop_zip": "78410",
       "mail_address": "424 VIRGINIA AVE CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78405",
       "appraised_value": 211778.0,
@@ -994,7 +1037,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.563575+00:00",
       "ncad_account_num": "9838-0010-0150",
       "prop_lat": 27.843897,
-      "prop_lng": -97.598429
+      "prop_lng": -97.598429,
+      "ncad_owner": "RODRIGUEZ LEO AND WF",
+      "ncad_legal": "WOODLAND CREEK #5 BLK 10 LOT 15"
     },
     {
       "doc_num": "2026000261",
@@ -1010,7 +1055,7 @@
       "prop_state": "TX",
       "prop_zip": "78414",
       "mail_address": "702 Sam St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78412",
       "appraised_value": 359978.0,
@@ -1028,7 +1073,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.551214+00:00",
       "ncad_account_num": "3969-0002-0130",
       "prop_lat": 27.661254,
-      "prop_lng": -97.38258
+      "prop_lng": -97.38258,
+      "ncad_owner": "GUERRERO ANTHONY AND WF ERICA NICOLE DAVIS GUERRERO",
+      "ncad_legal": "KINGS POINT UNIT 4 LT 13 BLK 2"
     },
     {
       "doc_num": "2026000260",
@@ -1044,22 +1091,24 @@
       "prop_state": "TX",
       "prop_zip": "78402",
       "mail_address": "3738 Marion St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Kingsville",
       "mail_state": "TX",
       "mail_zip": "78415",
       "appraised_value": 99543.0,
-      "ncad_prop_id": "200049424",
+      "ncad_prop_id": "200048479",
       "ncad_year": "2026",
-      "ncad_owner_id": "804580",
+      "ncad_owner_id": "701660",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "deed_date": "2022-07-27",
       "loan_doc": "2022035945",
       "lender": "Joseph J. Chavez",
       "pdf_parsed_at": "2026-05-20T21:05:21.544793+00:00",
-      "ncad_account_num": "9019-0030-3218",
+      "ncad_account_num": "9019-0010-1118",
       "prop_lat": 27.824729,
-      "prop_lng": -97.387033
+      "prop_lng": -97.387033,
+      "ncad_owner": "VELA JUAN DAVID",
+      "ncad_legal": "VILLA DEL SOL CONDO UNIT 1118 PHASE 1 .2374 PERCENT INT IN GCE"
     },
     {
       "doc_num": "2026000259",
@@ -1075,7 +1124,7 @@
       "prop_state": "TX",
       "prop_zip": "78380",
       "mail_address": "21149 Interstate 37 S Lot 5 Elmendorf",
-      "mail_city": "",
+      "mail_city": "Elmendorf",
       "mail_state": "TX",
       "mail_zip": "78112",
       "appraised_value": 56628.0,
@@ -1093,7 +1142,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.538994+00:00",
       "ncad_account_num": "2903-0001-0340",
       "prop_lat": 27.835505,
-      "prop_lng": -97.652824
+      "prop_lng": -97.652824,
+      "ncad_owner": "AMARO JOHN BRUNO & WF SANDRA ANN",
+      "ncad_legal": "GRANADO ESTATES ADDITION BLK 1 LOT 34"
     },
     {
       "doc_num": "2026000258",
@@ -1109,7 +1160,7 @@
       "prop_state": "TX",
       "prop_zip": "78408",
       "mail_address": "5701 SARATOGA BLVD Apt 531 CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78414",
       "appraised_value": 36464.0,
@@ -1127,7 +1178,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.533918+00:00",
       "ncad_account_num": "9866-0002-0050",
       "prop_lat": 27.799049,
-      "prop_lng": -97.4344
+      "prop_lng": -97.4344,
+      "ncad_owner": "SANCHEZ JENNY",
+      "ncad_legal": "WOODLAWN S74' X 135' OUT OF LT 5 BLK 2"
     },
     {
       "doc_num": "2026000252",
@@ -1143,7 +1196,7 @@
       "prop_state": "TX",
       "prop_zip": "78414",
       "mail_address": "7477 Star Harbor Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78414",
       "appraised_value": 217105.0,
@@ -1159,7 +1212,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.507553+00:00",
       "ncad_account_num": "5406-0005-0270",
       "prop_lat": 27.678092,
-      "prop_lng": -97.345006
+      "prop_lng": -97.345006,
+      "ncad_owner": "HASTEY JESSE",
+      "ncad_legal": "MORNINGSTAR ESTATES UNIT 3 LT 27 BLK 5"
     },
     {
       "doc_num": "2026000254",
@@ -1175,7 +1230,7 @@
       "prop_state": "TX",
       "prop_zip": "78417",
       "mail_address": "5718 VENTURA CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78417",
       "appraised_value": 243173.0,
@@ -1191,7 +1246,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.516761+00:00",
       "ncad_account_num": "1245-0012-0100",
       "prop_lat": 27.728156,
-      "prop_lng": -97.442283
+      "prop_lng": -97.442283,
+      "ncad_owner": "CHARLES OLGA L",
+      "ncad_legal": "CAP ESTATES II UNIT 2 BLK 12 LOT 10"
     },
     {
       "doc_num": "2026000255",
@@ -1207,7 +1264,7 @@
       "prop_state": "TX",
       "prop_zip": "78380",
       "mail_address": "VIRGINIA MARTINEZ 3690 REYNA ROBSTOWN",
-      "mail_city": "",
+      "mail_city": "ROBSTOWN",
       "mail_state": "TX",
       "mail_zip": "78380",
       "appraised_value": 155408.0,
@@ -1220,7 +1277,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.524095+00:00",
       "ncad_account_num": "8346-0000-0120",
       "prop_lat": 27.760435,
-      "prop_lng": -97.740866
+      "prop_lng": -97.740866,
+      "ncad_owner": "MARTINEZ JOHNNY P AND WFE MARIA",
+      "ncad_legal": "SPRING GARDENS UNIT 1 S/2 LT 12"
     },
     {
       "doc_num": "2026000249",
@@ -1236,7 +1295,7 @@
       "prop_state": "TX",
       "prop_zip": "78380",
       "mail_address": "MARIA J ELIZONDO 5535 WARBONNETT DR ROBSTOWN",
-      "mail_city": "",
+      "mail_city": "ROBSTOWN",
       "mail_state": "TX",
       "mail_zip": "78380",
       "appraised_value": 69659.0,
@@ -1254,7 +1313,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.484227+00:00",
       "ncad_account_num": "3665-0001-0150",
       "prop_lat": 27.851191,
-      "prop_lng": -97.798364
+      "prop_lng": -97.798364,
+      "ncad_owner": "ELIZONDO ROGELIO O ETUX",
+      "ncad_legal": "INDIAN TRAILS BLK 1 LOT 15 1.11"
     },
     {
       "doc_num": "2026000248",
@@ -1302,7 +1363,7 @@
       "prop_state": "TX",
       "prop_zip": "78413",
       "mail_address": "7705 JACINTO CIR CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78413",
       "appraised_value": 465515.0,
@@ -1320,7 +1381,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.405514+00:00",
       "ncad_account_num": "7149-0001-0320",
       "prop_lat": 27.667149,
-      "prop_lng": -97.406799
+      "prop_lng": -97.406799,
+      "ncad_owner": "GONZALES JENNIFER R & RODOLFO JOSE BARRERA",
+      "ncad_legal": "REFLECTIONS UNIT 5 BLK 1 LOT 32"
     },
     {
       "doc_num": "2026000241",
@@ -1336,7 +1399,7 @@
       "prop_state": "TX",
       "prop_zip": "78414",
       "mail_address": "4222 COTTAGE CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78414",
       "appraised_value": 119091.0,
@@ -1354,7 +1417,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.438757+00:00",
       "ncad_account_num": "1810-0002-0050",
       "prop_lat": 27.74217,
-      "prop_lng": -97.406929
+      "prop_lng": -97.406929,
+      "ncad_owner": "NARVAEZ LUPITA",
+      "ncad_legal": "COTTAGE PARK BLK 2 LOT 5"
     },
     {
       "doc_num": "2026000234",
@@ -1370,7 +1435,7 @@
       "prop_state": "TX",
       "prop_zip": "78410",
       "mail_address": "3902 Targaryen Way Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 282430.0,
@@ -1388,7 +1453,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.398962+00:00",
       "ncad_account_num": "1239-0004-0010",
       "prop_lat": 27.846575,
-      "prop_lng": -97.606739
+      "prop_lng": -97.606739,
+      "ncad_owner": "JOHNSTON GARRETT WAYNE & WF SUSANA",
+      "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE II BLK 4 LOT 1"
     },
     {
       "doc_num": "2026000243",
@@ -1404,7 +1471,7 @@
       "prop_state": "TX",
       "prop_zip": "78404",
       "mail_address": "621 Chamberlain St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78404",
       "appraised_value": 146049.0,
@@ -1424,7 +1491,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.447251+00:00",
       "ncad_account_num": "4473-0029-0220",
       "prop_lat": 27.759675,
-      "prop_lng": -97.39485
+      "prop_lng": -97.39485,
+      "ncad_owner": "GUERRA ELIZABETH Z",
+      "ncad_legal": "LINDALE PARK 2-A E 50' LT 22 & W 15' LT 23 BLK 29"
     },
     {
       "doc_num": "2026000245",
@@ -1440,7 +1509,7 @@
       "prop_state": "TX",
       "prop_zip": "78411",
       "mail_address": "5337 MEADOWGATE DR CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78413",
       "appraised_value": 184376.0,
@@ -1456,7 +1525,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.467894+00:00",
       "ncad_account_num": "1436-0009-0150",
       "prop_lat": 27.750319,
-      "prop_lng": -97.397447
+      "prop_lng": -97.397447,
+      "ncad_owner": "CHAPA CORINA L AND GEORGE I LONGORIA",
+      "ncad_legal": "CASA LINDA ESTATES  #6 BLK 9 LOT 15"
     },
     {
       "doc_num": "2026000235",
@@ -1472,7 +1543,7 @@
       "prop_state": "TX",
       "prop_zip": "78413",
       "mail_address": "3405 DERBY DR CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78414",
       "appraised_value": 304941.0,
@@ -1490,7 +1561,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.402934+00:00",
       "ncad_account_num": "3698-0006-0080",
       "prop_lat": 27.679989,
-      "prop_lng": -97.398539
+      "prop_lng": -97.398539,
+      "ncad_owner": "MUSQUIEZ  JENNIFER LEE EST OF",
+      "ncad_legal": "INVERNESS UNIT B BLK 6 LOT 8"
     },
     {
       "doc_num": "2026000246",
@@ -1506,21 +1579,23 @@
       "prop_state": "TX",
       "prop_zip": "78380",
       "mail_address": "MOLLY P O BOX 127 BANQUETE",
-      "mail_city": "",
+      "mail_city": "P O BOX 127",
       "mail_state": "TX",
       "mail_zip": "78339",
       "appraised_value": 238766.0,
-      "ncad_prop_id": "381208",
+      "ncad_prop_id": "290139",
       "ncad_year": "2026",
-      "ncad_owner_id": "796434",
+      "ncad_owner_id": "227049",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "loan_doc": "367579",
       "lender": "PENNYMAC LOAN SERVICES, LLC",
       "pdf_parsed_at": "2026-05-20T21:05:21.472533+00:00",
-      "ncad_account_num": "9672-0014-0065",
+      "ncad_account_num": "7102-0000-1010",
       "prop_lat": 27.817191,
-      "prop_lng": -97.84242
+      "prop_lng": -97.84242,
+      "ncad_owner": "GONZALES RICARDO ET UX",
+      "ncad_legal": "RANCHO BANQUETE #2 - UNREC LOT 101 1.501"
     },
     {
       "doc_num": "2026000238",
@@ -1536,7 +1611,7 @@
       "prop_state": "TX",
       "prop_zip": "78380",
       "mail_address": "125 Avalon Dr Robstown",
-      "mail_city": "",
+      "mail_city": "Robstown",
       "mail_state": "TX",
       "mail_zip": "78380",
       "appraised_value": 197773.0,
@@ -1550,7 +1625,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.420291+00:00",
       "ncad_account_num": "9974-0005-0121",
       "prop_lat": 27.808705,
-      "prop_lng": -97.663621
+      "prop_lng": -97.663621,
+      "ncad_owner": "ROJAS BENJAMIN",
+      "ncad_legal": "ZEKE SERNA ESTATES UNIT 1 LT 12-A BLK 5"
     },
     {
       "doc_num": "2026000244",
@@ -1566,7 +1643,7 @@
       "prop_state": "TX",
       "prop_zip": "78415",
       "mail_address": "4954 JO ANN ST CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78415",
       "appraised_value": 120431.0,
@@ -1580,7 +1657,9 @@
       "legal_block": "7",
       "legal_subdivision": "SOUTH PARK",
       "pdf_parsed_at": "2026-05-20T21:05:21.457731+00:00",
-      "ncad_account_num": "8187-0007-0020"
+      "ncad_account_num": "8187-0007-0020",
+      "ncad_owner": "BROOKS GERALDINE R",
+      "ncad_legal": "SOUTH PARK BLK 7 LOT 2"
     },
     {
       "doc_num": "2026000237",
@@ -1632,7 +1711,7 @@
       "prop_state": "TX",
       "prop_zip": "78413",
       "mail_address": "4217 MICHELLE LN CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78413",
       "appraised_value": 223642.0,
@@ -1651,7 +1730,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.434873+00:00",
       "ncad_account_num": "1878-0002-0070",
       "prop_lat": 27.692853,
-      "prop_lng": -97.409563
+      "prop_lng": -97.409563,
+      "ncad_owner": "ODEAY ALMENIA GREFAL",
+      "ncad_legal": "COUNTRY CLUB ESTATES UNIT 34 PUD BLK 2 LOT 7"
     },
     {
       "doc_num": "2026000232",
@@ -1667,7 +1748,7 @@
       "prop_state": "TX",
       "prop_zip": "78413",
       "mail_address": "7706 Arshan Ln Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78413",
       "appraised_value": 240877.0,
@@ -1683,7 +1764,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.389599+00:00",
       "ncad_account_num": "3947-0002-0050",
       "prop_lat": 27.663619,
-      "prop_lng": -97.400905
+      "prop_lng": -97.400905,
+      "ncad_owner": "HALL DAVID BRIAN & WF NANCY MARIE",
+      "ncad_legal": "KINGS CROSSING WEST UNIT 2 PUD BLK 2 LOT 5"
     },
     {
       "doc_num": "2026000231",
@@ -1699,13 +1782,13 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "902 W Lakeside Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78418",
       "appraised_value": 230350.0,
-      "ncad_prop_id": "373507",
+      "ncad_prop_id": "233825",
       "ncad_year": "2026",
-      "ncad_owner_id": "804038",
+      "ncad_owner_id": "688683",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "lender": "FVX LLC in trust for Morgan Stanley Bank, N.A",
@@ -1713,9 +1796,11 @@
       "legal_block": "C",
       "legal_subdivision": "the said Flour Bluff Estates",
       "pdf_parsed_at": "2026-05-20T21:05:21.383867+00:00",
-      "ncad_account_num": "2486-0003-0124",
+      "ncad_account_num": "2486-0011-0410",
       "prop_lat": 27.672408,
-      "prop_lng": -97.283587
+      "prop_lng": -97.283587,
+      "ncad_owner": "ALLEN THOMAS L",
+      "ncad_legal": "FLOUR BLUFF ESTATES LT 41 BK K"
     },
     {
       "doc_num": "2026000226",
@@ -1731,13 +1816,13 @@
       "prop_state": "TX",
       "prop_zip": "78343",
       "mail_address": "4226 Wood River Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "BURLINGTON",
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 282146.0,
-      "ncad_prop_id": "200065268",
+      "ncad_prop_id": "200057276",
       "ncad_year": "2026",
-      "ncad_owner_id": "744265",
+      "ncad_owner_id": "818528",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "loan_doc": "2022045632",
@@ -1746,9 +1831,11 @@
       "legal_block": "18",
       "legal_subdivision": "WOOD RIVER",
       "pdf_parsed_at": "2026-05-20T21:05:21.341003+00:00",
-      "ncad_account_num": "9818-0018-0410",
+      "ncad_account_num": "9377-0063-0180",
       "prop_lat": 27.589062,
-      "prop_lng": -97.805888
+      "prop_lng": -97.805888,
+      "ncad_owner": "TITLE IT LLC",
+      "ncad_legal": "WEST END-BISHOP LT 18 BLK 63"
     },
     {
       "doc_num": "2026000230",
@@ -1764,7 +1851,7 @@
       "prop_state": "TX",
       "prop_zip": "78417",
       "mail_address": "5710 Palo Blanco St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78417",
       "appraised_value": 215846.0,
@@ -1780,7 +1867,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.372993+00:00",
       "ncad_account_num": "4050-0005-0140",
       "prop_lat": 27.730046,
-      "prop_lng": -97.445917
+      "prop_lng": -97.445917,
+      "ncad_owner": "GRAY JOHN DAVID  & WFE LAURA GARCIA GRAY",
+      "ncad_legal": "LA JOYA ESTS UNIT 2 BLK 5 LOT 14"
     },
     {
       "doc_num": "2026000222",
@@ -1796,7 +1885,7 @@
       "prop_state": "TX",
       "prop_zip": "78413",
       "mail_address": "14317 Potranco Rd Ste 205-249 San Antonio",
-      "mail_city": "",
+      "mail_city": "Ste 205-249",
       "mail_state": "TX",
       "mail_zip": "78253",
       "appraised_value": 307380.0,
@@ -1817,7 +1906,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.332061+00:00",
       "ncad_account_num": "1857-0012-0020",
       "prop_lat": 27.699292,
-      "prop_lng": -97.388494
+      "prop_lng": -97.388494,
+      "ncad_owner": "HMHY INVESTMENTS LLC",
+      "ncad_legal": "COUNTRY CLUB ESTATES #13 BLK 12 LOT 2"
     },
     {
       "doc_num": "2026000219",
@@ -1833,7 +1924,7 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "635 YORKTOWN BLVD Trlr 11 CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "Trlr 11",
       "mail_state": "TX",
       "mail_zip": "78418",
       "appraised_value": 33750.0,
@@ -1850,7 +1941,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.329424+00:00",
       "ncad_account_num": "7675-0004-0230",
       "prop_lat": 27.639085,
-      "prop_lng": -97.303825
+      "prop_lng": -97.303825,
+      "ncad_owner": "ORTEGA EDGAR O ETALS",
+      "ncad_legal": "SANDY OAKS LT 23 BK 4"
     },
     {
       "doc_num": "2026000214",
@@ -1866,7 +1959,7 @@
       "prop_state": "TX",
       "prop_zip": "78404",
       "mail_address": "1702 Timrod St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78404",
       "appraised_value": 223694.0,
@@ -1885,7 +1978,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.322676+00:00",
       "ncad_account_num": "6745-0007-0060",
       "prop_lat": 27.763938,
-      "prop_lng": -97.415261
+      "prop_lng": -97.415261,
+      "ncad_owner": "PEREZ ANNA MARIA",
+      "ncad_legal": "PINEDA PARK BLK 7 LOT 6"
     },
     {
       "doc_num": "2026000215",
@@ -1901,7 +1996,7 @@
       "prop_state": "TX",
       "prop_zip": "78404",
       "mail_address": "1810 KEYS ST CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78404",
       "appraised_value": 177971.0,
@@ -1918,7 +2013,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.326972+00:00",
       "ncad_account_num": "0386-0005-0030",
       "prop_lat": 27.769564,
-      "prop_lng": -97.41316
+      "prop_lng": -97.41316,
+      "ncad_owner": "MARTINEZ RUBEN",
+      "ncad_legal": "BALDWIN PARK BLK 5 LOT 3"
     },
     {
       "doc_num": "2026000212",
@@ -1934,7 +2031,7 @@
       "prop_state": "TX",
       "prop_zip": "78411",
       "mail_address": "630 WILSHIRE CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78411",
       "appraised_value": 220465.0,
@@ -1953,7 +2050,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.313311+00:00",
       "ncad_account_num": "6854-0002-0150",
       "prop_lat": 27.742424,
-      "prop_lng": -97.383169
+      "prop_lng": -97.383169,
+      "ncad_owner": "BROADWICK CHARLES",
+      "ncad_legal": "POPE PLACE BLK 2 LOT 15"
     },
     {
       "doc_num": "2026000210",
@@ -1969,7 +2068,7 @@
       "prop_state": "TX",
       "prop_zip": "78410",
       "mail_address": "3922 Jayden Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 269747.0,
@@ -1986,7 +2085,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.302293+00:00",
       "ncad_account_num": "1239-0006-0020",
       "prop_lat": 27.846908,
-      "prop_lng": -97.6054
+      "prop_lng": -97.6054,
+      "ncad_owner": "ALIVIO MARIA JIZA P & KENNETH C",
+      "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE II BLK 6 LOT 2"
     },
     {
       "doc_num": "2026000205",
@@ -2002,7 +2103,7 @@
       "prop_state": "TX",
       "prop_zip": "78414",
       "mail_address": "2465 Still Brook Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78414",
       "appraised_value": 174854.0,
@@ -2019,7 +2120,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.285699+00:00",
       "ncad_account_num": "9895-0005-0010",
       "prop_lat": 27.688923,
-      "prop_lng": -97.372557
+      "prop_lng": -97.372557,
+      "ncad_owner": "DIAZ ROSE ANNA",
+      "ncad_legal": "WOOLDRIDGE CREEK #1 BLK 5 LOT 1"
     },
     {
       "doc_num": "2026000203",
@@ -2035,7 +2138,7 @@
       "prop_state": "TX",
       "prop_zip": "78413",
       "mail_address": "5517 S Oso Pkwy Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78414",
       "appraised_value": 764227.0,
@@ -2053,7 +2156,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.272193+00:00",
       "ncad_account_num": "3926-0001-0070",
       "prop_lat": 27.661362,
-      "prop_lng": -97.403532
+      "prop_lng": -97.403532,
+      "ncad_owner": "VERA JULIAN J",
+      "ncad_legal": "KING ESTATES UNIT 4 BLK 1 LOT 7"
     },
     {
       "doc_num": "2026000204",
@@ -2105,7 +2210,7 @@
       "prop_state": "TX",
       "prop_zip": "78412",
       "mail_address": "1814 Merriman Ave Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78412",
       "appraised_value": 142803.0,
@@ -2122,7 +2227,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.298473+00:00",
       "ncad_account_num": "6529-0006-0030",
       "prop_lat": 27.680364,
-      "prop_lng": -97.324903
+      "prop_lng": -97.324903,
+      "ncad_owner": "ALVARADO CHRISTOPHER A",
+      "ncad_legal": "PEARY PLACE #2 BLK 6 LOT 3"
     },
     {
       "doc_num": "2026000201",
@@ -2138,7 +2245,7 @@
       "prop_state": "TX",
       "prop_zip": "78414",
       "mail_address": "1122 3RD ST CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78404",
       "appraised_value": 348861.0,
@@ -2156,7 +2263,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.264057+00:00",
       "ncad_account_num": "2905-0001-0100",
       "prop_lat": 27.653463,
-      "prop_lng": -97.354467
+      "prop_lng": -97.354467,
+      "ncad_owner": "DUDLEY BRYCE & SP ASHTON DUDLEY",
+      "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 10"
     },
     {
       "doc_num": "2026000206",
@@ -2172,7 +2281,7 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "14014 Hawksnest Bay Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78418",
       "appraised_value": 532114.0,
@@ -2190,7 +2299,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.288280+00:00",
       "ncad_account_num": "6984-0010-0040",
       "prop_lat": 27.593227,
-      "prop_lng": -97.231157
+      "prop_lng": -97.231157,
+      "ncad_owner": "ROBERTS RICKY JR",
+      "ncad_legal": "PORTS O'CALL BLK 10 LOT 4"
     },
     {
       "doc_num": "2026000193",
@@ -2206,7 +2317,7 @@
       "prop_state": "TX",
       "prop_zip": "78413",
       "mail_address": "7425 LAKE SUPERIOR DR CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78413",
       "appraised_value": 473763.0,
@@ -2224,7 +2335,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.256811+00:00",
       "ncad_account_num": "4142-0003-0180",
       "prop_lat": 27.677344,
-      "prop_lng": -97.416086
+      "prop_lng": -97.416086,
+      "ncad_owner": "WIMBERLY JEREMY JAMES",
+      "ncad_legal": "THE LAKES UNIT 5-B BLK 3 LOT 18"
     },
     {
       "doc_num": "2026000190",
@@ -2240,7 +2353,7 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "2002 Orange St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78418",
       "appraised_value": 217550.0,
@@ -2256,7 +2369,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.248472+00:00",
       "ncad_account_num": "2127-0013-0140",
       "prop_lat": 27.659437,
-      "prop_lng": -97.300671
+      "prop_lng": -97.300671,
+      "ncad_owner": "JONES JAMES P",
+      "ncad_legal": "DON PATRICIO LT 14 BK M"
     },
     {
       "doc_num": "2026000191",
@@ -2272,7 +2387,7 @@
       "prop_state": "TX",
       "prop_zip": "78410",
       "mail_address": "10302 HILL COUNTRY LN CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 333094.0,
@@ -2290,7 +2405,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.252949+00:00",
       "ncad_account_num": "3433-0002-0010",
       "prop_lat": 27.83,
-      "prop_lng": -97.572462
+      "prop_lng": -97.572462,
+      "ncad_owner": "BRULLOTHS BENJAMIN G",
+      "ncad_legal": "HILL COUNTRY ESTATES BLK 2 LOT 1"
     },
     {
       "doc_num": "2026000195",
@@ -2306,7 +2423,7 @@
       "prop_state": "TX",
       "prop_zip": "78416",
       "mail_address": "4905 Lauren Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78416",
       "appraised_value": 107468.0,
@@ -2324,7 +2441,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.260185+00:00",
       "ncad_account_num": "8951-0001-0020",
       "prop_lat": 27.74508,
-      "prop_lng": -97.438572
+      "prop_lng": -97.438572,
+      "ncad_owner": "PAYNE KERRI",
+      "ncad_legal": "TWO FOUNTAINS UNIT 4 LT 2 BK 1"
     },
     {
       "doc_num": "2026000188",
@@ -2340,13 +2459,13 @@
       "prop_state": "TX",
       "prop_zip": "78410",
       "mail_address": "6017 PARKVIEW DRIVE CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78415",
       "appraised_value": 210447.0,
-      "ncad_prop_id": "207485",
+      "ncad_prop_id": "200065216",
       "ncad_year": "2026",
-      "ncad_owner_id": "396870",
+      "ncad_owner_id": "796977",
       "status": "pre-foreclosure",
       "days_until_sale": 0,
       "loan_doc": "2022053556",
@@ -2355,9 +2474,11 @@
       "legal_block": "18",
       "legal_subdivision": "WOOD RIVER",
       "pdf_parsed_at": "2026-05-20T21:05:21.245183+00:00",
-      "ncad_account_num": "1288-0007-0030",
+      "ncad_account_num": "9818-0018-0150",
       "prop_lat": 27.86258,
-      "prop_lng": -97.657428
+      "prop_lng": -97.657428,
+      "ncad_owner": "RODRIGUEZ ANDREW & WF ALYSHA RODRIGUEZ",
+      "ncad_legal": "WOOD RIVER UNIT 2 LT 15 BLK 18"
     },
     {
       "doc_num": "2026000183",
@@ -2373,7 +2494,7 @@
       "prop_state": "TX",
       "prop_zip": "78414",
       "mail_address": "2522 WHIRLWIND ST CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78414",
       "appraised_value": 258766.0,
@@ -2391,7 +2512,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.233381+00:00",
       "ncad_account_num": "4593-0009-0060",
       "prop_lat": 27.669133,
-      "prop_lng": -97.336263
+      "prop_lng": -97.336263,
+      "ncad_owner": "BALLI JESUS A & WF BRIJIDA ESCOBEDO",
+      "ncad_legal": "LOS VIENTOS AT TERRA MAR UNIT 1 LT 6 BLK 9"
     },
     {
       "doc_num": "2026000182",
@@ -2441,7 +2564,7 @@
       "prop_state": "TX",
       "prop_zip": "78404",
       "mail_address": "649 Chamberlain St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78404",
       "appraised_value": 210585.0,
@@ -2459,7 +2582,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.223715+00:00",
       "ncad_account_num": "4473-0029-0150",
       "prop_lat": 27.75956,
-      "prop_lng": -97.394985
+      "prop_lng": -97.394985,
+      "ncad_owner": "BENAVIDEZ MARIA RUBY",
+      "ncad_legal": "LINDALE PARK #2-A BLK 29 LOT 15"
     },
     {
       "doc_num": "2026000187",
@@ -2475,7 +2600,7 @@
       "prop_state": "TX",
       "prop_zip": "78407",
       "mail_address": "5830 Llano Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78407",
       "appraised_value": 192697.0,
@@ -2495,7 +2620,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.241277+00:00",
       "ncad_account_num": "0023-0004-0160",
       "prop_lat": 27.80602,
-      "prop_lng": -97.474842
+      "prop_lng": -97.474842,
+      "ncad_owner": "LANDEROS JOSE ALBERTO JR & WF LAURA",
+      "ncad_legal": "ACADEMY HEIGHTS  #2 BLK 4 LOT 16"
     },
     {
       "doc_num": "2026000185",
@@ -2511,7 +2638,7 @@
       "prop_state": "TX",
       "prop_zip": "78415",
       "mail_address": "PO Box 321 Driscoll",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78351",
       "appraised_value": 185683.0,
@@ -2530,7 +2657,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.237529+00:00",
       "ncad_account_num": "1974-0005-0370",
       "prop_lat": 27.717552,
-      "prop_lng": -97.421679
+      "prop_lng": -97.421679,
+      "ncad_owner": "GOMEZ RUBEN ET UX ELAINE G",
+      "ncad_legal": "CRESTMONT #5 BLK 5 LOT 37"
     },
     {
       "doc_num": "2026000172",
@@ -2546,7 +2675,7 @@
       "prop_state": "TX",
       "prop_zip": "78412",
       "mail_address": "6129 Orangewood Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78412",
       "appraised_value": 180448.0,
@@ -2563,7 +2692,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.205087+00:00",
       "ncad_account_num": "1233-0003-0690",
       "prop_lat": 27.698329,
-      "prop_lng": -97.362642
+      "prop_lng": -97.362642,
+      "ncad_owner": "HERNANDEZ EVELYN",
+      "ncad_legal": "CANDLEWOOD  #4 BLK 3 LOT 69"
     },
     {
       "doc_num": "2026000176",
@@ -2579,7 +2710,7 @@
       "prop_state": "TX",
       "prop_zip": "78410",
       "mail_address": "AURORA HERNANDEZ 2628 HEWLITT INGLESIDE",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78362",
       "appraised_value": 240204.0,
@@ -2597,7 +2728,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.208353+00:00",
       "ncad_account_num": "5778-0005-0340",
       "prop_lat": 27.815865,
-      "prop_lng": -97.551696
+      "prop_lng": -97.551696,
+      "ncad_owner": "HERNANDEZ ESMAEL JR AND VERONICA ROSSETTE",
+      "ncad_legal": "NORTHWEST CROSSING UNIT 4 LT 34 BLK 5"
     },
     {
       "doc_num": "2026000137",
@@ -2613,7 +2746,7 @@
       "prop_state": "TX",
       "prop_zip": "78413",
       "mail_address": "4121 KEVIN DR CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78413",
       "appraised_value": 169770.0,
@@ -2629,7 +2762,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.183598+00:00",
       "ncad_account_num": "7774-0028-0160",
       "prop_lat": 27.705304,
-      "prop_lng": -97.405514
+      "prop_lng": -97.405514,
+      "ncad_owner": "PAEZ NOE R AND NORA LEE WFE",
+      "ncad_legal": "SCHANEN ESTS #3B BLK 28 LOT 16"
     },
     {
       "doc_num": "2026000141",
@@ -2645,7 +2780,7 @@
       "prop_state": "TX",
       "prop_zip": "78404",
       "mail_address": "636 Atlantic St Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78404",
       "appraised_value": 213374.0,
@@ -2661,7 +2796,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.194070+00:00",
       "ncad_account_num": "2050-0039-0090",
       "prop_lat": 27.767397,
-      "prop_lng": -97.400386
+      "prop_lng": -97.400386,
+      "ncad_owner": "RODRIGUEZ ANDREW T",
+      "ncad_legal": "DEL MAR BLK 39 LOT 9"
     },
     {
       "doc_num": "2026000115",
@@ -2677,7 +2814,7 @@
       "prop_state": "TX",
       "prop_zip": "78410",
       "mail_address": "3921 Lott Ave Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 175954.0,
@@ -2697,7 +2834,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.173609+00:00",
       "ncad_account_num": "1221-0004-0230",
       "prop_lat": 27.84655,
-      "prop_lng": -97.604795
+      "prop_lng": -97.604795,
+      "ncad_owner": "MONTANTEZ MICHAEL C",
+      "ncad_legal": "CALLICOATTE ESTATES #2 BLK 4 LOT 23"
     },
     {
       "doc_num": "2026000329",
@@ -2757,7 +2896,9 @@
       "pdf_parsed_at": "2026-06-01T23:47:44.485736+00:00",
       "prop_lat": 27.757457,
       "prop_lng": -97.407456,
-      "ncad_account_num": "0232-0016-0190"
+      "ncad_account_num": "0232-0016-0190",
+      "ncad_owner": "VIZION247 LLC",
+      "ncad_legal": "ARCADIA BLK 16 LOT 19"
     },
     {
       "doc_num": "2026000326",
@@ -2806,9 +2947,9 @@
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 295796.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "597353",
+      "ncad_year": "2026",
+      "ncad_owner_id": "793355",
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "deed_date": "2022-08-12",
@@ -2819,7 +2960,10 @@
       "legal_subdivision": "CALLICOATTE ESTATES",
       "pdf_parsed_at": "2026-06-01T23:04:16.365797+00:00",
       "prop_lat": 27.847163,
-      "prop_lng": -97.607463
+      "prop_lng": -97.607463,
+      "ncad_account_num": "1238-0002-0200",
+      "ncad_owner": "CANO NATHAN MATTHEW",
+      "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20"
     },
     {
       "doc_num": "2026000318",
@@ -2853,7 +2997,9 @@
       "pdf_parsed_at": "2026-06-01T23:47:23.600892+00:00",
       "prop_lat": 27.762399,
       "prop_lng": -97.405572,
-      "ncad_account_num": "0232-0007-0140"
+      "ncad_account_num": "0232-0007-0140",
+      "ncad_owner": "AL-BARNAWI MOHAMMAD",
+      "ncad_legal": "ARCADIA BLK 7 LOT 14"
     },
     {
       "doc_num": "2026000325",
@@ -2887,7 +3033,9 @@
       "pdf_parsed_at": "2026-06-01T23:03:53.647820+00:00",
       "prop_lat": 27.823802,
       "prop_lng": -97.066444,
-      "ncad_account_num": "7656-0001-0060"
+      "ncad_account_num": "7656-0001-0060",
+      "ncad_owner": "HALSTEAD ROBERT",
+      "ncad_legal": "SANDPIPER ESTATES BLK 1 LOT 6"
     },
     {
       "doc_num": "2026000320",
@@ -2922,7 +3070,9 @@
       "pdf_parsed_at": "2026-06-01T23:47:30.748119+00:00",
       "prop_lat": 27.737253,
       "prop_lng": -97.393505,
-      "ncad_account_num": "1685-0001-0020"
+      "ncad_account_num": "1685-0001-0020",
+      "ncad_owner": "BRAY GERLINE J",
+      "ncad_legal": "COLLIER BLK 1 LOT 2"
     },
     {
       "doc_num": "2026000322",
@@ -2956,7 +3106,9 @@
       "pdf_parsed_at": "2026-06-01T23:03:59.297651+00:00",
       "prop_lat": 27.714753,
       "prop_lng": -97.366111,
-      "ncad_account_num": "2938-0008-0020"
+      "ncad_account_num": "2938-0008-0020",
+      "ncad_owner": "PHILLIPS KAYLA MARIE & JOSE SANTIAGO ALCARAZ",
+      "ncad_legal": "GREEN ACRES VILLAGE #2 BLK 8 LOT 2"
     },
     {
       "doc_num": "2026000324",
@@ -2989,7 +3141,9 @@
       "pdf_parsed_at": "2026-06-01T23:47:13.904720+00:00",
       "prop_lat": 27.724231,
       "prop_lng": -97.391429,
-      "ncad_account_num": "4465-0006-0240"
+      "ncad_account_num": "4465-0006-0240",
+      "ncad_owner": "PAIZ  AMBER LEANNE & ISHMAEL GONZALES PAIZ JR",
+      "ncad_legal": "LINCOLN TERRACE BLK 6 LOT 24"
     },
     {
       "doc_num": "2026000315",
@@ -3135,9 +3289,9 @@
       "mail_state": "TX",
       "mail_zip": "78373",
       "appraised_value": 225000.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "596954",
+      "ncad_year": "2026",
+      "ncad_owner_id": "753882",
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "deed_date": "2026-05-22",
@@ -3147,7 +3301,10 @@
       "legal_lot": "5",
       "legal_block": "2",
       "legal_subdivision": "Merisol",
-      "pdf_parsed_at": "2026-06-01T23:47:07.465307+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:07.465307+00:00",
+      "ncad_account_num": "5126-0002-0050",
+      "ncad_owner": "MERISOL VILLAGES LLC",
+      "ncad_legal": "MERISOL SUBDIVISION UNIT 1 BLK 2 LOT 5"
     },
     {
       "doc_num": "2026000311",
@@ -3163,7 +3320,7 @@
       "prop_state": "TX",
       "prop_zip": "78413",
       "mail_address": "7401 LAKE MAGGORIE DR CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78413",
       "appraised_value": 396423.0,
@@ -3180,7 +3337,9 @@
       "pdf_parsed_at": "2026-05-24T16:04:14.332276+00:00",
       "prop_lat": 27.678807,
       "prop_lng": -97.413367,
-      "ncad_account_num": "4137-0019-0010"
+      "ncad_account_num": "4137-0019-0010",
+      "ncad_owner": "HENDERSON JASON S & WF MEGAN M",
+      "ncad_legal": "THE LAKES UNIT 2 BLK 19 LOT 1"
     },
     {
       "doc_num": "2026000301",
@@ -3196,7 +3355,7 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "13957 DASMARIMAS CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78418",
       "appraised_value": 316182.0,
@@ -3212,7 +3371,9 @@
       "legal_block": "1",
       "legal_subdivision": "ARUBA P.U.D",
       "pdf_parsed_at": "2026-05-24T16:03:42.809559+00:00",
-      "ncad_account_num": "0291-0001-0290"
+      "ncad_account_num": "0291-0001-0290",
+      "ncad_owner": "ERWIN KIMBERLY L",
+      "ncad_legal": "ARUBA P.U.D. BLK 1 LOT 29"
     },
     {
       "doc_num": "2026000304",
@@ -3228,7 +3389,7 @@
       "prop_state": "TX",
       "prop_zip": "78411",
       "mail_address": "3702 Topeka Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78411",
       "appraised_value": 376600.0,
@@ -3245,7 +3406,9 @@
       "pdf_parsed_at": "2026-05-24T16:03:33.110625+00:00",
       "prop_lat": 27.746399,
       "prop_lng": -97.381705,
-      "ncad_account_num": "5074-0001-0010"
+      "ncad_account_num": "5074-0001-0010",
+      "ncad_owner": "MORROW VICTORIA",
+      "ncad_legal": "MELDO PARK BLK 1 LOT 1"
     },
     {
       "doc_num": "2026000308",
@@ -3261,7 +3424,7 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "830 SAINT PETER ST CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78418",
       "appraised_value": 260590.0,
@@ -3277,7 +3440,9 @@
       "legal_block": "2",
       "legal_subdivision": "HIGHLAND OAKS UNIT TWO",
       "pdf_parsed_at": "2026-05-24T16:03:38.307662+00:00",
-      "ncad_account_num": "3388-0002-0230"
+      "ncad_account_num": "3388-0002-0230",
+      "ncad_owner": "KARG STEVEN J & WF APRIL R",
+      "ncad_legal": "HIGHLAND OAKS 2 LT 23 BLK 2"
     },
     {
       "doc_num": "2026000302",
@@ -3293,7 +3458,7 @@
       "prop_state": "TX",
       "prop_zip": "78410",
       "mail_address": "10606 Emmord Loop Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 179996.0,
@@ -3311,7 +3476,9 @@
       "pdf_parsed_at": "2026-05-24T16:03:18.812662+00:00",
       "prop_lat": 27.837383,
       "prop_lng": -97.57726,
-      "ncad_account_num": "0661-0003-0140"
+      "ncad_account_num": "0661-0003-0140",
+      "ncad_owner": "GARZA JOSE SAMUEL",
+      "ncad_legal": "BERVONNE TERRACE E5O' OF LT 14 BK 3"
     },
     {
       "doc_num": "2026000300",
@@ -3327,13 +3494,13 @@
       "prop_state": "TX",
       "prop_zip": "78417",
       "mail_address": "LYDIA GOMEZ WFE 6201 HARTACK CIRCLE CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78417",
       "appraised_value": 171411.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "298073",
+      "ncad_year": "2026",
+      "ncad_owner_id": "454202",
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "deed_date": "2001-10-10",
@@ -3344,7 +3511,10 @@
       "legal_subdivision": "SARATOGA DOWNS UNIT 1A",
       "pdf_parsed_at": "2026-05-24T16:03:52.283475+00:00",
       "prop_lat": 27.724716,
-      "prop_lng": -97.451149
+      "prop_lng": -97.451149,
+      "ncad_account_num": "7717-0001-0060",
+      "ncad_owner": "GOMEZ ISRAEL JR AND",
+      "ncad_legal": "SARATOGA DOWNS UNIT 1A BLK 1 LOT 6"
     },
     {
       "doc_num": "2026000303",
@@ -3360,13 +3530,13 @@
       "prop_state": "TX",
       "prop_zip": "78410",
       "mail_address": "9461 Morrow Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 304692.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "240787",
+      "ncad_year": "2026",
+      "ncad_owner_id": "811803",
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "lender": "Rally Credit Union",
@@ -3375,7 +3545,10 @@
       "legal_subdivision": "GUTH PARKSIDE",
       "pdf_parsed_at": "2026-05-24T16:03:58.276444+00:00",
       "prop_lat": 27.831488,
-      "prop_lng": -97.549697
+      "prop_lng": -97.549697,
+      "ncad_account_num": "3119-0001-0130",
+      "ncad_owner": "HAWKINS CURTIS EUGENE",
+      "ncad_legal": "GUTH PARKSIDE SUB LT 13 BK 1"
     },
     {
       "doc_num": "2026000309",
@@ -3391,13 +3564,13 @@
       "prop_state": "TX",
       "prop_zip": "78411",
       "mail_address": "1233 Ray Dr Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78411",
       "appraised_value": 170388.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "290431",
+      "ncad_year": "2026",
+      "ncad_owner_id": "680650",
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "deed_date": "2014-02-26",
@@ -3408,7 +3581,10 @@
       "legal_subdivision": "W.B RAY HEIGHTS",
       "pdf_parsed_at": "2026-05-24T16:03:22.345874+00:00",
       "prop_lat": 27.745599,
-      "prop_lng": -97.394683
+      "prop_lng": -97.394683,
+      "ncad_account_num": "7122-0005-0090",
+      "ncad_owner": "VASQUEZ ALBERT L & WF CRYSTAL B RAMOS",
+      "ncad_legal": "RAY W B HGTS BLK 5 LOT 9"
     },
     {
       "doc_num": "2026000310",
@@ -3428,9 +3604,9 @@
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 291639.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "535213",
+      "ncad_year": "2026",
+      "ncad_owner_id": "405336",
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "lender": "Idaho Housing and Finance Association",
@@ -3439,7 +3615,10 @@
       "legal_subdivision": "WILLOWOOD",
       "pdf_parsed_at": "2026-05-24T16:03:27.253702+00:00",
       "prop_lat": 27.841609,
-      "prop_lng": -97.599475
+      "prop_lng": -97.599475,
+      "ncad_account_num": "9708-0010-0080",
+      "ncad_owner": "DELGADO JOSE BENITO JR",
+      "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8"
     },
     {
       "doc_num": "2026000299",
@@ -3505,19 +3684,22 @@
       "prop_state": "TX",
       "prop_zip": "78411",
       "mail_address": "2310 33rd St Galveston",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "77550",
       "appraised_value": 275092.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "236592",
+      "ncad_year": "2026",
+      "ncad_owner_id": "662523",
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "loan_doc": "414459",
       "pdf_parsed_at": "2026-05-20T21:05:21.713644+00:00",
       "prop_lat": 27.700616,
-      "prop_lng": -97.380478
+      "prop_lng": -97.380478,
+      "ncad_account_num": "2702-0009-0146",
+      "ncad_owner": "VENTAJA LLC",
+      "ncad_legal": "GARDENDALE LT 15 BLK 9 (LESS POR TO ROW)"
     },
     {
       "doc_num": "2026000296",
@@ -3533,13 +3715,13 @@
       "prop_state": "TX",
       "prop_zip": "78414",
       "mail_address": "828 WILLOW WOOD DR CEDAR HILL",
-      "mail_city": "",
+      "mail_city": "CEDAR HILL",
       "mail_state": "TX",
       "mail_zip": "75104",
       "appraised_value": 351112.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "541041",
+      "ncad_year": "2026",
+      "ncad_owner_id": "818860",
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "deed_date": "2024-08-01",
@@ -3550,7 +3732,10 @@
       "legal_subdivision": "GRANGE PARK",
       "pdf_parsed_at": "2026-05-20T21:05:21.707921+00:00",
       "prop_lat": 27.653521,
-      "prop_lng": -97.354431
+      "prop_lng": -97.354431,
+      "ncad_account_num": "2905-0001-0090",
+      "ncad_owner": "NICHOLS ANDREW E II",
+      "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 9"
     },
     {
       "doc_num": "2026000268",
@@ -3566,13 +3751,13 @@
       "prop_state": "TX",
       "prop_zip": "78404",
       "mail_address": "VERONICA V VELLA 1153 FLORIDA CORPUS CHRISTI",
-      "mail_city": "",
+      "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78404",
       "appraised_value": 146667.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "184686",
+      "ncad_year": "2026",
+      "ncad_owner_id": "395887",
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "deed_date": "2005-11-19",
@@ -3583,7 +3768,10 @@
       "legal_subdivision": "ARCADIA",
       "pdf_parsed_at": "2026-05-20T21:05:21.603989+00:00",
       "prop_lat": 27.760441,
-      "prop_lng": -97.403814
+      "prop_lng": -97.403814,
+      "ncad_account_num": "0232-0004-0090",
+      "ncad_owner": "VELLA JERRY AND",
+      "ncad_legal": "ARCADIA BLK 4 LOT 9"
     },
     {
       "doc_num": "2026000265",
@@ -3634,7 +3822,7 @@
       "prop_state": "TX",
       "prop_zip": "78415",
       "mail_address": "55 Beattie Pl Ste 110 Greenville",
-      "mail_city": "",
+      "mail_city": "Ste 110",
       "mail_state": "SC",
       "mail_zip": "29601",
       "appraised_value": 198134.0,
@@ -3651,7 +3839,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.555777+00:00",
       "ncad_account_num": "7790-0009-0090",
       "prop_lat": 27.706763,
-      "prop_lng": -97.413835
+      "prop_lng": -97.413835,
+      "ncad_owner": "US BANK NA ETAL",
+      "ncad_legal": "SCHANEN ESTS WEST #10 BLK 9 LOT 9"
     },
     {
       "doc_num": "2026000264",
@@ -3667,7 +3857,7 @@
       "prop_state": "TX",
       "prop_zip": "78373",
       "mail_address": "211 WEST OAKES AVENUE PORT ARANSAS",
-      "mail_city": "",
+      "mail_city": "PORT ARANSAS",
       "mail_state": "TX",
       "mail_zip": "78373",
       "appraised_value": 774216.0,
@@ -3682,7 +3872,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.568653+00:00",
       "ncad_account_num": "7410-0002-0071",
       "prop_lat": 27.836248,
-      "prop_lng": -97.063253
+      "prop_lng": -97.063253,
+      "ncad_owner": "SANDERS MELANIE",
+      "ncad_legal": "ROBERTS SARAH SUR #6 - PA BLK 2 LOT 7&8"
     },
     {
       "doc_num": "2026000257",
@@ -3698,7 +3890,7 @@
       "prop_state": "TX",
       "prop_zip": "78418",
       "mail_address": "ARLENE MADALI CORDELL 1305 Tates Creek Rd Corpus Christi",
-      "mail_city": "",
+      "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78418",
       "appraised_value": 387644.0,
@@ -3720,7 +3912,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.531482+00:00",
       "ncad_account_num": "0768-0001-0070",
       "prop_lat": 27.654602,
-      "prop_lng": -97.308183
+      "prop_lng": -97.308183,
+      "ncad_owner": "CORDELL BRANDON C AND WF",
+      "ncad_legal": "BLUE GRASS ESTATES BLK 1 LOT 7"
     },
     {
       "doc_num": "2026000251",
@@ -4243,9 +4437,9 @@
       "mail_state": "TX",
       "mail_zip": "78412",
       "appraised_value": 178716.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "259280",
+      "ncad_year": "2026",
+      "ncad_owner_id": "583526",
       "status": "pre-foreclosure",
       "days_until_sale": 63,
       "owner_raw": "RICHARD GONZALES A SINGLE MAN",
@@ -4257,7 +4451,10 @@
       "legal_subdivision": "LEXINGTON PARK",
       "pdf_parsed_at": "2026-06-01T23:03:48.650890+00:00",
       "prop_lat": 27.692219,
-      "prop_lng": -97.35119
+      "prop_lng": -97.35119,
+      "ncad_account_num": "4414-0004-0180",
+      "ncad_owner": "GONZALEZ RICHARD",
+      "ncad_legal": "LEXINGTON PK UNIT 2 LT 18 BK 4"
     },
     {
       "doc_num": "2026000321",
@@ -4277,9 +4474,9 @@
       "mail_state": "TX",
       "mail_zip": "78343",
       "appraised_value": 200464.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "200045303",
+      "ncad_year": "2026",
+      "ncad_owner_id": "775834",
       "status": "pre-foreclosure",
       "days_until_sale": 63,
       "deed_date": "2021-06-18",
@@ -4290,7 +4487,10 @@
       "legal_subdivision": "TRUE",
       "pdf_parsed_at": "2026-06-01T23:04:10.813994+00:00",
       "prop_lat": 27.579663,
-      "prop_lng": -97.797487
+      "prop_lng": -97.797487,
+      "ncad_account_num": "8902-0003-0200",
+      "ncad_owner": "ESPINOZA MATTHEW F & WF EBONY C",
+      "ncad_legal": "TRUE - BISHOP BLK 3 LOT 20"
     },
     {
       "doc_num": "2026000317",
@@ -4310,9 +4510,9 @@
       "mail_state": "TX",
       "mail_zip": "78415",
       "appraised_value": 170035.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "211801",
+      "ncad_year": "2026",
+      "ncad_owner_id": "747600",
       "status": "pre-foreclosure",
       "days_until_sale": 63,
       "deed_date": "2022-06-14",
@@ -4326,7 +4526,10 @@
       "legal_subdivision": "CENTRAL PARK",
       "pdf_parsed_at": "2026-06-01T23:03:42.497259+00:00",
       "prop_lat": 27.730004,
-      "prop_lng": -97.403848
+      "prop_lng": -97.403848,
+      "ncad_account_num": "1493-0010-0240",
+      "ncad_owner": "DELEON ROGELIO",
+      "ncad_legal": "CENTRAL PARK  #2 BLK 10 LOT 24"
     },
     {
       "doc_num": "2026000306",
@@ -4346,9 +4549,9 @@
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 262242.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "200116312",
+      "ncad_year": "2026",
+      "ncad_owner_id": "687946",
       "status": "pre-foreclosure",
       "days_until_sale": 63,
       "owner_raw": "TANIA ENCINIA AND FRANCISCO C ALVAREZ WIFE AND HUSBAND",
@@ -4359,7 +4562,10 @@
       "legal_subdivision": "OVERLAND MEADOWS",
       "pdf_parsed_at": "2026-05-24T16:04:09.627055+00:00",
       "prop_lat": 27.833695,
-      "prop_lng": -97.571989
+      "prop_lng": -97.571989,
+      "ncad_account_num": "6102-0003-0010",
+      "ncad_owner": "ENCINIA TANIA & HUSBAND FRANCISCO C ALVAREZ",
+      "ncad_legal": "OVERLAND MEADOWS #4 BLK 3 LOT 1"
     },
     {
       "doc_num": "2026000307",
@@ -4379,9 +4585,9 @@
       "mail_state": "TX",
       "mail_zip": "78415",
       "appraised_value": 138743.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "228569",
+      "ncad_year": "2026",
+      "ncad_owner_id": "757692",
       "status": "pre-foreclosure",
       "days_until_sale": 63,
       "owner_raw": "Frank Cordova, an unmarried man",
@@ -4391,7 +4597,10 @@
       "legal_subdivision": "Edgewood Park",
       "pdf_parsed_at": "2026-05-24T16:03:47.957036+00:00",
       "prop_lat": 27.745165,
-      "prop_lng": -97.413145
+      "prop_lng": -97.413145,
+      "ncad_account_num": "2255-0003-0030",
+      "ncad_owner": "CORDOVA FRANK",
+      "ncad_legal": "EDGEWOOD PK N 5FT OF 2 ALL OF 3 BK 3"
     },
     {
       "doc_num": "2026000305",
@@ -4411,9 +4620,9 @@
       "mail_state": "TX",
       "mail_zip": "78410",
       "appraised_value": 244748.0,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
+      "ncad_prop_id": "600557",
+      "ncad_year": "2026",
+      "ncad_owner_id": "808065",
       "status": "pre-foreclosure",
       "days_until_sale": 63,
       "deed_date": "2023-09-19",
@@ -4422,7 +4631,10 @@
       "legal_lot": "IN",
       "legal_block": "1",
       "legal_subdivision": "CALALLEN SOUTH",
-      "pdf_parsed_at": "2026-05-24T16:04:03.406607+00:00"
+      "pdf_parsed_at": "2026-05-24T16:04:03.406607+00:00",
+      "ncad_account_num": "1204-0001-0220",
+      "ncad_owner": "COLLINGS GEORGINA & SP WILLIAM CAZARES",
+      "ncad_legal": "CALALLEN SOUTH UNIT 1 BLK 1 LOT 22"
     },
     {
       "doc_num": "2026000139",
@@ -4461,5 +4673,5 @@
       "ncad_legal": "KINGS CROSSING UNIT 13 LT 22 BLK 1"
     }
   ],
-  "ncad_account_enriched_at": "2026-06-02T11:41:21+00:00"
+  "ncad_account_enriched_at": "2026-06-02T20:26:49+00:00"
 }
