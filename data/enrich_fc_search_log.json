@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-06-02T20:26:49+00:00",
+  "ran_at": "2026-06-02T21:15:09+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -26,7 +26,10 @@
         "ncad_account_num": "4341-0001-0101",
         "ncad_owner": "SANDERS EVA",
         "ncad_legal": "LEEWARD ISLES CONDO, BUILDING A, UNIT 101, 1.165% COMMON AREA INTEREST",
-        "mail_city": "Irving"
+        "mail_address": "1117 Gloucester Ct S",
+        "mail_city": "Irving",
+        "mail_state": "TX",
+        "mail_zip": "75062"
       }
     },
     {
@@ -45,7 +48,10 @@
         "ncad_account_num": "7652-0000-0010",
         "ncad_owner": "DENNIS ROBERT L",
         "ncad_legal": "SAND DOLLAR II STUDIO CONDO, UNIT 1, 6.25% COMMON AREA INTEREST",
-        "mail_city": "ROBSTOWN"
+        "mail_address": "4124 EMIL",
+        "mail_city": "ROBSTOWN",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -64,7 +70,10 @@
         "ncad_account_num": "1290-0011-0110",
         "ncad_owner": "MIRELES RAUL M & WF BERTA",
         "ncad_legal": "CAROLYN HEIGHTS  #7 BLK 11 LOT 11",
-        "mail_city": "Corpus Christi"
+        "mail_address": "3710 Mendenhall Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -83,7 +92,10 @@
         "ncad_account_num": "1336-0002-0280",
         "ncad_owner": "MATA DAVID",
         "ncad_legal": "CARROLL PLACE  #6 BLK 2 LOT 28",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "3442 XANADU ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -101,7 +113,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1258-0009-0330",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "CARIBBEAN PLACE  #3 BLK 9 LOT 33"
+        "ncad_legal": "CARIBBEAN PLACE  #3 BLK 9 LOT 33",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -119,7 +135,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1871-0001-0070",
         "ncad_owner": "PLUTUS PROEPRTIES LLC",
-        "ncad_legal": "COUNTRY CLUB ESTATES #27 BLK 1 LOT 7"
+        "ncad_legal": "COUNTRY CLUB ESTATES #27 BLK 1 LOT 7",
+        "mail_address": "2009 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -137,7 +157,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "9911-0001-0280",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28"
+        "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -155,7 +179,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1996-0032-0130",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "CULLEN PLACE #3 BLK 32 LOT 13"
+        "ncad_legal": "CULLEN PLACE #3 BLK 32 LOT 13",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -173,7 +201,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1975-0014-0080",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "CRESTMONT UNIT 6 LT 8 BK 14"
+        "ncad_legal": "CRESTMONT UNIT 6 LT 8 BK 14",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -191,7 +223,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1432-0007-0030",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "CASA LINDA 2 LT 3 BLK 7"
+        "ncad_legal": "CASA LINDA 2 LT 3 BLK 7",
+        "mail_address": "2813 ERIE DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -210,7 +246,10 @@
         "ncad_account_num": "6631-0022-0020",
         "ncad_owner": "RICARDO ROBLES SILVA OF DUAL ACTION ENTERPRISE LLC",
         "ncad_legal": "PHARAOH VALLEY NORTH #2 BLK 22 LOT 2",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "4310 ACUSHNET DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -228,7 +267,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "0661-0002-0120",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12"
+        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -247,7 +290,10 @@
         "ncad_account_num": "9063-0001-0690",
         "ncad_owner": "REYNOLDS MARY T ANNE-ALEXANDRIA",
         "ncad_legal": "VILLAGE BY THE BEACH 2 PUD, BLOCK 1, LOT 69",
-        "mail_city": "San Antonio"
+        "mail_address": "1622 Mountain Crst",
+        "mail_city": "San Antonio",
+        "mail_state": "TX",
+        "mail_zip": "78258"
       }
     },
     {
@@ -265,7 +311,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1650-0006-0050",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "CLUB ESTATES UNIT 3 LT 5 BK 6"
+        "ncad_legal": "CLUB ESTATES UNIT 3 LT 5 BK 6",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -283,7 +333,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "9911-0001-0280",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28"
+        "ncad_legal": "WOOLDRIDGE CREEK #12 BLK 1 LOT 28",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -301,7 +355,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1592-0012-0010",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "CIMARRON CROSSING UNIT  3 BLK 12 LOT 1"
+        "ncad_legal": "CIMARRON CROSSING UNIT  3 BLK 12 LOT 1",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -319,7 +377,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "7004-0006-0010",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "PRESCOTT PK LT 1 & PT OF ADJ ST BK 6"
+        "ncad_legal": "PRESCOTT PK LT 1 & PT OF ADJ ST BK 6",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -345,7 +407,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "3546-0009-0010",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "HOPPER #2 BLK 9 LOT 1"
+        "ncad_legal": "HOPPER #2 BLK 9 LOT 1",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -363,7 +429,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "0661-0002-0120",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12"
+        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -381,7 +451,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "5037-0003-0180",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "MEADOWS #2 BLK 3 LOT 18"
+        "ncad_legal": "MEADOWS #2 BLK 3 LOT 18",
+        "mail_address": "2110 Ranch Road 620 S",
+        "mail_city": "Unit 340591",
+        "mail_state": "TX",
+        "mail_zip": ""
       }
     },
     {
@@ -399,7 +473,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "7771-0013-0060",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "SCHANEN ESTS #2 BLK 13 LOT 6"
+        "ncad_legal": "SCHANEN ESTS #2 BLK 13 LOT 6",
+        "mail_address": "2813 ERIE DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -417,7 +495,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "0661-0002-0120",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12"
+        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -435,7 +517,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1534-0001-0070",
         "ncad_owner": "GARRETT JEFFERY S & WF TRICIA L",
-        "ncad_legal": "CHANNEL VISTA  - P A BLK 1 LOT 7"
+        "ncad_legal": "CHANNEL VISTA  - P A BLK 1 LOT 7",
+        "mail_address": "1058 Pamela Rd",
+        "mail_city": "Waco",
+        "mail_state": "TX",
+        "mail_zip": "76708"
       }
     },
     {
@@ -453,7 +539,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "0661-0002-0120",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12"
+        "ncad_legal": "BERVONNE TERRACE BLK 2 LOT 12",
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -472,7 +562,10 @@
         "ncad_account_num": "5978-0003-0090",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
         "ncad_legal": "OCEAN TERRACE BLK 3 LOT 9",
-        "mail_city": "AUSTIN"
+        "mail_address": "2909 CENTENNIAL OLYMPIC PARK",
+        "mail_city": "AUSTIN",
+        "mail_state": "TX",
+        "mail_zip": "78732"
       }
     },
     {
@@ -490,7 +583,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "3163-0008-0030",
         "ncad_owner": "PLUTUS PROPERTIES LLC",
-        "ncad_legal": "HAMLIN PLACE UNIT 1 BLK 8 LOT 3"
+        "ncad_legal": "HAMLIN PLACE UNIT 1 BLK 8 LOT 3",
+        "mail_address": "2813 ERIE DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -518,7 +615,10 @@
         "ncad_account_num": "3810-0003-0210",
         "ncad_owner": "MARTINEZ EVA",
         "ncad_legal": "JONES JOHN BLK 3 LOT 21",
-        "mail_city": "Corpus Christi"
+        "mail_address": "1941 Yale St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78416"
       }
     },
     {
@@ -537,7 +637,10 @@
         "ncad_account_num": "9838-0010-0150",
         "ncad_owner": "RODRIGUEZ LEO AND WF",
         "ncad_legal": "WOODLAND CREEK #5 BLK 10 LOT 15",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "11626 TURKEY CREEK DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -556,7 +659,10 @@
         "ncad_account_num": "3969-0002-0130",
         "ncad_owner": "GUERRERO ANTHONY AND WF ERICA NICOLE DAVIS GUERRERO",
         "ncad_legal": "KINGS POINT UNIT 4 LT 13 BLK 2",
-        "mail_city": "Corpus Christi"
+        "mail_address": "6305 Sir Jack St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -575,7 +681,10 @@
         "ncad_account_num": "9019-0010-1118",
         "ncad_owner": "VELA JUAN DAVID",
         "ncad_legal": "VILLA DEL SOL CONDO UNIT 1118 PHASE 1 .2374 PERCENT INT IN GCE",
-        "mail_city": "Kingsville"
+        "mail_address": "1327 E Fordyce Ave",
+        "mail_city": "Kingsville",
+        "mail_state": "TX",
+        "mail_zip": "78363"
       }
     },
     {
@@ -594,7 +703,10 @@
         "ncad_account_num": "2903-0001-0340",
         "ncad_owner": "AMARO JOHN BRUNO & WF SANDRA ANN",
         "ncad_legal": "GRANADO ESTATES ADDITION BLK 1 LOT 34",
-        "mail_city": "Elmendorf"
+        "mail_address": "21149 Interstate 37 S Lot 5",
+        "mail_city": "Elmendorf",
+        "mail_state": "TX",
+        "mail_zip": "78112"
       }
     },
     {
@@ -613,7 +725,10 @@
         "ncad_account_num": "9866-0002-0050",
         "ncad_owner": "SANCHEZ JENNY",
         "ncad_legal": "WOODLAWN S74' X 135' OUT OF LT 5 BLK 2",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "5701 SARATOGA BLVD Apt 531",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -632,7 +747,10 @@
         "ncad_account_num": "5406-0005-0270",
         "ncad_owner": "HASTEY JESSE",
         "ncad_legal": "MORNINGSTAR ESTATES UNIT 3 LT 27 BLK 5",
-        "mail_city": "Corpus Christi"
+        "mail_address": "7477 Star Harbor Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -651,7 +769,10 @@
         "ncad_account_num": "1245-0012-0100",
         "ncad_owner": "CHARLES OLGA L",
         "ncad_legal": "CAP ESTATES II UNIT 2 BLK 12 LOT 10",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "5718 VENTURA",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78417"
       }
     },
     {
@@ -670,7 +791,10 @@
         "ncad_account_num": "8346-0000-0120",
         "ncad_owner": "MARTINEZ JOHNNY P AND WFE MARIA",
         "ncad_legal": "SPRING GARDENS UNIT 1 S/2 LT 12",
-        "mail_city": "ROBSTOWN"
+        "mail_address": "3690 REYNA",
+        "mail_city": "ROBSTOWN",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -689,7 +813,10 @@
         "ncad_account_num": "3665-0001-0150",
         "ncad_owner": "ELIZONDO ROGELIO O ETUX",
         "ncad_legal": "INDIAN TRAILS BLK 1 LOT 15 1.11",
-        "mail_city": "ROBSTOWN"
+        "mail_address": "5535 WARBONNETT DR",
+        "mail_city": "ROBSTOWN",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -718,7 +845,10 @@
         "ncad_account_num": "7149-0001-0320",
         "ncad_owner": "GONZALES JENNIFER R & RODOLFO JOSE BARRERA",
         "ncad_legal": "REFLECTIONS UNIT 5 BLK 1 LOT 32",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "7705 JACINTO CIR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -737,7 +867,10 @@
         "ncad_account_num": "1810-0002-0050",
         "ncad_owner": "NARVAEZ LUPITA",
         "ncad_legal": "COTTAGE PARK BLK 2 LOT 5",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "4222 COTTAGE",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -756,7 +889,10 @@
         "ncad_account_num": "1239-0004-0010",
         "ncad_owner": "JOHNSTON GARRETT WAYNE & WF SUSANA",
         "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE II BLK 4 LOT 1",
-        "mail_city": "Corpus Christi"
+        "mail_address": "3902 Targaryen Way",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -775,7 +911,10 @@
         "ncad_account_num": "4473-0029-0220",
         "ncad_owner": "GUERRA ELIZABETH Z",
         "ncad_legal": "LINDALE PARK 2-A E 50' LT 22 & W 15' LT 23 BLK 29",
-        "mail_city": "Corpus Christi"
+        "mail_address": "621 Chamberlain St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78404"
       }
     },
     {
@@ -794,7 +933,10 @@
         "ncad_account_num": "1436-0009-0150",
         "ncad_owner": "CHAPA CORINA L AND GEORGE I LONGORIA",
         "ncad_legal": "CASA LINDA ESTATES  #6 BLK 9 LOT 15",
-        "mail_city": "Corpus Christi"
+        "mail_address": "3325 Orlando Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78411"
       }
     },
     {
@@ -813,7 +955,10 @@
         "ncad_account_num": "3698-0006-0080",
         "ncad_owner": "MUSQUIEZ  JENNIFER LEE EST OF",
         "ncad_legal": "INVERNESS UNIT B BLK 6 LOT 8",
-        "mail_city": "Corpus Christi"
+        "mail_address": "6910 Fruitwood Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -832,7 +977,10 @@
         "ncad_account_num": "7102-0000-1010",
         "ncad_owner": "GONZALES RICARDO ET UX",
         "ncad_legal": "RANCHO BANQUETE #2 - UNREC LOT 101 1.501",
-        "mail_city": "P O BOX 127"
+        "mail_address": "P O BOX 127",
+        "mail_city": "BANQUETE",
+        "mail_state": "TX",
+        "mail_zip": "78339"
       }
     },
     {
@@ -851,7 +999,10 @@
         "ncad_account_num": "9974-0005-0121",
         "ncad_owner": "ROJAS BENJAMIN",
         "ncad_legal": "ZEKE SERNA ESTATES UNIT 1 LT 12-A BLK 5",
-        "mail_city": "Robstown"
+        "mail_address": "125 Avalon Dr",
+        "mail_city": "Robstown",
+        "mail_state": "TX",
+        "mail_zip": "78380"
       }
     },
     {
@@ -870,7 +1021,10 @@
         "ncad_account_num": "8187-0007-0020",
         "ncad_owner": "BROOKS GERALDINE R",
         "ncad_legal": "SOUTH PARK BLK 7 LOT 2",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "4954 JO ANN ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -888,7 +1042,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "3760-0003-0150",
         "ncad_owner": "CARDENAS ALFONSO GARCIA & WF LAMAR GARCIA CARDENAS",
-        "ncad_legal": "JACKSON WOODS #2 BLK 3 LOT 15"
+        "ncad_legal": "JACKSON WOODS #2 BLK 3 LOT 15",
+        "mail_address": "3157 VICKSBURG ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -907,7 +1065,10 @@
         "ncad_account_num": "1878-0002-0070",
         "ncad_owner": "ODEAY ALMENIA GREFAL",
         "ncad_legal": "COUNTRY CLUB ESTATES UNIT 34 PUD BLK 2 LOT 7",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "4217 MICHELLE LN",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -926,7 +1087,10 @@
         "ncad_account_num": "3947-0002-0050",
         "ncad_owner": "HALL DAVID BRIAN & WF NANCY MARIE",
         "ncad_legal": "KINGS CROSSING WEST UNIT 2 PUD BLK 2 LOT 5",
-        "mail_city": "Corpus Christi"
+        "mail_address": "7706 Arshan Ln",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -945,7 +1109,10 @@
         "ncad_account_num": "2486-0011-0410",
         "ncad_owner": "ALLEN THOMAS L",
         "ncad_legal": "FLOUR BLUFF ESTATES LT 41 BK K",
-        "mail_city": "Corpus Christi"
+        "mail_address": "902 E Lakeside Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -964,7 +1131,10 @@
         "ncad_account_num": "9377-0063-0180",
         "ncad_owner": "TITLE IT LLC",
         "ncad_legal": "WEST END-BISHOP LT 18 BLK 63",
-        "mail_city": "BURLINGTON"
+        "mail_address": "102 MULLER RD",
+        "mail_city": "BURLINGTON",
+        "mail_state": "MA",
+        "mail_zip": "01803"
       }
     },
     {
@@ -983,7 +1153,10 @@
         "ncad_account_num": "4050-0005-0140",
         "ncad_owner": "GRAY JOHN DAVID  & WFE LAURA GARCIA GRAY",
         "ncad_legal": "LA JOYA ESTS UNIT 2 BLK 5 LOT 14",
-        "mail_city": "Corpus Christi"
+        "mail_address": "5710 Palo Blanco St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78417"
       }
     },
     {
@@ -1002,7 +1175,10 @@
         "ncad_account_num": "1857-0012-0020",
         "ncad_owner": "HMHY INVESTMENTS LLC",
         "ncad_legal": "COUNTRY CLUB ESTATES #13 BLK 12 LOT 2",
-        "mail_city": "Ste 205-249"
+        "mail_address": "14317 Potranco Rd",
+        "mail_city": "Ste 205-249",
+        "mail_state": "TX",
+        "mail_zip": ""
       }
     },
     {
@@ -1021,7 +1197,10 @@
         "ncad_account_num": "7675-0004-0230",
         "ncad_owner": "ORTEGA EDGAR O ETALS",
         "ncad_legal": "SANDY OAKS LT 23 BK 4",
-        "mail_city": "Trlr 11"
+        "mail_address": "635 YORKTOWN BLVD",
+        "mail_city": "Trlr 11",
+        "mail_state": "TX",
+        "mail_zip": ""
       }
     },
     {
@@ -1040,7 +1219,10 @@
         "ncad_account_num": "6745-0007-0060",
         "ncad_owner": "PEREZ ANNA MARIA",
         "ncad_legal": "PINEDA PARK BLK 7 LOT 6",
-        "mail_city": "Corpus Christi"
+        "mail_address": "1702 Timrod St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78404"
       }
     },
     {
@@ -1059,7 +1241,10 @@
         "ncad_account_num": "0386-0005-0030",
         "ncad_owner": "MARTINEZ RUBEN",
         "ncad_legal": "BALDWIN PARK BLK 5 LOT 3",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "1810 KEYS ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78404"
       }
     },
     {
@@ -1078,7 +1263,10 @@
         "ncad_account_num": "6854-0002-0150",
         "ncad_owner": "BROADWICK CHARLES",
         "ncad_legal": "POPE PLACE BLK 2 LOT 15",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "630 WILSHIRE",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78411"
       }
     },
     {
@@ -1097,7 +1285,10 @@
         "ncad_account_num": "1239-0006-0020",
         "ncad_owner": "ALIVIO MARIA JIZA P & KENNETH C",
         "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE II BLK 6 LOT 2",
-        "mail_city": "Corpus Christi"
+        "mail_address": "3922 Jayden Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -1116,7 +1307,10 @@
         "ncad_account_num": "9895-0005-0010",
         "ncad_owner": "DIAZ ROSE ANNA",
         "ncad_legal": "WOOLDRIDGE CREEK #1 BLK 5 LOT 1",
-        "mail_city": "Corpus Christi"
+        "mail_address": "2465 Still Brook Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -1135,7 +1329,10 @@
         "ncad_account_num": "3926-0001-0070",
         "ncad_owner": "VERA JULIAN J",
         "ncad_legal": "KING ESTATES UNIT 4 BLK 1 LOT 7",
-        "mail_city": "Corpus Christi"
+        "mail_address": "5517 S Oso Pkwy",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -1153,7 +1350,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1014-0001-0200",
         "ncad_owner": "FLORES EDDIE ET UX MARIA VIOLA",
-        "ncad_legal": "BROADMOOR PARK 3 LT 20 BK 1"
+        "ncad_legal": "BROADMOOR PARK 3 LT 20 BK 1",
+        "mail_address": "P O BOX 7932",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78467"
       }
     },
     {
@@ -1172,7 +1373,10 @@
         "ncad_account_num": "6529-0006-0030",
         "ncad_owner": "ALVARADO CHRISTOPHER A",
         "ncad_legal": "PEARY PLACE #2 BLK 6 LOT 3",
-        "mail_city": "Corpus Christi"
+        "mail_address": "1814 Merriman Ave",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78412"
       }
     },
     {
@@ -1191,7 +1395,10 @@
         "ncad_account_num": "2905-0001-0100",
         "ncad_owner": "DUDLEY BRYCE & SP ASHTON DUDLEY",
         "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 10",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "3837 WOODHOUSE LN",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -1210,7 +1417,10 @@
         "ncad_account_num": "6984-0010-0040",
         "ncad_owner": "ROBERTS RICKY JR",
         "ncad_legal": "PORTS O'CALL BLK 10 LOT 4",
-        "mail_city": "Corpus Christi"
+        "mail_address": "14014 Hawksnest Bay Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -1229,7 +1439,10 @@
         "ncad_account_num": "4142-0003-0180",
         "ncad_owner": "WIMBERLY JEREMY JAMES",
         "ncad_legal": "THE LAKES UNIT 5-B BLK 3 LOT 18",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "7425 LAKE SUPERIOR DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -1248,7 +1461,10 @@
         "ncad_account_num": "2127-0013-0140",
         "ncad_owner": "JONES JAMES P",
         "ncad_legal": "DON PATRICIO LT 14 BK M",
-        "mail_city": "Corpus Christi"
+        "mail_address": "2002 Orange St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -1267,7 +1483,10 @@
         "ncad_account_num": "3433-0002-0010",
         "ncad_owner": "BRULLOTHS BENJAMIN G",
         "ncad_legal": "HILL COUNTRY ESTATES BLK 2 LOT 1",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "10302 HILL COUNTRY LN",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -1286,7 +1505,10 @@
         "ncad_account_num": "8951-0001-0020",
         "ncad_owner": "PAYNE KERRI",
         "ncad_legal": "TWO FOUNTAINS UNIT 4 LT 2 BK 1",
-        "mail_city": "Corpus Christi"
+        "mail_address": "4905 Lauren Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78416"
       }
     },
     {
@@ -1305,7 +1527,10 @@
         "ncad_account_num": "9818-0018-0150",
         "ncad_owner": "RODRIGUEZ ANDREW & WF ALYSHA RODRIGUEZ",
         "ncad_legal": "WOOD RIVER UNIT 2 LT 15 BLK 18",
-        "mail_city": "Corpus Christi"
+        "mail_address": "4205 Cowhouse Creek Ct",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -1324,7 +1549,10 @@
         "ncad_account_num": "4593-0009-0060",
         "ncad_owner": "BALLI JESUS A & WF BRIJIDA ESCOBEDO",
         "ncad_legal": "LOS VIENTOS AT TERRA MAR UNIT 1 LT 6 BLK 9",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "2522 WHIRLWIND ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     },
     {
@@ -1352,7 +1580,10 @@
         "ncad_account_num": "4473-0029-0150",
         "ncad_owner": "BENAVIDEZ MARIA RUBY",
         "ncad_legal": "LINDALE PARK #2-A BLK 29 LOT 15",
-        "mail_city": "Corpus Christi"
+        "mail_address": "649 Chamberlain St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78404"
       }
     },
     {
@@ -1371,7 +1602,10 @@
         "ncad_account_num": "0023-0004-0160",
         "ncad_owner": "LANDEROS JOSE ALBERTO JR & WF LAURA",
         "ncad_legal": "ACADEMY HEIGHTS  #2 BLK 4 LOT 16",
-        "mail_city": "Corpus Christi"
+        "mail_address": "5830 Llano Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78407"
       }
     },
     {
@@ -1390,7 +1624,10 @@
         "ncad_account_num": "1974-0005-0370",
         "ncad_owner": "GOMEZ RUBEN ET UX ELAINE G",
         "ncad_legal": "CRESTMONT #5 BLK 5 LOT 37",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "3145 CREST VEIL DRIVE",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -1409,7 +1646,10 @@
         "ncad_account_num": "1233-0003-0690",
         "ncad_owner": "HERNANDEZ EVELYN",
         "ncad_legal": "CANDLEWOOD  #4 BLK 3 LOT 69",
-        "mail_city": "Corpus Christi"
+        "mail_address": "6129 Orangewood Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78412"
       }
     },
     {
@@ -1428,7 +1668,10 @@
         "ncad_account_num": "5778-0005-0340",
         "ncad_owner": "HERNANDEZ ESMAEL JR AND VERONICA ROSSETTE",
         "ncad_legal": "NORTHWEST CROSSING UNIT 4 LT 34 BLK 5",
-        "mail_city": "Corpus Christi"
+        "mail_address": "1737 Gallop Trl",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -1447,7 +1690,10 @@
         "ncad_account_num": "7774-0028-0160",
         "ncad_owner": "PAEZ NOE R AND NORA LEE WFE",
         "ncad_legal": "SCHANEN ESTS #3B BLK 28 LOT 16",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "4121 KEVIN DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -1466,7 +1712,10 @@
         "ncad_account_num": "2050-0039-0090",
         "ncad_owner": "RODRIGUEZ ANDREW T",
         "ncad_legal": "DEL MAR BLK 39 LOT 9",
-        "mail_city": "Corpus Christi"
+        "mail_address": "636 Atlantic St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78404"
       }
     },
     {
@@ -1485,7 +1734,10 @@
         "ncad_account_num": "1221-0004-0230",
         "ncad_owner": "MONTANTEZ MICHAEL C",
         "ncad_legal": "CALLICOATTE ESTATES #2 BLK 4 LOT 23",
-        "mail_city": "Corpus Christi"
+        "mail_address": "3921 Lott Ave",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -1507,7 +1759,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "0232-0016-0190",
         "ncad_owner": "VIZION247 LLC",
-        "ncad_legal": "ARCADIA BLK 16 LOT 19"
+        "ncad_legal": "ARCADIA BLK 16 LOT 19",
+        "mail_address": "20926 Tonydale Ln",
+        "mail_city": "Spring",
+        "mail_state": "TX",
+        "mail_zip": "77388"
       }
     },
     {
@@ -1529,7 +1785,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1238-0002-0200",
         "ncad_owner": "CANO NATHAN MATTHEW",
-        "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20"
+        "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20",
+        "mail_address": "3909 Shiva Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -1547,7 +1807,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "0232-0007-0140",
         "ncad_owner": "AL-BARNAWI MOHAMMAD",
-        "ncad_legal": "ARCADIA BLK 7 LOT 14"
+        "ncad_legal": "ARCADIA BLK 7 LOT 14",
+        "mail_address": "3237 S PADRE ISLAND DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -1565,7 +1829,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "7656-0001-0060",
         "ncad_owner": "HALSTEAD ROBERT",
-        "ncad_legal": "SANDPIPER ESTATES BLK 1 LOT 6"
+        "ncad_legal": "SANDPIPER ESTATES BLK 1 LOT 6",
+        "mail_address": "1030 Sea Secret St",
+        "mail_city": "Port Aransas",
+        "mail_state": "TX",
+        "mail_zip": "78373"
       }
     },
     {
@@ -1583,7 +1851,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1685-0001-0020",
         "ncad_owner": "BRAY GERLINE J",
-        "ncad_legal": "COLLIER BLK 1 LOT 2"
+        "ncad_legal": "COLLIER BLK 1 LOT 2",
+        "mail_address": "4234 DAKIN",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78411"
       }
     },
     {
@@ -1601,7 +1873,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "2938-0008-0020",
         "ncad_owner": "PHILLIPS KAYLA MARIE & JOSE SANTIAGO ALCARAZ",
-        "ncad_legal": "GREEN ACRES VILLAGE #2 BLK 8 LOT 2"
+        "ncad_legal": "GREEN ACRES VILLAGE #2 BLK 8 LOT 2",
+        "mail_address": "1037 SALEM DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78412"
       }
     },
     {
@@ -1619,7 +1895,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "4465-0006-0240",
         "ncad_owner": "PAIZ  AMBER LEANNE & ISHMAEL GONZALES PAIZ JR",
-        "ncad_legal": "LINCOLN TERRACE BLK 6 LOT 24"
+        "ncad_legal": "LINCOLN TERRACE BLK 6 LOT 24",
+        "mail_address": "4801 Edith St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78411"
       }
     },
     {
@@ -1660,7 +1940,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "5126-0002-0050",
         "ncad_owner": "MERISOL VILLAGES LLC",
-        "ncad_legal": "MERISOL SUBDIVISION UNIT 1 BLK 2 LOT 5"
+        "ncad_legal": "MERISOL SUBDIVISION UNIT 1 BLK 2 LOT 5",
+        "mail_address": "PO Box 366",
+        "mail_city": "Port Aransas",
+        "mail_state": "TX",
+        "mail_zip": "78373"
       }
     },
     {
@@ -1679,7 +1963,10 @@
         "ncad_account_num": "4137-0019-0010",
         "ncad_owner": "HENDERSON JASON S & WF MEGAN M",
         "ncad_legal": "THE LAKES UNIT 2 BLK 19 LOT 1",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "7401 LAKE MAGGORIE DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -1698,7 +1985,10 @@
         "ncad_account_num": "0291-0001-0290",
         "ncad_owner": "ERWIN KIMBERLY L",
         "ncad_legal": "ARUBA P.U.D. BLK 1 LOT 29",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "13957 DASMARIMAS",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -1717,7 +2007,10 @@
         "ncad_account_num": "5074-0001-0010",
         "ncad_owner": "MORROW VICTORIA",
         "ncad_legal": "MELDO PARK BLK 1 LOT 1",
-        "mail_city": "Corpus Christi"
+        "mail_address": "3702 Topeka",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78411"
       }
     },
     {
@@ -1736,7 +2029,10 @@
         "ncad_account_num": "3388-0002-0230",
         "ncad_owner": "KARG STEVEN J & WF APRIL R",
         "ncad_legal": "HIGHLAND OAKS 2 LT 23 BLK 2",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "830 SAINT PETER ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -1755,7 +2051,10 @@
         "ncad_account_num": "0661-0003-0140",
         "ncad_owner": "GARZA JOSE SAMUEL",
         "ncad_legal": "BERVONNE TERRACE E5O' OF LT 14 BK 3",
-        "mail_city": "Corpus Christi"
+        "mail_address": "10606 Emmord Loop",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -1774,7 +2073,10 @@
         "ncad_account_num": "7717-0001-0060",
         "ncad_owner": "GOMEZ ISRAEL JR AND",
         "ncad_legal": "SARATOGA DOWNS UNIT 1A BLK 1 LOT 6",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "6201 HARTACK CIRCLE",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78417"
       }
     },
     {
@@ -1793,7 +2095,10 @@
         "ncad_account_num": "3119-0001-0130",
         "ncad_owner": "HAWKINS CURTIS EUGENE",
         "ncad_legal": "GUTH PARKSIDE SUB LT 13 BK 1",
-        "mail_city": "Corpus Christi"
+        "mail_address": "9461 Morrow Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -1812,7 +2117,10 @@
         "ncad_account_num": "7122-0005-0090",
         "ncad_owner": "VASQUEZ ALBERT L & WF CRYSTAL B RAMOS",
         "ncad_legal": "RAY W B HGTS BLK 5 LOT 9",
-        "mail_city": "Corpus Christi"
+        "mail_address": "1233 Ray Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78411"
       }
     },
     {
@@ -1830,7 +2138,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "9708-0010-0080",
         "ncad_owner": "DELGADO JOSE BENITO JR",
-        "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8"
+        "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8",
+        "mail_address": "11537 Pintas Creek Cir",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -1857,7 +2169,10 @@
         "ncad_account_num": "2702-0009-0146",
         "ncad_owner": "VENTAJA LLC",
         "ncad_legal": "GARDENDALE LT 15 BLK 9 (LESS POR TO ROW)",
-        "mail_city": "Corpus Christi"
+        "mail_address": "5306 Holly Rd #B",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78411"
       }
     },
     {
@@ -1876,7 +2191,10 @@
         "ncad_account_num": "2905-0001-0090",
         "ncad_owner": "NICHOLS ANDREW E II",
         "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 9",
-        "mail_city": "CEDAR HILL"
+        "mail_address": "828 WILLOW WOOD DR",
+        "mail_city": "CEDAR HILL",
+        "mail_state": "TX",
+        "mail_zip": "75104"
       }
     },
     {
@@ -1895,7 +2213,10 @@
         "ncad_account_num": "0232-0004-0090",
         "ncad_owner": "VELLA JERRY AND",
         "ncad_legal": "ARCADIA BLK 4 LOT 9",
-        "mail_city": "CORPUS CHRISTI"
+        "mail_address": "1153 FLORIDA",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78404"
       }
     },
     {
@@ -1913,7 +2234,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1847-0010-0160",
         "ncad_owner": "HALL CHRISTOPHER WAYNE & WF RACHEL YOLANDA EATMON-HALL",
-        "ncad_legal": "COUNTRY CLUB ESTATES #5 BLK 10 LOT 16"
+        "ncad_legal": "COUNTRY CLUB ESTATES #5 BLK 10 LOT 16",
+        "mail_address": "6345 Saint Andrews Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -1932,7 +2257,10 @@
         "ncad_account_num": "7790-0009-0090",
         "ncad_owner": "US BANK NA ETAL",
         "ncad_legal": "SCHANEN ESTS WEST #10 BLK 9 LOT 9",
-        "mail_city": "Ste 110"
+        "mail_address": "55 Beattie Pl",
+        "mail_city": "Ste 110",
+        "mail_state": "TX",
+        "mail_zip": ""
       }
     },
     {
@@ -1951,7 +2279,10 @@
         "ncad_account_num": "7410-0002-0071",
         "ncad_owner": "SANDERS MELANIE",
         "ncad_legal": "ROBERTS SARAH SUR #6 - PA BLK 2 LOT 7&8",
-        "mail_city": "PORT ARANSAS"
+        "mail_address": "211 WEST OAKES AVENUE",
+        "mail_city": "PORT ARANSAS",
+        "mail_state": "TX",
+        "mail_zip": "78373"
       }
     },
     {
@@ -1970,7 +2301,10 @@
         "ncad_account_num": "0768-0001-0070",
         "ncad_owner": "CORDELL BRANDON C AND WF",
         "ncad_legal": "BLUE GRASS ESTATES BLK 1 LOT 7",
-        "mail_city": "Corpus Christi"
+        "mail_address": "1305 Tates Creek Rd",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -1988,7 +2322,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1585-0004-0180",
         "ncad_owner": "SALAZAR GABREAL ROSE & SP ALBERT CANALES JR",
-        "ncad_legal": "CHULA VISTA BLK 4 LOT 18"
+        "ncad_legal": "CHULA VISTA BLK 4 LOT 18",
+        "mail_address": "1734 Hudson St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78416"
       }
     },
     {
@@ -2014,7 +2352,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "7224-0008-0210",
         "ncad_owner": "VARGAS VALENTIN & WF NORA L",
-        "ncad_legal": "RIDGEWOOD #2 BLK 8 LOT 21"
+        "ncad_legal": "RIDGEWOOD #2 BLK 8 LOT 21",
+        "mail_address": "5013 Romford Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78413"
       }
     },
     {
@@ -2032,7 +2374,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "2843-0000-0120",
         "ncad_owner": "CASTLE BRANDON & WF CARMEN",
-        "ncad_legal": "GLENOAK S/D LT 12"
+        "ncad_legal": "GLENOAK S/D LT 12",
+        "mail_address": "349 Glenoak Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78418"
       }
     },
     {
@@ -2050,7 +2396,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "9810-0002-0110",
         "ncad_owner": "GONZALES STEPHEN M AND REYNALDO GONZALES AND OFELIA WFE",
-        "ncad_legal": "WOODBEND LT 11 BLK 2"
+        "ncad_legal": "WOODBEND LT 11 BLK 2",
+        "mail_address": "6526 HIGH ARCH CT",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78412"
       }
     },
     {
@@ -2068,7 +2418,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "7749-0003-0010",
         "ncad_owner": "ESTRADA XAVIER D",
-        "ncad_legal": "SAXET HTS 1 LT 1 AND N .50 OF LT 2 BK 3"
+        "ncad_legal": "SAXET HTS 1 LT 1 AND N .50 OF LT 2 BK 3",
+        "mail_address": "361 Bartlett Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78408"
       }
     },
     {
@@ -2086,7 +2440,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "3433-0001-0070",
         "ncad_owner": "CALL JARED & WF KIMBERLY DUGDALE",
-        "ncad_legal": "HILL COUNTRY ESTATES BLK 1 LOT 7"
+        "ncad_legal": "HILL COUNTRY ESTATES BLK 1 LOT 7",
+        "mail_address": "10321 Hill Country Ln",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -2104,7 +2462,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "9563-0005-0120",
         "ncad_owner": "ALLMAN PATRICK",
-        "ncad_legal": "WESTWOOD VILLAGE BLK 5 LOT 12"
+        "ncad_legal": "WESTWOOD VILLAGE BLK 5 LOT 12",
+        "mail_address": "4326 Cherry St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78411"
       }
     },
     {
@@ -2122,7 +2484,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "4557-0020-0170",
         "ncad_owner": "MONTOYA MARISSA J",
-        "ncad_legal": "LONDON TOWNE SUBDIVISION UNIT 2 BLK 20 LOT 17"
+        "ncad_legal": "LONDON TOWNE SUBDIVISION UNIT 2 BLK 20 LOT 17",
+        "mail_address": "1229 Thames Chase Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -2140,7 +2506,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1238-0002-0200",
         "ncad_owner": "CANO NATHAN MATTHEW",
-        "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20"
+        "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20",
+        "mail_address": "3909 Shiva Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -2178,7 +2548,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "5791-0010-0290",
         "ncad_owner": "PEREZ JACOB",
-        "ncad_legal": "NORTHWEST CROSSING UNIT 8 BLK 10 LOT 29"
+        "ncad_legal": "NORTHWEST CROSSING UNIT 8 BLK 10 LOT 29",
+        "mail_address": "9609 SEDALIA TRL",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -2200,7 +2574,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "4414-0004-0180",
         "ncad_owner": "GONZALEZ RICHARD",
-        "ncad_legal": "LEXINGTON PK UNIT 2 LT 18 BK 4"
+        "ncad_legal": "LEXINGTON PK UNIT 2 LT 18 BK 4",
+        "mail_address": "1809 BRAZOS DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78412"
       }
     },
     {
@@ -2218,7 +2596,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "8902-0003-0200",
         "ncad_owner": "ESPINOZA MATTHEW F & WF EBONY C",
-        "ncad_legal": "TRUE - BISHOP BLK 3 LOT 20"
+        "ncad_legal": "TRUE - BISHOP BLK 3 LOT 20",
+        "mail_address": "413 E Henderson St",
+        "mail_city": "Bishop",
+        "mail_state": "TX",
+        "mail_zip": "78343"
       }
     },
     {
@@ -2236,7 +2618,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1493-0010-0240",
         "ncad_owner": "DELEON ROGELIO",
-        "ncad_legal": "CENTRAL PARK  #2 BLK 10 LOT 24"
+        "ncad_legal": "CENTRAL PARK  #2 BLK 10 LOT 24",
+        "mail_address": "4817 Mokry Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -2254,7 +2640,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "6102-0003-0010",
         "ncad_owner": "ENCINIA TANIA & HUSBAND FRANCISCO C ALVAREZ",
-        "ncad_legal": "OVERLAND MEADOWS #4 BLK 3 LOT 1"
+        "ncad_legal": "OVERLAND MEADOWS #4 BLK 3 LOT 1",
+        "mail_address": "2801 Jesse Jaye Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -2272,7 +2662,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "2255-0003-0030",
         "ncad_owner": "CORDOVA FRANK",
-        "ncad_legal": "EDGEWOOD PK N 5FT OF 2 ALL OF 3 BK 3"
+        "ncad_legal": "EDGEWOOD PK N 5FT OF 2 ALL OF 3 BK 3",
+        "mail_address": "4334 Brentwood Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78415"
       }
     },
     {
@@ -2290,7 +2684,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "1204-0001-0220",
         "ncad_owner": "COLLINGS GEORGINA & SP WILLIAM CAZARES",
-        "ncad_legal": "CALALLEN SOUTH UNIT 1 BLK 1 LOT 22"
+        "ncad_legal": "CALALLEN SOUTH UNIT 1 BLK 1 LOT 22",
+        "mail_address": "13250 WRANGLER ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78410"
       }
     },
     {
@@ -2308,7 +2706,11 @@
         "ncad_year": "2026",
         "ncad_account_num": "3960-0001-0220",
         "ncad_owner": "BALDEARENA MIGUEL J",
-        "ncad_legal": "KINGS CROSSING UNIT 13 LT 22 BLK 1"
+        "ncad_legal": "KINGS CROSSING UNIT 13 LT 22 BLK 1",
+        "mail_address": "7530 Bon Soir",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78414"
       }
     }
   ]
