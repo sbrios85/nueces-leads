@@ -949,10 +949,20 @@
   .today-hot-sale.soon { color: #f87171; }
   .today-hot-stage { color: var(--muted); font-size: 11px; margin-top: 1px; }
   .today-hot-empty { color: var(--muted); font-size: 13px; padding: 8px 4px; }
-  /* Compact attention cards — 2 per row, colored left accent */
+  /* Two-column band: hot list (left) | needs attention (right).
+     Stacks to one column on narrow screens. */
+  .today-cols {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .today-cols { grid-template-columns: 1fr; }
+  }
+  .today-col { min-width: 0; }
+  .today-col .today-section-label { margin-top: 0; }
+  /* Compact attention cards — stacked within their (half-width) column */
   .today-actions {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 8px;
+    display: flex; flex-direction: column; gap: 8px;
   }
   .today-card {
     background: var(--card); border: 1px solid var(--border);
@@ -979,23 +989,24 @@
   .today-card.tc-ok .tc-count { color: #34d399; }
   .today-card.tc-clear { opacity: .6; }
   .today-card.tc-clear .tc-count { color: var(--muted); }
-  /* Pipeline + glance grids */
+  /* Pipeline + glance grids — skinny stat tiles */
   .today-pipeline, .today-glance {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 8px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px; margin-bottom: 4px;
   }
   .today-stat {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: 11px 14px;
+    border-radius: 8px; padding: 7px 12px;
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
   }
   .today-stat.clickable { cursor: pointer; transition: border-color .15s; }
   .today-stat.clickable:hover { border-color: var(--accent); }
-  .today-stat .ts-num { font-size: 22px; font-weight: 700; color: var(--fg); }
+  .today-stat .ts-num { font-size: 19px; font-weight: 700; color: var(--fg); line-height: 1.1; }
   .today-stat .ts-label {
-    color: var(--muted); font-size: 11px; margin-top: 1px;
+    color: var(--muted); font-size: 11px;
     text-transform: uppercase; letter-spacing: .04em;
   }
-  .today-stat .ts-sub { color: var(--muted); font-size: 11px; margin-top: 3px; }
+  .today-stat .ts-sub { color: var(--muted); font-size: 10px; width: 100%; margin-top: -1px; }
   /* Follow-up / sale-date detail lists inside a card */
   .today-list { margin: 6px 4px 0; display: flex; flex-direction: column; gap: 5px; }
   .today-list-item {
@@ -2585,14 +2596,6 @@
     <div class="today-sub" id="today-datestr"></div>
   </div>
 
-  <!-- Hot list: top-priority leads (active stage + soonest sale date) -->
-  <div class="today-section-label">🔥 Hot list</div>
-  <div class="today-hotlist" id="today-hotlist"><!-- built by renderToday() --></div>
-
-  <!-- Action items: things that need the user to DO something -->
-  <div class="today-section-label">Needs attention</div>
-  <div class="today-actions" id="today-actions"><!-- built by renderToday() --></div>
-
   <!-- Pipeline stage counters -->
   <div class="today-section-label">Pipeline</div>
   <div class="today-pipeline" id="today-pipeline"><!-- built by renderToday() --></div>
@@ -2600,6 +2603,18 @@
   <!-- At-a-glance metrics -->
   <div class="today-section-label">At a glance</div>
   <div class="today-glance" id="today-glance"><!-- built by renderToday() --></div>
+
+  <!-- Two columns: Hot list (left) | Needs attention (right) -->
+  <div class="today-cols">
+    <div class="today-col">
+      <div class="today-section-label">🔥 Hot list</div>
+      <div class="today-hotlist" id="today-hotlist"><!-- built by renderToday() --></div>
+    </div>
+    <div class="today-col">
+      <div class="today-section-label">Needs attention</div>
+      <div class="today-actions" id="today-actions"><!-- built by renderToday() --></div>
+    </div>
+  </div>
 </div>
 
 <div class="pane" id="pane-foreclosures">
