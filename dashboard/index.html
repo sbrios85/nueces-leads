@@ -12597,8 +12597,28 @@ function buildFcRow(r, isDead) {
     // other fields render the raw control directly (legal stays caps).
     if (key === "owner")
       return _fmtCellWrap(ctrl, fmtOwnerFL(val));
-    if (key === "prop_address" || key === "mail_address")
+    if (key === "prop_address")
       return _fmtCellWrap(ctrl, fmtTitle(val));
+    if (key === "mail_address") {
+      // Two-line display: street on line 1, "City, ST ZIP" on line 2
+      // (muted). The editable textarea keeps the full merged value so
+      // editing/copying still works. If the user saved an override,
+      // just show it as one formatted line (their own text).
+      if (_mailOverride) return _fmtCellWrap(ctrl, fmtTitle(val));
+      const _locParts = [r.mail_city, r.mail_state, r.mail_zip].filter(Boolean);
+      const _cityState = r.mail_city
+        ? esc(fmtTitle(r.mail_city)) +
+            (r.mail_state || r.mail_zip ? ", " : "") +
+            esc([r.mail_state, r.mail_zip].filter(Boolean).join(" "))
+        : esc([r.mail_state, r.mail_zip].filter(Boolean).join(" "));
+      const _line1 = r.mail_address
+        ? esc(fmtTitle(r.mail_address))
+        : '<span style="color:var(--muted)">\u2014</span>';
+      const _dispHtml = _locParts.length
+        ? _line1 + '<br><small style="color:var(--muted)">' + _cityState + '</small>'
+        : _line1;
+      return _fmtCellWrap(ctrl, fmtTitle(val), _dispHtml);
+    }
     return ctrl;
   };
 
@@ -13074,9 +13094,14 @@ function fmtOwnerFL(raw) {
 // data-field/dirty/save wiring is preserved). `dispText` is the
 // formatted text to show at rest. Clicking the display reveals + focuses
 // the control; the control's own value remains the RAW value to save.
-function _fmtCellWrap(controlHtml, dispText) {
-  const disp = dispText && dispText.trim() ? esc(dispText)
-    : '<span style="color:var(--muted)">—</span>';
+function _fmtCellWrap(controlHtml, dispText, dispHtml) {
+  // dispHtml (optional): pre-built, already-escaped HTML for the
+  // display line — used by the mailing-address cell to show a second
+  // "City, ST ZIP" line. When omitted, dispText is escaped as before.
+  const disp = dispHtml != null
+    ? dispHtml
+    : (dispText && dispText.trim() ? esc(dispText)
+        : '<span style="color:var(--muted)">—</span>');
   return `<div class="fmt-cell" onclick="fmtCellReveal(this, event)">` +
          `<span class="fmt-disp">${disp}</span>${controlHtml}</div>`;
 }
