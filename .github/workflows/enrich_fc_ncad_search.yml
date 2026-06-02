@@ -1,0 +1,136 @@
+name: Enrich FC NCAD (search)
+
+# Address-SEARCH enrichment for foreclosure records that have no
+# ncad_prop_id yet — i.e. records created by the PDF parser
+# ("Parse uploaded foreclosure PDFs"), which fills owner / loan /
+# legal / address but never a prop_id. This workflow searches NCAD's
+# esearch portal by the parsed property address, finds the matching
+# parcel, and writes back the NCAD identifiers, account number, market
+# value, and mailing address — so the dashboard's NCAD / NCTAX columns
+# fill in immediately after a parse instead of waiting for the nightly
+# scrape to assign prop_ids.
+#
+# This is the SEARCH counterpart to "Enrich FC NCAD (account numbers)"
+# (enrich_fc_ncad.yml), which is detail-page-only and needs a prop_id
+# to already exist. The two are complementary:
+#   * after a SCRAPE  → fetch.py sets prop_ids → account enricher runs
+#   * after a PARSE   → no prop_ids exist     → THIS search enricher runs
+#
+# Triggers:
+#   1. Manual (workflow_dispatch) — apply / force, dry-run by default.
+#   2. Automatic (workflow_run) — fires when "Parse uploaded
+#      foreclosure PDFs" finishes successfully. Runs apply with force
+#      OFF, so only records still missing a prop_id are searched
+#      (idempotent — already-enriched records skip).
+#
+# Pages is served from a GitHub Actions deployment, so committing
+# alone won't update the live dashboard — this workflow deploys Pages
+# itself after an apply/auto run.
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Write foreclosures.json (false = dry-run, log only)"
+        type: boolean
+        default: false
+      force:
+        description: "Re-search records that already have a prop_id"
+        type: boolean
+        default: false
+  workflow_run:
+    workflows: ["Parse uploaded foreclosure PDFs"]
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Shares the NCAD-cache write group with the account enricher so the
+# two never write foreclosures.json concurrently.
+concurrency:
+  group: "ncad-cache-write"
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Only proceed on a manual run, or an auto-run whose upstream parse
+    # actually succeeded (don't enrich off a failed parse).
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pull latest (catch checkout race)
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      - name: Install Playwright + Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run FC NCAD search enricher
+        env:
+          # Auto-run (workflow_run) always applies; manual run honors the
+          # checkbox. Force only ever set via the manual checkbox.
+          ENRICH_FC_SEARCH_APPLY: ${{ (github.event_name == 'workflow_run' || inputs.apply) && '1' || '0' }}
+          ENRICH_FC_SEARCH_FORCE: ${{ inputs.force && '1' || '0' }}
+          FETCH_MAIL_ADDRESS: "1"
+        run: python scraper/enrich_fc_ncad_search.py
+
+      - name: Commit results
+        if: ${{ github.event_name == 'workflow_run' || inputs.apply }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dashboard/foreclosures.json data/foreclosures.json data/enrich_fc_search_log.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "FC: NCAD search-enrichment pass (${{ github.event_name }})"
+            git push
+          fi
+
+      - name: Upload dashboard artifact for Pages deploy
+        if: ${{ github.event_name == 'workflow_run' || inputs.apply }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+      - name: Upload enrichment log (always, for dry-run review)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: enrich-fc-search-log
+          path: data/enrich_fc_search_log.json
+          if-no-files-found: ignore
+
+  deploy:
+    needs: enrich
+    if: ${{ needs.enrich.result == 'success' && (github.event_name == 'workflow_run' || inputs.apply) }}
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
