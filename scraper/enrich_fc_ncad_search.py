@@ -245,6 +245,29 @@ def _parse_street_address(street: str
     if first and first not in candidates and first.lower() not in SKIP_TOKENS:
         candidates.append(first)
 
+    # Extra candidates: street-word abbreviation variants. NCAD often
+    # indexes a name with the abbreviated form even when the filing
+    # spells it out (or vice versa). The clearest case: "SAINT ANDREWS
+    # DR" is filed spelled out, but NCAD lists it as "ST ANDREWS"
+    # (doc 2026000265). We generate both directions for a small set of
+    # well-known street-word abbreviations and append any new forms so
+    # they're tried after the literal candidates. Whole-token swaps
+    # only — never substring — so "SAINTLY" or "MOUNTAINVIEW" are safe.
+    _abbrev_pairs = [
+        ("SAINT", "ST"), ("MOUNT", "MT"), ("FORT", "FT"),
+        ("POINT", "PT"),
+    ]
+    extra: List[str] = []
+    for cand in list(candidates):
+        ctoks = cand.split()
+        for long_form, short_form in _abbrev_pairs:
+            for a, b in ((long_form, short_form), (short_form, long_form)):
+                if a in ctoks:
+                    swapped = " ".join(b if t == a else t for t in ctoks)
+                    if swapped not in candidates and swapped not in extra:
+                        extra.append(swapped)
+    candidates.extend(extra)
+
     return st_num, candidates
 
 
