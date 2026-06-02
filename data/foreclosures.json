@@ -34,7 +34,9 @@
       "days_until_sale": 0,
       "loan_doc": "2000042822",
       "lender": "Leeward Isles Condominium Council of Co-Owners",
-      "pdf_parsed_at": "2026-05-20T21:05:21.700053+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.700053+00:00",
+      "prop_lat": 27.60712,
+      "prop_lng": -97.210667
     },
     {
       "doc_num": "2026000294",
@@ -62,7 +64,9 @@
       "deed_date": "1984-10-03",
       "loan_doc": "401253",
       "lender": "Sand Dollar Il Studio Condominium Council of Co-Owners, Inc",
-      "pdf_parsed_at": "2026-05-20T21:05:21.694811+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.694811+00:00",
+      "prop_lat": 27.60923,
+      "prop_lng": -97.20974
     },
     {
       "doc_num": "2026000293",
@@ -93,7 +97,9 @@
       "legal_lot": "11",
       "legal_block": "11",
       "legal_subdivision": "CAROLYN HEIGHTS",
-      "pdf_parsed_at": "2026-05-20T21:05:21.691802+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.691802+00:00",
+      "prop_lat": 27.71282,
+      "prop_lng": -97.410788
     },
     {
       "doc_num": "2026000292",
@@ -122,7 +128,9 @@
       "loan_doc": "2010019496",
       "lender": "WILMINGTON SAVINGS FUND SOCIETY, FSB, AS INDENTURE TRUSTEE WITH RESPECT TO CIM TRUST 2023-R 1",
       "legal_subdivision": "SHARPSBURG",
-      "pdf_parsed_at": "2026-05-20T21:05:21.689052+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.689052+00:00",
+      "prop_lat": 27.719131,
+      "prop_lng": -97.413095
     },
     {
       "doc_num": "2026000286",
@@ -153,7 +161,9 @@
       "legal_lot": "33",
       "legal_block": "9",
       "legal_subdivision": "CARIBBEAN PLACE",
-      "pdf_parsed_at": "2026-05-20T21:05:21.663582+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.663582+00:00",
+      "prop_lat": 27.631834,
+      "prop_lng": -97.302477
     },
     {
       "doc_num": "2026000276",
@@ -184,7 +194,9 @@
       "legal_lot": "7",
       "legal_block": "1",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
-      "pdf_parsed_at": "2026-05-20T21:05:21.631646+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.631646+00:00",
+      "prop_lat": 27.696075,
+      "prop_lng": -97.406547
     },
     {
       "doc_num": "2026000279",
@@ -215,7 +227,9 @@
       "legal_lot": "28",
       "legal_block": "1",
       "legal_subdivision": "WOOLDRIDGE CREEK",
-      "pdf_parsed_at": "2026-05-20T21:05:21.640844+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.640844+00:00",
+      "prop_lat": 27.686006,
+      "prop_lng": -97.370562
     },
     {
       "doc_num": "2026000284",
@@ -246,7 +260,9 @@
       "legal_lot": "13",
       "legal_block": "32",
       "legal_subdivision": "CULLEN PLACE",
-      "pdf_parsed_at": "2026-05-20T21:05:21.656210+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.656210+00:00",
+      "prop_lat": 27.720644,
+      "prop_lng": -97.354289
     },
     {
       "doc_num": "2026000285",
@@ -274,7 +290,9 @@
       "deed_date": "2024-11-21",
       "loan_doc": "2024040376",
       "lender": "Simmons Bank",
-      "pdf_parsed_at": "2026-05-20T21:05:21.660543+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.660543+00:00",
+      "prop_lat": 27.717306,
+      "prop_lng": -97.427493
     },
     {
       "doc_num": "2026000271",
@@ -305,7 +323,9 @@
       "legal_lot": "3",
       "legal_block": "7",
       "legal_subdivision": "CASA LINDA ESTATES",
-      "pdf_parsed_at": "2026-05-20T21:05:21.613123+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.613123+00:00",
+      "prop_lat": 27.748973,
+      "prop_lng": -97.39956
     },
     {
       "doc_num": "2026000270",
@@ -334,7 +354,9 @@
       "legal_lot": "2",
       "legal_block": "22",
       "legal_subdivision": "PHARAOH VALLEY NORTH",
-      "pdf_parsed_at": "2026-05-20T21:05:21.610050+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.610050+00:00",
+      "prop_lat": 27.707479,
+      "prop_lng": -97.345258
     },
     {
       "doc_num": "2026000287",
@@ -427,7 +449,9 @@
       "legal_lot": "5",
       "legal_block": "6",
       "legal_subdivision": "CLUB ESTATES",
-      "pdf_parsed_at": "2026-05-20T21:05:21.625571+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.625571+00:00",
+      "prop_lat": 27.682007,
+      "prop_lng": -97.399777
     },
     {
       "doc_num": "2026000288",
@@ -461,7 +485,9 @@
       "legal_lot": "28",
       "legal_block": "1",
       "legal_subdivision": "WOOLDRIDGE CREEK",
-      "pdf_parsed_at": "2026-05-20T21:05:21.670010+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.670010+00:00",
+      "prop_lat": 27.686006,
+      "prop_lng": -97.370562
     },
     {
       "doc_num": "2026000273",
@@ -894,7 +920,7 @@
       "days_until_sale": 0,
       "deed_date": "1974-05-10",
       "loan_doc": "944313",
-      "lender": "Anchor Resort Co-Owner\u2019s Association, Inc",
+      "lender": "Anchor Resort Co-Owner’s Association, Inc",
       "pdf_parsed_at": "2026-05-20T21:05:21.594773+00:00",
       "ncad_account_num": "7060-0040-0134",
       "prop_lat": 27.631107,
@@ -2722,7 +2748,9 @@
       "legal_lot": "19",
       "legal_block": "16",
       "legal_subdivision": "Arcadi",
-      "pdf_parsed_at": "2026-06-01T23:47:44.485736+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:44.485736+00:00",
+      "prop_lat": 27.757457,
+      "prop_lng": -97.407456
     },
     {
       "doc_num": "2026000326",
@@ -2782,7 +2810,9 @@
       "legal_lot": "20",
       "legal_block": "2",
       "legal_subdivision": "CALLICOATTE ESTATES",
-      "pdf_parsed_at": "2026-06-01T23:04:16.365797+00:00"
+      "pdf_parsed_at": "2026-06-01T23:04:16.365797+00:00",
+      "prop_lat": 27.847163,
+      "prop_lng": -97.607463
     },
     {
       "doc_num": "2026000318",
@@ -2813,7 +2843,9 @@
       "legal_lot": "14",
       "legal_block": "7",
       "legal_subdivision": "ARCADIA OF PROPERTY",
-      "pdf_parsed_at": "2026-06-01T23:47:23.600892+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:23.600892+00:00",
+      "prop_lat": 27.762399,
+      "prop_lng": -97.405572
     },
     {
       "doc_num": "2026000325",
@@ -2844,7 +2876,9 @@
       "legal_lot": "6",
       "legal_block": "1",
       "legal_subdivision": "SANDPIPER ESTATES",
-      "pdf_parsed_at": "2026-06-01T23:03:53.647820+00:00"
+      "pdf_parsed_at": "2026-06-01T23:03:53.647820+00:00",
+      "prop_lat": 27.823802,
+      "prop_lng": -97.066444
     },
     {
       "doc_num": "2026000320",
@@ -2876,7 +2910,9 @@
       "legal_lot": "2",
       "legal_block": "1",
       "legal_subdivision": "COLLIER",
-      "pdf_parsed_at": "2026-06-01T23:47:30.748119+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:30.748119+00:00",
+      "prop_lat": 27.737253,
+      "prop_lng": -97.393505
     },
     {
       "doc_num": "2026000322",
@@ -2907,7 +2943,9 @@
       "legal_lot": "2",
       "legal_block": "8",
       "legal_subdivision": "GREEN ACRES VILLAGE NO 2",
-      "pdf_parsed_at": "2026-06-01T23:03:59.297651+00:00"
+      "pdf_parsed_at": "2026-06-01T23:03:59.297651+00:00",
+      "prop_lat": 27.714753,
+      "prop_lng": -97.366111
     },
     {
       "doc_num": "2026000324",
@@ -2937,7 +2975,9 @@
       "legal_lot": "24",
       "legal_block": "6",
       "legal_subdivision": "LINCOLN TERRACE",
-      "pdf_parsed_at": "2026-06-01T23:47:13.904720+00:00"
+      "pdf_parsed_at": "2026-06-01T23:47:13.904720+00:00",
+      "prop_lat": 27.724231,
+      "prop_lng": -97.391429
     },
     {
       "doc_num": "2026000315",
@@ -2968,7 +3008,9 @@
       "legal_lot": "2",
       "legal_block": "3",
       "legal_subdivision": "Washington",
-      "pdf_parsed_at": "2026-06-01T23:03:34.883142+00:00"
+      "pdf_parsed_at": "2026-06-01T23:03:34.883142+00:00",
+      "prop_lat": 27.749569,
+      "prop_lng": -97.447529
     },
     {
       "doc_num": "2026000316",
@@ -3123,7 +3165,9 @@
       "legal_lot": "1",
       "legal_block": "19",
       "legal_subdivision": "THE LAKES",
-      "pdf_parsed_at": "2026-05-24T16:04:14.332276+00:00"
+      "pdf_parsed_at": "2026-05-24T16:04:14.332276+00:00",
+      "prop_lat": 27.678807,
+      "prop_lng": -97.413367
     },
     {
       "doc_num": "2026000301",
@@ -3184,7 +3228,9 @@
       "legal_lot": "1",
       "legal_block": "1",
       "legal_subdivision": "MELDO PARK",
-      "pdf_parsed_at": "2026-05-24T16:03:33.110625+00:00"
+      "pdf_parsed_at": "2026-05-24T16:03:33.110625+00:00",
+      "prop_lat": 27.746399,
+      "prop_lng": -97.381705
     },
     {
       "doc_num": "2026000308",
@@ -3246,7 +3292,9 @@
       "legal_lot": "14",
       "legal_block": "3",
       "legal_subdivision": "BERVONNE TERRACE",
-      "pdf_parsed_at": "2026-05-24T16:03:18.812662+00:00"
+      "pdf_parsed_at": "2026-05-24T16:03:18.812662+00:00",
+      "prop_lat": 27.837383,
+      "prop_lng": -97.57726
     },
     {
       "doc_num": "2026000300",
@@ -3277,7 +3325,9 @@
       "legal_lot": "6",
       "legal_block": "1",
       "legal_subdivision": "SARATOGA DOWNS UNIT 1A",
-      "pdf_parsed_at": "2026-05-24T16:03:52.283475+00:00"
+      "pdf_parsed_at": "2026-05-24T16:03:52.283475+00:00",
+      "prop_lat": 27.724716,
+      "prop_lng": -97.451149
     },
     {
       "doc_num": "2026000303",
@@ -3306,7 +3356,9 @@
       "legal_lot": "13",
       "legal_block": "1",
       "legal_subdivision": "GUTH PARKSIDE",
-      "pdf_parsed_at": "2026-05-24T16:03:58.276444+00:00"
+      "pdf_parsed_at": "2026-05-24T16:03:58.276444+00:00",
+      "prop_lat": 27.831488,
+      "prop_lng": -97.549697
     },
     {
       "doc_num": "2026000309",
@@ -3337,7 +3389,9 @@
       "legal_lot": "9",
       "legal_block": "5",
       "legal_subdivision": "W.B RAY HEIGHTS",
-      "pdf_parsed_at": "2026-05-24T16:03:22.345874+00:00"
+      "pdf_parsed_at": "2026-05-24T16:03:22.345874+00:00",
+      "prop_lat": 27.745599,
+      "prop_lng": -97.394683
     },
     {
       "doc_num": "2026000310",
@@ -3366,7 +3420,9 @@
       "legal_lot": "8",
       "legal_block": "10",
       "legal_subdivision": "WILLOWOOD",
-      "pdf_parsed_at": "2026-05-24T16:03:27.253702+00:00"
+      "pdf_parsed_at": "2026-05-24T16:03:27.253702+00:00",
+      "prop_lat": 27.841609,
+      "prop_lng": -97.599475
     },
     {
       "doc_num": "2026000299",
@@ -3442,7 +3498,9 @@
       "status": "pre-foreclosure",
       "days_until_sale": 35,
       "loan_doc": "414459",
-      "pdf_parsed_at": "2026-05-20T21:05:21.713644+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.713644+00:00",
+      "prop_lat": 27.700616,
+      "prop_lng": -97.380478
     },
     {
       "doc_num": "2026000296",
@@ -3473,7 +3531,9 @@
       "legal_lot": "9",
       "legal_block": "1",
       "legal_subdivision": "GRANGE PARK",
-      "pdf_parsed_at": "2026-05-20T21:05:21.707921+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.707921+00:00",
+      "prop_lat": 27.653521,
+      "prop_lng": -97.354431
     },
     {
       "doc_num": "2026000268",
@@ -3504,7 +3564,9 @@
       "legal_lot": "9",
       "legal_block": "4",
       "legal_subdivision": "ARCADIA",
-      "pdf_parsed_at": "2026-05-20T21:05:21.603989+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.603989+00:00",
+      "prop_lat": 27.760441,
+      "prop_lng": -97.403814
     },
     {
       "doc_num": "2026000265",
@@ -4176,7 +4238,9 @@
       "legal_lot": "18",
       "legal_block": "4",
       "legal_subdivision": "LEXINGTON PARK",
-      "pdf_parsed_at": "2026-06-01T23:03:48.650890+00:00"
+      "pdf_parsed_at": "2026-06-01T23:03:48.650890+00:00",
+      "prop_lat": 27.692219,
+      "prop_lng": -97.35119
     },
     {
       "doc_num": "2026000321",
@@ -4207,7 +4271,9 @@
       "legal_lot": "20",
       "legal_block": "3",
       "legal_subdivision": "TRUE",
-      "pdf_parsed_at": "2026-06-01T23:04:10.813994+00:00"
+      "pdf_parsed_at": "2026-06-01T23:04:10.813994+00:00",
+      "prop_lat": 27.579663,
+      "prop_lng": -97.797487
     },
     {
       "doc_num": "2026000317",
@@ -4241,7 +4307,9 @@
       "legal_lot": "24",
       "legal_block": "10",
       "legal_subdivision": "CENTRAL PARK",
-      "pdf_parsed_at": "2026-06-01T23:03:42.497259+00:00"
+      "pdf_parsed_at": "2026-06-01T23:03:42.497259+00:00",
+      "prop_lat": 27.730004,
+      "prop_lng": -97.403848
     },
     {
       "doc_num": "2026000306",
@@ -4272,7 +4340,9 @@
       "legal_lot": "1",
       "legal_block": "3",
       "legal_subdivision": "OVERLAND MEADOWS",
-      "pdf_parsed_at": "2026-05-24T16:04:09.627055+00:00"
+      "pdf_parsed_at": "2026-05-24T16:04:09.627055+00:00",
+      "prop_lat": 27.833695,
+      "prop_lng": -97.571989
     },
     {
       "doc_num": "2026000307",
@@ -4302,7 +4372,9 @@
       "legal_lot": "3",
       "legal_block": "3",
       "legal_subdivision": "Edgewood Park",
-      "pdf_parsed_at": "2026-05-24T16:03:47.957036+00:00"
+      "pdf_parsed_at": "2026-05-24T16:03:47.957036+00:00",
+      "prop_lat": 27.745165,
+      "prop_lng": -97.413145
     },
     {
       "doc_num": "2026000305",
