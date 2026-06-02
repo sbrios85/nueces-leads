@@ -854,6 +854,42 @@ async def _esearch_detail_for_mail(page,
     return _split_us_address(mail_full)
 
 
+# Known cities for the Coastal Bend / common absentee-owner metros.
+# Used to peel a city name off the END of a street line when NCAD
+# renders the mailing block as "STREET CITY\nTX ZIP" (city stuck on
+# the street line, line 2 holding only state+zip). Longest names are
+# matched first so "CORPUS CHRISTI" wins over a stray "CHRISTI".
+# Sorted at module load. Add metros here as absentee owners turn up.
+_KNOWN_CITIES = [
+    "CORPUS CHRISTI", "ARANSAS PASS", "PORT ARANSAS", "NORTH PADRE ISLAND",
+    "PADRE ISLAND", "FLOUR BLUFF", "ROBSTOWN", "PORTLAND", "INGLESIDE",
+    "GREGORY", "TAFT", "SINTON", "MATHIS", "ODEM", "BISHOP", "DRISCOLL",
+    "AGUA DULCE", "BANQUETE", "CHAPMAN RANCH", "PETRONILA",
+    "SAN ANTONIO", "AUSTIN", "HOUSTON", "DALLAS", "FORT WORTH",
+    "SAN DIEGO", "ALICE", "KINGSVILLE", "BEEVILLE", "ROCKPORT",
+    "GEORGE WEST", "MCALLEN", "LAREDO", "VICTORIA", "EL PASO",
+]
+_KNOWN_CITIES_SORTED = sorted(_KNOWN_CITIES, key=len, reverse=True)
+
+
+def _peel_city_from_street(street: str):
+    """If a known city name sits at the end of the street string,
+    split it off. Returns (street_without_city, city) or (street, "")
+    when no known city is found. Whole-word suffix match only, so
+    "PADRE ISLAND DR" won't be mistaken for the city "PADRE ISLAND"
+    (the street has trailing tokens after the city name only when the
+    city really is the tail — we anchor to the END of the string)."""
+    if not street:
+        return street, ""
+    up = street.upper()
+    for city in _KNOWN_CITIES_SORTED:
+        # Match the city as a whole-word suffix at the end of the line.
+        if up.endswith(" " + city) or up == city:
+            cut = len(street) - len(city)
+            return street[:cut].strip(), street[cut:].strip()
+    return street, ""
+
+
 def _split_us_address(full: str) -> Dict[str, str]:
     """Split a US-style address string into components.
 
@@ -965,6 +1001,18 @@ def _split_us_address(full: str) -> Dict[str, str]:
                 if m:
                     state = m.group(1)
                     zipc = m.group(2)
+
+    # If we still have no city but DO have a street, the city was
+    # likely stranded at the end of the street line (NCAD rendered the
+    # block as "STREET CITY\nTX ZIP", with line 2 holding only the
+    # state+zip). Peel a known city name off the street's tail.
+    # Verified against docs 295/294/293 (Corpus Christi jammed onto
+    # "15010 Leeward Dr Apt 803 Corpus Christi" with line 2 "TX 78418").
+    if not city and street:
+        street2, peeled = _peel_city_from_street(street)
+        if peeled:
+            street = street2
+            city = peeled
 
     # Strip ZIP+4 down to 5-digit ZIP for consistency. ZIP+4 is
     # rarely useful for lead-generation work and creates display
