@@ -954,6 +954,19 @@
   /* Custom per-type cluster bubble: strip default markercluster bg. */
   .lead-cluster { background: transparent; }
   .lead-cluster div { box-sizing: border-box; }
+  /* ===== Verified manual-review column (FC only) ===== */
+  .verify-cell { text-align: center; }
+  .verify-wrap {
+    display: inline-flex; align-items: center; gap: 5px;
+    cursor: pointer; user-select: none;
+  }
+  .verify-box {
+    width: 16px; height: 16px; cursor: pointer; accent-color: #1D9E75;
+    flex-shrink: 0; margin: 0;
+  }
+  .verify-date {
+    font-size: 11px; color: #1D9E75; font-weight: 500; white-space: nowrap;
+  }
 
   /* ===== Full-screen CRM view ===== */
   #crm-view { padding: 0; }
@@ -2473,6 +2486,7 @@
   <table id="fc-table">
     <thead><tr>
       <th style="width: 40px;" title="Save manual edits"></th>
+      <th style="width: 84px;" title="Mark a lead as manually reviewed/verified. Saved on this device only.">Verified</th>
       <th data-sort="status"         style="width: 58px;">Status</th>
       <th data-sort="sale_date"      style="width: 130px;">Sale Date</th>
       <th data-sort="recorded"       style="width: 80px;">Recorded</th>
@@ -3388,6 +3402,70 @@ function setFcOverride(docNum, patch) {
   o[docNum] = Object.assign({}, o[docNum], patch,
     {_updated_at: new Date().toISOString()});
   saveFcOverrides(o);
+}
+
+// ---- Verified manual-review tracker (FC only, local-only) ----
+// A lightweight progress tracker for working through foreclosure leads
+// while training the parser. Kept in its OWN localStorage store so it's
+// independent of the CRM/override data and can be cleared in one shot
+// when no longer needed. Shape: { [doc_num]: "YYYY-MM-DD" } — presence
+// of a date = verified; absence = not verified. Per-device, like the
+// other browser-stored data.
+const FC_VERIFIED_KEY = "fc-verified-store";
+function loadFcVerified() {
+  try { return JSON.parse(localStorage.getItem(FC_VERIFIED_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+// Returns the ISO date the record was verified, or "" if not verified.
+function getFcVerified(docNum) {
+  const v = loadFcVerified();
+  return (docNum && v[docNum]) ? v[docNum] : "";
+}
+// Toggle handler wired to the row checkbox. Checking stores today's
+// local date; unchecking removes the entry. Updates the inline date
+// label in place so no full re-render is needed.
+function fcToggleVerified(cb) {
+  const docNum = cb.getAttribute("data-doc");
+  if (!docNum) return;
+  const v = loadFcVerified();
+  const wrap = cb.closest(".verify-wrap");
+  if (cb.checked) {
+    const d = new Date();
+    const iso = d.getFullYear() + "-" +
+      String(d.getMonth() + 1).padStart(2, "0") + "-" +
+      String(d.getDate()).padStart(2, "0");
+    v[docNum] = iso;
+    localStorage.setItem(FC_VERIFIED_KEY, JSON.stringify(v));
+    if (wrap) {
+      let lbl = wrap.querySelector(".verify-date");
+      if (!lbl) {
+        lbl = document.createElement("span");
+        lbl.className = "verify-date";
+        wrap.appendChild(lbl);
+      }
+      lbl.textContent = _verifiedShort(iso);
+      wrap.title = "Verified on " + iso + " — click to un-verify";
+    }
+  } else {
+    delete v[docNum];
+    localStorage.setItem(FC_VERIFIED_KEY, JSON.stringify(v));
+    if (wrap) {
+      const lbl = wrap.querySelector(".verify-date");
+      if (lbl) lbl.remove();
+      wrap.title = "Mark this lead as manually reviewed (saved on this device)";
+    }
+  }
+}
+// "2026-06-02" -> "Jun 2" for the compact inline label.
+function _verifiedShort(iso) {
+  const m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return String(iso || "");
+  const months = ["Jan","Feb","Mar","Apr","May","Jun",
+                  "Jul","Aug","Sep","Oct","Nov","Dec"];
+  const mo = parseInt(m[2], 10);
+  return (mo >= 1 && mo <= 12)
+    ? months[mo - 1] + " " + parseInt(m[3], 10)
+    : iso;
 }
 
 // ---- Manual per-field edits (owner, address, lender, etc.) ----
@@ -11937,12 +12015,34 @@ function buildFcRow(r, isDead) {
     return ctrl;
   };
 
+  // ---- Verified checkbox (manual-review tracker) ----
+  // Local-only progress tracker for working through the foreclosure
+  // leads while training the parser. State lives in its own
+  // localStorage store (fc-verified-store), separate from the CRM
+  // data, so it can be cleared independently once parsing is dialed
+  // in. Checking the box records today's date; unchecking clears it.
+  const _verifiedOn = getFcVerified(r.doc_num);   // ISO date string or ""
+  const _isVerified = !!_verifiedOn;
+  const verifyCellHtml = `
+    <label class="verify-wrap" title="${_isVerified
+        ? "Verified on " + esc(_verifiedOn) + " — click to un-verify"
+        : "Mark this lead as manually reviewed (saved on this device)"}">
+      <input type="checkbox" class="verify-box" ${_isVerified ? "checked" : ""}
+        data-doc="${esc(r.doc_num)}"
+        onclick="event.stopPropagation();"
+        onchange="fcToggleVerified(this);">
+      ${_isVerified
+        ? `<span class="verify-date">${esc(_verifiedShort(_verifiedOn))}</span>`
+        : ``}
+    </label>`;
+
   tr.innerHTML = `
     <td class="save-cell">
       <button class="save-btn" title="Save manual edits on this row"
         onclick="fcSaveRow(this); event.stopPropagation();">💾</button>
       <span class="save-ok" title="Saved">✓</span>
     </td>
+    <td class="verify-cell">${verifyCellHtml}</td>
     <td>${statusCell}</td>
     <td>${foreclosureDateCell}</td>
     <td>${esc(formatDate(r.recorded))}</td>
