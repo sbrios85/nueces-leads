@@ -1,12 +1,12 @@
 {
-  "ran_at": "2026-06-01T21:25:40+00:00",
+  "ran_at": "2026-06-02T11:41:21+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
-    "matched": 44,
+    "matched": 17,
     "no_account_on_page": 0,
-    "no_prop_id": 62,
-    "skipped_already": 29,
+    "no_prop_id": 38,
+    "skipped_already": 80,
     "total": 135
   },
   "entries": [
@@ -88,246 +88,18 @@
       "ncad_account_num": "9063-0001-0690"
     },
     {
-      "doc_num": "2026000288",
-      "prop_address": "2534 DOGTOOTH CT",
-      "result": "no-prop-id"
-    },
-    {
       "doc_num": "2026000274",
       "prop_address": "4914 CREEKBEND RD",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000273",
-      "prop_address": "7814 ELK DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000281",
-      "prop_address": "4302 VESTAL ST",
+      "doc_num": "2026000288",
+      "prop_address": "2534 DOGTOOTH CT",
       "result": "no-prop-id"
     },
     {
       "doc_num": "2026000277",
       "prop_address": "4910 ETMHURST LN",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000278",
-      "prop_address": "1041 BRAWNER PKWY",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000272",
-      "prop_address": "10533 HEIZER DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000275",
-      "prop_address": "2110 MEADOWVIEW DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000282",
-      "prop_address": "5730 FLYNN PKWY",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000290",
-      "prop_address": "10533 HEIZER DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000291",
-      "prop_address": "535 ROCKPORT CHANNEL",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000289",
-      "prop_address": "10533 HEIZER DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000280",
-      "prop_address": "430 TROY DR",
-      "ncad_prop_id": "274667",
-      "result": "matched",
-      "ncad_account_num": "5978-0003-0090"
-    },
-    {
-      "doc_num": "2026000283",
-      "prop_address": "4410 HAMLIN DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000267",
-      "prop_address": "14300 S PADRE ISLAND DR",
-      "ncad_prop_id": "289657",
-      "result": "matched",
-      "ncad_account_num": "7060-0040-0134"
-    },
-    {
-      "doc_num": "2026000266",
-      "prop_address": "1941 YALE",
-      "ncad_prop_id": "586156",
-      "result": "matched",
-      "ncad_account_num": "6479-0035-0040"
-    },
-    {
-      "doc_num": "2026000263",
-      "prop_address": "11626 TURKEY CREEK DR",
-      "ncad_prop_id": "200066716",
-      "result": "matched",
-      "ncad_account_num": "9838-0010-0150"
-    },
-    {
-      "doc_num": "2026000261",
-      "prop_address": "6305 SIR JACK ST",
-      "ncad_prop_id": "200112334",
-      "result": "matched",
-      "ncad_account_num": "3969-0002-0130"
-    },
-    {
-      "doc_num": "2026000260",
-      "prop_address": "3938 SURFSIDE BLVD",
-      "ncad_prop_id": "200049424",
-      "result": "matched",
-      "ncad_account_num": "9019-0030-3218"
-    },
-    {
-      "doc_num": "2026000259",
-      "prop_address": "4610 E GRANADO DR",
-      "ncad_prop_id": "547950",
-      "result": "matched",
-      "ncad_account_num": "2903-0001-0340"
-    },
-    {
-      "doc_num": "2026000258",
-      "prop_address": "838 ERWIN AVE",
-      "ncad_prop_id": "200072779",
-      "result": "matched",
-      "ncad_account_num": "9866-0002-0050"
-    },
-    {
-      "doc_num": "2026000252",
-      "prop_address": "7477 STAR HARBOR DR",
-      "ncad_prop_id": "381540",
-      "result": "matched",
-      "ncad_account_num": "5406-0005-0270"
-    },
-    {
-      "doc_num": "2026000254",
-      "prop_address": "5718 VENTURA LN",
-      "ncad_prop_id": "378598",
-      "result": "matched",
-      "ncad_account_num": "1245-0012-0100"
-    },
-    {
-      "doc_num": "2026000255",
-      "prop_address": "3690 REYNA ST",
-      "ncad_prop_id": "200032031",
-      "result": "matched",
-      "ncad_account_num": "8346-0000-0120"
-    },
-    {
-      "doc_num": "2026000249",
-      "prop_address": "5535 WARBONNET DR",
-      "ncad_prop_id": "246236",
-      "result": "matched",
-      "ncad_account_num": "3665-0001-0150"
-    },
-    {
-      "doc_num": "2026000248",
-      "prop_address": "450 CLERK KARA SOUNTE COURT",
-      "ncad_prop_id": "235024",
-      "result": "matched",
-      "ncad_account_num": "2540-0005-0180"
-    },
-    {
-      "doc_num": "2026000236",
-      "prop_address": "7705 JACINTO CIRCLE",
-      "ncad_prop_id": "200089546",
-      "result": "matched",
-      "ncad_account_num": "7149-0001-0320"
-    },
-    {
-      "doc_num": "2026000241",
-      "prop_address": "4222 COTTAGE STREET",
-      "ncad_prop_id": "217756",
-      "result": "matched",
-      "ncad_account_num": "1810-0002-0050"
-    },
-    {
-      "doc_num": "2026000234",
-      "prop_address": "3902 TARGARYEN WAY",
-      "ncad_prop_id": "597405",
-      "result": "matched",
-      "ncad_account_num": "1239-0004-0010"
-    },
-    {
-      "doc_num": "2026000243",
-      "prop_address": "621 CHAMBERLAIN ST",
-      "ncad_prop_id": "260479",
-      "result": "matched",
-      "ncad_account_num": "4473-0029-0220"
-    },
-    {
-      "doc_num": "2026000245",
-      "prop_address": "3225 ORLANDO DR",
-      "ncad_prop_id": "210587",
-      "result": "matched",
-      "ncad_account_num": "1436-0009-0150"
-    },
-    {
-      "doc_num": "2026000235",
-      "prop_address": "6910 FRUITWOOD DR",
-      "ncad_prop_id": "246587",
-      "result": "matched",
-      "ncad_account_num": "3698-0006-0080"
-    },
-    {
-      "doc_num": "2026000246",
-      "prop_address": "5977 CR 42",
-      "ncad_prop_id": "381208",
-      "result": "matched",
-      "ncad_account_num": "9672-0014-0065"
-    },
-    {
-      "doc_num": "2026000238",
-      "prop_address": "125 AVALON DR",
-      "ncad_prop_id": "200069858",
-      "result": "matched",
-      "ncad_account_num": "9974-0005-0121"
-    },
-    {
-      "doc_num": "2026000244",
-      "prop_address": "4954 JO AN ST",
-      "ncad_prop_id": "200025667",
-      "result": "matched",
-      "ncad_account_num": "8187-0007-0020"
-    },
-    {
-      "doc_num": "2026000237",
-      "prop_address": "3157 VICKSBURG",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000240",
-      "prop_address": "4217 MICHELLE LN",
-      "ncad_prop_id": "550531",
-      "result": "matched",
-      "ncad_account_num": "1878-0002-0070"
-    },
-    {
-      "doc_num": "2026000232",
-      "prop_address": "7706 ARSHAN LANE",
-      "ncad_prop_id": "535283",
-      "result": "matched",
-      "ncad_account_num": "3947-0002-0050"
-    },
-    {
-      "doc_num": "2026000204",
-      "prop_address": "1717 ROBIN DR",
       "result": "no-prop-id"
     },
     {
@@ -337,8 +109,10 @@
     },
     {
       "doc_num": "2026000327",
-      "prop_address": "",
-      "result": "no-prop-id"
+      "prop_address": "1333 LOGAN AVENUE",
+      "ncad_prop_id": "184953",
+      "result": "matched",
+      "ncad_account_num": "0232-0016-0190"
     },
     {
       "doc_num": "2026000326",
@@ -347,37 +121,47 @@
     },
     {
       "doc_num": "2026000323",
-      "prop_address": "",
+      "prop_address": "3909 SHIVA DRIVE",
       "result": "no-prop-id"
     },
     {
       "doc_num": "2026000318",
-      "prop_address": "",
-      "result": "no-prop-id"
+      "prop_address": "1153 YORK AVE",
+      "ncad_prop_id": "184763",
+      "result": "matched",
+      "ncad_account_num": "0232-0007-0140"
     },
     {
       "doc_num": "2026000325",
-      "prop_address": "",
-      "result": "no-prop-id"
+      "prop_address": "1030 SEA SECRET ST",
+      "ncad_prop_id": "297231",
+      "result": "matched",
+      "ncad_account_num": "7656-0001-0060"
     },
     {
       "doc_num": "2026000320",
-      "prop_address": "",
-      "result": "no-prop-id"
+      "prop_address": "4234 DAKIN PLACE",
+      "ncad_prop_id": "214528",
+      "result": "matched",
+      "ncad_account_num": "1685-0001-0020"
     },
     {
       "doc_num": "2026000322",
-      "prop_address": "",
-      "result": "no-prop-id"
+      "prop_address": "1037 SALEM DR",
+      "ncad_prop_id": "238991",
+      "result": "matched",
+      "ncad_account_num": "2938-0008-0020"
     },
     {
       "doc_num": "2026000324",
-      "prop_address": "",
-      "result": "no-prop-id"
+      "prop_address": "4801 EDITH ST",
+      "ncad_prop_id": "259709",
+      "result": "matched",
+      "ncad_account_num": "4465-0006-0240"
     },
     {
       "doc_num": "2026000315",
-      "prop_address": "",
+      "prop_address": "817 W. POINT ROAD",
       "result": "no-prop-id"
     },
     {
@@ -397,7 +181,7 @@
     },
     {
       "doc_num": "2026000312",
-      "prop_address": "",
+      "prop_address": "121 MERISOL DR",
       "result": "no-prop-id"
     },
     {
@@ -438,23 +222,17 @@
     {
       "doc_num": "2026000300",
       "prop_address": "6201 HARTACK CIR",
-      "ncad_prop_id": "298073",
-      "result": "matched",
-      "ncad_account_num": "7717-0001-0060"
+      "result": "no-prop-id"
     },
     {
       "doc_num": "2026000303",
       "prop_address": "9461 MORROW DR",
-      "ncad_prop_id": "240787",
-      "result": "matched",
-      "ncad_account_num": "3119-0001-0130"
+      "result": "no-prop-id"
     },
     {
       "doc_num": "2026000309",
       "prop_address": "1233 RAY DR",
-      "ncad_prop_id": "290431",
-      "result": "matched",
-      "ncad_account_num": "7122-0005-0090"
+      "result": "no-prop-id"
     },
     {
       "doc_num": "2026000310",
@@ -474,98 +252,21 @@
     {
       "doc_num": "2026000297",
       "prop_address": "5306 HOLLY ROAD",
-      "ncad_prop_id": "200031953",
-      "result": "matched",
-      "ncad_account_num": "8344-0000-0305"
+      "result": "no-prop-id"
     },
     {
       "doc_num": "2026000296",
       "prop_address": "3833 WOODHOUSE LN",
-      "ncad_prop_id": "541041",
-      "result": "matched",
-      "ncad_account_num": "2905-0001-0090"
+      "result": "no-prop-id"
     },
     {
       "doc_num": "2026000268",
       "prop_address": "1153 FLORIDA AVE",
-      "ncad_prop_id": "184686",
-      "result": "matched",
-      "ncad_account_num": "0232-0004-0090"
-    },
-    {
-      "doc_num": "2026000265",
-      "prop_address": "6345 SAINT ANDREWS DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000262",
-      "prop_address": "3717 WOODSTONE DRIVE",
-      "ncad_prop_id": "200013844",
-      "result": "matched",
-      "ncad_account_num": "7790-0009-0090"
-    },
-    {
-      "doc_num": "2026000264",
-      "prop_address": "211 W OAKES AVE",
-      "ncad_prop_id": "293036",
-      "result": "matched",
-      "ncad_account_num": "7410-0002-0071"
-    },
-    {
-      "doc_num": "2026000257",
-      "prop_address": "1305 TATES CREEK RD",
-      "ncad_prop_id": "523036",
-      "result": "matched",
-      "ncad_account_num": "0768-0001-0070"
-    },
-    {
-      "doc_num": "2026000251",
-      "prop_address": "1734 HUDSON",
       "result": "no-prop-id"
     },
     {
       "doc_num": "2026000256",
       "prop_address": "4114 NICKLAUS LANE",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000250",
-      "prop_address": "5013 ROMFORD DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000253",
-      "prop_address": "349 GLENOAK DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000242",
-      "prop_address": "6526 HIGH ARCH CT",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000247",
-      "prop_address": "361 BARTLETT DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000233",
-      "prop_address": "10321 HILL COUNTRY LN",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000239",
-      "prop_address": "4326 CHERRY ST",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000227",
-      "prop_address": "1229 THAMES CHASE DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000228",
-      "prop_address": "3909 SHIVA DRIVE",
       "result": "no-prop-id"
     },
     {
@@ -584,28 +285,23 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000178",
-      "prop_address": "9609 SEDALIA TRAIL",
-      "result": "no-prop-id"
-    },
-    {
       "doc_num": "2026000328",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
       "doc_num": "2026000319",
-      "prop_address": "",
+      "prop_address": "1809 BRAZOS DRIVE",
       "result": "no-prop-id"
     },
     {
       "doc_num": "2026000321",
-      "prop_address": "",
+      "prop_address": "413 E HENDERSON ST",
       "result": "no-prop-id"
     },
     {
       "doc_num": "2026000317",
-      "prop_address": "",
+      "prop_address": "4817 MOKRY DR",
       "result": "no-prop-id"
     },
     {
@@ -621,11 +317,6 @@
     {
       "doc_num": "2026000305",
       "prop_address": "13250 WRANGLER ST",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000139",
-      "prop_address": "7530 BON SOIR DR",
       "result": "no-prop-id"
     }
   ]
