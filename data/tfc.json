@@ -25,9 +25,7 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331316",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260602",
-      "_source": "lgbs",
-      "prop_lat": 27.767174,
-      "prop_lng": -97.432158
+      "_source": "lgbs"
     },
     {
       "uid": "1007738835",
@@ -38,7 +36,7 @@
       "sale_date_only": "2026-06-02",
       "sale_nbr": 4,
       "sale_type": "SALE",
-      "status": "Scheduled for Online Auction",
+      "status": "Cancelled",
       "precinct": "",
       "prop_address": "4613 ANGELA DR, CORPUS CHRISTI TX 78416",
       "prop_address_street": "4613 ANGELA DR",
@@ -54,9 +52,7 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331317",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260602",
-      "_source": "lgbs",
-      "prop_lat": 27.751259,
-      "prop_lng": -97.446756
+      "_source": "lgbs"
     },
     {
       "uid": "1012482142",
@@ -67,7 +63,7 @@
       "sale_date_only": "2026-06-02",
       "sale_nbr": 5,
       "sale_type": "SALE",
-      "status": "Scheduled for Online Auction",
+      "status": "Cancelled",
       "precinct": "",
       "prop_address": "1521 EL PASO ST, CORPUS CHRISTI TX 78417-2816",
       "prop_address_street": "1521 EL PASO ST",
@@ -83,9 +79,7 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331318",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260602",
-      "_source": "lgbs",
-      "prop_lat": 27.729536,
-      "prop_lng": -97.451428
+      "_source": "lgbs"
     },
     {
       "uid": "1008177121",
@@ -96,7 +90,7 @@
       "sale_date_only": "2026-06-02",
       "sale_nbr": 6,
       "sale_type": "SALE",
-      "status": "Scheduled for Online Auction",
+      "status": "Cancelled",
       "precinct": "",
       "prop_address": "5694 COUNTY ROAD 73, ROBSTOWN TX 78380-5841",
       "prop_address_street": "5694 COUNTY ROAD 73",
@@ -112,9 +106,7 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331319",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260602",
-      "_source": "lgbs",
-      "prop_lat": 27.88865,
-      "prop_lng": -97.675141
+      "_source": "lgbs"
     },
     {
       "uid": "1009699521",
@@ -141,9 +133,7 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331321",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260602",
-      "_source": "lgbs",
-      "prop_lat": 27.786862,
-      "prop_lng": -97.670658
+      "_source": "lgbs"
     },
     {
       "uid": "1008394525",
@@ -170,9 +160,7 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331322",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260602",
-      "_source": "lgbs",
-      "prop_lat": 27.718654,
-      "prop_lng": -97.409128
+      "_source": "lgbs"
     },
     {
       "uid": "1008915366",
@@ -199,9 +187,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.752899,
-      "prop_lng": -97.444062
+      "_source": "lgbs"
     },
     {
       "uid": "1008960271",
@@ -228,9 +214,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.783352,
-      "prop_lng": -97.682125
+      "_source": "lgbs"
     },
     {
       "uid": "1008174360",
@@ -257,9 +241,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.784326,
-      "prop_lng": -97.426239
+      "_source": "lgbs"
     },
     {
       "uid": "1009330554",
@@ -313,9 +295,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.73964,
-      "prop_lng": -97.411255
+      "_source": "lgbs"
     },
     {
       "uid": "1007720525",
@@ -342,9 +322,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.744907,
-      "prop_lng": -97.41752
+      "_source": "lgbs"
     },
     {
       "uid": "1009613081",
@@ -371,9 +349,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.839619,
-      "prop_lng": -97.584629
+      "_source": "lgbs"
     },
     {
       "uid": "1008967561",
@@ -427,9 +403,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.639387,
-      "prop_lng": -97.337832
+      "_source": "lgbs"
     },
     {
       "uid": "1012928889",
@@ -456,9 +430,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.639504,
-      "prop_lng": -97.337758
+      "_source": "lgbs"
     },
     {
       "uid": "1015790033",
@@ -485,9 +457,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.627931,
-      "prop_lng": -97.228535
+      "_source": "lgbs"
     },
     {
       "uid": "1008187051",
@@ -514,9 +484,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.776618,
-      "prop_lng": -97.412728
+      "_source": "lgbs"
     },
     {
       "uid": "1009778654",
@@ -543,9 +511,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.69097,
-      "prop_lng": -97.403811
+      "_source": "lgbs"
     },
     {
       "uid": "1009679980",
@@ -572,9 +538,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.78682,
-      "prop_lng": -97.666209
+      "_source": "lgbs"
     },
     {
       "uid": "1009010113",
@@ -628,9 +592,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.789175,
-      "prop_lng": -97.679116
+      "_source": "lgbs"
     },
     {
       "uid": "1008191881",
@@ -657,9 +619,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.79312,
-      "prop_lng": -97.668917
+      "_source": "lgbs"
     },
     {
       "uid": "1013326563",
@@ -686,9 +646,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.751308,
-      "prop_lng": -97.443244
+      "_source": "lgbs"
     },
     {
       "uid": "1008227652",
@@ -715,9 +673,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.718373,
-      "prop_lng": -97.407134
+      "_source": "lgbs"
     },
     {
       "uid": "1008251510",
@@ -744,9 +700,7 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.751576,
-      "prop_lng": -97.424171
+      "_source": "lgbs"
     },
     {
       "uid": "1008122147",
@@ -773,13 +727,11 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs",
-      "prop_lat": 27.76428,
-      "prop_lng": -97.420998
+      "_source": "lgbs"
     }
   ],
   "total": 27,
-  "fetched_at": "2026-06-01T21:22:36+00:00",
+  "fetched_at": "2026-06-02T11:48:31+00:00",
   "source": "lgbs",
   "county": "NUECES COUNTY",
   "sale_types_filter": [
