@@ -916,6 +916,66 @@
   }
 
   .pane { display: none; padding: 4px 10px; }
+  /* ===== Today tab ===== */
+  .today-head { padding: 14px 4px 4px; }
+  .today-title { font-size: 22px; font-weight: 600; margin: 0; color: var(--fg); }
+  .today-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .today-section-label {
+    text-transform: uppercase; font-size: 11px; letter-spacing: .06em;
+    color: var(--muted); font-weight: 600; margin: 22px 4px 10px;
+  }
+  .today-actions { display: flex; flex-direction: column; gap: 10px; }
+  .today-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .today-card.clickable { cursor: pointer; transition: border-color .15s; }
+  .today-card.clickable:hover { border-color: var(--accent); }
+  .today-card .tc-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+  .today-card .tc-body { flex: 1; min-width: 0; }
+  .today-card .tc-title { font-weight: 600; color: var(--fg); font-size: 14px; }
+  .today-card .tc-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .today-card .tc-count {
+    font-size: 24px; font-weight: 700; flex-shrink: 0;
+    min-width: 42px; text-align: center;
+  }
+  .today-card.tc-alert { border-color: #b45309; }
+  .today-card.tc-alert .tc-count { color: #fbbf24; }
+  .today-card.tc-urgent { border-color: #b91c1c; }
+  .today-card.tc-urgent .tc-count { color: #f87171; }
+  .today-card.tc-ok .tc-count { color: #34d399; }
+  .today-card.tc-clear { opacity: .65; }
+  .today-card.tc-clear .tc-count { color: var(--muted); }
+  /* Pipeline + glance grids */
+  .today-pipeline, .today-glance {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .today-stat {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .today-stat.clickable { cursor: pointer; transition: border-color .15s; }
+  .today-stat.clickable:hover { border-color: var(--accent); }
+  .today-stat .ts-num { font-size: 26px; font-weight: 700; color: var(--fg); }
+  .today-stat .ts-label {
+    color: var(--muted); font-size: 12px; margin-top: 2px;
+    text-transform: uppercase; letter-spacing: .04em;
+  }
+  .today-stat .ts-sub { color: var(--muted); font-size: 11px; margin-top: 4px; }
+  /* Follow-up / sale-date detail lists inside a card */
+  .today-list { margin: 8px 4px 0; display: flex; flex-direction: column; gap: 6px; }
+  .today-list-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; cursor: pointer;
+    display: flex; justify-content: space-between; gap: 10px; font-size: 13px;
+    transition: border-color .15s;
+  }
+  .today-list-item:hover { border-color: var(--accent); }
+  .today-list-item .tli-name { color: var(--fg); font-weight: 500; }
+  .today-list-item .tli-meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .today-list-item .tli-overdue { color: #f87171; }
   .pane.active { display: block; }
   /* ===== Map view ===== */
   #pane-map.active { display: flex; flex-direction: column; height: 100%; }
@@ -2405,8 +2465,14 @@
 <div class="layout">
 <nav class="sidebar">
   <div class="sidebar-section">
+    <div class="sidebar-section-title">Daily</div>
+    <div class="nav-item active" data-pane="today">
+      <span>📋 Today</span>
+      <span class="tab-count" id="today-count">—</span></div>
+  </div>
+  <div class="sidebar-section">
     <div class="sidebar-section-title">Lead Types</div>
-    <div class="nav-item active" data-pane="foreclosures">
+    <div class="nav-item" data-pane="foreclosures">
       <span>Mortgage Foreclosures</span>
       <span class="tab-count" id="fc-count">—</span></div>
     <div class="nav-item" data-pane="taxforeclosures">
@@ -2481,7 +2547,26 @@
 </div>
 
 <!-- ======== FORECLOSURES PANE ======== -->
-<div class="pane active" id="pane-foreclosures">
+<div class="pane active" id="pane-today">
+  <div class="today-head">
+    <h2 class="today-title">Today</h2>
+    <div class="today-sub" id="today-datestr"></div>
+  </div>
+
+  <!-- Action items: things that need the user to DO something -->
+  <div class="today-section-label">Needs attention</div>
+  <div class="today-actions" id="today-actions"><!-- built by renderToday() --></div>
+
+  <!-- Pipeline stage counters -->
+  <div class="today-section-label">Pipeline</div>
+  <div class="today-pipeline" id="today-pipeline"><!-- built by renderToday() --></div>
+
+  <!-- At-a-glance metrics -->
+  <div class="today-section-label">At a glance</div>
+  <div class="today-glance" id="today-glance"><!-- built by renderToday() --></div>
+</div>
+
+<div class="pane" id="pane-foreclosures">
   <div class="stats" id="fc-stats"></div>
   <table id="fc-table">
     <thead><tr>
@@ -2755,8 +2840,10 @@
        - NCAD account num (appraisal district, same format as elsewhere)
        - NCTAX account num (tax office identifier, NEW field — first
          time we track tax-office IDs in this dashboard)
-     Status uses the same stage pipeline as MFC/TFC (New / Contacted /
+     Status uses the same stage pipeline as MFC/TFC (New / Working /
      Negotiating / Under Contract / Closed / Watching / Dead).
+     NOTE: stored stage key is still "contacted" — only the DISPLAY
+     label was renamed to "Working" (zero-risk, no data migration).
      CRM panel (contacts, attempts log, skiptrace) is deferred to a
      follow-up; this pane currently shows the read-only data table.
      Column order is intentional — mirrors how Sergio scans rows:
@@ -3244,7 +3331,7 @@
 const CRM_KEY = "nueces_ccln_crm_v1";
 const STATUSES = ["new","contacted","interested","negotiating","closed","dead"];
 const STATUS_LABELS = {
-  "new":"New","contacted":"Contacted","interested":"Interested",
+  "new":"New","contacted":"Working","interested":"Interested",
   "negotiating":"Negotiating","closed":"Closed","dead":"Dead"
 };
 
@@ -3715,7 +3802,7 @@ function moneyFmt(v) {
 // distinctive coloring.
 const MFC_STAGES = [
   { key: "new",            label: "New",            terminal: false },
-  { key: "contacted",      label: "Contacted",      terminal: false },
+  { key: "contacted",      label: "Working",        terminal: false },
   { key: "negotiating",    label: "Negotiating",    terminal: false },
   { key: "under_contract", label: "Under Contract", terminal: false },
   { key: "closed_won",     label: "Closed",         terminal: true, kind: "closed-won" },
@@ -5964,7 +6051,7 @@ function openMfcCrm(docNum, sourceRecords) {
 // faint vertical line in CSS).
 const TFC_STAGES = [
   { key: "new",            label: "New",            terminal: false },
-  { key: "contacted",      label: "Contacted",      terminal: false },
+  { key: "contacted",      label: "Working",        terminal: false },
   { key: "negotiating",    label: "Negotiating",    terminal: false },
   { key: "under_contract", label: "Under Contract", terminal: false },
   { key: "closed_won",     label: "Closed",         terminal: true, kind: "closed-won" },
@@ -5996,7 +6083,7 @@ const TFC_METHODS = [
 // delq-crm-store using these same stage keys.
 const DELQ_STAGES = [
   { key: "new",            label: "New",            terminal: false },
-  { key: "contacted",      label: "Contacted",      terminal: false },
+  { key: "contacted",      label: "Working",        terminal: false },
   { key: "negotiating",    label: "Negotiating",    terminal: false },
   { key: "under_contract", label: "Under Contract", terminal: false },
   { key: "closed_won",     label: "Closed",         terminal: true, kind: "closed-won" },
@@ -8069,6 +8156,9 @@ document.addEventListener("keydown", (e) => {
 // ============================================================
 let CCLN_RAW = [], CCLN_FILTERED = [];
 let FC_RAW = [], FC_FILTERED = [];
+// Most recent scrape window start (YYYY-MM-DD), from records.json's
+// date_range. Used by the Today tab's "new leads since last scrape".
+let FC_DATE_RANGE_START = "";
 // TFC = Tax Foreclosures (Linebarger Goggan Blair & Sampson source).
 // Loaded from tfc.json — see scraper/scrape_tfc.py for the data shape.
 let TFC_RAW = [];
@@ -8339,7 +8429,311 @@ function initLeadMap() {
   setTimeout(() => _leadMap.invalidateSize(), 50);
 }
 
+// ============================================================
+// Today tab — daily work dashboard (MFC + TFC scope for now;
+// CCLN/DELQ stack to be added once the code-violation list lands).
+// Re-rendered on every visit via _renderPaneIfNeeded.
+// ============================================================
+function _todayDateStr() {
+  const d = new Date();
+  return d.toLocaleDateString(undefined,
+    { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+}
+// Local YYYY-MM-DD for "today" (date inputs store this format).
+function _todayISO() {
+  const d = new Date();
+  return d.getFullYear() + "-" +
+    String(d.getMonth() + 1).padStart(2, "0") + "-" +
+    String(d.getDate()).padStart(2, "0");
+}
+// Is an FC/MFC record dead? Dead status lives in the FC CRM store
+// (nueces_fc_crm_v1), separate from the stage in the MFC CRM.
+function _todayFcIsDead(docNum) {
+  try { return getFcEntry(docNum).status === "dead"; }
+  catch (e) { return false; }
+}
+// Collect follow-ups due today or overdue from one CRM store.
+// `entries` = the store object (keyed by id); `rawById` maps id →
+// raw record for display; `kind` labels the source.
+function _todayCollectFollowups(entries, rawById, kind, deadFn) {
+  const today = _todayISO();
+  const out = [];
+  for (const id in entries) {
+    if (deadFn && deadFn(id)) continue;
+    const e = entries[id] || {};
+    const attempts = Array.isArray(e.attempts) ? e.attempts : [];
+    // Use the latest (max) follow-up date set on any attempt that is
+    // still <= today. One row per lead — the soonest due date.
+    let due = "";
+    for (const a of attempts) {
+      const f = (a && a.followup) ? String(a.followup) : "";
+      if (f && f <= today) { if (!due || f < due) due = f; }
+    }
+    if (due) {
+      const raw = rawById[id] || {};
+      out.push({
+        id, kind, due,
+        name: raw.owner || raw.prop_address || ("Lead " + id),
+        overdue: due < today,
+      });
+    }
+  }
+  return out;
+}
+// Build a map of raw records by their CRM key.
+function _todayIndexBy(arr, keyFn) {
+  const m = {};
+  if (Array.isArray(arr)) for (const r of arr) { const k = keyFn(r); if (k != null) m[k] = r; }
+  return m;
+}
+
+function renderToday() {
+  const dateEl = document.getElementById("today-datestr");
+  if (dateEl) dateEl.textContent = _todayDateStr();
+
+  // ---- Data sources ----
+  const fc = Array.isArray(FC_RAW) ? FC_RAW : [];
+  const tfc = (typeof TFC_RAW !== "undefined" && Array.isArray(TFC_RAW)) ? TFC_RAW : [];
+  const mfcCrm = (function () {
+    try { return JSON.parse(localStorage.getItem("nueces_mfc_crm_v1") || "{}"); }
+    catch (e) { return {}; }
+  })();
+  const tfcCrm = (function () {
+    try { return JSON.parse(localStorage.getItem(TFC_CRM_KEY) || "{}"); }
+    catch (e) { return {}; }
+  })();
+  const fcById = _todayIndexBy(fc, r => String(r.doc_num));
+  const tfcById = _todayIndexBy(tfc, r => String(r.uid));
+
+  // ===== 1. Follow-ups due today / overdue =====
+  const fups = [
+    ..._todayCollectFollowups(mfcCrm, fcById, "mfc", _todayFcIsDead),
+    ..._todayCollectFollowups(tfcCrm, tfcById, "tfc", null),
+  ].sort((a, b) => a.due.localeCompare(b.due));
+  const fupOverdue = fups.filter(f => f.overdue).length;
+
+  // ===== 2. Parsed-pending (FC records with doc_num but no owner) =====
+  // A filing exists but its PDF hasn't been parsed → owner is blank.
+  const pending = fc.filter(r =>
+    r.doc_num && !_todayFcIsDead(String(r.doc_num)) &&
+    !(r.owner && String(r.owner).trim()));
+
+  // ===== 3. No-NCAD-match leads (have an address but no prop_id) =====
+  const noNcad = fc.filter(r =>
+    !_todayFcIsDead(String(r.doc_num)) &&
+    (r.owner && String(r.owner).trim()) &&
+    (r.prop_address && String(r.prop_address).trim()) &&
+    !r.ncad_prop_id);
+
+  // ===== 4. Pipeline stage counters (MFC + TFC, excluding dead) =====
+  // Stage lives on the CRM entry; default "new" when no entry. Dead
+  // (FC store for MFC; stage "dead" for TFC) is excluded.
+  const stageCount = { new: 0, contacted: 0, negotiating: 0, under_contract: 0 };
+  function _tallyStage(rawArr, crm, keyFn, deadFn) {
+    for (const r of rawArr) {
+      const id = String(keyFn(r));
+      if (deadFn && deadFn(id)) continue;
+      const e = crm[id] || {};
+      const st = e.stage || "new";
+      if (st === "dead") continue;
+      if (st in stageCount) stageCount[st]++;
+    }
+  }
+  _tallyStage(fc, mfcCrm, r => r.doc_num, _todayFcIsDead);
+  _tallyStage(tfc, tfcCrm, r => r.uid, null);
+
+  // ===== 5. Verified review progress (FC) =====
+  let verifiedCount = 0;
+  try {
+    const v = JSON.parse(localStorage.getItem("fc-verified-store") || "{}");
+    verifiedCount = Object.keys(v).length;
+  } catch (e) {}
+  const fcLiveTotal = fc.filter(r => !_todayFcIsDead(String(r.doc_num))).length;
+
+  // ===== 6. New leads since last scrape (recorded within window) =====
+  // Uses the MFC data's date_range.start as the "this scrape" cutoff.
+  let newSince = 0, sinceLabel = "";
+  try {
+    if (typeof FC_DATE_RANGE_START !== "undefined" && FC_DATE_RANGE_START) {
+      const start = FC_DATE_RANGE_START;
+      sinceLabel = "since " + start;
+      newSince = fc.filter(r => r.recorded && String(r.recorded) >= start &&
+        !_todayFcIsDead(String(r.doc_num))).length;
+    }
+  } catch (e) {}
+
+  // ===== 7. Upcoming sale dates (next 14 days) =====
+  const todayISO = _todayISO();
+  const in14 = (function () {
+    const d = new Date(); d.setDate(d.getDate() + 14);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") +
+      "-" + String(d.getDate()).padStart(2, "0");
+  })();
+  const upcomingSales = fc.filter(r =>
+    r.sale_date && String(r.sale_date) >= todayISO &&
+    String(r.sale_date) <= in14 &&
+    !_todayFcIsDead(String(r.doc_num)))
+    .sort((a, b) => String(a.sale_date).localeCompare(String(b.sale_date)));
+
+  // ===== 8. CV import reminder (cadence-based) =====
+  // The dashboard can't see the city portal, so this is a manual
+  // cadence reminder: tracks the last time the user marked CV imported
+  // (localStorage 'today-cv-last-import'); nudges after CV_CADENCE_DAYS.
+  const CV_CADENCE_DAYS = 30;
+  let cvDaysSince = null, cvLast = "";
+  try { cvLast = localStorage.getItem("today-cv-last-import") || ""; } catch (e) {}
+  if (cvLast) {
+    const ms = Date.now() - new Date(cvLast).getTime();
+    cvDaysSince = Math.floor(ms / 86400000);
+  }
+
+  // ---------- Render: action cards ----------
+  const esc2 = (typeof esc === "function") ? esc : (s => String(s == null ? "" : s));
+  const actions = [];
+
+  // Follow-ups
+  actions.push(`
+    <div class="today-card ${fups.length ? (fupOverdue ? "tc-urgent" : "tc-alert") : "tc-clear tc-ok"}"
+         ${fups.length ? 'onclick="_todayToggleList(\'fups\')"' : ""} 
+         ${fups.length ? 'style="cursor:pointer"' : ""}>
+      <div class="tc-icon">📞</div>
+      <div class="tc-body">
+        <div class="tc-title">Follow-ups due</div>
+        <div class="tc-sub">${fups.length
+          ? (fupOverdue ? fupOverdue + " overdue, " : "") +
+            (fups.length - fupOverdue) + " due today — tap to view"
+          : "Nothing due today. Nice."}</div>
+      </div>
+      <div class="tc-count">${fups.length}</div>
+    </div>
+    <div id="today-list-fups" class="today-list" style="display:none">
+      ${fups.map(f => `
+        <div class="today-list-item" onclick="_todayOpenLead('${f.kind}','${esc2(f.id)}')">
+          <span class="tli-name">${esc2(f.name)}</span>
+          <span class="tli-meta ${f.overdue ? "tli-overdue" : ""}">
+            ${f.overdue ? "overdue " : "due "}${esc2(f.due)} · ${f.kind.toUpperCase()}</span>
+        </div>`).join("")}
+    </div>`);
+
+  // Parsed-pending PDFs
+  actions.push(`
+    <div class="today-card ${pending.length ? "tc-alert" : "tc-clear tc-ok"}">
+      <div class="tc-icon">📄</div>
+      <div class="tc-body">
+        <div class="tc-title">Foreclosure PDFs to parse</div>
+        <div class="tc-sub">${pending.length
+          ? pending.length + " filing(s) have no owner yet — upload their PDFs and run the parse workflow"
+          : "All filings parsed."}</div>
+      </div>
+      <div class="tc-count">${pending.length}</div>
+    </div>`);
+
+  // CV import reminder
+  const cvDue = (cvDaysSince === null) || (cvDaysSince >= CV_CADENCE_DAYS);
+  actions.push(`
+    <div class="today-card ${cvDue ? "tc-alert" : "tc-clear tc-ok"}" style="cursor:pointer"
+         onclick="_todayMarkCvImported()">
+      <div class="tc-icon">🏛️</div>
+      <div class="tc-body">
+        <div class="tc-title">Code-violation (CV) import</div>
+        <div class="tc-sub">${cvLast
+          ? (cvDue ? "Last imported " + cvDaysSince + " days ago — due for a refresh. Tap when done."
+                   : "Last imported " + cvDaysSince + " days ago. Tap when you import again.")
+          : "No import logged yet. Tap when you download & upload the CV list."}</div>
+      </div>
+      <div class="tc-count">${cvDue ? "!" : "✓"}</div>
+    </div>`);
+
+  // No-NCAD-match
+  actions.push(`
+    <div class="today-card ${noNcad.length ? "tc-alert" : "tc-clear tc-ok"}">
+      <div class="tc-icon">🔎</div>
+      <div class="tc-body">
+        <div class="tc-title">Leads missing NCAD data</div>
+        <div class="tc-sub">${noNcad.length
+          ? noNcad.length + " lead(s) have an address but no NCAD match — may need an address fix or a re-run"
+          : "All addressed leads have NCAD data."}</div>
+      </div>
+      <div class="tc-count">${noNcad.length}</div>
+    </div>`);
+
+  document.getElementById("today-actions").innerHTML = actions.join("");
+
+  // ---------- Render: pipeline ----------
+  const stageDefs = [
+    ["new", "New"], ["contacted", "Working"],
+    ["negotiating", "Negotiating"], ["under_contract", "Under Contract"],
+  ];
+  document.getElementById("today-pipeline").innerHTML = stageDefs.map(([k, lbl]) => `
+    <div class="today-stat">
+      <div class="ts-num">${stageCount[k]}</div>
+      <div class="ts-label">${lbl}</div>
+    </div>`).join("");
+
+  // ---------- Render: at-a-glance ----------
+  const glance = [];
+  glance.push(`
+    <div class="today-stat">
+      <div class="ts-num">${verifiedCount}<span style="font-size:15px;color:var(--muted)"> / ${fcLiveTotal}</span></div>
+      <div class="ts-label">Verified</div>
+      <div class="ts-sub">foreclosures reviewed</div>
+    </div>`);
+  glance.push(`
+    <div class="today-stat">
+      <div class="ts-num">${newSince}</div>
+      <div class="ts-label">New leads</div>
+      <div class="ts-sub">${sinceLabel || "this scrape"}</div>
+    </div>`);
+  glance.push(`
+    <div class="today-stat ${upcomingSales.length ? "clickable" : ""}"
+         ${upcomingSales.length ? 'onclick="_todayToggleList(\'sales\')"' : ""}>
+      <div class="ts-num">${upcomingSales.length}</div>
+      <div class="ts-label">Sales ≤ 14 days</div>
+      <div class="ts-sub">${upcomingSales.length ? "tap to view" : "none upcoming"}</div>
+    </div>`);
+  document.getElementById("today-glance").innerHTML = glance.join("") + `
+    <div id="today-list-sales" class="today-list" style="display:none;grid-column:1/-1">
+      ${upcomingSales.map(r => `
+        <div class="today-list-item" onclick="_todayOpenLead('mfc','${esc2(String(r.doc_num))}')">
+          <span class="tli-name">${esc2(r.owner || r.prop_address || r.doc_num)}</span>
+          <span class="tli-meta">sale ${esc2(r.sale_date)}</span>
+        </div>`).join("")}
+    </div>`;
+
+  // Sidebar count badge: total things needing attention.
+  const badge = document.getElementById("today-count");
+  if (badge) {
+    const n = fups.length + pending.length + noNcad.length + (cvDue ? 1 : 0);
+    badge.textContent = n;
+  }
+}
+// Toggle a detail list open/closed.
+function _todayToggleList(which) {
+  const el = document.getElementById("today-list-" + which);
+  if (el) el.style.display = (el.style.display === "none") ? "flex" : "none";
+}
+// Open a lead's CRM from the Today tab.
+function _todayOpenLead(kind, id) {
+  try {
+    if (kind === "mfc") openMfcCrm(id, FC_RAW);
+    else if (kind === "tfc") openTfcCrm(id, TFC_RAW);
+  } catch (e) { console.warn("could not open lead", kind, id, e); }
+}
+// Log a CV import as done today (resets the cadence reminder).
+function _todayMarkCvImported() {
+  try { localStorage.setItem("today-cv-last-import", _todayISO()); } catch (e) {}
+  renderToday();
+}
+
+
 function _renderPaneIfNeeded(paneId) {
+  // Today: always re-render on visit — its counts (follow-ups due,
+  // pipeline stages, parsed-pending) change as the user works other
+  // tabs, so a cached render would go stale.
+  if (paneId === "pane-today") {
+    renderToday();
+    return;
+  }
   // Stack is special: it derives from multiple data sources whose
   // soft-delete state can change while the user is on other panes.
   // Always re-render on visit so dead records correctly disappear.
@@ -8407,6 +8801,7 @@ async function loadAll() {
       scraperDateText = new Date(data.fetched_at).toLocaleString();
       if (data.date_range && data.date_range.start) {
         rangeText = data.date_range.start + " → " + data.date_range.end;
+        FC_DATE_RANGE_START = data.date_range.start;
       }
     }
   } catch (e) { /* records.json optional — header just omits the date */ }
@@ -8494,6 +8889,14 @@ async function loadAll() {
       renderTfcTable();
     }
   } catch (e) { /* tfc.json optional — table keeps its stub rows */ }
+
+  // Today tab is the default landing pane — render it now that FC +
+  // TFC data and the scrape window are loaded. (Re-renders on each
+  // later visit via _renderPaneIfNeeded.)
+  if (_activePane === "pane-today") {
+    _renderedPanes.add("pane-today");
+    try { renderToday(); } catch (e) { console.warn("renderToday failed", e); }
+  }
 
   // --- DELQ (delinquent property taxes from Nueces County) ---
   // Imported monthly from the county tax-office XLS via the
