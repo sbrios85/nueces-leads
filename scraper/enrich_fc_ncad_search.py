@@ -704,15 +704,43 @@ async def _esearch_address(page,
     return best
 
 
+async def _fetch_detail_html(page,
+                             prop_id: str,
+                             year: str,
+                             owner_id: str) -> str:
+    """Fetch the property detail page HTML for a known prop_id.
+
+    Builds the same URL the mailing-address fetch uses:
+        /Property/View/{prop_id}?year={year}&ownerId={owner_id}
+    Returns the rendered HTML, or "" on navigation failure. Used to
+    pull the Geographic ID (account number) off the detail page.
+    """
+    if not prop_id:
+        return ""
+    url = f"{NCAD_ESEARCH_BASE}/Property/View/{prop_id}?year={year}"
+    if owner_id:
+        url += f"&ownerId={owner_id}"
+    try:
+        await page.goto(url, wait_until="domcontentloaded",
+                        timeout=DETAIL_TIMEOUT_MS)
+        await page.wait_for_timeout(400)
+        return await page.content()
+    except Exception as exc:
+        log.warning("    detail nav failed for prop_id=%s: %s", prop_id, exc)
+        return ""
+
+
 async def _esearch_detail_for_mail(page,
                                     prop_id: str,
                                     year: str,
-                                    owner_id: str) -> Dict[str, str]:
-    """Fetch a property-detail page to extract mailing address.
+                                    owner_id: str,
+                                    html: str = "") -> Dict[str, str]:
+    """Extract the mailing address from a property-detail page.
 
-    Only called when FETCH_MAIL_ADDRESS=1. The detail page is the
-    only place mail address lives — the result list shows owner +
-    site addr + value but not the mailing address.
+    If `html` is passed (already fetched by the caller for the account-
+    number extraction), it's parsed directly — avoiding a second fetch
+    of the same page. Otherwise the page is fetched here. The detail
+    page is the only place the mailing address lives.
 
     Returns {mail_addr, mail_city, mail_state, mail_zip} or empty
     dict on failure. Failure is non-fatal (mail address stays empty
@@ -720,17 +748,18 @@ async def _esearch_detail_for_mail(page,
     """
     if not prop_id:
         return {}
-    url = f"{NCAD_ESEARCH_BASE}/Property/View/{prop_id}?year={year}"
-    if owner_id:
-        url += f"&ownerId={owner_id}"
-    try:
-        await page.goto(url, wait_until="domcontentloaded",
-                         timeout=DETAIL_TIMEOUT_MS)
-        await page.wait_for_timeout(400)
-        html = await page.content()
-    except Exception as exc:
-        log.warning("    detail nav failed for %s: %s", prop_id, exc)
-        return {}
+    if not html:
+        url = f"{NCAD_ESEARCH_BASE}/Property/View/{prop_id}?year={year}"
+        if owner_id:
+            url += f"&ownerId={owner_id}"
+        try:
+            await page.goto(url, wait_until="domcontentloaded",
+                             timeout=DETAIL_TIMEOUT_MS)
+            await page.wait_for_timeout(400)
+            html = await page.content()
+        except Exception as exc:
+            log.warning("    detail nav failed for %s: %s", prop_id, exc)
+            return {}
 
     # Reuse fetch.py's detail-page parsing logic (kept inline to avoid
     # the import dependency). The detail page renders the mailing
@@ -1145,7 +1174,9 @@ async def _enrich_all(records: List[Dict[str, Any]]
 
                 consecutive_misses = 0
 
-                # Detail page: account number (+ mailing address).
+                # Detail page: fetch ONCE, then extract both the
+                # account number and the mailing address from the same
+                # HTML (avoids a second fetch of the same page).
                 account_num = ""
                 mail_info: Dict[str, str] = {}
                 if best.get("prop_id"):
@@ -1155,11 +1186,12 @@ async def _enrich_all(records: List[Dict[str, Any]]
                         best.get("owner_id", ""))
                     if detail_html:
                         account_num = _extract_account_num(detail_html)
-                    if FETCH_MAIL_ADDRESS:
-                        mail_info = await _esearch_detail_for_mail(
-                            page, best.get("prop_id", ""),
-                            best.get("year") or NCAD_YEAR,
-                            best.get("owner_id", ""))
+                        if FETCH_MAIL_ADDRESS:
+                            mail_info = await _esearch_detail_for_mail(
+                                page, best.get("prop_id", ""),
+                                best.get("year") or NCAD_YEAR,
+                                best.get("owner_id", ""),
+                                html=detail_html)
 
                 additions = _build_additions(rec, best, account_num, mail_info)
                 if APPLY:
