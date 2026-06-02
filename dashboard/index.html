@@ -917,58 +917,90 @@
 
   .pane { display: none; padding: 4px 10px; }
   /* ===== Today tab ===== */
-  .today-head { padding: 14px 4px 4px; }
-  .today-title { font-size: 22px; font-weight: 600; margin: 0; color: var(--fg); }
-  .today-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .today-head { padding: 10px 4px 2px; }
+  .today-title { font-size: 20px; font-weight: 600; margin: 0; color: var(--fg); }
+  .today-sub { color: var(--muted); font-size: 12px; margin-top: 1px; }
   .today-section-label {
     text-transform: uppercase; font-size: 11px; letter-spacing: .06em;
-    color: var(--muted); font-weight: 600; margin: 22px 4px 10px;
+    color: var(--muted); font-weight: 600; margin: 16px 4px 8px;
   }
-  .today-actions { display: flex; flex-direction: column; gap: 10px; }
+  /* Hot list — top-priority leads */
+  .today-hotlist { display: flex; flex-direction: column; gap: 6px; }
+  .today-hot-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    padding: 9px 14px; cursor: pointer; transition: border-color .15s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .today-hot-item:hover { border-color: var(--accent); }
+  .today-hot-rank {
+    font-size: 13px; font-weight: 700; color: var(--accent);
+    min-width: 18px; text-align: center; flex-shrink: 0;
+  }
+  .today-hot-main { flex: 1; min-width: 0; }
+  .today-hot-name {
+    color: var(--fg); font-weight: 500; font-size: 13px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .today-hot-addr { color: var(--muted); font-size: 11px; margin-top: 1px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .today-hot-meta { text-align: right; flex-shrink: 0; }
+  .today-hot-sale { color: #fbbf24; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .today-hot-sale.soon { color: #f87171; }
+  .today-hot-stage { color: var(--muted); font-size: 11px; margin-top: 1px; }
+  .today-hot-empty { color: var(--muted); font-size: 13px; padding: 8px 4px; }
+  /* Compact attention cards — 2 per row, colored left accent */
+  .today-actions {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 8px;
+  }
   .today-card {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px 16px;
-    display: flex; align-items: center; gap: 14px;
+    border-left: 3px solid var(--border);
+    border-radius: 0 8px 8px 0; padding: 10px 14px;
+    display: flex; align-items: center; gap: 12px;
   }
   .today-card.clickable { cursor: pointer; transition: border-color .15s; }
   .today-card.clickable:hover { border-color: var(--accent); }
-  .today-card .tc-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+  .today-card .tc-icon { font-size: 18px; line-height: 1; flex-shrink: 0; }
   .today-card .tc-body { flex: 1; min-width: 0; }
-  .today-card .tc-title { font-weight: 600; color: var(--fg); font-size: 14px; }
-  .today-card .tc-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .today-card .tc-title { font-weight: 600; color: var(--fg); font-size: 13px; }
+  .today-card .tc-sub { color: var(--muted); font-size: 11px; margin-top: 1px;
+    overflow: hidden; text-overflow: ellipsis; }
   .today-card .tc-count {
-    font-size: 24px; font-weight: 700; flex-shrink: 0;
-    min-width: 42px; text-align: center;
+    font-size: 20px; font-weight: 700; flex-shrink: 0;
+    min-width: 32px; text-align: center;
   }
-  .today-card.tc-alert { border-color: #b45309; }
+  .today-card.tc-alert { border-left-color: #b45309; }
   .today-card.tc-alert .tc-count { color: #fbbf24; }
-  .today-card.tc-urgent { border-color: #b91c1c; }
+  .today-card.tc-urgent { border-left-color: #b91c1c; }
   .today-card.tc-urgent .tc-count { color: #f87171; }
+  .today-card.tc-ok { border-left-color: #15803d; }
   .today-card.tc-ok .tc-count { color: #34d399; }
-  .today-card.tc-clear { opacity: .65; }
+  .today-card.tc-clear { opacity: .6; }
   .today-card.tc-clear .tc-count { color: var(--muted); }
   /* Pipeline + glance grids */
   .today-pipeline, .today-glance {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
   }
   .today-stat {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px 16px;
+    border-radius: 8px; padding: 11px 14px;
   }
   .today-stat.clickable { cursor: pointer; transition: border-color .15s; }
   .today-stat.clickable:hover { border-color: var(--accent); }
-  .today-stat .ts-num { font-size: 26px; font-weight: 700; color: var(--fg); }
+  .today-stat .ts-num { font-size: 22px; font-weight: 700; color: var(--fg); }
   .today-stat .ts-label {
-    color: var(--muted); font-size: 12px; margin-top: 2px;
+    color: var(--muted); font-size: 11px; margin-top: 1px;
     text-transform: uppercase; letter-spacing: .04em;
   }
-  .today-stat .ts-sub { color: var(--muted); font-size: 11px; margin-top: 4px; }
+  .today-stat .ts-sub { color: var(--muted); font-size: 11px; margin-top: 3px; }
   /* Follow-up / sale-date detail lists inside a card */
-  .today-list { margin: 8px 4px 0; display: flex; flex-direction: column; gap: 6px; }
+  .today-list { margin: 6px 4px 0; display: flex; flex-direction: column; gap: 5px; }
   .today-list-item {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: 8px 12px; cursor: pointer;
+    border-radius: 8px; padding: 7px 12px; cursor: pointer;
     display: flex; justify-content: space-between; gap: 10px; font-size: 13px;
     transition: border-color .15s;
   }
@@ -2552,6 +2584,10 @@
     <h2 class="today-title">Today</h2>
     <div class="today-sub" id="today-datestr"></div>
   </div>
+
+  <!-- Hot list: top-priority leads (active stage + soonest sale date) -->
+  <div class="today-section-label">🔥 Hot list</div>
+  <div class="today-hotlist" id="today-hotlist"><!-- built by renderToday() --></div>
 
   <!-- Action items: things that need the user to DO something -->
   <div class="today-section-label">Needs attention</div>
@@ -8488,6 +8524,7 @@ function _todayIndexBy(arr, keyFn) {
 }
 
 function renderToday() {
+  const esc2 = (typeof esc === "function") ? esc : (s => String(s == null ? "" : s));
   const dateEl = document.getElementById("today-datestr");
   if (dateEl) dateEl.textContent = _todayDateStr();
 
@@ -8587,8 +8624,91 @@ function renderToday() {
     cvDaysSince = Math.floor(ms / 86400000);
   }
 
+  // ===== 9. Hot list — top-priority leads =====
+  // Leads in an ACTIVE stage (new/contacted/negotiating/under_contract)
+  // that have an UPCOMING sale date, ranked soonest-first. These are the
+  // most time-sensitive deals worth working first. Up to 7 shown.
+  const ACTIVE_STAGES = { new: 1, contacted: 1, negotiating: 1, under_contract: 1 };
+  const hot = [];
+  // MFC
+  for (const r of fc) {
+    const doc = String(r.doc_num);
+    if (_todayFcIsDead(doc)) continue;
+    const stage = (mfcCrm[doc] || {}).stage || "new";
+    if (!ACTIVE_STAGES[stage]) continue;
+    if (!r.sale_date || String(r.sale_date) < todayISO) continue;
+    hot.push({
+      kind: "mfc", id: doc,
+      name: r.owner || r.prop_address || ("Lead " + doc),
+      addr: r.prop_address || "",
+      sale: String(r.sale_date), stage,
+    });
+  }
+  // TFC
+  for (const r of tfc) {
+    const uid = String(r.uid);
+    const e = tfcCrm[uid] || {};
+    const stage = e.stage || "new";
+    if (stage === "dead" || !ACTIVE_STAGES[stage]) continue;
+    if (!r.sale_date || String(r.sale_date) < todayISO) continue;
+    hot.push({
+      kind: "tfc", id: uid,
+      name: r.owner || r.prop_address || ("Lead " + uid),
+      addr: r.prop_address || "",
+      sale: String(r.sale_date), stage,
+    });
+  }
+  hot.sort((a, b) => a.sale.localeCompare(b.sale));
+  const hotTop = hot.slice(0, 7);
+
+  // ===== 10. Today's contact log — attempts logged today =====
+  // Counts attempts across MFC + TFC whose date is today. A simple
+  // productivity check ("have I made calls yet?").
+  let loggedToday = 0;
+  function _countTodayAttempts(crm) {
+    for (const id in crm) {
+      const atts = (crm[id] || {}).attempts;
+      if (!Array.isArray(atts)) continue;
+      for (const a of atts) {
+        if (a && a.date && String(a.date) === todayISO) loggedToday++;
+      }
+    }
+  }
+  _countTodayAttempts(mfcCrm);
+  _countTodayAttempts(tfcCrm);
+
+  // Stage label lookup for the hot list (shows "Working" not "contacted").
+  const _stageLabel = { new: "New", contacted: "Working",
+    negotiating: "Negotiating", under_contract: "Under Contract" };
+
+  // ---------- Render: hot list ----------
+  const hotEl = document.getElementById("today-hotlist");
+  if (hotEl) {
+    if (!hotTop.length) {
+      hotEl.innerHTML = `<div class="today-hot-empty">No active leads with upcoming sale dates. Work the pipeline below.</div>`;
+    } else {
+      hotEl.innerHTML = hotTop.map((h, i) => {
+        const days = Math.round(
+          (new Date(h.sale).getTime() - new Date(todayISO).getTime()) / 86400000);
+        const soon = days <= 14;
+        return `
+        <div class="today-hot-item" onclick="_todayOpenLead('${h.kind}','${esc2(h.id)}')">
+          <div class="today-hot-rank">${i + 1}</div>
+          <div class="today-hot-main">
+            <div class="today-hot-name">${esc2(h.name)}</div>
+            <div class="today-hot-addr">${esc2(h.addr || "—")}</div>
+          </div>
+          <div class="today-hot-meta">
+            <div class="today-hot-sale ${soon ? "soon" : ""}">sale ${esc2(h.sale)}${
+              days >= 0 ? " · " + days + "d" : ""}</div>
+            <div class="today-hot-stage">${_stageLabel[h.stage] || h.stage} · ${h.kind.toUpperCase()}</div>
+          </div>
+        </div>`;
+      }).join("");
+    }
+  }
+
   // ---------- Render: action cards ----------
-  const esc2 = (typeof esc === "function") ? esc : (s => String(s == null ? "" : s));
   const actions = [];
 
   // Follow-ups
@@ -8683,6 +8803,12 @@ function renderToday() {
       <div class="ts-num">${newSince}</div>
       <div class="ts-label">New leads</div>
       <div class="ts-sub">${sinceLabel || "this scrape"}</div>
+    </div>`);
+  glance.push(`
+    <div class="today-stat">
+      <div class="ts-num">${loggedToday}</div>
+      <div class="ts-label">Logged today</div>
+      <div class="ts-sub">contact attempts</div>
     </div>`);
   glance.push(`
     <div class="today-stat ${upcomingSales.length ? "clickable" : ""}"
