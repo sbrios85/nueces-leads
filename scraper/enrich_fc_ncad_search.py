@@ -846,9 +846,30 @@ async def _esearch_detail_for_mail(page,
                 return value
         return ""
 
-    mail_full = (find_value("mailing", "address")
-                  or find_value("mail", "address")
-                  or find_value("owner", "address"))
+    # Select the MAILING address specifically. NCAD's detail page has
+    # both a "Situs Address" (the property location) and a "Mailing
+    # Address" (where the owner gets mail) — they're often different,
+    # and grabbing Situs by mistake was producing mail_address values
+    # that were really the property address with the situs city jammed
+    # on ("3710 Mendenhall Dr Corpus Christi"). Match "mailing" only,
+    # and explicitly skip any label containing "situs". Do NOT fall back
+    # to a generic "owner"/"address" match — that risks pulling the
+    # situs row or an owner-name row.
+    mail_full = ""
+    for label, value in text_pairs.items():
+        if "situs" in label:
+            continue
+        if "mailing" in label and "address" in label:
+            mail_full = value
+            break
+    if not mail_full:
+        # Some layouts label it just "mailing". Still skip situs.
+        for label, value in text_pairs.items():
+            if "situs" in label:
+                continue
+            if "mailing" in label:
+                mail_full = value
+                break
     if not mail_full:
         return {}
     return _split_us_address(mail_full)
@@ -864,10 +885,12 @@ _KNOWN_CITIES = [
     "CORPUS CHRISTI", "ARANSAS PASS", "PORT ARANSAS", "NORTH PADRE ISLAND",
     "PADRE ISLAND", "FLOUR BLUFF", "ROBSTOWN", "PORTLAND", "INGLESIDE",
     "GREGORY", "TAFT", "SINTON", "MATHIS", "ODEM", "BISHOP", "DRISCOLL",
-    "AGUA DULCE", "BANQUETE", "CHAPMAN RANCH", "PETRONILA",
-    "SAN ANTONIO", "AUSTIN", "HOUSTON", "DALLAS", "FORT WORTH",
-    "SAN DIEGO", "ALICE", "KINGSVILLE", "BEEVILLE", "ROCKPORT",
-    "GEORGE WEST", "MCALLEN", "LAREDO", "VICTORIA", "EL PASO",
+    "AGUA DULCE", "BANQUETE", "CHAPMAN RANCH", "PETRONILA", "ELMENDORF",
+    "SAN ANTONIO", "AUSTIN", "HOUSTON", "DALLAS", "FORT WORTH", "IRVING",
+    "SAN DIEGO", "ALICE", "KINGSVILLE", "BEEVILLE", "ROCKPORT", "WACO",
+    "GEORGE WEST", "MCALLEN", "LAREDO", "VICTORIA", "EL PASO", "SPRING",
+    "PFLUGERVILLE", "ROUND ROCK", "CEDAR PARK", "GEORGETOWN", "KYLE",
+    "NEW BRAUNFELS", "SAN MARCOS", "LEANDER", "BUDA", "MANOR",
 ]
 _KNOWN_CITIES_SORTED = sorted(_KNOWN_CITIES, key=len, reverse=True)
 
@@ -933,13 +956,14 @@ def _split_us_address(full: str) -> Dict[str, str]:
         return {}
 
     # Find the first line that looks like a real street address —
-    # i.e. starts with a digit. Anything before it is a co-owner
-    # name (the ET UX pattern). Without this, the parser was treating
-    # "GUADALUPE SOSA MAYEN" as the street and "5318 SEGUIN" as the
-    # city, because the parser blindly took lines[0] and lines[1].
+    # i.e. starts with a digit (house number) OR is a PO Box. Anything
+    # before it is a co-owner name (the ET UX pattern). Without this,
+    # the parser was treating "GUADALUPE SOSA MAYEN" as the street and
+    # "5318 SEGUIN" as the city.
+    _pobox_re = re.compile(r"^\s*P\.?\s*O\.?\s*BOX\b", re.IGNORECASE)
     street_idx = None
     for i, line in enumerate(lines):
-        if re.match(r"^\s*\d", line):
+        if re.match(r"^\s*\d", line) or _pobox_re.match(line):
             street_idx = i
             break
 
@@ -984,6 +1008,27 @@ def _split_us_address(full: str) -> Dict[str, str]:
                 # No recognizable zip — treat the whole line as city.
                 city = line2
 
+    # One-line "STREET CITY, ST ZIP" — the single comma sits right
+    # before the 2-letter state (this is how NCAD's mailing block looks
+    # when the street/city <br> collapses to a space: "13957 DASMARIMAS
+    # CORPUS CHRISTI, TX 78418"). Detect: exactly the tail ", ST ZIP".
+    # Everything before the comma is "STREET CITY"; peel the known city
+    # off its end. Run this BEFORE the legacy multi-comma split so we
+    # don't mis-handle it as "STREET, CITY, ST ZIP".
+    if not city and "," in street:
+        m = re.search(r",\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)\s*$",
+                      street, re.IGNORECASE)
+        ncommas = street.count(",")
+        if m and ncommas == 1:
+            head = street[:m.start()].strip()   # "STREET CITY"
+            state = m.group(1).upper()
+            zipc = m.group(2)
+            h2, peeled = _peel_city_from_street(head)
+            if peeled:
+                street, city = h2, peeled
+            else:
+                street = head   # couldn't ID city; keep full head as street
+
     # Legacy fallback: input had only ONE line but contains commas.
     # This handles old code paths or unusual NCAD renderings where
     # the address came back as "STREET, CITY, ST ZIP" all on one
@@ -1013,6 +1058,26 @@ def _split_us_address(full: str) -> Dict[str, str]:
         if peeled:
             street = street2
             city = peeled
+
+    # Strip a leading co-owner NAME prefix that ended up on the street
+    # line. NCAD prepends a co-owner ("AND MELVA LIZA MATA 3442 XANADU
+    # ST") on ET UX properties; when the whole block is one line the
+    # name can't be skipped by the line-walk above. A real street starts
+    # with the house number, so if the street begins with non-digit
+    # words followed by a digit-led token, drop everything before that
+    # token. Guard: only strip when the leading chunk looks like a name
+    # (starts with "AND " or is >=2 alpha words), never a unit like
+    # "APT 3" (which starts with a digit anyway).
+    if street and not re.match(r"^\s*\d", street) and not _pobox_re.match(street):
+        mnum = re.search(r"\b\d", street)
+        if mnum:
+            # Find the token boundary: first token starting with a digit.
+            toks = street.split()
+            for ti, tk in enumerate(toks):
+                if re.match(r"^\d", tk):
+                    if ti > 0:   # there was a name prefix
+                        street = " ".join(toks[ti:])
+                    break
 
     # Strip ZIP+4 down to 5-digit ZIP for consistency. ZIP+4 is
     # rarely useful for lead-generation work and creates display
@@ -1118,14 +1183,36 @@ def _build_additions(rec: Dict[str, Any],
         additions["appraised_value"] = av
 
     # Mailing address (when detail fetch ran). These are NCAD-derived
-    # and the parser doesn't set them, so it's safe to fill.
-    for src_key, dst_key in (("mail_addr", "mail_address"),
-                             ("mail_city", "mail_city"),
-                             ("mail_state", "mail_state"),
-                             ("mail_zip", "mail_zip")):
-        v = mail_info.get(src_key)
-        if v and not rec.get(dst_key):
-            additions[dst_key] = v
+    # and the parser doesn't set them. Two write modes:
+    #
+    #  * If the detail fetch produced a street (mail_addr), treat the
+    #    whole mail block as a COHERENT UNIT and write all four fields
+    #    together — overwriting any existing values. This is essential
+    #    because the four fields must agree: an earlier run may have
+    #    stored a street with the city jammed onto it ("123 Main St
+    #    Corpus Christi") while mail_city was blank. The old additive
+    #    guard (`not rec.get`) would then refresh mail_city but leave
+    #    the stale jammed street, producing a street and city that
+    #    disagree. Writing them as a set keeps them consistent and lets
+    #    the improved _split_us_address city-peel actually take effect.
+    #    (User edits live in the dashboard's override store, not on the
+    #    record, so overwriting the scraped field here is safe.)
+    #
+    #  * If the detail fetch produced NO street (failed/empty), fall
+    #    back to the additive behaviour for whatever individual pieces
+    #    came back, so we never blank out existing data.
+    if mail_info.get("mail_addr"):
+        additions["mail_address"] = mail_info.get("mail_addr") or ""
+        additions["mail_city"]    = mail_info.get("mail_city") or ""
+        additions["mail_state"]   = mail_info.get("mail_state") or ""
+        additions["mail_zip"]     = mail_info.get("mail_zip") or ""
+    else:
+        for src_key, dst_key in (("mail_city", "mail_city"),
+                                 ("mail_state", "mail_state"),
+                                 ("mail_zip", "mail_zip")):
+            v = mail_info.get(src_key)
+            if v and not rec.get(dst_key):
+                additions[dst_key] = v
 
     return additions
 
