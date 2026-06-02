@@ -5887,6 +5887,7 @@ function openMfcCrm(docNum, sourceRecords) {
       p.classList.remove("active"));
   const crm = document.getElementById("crm-view");
   crm.hidden = false;
+  _crmPushHistory();
   // Scroll behavior: reset to top ONLY when opening fresh from the
   // list. If we were already open (re-render), preserve where the
   // user was reading. Same goes for focus: restore the focused
@@ -7709,6 +7710,7 @@ function openTfcCrm(uid, sourceRecords) {
       p.classList.remove("active"));
   const crm = document.getElementById("crm-view");
   crm.hidden = false;
+  _crmPushHistory();
   // Preserve scroll on re-render; reset to top on fresh open.
   if (_wasOpen) {
     if (_mainEl) _mainEl.scrollTop = _prevScrollY;
@@ -7977,6 +7979,7 @@ function openCrm(type, docNum, sourceRecords) {
       p.classList.remove("active"));
   const crm = document.getElementById("crm-view");
   crm.hidden = false;
+  _crmPushHistory();
   // Scroll the .main container (not the window) to the top.
   if (_mainEl) _mainEl.scrollTop = 0;
   else window.scrollTo(0, 0);
@@ -7999,6 +8002,49 @@ function closeCrm() {
   });
 }
 
+document.getElementById("crm-back").onclick = closeCrm;
+
+// Make the browser BACK button close the CRM the same way the in-app
+// ← Back button does. Without this, pressing the browser's back button
+// while the CRM is open navigates the history entry away while the app
+// state still has .main hidden — leaving the page blank except the
+// header. We push a sentinel history entry when the CRM opens (see
+// _crmPushHistory, called from the open functions); popstate then just
+// restores the list view instead of leaving a broken state.
+let _crmHistoryActive = false;
+function _crmPushHistory() {
+  // Only push once per CRM session so repeated re-renders (status
+  // changes etc.) don't stack history entries.
+  if (_crmHistoryActive) return;
+  try {
+    history.pushState({ crmOpen: true }, "");
+    _crmHistoryActive = true;
+  } catch (e) { /* history unavailable — back button just won't close */ }
+}
+window.addEventListener("popstate", () => {
+  // If the CRM is open when the user hits browser-back, close it
+  // cleanly (restores .main + scroll) instead of leaving a blank page.
+  // Use the RAW close (not the wrapper) — the browser already consumed
+  // our sentinel history entry by navigating back, so we must NOT call
+  // history.back() again here or we'd over-pop the user's history.
+  if (!document.getElementById("crm-view").hidden) {
+    _crmHistoryActive = false;
+    _origCloseCrm();
+  }
+});
+// When the CRM is closed via the in-app button/Escape, consume the
+// sentinel history entry we pushed, so the next browser-back goes to
+// wherever the user actually was before — not back into the CRM.
+const _origCloseCrm = closeCrm;
+closeCrm = function () {
+  _origCloseCrm();
+  if (_crmHistoryActive) {
+    _crmHistoryActive = false;
+    // Pop our sentinel entry. This fires popstate, but the CRM is
+    // already hidden by _origCloseCrm() above, so that handler no-ops.
+    try { history.back(); } catch (e) { /* no-op */ }
+  }
+};
 document.getElementById("crm-back").onclick = closeCrm;
 document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
@@ -11417,7 +11463,7 @@ function buildTfcRow(r, mode) {
   tr.addEventListener("click", (ev) => {
     if (ev.target.closest(
         "a, button, input, textarea, .pill.status, .ext-icon, "
-        + ".save-cell, .cell-edit, .map-icon"))
+        + ".save-cell, .cell-edit, .map-icon, .fmt-cell"))
       return;
     const moved = Math.abs(ev.clientX - _tfcDownX) > 5 ||
                   Math.abs(ev.clientY - _tfcDownY) > 5;
@@ -12009,7 +12055,7 @@ function buildFcRow(r, isDead) {
     // Owner & address get a formatted click-to-edit display; legal and
     // other fields render the raw control directly (legal stays caps).
     if (key === "owner")
-      return _fmtCellWrap(ctrl, fmtOwner(val));
+      return _fmtCellWrap(ctrl, fmtOwnerFL(val));
     if (key === "prop_address" || key === "mail_address")
       return _fmtCellWrap(ctrl, fmtTitle(val));
     return ctrl;
@@ -12090,7 +12136,7 @@ function buildFcRow(r, isDead) {
   tr.addEventListener("click", (ev) => {
     if (ev.target.closest(
         "a, button, input, textarea, .pill.status, .ext-icon, "
-        + ".save-cell, .cell-edit, .map-icon"))
+        + ".save-cell, .cell-edit, .map-icon, .fmt-cell"))
       return;
     // Pointer moved appreciably → drag-select, not a click.
     const moved = Math.abs(ev.clientX - _downX) > 5 ||
@@ -12445,6 +12491,42 @@ function _fmtIsEntity(name) {
   return false;
 }
 
+// First-Last-preserving owner formatter. Used by the Mortgage
+// Foreclosure (FC) table, whose owner names come from the PDF parser
+// and are ALREADY in First-Last order (e.g. "RICHARD GONZALES",
+// "MOHAMMAD AL-BARNAWI"). The standard fmtOwner() assumes county
+// (NCAD/CCLN) surname-first ordering and FLIPS the name, which would
+// turn "RICHARD GONZALES" into "Gonzales Richard". This variant
+// title-cases the name in place WITHOUT flipping, while still handling
+// entities (LLCs), estates, and already-mixed-case names exactly like
+// fmtOwner. Co-owner connectors ("AND"/"&") are preserved and each
+// side title-cased in place.
+function fmtOwnerFL(raw) {
+  if (raw == null) return "";
+  const name = String(raw).trim();
+  if (!name) return name;
+  if (_fmtGenuinelyMixed(name)) return name;          // already formatted
+  if (_fmtIsEntity(name)) return _fmtTitleCore(name); // organization
+  const upper = name.toUpperCase();
+  const mSuf = /\s+EST(?:ATE)?\s+OF\s*$/.exec(upper);
+  const mPre = /^EST(?:ATE)?\s+OF\s+(.*)$/.exec(upper);
+  if (mSuf || mPre) {
+    const body = (mSuf ? name.slice(0, mSuf.index)
+                       : name.slice(upper.indexOf(mPre[1]))).trim();
+    return "Estate of " + _fmtTitleCore(body);
+  }
+  // Plain person name(s) — title-case in place, no surname flip. Splits
+  // on a co-owner connector so "RAUL M. MIRELES AND BERTA MIRELES"
+  // becomes "Raul M. Mireles and Berta Mireles".
+  const m = /\s*&\s*|\s+AND\s+/i.exec(name);
+  if (m) {
+    const a = name.slice(0, m.index).trim();
+    const b = name.slice(m.index + m[0].length).trim();
+    if (a && b) return _fmtTitleCore(a) + " and " + _fmtTitleCore(b);
+  }
+  return _fmtTitleCore(name);
+}
+
 // Wrap an editable cell control so it shows a formatted, read-only
 // display by default and reveals the raw editable control on click.
 // `controlHtml` is the existing <textarea>/<input> (unchanged, so its
@@ -12454,10 +12536,14 @@ function _fmtIsEntity(name) {
 function _fmtCellWrap(controlHtml, dispText) {
   const disp = dispText && dispText.trim() ? esc(dispText)
     : '<span style="color:var(--muted)">—</span>';
-  return `<div class="fmt-cell" onclick="fmtCellReveal(this)">` +
+  return `<div class="fmt-cell" onclick="fmtCellReveal(this, event)">` +
          `<span class="fmt-disp">${disp}</span>${controlHtml}</div>`;
 }
-function fmtCellReveal(wrap) {
+function fmtCellReveal(wrap, ev) {
+  // Don't let a click on an editable cell bubble up to the row's
+  // click handler (which opens the CRM). The user clicked the cell to
+  // edit/select/copy its text, not to open the lead.
+  if (ev) ev.stopPropagation();
   if (wrap.classList.contains("editing")) return;
   wrap.classList.add("editing");
   const ctrl = wrap.querySelector(".cell-edit");
