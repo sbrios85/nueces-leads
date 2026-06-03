@@ -12605,8 +12605,31 @@ function buildFcRow(r, isDead) {
     // other fields render the raw control directly (legal stays caps).
     if (key === "owner")
       return _fmtCellWrap(ctrl, fmtOwnerFL(val));
-    if (key === "prop_address")
-      return _fmtCellWrap(ctrl, fmtTitle(val));
+    if (key === "prop_address") {
+      // Two-line display: street on line 1, "City, ST ZIP" on line 2
+      // (muted) — same treatment as the mailing-address cell. The
+      // editable textarea keeps the full merged value. If the user
+      // saved a manual override, show it as one formatted line.
+      const _propOvObj = getFcOverride(r.doc_num);
+      const _propUserOverride = (_propOvObj.fields &&
+          _propOvObj.fields.prop_address != null &&
+          _propOvObj.fields.prop_address !== "")
+            ? _propOvObj.fields.prop_address : "";
+      if (_propUserOverride) return _fmtCellWrap(ctrl, fmtTitle(val));
+      const _pLocParts = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean);
+      const _pCityState = r.prop_city
+        ? esc(fmtTitle(r.prop_city)) +
+            (r.prop_state || r.prop_zip ? ", " : "") +
+            esc([r.prop_state, r.prop_zip].filter(Boolean).join(" "))
+        : esc([r.prop_state, r.prop_zip].filter(Boolean).join(" "));
+      const _pLine1 = r.prop_address
+        ? esc(fmtTitle(r.prop_address))
+        : '<span style="color:var(--muted)">\u2014</span>';
+      const _pDispHtml = _pLocParts.length
+        ? _pLine1 + '<br><small style="color:var(--muted)">' + _pCityState + '</small>'
+        : _pLine1;
+      return _fmtCellWrap(ctrl, fmtTitle(val), _pDispHtml);
+    }
     if (key === "mail_address") {
       // Two-line display: street on line 1, "City, ST ZIP" on line 2
       // (muted). The editable textarea keeps the full merged value so
