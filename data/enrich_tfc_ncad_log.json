@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-06-02T11:52:31+00:00",
+  "ran_at": "2026-06-03T12:23:41+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -260,7 +260,12 @@
         "market_value": 102208.0,
         "ncad_prop_id": "287739",
         "ncad_owner_id": "830559",
-        "ncad_year": "2026"
+        "ncad_year": "2026",
+        "mail_address": "4443 NAPLES ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415",
+        "ncad_account_num": "6936-0005-0210"
       }
     },
     {
