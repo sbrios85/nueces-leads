@@ -12287,7 +12287,15 @@ function buildFcRow(r, isDead) {
        [r.prop_city, r.prop_state, r.prop_zip]
            .filter(Boolean).join(" ").trim()
       ].filter(Boolean).join(" ").trim();
-  const _mailOverride = fcFieldValue(r, "mail_address");
+  // A TRUE user override only — read the override store directly.
+  // (fcFieldValue falls back to the scraped r.mail_address when there's
+  // no override, which would make _mailOverride truthy for almost every
+  // row and wrongly skip the two-line city/state/zip display.)
+  const _mailOvObj = getFcOverride(r.doc_num);
+  const _mailOverride = (_mailOvObj.fields &&
+      _mailOvObj.fields.mail_address != null &&
+      _mailOvObj.fields.mail_address !== "")
+        ? _mailOvObj.fields.mail_address : "";
   const _mailEff = _mailOverride ||
       [r.mail_address,
        [r.mail_city, r.mail_state, r.mail_zip]
