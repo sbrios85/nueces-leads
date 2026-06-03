@@ -967,7 +967,7 @@
       "days_until_sale": 0,
       "deed_date": "1974-05-10",
       "loan_doc": "944313",
-      "lender": "Anchor Resort Co-Owner\u2019s Association, Inc",
+      "lender": "Anchor Resort Co-Owner’s Association, Inc",
       "pdf_parsed_at": "2026-05-20T21:05:21.594773+00:00",
       "ncad_account_num": "7060-0040-0134",
       "prop_lat": 27.631107,
@@ -4673,5 +4673,5 @@
       "ncad_legal": "KINGS CROSSING UNIT 13 LT 22 BLK 1"
     }
   ],
-  "ncad_account_enriched_at": "2026-06-02T21:15:09+00:00"
+  "ncad_account_enriched_at": "2026-06-03T12:09:53+00:00"
 }
