@@ -3773,7 +3773,22 @@ def write_foreclosure_outputs(records: List[ForeclosureRecord],
                   "mail_address", "mail_city", "mail_state", "mail_zip",
                   "legal_lot", "legal_block", "legal_subdivision",
                   "legal_unit", "pdf_parsed_at",
-                  "appraised_value")
+                  "appraised_value",
+                  # NCAD esearch enrichment. The clerk portal never
+                  # provides these — they're attached by the esearch
+                  # step from the NCAD cross-reference. Preserve them
+                  # here so a daily re-fetch of an existing record
+                  # doesn't blank out its prop_id / account / value /
+                  # mailing address. Without this, every re-scraped
+                  # record lost its NCAD links until a manual re-run
+                  # of the enricher (the recurring breakage seen
+                  # 2026-06-03). The merge below only fills when the
+                  # new portal value is blank, and the portal value
+                  # for these is ALWAYS blank, so existing enrichment
+                  # is preserved; a later esearch step in the same run
+                  # can still refresh/overwrite as needed.
+                  "ncad_prop_id", "ncad_owner_id", "ncad_account_num",
+                  "ncad_year", "market_value")
     for rec in existing_records:
         dn = rec.get("doc_num")
         if not dn:
