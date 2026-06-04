@@ -139,7 +139,9 @@
       "pdf_parsed_at": "2026-06-01T23:47:44.485736+00:00",
       "ncad_account_num": "0232-0016-0190",
       "ncad_owner": "VIZION247 LLC",
-      "ncad_legal": "ARCADIA BLK 16 LOT 19"
+      "ncad_legal": "ARCADIA BLK 16 LOT 19",
+      "prop_lat": 27.757457,
+      "prop_lng": -97.407456
     },
     {
       "doc_num": "2026000326",
@@ -202,7 +204,9 @@
       "pdf_parsed_at": "2026-06-01T23:04:16.365797+00:00",
       "ncad_account_num": "1238-0002-0200",
       "ncad_owner": "CANO NATHAN MATTHEW",
-      "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20"
+      "ncad_legal": "CALLICOATTE ESTATES UNIT 5 - PHASE 1 BLK 2 LOT 20",
+      "prop_lat": 27.847163,
+      "prop_lng": -97.607463
     },
     {
       "doc_num": "2026000318",
@@ -236,7 +240,9 @@
       "pdf_parsed_at": "2026-06-01T23:47:23.600892+00:00",
       "ncad_account_num": "0232-0007-0140",
       "ncad_owner": "AL-BARNAWI MOHAMMAD",
-      "ncad_legal": "ARCADIA BLK 7 LOT 14"
+      "ncad_legal": "ARCADIA BLK 7 LOT 14",
+      "prop_lat": 27.762399,
+      "prop_lng": -97.405572
     },
     {
       "doc_num": "2026000325",
@@ -270,7 +276,9 @@
       "pdf_parsed_at": "2026-06-01T23:03:53.647820+00:00",
       "ncad_account_num": "7656-0001-0060",
       "ncad_owner": "HALSTEAD ROBERT",
-      "ncad_legal": "SANDPIPER ESTATES BLK 1 LOT 6"
+      "ncad_legal": "SANDPIPER ESTATES BLK 1 LOT 6",
+      "prop_lat": 27.823802,
+      "prop_lng": -97.066444
     },
     {
       "doc_num": "2026000320",
@@ -305,7 +313,9 @@
       "pdf_parsed_at": "2026-06-01T23:47:30.748119+00:00",
       "ncad_account_num": "1685-0001-0020",
       "ncad_owner": "BRAY GERLINE J",
-      "ncad_legal": "COLLIER BLK 1 LOT 2"
+      "ncad_legal": "COLLIER BLK 1 LOT 2",
+      "prop_lat": 27.737253,
+      "prop_lng": -97.393505
     },
     {
       "doc_num": "2026000322",
@@ -339,7 +349,9 @@
       "pdf_parsed_at": "2026-06-01T23:03:59.297651+00:00",
       "ncad_account_num": "2938-0008-0020",
       "ncad_owner": "PHILLIPS KAYLA MARIE & JOSE SANTIAGO ALCARAZ",
-      "ncad_legal": "GREEN ACRES VILLAGE #2 BLK 8 LOT 2"
+      "ncad_legal": "GREEN ACRES VILLAGE #2 BLK 8 LOT 2",
+      "prop_lat": 27.714753,
+      "prop_lng": -97.366111
     },
     {
       "doc_num": "2026000324",
@@ -372,7 +384,9 @@
       "pdf_parsed_at": "2026-06-01T23:47:13.904720+00:00",
       "ncad_account_num": "4465-0006-0240",
       "ncad_owner": "PAIZ  AMBER LEANNE & ISHMAEL GONZALES PAIZ JR",
-      "ncad_legal": "LINCOLN TERRACE BLK 6 LOT 24"
+      "ncad_legal": "LINCOLN TERRACE BLK 6 LOT 24",
+      "prop_lat": 27.724231,
+      "prop_lng": -97.391429
     },
     {
       "doc_num": "2026000315",
@@ -403,7 +417,9 @@
       "legal_lot": "2",
       "legal_block": "3",
       "legal_subdivision": "Washington",
-      "pdf_parsed_at": "2026-06-01T23:03:34.883142+00:00"
+      "pdf_parsed_at": "2026-06-01T23:03:34.883142+00:00",
+      "prop_lat": 27.749569,
+      "prop_lng": -97.447529
     },
     {
       "doc_num": "2026000316",
@@ -564,7 +580,9 @@
       "pdf_parsed_at": "2026-05-24T16:04:14.332276+00:00",
       "ncad_account_num": "4137-0019-0010",
       "ncad_owner": "HENDERSON JASON S & WF MEGAN M",
-      "ncad_legal": "THE LAKES UNIT 2 BLK 19 LOT 1"
+      "ncad_legal": "THE LAKES UNIT 2 BLK 19 LOT 1",
+      "prop_lat": 27.678807,
+      "prop_lng": -97.413367
     },
     {
       "doc_num": "2026000301",
@@ -631,7 +649,9 @@
       "pdf_parsed_at": "2026-05-24T16:03:33.110625+00:00",
       "ncad_account_num": "5074-0001-0010",
       "ncad_owner": "MORROW VICTORIA",
-      "ncad_legal": "MELDO PARK BLK 1 LOT 1"
+      "ncad_legal": "MELDO PARK BLK 1 LOT 1",
+      "prop_lat": 27.746399,
+      "prop_lng": -97.381705
     },
     {
       "doc_num": "2026000308",
@@ -699,7 +719,9 @@
       "pdf_parsed_at": "2026-05-24T16:03:18.812662+00:00",
       "ncad_account_num": "0661-0003-0140",
       "ncad_owner": "GARZA JOSE SAMUEL",
-      "ncad_legal": "BERVONNE TERRACE E5O' OF LT 14 BK 3"
+      "ncad_legal": "BERVONNE TERRACE E5O' OF LT 14 BK 3",
+      "prop_lat": 27.837383,
+      "prop_lng": -97.57726
     },
     {
       "doc_num": "2026000300",
@@ -733,7 +755,9 @@
       "pdf_parsed_at": "2026-05-24T16:03:52.283475+00:00",
       "ncad_account_num": "7717-0001-0060",
       "ncad_owner": "GOMEZ ISRAEL JR AND",
-      "ncad_legal": "SARATOGA DOWNS UNIT 1A BLK 1 LOT 6"
+      "ncad_legal": "SARATOGA DOWNS UNIT 1A BLK 1 LOT 6",
+      "prop_lat": 27.724716,
+      "prop_lng": -97.451149
     },
     {
       "doc_num": "2026000303",
@@ -765,7 +789,9 @@
       "pdf_parsed_at": "2026-05-24T16:03:58.276444+00:00",
       "ncad_account_num": "3119-0001-0130",
       "ncad_owner": "HAWKINS CURTIS EUGENE",
-      "ncad_legal": "GUTH PARKSIDE SUB LT 13 BK 1"
+      "ncad_legal": "GUTH PARKSIDE SUB LT 13 BK 1",
+      "prop_lat": 27.831488,
+      "prop_lng": -97.549697
     },
     {
       "doc_num": "2026000309",
@@ -799,7 +825,9 @@
       "pdf_parsed_at": "2026-05-24T16:03:22.345874+00:00",
       "ncad_account_num": "7122-0005-0090",
       "ncad_owner": "VASQUEZ ALBERT L & WF CRYSTAL B RAMOS",
-      "ncad_legal": "RAY W B HGTS BLK 5 LOT 9"
+      "ncad_legal": "RAY W B HGTS BLK 5 LOT 9",
+      "prop_lat": 27.745599,
+      "prop_lng": -97.394683
     },
     {
       "doc_num": "2026000310",
@@ -831,7 +859,9 @@
       "pdf_parsed_at": "2026-05-24T16:03:27.253702+00:00",
       "ncad_account_num": "9708-0010-0080",
       "ncad_owner": "DELGADO JOSE BENITO JR",
-      "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8"
+      "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8",
+      "prop_lat": 27.841609,
+      "prop_lng": -97.599475
     },
     {
       "doc_num": "2026000299",
@@ -910,7 +940,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.713644+00:00",
       "ncad_account_num": "2702-0009-0146",
       "ncad_owner": "VENTAJA LLC",
-      "ncad_legal": "GARDENDALE LT 15 BLK 9 (LESS POR TO ROW)"
+      "ncad_legal": "GARDENDALE LT 15 BLK 9 (LESS POR TO ROW)",
+      "prop_lat": 27.700616,
+      "prop_lng": -97.380478
     },
     {
       "doc_num": "2026000296",
@@ -944,7 +976,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.707921+00:00",
       "ncad_account_num": "2905-0001-0090",
       "ncad_owner": "NICHOLS ANDREW E II",
-      "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 9"
+      "ncad_legal": "GRANGE PARK UNIT 1 BLK 1 LOT 9",
+      "prop_lat": 27.653521,
+      "prop_lng": -97.354431
     },
     {
       "doc_num": "2026000268",
@@ -978,7 +1012,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.603989+00:00",
       "ncad_account_num": "0232-0004-0090",
       "ncad_owner": "VELLA JERRY AND",
-      "ncad_legal": "ARCADIA BLK 4 LOT 9"
+      "ncad_legal": "ARCADIA BLK 4 LOT 9",
+      "prop_lat": 27.760441,
+      "prop_lng": -97.403814
     },
     {
       "doc_num": "2026000265",
@@ -1011,7 +1047,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.573366+00:00",
       "ncad_account_num": "1847-0010-0160",
       "ncad_owner": "HALL CHRISTOPHER WAYNE & WF RACHEL YOLANDA EATMON-HALL",
-      "ncad_legal": "COUNTRY CLUB ESTATES #5 BLK 10 LOT 16"
+      "ncad_legal": "COUNTRY CLUB ESTATES #5 BLK 10 LOT 16",
+      "prop_lat": 27.692961,
+      "prop_lng": -97.390376
     },
     {
       "doc_num": "2026000262",
@@ -1044,7 +1082,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.555777+00:00",
       "ncad_account_num": "7790-0009-0090",
       "ncad_owner": "US BANK NA ETAL",
-      "ncad_legal": "SCHANEN ESTS WEST #10 BLK 9 LOT 9"
+      "ncad_legal": "SCHANEN ESTS WEST #10 BLK 9 LOT 9",
+      "prop_lat": 27.706763,
+      "prop_lng": -97.413835
     },
     {
       "doc_num": "2026000264",
@@ -1075,7 +1115,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.568653+00:00",
       "ncad_account_num": "7410-0002-0071",
       "ncad_owner": "SANDERS MELANIE",
-      "ncad_legal": "ROBERTS SARAH SUR #6 - PA BLK 2 LOT 7&8"
+      "ncad_legal": "ROBERTS SARAH SUR #6 - PA BLK 2 LOT 7&8",
+      "prop_lat": 27.836248,
+      "prop_lng": -97.063253
     },
     {
       "doc_num": "2026000257",
@@ -1113,7 +1155,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.531482+00:00",
       "ncad_account_num": "0768-0001-0070",
       "ncad_owner": "CORDELL BRANDON C AND WF",
-      "ncad_legal": "BLUE GRASS ESTATES BLK 1 LOT 7"
+      "ncad_legal": "BLUE GRASS ESTATES BLK 1 LOT 7",
+      "prop_lat": 27.654602,
+      "prop_lng": -97.308183
     },
     {
       "doc_num": "2026000251",
@@ -1146,7 +1190,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.496831+00:00",
       "ncad_account_num": "1585-0004-0180",
       "ncad_owner": "SALAZAR GABREAL ROSE & SP ALBERT CANALES JR",
-      "ncad_legal": "CHULA VISTA BLK 4 LOT 18"
+      "ncad_legal": "CHULA VISTA BLK 4 LOT 18",
+      "prop_lat": 27.75524,
+      "prop_lng": -97.430567
     },
     {
       "doc_num": "2026000256",
@@ -1177,7 +1223,9 @@
       "legal_lot": "18",
       "legal_block": "1",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
-      "pdf_parsed_at": "2026-05-20T21:05:21.528620+00:00"
+      "pdf_parsed_at": "2026-05-20T21:05:21.528620+00:00",
+      "prop_lat": 27.696677,
+      "prop_lng": -97.409634
     },
     {
       "doc_num": "2026000250",
@@ -1211,7 +1259,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.488091+00:00",
       "ncad_account_num": "7224-0008-0210",
       "ncad_owner": "VARGAS VALENTIN & WF NORA L",
-      "ncad_legal": "RIDGEWOOD #2 BLK 8 LOT 21"
+      "ncad_legal": "RIDGEWOOD #2 BLK 8 LOT 21",
+      "prop_lat": 27.701106,
+      "prop_lng": -97.387128
     },
     {
       "doc_num": "2026000253",
@@ -1242,7 +1292,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.511670+00:00",
       "ncad_account_num": "2843-0000-0120",
       "ncad_owner": "CASTLE BRANDON & WF CARMEN",
-      "ncad_legal": "GLENOAK S/D LT 12"
+      "ncad_legal": "GLENOAK S/D LT 12",
+      "prop_lat": 27.640811,
+      "prop_lng": -97.293761
     },
     {
       "doc_num": "2026000242",
@@ -1276,7 +1328,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.443990+00:00",
       "ncad_account_num": "9810-0002-0110",
       "ncad_owner": "GONZALES STEPHEN M AND REYNALDO GONZALES AND OFELIA WFE",
-      "ncad_legal": "WOODBEND LT 11 BLK 2"
+      "ncad_legal": "WOODBEND LT 11 BLK 2",
+      "prop_lat": 27.691248,
+      "prop_lng": -97.358411
     },
     {
       "doc_num": "2026000247",
@@ -1309,7 +1363,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.475639+00:00",
       "ncad_account_num": "7749-0003-0010",
       "ncad_owner": "ESTRADA XAVIER D",
-      "ncad_legal": "SAXET HTS 1 LT 1 AND N .50 OF LT 2 BK 3"
+      "ncad_legal": "SAXET HTS 1 LT 1 AND N .50 OF LT 2 BK 3",
+      "prop_lat": 27.790908,
+      "prop_lng": -97.436718
     },
     {
       "doc_num": "2026000233",
@@ -1343,7 +1399,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.394888+00:00",
       "ncad_account_num": "3433-0001-0070",
       "ncad_owner": "CALL JARED & WF KIMBERLY DUGDALE",
-      "ncad_legal": "HILL COUNTRY ESTATES BLK 1 LOT 7"
+      "ncad_legal": "HILL COUNTRY ESTATES BLK 1 LOT 7",
+      "prop_lat": 27.829866,
+      "prop_lng": -97.572119
     },
     {
       "doc_num": "2026000239",
@@ -1375,7 +1433,9 @@
       "pdf_parsed_at": "2026-05-20T21:05:21.431159+00:00",
       "ncad_account_num": "9563-0005-0120",
       "ncad_owner": "ALLMAN PATRICK",
-      "ncad_legal": "WESTWOOD VILLAGE BLK 5 LOT 12"
+      "ncad_legal": "WESTWOOD VILLAGE BLK 5 LOT 12",
+      "prop_lat": 27.736618,
+      "prop_lng": -97.396982
     },
     {
       "doc_num": "2026000227",
@@ -1660,7 +1720,9 @@
       "pdf_parsed_at": "2026-06-01T23:03:48.650890+00:00",
       "ncad_account_num": "4414-0004-0180",
       "ncad_owner": "GONZALEZ RICHARD",
-      "ncad_legal": "LEXINGTON PK UNIT 2 LT 18 BK 4"
+      "ncad_legal": "LEXINGTON PK UNIT 2 LT 18 BK 4",
+      "prop_lat": 27.692219,
+      "prop_lng": -97.35119
     },
     {
       "doc_num": "2026000321",
@@ -1694,7 +1756,9 @@
       "pdf_parsed_at": "2026-06-01T23:04:10.813994+00:00",
       "ncad_account_num": "8902-0003-0200",
       "ncad_owner": "ESPINOZA MATTHEW F & WF EBONY C",
-      "ncad_legal": "TRUE - BISHOP BLK 3 LOT 20"
+      "ncad_legal": "TRUE - BISHOP BLK 3 LOT 20",
+      "prop_lat": 27.579663,
+      "prop_lng": -97.797487
     },
     {
       "doc_num": "2026000317",
@@ -1731,7 +1795,9 @@
       "pdf_parsed_at": "2026-06-01T23:03:42.497259+00:00",
       "ncad_account_num": "1493-0010-0240",
       "ncad_owner": "DELEON ROGELIO",
-      "ncad_legal": "CENTRAL PARK  #2 BLK 10 LOT 24"
+      "ncad_legal": "CENTRAL PARK  #2 BLK 10 LOT 24",
+      "prop_lat": 27.730004,
+      "prop_lng": -97.403848
     },
     {
       "doc_num": "2026000306",
@@ -1765,7 +1831,9 @@
       "pdf_parsed_at": "2026-05-24T16:04:09.627055+00:00",
       "ncad_account_num": "6102-0003-0010",
       "ncad_owner": "ENCINIA TANIA & HUSBAND FRANCISCO C ALVAREZ",
-      "ncad_legal": "OVERLAND MEADOWS #4 BLK 3 LOT 1"
+      "ncad_legal": "OVERLAND MEADOWS #4 BLK 3 LOT 1",
+      "prop_lat": 27.833695,
+      "prop_lng": -97.571989
     },
     {
       "doc_num": "2026000307",
@@ -1798,7 +1866,9 @@
       "pdf_parsed_at": "2026-05-24T16:03:47.957036+00:00",
       "ncad_account_num": "2255-0003-0030",
       "ncad_owner": "CORDOVA FRANK",
-      "ncad_legal": "EDGEWOOD PK N 5FT OF 2 ALL OF 3 BK 3"
+      "ncad_legal": "EDGEWOOD PK N 5FT OF 2 ALL OF 3 BK 3",
+      "prop_lat": 27.745165,
+      "prop_lng": -97.413145
     },
     {
       "doc_num": "2026000305",
