@@ -547,9 +547,23 @@ _RE_LENDER = [
     re.compile(r"\bBeneficiary:\s+([A-Z][A-Za-z0-9\s&,.'-]{3,80}?)"
                 r"(?=\s*\n|\s+(?:Note|Trustee))",
                re.IGNORECASE),
-    # "in favor of NAME" — Mackie Wolf body text
+    # MERS narrative: "in favor of TRUSTEE, as Trustee, Mortgage
+    # Electronic Registration Systems, Inc., as ... nominee for
+    # <REAL LENDER>" (doc 227). The entity after "nominee for" is the
+    # actual lender; the name right after "in favor of" here is only
+    # the TRUSTEE, which the generic "in favor of" fallback below would
+    # otherwise wrongly capture. Must precede that fallback.
+    re.compile(r"nominee\s+for\s+([A-Z][A-Za-z0-9\s,&.'-]+?"
+                r"(?:LP|L\.?P\.?|LLC|L\.?L\.?C\.?|INC|CORP|"
+                r"COMPANY|CO|LTD|BANK|N\.?A\.?|ASSOCIATION|FUNDING)\.?)"
+                r"(?=\s*,?\s*(?:its|a\s+\w+|as\s+|whose|Ltd)|\.|\n)",
+               re.IGNORECASE),
+    # "in favor of NAME" — Mackie Wolf body text. Guarded so it does
+    # NOT fire when the captured name is immediately followed by ", as
+    # Trustee" (that's the trustee, not the lender — see doc 227, which
+    # is instead handled by the nominee-for pattern above).
     re.compile(r"in\s+favor\s+of\s+([A-Z][A-Za-z0-9\s,&.'-]{3,80}?)"
-                r"(?=\s*,\s*(?:its|a\s+\w+|as\s+|whose|located)|\.|\n|recorded)"),
+                r"(?=\s*,\s*(?:its|a\s+\w+|whose|located)|\.|\n|recorded)"),
 ]
 
 # Loan amount — original principal.
@@ -557,6 +571,12 @@ _RE_LENDER = [
 _RE_LOAN_AMOUNT = [
     re.compile(r"original\s+principal\s+(?:balance|amount|sum)?[:\s]+"
                 r"\$\s*([\d,]+(?:\.\d{2})?)",
+               re.IGNORECASE),
+    # "Original Principal: $275,910.00" — table format where the colon
+    # comes immediately after "Principal" with no balance/amount/sum
+    # word and no space before the colon (docs 178, 239). The pattern
+    # above requires \s+ after "principal", which this layout lacks.
+    re.compile(r"original\s+principal\s*:\s*\$\s*([\d,]+(?:\.\d{2})?)",
                re.IGNORECASE),
     re.compile(r"principal\s+(?:sum|amount)\s+of\s+\$\s*([\d,]+(?:\.\d{2})?)",
                re.IGNORECASE),
@@ -583,6 +603,21 @@ _RE_LOAN_AMOUNT = [
 
 # Deed of trust date — when the original loan was executed.
 _RE_DEED_DATE = [
+    # "DEED OF TRUST INFORMATION:" header followed by a "Date:" row
+    # (docs 178, 239). The header word "INFORMATION" (with ; or :) sits
+    # between "DEED OF TRUST" and the date row, and OCR sometimes drops
+    # a stray "— " after the colon ("Date: — 07/27/2022"). Handles both
+    # month-name ("July 19, 2024") and numeric ("07/27/2022") dates.
+    re.compile(r"deed\s+of\s+trust\s+information[:;]\s*\n+\s*"
+                r"Date:\s*(?:[\u2014\-_]+\s*)?"
+                r"([A-Za-z]+\s+\d{1,2},?\s+\d{4}|\d{1,2}/\d{1,2}/\d{2,4})",
+               re.IGNORECASE),
+    # Narrative: "on 3/30/2022, NAME ... executed and delivered that
+    # certain Deed of Trust" (doc 227). The date precedes the grantor
+    # and the "executed ... Deed of Trust" phrase.
+    re.compile(r"\bon\s+(\d{1,2}/\d{1,2}/\d{2,4})\s*,[^.]{0,120}?"
+                r"executed[^.]{0,40}?deed\s+of\s+trust",
+               re.IGNORECASE),
     # "Deed of Trust dated MM/DD/YYYY" or "Deed of Trust Dated MM/DD/YYYY"
     # (case-insensitive)
     re.compile(r"deed\s+of\s+trust\s+(?:dated|executed\s+on)[\s:]+"
@@ -625,6 +660,33 @@ _RE_DEED_DATE = [
 # older records use 5-7 digit clerk's file numbers (e.g. 944313). We
 # accept 5-12 digits to cover both eras.
 _RE_LOAN_DOC = [
+    # "Recording Information: [stray] Instrument/Document <num>" — table
+    # format (doc 239) where OCR inserts stray dash/underscore chars
+    # between the colon and "Instrument" ("Recording Information: —_
+    # Instrument 2022035986"). Tolerates an optional run of dash/
+    # underscore/space before the document-type word.
+    re.compile(
+        r"recording\s+information\s*:?\s*[\u2014\-_\s]*"
+        r"(?:document|instrument|clerk(?:'|\u2019)?s?\s+file)\s*"
+        r"(?:no\.?|number|#)?\s*:?\s*"
+        r"(\d{5,12})",
+        re.IGNORECASE),
+    # OCR-split label: the value lands BETWEEN the two halves of the
+    # "Recording / Information:" label (doc 178):
+    #   "Recording 2024025131 Information:"
+    # (loan_doc matching runs on whitespace-flattened text, so the
+    # original line breaks are spaces here.) Capture the 5-12 digit
+    # number sitting between "Recording" and a following "Information:".
+    re.compile(
+        r"recording\s+(\d{5,12})\s+information\s*:",
+        re.IGNORECASE),
+    # Narrative: "Deed of Trust is Recorded on <date> as Volume <num>"
+    # (doc 227). Existing patterns expect Document/Instrument/Clerk's
+    # File; this template uses "as Volume <num>".
+    re.compile(
+        r"deed\s+of\s+trust\s+is\s+recorded\b[^.]{0,60}?"
+        r"\bas\s+volume\s+(\d{5,12})",
+        re.IGNORECASE),
     # Anchored: "Deed of Trust dated <date> and recorded in
     # Document/Instrument/Clerk's File No. <num>". The date portion is
     # skipped over with a non-greedy gap so we land on the recording
