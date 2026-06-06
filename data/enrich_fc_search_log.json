@@ -1,11 +1,11 @@
 {
-  "ran_at": "2026-06-06T19:39:58+00:00",
+  "ran_at": "2026-06-06T19:55:11+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
   "summary": {
-    "matched": 38,
-    "no_match": 7,
+    "matched": 39,
+    "no_match": 6,
     "skipped": 17,
     "total_targets": 45
   },
@@ -412,12 +412,24 @@
     {
       "doc_num": "2026000310",
       "prop_address": "11537 PINTAS CREEK CIR",
-      "result": "rejected-subdivision-conflict",
+      "result": "matched",
+      "ncad_prop_id": "535213",
+      "ncad_account_num": "9708-0010-0080",
+      "ncad_owner": "DELGADO JOSE BENITO JR",
       "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8",
-      "fc_legal": "OVERLAND MEADOWS LOT 1 BLOCK 3 UNIT 4, WILLOWOOD LOT 8 BLOCK 10 UNIT 7",
-      "query": [
-        "StreetNumber:11537 StreetName:PINTAS CREEK"
-      ]
+      "market_value": 291639.0,
+      "additions": {
+        "ncad_prop_id": "535213",
+        "ncad_owner_id": "405336",
+        "ncad_year": "2026",
+        "ncad_account_num": "9708-0010-0080",
+        "ncad_owner": "DELGADO JOSE BENITO JR",
+        "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8",
+        "mail_address": "11537 Pintas Creek Cir",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410"
+      }
     },
     {
       "doc_num": "2026000299",

@@ -909,7 +909,9 @@
       "ncad_account_num": "9708-0010-0080",
       "prop_lat": 27.841609,
       "prop_lng": -97.599475,
-      "has_loan_mod": false
+      "has_loan_mod": false,
+      "ncad_owner": "DELGADO JOSE BENITO JR",
+      "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8"
     },
     {
       "doc_num": "2026000299",
@@ -2096,5 +2098,5 @@
       "ncad_legal": "KINGS CROSSING UNIT 13 LT 22 BLK 1"
     }
   ],
-  "ncad_account_enriched_at": "2026-06-06T19:39:58+00:00"
+  "ncad_account_enriched_at": "2026-06-06T19:55:11+00:00"
 }
