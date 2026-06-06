@@ -11,8 +11,16 @@ name: Parse uploaded foreclosure PDFs
 on:
   workflow_dispatch:
     inputs:
+      source:
+        description: 'PDF source: inbox = parse new uploads in pdfs/foreclosures/; text_archive = re-parse ALL saved PDF text in pdfs/text_archive/ (use after a parser improvement to refresh every historical record — forces overwrite ON)'
+        required: false
+        default: 'inbox'
+        type: choice
+        options:
+          - 'inbox'
+          - 'text_archive'
       overwrite:
-        description: 'Overwrite existing fields (use after parser bug fixes)'
+        description: 'Overwrite existing fields (use after parser bug fixes). Ignored in text_archive mode, which always overwrites.'
         required: false
         default: 'false'
         type: choice
@@ -64,6 +72,7 @@ jobs:
         env:
           LOG_LEVEL: INFO
           PYTHONUNBUFFERED: "1"
+          PDF_SOURCE: ${{ inputs.source }}
           PDF_OVERWRITE: ${{ inputs.overwrite }}
           # OCR up to 6 pages per PDF. Most notices put the core fields
           # (borrower, lender, loan amount, deed date) on page 1, but
