@@ -374,8 +374,8 @@ def _parse_esearch_result_list(html: str) -> List[Dict[str, Any]]:
 # MFC lesson, legal agreement only STRENGTHENS a pick — it never
 # overrides the address-number rejection guard below.
 
-_LOT_RE   = re.compile(r"\bLO?T?S?\.?\s*([0-9]+[A-Z]?)\b", re.IGNORECASE)
-_BLOCK_RE = re.compile(r"\bB(?:LO?C?K|K)\.?\s*([0-9]+[A-Z]?)\b", re.IGNORECASE)
+_LOT_RE   = re.compile(r"\bLO?T?S?\.?\s*([0-9]+(?:[-\s]?[A-Z])?)\b", re.IGNORECASE)
+_BLOCK_RE = re.compile(r"\bB(?:LO?C?K|K)\.?\s*([0-9]+(?:[-\s]?[A-Z])?)\b", re.IGNORECASE)
 
 
 def _legal_tokens(legal: str) -> Dict[str, str]:
@@ -397,6 +397,13 @@ def _legal_tokens(legal: str) -> Dict[str, str]:
     m = _BLOCK_RE.search(s)
     if m:
         block = m.group(1)
+    # Normalize the optional letter suffix so "32-B", "32 B" and "32B"
+    # all compare equal. NCAD writes "LOT 32-B" while the foreclosure
+    # legal writes "LOT 32B"; without this they'd mismatch and a
+    # genuine parcel would be rejected (e.g. doc 2025000821 / BERVONNE
+    # TERRACE BLK 4 LOT 32-B vs LOT 32B BLOCK 4).
+    lot = re.sub(r"[-\s]", "", lot)
+    block = re.sub(r"[-\s]", "", block)
     # Subdivision = text before the earliest LOT/BLOCK marker.
     cut = len(s)
     for rx in (_LOT_RE, _BLOCK_RE):
