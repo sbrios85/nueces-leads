@@ -603,6 +603,19 @@ _RE_LOAN_AMOUNT = [
 
 # Deed of trust date — when the original loan was executed.
 _RE_DEED_DATE = [
+    # Side-by-side header table: "Deed of Trust Date:" sits on one line
+    # (next to "Grantor(s)/Mortgagor(s):") and the value leads the FOLLOWING
+    # line (doc 247): "Deed of Trust Date: Grantor(s)...\n10/7/2014 XAVIER...".
+    # Capture the first M/D/YYYY at the start of the line after the label.
+    re.compile(r"deed\s+of\s+trust\s+date\s*:[^\n]*\n\s*"
+                r"(\d{1,2}/\d{1,2}/\d{2,4})\b",
+               re.IGNORECASE),
+    # Same table, label OCR-dropped (doc 251): the date leads the grantor
+    # line — "<date> NAME, AN UNMARRIED ..." or "<date> NAME, A MARRIED ...".
+    # Anchored to the grantor descriptor so it won't grab a random date.
+    re.compile(r"(?:^|\n)\s*(\d{1,2}/\d{1,2}/\d{2,4})\s+[A-Z][A-Z .,'-]{3,60}?,"
+                r"\s+(?:AN?\s+(?:UN)?MARRIED|A\s+SINGLE|UNMARRIED|MARRIED)",
+               re.IGNORECASE),
     # "DEED OF TRUST INFORMATION:" header followed by a "Date:" row
     # (docs 178, 239). The header word "INFORMATION" (with ; or :) sits
     # between "DEED OF TRUST" and the date row, and OCR sometimes drops
