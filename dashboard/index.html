@@ -3542,38 +3542,6 @@ function setFcOverride(docNum, patch) {
   saveFcOverrides(o);
 }
 
-// ---- "No NCAD data" marker (FC only, local-only) ----
-// Some parcels exist in NCAD as a registered property ID but have ALL
-// fields blank (no owner, address, legal, or deed). Example: prop_id
-// 219511. These can't be found by address OR owner search because NCAD
-// has nothing indexed, so the NCAD/NCTAX columns sit on the search-
-// fallback icon forever and the row looks "incomplete". This marker
-// lets the user flag such a record as verified-blank: the NCAD/NCTAX
-// cells dim with a "no data" label and a "NCAD verified" badge appears
-// by the owner. Stored in the FC override store under `ncad_no_data`.
-// Purely a display marker — the enricher reads JSON, not this store,
-// so its behaviour is unchanged.
-function fcHasNoNcadData(docNum) {
-  if (!docNum) return false;
-  const o = getFcOverride(docNum);
-  return !!(o && o.fields && o.fields.ncad_no_data);
-}
-function toggleFcNoNcad(docNum) {
-  if (!docNum) return;
-  const cur = fcHasNoNcadData(docNum);
-  const o = loadFcOverrides();
-  const rec = o[docNum] || {};
-  const fields = Object.assign({}, rec.fields || {});
-  if (cur) delete fields.ncad_no_data;
-  else fields.ncad_no_data = true;
-  o[docNum] = Object.assign({}, rec, {fields: fields,
-    _updated_at: new Date().toISOString()});
-  saveFcOverrides(o);
-  // Re-render the foreclosures table so the row reflects the change.
-  try { if (typeof renderFc === "function") renderFc(); }
-  catch (e) {}
-}
-
 // ---- Verified manual-review tracker (FC only, local-only) ----
 // A lightweight progress tracker for working through foreclosure leads
 // while training the parser. Kept in its OWN localStorage store so it's
@@ -5178,21 +5146,27 @@ function openMfcCrm(docNum, sourceRecords) {
   const rec = (sourceRecords || []).find(x => x.doc_num === docNum);
   if (!rec) return;
 
-  // Remember return state (same pattern as openCrm).
   const _mainEl = document.querySelector(".main");
-  const activePane = document.querySelector(".pane.active");
-  _crmReturn = {
-    pane: activePane ? activePane.id : null,
-    scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY,
-  };
 
-  // Detect whether the CRM is already open. If it is, this call
-  // is a RE-RENDER (status change, dupe check, etc.) and we should
-  // PRESERVE the user's current scroll position. If it's hidden,
-  // we're navigating in from the list and should scroll to the top
-  // of the lead.
+  // Detect whether the CRM is already open BEFORE touching
+  // _crmReturn. If it's open, this call is a RE-RENDER (stage
+  // change, attempt save, etc.) — and by this point the CRM has
+  // already removed .active from every pane, so ".pane.active"
+  // would be null. Capturing _crmReturn here would overwrite the
+  // good return-pane (recorded on the fresh open) with null, and
+  // Back would then have no pane to restore — leaving the dashboard
+  // blank. So we ONLY capture the return state on a FRESH open,
+  // while the list pane is still active. Re-renders preserve scroll
+  // via _prevScrollY (captured below), independent of _crmReturn.
   const crmEl = document.getElementById("crm-view");
   const _wasOpen = crmEl && !crmEl.hidden;
+  if (!_wasOpen) {
+    const activePane = document.querySelector(".pane.active");
+    _crmReturn = {
+      pane: activePane ? activePane.id : null,
+      scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY,
+    };
+  }
   // Remember which input was focused (and its caret position) so
   // we can restore focus after the re-render — without this, blur
   // on a phone would trigger a re-render that steals focus from
@@ -7116,19 +7090,21 @@ function openTfcCrm(uid, sourceRecords) {
   if (!rec) return;
 
   // Save return state (which pane was active, where the scroll was)
-  // so closeCrm() can put the user back where they were.
+  // so closeCrm() can put the user back where they were. Same fix as
+  // openMfcCrm: detect re-render FIRST, and only capture _crmReturn
+  // on a FRESH open. On a re-render the CRM has already deactivated
+  // every pane, so ".pane.active" is null — capturing here would wipe
+  // the good return-pane and Back would land on a blank dashboard.
   const _mainEl = document.querySelector(".main");
-  const activePane = document.querySelector(".pane.active");
-  _crmReturn = {
-    pane: activePane ? activePane.id : null,
-    scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY,
-  };
-
-  // Detect re-render vs fresh open — re-renders (stage change,
-  // attempt save, contact add, etc.) PRESERVE the user's current
-  // scroll position; fresh opens reset to top.
   const crmEl = document.getElementById("crm-view");
   const _wasOpen = crmEl && !crmEl.hidden;
+  if (!_wasOpen) {
+    const activePane = document.querySelector(".pane.active");
+    _crmReturn = {
+      pane: activePane ? activePane.id : null,
+      scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY,
+    };
+  }
   const _prevScrollY = _mainEl ? _mainEl.scrollTop : window.scrollY;
 
   // Pull the entry. Empty {} if this lead has never been touched —
@@ -12716,7 +12692,7 @@ function buildFcRow(r, isDead) {
     <td>${statusCell}</td>
     <td>${foreclosureDateCell}</td>
     <td>${esc(formatDate(r.recorded))}</td>
-    <td>${_ecell("owner", _ownerEff)}${fcHasNoNcadData(r.doc_num) ? `<div class="ncad-verified-badge" title="You verified NCAD has no data for this parcel" onclick="event.stopPropagation();" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;padding:1px 7px;border-radius:6px;background:var(--color-background-success,#e1f5ee);color:var(--color-text-success,#0f6e56);font-size:11px;font-weight:500;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M5 12l5 5L20 6"/></svg>NCAD verified</div>` : ""}</td>
+    <td>${_ecell("owner", _ownerEff)}</td>
     <td class="addr-cell">${_ecell("prop_address", _propEff)}${absenteeBadge}${shortSaleBadge}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: _propEff, prop_city: r.prop_city, prop_state: r.prop_state, prop_zip: r.prop_zip})}</td>
     <td class="addr-cell">${_ecell("mail_address", _mailEff)}</td>
@@ -13260,18 +13236,6 @@ function flipOwnerForNcad(raw) {
 }
 
 function ncadCellHtml(r) {
-  // "No NCAD data" verified-blank state (FC only). When the user has
-  // flagged this record, show a dimmed "no data" cell instead of the
-  // search icon. Clicking it toggles the flag back off.
-  if (r && r.doc_num && fcHasNoNcadData(r.doc_num)) {
-    const h = "event.stopPropagation();toggleFcNoNcad(" +
-              JSON.stringify(String(r.doc_num)) + ");return false;";
-    return `<span class="ncad-nodata" title="NCAD has no data for this parcel (verified). Click to undo."
-                 onclick="${esc(h)}"
-                 style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;opacity:0.4;cursor:pointer;">
-               <svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 17 L16 7 L27 17 L27 27 L20 27 L20 20 L12 20 L12 27 L5 27 Z" fill="none" stroke="#888780" stroke-width="1.3" stroke-linejoin="round"/><line x1="6" y1="6" x2="26" y2="26" stroke="#888780" stroke-width="1.6" stroke-linecap="round"/></svg>
-               <span style="font-size:10px;color:var(--muted,#888);">no data</span></span>`;
-  }
   if (r && r.ncad_prop_id) {
     const url = "https://esearch.nuecescad.net/Property/View/" +
                 encodeURIComponent(r.ncad_prop_id) +
@@ -13298,11 +13262,7 @@ function ncadCellHtml(r) {
                class="ncad-search-link"
                title="Copy &quot;${esc(flipped)}&quot; &amp; open NCAD search (paste with Ctrl+V)"
                onclick="${esc(handler)}">
-               <svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="13" cy="13" r="8" fill="#ffffff" stroke="#6bc6ff" stroke-width="1.6"/><line x1="19" y1="19" x2="27" y2="27" stroke="#6bc6ff" stroke-width="2.4" stroke-linecap="round"/></svg></a>` +
-           (r.doc_num ? `<span class="ncad-nodata-mark"
-               title="Mark: NCAD has no data for this parcel (after you've verified)"
-               onclick="event.stopPropagation();toggleFcNoNcad(${esc(JSON.stringify(String(r.doc_num)))});return false;"
-               style="cursor:pointer;margin-left:5px;font-size:11px;color:var(--muted,#888);vertical-align:middle;opacity:0.6;">no data</span>` : "");
+               <svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="13" cy="13" r="8" fill="#ffffff" stroke="#6bc6ff" stroke-width="1.6"/><line x1="19" y1="19" x2="27" y2="27" stroke="#6bc6ff" stroke-width="2.4" stroke-linecap="round"/></svg></a>`;
   }
   return "—";
 }
@@ -13432,16 +13392,6 @@ function _nctaxAddressSearchLink(r, reason) {
 //      2026-05-28 (search-result.jsp shows no query string).
 //   3. No account → address search if we have one, else owner search.
 function nctaxCellHtml(r) {
-  // "No NCAD data" verified-blank state (FC only) — mirrors ncadCellHtml.
-  if (r && r.doc_num && fcHasNoNcadData(r.doc_num)) {
-    const h = "event.stopPropagation();toggleFcNoNcad(" +
-              JSON.stringify(String(r.doc_num)) + ");return false;";
-    return `<span class="ncad-nodata" title="NCAD has no data for this parcel (verified). Click to undo."
-                 onclick="${esc(h)}"
-                 style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;opacity:0.4;cursor:pointer;">
-               <svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 17 L16 7 L27 17 L27 27 L20 27 L20 20 L12 20 L12 27 L5 27 Z" fill="none" stroke="#888780" stroke-width="1.3" stroke-linejoin="round"/><line x1="6" y1="6" x2="26" y2="26" stroke="#888780" stroke-width="1.6" stroke-linecap="round"/></svg>
-               <span style="font-size:10px;color:var(--muted,#888);">no data</span></span>`;
-  }
   const acct = r && r.ncad_account_num ? String(r.ncad_account_num) : "";
   const can = acct.replace(/\D/g, "");   // strip dashes/spaces → digits
   if (can && !_ambiguousAccounts().has(can)) {
