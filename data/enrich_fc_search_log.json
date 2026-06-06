@@ -1,11 +1,11 @@
 {
-  "ran_at": "2026-06-06T16:20:32+00:00",
+  "ran_at": "2026-06-06T19:39:58+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
   "summary": {
-    "matched": 41,
-    "no_match": 4,
+    "matched": 38,
+    "no_match": 7,
     "skipped": 17,
     "total_targets": 45
   },
@@ -412,24 +412,12 @@
     {
       "doc_num": "2026000310",
       "prop_address": "11537 PINTAS CREEK CIR",
-      "result": "matched",
-      "ncad_prop_id": "535213",
-      "ncad_account_num": "9708-0010-0080",
-      "ncad_owner": "DELGADO JOSE BENITO JR",
+      "result": "rejected-subdivision-conflict",
       "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8",
-      "market_value": 291639.0,
-      "additions": {
-        "ncad_prop_id": "535213",
-        "ncad_owner_id": "405336",
-        "ncad_year": "2026",
-        "ncad_account_num": "9708-0010-0080",
-        "ncad_owner": "DELGADO JOSE BENITO JR",
-        "ncad_legal": "WILLOWOOD UNIT 7 BLK 10 LOT 8",
-        "mail_address": "11537 Pintas Creek Cir",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78410"
-      }
+      "fc_legal": "OVERLAND MEADOWS LOT 1 BLOCK 3 UNIT 4, WILLOWOOD LOT 8 BLOCK 10 UNIT 7",
+      "query": [
+        "StreetNumber:11537 StreetName:PINTAS CREEK"
+      ]
     },
     {
       "doc_num": "2026000299",
@@ -442,24 +430,12 @@
     {
       "doc_num": "2026000297",
       "prop_address": "5306 HOLLY ROAD",
-      "result": "matched",
-      "ncad_prop_id": "236592",
-      "ncad_account_num": "2702-0009-0146",
-      "ncad_owner": "VENTAJA LLC",
+      "result": "rejected-subdivision-conflict",
       "ncad_legal": "GARDENDALE LT 15 BLK 9 (LESS POR TO ROW)",
-      "market_value": 891030.0,
-      "additions": {
-        "ncad_prop_id": "236592",
-        "ncad_owner_id": "662523",
-        "ncad_year": "2026",
-        "ncad_account_num": "2702-0009-0146",
-        "ncad_owner": "VENTAJA LLC",
-        "ncad_legal": "GARDENDALE LT 15 BLK 9 (LESS POR TO ROW)",
-        "mail_address": "5306 Holly Rd #B",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78411"
-      }
+      "fc_legal": "SPINNAKER CONDOMINIUMS UNIT 305 BLDG A",
+      "query": [
+        "StreetNumber:5306 StreetName:HOLLY"
+      ]
     },
     {
       "doc_num": "2026000296",
@@ -596,24 +572,12 @@
     {
       "doc_num": "2026000251",
       "prop_address": "1734 HUDSON",
-      "result": "matched",
-      "ncad_prop_id": "212944",
-      "ncad_account_num": "1585-0004-0180",
-      "ncad_owner": "SALAZAR GABREAL ROSE & SP ALBERT CANALES JR",
+      "result": "rejected-subdivision-conflict",
       "ncad_legal": "CHULA VISTA BLK 4 LOT 18",
-      "market_value": 194024.0,
-      "additions": {
-        "ncad_prop_id": "212944",
-        "ncad_owner_id": "762253",
-        "ncad_year": "2026",
-        "ncad_account_num": "1585-0004-0180",
-        "ncad_owner": "SALAZAR GABREAL ROSE & SP ALBERT CANALES JR",
-        "ncad_legal": "CHULA VISTA BLK 4 LOT 18",
-        "mail_address": "1734 Hudson St",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78416"
-      }
+      "fc_legal": "BARCELONA ESTATES LOT 46 BLOCK 3 UNIT 4",
+      "query": [
+        "StreetNumber:1734 StreetName:HUDSON"
+      ]
     },
     {
       "doc_num": "2026000256",
