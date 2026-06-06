@@ -441,6 +441,53 @@ def _legal_agrees(parsed_legal: str, ncad_legal: str) -> bool:
     return False
 
 
+def _subdivision_conflicts(parsed_legal: str, ncad_legal: str) -> bool:
+    """Strong, conservative DISAGREEMENT test on subdivision name.
+
+    Returns True only when BOTH legals name a subdivision AND the two
+    names clearly do NOT correspond (no shared distinctive word, and
+    neither contains the other). Used to REJECT an address-search match
+    whose parcel is plainly in a different subdivision than the
+    foreclosure — e.g. a Barcelona Estates foreclosure that address-
+    matched a Chula Vista parcel (doc 2026000251).
+
+    Deliberately errs toward False (no conflict) on any ambiguity, so
+    abbreviations ("Barcelona Est" vs "Barcelona Estates") and partial
+    names never trigger a false rejection. Only a clear, unambiguous
+    name difference returns True.
+    """
+    if not parsed_legal or not ncad_legal:
+        return False
+    a = _legal_tokens(parsed_legal).get("subdivision", "")
+    b = _legal_tokens(ncad_legal).get("subdivision", "")
+    if not a or not b:
+        return False
+    na = re.sub(r"[^A-Z0-9 ]", " ", a.upper())
+    nb = re.sub(r"[^A-Z0-9 ]", " ", b.upper())
+    na = re.sub(r"\s+", " ", na).strip()
+    nb = re.sub(r"\s+", " ", nb).strip()
+    if not na or not nb:
+        return False
+    # Containment either direction → not a conflict (handles
+    # abbreviations / extra words like "UNIT", "PHASE").
+    if na in nb or nb in na:
+        return False
+    # Shared distinctive word (>3 chars, ignore generic suffixes) →
+    # treat as corresponding, not a conflict.
+    GENERIC = {"ESTATES", "ESTATE", "PARK", "ADDITION", "HEIGHTS",
+               "TERRACE", "CROSSING", "VILLAGE", "GARDENS", "GARDEN",
+               "ACRES", "PLACE", "SUBDIVISION", "UNIT", "PHASE",
+               "SECTION", "TRACT", "BLOCK", "LOT"}
+    sa = {w for w in na.split() if len(w) > 3 and w not in GENERIC}
+    sb = {w for w in nb.split() if len(w) > 3 and w not in GENERIC}
+    if not sa or not sb:
+        return False
+    if sa & sb:
+        return False
+    # Both have distinctive words, none shared, no containment → conflict.
+    return True
+
+
 def _pick_best_row(rows: List[Dict[str, Any]],
                    query_addr: str,
                    parsed_legal: str = "") -> Optional[Dict[str, Any]]:
@@ -1337,9 +1384,34 @@ async def _enrich_all(records: List[Dict[str, Any]]
                     await asyncio.sleep(INTER_FETCH_DELAY_S)
                     continue
 
-                consecutive_misses = 0
+                # Subdivision-conflict guard: an address search can
+                # return a confident single hit for a DIFFERENT property
+                # than the foreclosure (e.g. a stale/wrong prop_address
+                # on the record, or two owners with similar names). If
+                # the matched parcel's subdivision clearly disagrees with
+                # the foreclosure's own legal description, reject it —
+                # a false match (wrong owner/address/value) is worse than
+                # no match. Conservative: only fires on an unambiguous
+                # subdivision-name difference (doc 2026000251: Barcelona
+                # Estates foreclosure vs Chula Vista parcel).
+                if best and parsed_legal and _subdivision_conflicts(
+                        parsed_legal, best.get("legal", "")):
+                    log.info("  -> REJECTED match for doc=%s: subdivision "
+                             "conflict (foreclosure legal=%r vs NCAD "
+                             "parcel legal=%r)",
+                             doc, parsed_legal, best.get("legal", ""))
+                    no_match += 1
+                    consecutive_misses += 1
+                    log_entries.append({"doc_num": doc,
+                                        "prop_address": street,
+                                        "result": "rejected-subdivision-conflict",
+                                        "ncad_legal": best.get("legal", ""),
+                                        "fc_legal": parsed_legal,
+                                        "query": tried})
+                    await asyncio.sleep(INTER_FETCH_DELAY_S)
+                    continue
 
-                # Detail page: fetch ONCE, then extract both the
+                consecutive_misses = 0
                 # account number and the mailing address from the same
                 # HTML (avoids a second fetch of the same page).
                 account_num = ""
