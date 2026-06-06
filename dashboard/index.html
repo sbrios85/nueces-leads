@@ -7879,6 +7879,11 @@ function _mfcSetStage(docNum, newStage) {
   const oldLbl = (MFC_STAGES.find(s => s.key === oldStage) || {}).label || oldStage;
   const newLbl = (MFC_STAGES.find(s => s.key === newStage) || {}).label || newStage;
   _mfcLogActivity(docNum, `Stage: ${oldLbl} → ${newLbl}`);
+  // Refresh the underlying FC table (hidden behind the CRM) so the
+  // Status-column pill reflects the new stage the moment the user
+  // hits Back — closeCrm() only un-hides the pane, it doesn't
+  // re-render it.
+  renderFc();
   // Re-open to refresh the UI. Pass FC_RAW as the source (MFC lives
   // in the foreclosures records array).
   openMfcCrm(docNum, FC_RAW);
@@ -12565,12 +12570,33 @@ function buildFcRow(r, isDead) {
       </button>
     `;
   } else {
+    // Active rows show the lead's CRM pipeline STAGE (New / Working /
+    // Negotiating / Under Contract / Closed) instead of a flat
+    // "Active". The stage lives on the MFC CRM store
+    // (nueces_mfc_crm_v1), keyed by doc_num — a DIFFERENT store than
+    // the dead/active bucketing above (nueces_fc_crm_v1). Untouched
+    // leads default to "new". Clicking the pill opens a stage menu
+    // (openFcStageMenu) so the stage can be changed from the table;
+    // changing it inside the CRM also reflects here on Back, because
+    // _mfcSetStage re-renders this table.
+    const stEntry = getCrmEntry("mfc", r.doc_num);
+    const st = stEntry.stage || "new";
+    const stageDef = MFC_STAGES.find(s => s.key === st) || MFC_STAGES[0];
+    const pillClassMap = {
+      new:            "status-new",
+      contacted:      "status-working",
+      negotiating:    "status-negotiating",
+      under_contract: "status-negotiating",
+      closed_won:     "status-closed",
+      dead:           "status-dead",
+    };
+    const pillClass = pillClassMap[st] || "status-new";
     statusCell = `
-      <span class="pill status status-active"
+      <span class="pill status ${pillClass}"
             data-doc="${esc(r.doc_num)}"
-            title="Click to mark this lead as dead"
-            onclick="openMarkDeadModal('${esc(r.doc_num)}', this.closest('tr')); event.stopPropagation();"
-            style="cursor: pointer;">Active</span>
+            title="Click to change stage"
+            onclick="openFcStageMenu(event, '${esc(r.doc_num)}', '${esc(st)}')"
+            style="cursor: pointer;">${esc(stageDef.label)} ▾</span>
     `;
   }
 
@@ -12800,6 +12826,84 @@ function restoreFcLead(docNum) {
     status: "active",
     restored_at: new Date().toISOString()
   });
+  renderFc();
+}
+
+// ============================================================
+// MFC stage menu (opened from the Status pill in the FC table)
+// ============================================================
+// Same shape as openDelqStatusMenu. Lists the pipeline stages the
+// lead can move to (current stage excluded), plus a "Mark dead…"
+// danger item that routes through the existing reason picker so the
+// row still moves to the dead footer with a recorded reason.
+//
+// NOTE: we deliberately do NOT call _mfcSetStage here — that helper
+// force-opens the CRM (it's the CRM-side stage button handler).
+// From the table we want to set the stage and stay on the table, so
+// we use _mfcSetStageInline below.
+function openFcStageMenu(ev, docNum, currentStage) {
+  ev.stopPropagation();
+  closeFcStageMenu();
+  const menu = document.createElement("div");
+  menu.className = "ccln-status-menu";   // reuse CCLN's menu styling
+  menu.id = "fc-stage-menu";
+
+  // Non-terminal stages + Closed (won) as normal items; current
+  // stage omitted (no-op self-transition).
+  const stageItems = MFC_STAGES
+    .filter(s => s.key !== "dead" && s.key !== currentStage)
+    .map(s => `<button class="status-menu-item" data-stage="${esc(s.key)}">${esc(s.label)}</button>`)
+    .join("");
+  // "Mark dead…" always shown (unless already viewing a dead row,
+  // which never reaches this menu). Routes to the reason modal.
+  const deadItem =
+    `<button class="status-menu-item danger" data-stage="__dead__">Mark dead…</button>`;
+  menu.innerHTML = stageItems + deadItem;
+
+  const rect = ev.currentTarget.getBoundingClientRect();
+  menu.style.position = "fixed";
+  menu.style.left = rect.left + "px";
+  menu.style.top  = (rect.bottom + 4) + "px";
+  menu.style.zIndex = "1000";
+  document.body.appendChild(menu);
+
+  menu.querySelectorAll(".status-menu-item").forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const stage = btn.dataset.stage;
+      closeFcStageMenu();
+      if (stage === "__dead__") {
+        // Find the row so the reason modal can show the owner name.
+        const pill = document.querySelector(
+          `#fc-table .pill.status[data-doc="${CSS.escape(docNum)}"]`);
+        const rowEl = pill ? pill.closest("tr") : null;
+        openMarkDeadModal(docNum, rowEl);
+      } else {
+        _mfcSetStageInline(docNum, stage);
+      }
+    };
+  });
+
+  setTimeout(() => {
+    document.addEventListener("click", closeFcStageMenu, {once: true});
+  }, 0);
+}
+function closeFcStageMenu() {
+  const m = document.getElementById("fc-stage-menu");
+  if (m) m.remove();
+}
+
+// Set an MFC lead's stage from the table WITHOUT opening the CRM,
+// then re-render the table so the pill updates in place. Mirrors the
+// field-write + activity-log half of _mfcSetStage.
+function _mfcSetStageInline(docNum, newStage) {
+  const entry = getCrmEntry("mfc", docNum);
+  const oldStage = entry.stage || "new";
+  if (oldStage === newStage) return;  // no-op
+  setCrmField("mfc", docNum, "stage", newStage);
+  const oldLbl = (MFC_STAGES.find(s => s.key === oldStage) || {}).label || oldStage;
+  const newLbl = (MFC_STAGES.find(s => s.key === newStage) || {}).label || newStage;
+  _mfcLogActivity(docNum, `Stage: ${oldLbl} → ${newLbl}`);
   renderFc();
 }
 
