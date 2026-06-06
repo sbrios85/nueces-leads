@@ -3542,6 +3542,38 @@ function setFcOverride(docNum, patch) {
   saveFcOverrides(o);
 }
 
+// ---- "No NCAD data" marker (FC only, local-only) ----
+// Some parcels exist in NCAD as a registered property ID but have ALL
+// fields blank (no owner, address, legal, or deed). Example: prop_id
+// 219511. These can't be found by address OR owner search because NCAD
+// has nothing indexed, so the NCAD/NCTAX columns sit on the search-
+// fallback icon forever and the row looks "incomplete". This marker
+// lets the user flag such a record as verified-blank: the NCAD/NCTAX
+// cells dim with a "no data" label and a "NCAD verified" badge appears
+// by the owner. Stored in the FC override store under `ncad_no_data`.
+// Purely a display marker — the enricher reads JSON, not this store,
+// so its behaviour is unchanged.
+function fcHasNoNcadData(docNum) {
+  if (!docNum) return false;
+  const o = getFcOverride(docNum);
+  return !!(o && o.fields && o.fields.ncad_no_data);
+}
+function toggleFcNoNcad(docNum) {
+  if (!docNum) return;
+  const cur = fcHasNoNcadData(docNum);
+  const o = loadFcOverrides();
+  const rec = o[docNum] || {};
+  const fields = Object.assign({}, rec.fields || {});
+  if (cur) delete fields.ncad_no_data;
+  else fields.ncad_no_data = true;
+  o[docNum] = Object.assign({}, rec, {fields: fields,
+    _updated_at: new Date().toISOString()});
+  saveFcOverrides(o);
+  // Re-render the foreclosures table so the row reflects the change.
+  try { if (typeof renderFc === "function") renderFc(); }
+  catch (e) {}
+}
+
 // ---- Verified manual-review tracker (FC only, local-only) ----
 // A lightweight progress tracker for working through foreclosure leads
 // while training the parser. Kept in its OWN localStorage store so it's
@@ -12684,7 +12716,7 @@ function buildFcRow(r, isDead) {
     <td>${statusCell}</td>
     <td>${foreclosureDateCell}</td>
     <td>${esc(formatDate(r.recorded))}</td>
-    <td>${_ecell("owner", _ownerEff)}</td>
+    <td>${_ecell("owner", _ownerEff)}${fcHasNoNcadData(r.doc_num) ? `<div class="ncad-verified-badge" title="You verified NCAD has no data for this parcel" onclick="event.stopPropagation();" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;padding:1px 7px;border-radius:6px;background:var(--color-background-success,#e1f5ee);color:var(--color-text-success,#0f6e56);font-size:11px;font-weight:500;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M5 12l5 5L20 6"/></svg>NCAD verified</div>` : ""}</td>
     <td class="addr-cell">${_ecell("prop_address", _propEff)}${absenteeBadge}${shortSaleBadge}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: _propEff, prop_city: r.prop_city, prop_state: r.prop_state, prop_zip: r.prop_zip})}</td>
     <td class="addr-cell">${_ecell("mail_address", _mailEff)}</td>
@@ -13228,6 +13260,18 @@ function flipOwnerForNcad(raw) {
 }
 
 function ncadCellHtml(r) {
+  // "No NCAD data" verified-blank state (FC only). When the user has
+  // flagged this record, show a dimmed "no data" cell instead of the
+  // search icon. Clicking it toggles the flag back off.
+  if (r && r.doc_num && fcHasNoNcadData(r.doc_num)) {
+    const h = "event.stopPropagation();toggleFcNoNcad(" +
+              JSON.stringify(String(r.doc_num)) + ");return false;";
+    return `<span class="ncad-nodata" title="NCAD has no data for this parcel (verified). Click to undo."
+                 onclick="${esc(h)}"
+                 style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;opacity:0.4;cursor:pointer;">
+               <svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 17 L16 7 L27 17 L27 27 L20 27 L20 20 L12 20 L12 27 L5 27 Z" fill="none" stroke="#888780" stroke-width="1.3" stroke-linejoin="round"/><line x1="6" y1="6" x2="26" y2="26" stroke="#888780" stroke-width="1.6" stroke-linecap="round"/></svg>
+               <span style="font-size:10px;color:var(--muted,#888);">no data</span></span>`;
+  }
   if (r && r.ncad_prop_id) {
     const url = "https://esearch.nuecescad.net/Property/View/" +
                 encodeURIComponent(r.ncad_prop_id) +
@@ -13254,7 +13298,11 @@ function ncadCellHtml(r) {
                class="ncad-search-link"
                title="Copy &quot;${esc(flipped)}&quot; &amp; open NCAD search (paste with Ctrl+V)"
                onclick="${esc(handler)}">
-               <svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="13" cy="13" r="8" fill="#ffffff" stroke="#6bc6ff" stroke-width="1.6"/><line x1="19" y1="19" x2="27" y2="27" stroke="#6bc6ff" stroke-width="2.4" stroke-linecap="round"/></svg></a>`;
+               <svg class="ncad-icon" width="22" height="22" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="13" cy="13" r="8" fill="#ffffff" stroke="#6bc6ff" stroke-width="1.6"/><line x1="19" y1="19" x2="27" y2="27" stroke="#6bc6ff" stroke-width="2.4" stroke-linecap="round"/></svg></a>` +
+           (r.doc_num ? `<span class="ncad-nodata-mark"
+               title="Mark: NCAD has no data for this parcel (after you've verified)"
+               onclick="event.stopPropagation();toggleFcNoNcad(${esc(JSON.stringify(String(r.doc_num)))});return false;"
+               style="cursor:pointer;margin-left:5px;font-size:11px;color:var(--muted,#888);vertical-align:middle;opacity:0.6;">no data</span>` : "");
   }
   return "—";
 }
@@ -13384,6 +13432,16 @@ function _nctaxAddressSearchLink(r, reason) {
 //      2026-05-28 (search-result.jsp shows no query string).
 //   3. No account → address search if we have one, else owner search.
 function nctaxCellHtml(r) {
+  // "No NCAD data" verified-blank state (FC only) — mirrors ncadCellHtml.
+  if (r && r.doc_num && fcHasNoNcadData(r.doc_num)) {
+    const h = "event.stopPropagation();toggleFcNoNcad(" +
+              JSON.stringify(String(r.doc_num)) + ");return false;";
+    return `<span class="ncad-nodata" title="NCAD has no data for this parcel (verified). Click to undo."
+                 onclick="${esc(h)}"
+                 style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;opacity:0.4;cursor:pointer;">
+               <svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 17 L16 7 L27 17 L27 27 L20 27 L20 20 L12 20 L12 27 L5 27 Z" fill="none" stroke="#888780" stroke-width="1.3" stroke-linejoin="round"/><line x1="6" y1="6" x2="26" y2="26" stroke="#888780" stroke-width="1.6" stroke-linecap="round"/></svg>
+               <span style="font-size:10px;color:var(--muted,#888);">no data</span></span>`;
+  }
   const acct = r && r.ncad_account_num ? String(r.ncad_account_num) : "";
   const can = acct.replace(/\D/g, "");   // strip dashes/spaces → digits
   if (can && !_ambiguousAccounts().has(can)) {
