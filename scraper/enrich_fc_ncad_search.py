@@ -472,6 +472,17 @@ def _subdivision_conflicts(parsed_legal: str, ncad_legal: str) -> bool:
     # abbreviations / extra words like "UNIT", "PHASE").
     if na in nb or nb in na:
         return False
+    # Concatenated-legal guard: a foreclosure notice sometimes lists
+    # TWO legals (e.g. "OVERLAND MEADOWS LOT 1 ..., WILLOWOOD LOT 8
+    # ..."), but _legal_tokens only parses the FIRST subdivision. If
+    # the NCAD subdivision's distinctive words ALL appear somewhere in
+    # the full foreclosure legal string (or vice-versa), the parcel is
+    # named in the legal — not a conflict (doc 2026000310: NCAD
+    # "WILLOWOOD" is present in the foreclosure's second legal).
+    full_a = re.sub(r"[^A-Z0-9 ]", " ", str(parsed_legal).upper())
+    full_a = re.sub(r"\s+", " ", full_a).strip()
+    full_b = re.sub(r"[^A-Z0-9 ]", " ", str(ncad_legal).upper())
+    full_b = re.sub(r"\s+", " ", full_b).strip()
     # Shared distinctive word (>3 chars, ignore generic suffixes) →
     # treat as corresponding, not a conflict.
     GENERIC = {"ESTATES", "ESTATE", "PARK", "ADDITION", "HEIGHTS",
@@ -483,6 +494,16 @@ def _subdivision_conflicts(parsed_legal: str, ncad_legal: str) -> bool:
     if not sa or not sb:
         return False
     if sa & sb:
+        return False
+    # Concatenated-legal containment: if every distinctive word of the
+    # NCAD subdivision appears somewhere in the FULL foreclosure legal
+    # (or vice-versa), the parcel is named in the legal — not a
+    # conflict. Catches the two-legals-in-one case (doc 2026000310).
+    full_a_words = set(full_a.split())
+    full_b_words = set(full_b.split())
+    if sb and sb.issubset(full_a_words):
+        return False
+    if sa and sa.issubset(full_b_words):
         return False
     # Both have distinctive words, none shared, no containment → conflict.
     return True
