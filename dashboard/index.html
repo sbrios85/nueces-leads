@@ -8660,6 +8660,19 @@ function renderToday() {
     cvDaysSince = Math.floor(ms / 86400000);
   }
 
+  // ===== 8b. Delinquent-tax import reminder (cadence-based) =====
+  // Same manual-cadence pattern as the CV reminder: the delinquent-tax
+  // list is pulled by hand roughly monthly. Tracks the last import in
+  // localStorage 'today-delq-last-import'; nudges after
+  // DELQ_CADENCE_DAYS.
+  const DELQ_CADENCE_DAYS = 30;
+  let delqDaysSince = null, delqLast = "";
+  try { delqLast = localStorage.getItem("today-delq-last-import") || ""; } catch (e) {}
+  if (delqLast) {
+    const ms = Date.now() - new Date(delqLast).getTime();
+    delqDaysSince = Math.floor(ms / 86400000);
+  }
+
   // ===== 9. Hot list — top-priority leads =====
   // Leads in an ACTIVE stage (new/contacted/negotiating/under_contract)
   // that have an UPCOMING sale date, ranked soonest-first. These are the
@@ -8788,16 +8801,37 @@ function renderToday() {
   const cvDue = (cvDaysSince === null) || (cvDaysSince >= CV_CADENCE_DAYS);
   actions.push(`
     <div class="today-card ${cvDue ? "tc-alert" : "tc-clear tc-ok"}" style="cursor:pointer"
-         onclick="_todayMarkCvImported()">
+         onclick="_todayToggleImport('cv')">
       <div class="tc-icon">🏛️</div>
       <div class="tc-body">
         <div class="tc-title">Code-violation (CV) import</div>
         <div class="tc-sub">${cvLast
-          ? (cvDue ? "Last imported " + cvDaysSince + " days ago — due for a refresh. Tap when done."
-                   : "Last imported " + cvDaysSince + " days ago. Tap when you import again.")
+          ? (cvDaysSince === 0
+              ? "Imported today. Tap to undo."
+              : (cvDue ? "Last imported " + cvDaysSince + " days ago — due for a refresh. Tap when done."
+                       : "Last imported " + cvDaysSince + " days ago. Tap when you import again."))
           : "No import logged yet. Tap when you download & upload the CV list."}</div>
       </div>
       <div class="tc-count">${cvDue ? "!" : "✓"}</div>
+    </div>`);
+
+  // Delinquent-tax import reminder (same cadence pattern as CV; sits
+  // directly under the CV card).
+  const delqDue = (delqDaysSince === null) || (delqDaysSince >= DELQ_CADENCE_DAYS);
+  actions.push(`
+    <div class="today-card ${delqDue ? "tc-alert" : "tc-clear tc-ok"}" style="cursor:pointer"
+         onclick="_todayToggleImport('delq')">
+      <div class="tc-icon">💰</div>
+      <div class="tc-body">
+        <div class="tc-title">Delinquent-tax list import</div>
+        <div class="tc-sub">${delqLast
+          ? (delqDaysSince === 0
+              ? "Imported today. Tap to undo."
+              : (delqDue ? "Last imported " + delqDaysSince + " days ago — due for a refresh. Tap when done."
+                         : "Last imported " + delqDaysSince + " days ago. Tap when you import again."))
+          : "No import logged yet. Tap when you download & upload the delinquent-tax list."}</div>
+      </div>
+      <div class="tc-count">${delqDue ? "!" : "✓"}</div>
     </div>`);
 
   // No-NCAD-match
@@ -8865,7 +8899,7 @@ function renderToday() {
   // Sidebar count badge: total things needing attention.
   const badge = document.getElementById("today-count");
   if (badge) {
-    const n = fups.length + pending.length + noNcad.length + (cvDue ? 1 : 0);
+    const n = fups.length + pending.length + noNcad.length + (cvDue ? 1 : 0) + (delqDue ? 1 : 0);
     badge.textContent = n;
   }
 }
@@ -8881,9 +8915,29 @@ function _todayOpenLead(kind, id) {
     else if (kind === "tfc") openTfcCrm(id, TFC_RAW);
   } catch (e) { console.warn("could not open lead", kind, id, e); }
 }
-// Log a CV import as done today (resets the cadence reminder).
-function _todayMarkCvImported() {
-  try { localStorage.setItem("today-cv-last-import", _todayISO()); } catch (e) {}
+// Toggle a monthly import reminder (CV or DELQ). First tap stamps
+// today's date; tapping again while it still shows today's date undoes
+// it, restoring whatever was recorded before (an older import date, or
+// nothing if none) — so an accidental tap is one tap to reverse.
+// kind: "cv" | "delq".
+function _todayToggleImport(kind) {
+  const key  = (kind === "delq") ? "today-delq-last-import" : "today-cv-last-import";
+  const bkey = key + "-prev";   // backup of the value before today's stamp
+  const today = _todayISO();
+  try {
+    const cur = localStorage.getItem(key) || "";
+    if (cur === today) {
+      // Undo: put back the previous value (or clear if there wasn't one).
+      const prev = localStorage.getItem(bkey);
+      if (prev != null && prev !== "") localStorage.setItem(key, prev);
+      else localStorage.removeItem(key);
+      localStorage.removeItem(bkey);
+    } else {
+      // Mark imported today; stash the old value so it can be undone.
+      localStorage.setItem(bkey, cur);
+      localStorage.setItem(key, today);
+    }
+  } catch (e) {}
   renderToday();
 }
 
