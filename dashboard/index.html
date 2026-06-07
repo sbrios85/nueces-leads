@@ -293,6 +293,14 @@
   .pill.status-dead { background: rgba(100,116,139,.20); color: var(--status-dead); }
   .pill.status-working { background: rgba(245,158,11,.18); color: var(--warn); }
   .pill.status-new:hover, .pill.status-working:hover { filter: brightness(1.25); }
+  /* FC Status column shows pipeline stage labels (New / Working /
+     Negotiating / Under Contract / Closed). The table is
+     table-layout:fixed with overflow:hidden cells, so the global
+     .pill white-space:nowrap clipped the longer labels. In the FC
+     table only, let the stage pill wrap (so "Under Contract" breaks
+     to two lines) instead of being cut off. */
+  #fc-table td .pill.status { white-space: normal; line-height: 1.25;
+                              text-align: center; }
   /* CCLN status dropdown menu (appears on status-pill click) */
   .ccln-status-menu {
     position: fixed; z-index: 200;
@@ -2623,7 +2631,7 @@
     <thead><tr>
       <th style="width: 40px;" title="Save manual edits"></th>
       <th style="width: 84px;" title="Mark a lead as manually reviewed/verified. Saved on this device only.">Verified</th>
-      <th data-sort="status"         style="width: 58px;">Status</th>
+      <th data-sort="status"         style="width: 118px;">Status</th>
       <th data-sort="sale_date"      style="width: 130px;">Sale Date</th>
       <th data-sort="recorded"       style="width: 80px;">Recorded</th>
       <th data-sort="owner"          style="width: 155px;">Owner</th>
@@ -11209,12 +11217,24 @@ const FC_SORT_TYPES = {
 function _fcCompare(a, b, key, dir, type) {
   let va, vb;
   if (type === "status") {
-    // Active leads sorted by Active first when asc, Dead first when
-    // desc. We read CRM state here because it's not on the record.
-    const crm = loadFcCrm();
-    const sa = (crm[a.doc_num] && crm[a.doc_num].status === "dead") ? 1 : 0;
-    const sb = (crm[b.doc_num] && crm[b.doc_num].status === "dead") ? 1 : 0;
-    return dir === "asc" ? sa - sb : sb - sa;
+    // The Status column now shows the MFC pipeline STAGE, so sorting
+    // it orders leads by pipeline progress: New → Working →
+    // Negotiating → Under Contract → Closed (ascending), reversed on
+    // descending. Stage lives on the MFC CRM store (nueces_mfc_crm_v1),
+    // keyed by doc_num; untouched leads are "new".
+    //
+    // Dead leads are pulled into their own collapsed footer section
+    // by renderFc() AFTER this sort runs, so they always stay at the
+    // bottom in their own area no matter which direction is chosen —
+    // this comparator only orders rows within each section.
+    const mfcCrm = loadCrmStore("mfc");
+    const rank = {};
+    MFC_STAGES.forEach((s, i) => { rank[s.key] = i; });
+    const ra = rank[(mfcCrm[a.doc_num] || {}).stage || "new"];
+    const rb = rank[(mfcCrm[b.doc_num] || {}).stage || "new"];
+    const na = (ra == null) ? 0 : ra;
+    const nb = (rb == null) ? 0 : rb;
+    return dir === "asc" ? na - nb : nb - na;
   }
   va = a[key];
   vb = b[key];
