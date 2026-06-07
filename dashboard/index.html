@@ -790,7 +790,10 @@
     background: rgba(2,8,23,.7);
     display: none;
     align-items: center; justify-content: center;
-    z-index: 100;
+    /* Must sit above the Leaflet map: its panes/controls go up to
+       z-index 1000, so a backdrop at 100 opened on the Map page
+       (e.g. Data Portals) rendered BEHIND the map. 2000 clears it. */
+    z-index: 2000;
   }
   .modal-backdrop.open { display: flex; }
   .modal {
