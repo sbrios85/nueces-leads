@@ -8809,7 +8809,7 @@ function renderToday() {
           ? (cvDaysSince === 0
               ? "Imported today. Tap to undo."
               : (cvDue ? "Last imported " + cvDaysSince + " days ago — due for a refresh. Tap when done."
-                       : "Last imported " + cvDaysSince + " days ago. Tap when you import again."))
+                       : "Last imported " + cvDaysSince + " days ago. Tap to undo."))
           : "No import logged yet. Tap when you download & upload the CV list."}</div>
       </div>
       <div class="tc-count">${cvDue ? "!" : "✓"}</div>
@@ -8828,7 +8828,7 @@ function renderToday() {
           ? (delqDaysSince === 0
               ? "Imported today. Tap to undo."
               : (delqDue ? "Last imported " + delqDaysSince + " days ago — due for a refresh. Tap when done."
-                         : "Last imported " + delqDaysSince + " days ago. Tap when you import again."))
+                         : "Last imported " + delqDaysSince + " days ago. Tap to undo."))
           : "No import logged yet. Tap when you download & upload the delinquent-tax list."}</div>
       </div>
       <div class="tc-count">${delqDue ? "!" : "✓"}</div>
@@ -8920,23 +8920,25 @@ function _todayOpenLead(kind, id) {
 // it, restoring whatever was recorded before (an older import date, or
 // nothing if none) — so an accidental tap is one tap to reverse.
 // kind: "cv" | "delq".
+// Toggle a monthly import reminder (CV or DELQ) like a checkbox.
+// If the card is currently checked (a fresh import within the 30-day
+// cadence → ✓), tapping CLEARS it back to "needs import" (red !).
+// If it's unchecked (due or never imported → !), tapping stamps today
+// (✓). So the checkmark visibly flips on every tap, and an accidental
+// tap is reversed by tapping again. kind: "cv" | "delq".
 function _todayToggleImport(kind) {
-  const key  = (kind === "delq") ? "today-delq-last-import" : "today-cv-last-import";
-  const bkey = key + "-prev";   // backup of the value before today's stamp
-  const today = _todayISO();
+  const key     = (kind === "delq") ? "today-delq-last-import" : "today-cv-last-import";
+  const cadence = 30;
+  const today   = _todayISO();
   try {
     const cur = localStorage.getItem(key) || "";
-    if (cur === today) {
-      // Undo: put back the previous value (or clear if there wasn't one).
-      const prev = localStorage.getItem(bkey);
-      if (prev != null && prev !== "") localStorage.setItem(key, prev);
-      else localStorage.removeItem(key);
-      localStorage.removeItem(bkey);
-    } else {
-      // Mark imported today; stash the old value so it can be undone.
-      localStorage.setItem(bkey, cur);
-      localStorage.setItem(key, today);
+    let fresh = false;
+    if (cur) {
+      const days = Math.floor((Date.now() - new Date(cur).getTime()) / 86400000);
+      fresh = days < cadence;   // within cadence → card is showing ✓
     }
+    if (fresh) localStorage.removeItem(key);       // ✓ → ! (clear)
+    else       localStorage.setItem(key, today);   // ! → ✓ (mark imported today)
   } catch (e) {}
   renderToday();
 }
