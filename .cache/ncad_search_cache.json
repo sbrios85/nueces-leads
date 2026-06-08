@@ -1024,6 +1024,7 @@
       "site_state": "TX",
       "site_zip": "78404"
     },
+    "BERRY GABRIELA": null,
     "BFS RETAIL & COMMERCIAL": {
       "mail_addr": "",
       "mail_city": "",
@@ -1833,6 +1834,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "CLAUNCH TERI L": null,
     "CLAY GENEVA": {
       "mail_addr": "",
       "mail_city": "",
@@ -1884,6 +1886,21 @@
       "site_city": "AGUA DULCE",
       "site_state": "TX",
       "site_zip": "78330"
+    },
+    "COMPASS CAPITAL PROPERTIES LLC": {
+      "appraised_value": 4292966.0,
+      "mail_addr": "3505 OCEAN DR CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "ncad_legal": "CINNAMON SHORE SOUTH UNIT 1 BLK 2 LOT 43",
+      "ncad_owner_id": "813942",
+      "ncad_prop_id": "572448",
+      "ncad_year": "2026",
+      "site_addr": "201 LAUGHTER LN",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373"
     },
     "CONINE SHIRLEY JEAN C": {
       "mail_addr": "",
@@ -3607,6 +3624,21 @@
       "site_state": "TX",
       "site_zip": "78416"
     },
+    "GONZALES ALEXIS": {
+      "appraised_value": 10800.0,
+      "mail_addr": "445 Cape Henry Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78412",
+      "ncad_legal": "PERSONAL PROPERTY LOC 445 CAPE HENRY F&F M&E MDSE COMP",
+      "ncad_owner_id": "675152",
+      "ncad_prop_id": "523459",
+      "ncad_year": "2026",
+      "site_addr": "445 CAPE HENRY",
+      "site_city": "Corpus Christi",
+      "site_state": "TX",
+      "site_zip": "78412"
+    },
     "GONZALES ANGELITA ALVAREZ": {
       "mail_addr": "",
       "mail_city": "",
@@ -3784,6 +3816,21 @@
       "mail_state": "",
       "mail_zip": "",
       "site_addr": "2905 SANTANA DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
+    },
+    "GUADALUPE-NAVARRO CRUZ": {
+      "appraised_value": 42000.0,
+      "mail_addr": "1242 Jonnell St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_legal": "FLOUR BLUFF CENTER LT 23 BK 3",
+      "ncad_owner_id": "748535",
+      "ncad_prop_id": "233304",
+      "ncad_year": "2026",
+      "site_addr": "1410 O NEILL",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78418"
@@ -4081,6 +4128,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "HEITKAMP HARLAN R": null,
     "HENDERSON MERIEROSE": {
       "mail_addr": "",
       "mail_city": "",
@@ -5071,6 +5119,21 @@
       "site_state": "TX",
       "site_zip": "78412"
     },
+    "LEDEZMA MIGUEL": {
+      "appraised_value": 2502194.0,
+      "mail_addr": "2629 21st St Lubbock",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "79410",
+      "ncad_legal": "ARANSAS HOLDING CO S/D  C BLK 49 LOT 1A",
+      "ncad_owner_id": "794478",
+      "ncad_prop_id": "184163",
+      "ncad_year": "2026",
+      "site_addr": "910 STATE HWY 361",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373"
+    },
     "LEE SUNGNAM": {
       "mail_addr": "",
       "mail_city": "",
@@ -5666,6 +5729,7 @@
       "site_state": "TX",
       "site_zip": "78414"
     },
+    "MARTINEZ MALYSSA": null,
     "MARTINEZ MARIA DE LOS ANGELES": {
       "mail_addr": "",
       "mail_city": "",
@@ -5957,6 +6021,7 @@
       "site_state": "TX",
       "site_zip": "78404"
     },
+    "MERELO JEHILYN": null,
     "MERRIWEATHER KENNETH": {
       "mail_addr": "",
       "mail_city": "",
@@ -8356,6 +8421,7 @@
       "site_state": "TX",
       "site_zip": "78416"
     },
+    "SANDOVAL RAUL": null,
     "SANSING GERALD A": null,
     "SANTA CRUZ PARTNERSHIP LTD": {
       "appraised_value": 294474.0,
@@ -8528,6 +8594,7 @@
       "site_state": "TX",
       "site_zip": "78411"
     },
+    "SILVA KHIARY": null,
     "SILVA SAMUEL G": {
       "mail_addr": "",
       "mail_city": "",
