@@ -314,6 +314,11 @@
     color: var(--accent); cursor: pointer; font-size: 11px; font-weight: 500;
   }
   #cv-table td .cv-narr-toggle:hover { text-decoration: underline; }
+  #cv-table td .cv-cases {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    background: rgba(56,189,248,0.15); color: var(--accent);
+    font-size: 12px; font-weight: 500; white-space: nowrap;
+  }
   /* CCLN status dropdown menu (appears on status-pill click) */
   .ccln-status-menu {
     position: fixed; z-index: 200;
@@ -2763,7 +2768,7 @@
       <th data-sort="mail_address"  style="width: 190px;">Mailing Address</th>
       <th data-sort="violation_type" style="width: 140px;">Violation Type</th>
       <th data-sort="property_type" style="width: 110px;">Property Type</th>
-      <th data-sort="case_num"      style="width: 110px;">Case #</th>
+      <th data-sort="case_count"   style="width: 92px;">Cases</th>
       <th data-sort="market_value"  style="width: 100px;">Market Value</th>
       <th data-sort="legal"         style="width: 150px;">Legal Description</th>
       <th data-sort="violation_narrative" style="width: 220px;">Violation Narrative</th>
@@ -3696,7 +3701,7 @@ const CRM_CONFIG = {
       ["violation_type",      "Violation Type"],
       ["property_type",       "Property Type"],
       ["cited",               "Cited"],
-      ["case_num",            "Case #"],
+      ["case_summary",        "Cases"],
       ["market_value",        "Market Value", "money"],
       ["legal",               "Legal Description"],
       ["violation_narrative", "Violation Narrative"],
@@ -9018,7 +9023,7 @@ let CV_SORT_DIR = "desc";
 const CV_SORT_TYPES = {
   status: "status", cited: "string", owner: "string", prop_address: "string",
   mail_address: "string", violation_type: "string", property_type: "string",
-  case_num: "string", market_value: "number", legal: "string", violation_narrative: "string",
+  case_count: "number", market_value: "number", legal: "string", violation_narrative: "string",
 };
 function _cvCompare(a, b, key, dir, type) {
   if (type === "status") {
@@ -9131,7 +9136,10 @@ function buildCvRow(r, isDead) {
   const mailCell  = r.mail_address ? esc(fmtTitle(r.mail_address)) : `<span style="color:var(--muted)">—</span>`;
   const vtCell    = esc(r.violation_type || "—");
   const ptCell    = r.property_type ? esc(r.property_type) : `<span style="color:var(--muted)">—</span>`;
-  const caseCell  = esc(cn);
+  const caseCount = r.case_count || 1;
+  const caseCell = caseCount > 1
+    ? `<span class="cv-cases" title="${esc((r.case_nums || []).join(', '))}">${caseCount} cases</span>`
+    : esc(r.primary_case || cn);
   const mv = Number(r.market_value) || 0;
   const mvCell = mv > 0 ? "$" + mv.toLocaleString("en-US", {maximumFractionDigits: 0})
                         : `<span style="color:var(--muted)">—</span>`;
@@ -14087,7 +14095,7 @@ document.querySelectorAll("#cv-table th[data-sort]").forEach(th => {
       CV_SORT_DIR = CV_SORT_DIR === "asc" ? "desc" : "asc";
     } else {
       CV_SORT_KEY = key;
-      CV_SORT_DIR = (key === "market_value" || key === "cited") ? "desc" : "asc";
+      CV_SORT_DIR = (key === "market_value" || key === "cited" || key === "case_count") ? "desc" : "asc";
     }
     applyCv();
   });
