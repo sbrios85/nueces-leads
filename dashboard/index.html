@@ -9130,15 +9130,27 @@ function buildCvRow(r, isDead) {
         ${esc(stageDef.label)} ▾</span>`;
   }
 
-  const citedCell = r.cited ? esc(r.cited) : `<span style="color:var(--muted)">—</span>`;
-  const ownerCell = esc(fmtOwner(r.owner || "")) || `<span style="color:var(--muted)">—</span>`;
+  const citedCell = r.cited ? esc(formatDate(r.cited)) : `<span style="color:var(--muted)">—</span>`;
+  const ownerCell = esc(fmtOwnerCV(r.owner || "")) || `<span style="color:var(--muted)">—</span>`;
   const propCityLine = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean);
   const propCell  = r.prop_address
     ? esc(fmtTitle(r.prop_address)) + (propCityLine.length
         ? `<br><small>${esc(fmtTitle(r.prop_city || "") + (r.prop_state ? ", " + r.prop_state : "") + (r.prop_zip ? " " + r.prop_zip : ""))}</small>`
         : "")
     : `<span style="color:var(--muted)">—</span>`;
-  const mailCell  = r.mail_address ? esc(fmtTitle(r.mail_address)) : `<span style="color:var(--muted)">—</span>`;
+  let mailCell;
+  if (r.mail_address) {
+    const _mi = r.mail_address.indexOf("  ");   // pipeline joins street + "City, ST ZIP" with a double space
+    if (_mi >= 0) {
+      const _street = r.mail_address.slice(0, _mi).trim();
+      const _csz = r.mail_address.slice(_mi + 2).trim();
+      mailCell = esc(fmtTitle(_street)) + (_csz ? `<br><small>${esc(fmtTitle(_csz))}</small>` : "");
+    } else {
+      mailCell = esc(fmtTitle(r.mail_address));
+    }
+  } else {
+    mailCell = `<span style="color:var(--muted)">—</span>`;
+  }
   const vtCell    = esc(r.violation_type || "—");
   const ptCell    = r.property_type ? esc(r.property_type) : `<span style="color:var(--muted)">—</span>`;
   const caseCount = r.case_count || 1;
@@ -9195,25 +9207,45 @@ function renderCvStats() {
     statsEl.innerHTML = `
       <div class="stats-title">Code Violations</div>
       <div class="stat"><div class="v">—</div><div class="k">Active leads</div></div>
-      <div class="stat"><div class="v">—</div><div class="k">Vacant/Substandard</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Vacant Building</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Vacant Lot</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Unsecured Vacant Bldg</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Substandard Structure</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Care of Premises</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Junked Vehicle</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">PMC Standards</div></div>
       <div class="stat"><div class="v">—</div><div class="k">Total market value</div></div>
       ${fresh}`;
     return;
   }
-  let nActive = 0, nVacant = 0, totMv = 0;
+  let nActive = 0, totMv = 0;
+  const vtCounts = {};   // base violation type -> # of active leads carrying it
   for (const r of CV_RAW) {
     if (getCvStatus(r.case_num) === "dead") continue;
     nActive++;
     totMv += Number(r.market_value) || 0;
-    const vt = (r.violation_type || "").toLowerCase();
-    if (vt.includes("vacant") || vt.includes("substandard") || vt.includes("unsecured")) nVacant++;
+    const vt = (r.violation_type || "");
+    // The summary string packs distinct types as "Type ×N · Type"; tally each once per property.
+    const seen = new Set();
+    for (const part of vt.split("·")) {
+      const base = part.replace(/\s*×\s*\d+\s*$/, "").trim();
+      if (base) seen.add(base);
+    }
+    for (const b of seen) vtCounts[b] = (vtCounts[b] || 0) + 1;
   }
+  const _vc = t => (vtCounts[t] || 0).toLocaleString();
   const navCount = document.getElementById("cv-count");
   if (navCount) navCount.textContent = nActive.toLocaleString();
   statsEl.innerHTML = `
     <div class="stats-title">Code Violations</div>
     <div class="stat"><div class="v">${nActive.toLocaleString()}</div><div class="k">Active leads</div></div>
-    <div class="stat"><div class="v">${nVacant.toLocaleString()}</div><div class="k">Vacant/Substandard</div></div>
+    <div class="stat"><div class="v">${_vc("Vacant Building")}</div><div class="k">Vacant Building</div></div>
+    <div class="stat"><div class="v">${_vc("Vacant Lot")}</div><div class="k">Vacant Lot</div></div>
+    <div class="stat"><div class="v">${_vc("Unsecured Vacant Building")}</div><div class="k">Unsecured Vacant Bldg</div></div>
+    <div class="stat"><div class="v">${_vc("Substandard Structure")}</div><div class="k">Substandard Structure</div></div>
+    <div class="stat"><div class="v">${_vc("Care of Premises")}</div><div class="k">Care of Premises</div></div>
+    <div class="stat"><div class="v">${_vc("Junked Vehicle")}</div><div class="k">Junked Vehicle</div></div>
+    <div class="stat"><div class="v">${_vc("PMC Standards")}</div><div class="k">PMC Standards</div></div>
     <div class="stat"><div class="v">$${Math.round(totMv).toLocaleString()}</div><div class="k">Total market value</div></div>
     ${fresh}`;
 }
@@ -10744,7 +10776,7 @@ function buildCclnRow(r, isDead) {
 
   tr.innerHTML = `
     <td>${statusCell}</td>
-    <td>${esc(r.filed || "")}</td>
+    <td>${esc(formatDate(r.filed || ""))}</td>
     <td>${esc(fmtOwner(r.owner || ""))}</td>
     <td>${esc(fmtTitle(r.prop_address || ""))}${r.prop_city ? "<br><small>" + esc(fmtTitle(r.prop_city + " " + (r.prop_zip||""))) + "</small>" : ""}</td>
     <td style="text-align:center;">${mapCellHtml(r)}</td>
@@ -11275,7 +11307,7 @@ function _buildStackRow(entry) {
     <td>${esc(fmtTitle(entry.prop_address || "—"))}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
     <td>${esc(fmtOwner(entry.owner || "—"))}</td>
-    <td>${esc(entry.latest_filed || "—")}</td>
+    <td>${esc(formatDate(entry.latest_filed || ""))}</td>
     <td>${esc(entry.ncad_account_num || "—")}</td>
     <td style="text-align:center;">${ncadCell}</td>
     <td style="text-align:center;">${nctaxCell}</td>
@@ -13661,6 +13693,77 @@ function fmtOwnerFL(raw) {
     if (a && b) return _fmtTitleCore(a) + " and " + _fmtTitleCore(b);
   }
   return _fmtTitleCore(name);
+}
+
+// CV owner formatter. NCAD owner names are surname-first ALL-CAPS
+// (e.g. "TRUAN CARLOS F & WF ELVIRA M"). Unlike fmtOwner, this ALWAYS
+// formats — no "already-mixed" bail-out, so stray-case names like
+// "HERNANDEZ VICTOR Jr" still normalize — and renders BOTH spouses in
+// full First-Last form: "Carlos F Truan & Elvira M Truan". A spouse
+// given without a surname inherits the primary's surname.
+function _cvRole(s) {            // strip status tags like (TD) (LE) (TR)
+  return String(s).replace(/\((?:TD|LE|IND|EST|TR|TRUSTEE|ET\s*AL)\)/ig, " ")
+                  .replace(/\s{2,}/g, " ").trim();
+}
+function _cvFixInitials(s) {     // a lone "a" gets lowercased as an article — restore middle initials
+  return s.replace(/(^|[\s.])([a-z])(?=[\s.]|$)/g, (m, p, c) => p + c.toUpperCase());
+}
+function _cvFlipPerson(core) {   // "SURNAME FIRST M [SUF]" -> {text, surname}
+  core = _cvRole(core).replace(_FMT_ROLE_TAIL, "").trim();   // drop trailing TRUSTEE/EXEC/etc.
+  if (!core) return { text: "", surname: "" };
+  let toks = core.split(/\s+/).filter(Boolean), suffix = "";
+  if (toks.length && _FMT_SUFFIXES.has(toks[toks.length - 1].toUpperCase())) {
+    const s = toks[toks.length - 1].toUpperCase(); toks = toks.slice(0, -1);
+    suffix = _FMT_ROMAN.has(s) ? s : s[0] + s.slice(1).toLowerCase();
+  }
+  if (toks.length <= 1) {
+    const w = _fmtTitleCore(toks.join(" "));
+    return { text: (w + (suffix ? " " + suffix : "")).trim(), surname: w };
+  }
+  const [lastT, rest] = _fmtSplitLast(toks);
+  const surname = _fmtTitleCore(lastT.join(" "));
+  let text = (_fmtTitleCore(rest.join(" ")) + " " + surname).trim();
+  if (suffix) text += " " + suffix;
+  return { text, surname };
+}
+function _cvSpouse(side, primarySurname) {   // spouse part is First-Last (or first-only)
+  // Drop a leading relationship marker; a bare "WF"/"WIFE" with no name -> no spouse.
+  side = _cvRole(side)
+    .replace(/^(?:WF|WFE|HW|H\/W|HB|HUSB|HUSBAND\s+AND\s+WIFE|HUSBAND|WIFE|SP|SPOUSE|ET\s+UX|ETUX|ET\s+VIR|ETVIR)\b\s*/i, "")
+    .replace(_FMT_ROLE_TAIL, "").replace(_FMT_BARE_REL, "").trim();
+  if (!side) return "";
+  let toks = side.split(/\s+/).filter(Boolean), suffix = "";
+  if (toks.length && _FMT_SUFFIXES.has(toks[toks.length - 1].toUpperCase())) {
+    const s = toks[toks.length - 1].toUpperCase(); toks = toks.slice(0, -1);
+    suffix = _FMT_ROMAN.has(s) ? s : s[0] + s.slice(1).toLowerCase();
+  }
+  if (!toks.length) return "";
+  const last = toks[toks.length - 1].replace(/\.$/, "");
+  const hasSurname = toks.length >= 2 && last.length > 1;   // real word, not an initial
+  let text = _fmtTitleCore(toks.join(" "));
+  if (!hasSurname && primarySurname) text = (text + " " + primarySurname).trim();
+  if (suffix) text += " " + suffix;
+  return text;
+}
+function fmtOwnerCV(raw) {
+  if (raw == null) return "";
+  let name = _cvRole(String(raw).trim()).replace(/\bDEC(?:'?D|EASED)\b/ig, " ").replace(/\s{2,}/g, " ").trim();
+  if (!name) return name;
+  // Pipeline already strips companies/agencies; the only non-person owners
+  // that survive are dba aliases and family trusts — title-case those in place.
+  if (/\bd\/b\/a\b/i.test(name) || /\bTR(?:U)?ST\b/i.test(name)) return _fmtTitleCore(name);
+  const up = name.toUpperCase();
+  const mSuf = /\s+EST(?:ATE)?\s+OF\s*$/.exec(up);
+  const mPre = /^EST(?:ATE)?\s+OF\s+(.*)$/.exec(up);
+  if (mSuf || mPre) {
+    const body = (mSuf ? name.slice(0, mSuf.index) : name.slice(up.indexOf(mPre[1]))).trim();
+    return "Estate of " + _cvFixInitials(_cvFlipPerson(body).text);
+  }
+  const m = /\s*&\s*|\s+AND\s+|\s+(?:WF|WFE|WIFE|HUSBAND|ET\s+UX|ETUX|ET\s+VIR|ETVIR)\s+/i.exec(name);
+  if (!m) return _cvFixInitials(_cvFlipPerson(name).text);
+  const p = _cvFlipPerson(name.slice(0, m.index));
+  const sp = _cvSpouse(name.slice(m.index + m[0].length), p.surname);
+  return _cvFixInitials(sp ? p.text + " and " + sp : p.text);
 }
 
 // Wrap an editable cell control so it shows a formatted, read-only
