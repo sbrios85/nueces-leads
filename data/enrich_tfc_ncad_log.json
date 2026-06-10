@@ -1,141 +1,9 @@
 {
-  "ran_at": "2026-06-09T10:51:09+00:00",
+  "ran_at": "2026-06-10T11:12:59+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
   "entries": [
-    {
-      "uid": "1009142746",
-      "prop_address": "1058 BEECHCRAFT AVE, CORPUS CHRISTI TX 78405-2802",
-      "result": "matched",
-      "ncad_prop_id": "182368",
-      "ncad_owner": "ADAMS MARTIN L",
-      "ncad_legal": "AIRPORT PARK BLK 1 LOT 4",
-      "market_value": 105823.0,
-      "additions": {
-        "owner": "ADAMS MARTIN L",
-        "legal": "AIRPORT PARK BLK 1 LOT 4",
-        "market_value": 105823.0,
-        "ncad_prop_id": "182368",
-        "ncad_owner_id": "119272",
-        "ncad_year": "2026",
-        "mail_address": "1058 BEECHCRAFT AVE",
-        "mail_city": "CORPUS CHRISTI",
-        "mail_state": "TX",
-        "mail_zip": "78405",
-        "ncad_account_num": "0072-0001-0040"
-      }
-    },
-    {
-      "uid": "1007738835",
-      "prop_address": "4613 ANGELA DR, CORPUS CHRISTI TX 78416",
-      "result": "matched",
-      "ncad_prop_id": "268487",
-      "ncad_owner": "ORTEGA JESSE",
-      "ncad_legal": "MOLINA 2 LT 22B BLK 11",
-      "market_value": 34000.0,
-      "additions": {
-        "owner": "ORTEGA JESSE",
-        "legal": "MOLINA 2 LT 22B BLK 11",
-        "market_value": 34000.0,
-        "ncad_prop_id": "268487",
-        "ncad_owner_id": "551061",
-        "ncad_year": "2026",
-        "mail_address": "1838 BERNANDINO ST",
-        "mail_city": "CORPUS CHRISTI",
-        "mail_state": "TX",
-        "mail_zip": "78416",
-        "ncad_account_num": "5281-0011-0225"
-      }
-    },
-    {
-      "uid": "1012482142",
-      "prop_address": "1521 EL PASO ST, CORPUS CHRISTI TX 78417-2816",
-      "result": "matched",
-      "ncad_prop_id": "261677",
-      "ncad_owner": "HERRERA PAULITA C  ETALS",
-      "ncad_legal": "LOS ENCINOS BLK F LOT 6",
-      "market_value": 108701.0,
-      "additions": {
-        "owner": "HERRERA PAULITA C  ETALS",
-        "legal": "LOS ENCINOS BLK F LOT 6",
-        "market_value": 108701.0,
-        "ncad_prop_id": "261677",
-        "ncad_owner_id": "699393",
-        "ncad_year": "2026",
-        "mail_address": "1521 El Paso St",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78417",
-        "ncad_account_num": "4570-0006-0060"
-      }
-    },
-    {
-      "uid": "1008177121",
-      "prop_address": "5694 COUNTY ROAD 73, ROBSTOWN TX 78380-5841",
-      "result": "matched",
-      "ncad_prop_id": "292188",
-      "ncad_owner": "MAYEN EDGAR ROLANDO ET UX",
-      "ncad_legal": "RIVERSIDE LT 31",
-      "market_value": 209530.0,
-      "additions": {
-        "owner": "MAYEN EDGAR ROLANDO ET UX",
-        "legal": "RIVERSIDE LT 31",
-        "market_value": 209530.0,
-        "ncad_prop_id": "292188",
-        "ncad_owner_id": "461542",
-        "ncad_year": "2026",
-        "mail_address": "5318 SEGUIN",
-        "mail_city": "CORPUS CHRISTI",
-        "mail_state": "TX",
-        "mail_zip": "78415",
-        "ncad_account_num": "7308-0000-0310"
-      }
-    },
-    {
-      "uid": "1009699521",
-      "prop_address": "519 JACKSON AVE, ROBSTOWN TX 78380-3624",
-      "result": "matched",
-      "ncad_prop_id": "245073",
-      "ncad_owner": "MALDONADO ROBERT III ETUX",
-      "ncad_legal": "HOME PLACE - RBST BLK 1 LOT 7",
-      "market_value": 186895.0,
-      "additions": {
-        "owner": "MALDONADO ROBERT III ETUX",
-        "legal": "HOME PLACE - RBST BLK 1 LOT 7",
-        "market_value": 186895.0,
-        "ncad_prop_id": "245073",
-        "ncad_owner_id": "459548",
-        "ncad_year": "2026",
-        "mail_address": "519 JACKSON ST",
-        "mail_city": "ROBSTOWN",
-        "mail_state": "TX",
-        "mail_zip": "78380",
-        "ncad_account_num": "3525-0001-0070"
-      }
-    },
-    {
-      "uid": "1008394525",
-      "prop_address": "3630 WATERLOO DR, CORPUS CHRISTI TX 78415-3339",
-      "result": "matched",
-      "ncad_prop_id": "208344",
-      "ncad_owner": "JOSE E RAMOS JR",
-      "ncad_legal": "CARROLL PLACE ADDN 2 LT 25 BK 3",
-      "market_value": 157574.0,
-      "additions": {
-        "owner": "JOSE E RAMOS JR",
-        "legal": "CARROLL PLACE ADDN 2 LT 25 BK 3",
-        "market_value": 157574.0,
-        "ncad_prop_id": "208344",
-        "ncad_owner_id": "843755",
-        "ncad_year": "2026",
-        "mail_address": "3630 WATERLOO DR",
-        "mail_city": "CORPUS CHRISTI",
-        "mail_state": "TX",
-        "mail_zip": "78415",
-        "ncad_account_num": "1331-0003-0250"
-      }
-    },
     {
       "uid": "1008122147",
       "prop_address": "2214 NOGALES ST, CORPUS CHRISTI TX 78416-1657",
@@ -203,6 +71,28 @@
       }
     },
     {
+      "uid": "1007738835",
+      "prop_address": "4613 ANGELA DR, CORPUS CHRISTI TX 78416",
+      "result": "matched",
+      "ncad_prop_id": "268487",
+      "ncad_owner": "ORTEGA JESSE",
+      "ncad_legal": "MOLINA 2 LT 22B BLK 11",
+      "market_value": 34000.0,
+      "additions": {
+        "owner": "ORTEGA JESSE",
+        "legal": "MOLINA 2 LT 22B BLK 11",
+        "market_value": 34000.0,
+        "ncad_prop_id": "268487",
+        "ncad_owner_id": "551061",
+        "ncad_year": "2026",
+        "mail_address": "1838 BERNANDINO ST",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78416",
+        "ncad_account_num": "5281-0011-0225"
+      }
+    },
+    {
       "uid": "1008915366",
       "prop_address": "4525 RAMONA DR, CORPUS CHRISTI TX 78416-2214",
       "result": "matched",
@@ -244,6 +134,28 @@
         "mail_state": "TX",
         "mail_zip": "78380",
         "ncad_account_num": "5726-0001-0130"
+      }
+    },
+    {
+      "uid": "1008177121",
+      "prop_address": "5694 COUNTY ROAD 73, ROBSTOWN TX 78380-5841",
+      "result": "matched",
+      "ncad_prop_id": "292188",
+      "ncad_owner": "MAYEN EDGAR ROLANDO ET UX",
+      "ncad_legal": "RIVERSIDE LT 31",
+      "market_value": 209530.0,
+      "additions": {
+        "owner": "MAYEN EDGAR ROLANDO ET UX",
+        "legal": "RIVERSIDE LT 31",
+        "market_value": 209530.0,
+        "ncad_prop_id": "292188",
+        "ncad_owner_id": "461542",
+        "ncad_year": "2026",
+        "mail_address": "5318 SEGUIN",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415",
+        "ncad_account_num": "7308-0000-0310"
       }
     },
     {
@@ -596,6 +508,50 @@
         "mail_state": "TX",
         "mail_zip": "78405",
         "ncad_account_num": "4072-0008-0430"
+      }
+    },
+    {
+      "uid": "1012482142",
+      "prop_address": "1521 EL PASO ST, CORPUS CHRISTI TX 78417-2816",
+      "result": "matched",
+      "ncad_prop_id": "261677",
+      "ncad_owner": "HERRERA PAULITA C  ETALS",
+      "ncad_legal": "LOS ENCINOS BLK F LOT 6",
+      "market_value": 108701.0,
+      "additions": {
+        "owner": "HERRERA PAULITA C  ETALS",
+        "legal": "LOS ENCINOS BLK F LOT 6",
+        "market_value": 108701.0,
+        "ncad_prop_id": "261677",
+        "ncad_owner_id": "699393",
+        "ncad_year": "2026",
+        "mail_address": "1521 El Paso St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78417",
+        "ncad_account_num": "4570-0006-0060"
+      }
+    },
+    {
+      "uid": "1008394525",
+      "prop_address": "3630 WATERLOO DR, CORPUS CHRISTI TX 78415-3339",
+      "result": "matched",
+      "ncad_prop_id": "208344",
+      "ncad_owner": "JOSE E RAMOS JR",
+      "ncad_legal": "CARROLL PLACE ADDN 2 LT 25 BK 3",
+      "market_value": 157574.0,
+      "additions": {
+        "owner": "JOSE E RAMOS JR",
+        "legal": "CARROLL PLACE ADDN 2 LT 25 BK 3",
+        "market_value": 157574.0,
+        "ncad_prop_id": "208344",
+        "ncad_owner_id": "843755",
+        "ncad_year": "2026",
+        "mail_address": "3630 WATERLOO DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415",
+        "ncad_account_num": "1331-0003-0250"
       }
     },
     {
