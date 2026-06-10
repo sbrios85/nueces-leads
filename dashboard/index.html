@@ -301,6 +301,19 @@
      to two lines) instead of being cut off. */
   #fc-table td .pill.status { white-space: normal; line-height: 1.25;
                               text-align: center; }
+  /* CV Violation Narrative — clamp to 2 lines; "Show more" expands it */
+  #cv-table td .cv-narr {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; line-height: 1.3;
+  }
+  #cv-table td .cv-narr.expanded {
+    display: block; -webkit-line-clamp: unset; overflow: visible;
+  }
+  #cv-table td .cv-narr-toggle {
+    margin-top: 3px; padding: 0; border: none; background: none;
+    color: var(--accent); cursor: pointer; font-size: 11px; font-weight: 500;
+  }
+  #cv-table td .cv-narr-toggle:hover { text-decoration: underline; }
   /* CCLN status dropdown menu (appears on status-pill click) */
   .ccln-status-menu {
     position: fixed; z-index: 200;
@@ -9126,8 +9139,12 @@ function buildCvRow(r, isDead) {
   const legalCell = legal ? `<span title="${esc(legal)}">${esc(legal)}</span>`
                           : `<span style="color:var(--muted)">—</span>`;
   const narr = r.violation_narrative || "";
-  const narrCell = narr ? `<span title="${esc(narr)}">${esc(narr)}</span>`
-                        : `<span style="color:var(--muted)">—</span>`;
+  const narrCell = narr
+    ? `<div class="cv-narr">${esc(narr)}</div>` +
+      (narr.length > 110
+        ? `<button class="cv-narr-toggle" onclick="event.stopPropagation(); var d=this.previousElementSibling; this.textContent = d.classList.toggle('expanded') ? 'Show less' : 'Show more';">Show more</button>`
+        : "")
+    : `<span style="color:var(--muted)">—</span>`;
   const ncadCell  = ncadCellHtml(r);
   const nctaxCell = nctaxCellHtml(r);
 
@@ -9143,7 +9160,7 @@ function buildCvRow(r, isDead) {
     <td>${caseCell}</td>
     <td>${mvCell}</td>
     <td class="legal">${legalCell}</td>
-    <td class="legal">${narrCell}</td>
+    <td>${narrCell}</td>
     <td style="text-align:center;">${ncadCell}</td>
     <td style="text-align:center;">${nctaxCell}</td>`;
 
