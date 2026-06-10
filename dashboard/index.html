@@ -10924,11 +10924,20 @@ const STACK_SOURCES = [
   //   autoInclude: false,   // weak alone, needs to stack with another
   //   ...
   // },
-  // {
-  //   type: "cv", label: "Code Viol.", badgeClass: "stack-badge-cv",
-  //   autoInclude: false,
-  //   ...
-  // },
+  {
+    type: "cv",
+    label: "Code Viol.",
+    badgeClass: "stack-badge-cv",
+    autoInclude: false,   // overlap-only — surfaces in Stack only when the parcel also hits another list
+    getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW : []),
+    isActive: (r) => getCvStatus(r.case_num) !== "dead",
+    primaryKey: (r) => r.case_num,
+    addressKey: (r) => r.prop_address,
+    ncadKey: (r) => r.ncad_account_num,   // dashed geo_id, same format as CCLN → cross-matches cleanly
+    ownerKey: (r) => r.owner,
+    filedKey: (r) => r.cited,
+    openCrm: (r) => openCrm("cv", r.case_num, CV_RAW),
+  },
 ];
 
 // ----------------------------------------------------------------
