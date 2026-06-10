@@ -33,8 +33,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    permissions:
-      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -80,9 +78,6 @@ jobs:
     needs: build
     if: ${{ needs.build.result == 'success' }}
     runs-on: ubuntu-22.04
-    permissions:
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
