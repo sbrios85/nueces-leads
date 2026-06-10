@@ -1,0 +1,88 @@
+name: Build Code Violations
+
+# Triggers:
+#   1. Automatic (push) — fires whenever a new city code-violation file is
+#      committed under cv_input/. Drop the monthly .xls there and the
+#      dashboard rebuilds and redeploys on its own.
+#   2. Manual (workflow_dispatch) — re-run against whatever is in cv_input/.
+#
+# Pages is served from a GitHub Actions deployment (not a branch), so this
+# workflow deploys Pages itself after rebuilding code_violations.json.
+# The lead list is rebuilt from scratch each run, so any property whose
+# violations are no longer "In Progress" drops off automatically; CRM work
+# on still-active properties is preserved (it is keyed per parcel, client-side).
+
+on:
+  push:
+    paths:
+      - "cv_input/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write            # commit rebuilt code_violations.json
+  pages: write               # deploy the refreshed dashboard
+  id-token: write            # deploy the refreshed dashboard
+
+# Share the repo-push lock with the scrapers so two workflows never push at once.
+concurrency:
+  group: "ncad-cache-write"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pull latest (catch checkout race)
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install xlrd
+
+      - name: Build code_violations.json
+        run: python scraper/build_cv.py
+
+      - name: Commit rebuilt JSON
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dashboard/code_violations.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "CV: rebuild code_violations.json from cv_input"
+            git push
+          fi
+
+      - name: Upload dashboard artifact for Pages deploy
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+
+  deploy:
+    needs: build
+    if: ${{ needs.build.result == 'success' }}
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
