@@ -9132,7 +9132,12 @@ function buildCvRow(r, isDead) {
 
   const citedCell = r.cited ? esc(r.cited) : `<span style="color:var(--muted)">—</span>`;
   const ownerCell = esc(fmtOwner(r.owner || "")) || `<span style="color:var(--muted)">—</span>`;
-  const propCell  = r.prop_address ? esc(fmtTitle(r.prop_address)) : `<span style="color:var(--muted)">—</span>`;
+  const propCityLine = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean);
+  const propCell  = r.prop_address
+    ? esc(fmtTitle(r.prop_address)) + (propCityLine.length
+        ? `<br><small>${esc(fmtTitle(r.prop_city || "") + (r.prop_state ? ", " + r.prop_state : "") + (r.prop_zip ? " " + r.prop_zip : ""))}</small>`
+        : "")
+    : `<span style="color:var(--muted)">—</span>`;
   const mailCell  = r.mail_address ? esc(fmtTitle(r.mail_address)) : `<span style="color:var(--muted)">—</span>`;
   const vtCell    = esc(r.violation_type || "—");
   const ptCell    = r.property_type ? esc(r.property_type) : `<span style="color:var(--muted)">—</span>`;
