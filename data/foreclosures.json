@@ -257,7 +257,9 @@
       "legal_block": "16",
       "legal_subdivision": "Arcadi",
       "pdf_parsed_at": "2026-06-06T19:31:40.131715+00:00",
-      "ncad_account_num": "0232-0016-0190"
+      "ncad_account_num": "0232-0016-0190",
+      "prop_lat": 27.757457,
+      "prop_lng": -97.407456
     },
     {
       "doc_num": "2026000326",
@@ -318,7 +320,9 @@
       "legal_block": "2",
       "legal_subdivision": "CALLICOATTE ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:40.088851+00:00",
-      "ncad_account_num": "1238-0002-0200"
+      "ncad_account_num": "1238-0002-0200",
+      "prop_lat": 27.847163,
+      "prop_lng": -97.607463
     },
     {
       "doc_num": "2026000318",
@@ -350,7 +354,9 @@
       "legal_block": "7",
       "legal_subdivision": "ARCADIA OF PROPERTY",
       "pdf_parsed_at": "2026-06-06T19:31:40.063082+00:00",
-      "ncad_account_num": "0232-0007-0140"
+      "ncad_account_num": "0232-0007-0140",
+      "prop_lat": 27.762399,
+      "prop_lng": -97.405572
     },
     {
       "doc_num": "2026000325",
@@ -382,7 +388,9 @@
       "legal_block": "1",
       "legal_subdivision": "SANDPIPER ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:40.106066+00:00",
-      "ncad_account_num": "7656-0001-0060"
+      "ncad_account_num": "7656-0001-0060",
+      "prop_lat": 27.823802,
+      "prop_lng": -97.066444
     },
     {
       "doc_num": "2026000320",
@@ -415,7 +423,9 @@
       "legal_block": "1",
       "legal_subdivision": "COLLIER",
       "pdf_parsed_at": "2026-06-06T19:31:40.076024+00:00",
-      "ncad_account_num": "1685-0001-0020"
+      "ncad_account_num": "1685-0001-0020",
+      "prop_lat": 27.737253,
+      "prop_lng": -97.393505
     },
     {
       "doc_num": "2026000322",
@@ -447,7 +457,9 @@
       "legal_block": "8",
       "legal_subdivision": "GREEN ACRES VILLAGE NO 2",
       "pdf_parsed_at": "2026-06-06T19:31:40.083198+00:00",
-      "ncad_account_num": "2938-0008-0020"
+      "ncad_account_num": "2938-0008-0020",
+      "prop_lat": 27.714753,
+      "prop_lng": -97.366111
     },
     {
       "doc_num": "2026000324",
@@ -480,7 +492,9 @@
       "legal_block": "6",
       "legal_subdivision": "LINCOLN TERRACE",
       "pdf_parsed_at": "2026-06-06T19:31:40.100755+00:00",
-      "ncad_account_num": "4465-0006-0240"
+      "ncad_account_num": "4465-0006-0240",
+      "prop_lat": 27.724231,
+      "prop_lng": -97.391429
     },
     {
       "doc_num": "2026000315",
@@ -511,7 +525,9 @@
       "legal_lot": "2",
       "legal_block": "3",
       "legal_subdivision": "Washington",
-      "pdf_parsed_at": "2026-06-06T19:31:40.045322+00:00"
+      "pdf_parsed_at": "2026-06-06T19:31:40.045322+00:00",
+      "prop_lat": 27.749569,
+      "prop_lng": -97.447529
     },
     {
       "doc_num": "2026000316",
@@ -668,7 +684,9 @@
       "legal_block": "19",
       "legal_subdivision": "THE LAKES",
       "pdf_parsed_at": "2026-06-06T19:31:39.999463+00:00",
-      "ncad_account_num": "4137-0019-0010"
+      "ncad_account_num": "4137-0019-0010",
+      "prop_lat": 27.678807,
+      "prop_lng": -97.413367
     },
     {
       "doc_num": "2026000301",
@@ -731,7 +749,9 @@
       "legal_block": "1",
       "legal_subdivision": "MELDO PARK",
       "pdf_parsed_at": "2026-06-06T19:31:39.943621+00:00",
-      "ncad_account_num": "5074-0001-0010"
+      "ncad_account_num": "5074-0001-0010",
+      "prop_lat": 27.746399,
+      "prop_lng": -97.381705
     },
     {
       "doc_num": "2026000308",
@@ -795,7 +815,9 @@
       "legal_block": "1",
       "legal_subdivision": "SARATOGA DOWNS UNIT 1A",
       "pdf_parsed_at": "2026-06-06T19:31:39.916439+00:00",
-      "ncad_account_num": "7717-0001-0060"
+      "ncad_account_num": "7717-0001-0060",
+      "prop_lat": 27.724716,
+      "prop_lng": -97.451149
     },
     {
       "doc_num": "2026000303",
@@ -825,7 +847,9 @@
       "legal_block": "1",
       "legal_subdivision": "GUTH PARKSIDE",
       "pdf_parsed_at": "2026-06-06T19:31:39.934156+00:00",
-      "ncad_account_num": "3119-0001-0130"
+      "ncad_account_num": "3119-0001-0130",
+      "prop_lat": 27.831488,
+      "prop_lng": -97.549697
     },
     {
       "doc_num": "2026000302",
@@ -857,7 +881,9 @@
       "legal_block": "3",
       "legal_subdivision": "BERVONNE TERRACE",
       "pdf_parsed_at": "2026-06-06T19:31:39.922158+00:00",
-      "ncad_account_num": "0661-0003-0140"
+      "ncad_account_num": "0661-0003-0140",
+      "prop_lat": 27.837383,
+      "prop_lng": -97.57726
     },
     {
       "doc_num": "2026000309",
@@ -889,7 +915,9 @@
       "legal_block": "5",
       "legal_subdivision": "W.B RAY HEIGHTS",
       "pdf_parsed_at": "2026-06-06T19:31:39.984623+00:00",
-      "ncad_account_num": "7122-0005-0090"
+      "ncad_account_num": "7122-0005-0090",
+      "prop_lat": 27.745599,
+      "prop_lng": -97.394683
     },
     {
       "doc_num": "2026000310",
@@ -921,7 +949,9 @@
       "legal_block": "10",
       "legal_subdivision": "WILLOWOOD",
       "pdf_parsed_at": "2026-06-06T19:31:39.993577+00:00",
-      "ncad_account_num": "9708-0010-0080"
+      "ncad_account_num": "9708-0010-0080",
+      "prop_lat": 27.841609,
+      "prop_lng": -97.599475
     },
     {
       "doc_num": "2026000299",
@@ -999,7 +1029,9 @@
       "days_until_sale": 27,
       "loan_doc": "414459",
       "pdf_parsed_at": "2026-06-06T19:31:39.891347+00:00",
-      "ncad_account_num": "2702-0009-0146"
+      "ncad_account_num": "2702-0009-0146",
+      "prop_lat": 27.700616,
+      "prop_lng": -97.380478
     },
     {
       "doc_num": "2026000296",
@@ -1031,7 +1063,9 @@
       "legal_block": "1",
       "legal_subdivision": "GRANGE PARK",
       "pdf_parsed_at": "2026-06-06T19:31:39.885043+00:00",
-      "ncad_account_num": "2905-0001-0090"
+      "ncad_account_num": "2905-0001-0090",
+      "prop_lat": 27.653521,
+      "prop_lng": -97.354431
     },
     {
       "doc_num": "2026000268",
@@ -1063,7 +1097,9 @@
       "legal_block": "4",
       "legal_subdivision": "ARCADIA",
       "pdf_parsed_at": "2026-06-06T19:31:39.751496+00:00",
-      "ncad_account_num": "0232-0004-0090"
+      "ncad_account_num": "0232-0004-0090",
+      "prop_lat": 27.760441,
+      "prop_lng": -97.403814
     },
     {
       "doc_num": "2026000265",
@@ -1094,7 +1130,9 @@
       "legal_block": "10",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.718897+00:00",
-      "ncad_account_num": "1847-0010-0160"
+      "ncad_account_num": "1847-0010-0160",
+      "prop_lat": 27.692961,
+      "prop_lng": -97.390376
     },
     {
       "doc_num": "2026000262",
@@ -1125,7 +1163,9 @@
       "legal_block": "9",
       "legal_subdivision": "SCHANEN ESTATES WEST",
       "pdf_parsed_at": "2026-06-06T19:31:39.699383+00:00",
-      "ncad_account_num": "7790-0009-0090"
+      "ncad_account_num": "7790-0009-0090",
+      "prop_lat": 27.706763,
+      "prop_lng": -97.413835
     },
     {
       "doc_num": "2026000264",
@@ -1154,7 +1194,9 @@
       "loan_doc": "2016052992",
       "lender": "U.S. Bank Trust National Association, not in its individual capacity, but solely in its capacity as Owner Trustee of Citigroup Mortgage Loan Trast 2025-RP2",
       "pdf_parsed_at": "2026-06-06T19:31:39.713516+00:00",
-      "ncad_account_num": "7410-0002-0071"
+      "ncad_account_num": "7410-0002-0071",
+      "prop_lat": 27.836248,
+      "prop_lng": -97.063253
     },
     {
       "doc_num": "2026000257",
@@ -1190,7 +1232,9 @@
       "legal_block": "1",
       "legal_subdivision": "BLUE GRASS ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.671727+00:00",
-      "ncad_account_num": "0768-0001-0070"
+      "ncad_account_num": "0768-0001-0070",
+      "prop_lat": 27.654602,
+      "prop_lng": -97.308183
     },
     {
       "doc_num": "2026000251",
@@ -1222,7 +1266,9 @@
       "legal_block": "3",
       "legal_subdivision": "BARCELONA ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.633392+00:00",
-      "ncad_account_num": "1585-0004-0180"
+      "ncad_account_num": "1585-0004-0180",
+      "prop_lat": 27.75524,
+      "prop_lng": -97.430567
     },
     {
       "doc_num": "2026000256",
@@ -1253,7 +1299,9 @@
       "legal_lot": "18",
       "legal_block": "1",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
-      "pdf_parsed_at": "2026-06-06T19:31:39.667934+00:00"
+      "pdf_parsed_at": "2026-06-06T19:31:39.667934+00:00",
+      "prop_lat": 27.696677,
+      "prop_lng": -97.409634
     },
     {
       "doc_num": "2026000250",
@@ -1285,7 +1333,9 @@
       "legal_block": "8",
       "legal_subdivision": "RIDGEWOOD",
       "pdf_parsed_at": "2026-06-06T19:31:39.624433+00:00",
-      "ncad_account_num": "7224-0008-0210"
+      "ncad_account_num": "7224-0008-0210",
+      "prop_lat": 27.701106,
+      "prop_lng": -97.387128
     },
     {
       "doc_num": "2026000253",
@@ -1314,7 +1364,9 @@
       "loan_doc": "2024000263",
       "lender": "Servicing, Inc., 3217 S. Decker Lake Dr., Salt Lake City, UT 84119",
       "pdf_parsed_at": "2026-06-06T19:31:39.649341+00:00",
-      "ncad_account_num": "2843-0000-0120"
+      "ncad_account_num": "2843-0000-0120",
+      "prop_lat": 27.640811,
+      "prop_lng": -97.293761
     },
     {
       "doc_num": "2026000242",
@@ -1346,7 +1398,9 @@
       "legal_block": "2",
       "legal_subdivision": "WOODBEND",
       "pdf_parsed_at": "2026-06-06T19:31:39.575854+00:00",
-      "ncad_account_num": "9810-0002-0110"
+      "ncad_account_num": "9810-0002-0110",
+      "prop_lat": 27.691248,
+      "prop_lng": -97.358411
     },
     {
       "doc_num": "2026000247",
@@ -1378,7 +1432,9 @@
       "legal_block": "3",
       "legal_subdivision": "SAXET HEIGHTS",
       "pdf_parsed_at": "2026-06-06T19:31:39.610498+00:00",
-      "ncad_account_num": "7749-0003-0010"
+      "ncad_account_num": "7749-0003-0010",
+      "prop_lat": 27.790908,
+      "prop_lng": -97.436718
     },
     {
       "doc_num": "2026000233",
@@ -1410,7 +1466,9 @@
       "legal_block": "1",
       "legal_subdivision": "HILL COUNTRY ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.523012+00:00",
-      "ncad_account_num": "3433-0001-0070"
+      "ncad_account_num": "3433-0001-0070",
+      "prop_lat": 27.829866,
+      "prop_lng": -97.572119
     },
     {
       "doc_num": "2026000239",
@@ -1442,7 +1500,9 @@
       "legal_block": "5",
       "legal_subdivision": "WESTWOOD VILLAGE",
       "pdf_parsed_at": "2026-06-06T19:31:39.560523+00:00",
-      "ncad_account_num": "9563-0005-0120"
+      "ncad_account_num": "9563-0005-0120",
+      "prop_lat": 27.736618,
+      "prop_lng": -97.396982
     },
     {
       "doc_num": "2026000227",
@@ -1475,7 +1535,9 @@
       "legal_block": "20",
       "legal_subdivision": "London Towne",
       "pdf_parsed_at": "2026-06-06T19:31:39.478469+00:00",
-      "ncad_account_num": "4557-0020-0170"
+      "ncad_account_num": "4557-0020-0170",
+      "prop_lat": 27.697387,
+      "prop_lng": -97.470158
     },
     {
       "doc_num": "2026000228",
@@ -1507,7 +1569,9 @@
       "legal_block": "2",
       "legal_subdivision": "CALLICOATTE ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.484432+00:00",
-      "ncad_account_num": "1238-0002-0200"
+      "ncad_account_num": "1238-0002-0200",
+      "prop_lat": 27.847163,
+      "prop_lng": -97.607463
     },
     {
       "doc_num": "2026000229",
@@ -1538,7 +1602,9 @@
       "legal_lot": "38",
       "legal_block": "4",
       "legal_subdivision": "AIRLINE CROSSING",
-      "pdf_parsed_at": "2026-06-06T19:31:39.490302+00:00"
+      "pdf_parsed_at": "2026-06-06T19:31:39.490302+00:00",
+      "prop_lat": 27.659735,
+      "prop_lng": -97.3711
     },
     {
       "doc_num": "2026000211",
@@ -1631,7 +1697,9 @@
       "legal_block": "10",
       "legal_subdivision": "NORTHWEST CROSSING",
       "pdf_parsed_at": "2026-06-06T19:31:39.330471+00:00",
-      "ncad_account_num": "5791-0010-0290"
+      "ncad_account_num": "5791-0010-0290",
+      "prop_lat": 27.814542,
+      "prop_lng": -97.549812
     },
     {
       "doc_num": "2026000336",
@@ -1787,7 +1855,9 @@
       "legal_block": "4",
       "legal_subdivision": "LEXINGTON PARK",
       "pdf_parsed_at": "2026-06-06T19:31:40.068094+00:00",
-      "ncad_account_num": "4414-0004-0180"
+      "ncad_account_num": "4414-0004-0180",
+      "prop_lat": 27.692219,
+      "prop_lng": -97.35119
     },
     {
       "doc_num": "2026000321",
@@ -1819,7 +1889,9 @@
       "legal_block": "3",
       "legal_subdivision": "TRUE",
       "pdf_parsed_at": "2026-06-06T19:31:40.080347+00:00",
-      "ncad_account_num": "8902-0003-0200"
+      "ncad_account_num": "8902-0003-0200",
+      "prop_lat": 27.579663,
+      "prop_lng": -97.797487
     },
     {
       "doc_num": "2026000317",
@@ -1854,7 +1926,9 @@
       "legal_block": "10",
       "legal_subdivision": "CENTRAL PARK",
       "pdf_parsed_at": "2026-06-06T19:31:40.053965+00:00",
-      "ncad_account_num": "1493-0010-0240"
+      "ncad_account_num": "1493-0010-0240",
+      "prop_lat": 27.730004,
+      "prop_lng": -97.403848
     },
     {
       "doc_num": "2026000306",
@@ -1886,7 +1960,9 @@
       "legal_block": "3",
       "legal_subdivision": "OVERLAND MEADOWS",
       "pdf_parsed_at": "2026-06-06T19:31:39.962902+00:00",
-      "ncad_account_num": "6102-0003-0010"
+      "ncad_account_num": "6102-0003-0010",
+      "prop_lat": 27.833695,
+      "prop_lng": -97.571989
     },
     {
       "doc_num": "2026000307",
@@ -1919,7 +1995,9 @@
       "legal_block": "3",
       "legal_subdivision": "Edgewood Park",
       "pdf_parsed_at": "2026-06-06T19:31:39.973351+00:00",
-      "ncad_account_num": "2255-0003-0030"
+      "ncad_account_num": "2255-0003-0030",
+      "prop_lat": 27.745165,
+      "prop_lng": -97.413145
     },
     {
       "doc_num": "2026000305",
@@ -1983,7 +2061,9 @@
       "legal_block": "1",
       "legal_subdivision": "KING'S CROSSING",
       "pdf_parsed_at": "2026-06-06T19:31:39.288268+00:00",
-      "ncad_account_num": "3960-0001-0220"
+      "ncad_account_num": "3960-0001-0220",
+      "prop_lat": 27.664985,
+      "prop_lng": -97.395101
     }
   ],
   "ncad_account_enriched_at": "2026-06-10T18:46:20+00:00"
