@@ -1,15 +1,20 @@
 {
-  "ran_at": "2026-06-09T18:30:10+00:00",
+  "ran_at": "2026-06-10T18:46:20+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 23,
+    "no_prop_id": 24,
     "skipped_already": 42,
-    "total": 65
+    "total": 66
   },
   "entries": [
+    {
+      "doc_num": "2026000341",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
     {
       "doc_num": "2026000340",
       "prop_address": "",
