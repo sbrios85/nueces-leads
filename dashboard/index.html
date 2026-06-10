@@ -2539,7 +2539,8 @@
       <span>Delinquent Taxes</span>
       <span class="tab-count" id="delq-count">—</span></div>
     <div class="nav-item" data-pane="codeviolation">
-      <span>Code Violation</span></div>
+      <span>Code Violation</span>
+      <span class="tab-count" id="cv-count">—</span></div>
     <div class="nav-item" data-pane="vacanthouses">
       <span>Vacant Houses</span></div>
     <div class="nav-item" data-pane="taxoveragesraw">
@@ -2742,24 +2743,26 @@
   <table id="cv-table">
     <thead><tr>
       <th data-sort="status"        style="width: 74px;">Status</th>
-      <th data-sort="cited"         style="width: 110px;">Cited</th>
-      <th data-sort="owner"         style="width: 200px;">Owner</th>
-      <th data-sort="prop_address"  style="width: 210px;">Property Address</th>
+      <th data-sort="cited"         style="width: 92px;">Cited</th>
+      <th data-sort="owner"         style="width: 180px;">Owner</th>
+      <th data-sort="prop_address"  style="width: 190px;">Property Address</th>
       <th style="width: 50px;">Map</th>
-      <th data-sort="mail_address"  style="width: 200px;">Mailing Address</th>
-      <th data-sort="violation_type" style="width: 160px;">Violation Type</th>
+      <th data-sort="mail_address"  style="width: 190px;">Mailing Address</th>
+      <th data-sort="violation_type" style="width: 140px;">Violation Type</th>
+      <th data-sort="property_type" style="width: 110px;">Property Type</th>
       <th data-sort="case_num"      style="width: 110px;">Case #</th>
-      <th data-sort="market_value"  style="width: 110px;">Market Value</th>
-      <th data-sort="legal"         style="width: 155px;">Legal Description</th>
+      <th data-sort="market_value"  style="width: 100px;">Market Value</th>
+      <th data-sort="legal"         style="width: 150px;">Legal Description</th>
+      <th data-sort="violation_narrative" style="width: 220px;">Violation Narrative</th>
       <th style="width: 50px;">NCAD</th>
       <th style="width: 50px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
+    <tfoot id="cv-dead-foot"></tfoot>
   </table>
-  <div class="empty">
-    Code Violation data source not yet wired up.<br>
-    Once the city's code-enforcement feed is connected, this table will
-    populate automatically.
+  <div class="empty" id="cv-empty">
+    No code-violation leads loaded yet.<br>
+    Upload code_violations.json to the repo and this table will populate.
   </div>
 </div>
 
@@ -3670,6 +3673,30 @@ function commitFcFields(docNum, edits) {
 // flagged with `stub:true` so the UI shows a "customize me" hint.
 
 const CRM_CONFIG = {
+  cv: {
+    storeKey: "nueces_cv_crm_v1",
+    label: "Code Violations",
+    readonly: [
+      ["owner",               "Owner"],
+      ["prop_address",        "Property Address"],
+      ["mail_address",        "Mailing Address"],
+      ["violation_type",      "Violation Type"],
+      ["property_type",       "Property Type"],
+      ["cited",               "Cited"],
+      ["case_num",            "Case #"],
+      ["market_value",        "Market Value", "money"],
+      ["legal",               "Legal Description"],
+      ["violation_narrative", "Violation Narrative"],
+      ["state_class",         "NCAD Class"],
+    ],
+    editable: [
+      ["phone",         "Phone", "text"],
+      ["email",         "Email", "text"],
+      ["last_contact",  "Last Contact", "date"],
+      ["next_followup", "Next Follow-up", "date"],
+      ["notes",         "Notes", "textarea"],
+    ],
+  },
   ccln: {
     storeKey: "nueces_ccln_crm_v2",
     label: "City of Corpus Christi Liens",
@@ -8944,6 +8971,286 @@ function _todayToggleImport(kind) {
 }
 
 
+// ============================================================
+// CODE VIOLATION (CV) tab — In-Progress, individual-owned
+// residential code-enforcement leads. Mirrors the DELQ tab:
+// table + clickable stage pill (CRM pipeline), dead leads collapse
+// to a footer, sortable headers, stats bar. Stage keys reuse
+// MFC_STAGES; stage state lives in nueces_cv_status_v1. The
+// click-in detail panel uses the generic openCrm("cv", ...).
+// ============================================================
+let CV_RAW = [], CV_FILTERED = [];
+let CV_IMPORT_DATE = "";
+
+const CV_STATUS_KEY = "nueces_cv_status_v1";
+function loadCvStatus() {
+  try { return JSON.parse(localStorage.getItem(CV_STATUS_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveCvStatus(s) { localStorage.setItem(CV_STATUS_KEY, JSON.stringify(s)); }
+function getCvStatus(caseNum) {
+  const s = loadCvStatus();
+  return (s[caseNum] && s[caseNum].status) || "new";
+}
+function setCvStatus(caseNum, status) {
+  const s = loadCvStatus();
+  s[caseNum] = Object.assign({}, s[caseNum], { status: status, updated_at: new Date().toISOString() });
+  saveCvStatus(s);
+}
+// Same pipeline + ordering as every other lead type.
+const CV_STAGES = MFC_STAGES;
+
+let CV_SORT_KEY = "cited";
+let CV_SORT_DIR = "desc";
+const CV_SORT_TYPES = {
+  status: "status", cited: "string", owner: "string", prop_address: "string",
+  mail_address: "string", violation_type: "string", property_type: "string",
+  case_num: "string", market_value: "number", legal: "string", violation_narrative: "string",
+};
+function _cvCompare(a, b, key, dir, type) {
+  if (type === "status") {
+    const rank = {}; CV_STAGES.forEach((s, i) => { rank[s.key] = i; });
+    const sa = rank[getCvStatus(a.case_num)] ?? 0;
+    const sb = rank[getCvStatus(b.case_num)] ?? 0;
+    return dir === "asc" ? sa - sb : sb - sa;
+  }
+  let va = a[key], vb = b[key];
+  const aE = (va == null || va === ""), bE = (vb == null || vb === "");
+  if (aE && bE) return 0;
+  if (aE) return 1;
+  if (bE) return -1;
+  if (type === "number") {
+    const na = Number(va), nb = Number(vb);
+    if (isNaN(na) && isNaN(nb)) return 0;
+    if (isNaN(na)) return 1; if (isNaN(nb)) return -1;
+    return dir === "asc" ? na - nb : nb - na;
+  }
+  const sa = String(va).toLowerCase(), sb = String(vb).toLowerCase();
+  return dir === "asc" ? sa.localeCompare(sb) : sb.localeCompare(sa);
+}
+
+function applyCv() {
+  const emptyEl = document.getElementById("cv-empty");
+  const tbody   = document.querySelector("#cv-table tbody");
+  const countEl = document.getElementById("cv-count");
+  if (countEl) countEl.textContent = CV_RAW.length ? CV_RAW.length.toLocaleString() : "—";
+  if (!CV_RAW.length) {
+    if (tbody) tbody.innerHTML = "";
+    if (emptyEl) emptyEl.hidden = false;
+    renderCvStats();
+    return;
+  }
+  if (emptyEl) emptyEl.hidden = true;
+  CV_FILTERED = CV_RAW.slice();
+  const type = CV_SORT_TYPES[CV_SORT_KEY] || "string";
+  CV_FILTERED.sort((a, b) => _cvCompare(a, b, CV_SORT_KEY, CV_SORT_DIR, type));
+  renderCv();
+  renderCvStats();
+  document.querySelectorAll("#cv-table th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === CV_SORT_KEY)
+      th.classList.add(CV_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
+  });
+}
+
+function renderCv() {
+  const tb = document.querySelector("#cv-table tbody");
+  const tf = document.getElementById("cv-dead-foot");
+  if (!tb || !tf) return;
+  tb.innerHTML = ""; tf.innerHTML = "";
+  const active = [], dead = [];
+  for (const r of CV_FILTERED) {
+    if (getCvStatus(r.case_num) === "dead") dead.push(r); else active.push(r);
+  }
+  for (const r of active) tb.appendChild(buildCvRow(r, false));
+  if (dead.length > 0) {
+    const expanded = localStorage.getItem("cv_dead_expanded") === "true";
+    const toggleTr = document.createElement("tr");
+    toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
+    toggleTr.innerHTML = `
+      <td colspan="14">
+        <span class="chev">▶</span>
+        <span>${dead.length} deleted lead${dead.length === 1 ? "" : "s"}</span>
+        <span style="margin-left: 8px; color: var(--muted); font-weight: 400;">
+          — click to ${expanded ? "collapse" : "expand"}</span>
+      </td>`;
+    toggleTr.onclick = () => {
+      localStorage.setItem("cv_dead_expanded",
+          toggleTr.classList.contains("expanded") ? "false" : "true");
+      renderCv();
+    };
+    tf.appendChild(toggleTr);
+    if (expanded) for (const r of dead) tf.appendChild(buildCvRow(r, true));
+  }
+}
+
+function buildCvRow(r, isDead) {
+  const tr = document.createElement("tr");
+  if (isDead) tr.classList.add("dead-lead");
+  const cn = r.case_num || "";
+
+  let statusCell;
+  if (isDead) {
+    statusCell = `
+      <span class="pill status status-dead">Dead</span>
+      <button class="restore-btn" style="margin-top:4px;" title="Restore this lead"
+              onclick="setCvStatus('${esc(cn)}', 'new'); applyCv(); event.stopPropagation();">
+        Restore</button>`;
+  } else {
+    const st = getCvStatus(cn);
+    const stageDef = CV_STAGES.find(s => s.key === st) || CV_STAGES[0];
+    const pillClassMap = {
+      new: "status-new", contacted: "status-contacted",
+      negotiating: "status-negotiating", under_contract: "status-negotiating",
+      closed_won: "status-closed", dead: "status-dead",
+    };
+    const pillClass = pillClassMap[st] || "status-new";
+    statusCell = `
+      <span class="pill status ${pillClass}" style="cursor:pointer;"
+            title="Click to change status"
+            onclick="openCvStatusMenu(event, '${esc(cn)}', '${esc(st)}')">
+        ${esc(stageDef.label)} ▾</span>`;
+  }
+
+  const citedCell = r.cited ? esc(r.cited) : `<span style="color:var(--muted)">—</span>`;
+  const ownerCell = esc(fmtOwner(r.owner || "")) || `<span style="color:var(--muted)">—</span>`;
+  const propCell  = r.prop_address ? esc(fmtTitle(r.prop_address)) : `<span style="color:var(--muted)">—</span>`;
+  const mailCell  = r.mail_address ? esc(fmtTitle(r.mail_address)) : `<span style="color:var(--muted)">—</span>`;
+  const vtCell    = esc(r.violation_type || "—");
+  const ptCell    = r.property_type ? esc(r.property_type) : `<span style="color:var(--muted)">—</span>`;
+  const caseCell  = esc(cn);
+  const mv = Number(r.market_value) || 0;
+  const mvCell = mv > 0 ? "$" + mv.toLocaleString("en-US", {maximumFractionDigits: 0})
+                        : `<span style="color:var(--muted)">—</span>`;
+  const legal = r.legal || "";
+  const legalCell = legal ? `<span title="${esc(legal)}">${esc(legal)}</span>`
+                          : `<span style="color:var(--muted)">—</span>`;
+  const narr = r.violation_narrative || "";
+  const narrCell = narr ? `<span title="${esc(narr)}">${esc(narr)}</span>`
+                        : `<span style="color:var(--muted)">—</span>`;
+  const ncadCell  = ncadCellHtml(r);
+  const nctaxCell = nctaxCellHtml(r);
+
+  tr.innerHTML = `
+    <td>${statusCell}</td>
+    <td>${citedCell}</td>
+    <td>${ownerCell}</td>
+    <td>${propCell}</td>
+    <td style="text-align:center;">${mapCellHtml(r)}</td>
+    <td>${mailCell}</td>
+    <td>${vtCell}</td>
+    <td>${ptCell}</td>
+    <td>${caseCell}</td>
+    <td>${mvCell}</td>
+    <td class="legal">${legalCell}</td>
+    <td class="legal">${narrCell}</td>
+    <td style="text-align:center;">${ncadCell}</td>
+    <td style="text-align:center;">${nctaxCell}</td>`;
+
+  // Row click opens the generic CRM detail panel — but not when the
+  // click landed on the stage pill, a link, or a button.
+  tr.addEventListener("click", (ev) => {
+    if (ev.target.closest("a, button, .status-menu-item, .pill.status")) return;
+    openCrm("cv", cn, CV_RAW);
+  });
+  return tr;
+}
+
+function renderCvStats() {
+  const statsEl = document.getElementById("cv-stats");
+  if (!statsEl) return;
+  const fresh = _freshnessHtml("Last Code-Violation Import", CV_IMPORT_DATE);
+  if (!CV_RAW.length) {
+    statsEl.innerHTML = `
+      <div class="stats-title">Code Violations</div>
+      <div class="stat"><div class="v">—</div><div class="k">Active leads</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Vacant/Substandard</div></div>
+      <div class="stat"><div class="v">—</div><div class="k">Total market value</div></div>
+      ${fresh}`;
+    return;
+  }
+  let nActive = 0, nVacant = 0, totMv = 0;
+  for (const r of CV_RAW) {
+    if (getCvStatus(r.case_num) === "dead") continue;
+    nActive++;
+    totMv += Number(r.market_value) || 0;
+    const vt = (r.violation_type || "").toLowerCase();
+    if (vt.includes("vacant") || vt.includes("substandard") || vt.includes("unsecured")) nVacant++;
+  }
+  const navCount = document.getElementById("cv-count");
+  if (navCount) navCount.textContent = nActive.toLocaleString();
+  statsEl.innerHTML = `
+    <div class="stats-title">Code Violations</div>
+    <div class="stat"><div class="v">${nActive.toLocaleString()}</div><div class="k">Active leads</div></div>
+    <div class="stat"><div class="v">${nVacant.toLocaleString()}</div><div class="k">Vacant/Substandard</div></div>
+    <div class="stat"><div class="v">$${Math.round(totMv).toLocaleString()}</div><div class="k">Total market value</div></div>
+    ${fresh}`;
+}
+
+function closeCvStatusMenu() {
+  const m = document.getElementById("cv-status-menu"); if (m) m.remove();
+  document.removeEventListener("click", _cvMenuOutside, true);
+}
+function _cvMenuOutside(e) {
+  const m = document.getElementById("cv-status-menu");
+  if (m && !m.contains(e.target)) closeCvStatusMenu();
+}
+function openCvStatusMenu(ev, caseNum, currentStatus) {
+  ev.stopPropagation();
+  closeCvStatusMenu();
+  const menu = document.createElement("div");
+  menu.className = "ccln-status-menu";   // reuse shared menu styling
+  menu.id = "cv-status-menu";
+  menu.innerHTML = CV_STAGES
+    .filter(s => s.key !== currentStatus)
+    .map(s => `<button class="status-menu-item" data-stage="${esc(s.key)}">${esc(s.label)}</button>`)
+    .join("");
+  const rect = ev.currentTarget.getBoundingClientRect();
+  menu.style.position = "fixed";
+  menu.style.left = rect.left + "px";
+  menu.style.top  = (rect.bottom + 4) + "px";
+  menu.style.zIndex = "1000";
+  document.body.appendChild(menu);
+  menu.querySelectorAll(".status-menu-item").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setCvStatus(caseNum, btn.dataset.stage);
+      closeCvStatusMenu();
+      applyCv();
+    });
+  });
+  setTimeout(() => document.addEventListener("click", _cvMenuOutside, true), 0);
+}
+
+// Loader — fetched once at startup from loadAll(). First-deploy
+// safe: if code_violations.json is missing, the empty state covers
+// it and the sidebar count stays "—".
+async function loadCv() {
+  try {
+    const r = await fetch("code_violations.json", {cache:"no-store"});
+    if (r.ok) {
+      const data = await r.json();
+      CV_RAW = data.records || [];
+      CV_IMPORT_DATE = data.import_date || "";
+      // Alias a few fields so the shared cell helpers work:
+      //   doc_num       — openCrm() looks records up by doc_num
+      //   ncad_prop_id  — ncadCellHtml() deep-links by it (strip pad zeros)
+      //   prop_city     — map/address-search links disambiguate by city
+      for (const rec of CV_RAW) {
+        rec.doc_num = rec.case_num;
+        rec.ncad_prop_id = String(rec.prop_id || "").replace(/^0+/, "");
+        if (!rec.prop_city) rec.prop_city = "Corpus Christi";
+      }
+      renderCvStats();
+      const _ap = (document.querySelector(".pane.active") || {}).id;
+      if (_ap === "pane-codeviolation") {
+        _renderedPanes.add("pane-codeviolation");
+        applyCv();
+      }
+    }
+  } catch (e) { /* code_violations.json optional — empty-state covers it */ }
+}
+
 function _renderPaneIfNeeded(paneId) {
   // Today: always re-render on visit — its counts (follow-ups due,
   // pipeline stages, parsed-pending) change as the user works other
@@ -8981,6 +9288,9 @@ function _renderPaneIfNeeded(paneId) {
     // display and will render rows once data lands. The empty-state
     // path is cheap, so it's safe to call on every visit.
     applyDelq();
+  } else if (paneId === "pane-codeviolation") {
+    // CV renderer; empty-state path is cheap so safe to call on visit.
+    applyCv();
   }
 }
 
@@ -9144,6 +9454,9 @@ async function loadAll() {
     }
   } catch (e) { /* delq_records.json optional — empty-state covers it */ }
 
+  // Code Violations — same optional-fetch pattern.
+  await loadCv();
+
   // Render the meta block. We use innerHTML (not textContent) so the
   // colored "X days ago" badge renders. All inputs come from trusted
   // server-generated data — no XSS surface.
@@ -9252,7 +9565,7 @@ function _renderPlaceholderStats(elementId, title) {
     `<div class="stat"><div class="v">—</div><div class="k">Working</div></div>` +
     `<div class="stat"><div class="v">—</div><div class="k">Dead</div></div>`;
 }
-function renderCodeViolationStats()    { _renderPlaceholderStats("cv-stats",  "Code Violation"); }
+function renderCodeViolationStats()    { renderCvStats(); }
 function renderWaterShutoffStats()     { _renderPlaceholderStats("ws-stats",  "Water Shutoff"); }
 function renderVacantHousesStats()     { _renderPlaceholderStats("vh-stats",  "Vacant Houses"); }
 function renderTaxOveragesRawStats()   { _renderPlaceholderStats("tov-stats", "Tax Overages"); }
@@ -13744,6 +14057,21 @@ document.querySelectorAll("#delq-table th[data-sort]").forEach(th => {
                       ? "desc" : "asc";
     }
     applyDelq();
+  });
+});
+
+// CV table sort headers — Market Value + Cited default descending
+// (newest / biggest first); everything else ascending.
+document.querySelectorAll("#cv-table th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (CV_SORT_KEY === key) {
+      CV_SORT_DIR = CV_SORT_DIR === "asc" ? "desc" : "asc";
+    } else {
+      CV_SORT_KEY = key;
+      CV_SORT_DIR = (key === "market_value" || key === "cited") ? "desc" : "asc";
+    }
+    applyCv();
   });
 });
 
