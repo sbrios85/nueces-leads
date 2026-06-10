@@ -15,7 +15,8 @@ name: Build Code Violations
 on:
   push:
     paths:
-      - "cv_input/**"
+      - "cv_input/*.xls"
+      - "cv_input/*.xlsx"
   workflow_dispatch:
 
 permissions:
@@ -79,6 +80,9 @@ jobs:
     needs: build
     if: ${{ needs.build.result == 'success' }}
     runs-on: ubuntu-22.04
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
