@@ -9166,6 +9166,7 @@ function buildCvRow(r, isDead) {
 
   // Row click opens the generic CRM detail panel — but not when the
   // click landed on the stage pill, a link, or a button.
+  tr.style.cursor = "pointer";
   tr.addEventListener("click", (ev) => {
     if (ev.target.closest("a, button, .status-menu-item, .pill.status")) return;
     openCrm("cv", cn, CV_RAW);
