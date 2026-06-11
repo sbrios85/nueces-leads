@@ -558,6 +558,11 @@
     color: #ef4444;
     border-color: rgba(239, 68, 68, 0.35);
   }
+  .stack-badge-delq {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border-color: rgba(168, 85, 247, 0.35);
+  }
   /* Signal-count pill on the leftmost column. Shows the total
      number of lead-list signals on this property. Becomes more
      saturated as count rises — visual cue that more-stacked
@@ -2986,16 +2991,15 @@
   <div class="stats" id="stack-stats"></div>
   <table id="stack-table">
     <thead><tr>
-      <th data-sort="types"         style="width: 150px;">Lead Type</th>
       <th data-sort="status"        style="width: 130px;">Status</th>
+      <th data-sort="types"         style="width: 160px;">Lead Type</th>
       <th data-sort="owner"         style="width: 180px;">Owner</th>
       <th data-sort="prop_address"  style="width: 200px;">Property Address</th>
       <th style="width: 46px;">Map</th>
       <th style="width: 190px;">Mail Address</th>
       <th data-sort="market_value"  style="width: 110px;">Market Value</th>
       <th data-sort="lien_total"    style="width: 120px;">Total Lien Amount</th>
-      <th data-sort="delq_owed"     style="width: 120px;">Delinquent Taxes</th>
-      <th data-sort="delq_years"    style="width: 95px;">Years Behind</th>
+      <th data-sort="delq_owed"     style="width: 120px;">Delinquent Taxes<br><small style="font-weight:400;color:var(--muted);">Years Behind</small></th>
       <th style="width: 140px;">Tax Status</th>
       <th style="width: 170px;">Violation Type</th>
       <th data-sort="property_type" style="width: 120px;">Property Type</th>
@@ -11296,6 +11300,13 @@ function _stackBuildEntry(key, group) {
 // total records appear first.
 let STACK_SORT_KEY = "types";
 let STACK_SORT_DIR = "desc";
+// "Hide Lots" view toggle — hides parcels whose violation is a vacant LOT
+// (vacant land) but not a vacant building, so you can focus on structures.
+let STACK_HIDE_LOTS = false;
+function _stackIsLot(e) {
+  const v = e.violation_type || "";
+  return /vacant lot/i.test(v) && !/vacant building/i.test(v);
+}
 const STACK_SORT_TYPES = {
   types:         "num",        // distinct-type count + tie-breaker
   status:        "status",     // ranked by STACK_STAGES order
@@ -11347,6 +11358,7 @@ function applyStack() {
     const d = e.ncad_account_num ? _delqMap[e.ncad_account_num] : null;
     e.delq_owed  = d ? (Number(d.total_owed) || 0) : 0;
     e.delq_years = d ? (Number(d.years_behind) || 0) : 0;
+    e.delq_years_list = d ? (d.del_years || []) : [];
     e.delq_flags = d ? (d.flags || {}) : null;
     e.delq_hit   = !!d;
     // CCLN carries no market value / property type — backfill from DELQ
@@ -11354,23 +11366,25 @@ function applyStack() {
     if (!e.market_value && d && Number(d.market_value)) e.market_value = Number(d.market_value);
     if (!e.property_type && d && d.state_prop_code) e.property_type = d.state_prop_code;
   }
+  // Sidebar count badge reflects the FULL stacked total (the Hide Lots
+  // toggle is a view filter, so it shouldn't move the global nav count).
+  const countEl = document.getElementById("stack-count");
+  if (countEl) countEl.textContent = list.length.toLocaleString();
+
+  // "Hide Lots" view filter — applied to the rendered set + stats only.
+  let view = STACK_HIDE_LOTS ? list.filter(e => !_stackIsLot(e)) : list;
+
   // Stable secondary sort: latest_filed desc as tie-breaker after
   // the user's chosen primary sort. Without this, ties (e.g. two
   // properties both at signal_count=1) would flicker on re-render.
-  list.sort((a, b) => {
+  view.sort((a, b) => {
     const p = _stackCompare(a, b, STACK_SORT_KEY, STACK_SORT_DIR);
     if (p !== 0) return p;
     return _stackCompare(a, b, "latest_filed", "desc");
   });
 
-  // Update the sidebar count badge so the user can see at a glance
-  // how many stacked properties exist (matches the pattern of
-  // ccln-count, tfc-count, fc-count, etc).
-  const countEl = document.getElementById("stack-count");
-  if (countEl) countEl.textContent = list.length.toLocaleString();
-
-  // Render the stats line
-  _renderStackStats(list);
+  // Render the stats line (reflects the visible/filtered set)
+  _renderStackStats(view);
 
   // Render the table body
   const tbody = document.querySelector("#stack-table tbody");
@@ -11378,13 +11392,13 @@ function applyStack() {
   tbody.innerHTML = "";
 
   const empty = document.getElementById("stack-empty");
-  if (list.length === 0) {
+  if (view.length === 0) {
     if (empty) empty.hidden = false;
     return;
   }
   if (empty) empty.hidden = true;
 
-  for (const entry of list) {
+  for (const entry of view) {
     tbody.appendChild(_buildStackRow(entry));
   }
 }
@@ -11426,7 +11440,17 @@ function _renderStackStats(list) {
     <div class="stat-card">
       <div class="num">${byTypeCount[4] || 0}</div>
       <div class="lbl">4 Types</div>
-    </div>`;
+    </div>
+    <button id="stack-hide-lots-btn" type="button"
+        onclick="STACK_HIDE_LOTS = !STACK_HIDE_LOTS; applyStack();"
+        title="Hide parcels whose violation is a vacant lot (vacant land)"
+        style="margin-left:auto; align-self:center; cursor:pointer; padding:8px 14px;
+               border-radius:8px; font-size:13px; font-weight:600;
+               border:1px solid ${STACK_HIDE_LOTS ? 'var(--accent)' : 'rgba(148,163,184,.4)'};
+               background:${STACK_HIDE_LOTS ? 'rgba(56,189,248,.15)' : 'transparent'};
+               color:${STACK_HIDE_LOTS ? 'var(--accent)' : 'var(--muted)'};">
+      ${STACK_HIDE_LOTS ? '✓ Lots Hidden' : 'Hide Lots'}
+    </button>`;
 }
 
 function _buildStackRow(entry) {
@@ -11448,6 +11472,13 @@ function _buildStackRow(entry) {
       return `<span class="stack-badge ${s.badgeClass}">${esc(label)}</span>`;
     })
     .join("");
+  // Delinquent-taxes pill. DELQ decorates rows (it isn't a stacking
+  // source today), so append its pill whenever the parcel is on the
+  // delinquent list. (Deferred-tax accounts will get their own pill
+  // once that list is available.)
+  const delqBadge = entry.delq_hit
+    ? `<span class="stack-badge stack-badge-delq">Delinquent Taxes</span>`
+    : "";
 
   // NCAD / NCTAX external icons — reuse the shared helpers via a
   // synthetic record-shaped object.
@@ -11494,17 +11525,30 @@ function _buildStackRow(entry) {
       : `<span class="pill" style="background:rgba(148,163,184,.15);color:var(--muted);border:1px solid rgba(148,163,184,.3);font-size:11px;">DELINQUENT</span>`;
   }
 
+  // Delinquent Taxes / Years Behind — merged cell: amount on top, year
+  // count below. Hover the year line to see every delinquent tax year.
+  let delqCell = dash;
+  if (entry.delq_hit) {
+    const yrs = entry.delq_years || 0;
+    const yrList = (entry.delq_years_list || [])
+      .map(y => "20" + String(y).padStart(2, "0")).join(", ");
+    const top = money(entry.delq_owed) || dash;
+    const bottom = yrs
+      ? `<br><small style="color:var(--muted);cursor:help;"${yrList ? ` title="Delinquent years: ${esc(yrList)}"` : ""}>${yrs} yr${yrs === 1 ? "" : "s"} behind</small>`
+      : "";
+    delqCell = top + bottom;
+  }
+
   tr.innerHTML = `
-    <td>${badgeHtml || dash}</td>
     <td>${statusCell}</td>
+    <td>${(badgeHtml + delqBadge) || dash}</td>
     <td>${esc(fmtOwner(entry.owner || "")) || dash}</td>
     <td>${entry.prop_address ? esc(fmtTitle(entry.prop_address)) : dash}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
     <td>${mailCell}</td>
     <td>${money(entry.market_value) || dash}</td>
     <td>${money(entry.lien_total) || dash}</td>
-    <td>${entry.delq_hit ? (money(entry.delq_owed) || dash) : dash}</td>
-    <td style="text-align:center;">${entry.delq_hit && entry.delq_years ? entry.delq_years : dash}</td>
+    <td>${delqCell}</td>
     <td>${taxStatusCell}</td>
     <td>${entry.violation_type ? esc(entry.violation_type) : dash}</td>
     <td>${entry.property_type ? esc(entry.property_type) : dash}</td>
