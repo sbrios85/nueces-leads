@@ -8338,6 +8338,13 @@ const _renderedPanes = new Set();
 // When an address mixes types, the pin is neutral gray (the popup
 // breaks out each type). A property's layer membership for the toggles
 // is "any of its lead types is enabled".
+// A CV record is a "vacant building" lead if its violation summary
+// includes Vacant Building or Unsecured Vacant Building (NOT Vacant Lot —
+// "vacant building" is not a substring of "vacant lot"). Shared by both
+// the Stack (auto-include filter) and the Map (cv layer data source).
+function _cvIsVacantBuilding(r) {
+  return /vacant building/i.test((r && r.violation_type) || "");
+}
 const _MAP_TYPES = {
   fc:   { color: "#378ADD", label: "Mortgage Foreclosures", noun: "filing",
           data: () => (typeof FC_RAW   !== "undefined" ? FC_RAW   : []) },
@@ -8345,8 +8352,10 @@ const _MAP_TYPES = {
           data: () => (typeof TFC_RAW  !== "undefined" ? TFC_RAW  : []) },
   ccln: { color: "#1D9E75", label: "City Liens (CCLN)", noun: "lien",
           data: () => (typeof CCLN_RAW !== "undefined" ? CCLN_RAW : []) },
+  cv:   { color: "#ef4444", label: "Code Violations (Vacant)", noun: "violation",
+          data: () => (typeof CV_RAW !== "undefined" ? CV_RAW.filter(_cvIsVacantBuilding) : []) },
 };
-const _MAP_TYPE_ORDER = ["fc", "tfc", "ccln"];
+const _MAP_TYPE_ORDER = ["fc", "tfc", "ccln", "cv"];
 const _MAP_MIXED_COLOR = "#888780";    // neutral gray for multi-type pins
 const _MAP_LIEN_CAP = 10;              // max lien lines shown per type in a popup
 let _leadMap = null;
@@ -8398,6 +8407,10 @@ function _mapLeadLines(typeKey, r) {
   if (typeKey === "fc") {
     const l1 = "Sale " + formatDate(r.sale_date) + (r.status ? " · " + r.status : "");
     return { l1, l2: r.lender ? esc(r.lender) : "" };
+  }
+  if (typeKey === "cv") {
+    const l1 = "Cited " + formatDate(r.cited || "");
+    return { l1, l2: r.violation_type ? esc(r.violation_type) : "" };
   }
   // tfc
   const l1 = "Sale " + formatDate(r.sale_date || r.sale_nbr || "");
@@ -10960,7 +10973,8 @@ const STACK_SOURCES = [
     type: "cv",
     label: "Code Viol.",
     badgeClass: "stack-badge-cv",
-    autoInclude: false,   // overlap-only — surfaces in Stack only when the parcel also hits another list
+    autoInclude: true,    // Vacant Building / Unsecured Vacant Building stand alone as leads…
+    autoIncludeFilter: (r) => _cvIsVacantBuilding(r),   // …all other CV types stay overlap-only (need a 2nd list)
     getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW : []),
     isActive: (r) => getCvStatus(r.case_num) !== "dead",
     primaryKey: (r) => r.case_num,
@@ -11058,31 +11072,29 @@ function _stackBuildList() {
 
       let g = groups.get(key);
       if (!g) {
-        g = { signals: [], byType: {} };
+        g = { signals: [], byType: {}, hasAuto: false };
         groups.set(key, g);
       }
+      let auto = false;
+      try {
+        auto = !!(source.autoInclude && (!source.autoIncludeFilter || source.autoIncludeFilter(rec)));
+      } catch (e) { /* defensive: a thrown filter just means not-auto */ }
       g.signals.push({ source, record: rec });
       g.byType[source.type] = (g.byType[source.type] || 0) + 1;
+      if (auto) g.hasAuto = true;
     }
   }
 
   // Apply inclusion rule. A property qualifies if:
-  //   - It has at least one signal from an autoInclude=true source, OR
-  //   - It has signals from 2+ distinct source TYPES (regardless of
-  //     autoInclude). Multiple records from the SAME type only count
-  //     as one signal type (a property with 3 CCLN liens is still
-  //     just one "CCLN signal" for inclusion purposes — though it
-  //     does still show as 3 in the signal count).
-  const autoIncludeTypes = new Set(
-    STACK_SOURCES.filter(s => s.autoInclude).map(s => s.type)
-  );
-
+  //   - It has at least one AUTO-INCLUDE signal (autoInclude source whose
+  //     optional autoIncludeFilter passed), OR
+  //   - It has signals from 2+ distinct source TYPES (overlap). Multiple
+  //     records from the SAME type still count as one type for inclusion.
   const list = [];
   for (const [key, g] of groups.entries()) {
     const distinctTypes = Object.keys(g.byType);
-    const hasAuto = distinctTypes.some(t => autoIncludeTypes.has(t));
     const multiType = distinctTypes.length >= 2;
-    if (!hasAuto && !multiType) continue;   // doesn't qualify
+    if (!g.hasAuto && !multiType) continue;   // doesn't qualify
 
     // Build the consolidated stack row
     const entry = _stackBuildEntry(key, g);
