@@ -9327,6 +9327,20 @@ async function loadCv() {
         _renderedPanes.add("pane-codeviolation");
         applyCv();
       }
+      // CV feeds the Stack (vacant-building leads auto-include) and loads
+      // AFTER the CCLN block that first set the Stack count — so that count
+      // was computed before CV_RAW existed (it read 751, CCLN-only).
+      // Refresh the badge now, and force the Stack pane to rebuild on next
+      // visit (or repaint immediately if the user is already on it).
+      const _sc = document.getElementById("stack-count");
+      if (_sc && typeof _stackBuildList === "function") {
+        try { _sc.textContent = _stackBuildList().length.toLocaleString(); } catch (e) {}
+      }
+      _renderedPanes.delete("pane-stack");
+      if (_ap === "pane-stack" && typeof applyStack === "function") {
+        _renderedPanes.add("pane-stack");
+        applyStack();
+      }
     }
   } catch (e) { /* code_violations.json optional — empty-state covers it */ }
 }
