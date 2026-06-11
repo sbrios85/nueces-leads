@@ -2986,13 +2986,20 @@
   <div class="stats" id="stack-stats"></div>
   <table id="stack-table">
     <thead><tr>
-      <th data-sort="types"            style="width: 280px;">Lead Types</th>
-      <th data-sort="prop_address"     style="width: 260px;">Property Address</th>
-      <th style="width: 50px;">Map</th>
-      <th data-sort="owner"            style="width: 240px;">Owner</th>
-      <th data-sort="latest_filed"     style="width: 120px;">Latest Filed</th>
-      <th data-sort="ncad_account_num" style="width: 140px;">NCAD Account</th>
-      <th style="width: 50px;">NCAD</th>
+      <th data-sort="types"         style="width: 150px;">Lead Type</th>
+      <th data-sort="status"        style="width: 130px;">Status</th>
+      <th data-sort="owner"         style="width: 180px;">Owner</th>
+      <th data-sort="prop_address"  style="width: 200px;">Property Address</th>
+      <th style="width: 46px;">Map</th>
+      <th style="width: 190px;">Mail Address</th>
+      <th data-sort="market_value"  style="width: 110px;">Market Value</th>
+      <th data-sort="lien_total"    style="width: 120px;">Total Lien Amount</th>
+      <th data-sort="delq_owed"     style="width: 120px;">Delinquent Taxes</th>
+      <th data-sort="delq_years"    style="width: 95px;">Years Behind</th>
+      <th style="width: 140px;">Tax Status</th>
+      <th style="width: 170px;">Violation Type</th>
+      <th data-sort="property_type" style="width: 120px;">Property Type</th>
+      <th style="width: 46px;">NCAD</th>
       <th style="width: 50px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
@@ -11124,6 +11131,76 @@ function _stackBuildList() {
 // Consolidate a group of signals into a single Stack row entry.
 // Picks the "best" address/owner/ncad among the constituent records,
 // and pre-computes sort keys.
+// ----------------------------------------------------------------
+// Stack working-status pill (independent of each source's own CRM)
+// ----------------------------------------------------------------
+// The Stack is its own workable list, so it gets its own stage pill —
+// same pipeline as every other lead type — keyed by the stack property
+// key (ncad:… or addr:…). Setting it here does NOT touch the underlying
+// CCLN/CV/etc. CRM; it tracks how you're working the stacked lead.
+const STACK_STATUS_KEY = "nueces_stack_status_v1";
+const STACK_STAGES = MFC_STAGES;
+function loadStackStatus() { try { return JSON.parse(localStorage.getItem(STACK_STATUS_KEY) || "{}"); } catch (e) { return {}; } }
+function saveStackStatus(s) { localStorage.setItem(STACK_STATUS_KEY, JSON.stringify(s)); }
+function getStackStatus(key) { const s = loadStackStatus(); return (s[key] && s[key].status) || "new"; }
+function setStackStatus(key, status) {
+  const s = loadStackStatus();
+  s[key] = Object.assign({}, s[key], { status: status, updated_at: new Date().toISOString() });
+  saveStackStatus(s);
+}
+function closeStackStatusMenu() {
+  const m = document.getElementById("stack-status-menu");
+  if (m) m.remove();
+  document.removeEventListener("click", _stackMenuOutside, true);
+}
+function _stackMenuOutside(e) {
+  const m = document.getElementById("stack-status-menu");
+  if (m && !m.contains(e.target)) closeStackStatusMenu();
+}
+function openStackStatusMenu(ev, key, currentStatus) {
+  ev.stopPropagation();
+  closeStackStatusMenu();
+  const menu = document.createElement("div");
+  menu.className = "ccln-status-menu";   // reuse shared menu styling
+  menu.id = "stack-status-menu";
+  menu.innerHTML = STACK_STAGES
+    .filter(s => s.key !== currentStatus)
+    .map(s => `<button class="status-menu-item" data-stage="${esc(s.key)}">${esc(s.label)}</button>`)
+    .join("");
+  const rect = ev.currentTarget.getBoundingClientRect();
+  menu.style.position = "fixed";
+  menu.style.left = rect.left + "px";
+  menu.style.top  = (rect.bottom + 4) + "px";
+  menu.style.zIndex = "1000";
+  document.body.appendChild(menu);
+  menu.querySelectorAll(".status-menu-item").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setStackStatus(key, btn.dataset.stage);
+      closeStackStatusMenu();
+      applyStack();
+    });
+  });
+  setTimeout(() => document.addEventListener("click", _stackMenuOutside, true), 0);
+}
+
+// DELQ isn't a Stack SOURCE (it doesn't auto-include or drive stacking),
+// but its tax data decorates stacked rows. Lookup by NCAD account number.
+let _stackDelqMapCache = null, _stackDelqMapLen = -1;
+function _stackDelqByNcad() {
+  if (typeof DELQ_RAW === "undefined") return {};
+  if (_stackDelqMapCache && _stackDelqMapLen === DELQ_RAW.length) return _stackDelqMapCache;
+  const m = {};
+  for (const d of DELQ_RAW) { const k = (d.ncad_account_num || "").trim(); if (k) m[k] = d; }
+  _stackDelqMapCache = m; _stackDelqMapLen = DELQ_RAW.length;
+  return m;
+}
+function _stackCsz(rec) {
+  const c = (rec.mail_city || "").trim(), s = (rec.mail_state || "").trim(), z = (rec.mail_zip || "").trim();
+  let out = c; if (s) out += (out ? ", " : "") + s; if (z) out += (out ? " " : "") + z;
+  return out;
+}
+
 function _stackBuildEntry(key, group) {
   const types = Object.keys(group.byType);
   const signalCount = group.signals.length;
@@ -11154,11 +11231,33 @@ function _stackBuildEntry(key, group) {
     const n = sig.source.ncadKey ? sig.source.ncadKey(sig.record) : "";
     if (n) { ncad = n; break; }
   }
-  // Latest filed date across all signals (for sorting)
+  // Latest filed date across all signals (for sorting / tie-break)
   let latestFiled = "";
   for (const sig of group.signals) {
     const f = sig.source.filedKey ? sig.source.filedKey(sig.record) : "";
     if (f && f > latestFiled) latestFiled = f;
+  }
+  // Decorating fields pulled across the constituent signals (multi-source).
+  let marketValue = 0, propType = "", violationType = "", lienTotal = 0;
+  let mailStreet = "", mailCsz = "";
+  for (const sig of group.signals) {
+    const rec = sig.record, t = sig.source.type;
+    const mv = Number(rec.market_value) || 0;
+    if (mv && !marketValue) marketValue = mv;                 // CV / (DELQ via lookup) carry this; CCLN doesn't
+    if (!propType && rec.property_type) propType = rec.property_type;
+    if (t === "cv" && rec.violation_type && !violationType) violationType = rec.violation_type;
+    if (t === "ccln") lienTotal += Number(rec.amount != null ? rec.amount : rec.pdf_amount) || 0;   // sum every lien on the parcel
+    if (!mailStreet && rec.mail_address) {
+      if (rec.mail_city || rec.mail_state || rec.mail_zip) {  // ccln / delq: structured fields
+        mailStreet = rec.mail_address; mailCsz = _stackCsz(rec);
+      } else if (rec.mail_address.indexOf("  ") >= 0) {       // cv: street + "City, ST ZIP" double-spaced
+        const i = rec.mail_address.indexOf("  ");
+        mailStreet = rec.mail_address.slice(0, i).trim();
+        mailCsz = rec.mail_address.slice(i + 2).trim();
+      } else {
+        mailStreet = rec.mail_address;
+      }
+    }
   }
   return {
     key,
@@ -11171,6 +11270,12 @@ function _stackBuildEntry(key, group) {
     owner,
     ncad_account_num: ncad,
     latest_filed: latestFiled,
+    market_value: marketValue,
+    lien_total: lienTotal,
+    property_type: propType,
+    violation_type: violationType,
+    mail_street: mailStreet,
+    mail_csz: mailCsz,
   };
 }
 
@@ -11192,11 +11297,16 @@ function _stackBuildEntry(key, group) {
 let STACK_SORT_KEY = "types";
 let STACK_SORT_DIR = "desc";
 const STACK_SORT_TYPES = {
-  types:            "num",       // distinct-type count + tie-breaker
-  prop_address:     "string",
-  owner:            "string",
-  latest_filed:     "string",
-  ncad_account_num: "string",
+  types:         "num",        // distinct-type count + tie-breaker
+  status:        "status",     // ranked by STACK_STAGES order
+  owner:         "string",
+  prop_address:  "string",
+  market_value:  "num",
+  lien_total:    "num",
+  delq_owed:     "num",
+  delq_years:    "num",
+  property_type: "string",
+  latest_filed:  "string",     // column removed, kept for stable secondary sort
 };
 
 function _stackCompare(a, b, key, dir) {
@@ -11208,6 +11318,12 @@ function _stackCompare(a, b, key, dir) {
     if (dt !== 0) return dir === "desc" ? -dt : dt;
     const ct = (a.signalCount || 0) - (b.signalCount || 0);
     return dir === "desc" ? -ct : ct;
+  }
+  if (key === "status") {
+    const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
+    const sa = rank[getStackStatus(a.key)] ?? 0;
+    const sb = rank[getStackStatus(b.key)] ?? 0;
+    return dir === "desc" ? sb - sa : sa - sb;
   }
   av = a[key] || ""; bv = b[key] || "";
   if (STACK_SORT_TYPES[key] === "num") {
@@ -11223,6 +11339,21 @@ function _stackCompare(a, b, key, dir) {
 
 function applyStack() {
   const list = _stackBuildList();
+  // Decorate each entry with delinquent-tax data. DELQ isn't a Stack
+  // source (it doesn't drive stacking), so it's looked up by NCAD
+  // account number and attached here for both sorting and rendering.
+  const _delqMap = _stackDelqByNcad();
+  for (const e of list) {
+    const d = e.ncad_account_num ? _delqMap[e.ncad_account_num] : null;
+    e.delq_owed  = d ? (Number(d.total_owed) || 0) : 0;
+    e.delq_years = d ? (Number(d.years_behind) || 0) : 0;
+    e.delq_flags = d ? (d.flags || {}) : null;
+    e.delq_hit   = !!d;
+    // CCLN carries no market value / property type — backfill from DELQ
+    // (NCAD-enriched) when the parcel is also on the delinquent list.
+    if (!e.market_value && d && Number(d.market_value)) e.market_value = Number(d.market_value);
+    if (!e.property_type && d && d.state_prop_code) e.property_type = d.state_prop_code;
+  }
   // Stable secondary sort: latest_filed desc as tie-breaker after
   // the user's chosen primary sort. Without this, ties (e.g. two
   // properties both at signal_count=1) would flicker on re-render.
@@ -11318,30 +11449,74 @@ function _buildStackRow(entry) {
     })
     .join("");
 
-  // NCAD external icon — reuse the same helper that other tabs use.
-  // Pass a synthetic record-shaped object so ncadCellHtml works on it.
+  // NCAD / NCTAX external icons — reuse the shared helpers via a
+  // synthetic record-shaped object.
   const ncadSyntheticRec = {
     ncad_account_num: entry.ncad_account_num,
     owner: entry.owner,
     prop_address: entry.prop_address,
   };
-  const ncadCell = (typeof ncadCellHtml === "function")
-    ? ncadCellHtml(ncadSyntheticRec)
-    : `<span style="color:var(--muted)">—</span>`;
-  const nctaxCell = (typeof nctaxCellHtml === "function")
-    ? nctaxCellHtml(ncadSyntheticRec)
-    : `<span style="color:var(--muted)">—</span>`;
+  const dash = '<span style="color:var(--muted)">—</span>';
+  const ncadCell = (typeof ncadCellHtml === "function") ? ncadCellHtml(ncadSyntheticRec) : dash;
+  const nctaxCell = (typeof nctaxCellHtml === "function") ? nctaxCellHtml(ncadSyntheticRec) : dash;
+  const money = v => (v && !isNaN(v)) ? "$" + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 }) : null;
+
+  // Status pill (editable, same look as MFC/CV). Wired after innerHTML so
+  // we close over entry.key instead of escaping it into inline onclick.
+  const sst = getStackStatus(entry.key);
+  let statusCell;
+  if (sst === "dead") {
+    statusCell = `<span class="pill status status-dead">Dead</span>`
+      + `<button class="restore-btn js-stack-restore" style="margin-top:4px;" title="Restore this lead">Restore</button>`;
+  } else {
+    const pillClassMap = { new:"status-new", contacted:"status-contacted", negotiating:"status-negotiating", under_contract:"status-negotiating", closed_won:"status-closed", dead:"status-dead" };
+    const stageDef = STACK_STAGES.find(s => s.key === sst) || STACK_STAGES[0];
+    const pillClass = pillClassMap[sst] || "status-new";
+    statusCell = `<span class="pill status ${pillClass} js-stack-status" style="cursor:pointer;" title="Click to change status">${esc(stageDef.label)} ▾</span>`;
+  }
+
+  // Mail address — 2-line (street / City, ST ZIP)
+  const mailCell = entry.mail_street
+    ? esc(fmtTitle(entry.mail_street)) + (entry.mail_csz ? `<br><small>${esc(fmtTitle(entry.mail_csz))}</small>` : "")
+    : dash;
+
+  // Tax Status — badges from the DELQ flags (only when the parcel is delinquent)
+  let taxStatusCell = dash;
+  if (entry.delq_hit) {
+    const f = entry.delq_flags || {};
+    const badges = [];
+    if (f.in_suit) badges.push("SUIT FILED");
+    if (f.has_judgment) badges.push("JUDGMENT");
+    if (f.tax_deferral) badges.push("TAX DEFERRAL");
+    if (f.payment_agreement) badges.push("PAYMENT PLAN");
+    taxStatusCell = badges.length
+      ? badges.map(b => `<span class="pill" style="background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.35);font-size:11px;">${esc(b)}</span>`).join(" ")
+      : `<span class="pill" style="background:rgba(148,163,184,.15);color:var(--muted);border:1px solid rgba(148,163,184,.3);font-size:11px;">DELINQUENT</span>`;
+  }
 
   tr.innerHTML = `
-    <td>${badgeHtml || '<span style="color:var(--muted)">—</span>'}</td>
-    <td>${esc(fmtTitle(entry.prop_address || "—"))}</td>
+    <td>${badgeHtml || dash}</td>
+    <td>${statusCell}</td>
+    <td>${esc(fmtOwner(entry.owner || "")) || dash}</td>
+    <td>${entry.prop_address ? esc(fmtTitle(entry.prop_address)) : dash}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
-    <td>${esc(fmtOwner(entry.owner || "—"))}</td>
-    <td>${esc(formatDate(entry.latest_filed || ""))}</td>
-    <td>${esc(entry.ncad_account_num || "—")}</td>
+    <td>${mailCell}</td>
+    <td>${money(entry.market_value) || dash}</td>
+    <td>${money(entry.lien_total) || dash}</td>
+    <td>${entry.delq_hit ? (money(entry.delq_owed) || dash) : dash}</td>
+    <td style="text-align:center;">${entry.delq_hit && entry.delq_years ? entry.delq_years : dash}</td>
+    <td>${taxStatusCell}</td>
+    <td>${entry.violation_type ? esc(entry.violation_type) : dash}</td>
+    <td>${entry.property_type ? esc(entry.property_type) : dash}</td>
     <td style="text-align:center;">${ncadCell}</td>
     <td style="text-align:center;">${nctaxCell}</td>
   `;
+
+  // Wire the editable status pill / restore button (closure over entry.key).
+  const _pill = tr.querySelector(".js-stack-status");
+  if (_pill) _pill.addEventListener("click", (e) => openStackStatusMenu(e, entry.key, sst));
+  const _restore = tr.querySelector(".js-stack-restore");
+  if (_restore) _restore.addEventListener("click", (e) => { e.stopPropagation(); setStackStatus(entry.key, "new"); applyStack(); });
 
   // Row click: open the CRM of the FIRST signal on this property.
   // Today that's always CCLN. When Vacant Houses ships, a vacant-only
