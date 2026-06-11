@@ -3077,6 +3077,9 @@
     <label class="map-toggle"><input type="checkbox" id="map-layer-ccln" checked>
       <span class="map-swatch" style="background:#1D9E75"></span>
       City Liens (CCLN) <span class="map-cov" id="map-cov-ccln"></span></label>
+    <label class="map-toggle"><input type="checkbox" id="map-layer-cv" checked>
+      <span class="map-swatch" style="background:#ef4444"></span>
+      Code Violations (Vacant) <span class="map-cov" id="map-cov-cv"></span></label>
     <span class="map-hint" id="map-hint"></span>
   </div>
   <div id="lead-map"></div>
@@ -8517,7 +8520,8 @@ function initLeadMap() {
 
   const places = _buildMapPlaces();
   // Per-type place counts for the coverage labels.
-  const typeCount = { fc: 0, tfc: 0, ccln: 0 };
+  const typeCount = {};
+  _MAP_TYPE_ORDER.forEach(k => { typeCount[k] = 0; });
   let placeCount = 0;
   const allBounds = [];
 
