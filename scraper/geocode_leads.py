@@ -72,6 +72,7 @@ DATASETS = [
     ("FC (Mortgage Foreclosures)", REPO / "dashboard" / "foreclosures.json", REPO / "data" / "foreclosures.json"),
     ("TFC (Tax Foreclosures)",     REPO / "dashboard" / "tfc.json",          REPO / "data" / "tfc.json"),
     ("CCLN (City Liens)",          REPO / "dashboard" / "city_liens.json",   REPO / "data" / "city_liens.json"),
+    ("CV (Code Violations)",       REPO / "dashboard" / "code_violations.json", REPO / "data" / "code_violations.json"),
 ]
 
 
