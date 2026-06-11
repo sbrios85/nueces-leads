@@ -25,7 +25,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331813",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260707",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.76428,
+      "prop_lng": -97.420998
     },
     {
       "uid": "1008251510",
@@ -52,7 +54,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331809",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260707",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.751576,
+      "prop_lng": -97.424171
     },
     {
       "uid": "1008227652",
@@ -79,7 +83,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331812",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260707",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.718373,
+      "prop_lng": -97.407134
     },
     {
       "uid": "1007738835",
@@ -106,7 +112,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.751259,
+      "prop_lng": -97.446756
     },
     {
       "uid": "1008915366",
@@ -133,7 +141,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.752899,
+      "prop_lng": -97.444062
     },
     {
       "uid": "1008960271",
@@ -160,7 +170,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.783352,
+      "prop_lng": -97.682125
     },
     {
       "uid": "1008177121",
@@ -187,7 +199,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.88865,
+      "prop_lng": -97.675141
     },
     {
       "uid": "1008174360",
@@ -214,7 +228,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.784326,
+      "prop_lng": -97.426239
     },
     {
       "uid": "1009330554",
@@ -268,7 +284,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.73964,
+      "prop_lng": -97.411255
     },
     {
       "uid": "1007720525",
@@ -295,7 +313,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.744907,
+      "prop_lng": -97.41752
     },
     {
       "uid": "1009613081",
@@ -322,7 +342,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.839619,
+      "prop_lng": -97.584629
     },
     {
       "uid": "1008967561",
@@ -376,7 +398,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.639387,
+      "prop_lng": -97.337832
     },
     {
       "uid": "1012928889",
@@ -403,7 +427,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.639504,
+      "prop_lng": -97.337758
     },
     {
       "uid": "1015790033",
@@ -430,7 +456,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.627931,
+      "prop_lng": -97.228535
     },
     {
       "uid": "1008187051",
@@ -457,7 +485,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.776618,
+      "prop_lng": -97.412728
     },
     {
       "uid": "1009778654",
@@ -484,7 +514,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.69097,
+      "prop_lng": -97.403811
     },
     {
       "uid": "1009679980",
@@ -511,7 +543,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.78682,
+      "prop_lng": -97.666209
     },
     {
       "uid": "1009010113",
@@ -565,7 +599,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.789175,
+      "prop_lng": -97.679116
     },
     {
       "uid": "1008191881",
@@ -592,7 +628,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.79312,
+      "prop_lng": -97.668917
     },
     {
       "uid": "1013326563",
@@ -619,7 +657,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.751308,
+      "prop_lng": -97.443244
     },
     {
       "uid": "1012482142",
@@ -646,7 +686,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.729536,
+      "prop_lng": -97.451428
     },
     {
       "uid": "1008394525",
@@ -673,7 +715,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.718654,
+      "prop_lng": -97.409128
     },
     {
       "uid": "1009303937",
@@ -700,7 +744,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.775268,
+      "prop_lng": -97.411579
     },
     {
       "uid": "1009676554",
@@ -727,7 +773,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.801728,
+      "prop_lng": -97.420406
     },
     {
       "uid": "1009712579",
@@ -754,7 +802,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.734059,
+      "prop_lng": -97.385779
     },
     {
       "uid": "1009762924",
@@ -781,7 +831,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.777369,
+      "prop_lng": -97.806275
     },
     {
       "uid": "1008947432",
@@ -808,7 +860,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.786946,
+      "prop_lng": -97.669584
     },
     {
       "uid": "1009010204",
@@ -835,7 +889,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.737711,
+      "prop_lng": -97.410336
     },
     {
       "uid": "1008438823",
@@ -862,7 +918,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.770351,
+      "prop_lng": -97.404985
     },
     {
       "uid": "1008485026",
@@ -889,7 +947,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.783771,
+      "prop_lng": -97.428796
     },
     {
       "uid": "1008173651",
@@ -916,7 +976,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.792953,
+      "prop_lng": -97.673857
     },
     {
       "uid": "1007900535",
@@ -943,7 +1005,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.834034,
+      "prop_lng": -97.591777
     },
     {
       "uid": "1007705294",
@@ -970,7 +1034,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.785249,
+      "prop_lng": -97.673591
     },
     {
       "uid": "1007577765",
@@ -997,7 +1063,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.786965,
+      "prop_lng": -97.676645
     }
   ],
   "total": 37,
