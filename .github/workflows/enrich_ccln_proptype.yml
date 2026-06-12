@@ -28,7 +28,7 @@ on:
         type: boolean
         default: false
   workflow_run:
-    workflows: ["Scrape Nueces leads"]
+    workflows: ["Scrape Nueces leads", "Extract CCLN PDFs", "Enrich CCLN with NCAD"]
     types:
       - completed
 
