@@ -8920,9 +8920,16 @@ function renderToday() {
   // (DEFERRAL_GENERATED), so the card knows the data's age even before
   // the user ever taps it. Manual taps override via localStorage.
   const NCADEXPORT_CADENCE_DAYS = 180;   // ~6 months — nudges twice a year (April + summer)
-  let ncadexLast = "";
-  try { ncadexLast = localStorage.getItem("today-ncadexport-last-import") || ""; } catch (e) {}
-  if (!ncadexLast && typeof DEFERRAL_GENERATED === "string" && DEFERRAL_GENERATED) ncadexLast = DEFERRAL_GENERATED;
+  // Baseline = the data file's own date (DEFERRAL_GENERATED) so the card shows
+  // the data's true age before the user ever taps. A "cleared" sentinel in
+  // localStorage means the user manually flipped it back to "due" — without it,
+  // removing the key would just re-show the seed and the toggle couldn't reverse.
+  let ncadexStored = "";
+  try { ncadexStored = localStorage.getItem("today-ncadexport-last-import") || ""; } catch (e) {}
+  const ncadexCleared = (ncadexStored === "cleared");
+  let ncadexLast = ncadexCleared
+    ? ""
+    : (ncadexStored || (typeof DEFERRAL_GENERATED === "string" ? DEFERRAL_GENERATED : ""));
   let ncadexDaysSince = null;
   if (ncadexLast) {
     const ms = Date.now() - new Date(ncadexLast).getTime();
@@ -9093,13 +9100,13 @@ function renderToday() {
   // NCAD appraisal-export annual refresh reminder (sits under the
   // delinquent-tax import card). Links straight to the NCAD downloads
   // page; the link stops propagation so it doesn't toggle the card.
-  const ncadexDue = (ncadexDaysSince === null) || (ncadexDaysSince >= NCADEXPORT_CADENCE_DAYS);
+  const ncadexDue = ncadexCleared || (ncadexDaysSince === null) || (ncadexDaysSince >= NCADEXPORT_CADENCE_DAYS);
   actions.push(`
     <div class="today-card ${ncadexDue ? "tc-alert" : "tc-clear tc-ok"}" style="cursor:pointer"
          onclick="_todayToggleImport('ncadexport')">
       <div class="tc-icon">\u{1F9FE}</div>
       <div class="tc-body">
-        <div class="tc-title">NCAD appraisal export (annual)</div>
+        <div class="tc-title">NCAD appraisal export (bi-annual)</div>
         <div class="tc-sub">${ncadexLast
           ? (ncadexDue
               ? "Exemptions + tax deferrals last refreshed " + esc2(ncadexLast) + " \u2014 time for the twice-yearly update. Grab the new roll (April preliminary or summer certified) at <a href=\'https://nuecescad.net/downloads-reports/\' target=\'_blank\' rel=\'noopener\' onclick=\'event.stopPropagation()\'>nuecescad.net</a>, run extract_ncad_exemptions.py, upload ncad_exemptions.json. Tap when done."
@@ -9202,22 +9209,32 @@ function _todayOpenLead(kind, id) {
 // (✓). So the checkmark visibly flips on every tap, and an accidental
 // tap is reversed by tapping again. kind: "cv" | "delq".
 function _todayToggleImport(kind) {
+  // [key, cadence-days, seed]. The seed is a fallback "last import" date used
+  // when localStorage is empty (e.g. the data file's own date) — only the NCAD
+  // export has one. Because of the seed, clearing can't simply remove the key
+  // (it would re-show the seed), so we store a "cleared" sentinel instead.
   const _impMap = {
-    delq:       ["today-delq-last-import", 30],
-    cv:         ["today-cv-last-import", 30],
-    ncadexport: ["today-ncadexport-last-import", 330],
+    delq:       ["today-delq-last-import", 30,  ""],
+    cv:         ["today-cv-last-import", 30,  ""],
+    ncadexport: ["today-ncadexport-last-import", 180,
+                 (typeof DEFERRAL_GENERATED === "string" ? DEFERRAL_GENERATED : "")],
   };
-  const [key, cadence] = _impMap[kind] || _impMap["cv"];
-  const today   = _todayISO();
+  const [key, cadence, seed] = _impMap[kind] || _impMap["cv"];
+  const today = _todayISO();
   try {
     const cur = localStorage.getItem(key) || "";
+    const effective = (cur === "cleared") ? "" : (cur || seed);
     let fresh = false;
-    if (cur) {
-      const days = Math.floor((Date.now() - new Date(cur).getTime()) / 86400000);
+    if (effective) {
+      const days = Math.floor((Date.now() - new Date(effective).getTime()) / 86400000);
       fresh = days < cadence;   // within cadence → card is showing ✓
     }
-    if (fresh) localStorage.removeItem(key);       // ✓ → ! (clear)
-    else       localStorage.setItem(key, today);   // ! → ✓ (mark imported today)
+    if (fresh) {
+      if (seed) localStorage.setItem(key, "cleared");  // ✓ → ! (seed-backed sentinel)
+      else      localStorage.removeItem(key);          // ✓ → ! (plain clear)
+    } else {
+      localStorage.setItem(key, today);                // ! → ✓ (mark imported today)
+    }
   } catch (e) {}
   renderToday();
 }
@@ -9928,12 +9945,14 @@ function renderDeferralStats(){
   const ov65 = has("OV65") + has("OV65S");
   const dp = has("DP") + has("DPS");
   const dv = DEFERRAL_RAW.filter(r => /DV/.test(r.deferral_types || "")).length;
+  const fresh = _freshnessHtml("Last Appraisal Export Update", DEFERRAL_GENERATED);
   el.innerHTML = `
     <div class="stats-title">Tax Deferrals</div>
     <div class="stat"><div class="v">${total.toLocaleString()}</div><div class="k">Total Deferred</div></div>
     <div class="stat"><div class="v">${ov65.toLocaleString()}</div><div class="k">Over-65</div></div>
     <div class="stat"><div class="v">${dp.toLocaleString()}</div><div class="k">Disabled Person</div></div>
-    <div class="stat"><div class="v">${dv.toLocaleString()}</div><div class="k">Disabled Veteran</div></div>`;
+    <div class="stat"><div class="v">${dv.toLocaleString()}</div><div class="k">Disabled Veteran</div></div>
+    ${fresh}`;
 }
 
 
