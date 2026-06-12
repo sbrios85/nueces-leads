@@ -10225,6 +10225,10 @@ async function loadAll() {
       const dc = document.getElementById("deferral-count");
       if (dc) dc.textContent = DEFERRAL_RAW.length ? DEFERRAL_RAW.length.toLocaleString() : "—";
       renderDeferralStats();
+      // Today's NCAD-export card reads DEFERRAL_GENERATED (just set above), so
+      // re-render Today now that the date exists. Without this, the card shows
+      // "No appraisal export loaded yet" from the earlier render pass in loadAll.
+      try { renderToday(); } catch (e) {}
       if (_activePane === "pane-taxdeferral") {
         _renderedPanes.add("pane-taxdeferral");
         applyDeferral();
