@@ -9100,7 +9100,9 @@ function renderToday() {
   // NCAD appraisal-export annual refresh reminder (sits under the
   // delinquent-tax import card). Links straight to the NCAD downloads
   // page; the link stops propagation so it doesn't toggle the card.
-  const ncadexDue = ncadexCleared || (ncadexDaysSince === null) || (ncadexDaysSince >= NCADEXPORT_CADENCE_DAYS);
+  const ncadexDue = _ncadexStoredDue(ncadexStored);
+  const _ncadNext = _ncadNextExport(ncadexLast);
+  const _ncadNextTxt = _ncadNext ? (_ncadNext.type + " report (" + _ncadNext.month + ")") : "the next roll";
   actions.push(`
     <div class="today-card ${ncadexDue ? "tc-alert" : "tc-clear tc-ok"}" style="cursor:pointer"
          onclick="_todayToggleImport('ncadexport')">
@@ -9109,9 +9111,9 @@ function renderToday() {
         <div class="tc-title">NCAD appraisal export (bi-annual)</div>
         <div class="tc-sub">${ncadexLast
           ? (ncadexDue
-              ? "Exemptions + tax deferrals last refreshed " + esc2(ncadexLast) + " \u2014 time for the twice-yearly update. Grab the new roll (April preliminary or summer certified) at <a href=\'https://nuecescad.net/downloads-reports/\' target=\'_blank\' rel=\'noopener\' onclick=\'event.stopPropagation()\'>nuecescad.net</a>, run extract_ncad_exemptions.py, upload ncad_exemptions.json. Tap when done."
-              : "Exemptions + tax deferrals refreshed " + esc2(ncadexLast) + ". Tap to undo.")
-          : "Not refreshed yet. Download the latest roll (April preliminary or summer certified) at <a href=\'https://nuecescad.net/downloads-reports/\' target=\'_blank\' rel=\'noopener\' onclick=\'event.stopPropagation()\'>nuecescad.net</a> and run the exemption extractor."}</div>
+              ? "Time to download the " + _ncadNextTxt + " \u2014 it should be on <a href=\'https://nuecescad.net/downloads-reports/\' target=\'_blank\' rel=\'noopener\' onclick=\'event.stopPropagation()\'>nuecescad.net</a>. Run extract_ncad_exemptions.py, upload ncad_exemptions.json. Tap when done."
+              : "Refreshed " + esc2(ncadexLast) + ". Next: " + _ncadNextTxt + ". Tap to undo.")
+          : "Not refreshed yet. Download the latest roll at <a href=\'https://nuecescad.net/downloads-reports/\' target=\'_blank\' rel=\'noopener\' onclick=\'event.stopPropagation()\'>nuecescad.net</a> and run the exemption extractor."}</div>
       </div>
       <div class="tc-count">${ncadexDue ? "!" : "\u2713"}</div>
     </div>`);
@@ -9208,32 +9210,72 @@ function _todayOpenLead(kind, id) {
 // If it's unchecked (due or never imported → !), tapping stamps today
 // (✓). So the checkmark visibly flips on every tap, and an accidental
 // tap is reversed by tapping again. kind: "cv" | "delq".
+// NCAD appraisal exports come in two waves: the Preliminary roll (~April) and
+// the Certified roll (~September). Given the date of the export we last loaded,
+// work out which one is next and roughly when. Because this reads the data
+// file's own date, loading a September file automatically flips the reminder to
+// next April's Preliminary, and vice-versa.
+function _ncadNextExport(lastDateStr) {
+  const d = new Date(lastDateStr);
+  if (isNaN(d.getTime())) return null;
+  const m = d.getMonth(), y = d.getFullYear();   // 0 = Jan
+  if (m <= 5) {
+    // last load was the spring Preliminary -> next is the fall Certified
+    return { type: "Certified (2nd)", month: "September", target: new Date(y, 8, 1) };
+  }
+  // last load was the Certified -> next is next spring's Preliminary
+  return { type: "Preliminary", month: "April", target: new Date(y + 1, 3, 1) };
+}
+// Whether the NCAD-export reminder should be "due / !", from the raw
+// localStorage value. Shared by renderToday and _todayToggleImport so the
+// display and the tap always agree.
+function _ncadexStoredDue(stored) {
+  if (stored === "cleared") return true;
+  const last = stored || (typeof DEFERRAL_GENERATED === "string" ? DEFERRAL_GENERATED : "");
+  if (!last) return true;
+  const nx = _ncadNextExport(last);
+  if (!nx) return true;
+  return Date.now() >= nx.target.getTime();
+}
+// Freshness-style line for the Tax Deferral stats bar: names the next export +
+// month; amber when it's time to grab it.
+function _ncadNextExportHtml(lastDateStr) {
+  const nx = _ncadNextExport(lastDateStr);
+  if (!nx) return "";
+  const due = Date.now() >= nx.target.getTime();
+  const color = due ? "var(--bad)" : "var(--muted)";
+  const tail = due ? "(download now — " + nx.month + ")" : "(" + nx.month + ")";
+  return '<div class="stats-meta">' +
+         '<span class="lbl">Next export</span>' +
+         '<span><span class="val">' + nx.type + ' report</span> ' +
+         '<span class="ago" style="color:' + color + ';">' + tail + '</span></span>' +
+         '</div>';
+}
 function _todayToggleImport(kind) {
-  // [key, cadence-days, seed]. The seed is a fallback "last import" date used
-  // when localStorage is empty (e.g. the data file's own date) — only the NCAD
-  // export has one. Because of the seed, clearing can't simply remove the key
-  // (it would re-show the seed), so we store a "cleared" sentinel instead.
+  // cv/delq use a flat day cadence; the NCAD export is month-anchored
+  // (see _ncadexStoredDue) so its tap aligns with whatever the card shows and
+  // can always reverse.
   const _impMap = {
-    delq:       ["today-delq-last-import", 30,  ""],
-    cv:         ["today-cv-last-import", 30,  ""],
-    ncadexport: ["today-ncadexport-last-import", 180,
-                 (typeof DEFERRAL_GENERATED === "string" ? DEFERRAL_GENERATED : "")],
+    delq: ["today-delq-last-import", 30],
+    cv:   ["today-cv-last-import", 30],
+    ncadexport: ["today-ncadexport-last-import", 0],
   };
-  const [key, cadence, seed] = _impMap[kind] || _impMap["cv"];
+  const [key, cadence] = _impMap[kind] || _impMap["cv"];
   const today = _todayISO();
   try {
-    const cur = localStorage.getItem(key) || "";
-    const effective = (cur === "cleared") ? "" : (cur || seed);
-    let fresh = false;
-    if (effective) {
-      const days = Math.floor((Date.now() - new Date(effective).getTime()) / 86400000);
-      fresh = days < cadence;   // within cadence → card is showing ✓
-    }
-    if (fresh) {
-      if (seed) localStorage.setItem(key, "cleared");  // ✓ → ! (seed-backed sentinel)
-      else      localStorage.removeItem(key);          // ✓ → ! (plain clear)
+    if (kind === "ncadexport") {
+      const stored = localStorage.getItem(key) || "";
+      if (_ncadexStoredDue(stored)) localStorage.setItem(key, today);     // ! -> done
+      else                          localStorage.setItem(key, "cleared"); // done -> !
     } else {
-      localStorage.setItem(key, today);                // ! → ✓ (mark imported today)
+      const cur = localStorage.getItem(key) || "";
+      let fresh = false;
+      if (cur) {
+        const days = Math.floor((Date.now() - new Date(cur).getTime()) / 86400000);
+        fresh = days < cadence;
+      }
+      if (fresh) localStorage.removeItem(key);
+      else       localStorage.setItem(key, today);
     }
   } catch (e) {}
   renderToday();
@@ -9946,13 +9988,15 @@ function renderDeferralStats(){
   const dp = has("DP") + has("DPS");
   const dv = DEFERRAL_RAW.filter(r => /DV/.test(r.deferral_types || "")).length;
   const fresh = _freshnessHtml("Last Appraisal Export Update", DEFERRAL_GENERATED);
+  const nextEx = _ncadNextExportHtml(DEFERRAL_GENERATED);
   el.innerHTML = `
     <div class="stats-title">Tax Deferrals</div>
     <div class="stat"><div class="v">${total.toLocaleString()}</div><div class="k">Total Deferred</div></div>
     <div class="stat"><div class="v">${ov65.toLocaleString()}</div><div class="k">Over-65</div></div>
     <div class="stat"><div class="v">${dp.toLocaleString()}</div><div class="k">Disabled Person</div></div>
     <div class="stat"><div class="v">${dv.toLocaleString()}</div><div class="k">Disabled Veteran</div></div>
-    ${fresh}`;
+    ${fresh}
+    ${nextEx}`;
 }
 
 
