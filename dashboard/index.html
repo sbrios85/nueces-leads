@@ -8911,6 +8911,24 @@ function renderToday() {
     delqDaysSince = Math.floor(ms / 86400000);
   }
 
+  // ===== 8c. NCAD appraisal-export refresh reminder (ANNUAL) =====
+  // The exemption + tax-deferral data comes from NCAD's yearly
+  // appraisal-roll export (Preliminary ~April, Certified ~late
+  // summer). Re-pulled by hand ~twice a year via
+  // scraper/extract_ncad_exemptions.py — see docs/NCAD_EXPORT_RUNBOOK.md.
+  // Baseline = the `generated` date inside ncad_exemptions.json
+  // (DEFERRAL_GENERATED), so the card knows the data's age even before
+  // the user ever taps it. Manual taps override via localStorage.
+  const NCADEXPORT_CADENCE_DAYS = 180;   // ~6 months — nudges twice a year (April + summer)
+  let ncadexLast = "";
+  try { ncadexLast = localStorage.getItem("today-ncadexport-last-import") || ""; } catch (e) {}
+  if (!ncadexLast && typeof DEFERRAL_GENERATED === "string" && DEFERRAL_GENERATED) ncadexLast = DEFERRAL_GENERATED;
+  let ncadexDaysSince = null;
+  if (ncadexLast) {
+    const ms = Date.now() - new Date(ncadexLast).getTime();
+    ncadexDaysSince = Math.floor(ms / 86400000);
+  }
+
   // ===== 9. Hot list — top-priority leads =====
   // Leads in an ACTIVE stage (new/contacted/negotiating/under_contract)
   // that have an UPCOMING sale date, ranked soonest-first. These are the
@@ -9072,6 +9090,25 @@ function renderToday() {
       <div class="tc-count">${delqDue ? "!" : "✓"}</div>
     </div>`);
 
+  // NCAD appraisal-export annual refresh reminder (sits under the
+  // delinquent-tax import card). Links straight to the NCAD downloads
+  // page; the link stops propagation so it doesn't toggle the card.
+  const ncadexDue = (ncadexDaysSince === null) || (ncadexDaysSince >= NCADEXPORT_CADENCE_DAYS);
+  actions.push(`
+    <div class="today-card ${ncadexDue ? "tc-alert" : "tc-clear tc-ok"}" style="cursor:pointer"
+         onclick="_todayToggleImport('ncadexport')">
+      <div class="tc-icon">\u{1F9FE}</div>
+      <div class="tc-body">
+        <div class="tc-title">NCAD appraisal export (annual)</div>
+        <div class="tc-sub">${ncadexLast
+          ? (ncadexDue
+              ? "Exemptions + tax deferrals last refreshed " + esc2(ncadexLast) + " \u2014 time for the twice-yearly update. Grab the new roll (April preliminary or summer certified) at <a href=\'https://nuecescad.net/downloads-reports/\' target=\'_blank\' rel=\'noopener\' onclick=\'event.stopPropagation()\'>nuecescad.net</a>, run extract_ncad_exemptions.py, upload ncad_exemptions.json. Tap when done."
+              : "Exemptions + tax deferrals refreshed " + esc2(ncadexLast) + ". Tap to undo.")
+          : "Not refreshed yet. Download the latest roll (April preliminary or summer certified) at <a href=\'https://nuecescad.net/downloads-reports/\' target=\'_blank\' rel=\'noopener\' onclick=\'event.stopPropagation()\'>nuecescad.net</a> and run the exemption extractor."}</div>
+      </div>
+      <div class="tc-count">${ncadexDue ? "!" : "\u2713"}</div>
+    </div>`);
+
   // No-NCAD-match
   actions.push(`
     <div class="today-card ${noNcad.length ? "tc-alert" : "tc-clear tc-ok"}">
@@ -9165,8 +9202,12 @@ function _todayOpenLead(kind, id) {
 // (✓). So the checkmark visibly flips on every tap, and an accidental
 // tap is reversed by tapping again. kind: "cv" | "delq".
 function _todayToggleImport(kind) {
-  const key     = (kind === "delq") ? "today-delq-last-import" : "today-cv-last-import";
-  const cadence = 30;
+  const _impMap = {
+    delq:       ["today-delq-last-import", 30],
+    cv:         ["today-cv-last-import", 30],
+    ncadexport: ["today-ncadexport-last-import", 330],
+  };
+  const [key, cadence] = _impMap[kind] || _impMap["cv"];
   const today   = _todayISO();
   try {
     const cur = localStorage.getItem(key) || "";
