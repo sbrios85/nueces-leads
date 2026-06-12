@@ -563,6 +563,11 @@
     color: #c084fc;
     border-color: rgba(168, 85, 247, 0.35);
   }
+  .stack-badge-taxstatus {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border-color: rgba(245, 158, 11, 0.35);
+  }
   /* Signal-count pill on the leftmost column. Shows the total
      number of lead-list signals on this property. Becomes more
      saturated as count rises — visual cue that more-stacked
@@ -11342,6 +11347,26 @@ function _stackIsLot(e) {
   const v = e.violation_type || "";
   return /vacant lot/i.test(v) && !/vacant building/i.test(v);
 }
+// Specific tax-status flags (beyond plain "delinquent") rendered as their
+// own pills in the Lead Type column. Plain DELINQUENT is already covered
+// by the "Delinquent Taxes" pill, so it isn't repeated here.
+function _stackTaxFlags(entry) {
+  const f = (entry && entry.delq_flags) || {};
+  const out = [];
+  if (f.in_suit) out.push("Suit Filed");
+  if (f.has_judgment) out.push("Judgment");
+  if (f.tax_deferral) out.push("Tax Deferral");
+  if (f.payment_agreement) out.push("Payment Plan");
+  return out;
+}
+// Total pill count for a stacked row = distinct source types (CCLN/CV)
+// + the Delinquent Taxes pill (if delinquent) + each specific tax-status
+// pill. Drives the counter-bar buckets and the "types" sort.
+function _stackPillCount(entry) {
+  return (entry.distinctTypeCount || 0)
+       + (entry.delq_hit ? 1 : 0)
+       + _stackTaxFlags(entry).length;
+}
 const STACK_SORT_TYPES = {
   types:         "num",        // distinct-type count + tie-breaker
   status:        "status",     // ranked by STACK_STAGES order
@@ -11358,9 +11383,9 @@ const STACK_SORT_TYPES = {
 function _stackCompare(a, b, key, dir) {
   let av, bv;
   if (key === "types") {
-    // Primary: distinct lead-type count.
+    // Primary: total pill count (source types + delinquent + tax-status).
     // Tie-break: total signal count (records across all types).
-    const dt = (a.distinctTypeCount || 0) - (b.distinctTypeCount || 0);
+    const dt = _stackPillCount(a) - _stackPillCount(b);
     if (dt !== 0) return dir === "desc" ? -dt : dt;
     const ct = (a.signalCount || 0) - (b.signalCount || 0);
     return dir === "desc" ? -ct : ct;
@@ -11441,17 +11466,15 @@ function applyStack() {
 function _renderStackStats(list) {
   const el = document.getElementById("stack-stats");
   if (!el) return;
-  // Total count + breakdown by distinct LEAD-TYPE count (e.g. CCLN +
-  // Vacant + Code Violation = 3 types). This is the dashboard's
-  // priority signal: a property in 3-4 distinct lead lists is a much
-  // stronger lead than 20 records of the same type. The leftmost
-  // pill on each row shows the per-type record count (e.g. "City
-  // Lien 20"), so these cards intentionally use the word "Type" to
-  // distinguish from that — same data viewed two different ways.
+  // Total count + breakdown by total PILL count on the row — every pill
+  // in the Lead Type column counts: each distinct source type (CCLN/CV),
+  // the Delinquent Taxes pill, and each specific tax-status pill (Suit
+  // Filed / Judgment / etc.). A property carrying 4 of these is a much
+  // stronger lead than 20 records of a single type.
   const total = list.length;
-  const byTypeCount = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  const byTypeCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
   for (const e of list) {
-    const t = Math.min(e.distinctTypeCount, 4);
+    const t = Math.min(_stackPillCount(e), 5);
     byTypeCount[t] = (byTypeCount[t] || 0) + 1;
   }
   el.innerHTML = `
@@ -11475,6 +11498,10 @@ function _renderStackStats(list) {
     <div class="stat-card">
       <div class="num">${byTypeCount[4] || 0}</div>
       <div class="lbl">4 Types</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">${byTypeCount[5] || 0}</div>
+      <div class="lbl">5+ Types</div>
     </div>
     <button id="stack-hide-lots-btn" type="button"
         onclick="STACK_HIDE_LOTS = !STACK_HIDE_LOTS; applyStack();"
@@ -11514,6 +11541,12 @@ function _buildStackRow(entry) {
   const delqBadge = entry.delq_hit
     ? `<span class="stack-badge stack-badge-delq">Delinquent Taxes</span>`
     : "";
+  // Specific tax-status pills (Suit Filed / Judgment / Tax Deferral /
+  // Payment Plan) — anything beyond plain "delinquent". Each is its own
+  // pill and counts toward the row's pill total.
+  const taxFlagBadges = _stackTaxFlags(entry)
+    .map(lbl => `<span class="stack-badge stack-badge-taxstatus">${esc(lbl)}</span>`)
+    .join("");
 
   // NCAD / NCTAX external icons — reuse the shared helpers via a
   // synthetic record-shaped object.
@@ -11576,7 +11609,7 @@ function _buildStackRow(entry) {
 
   tr.innerHTML = `
     <td>${statusCell}</td>
-    <td>${(badgeHtml + delqBadge) || dash}</td>
+    <td>${(badgeHtml + delqBadge + taxFlagBadges) || dash}</td>
     <td>${esc(fmtOwner(entry.owner || "")) || dash}</td>
     <td>${entry.prop_address ? esc(fmtTitle(entry.prop_address)) : dash}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
