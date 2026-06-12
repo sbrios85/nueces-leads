@@ -486,6 +486,10 @@
     background: rgba(34, 197, 94, 0.18);  /* green-500 */
     color: #22c55e;
   }
+  .delq-tax-bankruptcy {
+    background: rgba(168, 85, 247, 0.18);  /* purple-500 */
+    color: #c084fc;
+  }
   /* Exemption badges next to owner name. Show as small grey pills
      inline-block after the owner; multiple can stack horizontally
      and wrap to the next line if needed. Greyer than the tax-status
@@ -572,6 +576,11 @@
     background: rgba(20, 184, 166, 0.15);
     color: #2dd4bf;
     border-color: rgba(20, 184, 166, 0.4);
+  }
+  .stack-badge-bankruptcy {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border-color: rgba(168, 85, 247, 0.4);
   }
   /* Signal-count pill on the leftmost column. Shows the total
      number of lead-list signals on this property. Becomes more
@@ -8328,6 +8337,7 @@ let TFC_RAW = [];
 // override store). Status/stage lives on delq-crm-store and
 // matches the MFC/TFC pipeline (new/contacted/negotiating/...).
 let DELQ_RAW = [], DELQ_FILTERED = [];
+let DELQ_HIDE_BANKRUPTCY = false;
 
 // Per-tab freshness metadata. Captured at JSON load time so the
 // per-tab "Last X" indicators can render without re-fetching.
@@ -10089,6 +10099,8 @@ function applyDelq() {
   // Populated branch: sort, render rows, render stats.
   if (emptyEl) emptyEl.hidden = true;
   DELQ_FILTERED = DELQ_RAW.slice();
+  if (DELQ_HIDE_BANKRUPTCY)
+    DELQ_FILTERED = DELQ_FILTERED.filter(r => !(r.flags && r.flags.bankruptcy));
   const type = DELQ_SORT_TYPES[DELQ_SORT_KEY] || "string";
   DELQ_FILTERED.sort((a, b) =>
       _delqCompare(a, b, DELQ_SORT_KEY, DELQ_SORT_DIR, type));
@@ -10135,7 +10147,7 @@ function renderDelqStats() {
   }
 
   let nActive = 0, nDead = 0, totalOwed = 0;
-  let nJudgment = 0, nSuit = 0;
+  let nJudgment = 0, nSuit = 0, nBankruptcy = 0;
   for (const r of DELQ_RAW) {
     const st = getDelqStatus(r.ncad_account_num);
     if (st === "dead") nDead++;
@@ -10144,6 +10156,7 @@ function renderDelqStats() {
       totalOwed += Number(r.total_owed) || 0;
       if (r.flags && r.flags.has_judgment) nJudgment++;
       if (r.flags && r.flags.in_suit) nSuit++;
+      if (r.flags && r.flags.bankruptcy) nBankruptcy++;
     }
   }
 
@@ -10158,7 +10171,18 @@ function renderDelqStats() {
     <div class="stat"><div class="v">$${Math.round(totalOwed).toLocaleString()}</div><div class="k">Total owed</div></div>
     <div class="stat"><div class="v">${nJudgment.toLocaleString()}</div><div class="k">Judgment</div></div>
     <div class="stat"><div class="v">${nSuit.toLocaleString()}</div><div class="k">Suit filed</div></div>
+    <div class="stat"><div class="v">${nBankruptcy.toLocaleString()}</div><div class="k">Bankruptcy</div></div>
     ${delqFreshHtml}
+    <button id="delq-hide-bankruptcy-btn" type="button"
+        onclick="DELQ_HIDE_BANKRUPTCY = !DELQ_HIDE_BANKRUPTCY; applyDelq();"
+        title="Hide bankruptcy-flagged properties (automatic stay paused collection)"
+        style="margin-left:auto; align-self:center; cursor:pointer; padding:8px 14px;
+               border-radius:8px; font-size:13px; font-weight:600;
+               border:1px solid ${DELQ_HIDE_BANKRUPTCY ? '#c084fc' : 'rgba(148,163,184,.4)'};
+               background:${DELQ_HIDE_BANKRUPTCY ? 'rgba(168,85,247,.15)' : 'transparent'};
+               color:${DELQ_HIDE_BANKRUPTCY ? '#c084fc' : 'var(--muted)'};">
+      ${DELQ_HIDE_BANKRUPTCY ? '✓ Bankruptcy Hidden' : 'Hide Bankruptcy'}
+    </button>
   `;
 }
 
@@ -10427,6 +10451,9 @@ function buildDelqRow(r, isDead) {
   }
   if (f.payment_agreement) {
     taxBadges.push(`<span class="delq-tax-badge delq-tax-payplan" title="Active payment plan (code: ${esc(f.payment_agreement)}) — owner is paying down the balance">PAYMENT PLAN</span>`);
+  }
+  if (f.bankruptcy) {
+    taxBadges.push(`<span class="delq-tax-badge delq-tax-bankruptcy" title="Bankruptcy filed — collection is paused by an automatic stay. Still a lead (often a motivated seller), just worked differently.">BANKRUPTCY</span>`);
   }
   const taxStatusCell = taxBadges.length
     ? `<div class="delq-tax-status">${taxBadges.join("")}</div>`
@@ -11588,6 +11615,7 @@ let STACK_SORT_DIR = "desc";
 // "Hide Lots" view toggle — hides parcels whose violation is a vacant LOT
 // (vacant land) but not a vacant building, so you can focus on structures.
 let STACK_HIDE_LOTS = false;
+let STACK_HIDE_BANKRUPTCY = false;
 function _stackIsLot(e) {
   const v = e.violation_type || "";
   return /vacant lot/i.test(v) && !/vacant building/i.test(v);
@@ -11602,7 +11630,12 @@ function _stackTaxFlags(entry) {
   if (f.has_judgment) out.push("Judgment");
   if (f.tax_deferral) out.push("Tax Deferral");
   if (f.payment_agreement) out.push("Payment Plan");
+  if (f.bankruptcy) out.push("Bankruptcy");
   return out;
+}
+// True if this stacked entry is a bankruptcy-flagged delinquent property.
+function _stackIsBankruptcy(e) {
+  return !!(e && e.delq_flags && e.delq_flags.bankruptcy);
 }
 // Total pill count for a stacked row = distinct source types (CCLN/CV)
 // + the Delinquent Taxes pill (if delinquent) + each specific tax-status
@@ -11676,8 +11709,10 @@ function applyStack() {
   const countEl = document.getElementById("stack-count");
   if (countEl) countEl.textContent = list.length.toLocaleString();
 
-  // "Hide Lots" view filter — applied to the rendered set + stats only.
+  // "Hide Lots" / "Hide Bankruptcy" view filters — applied to the
+  // rendered set + stats only (the nav count stays the full total).
   let view = STACK_HIDE_LOTS ? list.filter(e => !_stackIsLot(e)) : list;
+  if (STACK_HIDE_BANKRUPTCY) view = view.filter(e => !_stackIsBankruptcy(e));
 
   // Stable secondary sort: latest_filed desc as tie-breaker after
   // the user's chosen primary sort. Without this, ties (e.g. two
@@ -11757,6 +11792,16 @@ function _renderStackStats(list) {
                background:${STACK_HIDE_LOTS ? 'rgba(56,189,248,.15)' : 'transparent'};
                color:${STACK_HIDE_LOTS ? 'var(--accent)' : 'var(--muted)'};">
       ${STACK_HIDE_LOTS ? '✓ Lots Hidden' : 'Hide Lots'}
+    </button>
+    <button id="stack-hide-bankruptcy-btn" type="button"
+        onclick="STACK_HIDE_BANKRUPTCY = !STACK_HIDE_BANKRUPTCY; applyStack();"
+        title="Hide bankruptcy-flagged delinquent properties (automatic stay paused collection)"
+        style="margin-left:10px; align-self:center; cursor:pointer; padding:8px 14px;
+               border-radius:8px; font-size:13px; font-weight:600;
+               border:1px solid ${STACK_HIDE_BANKRUPTCY ? '#c084fc' : 'rgba(148,163,184,.4)'};
+               background:${STACK_HIDE_BANKRUPTCY ? 'rgba(168,85,247,.15)' : 'transparent'};
+               color:${STACK_HIDE_BANKRUPTCY ? '#c084fc' : 'var(--muted)'};">
+      ${STACK_HIDE_BANKRUPTCY ? '✓ Bankruptcy Hidden' : 'Hide Bankruptcy'}
     </button>`;
 }
 
@@ -11790,7 +11835,10 @@ function _buildStackRow(entry) {
   // Payment Plan) — anything beyond plain "delinquent". Each is its own
   // pill and counts toward the row's pill total.
   const taxFlagBadges = _stackTaxFlags(entry)
-    .map(lbl => `<span class="stack-badge stack-badge-taxstatus">${esc(lbl)}</span>`)
+    .map(lbl => {
+      const cls = lbl === "Bankruptcy" ? "stack-badge-bankruptcy" : "stack-badge-taxstatus";
+      return `<span class="stack-badge ${cls}">${esc(lbl)}</span>`;
+    })
     .join("");
 
   // NCAD / NCTAX external icons — reuse the shared helpers via a
