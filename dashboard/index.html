@@ -568,6 +568,11 @@
     color: #fbbf24;
     border-color: rgba(245, 158, 11, 0.35);
   }
+  .stack-badge-vacant {
+    background: rgba(20, 184, 166, 0.15);
+    color: #2dd4bf;
+    border-color: rgba(20, 184, 166, 0.4);
+  }
   /* Signal-count pill on the leftmost column. Shows the total
      number of lead-list signals on this property. Becomes more
      saturated as count rises — visual cue that more-stacked
@@ -2570,7 +2575,8 @@
       <span>Code Violation</span>
       <span class="tab-count" id="cv-count">—</span></div>
     <div class="nav-item" data-pane="vacanthouses">
-      <span>Vacant Houses</span></div>
+      <span>Vacant Houses</span>
+      <span class="tab-count" id="vh-count">—</span></div>
     <div class="nav-item" data-pane="taxoveragesraw">
       <span>Tax Overages</span></div>
     <div class="nav-item" data-pane="mortgageoveragesraw">
@@ -2836,24 +2842,26 @@
   <table id="vh-table">
     <thead><tr>
       <th data-sort="status"        style="width: 74px;">Status</th>
-      <th data-sort="identified"    style="width: 110px;">Identified</th>
-      <th data-sort="owner"         style="width: 200px;">Owner</th>
-      <th data-sort="prop_address"  style="width: 210px;">Property Address</th>
-      <th style="width: 50px;">Map</th>
-      <th data-sort="mail_address"  style="width: 200px;">Mailing Address</th>
-      <th data-sort="source"        style="width: 130px;">Source</th>
-      <th data-sort="days_vacant"   style="width: 90px;">Days Vacant</th>
+      <th data-sort="cited"         style="width: 100px;">Identified</th>
+      <th data-sort="owner"         style="width: 180px;">Owner</th>
+      <th data-sort="prop_address"  style="width: 200px;">Property Address</th>
+      <th style="width: 46px;">Map</th>
+      <th data-sort="mail_address"  style="width: 180px;">Mailing Address</th>
+      <th data-sort="violation_type" style="width: 150px;">Violation Type</th>
+      <th data-sort="violation_narrative" style="width: 240px;">Violation Narrative</th>
+      <th style="width: 110px;">Source</th>
       <th data-sort="market_value"  style="width: 110px;">Market Value</th>
-      <th data-sort="legal"         style="width: 155px;">Legal Description</th>
-      <th style="width: 50px;">NCAD</th>
+      <th data-sort="property_type" style="width: 120px;">Property Type</th>
+      <th data-sort="legal"         style="width: 150px;">Legal Description</th>
+      <th style="width: 46px;">NCAD</th>
       <th style="width: 50px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
+    <tfoot id="vh-dead-foot"></tfoot>
   </table>
-  <div class="empty">
-    Vacant Houses data source not yet wired up.<br>
-    Once the vacant-property feed is connected (postal returns,
-    inspection reports, etc.), this table will populate automatically.
+  <div class="empty" id="vh-empty" hidden>
+    No vacant-building leads yet. They populate automatically from the
+    Code Violation list (Vacant Building + Unsecured Vacant Building).
   </div>
 </div>
 
@@ -9033,6 +9041,12 @@ function _todayToggleImport(kind) {
 // click-in detail panel uses the generic openCrm("cv", ...).
 // ============================================================
 let CV_RAW = [], CV_FILTERED = [];
+// Vacant Houses subset of CV (Vacant Building + Unsecured Vacant Building),
+// derived in loadCv(). Its own sort state; reuses the CV status/CRM since
+// these are CV records.
+let VACANT_RAW = [], VACANT_FILTERED = [];
+let VH_SORT_KEY = "cited";
+let VH_SORT_DIR = "desc";
 let CV_IMPORT_DATE = "";
 
 const CV_STATUS_KEY = "nueces_cv_status_v1";
@@ -9340,10 +9354,21 @@ async function loadCv() {
         if (!rec.prop_city) rec.prop_city = "Corpus Christi";
       }
       renderCvStats();
+      // Vacant Houses = the Vacant Building / Unsecured Vacant Building
+      // subset of CV. Derived here so every future CV upload (build_cv)
+      // flows into Vacant Houses automatically with no extra step.
+      VACANT_RAW = CV_RAW.filter(_cvIsVacantBuilding);
+      renderVacantStats();
       const _ap = (document.querySelector(".pane.active") || {}).id;
       if (_ap === "pane-codeviolation") {
         _renderedPanes.add("pane-codeviolation");
         applyCv();
+      }
+      if (_ap === "pane-vacanthouses") {
+        _renderedPanes.add("pane-vacanthouses");
+        applyVacant();
+      } else {
+        _renderedPanes.delete("pane-vacanthouses");
       }
       // CV feeds the Stack (vacant-building leads auto-include) and loads
       // AFTER the CCLN block that first set the Stack count — so that count
@@ -9361,6 +9386,139 @@ async function loadCv() {
       }
     }
   } catch (e) { /* code_violations.json optional — empty-state covers it */ }
+}
+
+// ===================== VACANT HOUSES (CV vacant-building subset) =====================
+const VH_SORT_TYPES = {
+  status: "status", cited: "string", owner: "string", prop_address: "string",
+  mail_address: "string", violation_type: "string", violation_narrative: "string",
+  market_value: "number", property_type: "string", legal: "string",
+};
+function applyVacant() {
+  const emptyEl = document.getElementById("vh-empty");
+  const tbody   = document.querySelector("#vh-table tbody");
+  const countEl = document.getElementById("vh-count");
+  if (countEl) countEl.textContent = VACANT_RAW.length ? VACANT_RAW.length.toLocaleString() : "—";
+  if (!VACANT_RAW.length) {
+    if (tbody) tbody.innerHTML = "";
+    const tf = document.getElementById("vh-dead-foot"); if (tf) tf.innerHTML = "";
+    if (emptyEl) emptyEl.hidden = false;
+    renderVacantStats();
+    return;
+  }
+  if (emptyEl) emptyEl.hidden = true;
+  VACANT_FILTERED = VACANT_RAW.slice();
+  const type = VH_SORT_TYPES[VH_SORT_KEY] || "string";
+  VACANT_FILTERED.sort((a, b) => _cvCompare(a, b, VH_SORT_KEY, VH_SORT_DIR, type));
+  renderVacant();
+  renderVacantStats();
+  document.querySelectorAll("#vh-table th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === VH_SORT_KEY)
+      th.classList.add(VH_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
+  });
+}
+function renderVacant() {
+  const tb = document.querySelector("#vh-table tbody");
+  const tf = document.getElementById("vh-dead-foot");
+  if (!tb || !tf) return;
+  tb.innerHTML = ""; tf.innerHTML = "";
+  const active = [], dead = [];
+  for (const r of VACANT_FILTERED) {
+    if (getCvStatus(r.case_num) === "dead") dead.push(r); else active.push(r);
+  }
+  for (const r of active) tb.appendChild(buildVacantRow(r, false));
+  if (dead.length > 0) {
+    const expanded = localStorage.getItem("vh_dead_expanded") === "true";
+    const toggleTr = document.createElement("tr");
+    toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
+    toggleTr.innerHTML = `<td colspan="14"><span class="chev">▶</span>
+        <span>${dead.length} deleted lead${dead.length === 1 ? "" : "s"}</span>
+        <span style="margin-left:8px;color:var(--muted);font-weight:400;">— click to ${expanded ? "collapse" : "expand"}</span></td>`;
+    toggleTr.onclick = () => {
+      localStorage.setItem("vh_dead_expanded", toggleTr.classList.contains("expanded") ? "false" : "true");
+      renderVacant();
+    };
+    tf.appendChild(toggleTr);
+    if (expanded) for (const r of dead) tf.appendChild(buildVacantRow(r, true));
+  }
+}
+function buildVacantRow(r, isDead) {
+  const tr = document.createElement("tr");
+  if (isDead) tr.classList.add("dead-lead");
+  const cn = r.case_num || "";
+  const dash = '<span style="color:var(--muted)">—</span>';
+  let statusCell;
+  if (isDead) {
+    statusCell = `<span class="pill status status-dead">Dead</span>
+      <button class="restore-btn" style="margin-top:4px;" title="Restore this lead"
+              onclick="setCvStatus('${esc(cn)}','new'); applyVacant(); event.stopPropagation();">Restore</button>`;
+  } else {
+    const st = getCvStatus(cn);
+    const stageDef = CV_STAGES.find(s => s.key === st) || CV_STAGES[0];
+    const pillClassMap = { new:"status-new", contacted:"status-contacted", negotiating:"status-negotiating", under_contract:"status-negotiating", closed_won:"status-closed", dead:"status-dead" };
+    const pillClass = pillClassMap[st] || "status-new";
+    statusCell = `<span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status"
+            onclick="openCvStatusMenu(event, '${esc(cn)}', '${esc(st)}')">${esc(stageDef.label)} ▾</span>`;
+  }
+  const citedCell = r.cited ? esc(formatDate(r.cited)) : dash;
+  const ownerCell = esc(fmtOwnerCV(r.owner || "")) || dash;
+  const propCityLine = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean);
+  const propCell = r.prop_address
+    ? esc(fmtTitle(r.prop_address)) + (propCityLine.length
+        ? `<br><small>${esc(fmtTitle(r.prop_city || "") + (r.prop_state ? ", " + r.prop_state : "") + (r.prop_zip ? " " + r.prop_zip : ""))}</small>` : "")
+    : dash;
+  let mailCell;
+  if (r.mail_address) {
+    const _mi = r.mail_address.indexOf("  ");
+    if (_mi >= 0) {
+      mailCell = esc(fmtTitle(r.mail_address.slice(0, _mi).trim())) + `<br><small>${esc(fmtTitle(r.mail_address.slice(_mi + 2).trim()))}</small>`;
+    } else mailCell = esc(fmtTitle(r.mail_address));
+  } else mailCell = dash;
+  const vtCell = esc(r.violation_type || "—");
+  const narr = r.violation_narrative || "";
+  const narrCell = narr
+    ? `<div class="cv-narr">${esc(narr)}</div>` +
+      (narr.length > 110 ? `<button class="cv-narr-toggle" onclick="event.stopPropagation(); var d=this.previousElementSibling; this.textContent = d.classList.toggle('expanded') ? 'Show less' : 'Show more';">Show more</button>` : "")
+    : dash;
+  const mv = Number(r.market_value) || 0;
+  const mvCell = mv > 0 ? "$" + mv.toLocaleString("en-US", {maximumFractionDigits: 0}) : dash;
+  const ptCell = r.property_type ? esc(r.property_type) : dash;
+  const legal = r.legal || "";
+  const legalCell = legal ? `<span title="${esc(legal)}">${esc(legal)}</span>` : dash;
+  tr.innerHTML = `
+    <td>${statusCell}</td>
+    <td>${citedCell}</td>
+    <td>${ownerCell}</td>
+    <td>${propCell}</td>
+    <td style="text-align:center;">${mapCellHtml(r)}</td>
+    <td>${mailCell}</td>
+    <td>${vtCell}</td>
+    <td>${narrCell}</td>
+    <td>Code Violation</td>
+    <td>${mvCell}</td>
+    <td>${ptCell}</td>
+    <td class="legal">${legalCell}</td>
+    <td style="text-align:center;">${ncadCellHtml(r)}</td>
+    <td style="text-align:center;">${nctaxCellHtml(r)}</td>`;
+  tr.style.cursor = "pointer";
+  tr.addEventListener("click", (ev) => {
+    if (ev.target.closest("a, button, .status-menu-item, .pill.status")) return;
+    openCrm("cv", cn, CV_RAW);
+  });
+  return tr;
+}
+function renderVacantStats() {
+  const el = document.getElementById("vh-stats");
+  if (!el) return;
+  const total = VACANT_RAW.length;
+  const uvb = VACANT_RAW.filter(r => /unsecured vacant building/i.test(r.violation_type || "")).length;
+  const vb  = total - uvb;
+  el.innerHTML = `
+    <div class="stats-title">Vacant Houses</div>
+    <div class="stat"><div class="v">${total.toLocaleString()}</div><div class="k">Total</div></div>
+    <div class="stat"><div class="v">${vb.toLocaleString()}</div><div class="k">Vacant Building</div></div>
+    <div class="stat"><div class="v">${uvb.toLocaleString()}</div><div class="k">Unsecured Vacant Building</div></div>`;
 }
 
 function _renderPaneIfNeeded(paneId) {
@@ -9403,6 +9561,8 @@ function _renderPaneIfNeeded(paneId) {
   } else if (paneId === "pane-codeviolation") {
     // CV renderer; empty-state path is cheap so safe to call on visit.
     applyCv();
+  } else if (paneId === "pane-vacanthouses") {
+    applyVacant();
   }
 }
 
@@ -9679,7 +9839,7 @@ function _renderPlaceholderStats(elementId, title) {
 }
 function renderCodeViolationStats()    { renderCvStats(); }
 function renderWaterShutoffStats()     { _renderPlaceholderStats("ws-stats",  "Water Shutoff"); }
-function renderVacantHousesStats()     { _renderPlaceholderStats("vh-stats",  "Vacant Houses"); }
+function renderVacantHousesStats()     { renderVacantStats(); }
 function renderTaxOveragesRawStats()   { _renderPlaceholderStats("tov-stats", "Tax Overages"); }
 function renderMortgageOveragesRawStats() { _renderPlaceholderStats("mov-stats", "Mortgage Overages"); }
 
@@ -11039,12 +11199,25 @@ const STACK_SOURCES = [
   //   ...
   // },
   {
+    type: "vacant",
+    label: "Vacant House",
+    badgeClass: "stack-badge-vacant",
+    autoInclude: true,    // Vacant Building / Unsecured Vacant Building stand alone as leads
+    getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW.filter(_cvIsVacantBuilding) : []),
+    isActive: (r) => getCvStatus(r.case_num) !== "dead",
+    primaryKey: (r) => r.case_num,
+    addressKey: (r) => r.prop_address,
+    ncadKey: (r) => r.ncad_account_num,
+    ownerKey: (r) => r.owner,
+    filedKey: (r) => r.cited,
+    openCrm: (r) => openCrm("cv", r.case_num, CV_RAW),
+  },
+  {
     type: "cv",
     label: "Code Viol.",
     badgeClass: "stack-badge-cv",
-    autoInclude: true,    // Vacant Building / Unsecured Vacant Building stand alone as leads…
-    autoIncludeFilter: (r) => _cvIsVacantBuilding(r),   // …all other CV types stay overlap-only (need a 2nd list)
-    getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW : []),
+    autoInclude: false,   // all non-vacant CV types are overlap-only (need a 2nd list to appear)
+    getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW.filter(r => !_cvIsVacantBuilding(r)) : []),
     isActive: (r) => getCvStatus(r.case_num) !== "dead",
     primaryKey: (r) => r.case_num,
     addressKey: (r) => r.prop_address,
@@ -11289,7 +11462,7 @@ function _stackBuildEntry(key, group) {
     const mv = Number(rec.market_value) || 0;
     if (mv && !marketValue) marketValue = mv;                 // CV / (DELQ via lookup) carry this; CCLN doesn't
     if (!propType && rec.property_type) propType = rec.property_type;
-    if (t === "cv" && rec.violation_type && !violationType) violationType = rec.violation_type;
+    if ((t === "cv" || t === "vacant") && rec.violation_type && !violationType) violationType = rec.violation_type;
     if (t === "ccln") lienTotal += Number(rec.amount != null ? rec.amount : rec.pdf_amount) || 0;   // sum every lien on the parcel
     if (!mailStreet && rec.mail_address) {
       if (rec.mail_city || rec.mail_state || rec.mail_zip) {  // ccln / delq: structured fields
@@ -14532,6 +14705,19 @@ document.querySelectorAll("#cv-table th[data-sort]").forEach(th => {
       CV_SORT_DIR = (key === "market_value" || key === "cited" || key === "case_count") ? "desc" : "asc";
     }
     applyCv();
+  });
+});
+
+document.querySelectorAll("#vh-table th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (VH_SORT_KEY === key) {
+      VH_SORT_DIR = VH_SORT_DIR === "asc" ? "desc" : "asc";
+    } else {
+      VH_SORT_KEY = key;
+      VH_SORT_DIR = (key === "market_value" || key === "cited") ? "desc" : "asc";
+    }
+    applyVacant();
   });
 });
 
