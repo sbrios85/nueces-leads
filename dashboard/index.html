@@ -2611,6 +2611,7 @@
       <th data-sort="lien_count"    style="width: 80px;">Lien Count</th>
       <th data-sort="total_lien_amount" style="width: 130px;">Total Lien Amount</th>
       <th data-sort="market_value"  style="width: 110px;">Market Value</th>
+      <th data-sort="property_type" style="width: 120px;">Property Type</th>
       <th data-sort="legal"         style="width: 155px;">Legal Description</th>
       <th data-sort="doc_num"       style="width: 100px;">Doc#</th>
       <th style="width: 50px;">NCAD</th>
@@ -2958,6 +2959,7 @@
       <th data-sort="total_owed"      style="width: 130px;">Delinquent Taxes</th>
       <th data-sort="years_behind"    style="width: 90px;">Years Behind</th>
       <th data-sort="market_value"    style="width: 110px;">Market Value</th>
+      <th data-sort="property_type"   style="width: 120px;">Property Type</th>
       <th data-sort="legal"           style="width: 155px;">Legal Description</th>
       <th data-sort="tax_status"      style="width: 110px;">Tax Status</th>
       <th style="width: 50px;">NCAD</th>
@@ -10161,6 +10163,12 @@ function buildDelqRow(r, isDead) {
     ? `$${mv.toLocaleString("en-US", {maximumFractionDigits: 0})}`
     : `<span style="color:var(--muted)">—</span>`;
 
+  // --- Property Type (from NCAD state class code) ------------------
+  const ptLabel = propTypeLabel(r.state_prop_code || r.state_class || "");
+  const ptCell = ptLabel
+    ? `<span title="${esc(r.state_prop_code || r.state_class || "")}">${esc(ptLabel)}</span>`
+    : `<span style="color:var(--muted)">—</span>`;
+
   // --- Legal Description (truncated; full on hover) ----------------
   const legal = r.legal || "";
   const legalCell = legal
@@ -10208,6 +10216,7 @@ function buildDelqRow(r, isDead) {
     <td>${owedCell}</td>
     <td style="text-align:center;">${yearsCell}</td>
     <td>${mvCell}</td>
+    <td>${ptCell}</td>
     <td class="legal">${legalCell}</td>
     <td>${taxStatusCell}</td>
     <td style="text-align:center;">${ncadCell}</td>
@@ -10763,6 +10772,29 @@ function renderCcln() {
 // values + aggregates; clicking opens the CRM view showing the
 // full history. isDead → dimmed + "Restore" instead of the
 // status menu.
+// NCAD state class code -> human property-type label. Mirrors the
+// label() mapping in build_cv.py / enrich_ccln_proptype.py so every tab
+// (CV, CCLN, DELQ, Stack) describes property type the same way.
+function propTypeLabel(code) {
+  const c = (code || "").trim().toUpperCase();
+  if (!c) return "";
+  if (c === "A1") return "Single-family";
+  if (c === "A2") return "Mobile home";
+  if (c === "A3" || c === "A4") return "Condo";
+  if (c[0] === "A") return "Residential";
+  if (c[0] === "B" && /\d/.test(c[1] || "")) return "Multifamily";
+  if (c[0] === "C") return "Vacant lot";
+  if (c[0] === "D") return "Rural / acreage";
+  if (c[0] === "E") return "Farm / ranch";
+  if (c === "F1") return "Commercial";
+  if (c === "F2") return "Industrial";
+  if (c[0] === "F") return "Commercial";
+  if (c[0] === "G") return "Mineral";
+  if (c[0] === "J") return "Utility";
+  if (c[0] === "L") return "Business personal";
+  return c;
+}
+
 function buildCclnRow(r, isDead) {
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
@@ -10827,6 +10859,7 @@ function buildCclnRow(r, isDead) {
     <td style="text-align:center;">${lienCountCell}</td>
     <td>${totalLienCell}</td>
     <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : "$" + Number(r.market_value).toLocaleString("en-US", {maximumFractionDigits: 0})}</td>
+    <td>${r.property_type ? esc(r.property_type) : (r.state_class ? esc(propTypeLabel(r.state_class)) : '<span style="color:var(--muted)">—</span>')}</td>
     <td class="legal">${esc((r.legal || "").replace(/^Subdivision\s*-\s*Name:\s*/i, ""))}</td>
     <td>${r.clerk_url ? `<a href="${esc(r.clerk_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(r.doc_num || "view")}</a>` : esc(r.doc_num || "")}${cclnFlagBadges(r)}</td>
     <td style="text-align:center;">${ncadCell}</td>
@@ -11364,7 +11397,7 @@ function applyStack() {
     // CCLN carries no market value / property type — backfill from DELQ
     // (NCAD-enriched) when the parcel is also on the delinquent list.
     if (!e.market_value && d && Number(d.market_value)) e.market_value = Number(d.market_value);
-    if (!e.property_type && d && d.state_prop_code) e.property_type = d.state_prop_code;
+    if (!e.property_type && d && d.state_prop_code) e.property_type = propTypeLabel(d.state_prop_code);
   }
   // Sidebar count badge reflects the FULL stacked total (the Hide Lots
   // toggle is a view filter, so it shouldn't move the global nav count).
