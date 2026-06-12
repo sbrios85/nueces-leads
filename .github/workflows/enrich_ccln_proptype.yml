@@ -1,132 +1,103 @@
-#!/usr/bin/env python3
-"""
-Enrich CCLN (City Liens) records with property type.
+name: Enrich CCLN property type
 
-CCLN records carry an NCAD account number (geo_id) but no property class.
-This joins them against the committed NCAD reference table
-(scraper/ncad_reference.csv.gz, ~219k parcels) by geo_id and writes two
-fields onto each record:
+# Adds `state_class` + `property_type` to City Lien (CCLN) records by
+# joining their NCAD account number (geo_id) against the committed NCAD
+# reference table (scraper/ncad_reference.csv.gz). CCLN records carry no
+# property class on their own, so this is what lets the City Liens tab —
+# and the Stack rows that are CCLN-only — show what kind of property it is.
+#
+# Idempotent: only fills records missing property_type unless force=true.
+#
+# Triggers:
+#   1. Manual (workflow_dispatch) — apply / force toggles, dry-run default.
+#   2. Automatic (workflow_run) — after "Scrape Nueces leads" refreshes
+#      CCLN, so new liens get a property type without a manual run.
+#
+# Pages is served from a GitHub Actions deployment, so this workflow
+# deploys Pages itself after writing.
 
-    state_class    – the raw NCAD state class code (e.g. A1, C1, F1)
-    property_type  – a human label (Single-family, Vacant lot, ...)
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Write property_type into the JSON (false = dry-run report only)"
+        type: boolean
+        default: false
+      force:
+        description: "Re-fill records that already have a property type"
+        type: boolean
+        default: false
+  workflow_run:
+    workflows: ["Scrape Nueces leads"]
+    types:
+      - completed
 
-It mirrors the label() mapping used by build_cv.py so the Code Violation,
-City Lien, Delinquent, and Stack tabs all describe property type the same way.
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
-Writes both the dashboard copy and the data/ mirror so the committed repo
-and the deployed dashboard stay in sync (same pattern as the geocoder).
+# Share the repo-push lock with the scrapers / enrichers / geocoder so
+# two workflows never push at once.
+concurrency:
+  group: "ncad-cache-write"
+  cancel-in-progress: false
 
-Idempotent: only fills records missing property_type unless FORCE=1.
-Env flags: CCLN_PROPTYPE_APPLY=1 to write (else dry-run report),
-           CCLN_PROPTYPE_FORCE=1 to re-fill records that already have it.
-"""
-import csv, gzip, json, os, sys
-from pathlib import Path
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-REPO = Path(__file__).resolve().parent.parent
-REF  = REPO / "scraper" / "ncad_reference.csv.gz"
-DASH = REPO / "dashboard" / "city_liens.json"
-DATA = REPO / "data" / "city_liens.json"
+      - name: Pull latest (catch checkout race)
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
-APPLY = os.environ.get("CCLN_PROPTYPE_APPLY", "") in ("1", "true", "True")
-FORCE = os.environ.get("CCLN_PROPTYPE_FORCE", "") in ("1", "true", "True")
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
+      - name: Run CCLN property-type enricher
+        env:
+          # Auto-runs always apply, force OFF. Manual runs honor inputs.
+          CCLN_PROPTYPE_APPLY: ${{ (github.event_name == 'workflow_run' || inputs.apply) && '1' || '0' }}
+          CCLN_PROPTYPE_FORCE: ${{ inputs.force && '1' || '0' }}
+        run: python scraper/enrich_ccln_proptype.py
 
-def label(c):
-    """NCAD state class code -> human property-type label."""
-    c = (c or "").strip().upper()
-    if not c:
-        return ""
-    if c == "A1":
-        return "Single-family"
-    if c == "A2":
-        return "Mobile home"
-    if c in ("A3", "A4"):
-        return "Condo"
-    if c.startswith("A"):
-        return "Residential"
-    if len(c) >= 2 and c[0] == "B" and c[1].isdigit():
-        return "Multifamily"
-    if c.startswith("C"):
-        return "Vacant lot"
-    if c.startswith("D"):
-        return "Rural / acreage"
-    if c.startswith("E"):
-        return "Farm / ranch"
-    if c == "F1":
-        return "Commercial"
-    if c == "F2":
-        return "Industrial"
-    if c.startswith("F"):
-        return "Commercial"
-    if c.startswith("G"):
-        return "Mineral"
-    if c.startswith("J"):
-        return "Utility"
-    if c.startswith("L"):
-        return "Business personal"
-    return c  # unknown code -> show the raw code
+      - name: Commit property types
+        if: ${{ github.event_name == 'workflow_run' || inputs.apply }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dashboard/city_liens.json data/city_liens.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No property-type changes to commit."
+          else
+            git commit -m "Enrich CCLN: add property_type (${{ github.event_name }})"
+            git push
+          fi
 
+      - name: Upload dashboard artifact for Pages deploy
+        if: ${{ github.event_name == 'workflow_run' || inputs.apply }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
 
-def load_reference():
-    """geo_id -> state class code (improvement first, then land)."""
-    ref = {}
-    with gzip.open(REF, "rt", encoding="utf-8-sig") as f:
-        for row in csv.DictReader(f, delimiter="|"):
-            gid = (row.get("geo_id") or "").strip()
-            if not gid:
-                continue
-            cls = (row.get("imprv_state_cd") or "").strip() or (row.get("land_state_cd") or "").strip()
-            ref[gid] = cls
-    return ref
-
-
-def main():
-    print(f"Enrich CCLN property type — APPLY={APPLY} FORCE={FORCE}")
-    if not REF.exists():
-        print(f"ERROR: reference not found at {REF}")
-        sys.exit(1)
-    if not DASH.exists():
-        print(f"ERROR: {DASH} not found")
-        sys.exit(1)
-
-    ref = load_reference()
-    print(f"  loaded {len(ref):,} NCAD reference parcels")
-
-    obj = json.loads(DASH.read_text())
-    records = obj["records"] if isinstance(obj, dict) and "records" in obj else obj
-
-    total = len(records)
-    filled = skipped = miss = 0
-    for r in records:
-        if r.get("property_type") and not FORCE:
-            skipped += 1
-            continue
-        gid = (r.get("ncad_account_num") or "").strip()
-        cls = ref.get(gid)
-        if cls is None:
-            miss += 1
-            continue
-        r["state_class"] = cls
-        r["property_type"] = label(cls)
-        filled += 1
-
-    print(f"  total={total}  filled={filled}  already-had={skipped}  no-reference-match={miss}")
-
-    if not APPLY:
-        print("  DRY RUN — set CCLN_PROPTYPE_APPLY=1 to write. No files changed.")
-        return
-
-    DASH.write_text(json.dumps(obj, indent=2, ensure_ascii=False))
-    print(f"  wrote {DASH}")
-    try:
-        DATA.parent.mkdir(parents=True, exist_ok=True)
-        DATA.write_text(json.dumps(obj, indent=2, ensure_ascii=False))
-        print(f"  wrote {DATA}")
-    except Exception as e:
-        print(f"  WARN: could not write data mirror: {e}")
-    print("==== DONE ====")
-
-
-if __name__ == "__main__":
-    main()
+  deploy:
+    needs: enrich
+    if: ${{ needs.enrich.result == 'success' && (github.event_name == 'workflow_run' || inputs.apply) }}
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
