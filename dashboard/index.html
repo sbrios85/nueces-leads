@@ -302,18 +302,18 @@
   #fc-table td .pill.status { white-space: normal; line-height: 1.25;
                               text-align: center; }
   /* CV Violation Narrative — clamp to 2 lines; "Show more" expands it */
-  #cv-table td .cv-narr {
+  #cv-table td .cv-narr, #vh-table td .cv-narr {
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden; line-height: 1.3;
   }
-  #cv-table td .cv-narr.expanded {
+  #cv-table td .cv-narr.expanded, #vh-table td .cv-narr.expanded {
     display: block; -webkit-line-clamp: unset; overflow: visible;
   }
-  #cv-table td .cv-narr-toggle {
+  #cv-table td .cv-narr-toggle, #vh-table td .cv-narr-toggle {
     margin-top: 3px; padding: 0; border: none; background: none;
     color: var(--accent); cursor: pointer; font-size: 11px; font-weight: 500;
   }
-  #cv-table td .cv-narr-toggle:hover { text-decoration: underline; }
+  #cv-table td .cv-narr-toggle:hover, #vh-table td .cv-narr-toggle:hover { text-decoration: underline; }
   #cv-table td .cv-cases {
     display: inline-block; padding: 2px 8px; border-radius: 10px;
     background: rgba(56,189,248,0.15); color: var(--accent);
@@ -8374,6 +8374,17 @@ const _renderedPanes = new Set();
 function _cvIsVacantBuilding(r) {
   return /vacant building/i.test((r && r.violation_type) || "");
 }
+// True when the record carries at least one violation that ISN'T a
+// vacant-building type. A single CV record can list several violations
+// ("Junked Vehicle · Vacant Building"); such a record belongs to BOTH the
+// Vacant House source (vacant part) and the Code Viol. source (the other
+// part), so it shows both pills in the Stack.
+function _cvHasNonVacant(r) {
+  const vt = (r && r.violation_type) || "";
+  if (!vt) return false;
+  return vt.split("·").map(s => s.trim()).filter(Boolean)
+           .some(part => !/vacant building/i.test(part));
+}
 const _MAP_TYPES = {
   fc:   { color: "#378ADD", label: "Mortgage Foreclosures", noun: "filing",
           data: () => (typeof FC_RAW   !== "undefined" ? FC_RAW   : []) },
@@ -11217,7 +11228,7 @@ const STACK_SOURCES = [
     label: "Code Viol.",
     badgeClass: "stack-badge-cv",
     autoInclude: false,   // all non-vacant CV types are overlap-only (need a 2nd list to appear)
-    getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW.filter(r => !_cvIsVacantBuilding(r)) : []),
+    getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW.filter(_cvHasNonVacant) : []),
     isActive: (r) => getCvStatus(r.case_num) !== "dead",
     primaryKey: (r) => r.case_num,
     addressKey: (r) => r.prop_address,
