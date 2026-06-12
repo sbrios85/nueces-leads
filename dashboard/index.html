@@ -582,6 +582,30 @@
     color: #c084fc;
     border-color: rgba(168, 85, 247, 0.4);
   }
+  .stack-badge-deferral {
+    background: rgba(244, 114, 182, 0.15);
+    color: #f472b6;
+    border-color: rgba(244, 114, 182, 0.4);
+  }
+  /* Exemption context tags appended under a lead's owner cell.
+     HS = owner-occupied; the amber "elig" tags (OV65/DP/DV/DVHS)
+     mean the owner could file a §33.06 tax deferral; EXEMPT = a
+     total/absolute exemption (govt/charity — usually not a lead). */
+  .ex-tags { margin-top:3px; display:flex; flex-wrap:wrap; gap:3px; }
+  .ex-tag {
+    font-size:9px; font-weight:700; letter-spacing:.3px;
+    padding:1px 5px; border-radius:8px; line-height:14px;
+    border:1px solid transparent; white-space:nowrap;
+  }
+  .ex-tag-hs { background:rgba(56,189,248,.12); color:#7dd3fc; border-color:rgba(56,189,248,.30); }
+  .ex-tag-elig { background:rgba(251,191,36,.14); color:#fbbf24; border-color:rgba(251,191,36,.35); }
+  .ex-tag-exempt { background:rgba(148,163,184,.16); color:#cbd5e1; border-color:rgba(148,163,184,.35); }
+  .deferral-type-badge {
+    display:inline-block; font-size:10px; font-weight:700;
+    padding:1px 7px; border-radius:9px; margin:1px 2px 1px 0;
+    background:rgba(244,114,182,.15); color:#f472b6;
+    border:1px solid rgba(244,114,182,.35); white-space:nowrap;
+  }
   /* Signal-count pill on the leftmost column. Shows the total
      number of lead-list signals on this property. Becomes more
      saturated as count rises — visual cue that more-stacked
@@ -2586,6 +2610,9 @@
     <div class="nav-item" data-pane="vacanthouses">
       <span>Vacant Houses</span>
       <span class="tab-count" id="vh-count">—</span></div>
+    <div class="nav-item" data-pane="taxdeferral">
+      <span>Tax Deferral</span>
+      <span class="tab-count" id="deferral-count">—</span></div>
     <div class="nav-item" data-pane="taxoveragesraw">
       <span>Tax Overages</span></div>
     <div class="nav-item" data-pane="mortgageoveragesraw">
@@ -2871,6 +2898,49 @@
   <div class="empty" id="vh-empty" hidden>
     No vacant-building leads yet. They populate automatically from the
     Code Violation list (Vacant Building + Unsecured Vacant Building).
+  </div>
+</div>
+
+<!-- ======== TAX DEFERRAL PANE ======== -->
+<!-- ===================================================================
+     Parcels with an ACTIVE Sec. 33.06 tax deferral — over-65, disabled,
+     or disabled-veteran homesteads that have elected to postpone their
+     property taxes. Critically, these are NOT on the Delinquent Taxes
+     list: the deferral pulls them off the collection roll, so the owner
+     can owe years of back taxes that never surface there. That makes a
+     deferral a "hidden" distress signal — and a deferred parcel that
+     ALSO shows a code violation, vacancy, or city lien is a prime
+     "aging owner ready to exit" lead (see the Stack tab).
+     Source: File #19 of the NCAD/PACS appraisal export, extracted
+     one-time on Sergio's PC by scraper/extract_ncad_exemptions.py and
+     enriched with situs address from the NCAD reference. Authoritative
+     — catches the deferrals the appraisal-roll "(TD)" owner-name tag
+     misses (e.g. 6333 Fitzhugh). The dollar balance isn't in the export;
+     use the NCTAX link to pull the live deferred balance per account.
+     ============================================================ -->
+<div class="pane" id="pane-taxdeferral">
+  <div class="stats" id="deferral-stats"></div>
+  <table id="deferral-table">
+    <thead><tr>
+      <th data-sort="status"         style="width: 74px;">Status</th>
+      <th data-sort="deferral_start" style="width: 110px;">Deferred Since</th>
+      <th data-sort="owner"          style="width: 190px;">Owner</th>
+      <th data-sort="prop_address"   style="width: 210px;">Property Address</th>
+      <th style="width: 46px;">Map</th>
+      <th data-sort="deferral_types" style="width: 130px;">Deferral Type</th>
+      <th data-sort="market_value"   style="width: 110px;">Market Value</th>
+      <th data-sort="exemptions"     style="width: 150px;">Exemptions</th>
+      <th data-sort="legal"          style="width: 160px;">Legal Description</th>
+      <th style="width: 46px;">NCAD</th>
+      <th style="width: 50px;">NCTAX</th>
+    </tr></thead>
+    <tbody></tbody>
+    <tfoot id="deferral-dead-foot"></tfoot>
+  </table>
+  <div class="empty" id="deferral-empty" hidden>
+    No tax-deferral data loaded yet. Upload ncad_exemptions.json (built
+    by scraper/extract_ncad_exemptions.py) and this table populates with
+    every parcel carrying an active §33.06 deferral.
   </div>
 </div>
 
@@ -9260,7 +9330,7 @@ function buildCvRow(r, isDead) {
   }
 
   const citedCell = r.cited ? esc(formatDate(r.cited)) : `<span style="color:var(--muted)">—</span>`;
-  const ownerCell = esc(fmtOwnerCV(r.owner || "")) || `<span style="color:var(--muted)">—</span>`;
+  const ownerCell = (esc(fmtOwnerCV(r.owner || "")) || `<span style="color:var(--muted)">—</span>`) + exemptionTagsHtml(r.ncad_account_num);
   const propCityLine = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean);
   const propCell  = r.prop_address
     ? esc(fmtTitle(r.prop_address)) + (propCityLine.length
@@ -9544,7 +9614,7 @@ function buildVacantRow(r, isDead) {
             onclick="openCvStatusMenu(event, '${esc(cn)}', '${esc(st)}')">${esc(stageDef.label)} ▾</span>`;
   }
   const citedCell = r.cited ? esc(formatDate(r.cited)) : dash;
-  const ownerCell = esc(fmtOwnerCV(r.owner || "")) || dash;
+  const ownerCell = (esc(fmtOwnerCV(r.owner || "")) || dash) + exemptionTagsHtml(r.ncad_account_num);
   const propCityLine = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean);
   const propCell = r.prop_address
     ? esc(fmtTitle(r.prop_address)) + (propCityLine.length
@@ -9603,6 +9673,229 @@ function renderVacantStats() {
     <div class="stat"><div class="v">${uvb.toLocaleString()}</div><div class="k">Unsecured Vacant Building</div></div>`;
 }
 
+// ============================================================
+// EXEMPTION TAGS + TAX DEFERRAL tab
+// ------------------------------------------------------------
+// Data comes from ncad_exemptions.json (loaded in loadAll):
+//   DEFERRAL_RAW   — array of parcels with an active §33.06 deferral
+//   EXEMPTIONS_MAP — geo_id (dashed) -> ";"-joined exemption codes
+// ============================================================
+let DEFERRAL_RAW = [];
+let EXEMPTIONS_MAP = {};
+let DEFERRAL_GENERATED = "";
+let DEFERRAL_FILTERED = [];
+let DEFERRAL_SORT_KEY = "deferral_start";
+let DEFERRAL_SORT_DIR = "desc";
+
+// --- Exemption context tags (appended under a lead's owner cell) ---
+const _EX_TAG_META = {
+  HS:    {label:"HS",     t:"Homestead — owner-occupied"},
+  OV65:  {label:"OV65",   t:"Over-65 owner — deferral-eligible"},
+  OV65S: {label:"OV65S",  t:"Over-65 surviving spouse — deferral-eligible"},
+  DP:    {label:"DP",     t:"Disabled person — deferral-eligible"},
+  DPS:   {label:"DPS",    t:"Disabled person surviving spouse — deferral-eligible"},
+  DVHS:  {label:"DVHS",   t:"100% disabled-veteran homestead — deferral-eligible"},
+  DVHSS: {label:"DVHSS",  t:"DVHS surviving spouse — deferral-eligible"},
+  DV1:   {label:"DV",     t:"Disabled veteran 10–30% — deferral-eligible"},
+  DV2:   {label:"DV",     t:"Disabled veteran 31–50% — deferral-eligible"},
+  DV3:   {label:"DV",     t:"Disabled veteran 51–70% — deferral-eligible"},
+  DV4:   {label:"DV",     t:"Disabled veteran 71–100% — deferral-eligible"},
+  EX:    {label:"EXEMPT", t:"Total/absolute exemption (govt/charity) — usually NOT a lead"},
+};
+function _exemptionsFor(acct) {
+  if (!acct || typeof EXEMPTIONS_MAP === "undefined") return [];
+  const v = EXEMPTIONS_MAP[String(acct).trim()];
+  return v ? v.split(";") : [];
+}
+// Render the small exemption pills for a lead, keyed by its dashed
+// NCAD account (== geo_id). Priority order keeps the most decision-
+// relevant codes first and de-dups the DV tiers down to one "DV".
+function exemptionTagsHtml(acct) {
+  const codes = _exemptionsFor(acct);
+  if (!codes.length) return "";
+  const order = ["EX","DVHS","DVHSS","OV65","OV65S","DP","DPS","DV1","DV2","DV3","DV4","HS"];
+  const seen = new Set();
+  const tags = [];
+  for (const c of order) {
+    if (codes.indexOf(c) < 0) continue;
+    const m = _EX_TAG_META[c];
+    if (!m || seen.has(m.label)) continue;
+    seen.add(m.label);
+    const cls = c === "EX" ? "ex-tag ex-tag-exempt"
+              : c === "HS" ? "ex-tag ex-tag-hs"
+              : "ex-tag ex-tag-elig";
+    tags.push(`<span class="${cls}" title="${esc(m.t)}">${esc(m.label)}</span>`);
+  }
+  return tags.length ? `<div class="ex-tags">${tags.join("")}</div>` : "";
+}
+
+// --- Tax Deferral status (own localStorage store, keyed by geo_id) ---
+const DEFERRAL_STATUS_KEY = "nueces_deferral_status_v1";
+function loadDeferralStatus(){ try { return JSON.parse(localStorage.getItem(DEFERRAL_STATUS_KEY) || "{}"); } catch (e) { return {}; } }
+function saveDeferralStatus(s){ localStorage.setItem(DEFERRAL_STATUS_KEY, JSON.stringify(s)); }
+function getDeferralStatus(key){ const s = loadDeferralStatus(); return (s[key] && s[key].status) || "new"; }
+function setDeferralStatus(key, status){ const s = loadDeferralStatus(); s[key] = Object.assign({}, s[key], { status: status, updated_at: new Date().toISOString() }); saveDeferralStatus(s); }
+
+const DEFERRAL_SORT_TYPES = {
+  status:"string", deferral_start:"string", owner:"string",
+  prop_address:"string", deferral_types:"string",
+  market_value:"number", exemptions:"string",
+};
+
+function closeDeferralStatusMenu(){ const m = document.getElementById("deferral-status-menu"); if (m) m.remove(); document.removeEventListener("click", _deferralMenuOutside, true); }
+function _deferralMenuOutside(e){ const m = document.getElementById("deferral-status-menu"); if (m && !m.contains(e.target)) closeDeferralStatusMenu(); }
+function openDeferralStatusMenu(ev, key, currentStatus){
+  ev.stopPropagation();
+  closeDeferralStatusMenu();
+  const menu = document.createElement("div");
+  menu.className = "ccln-status-menu";   // reuse shared menu styling
+  menu.id = "deferral-status-menu";
+  menu.innerHTML = CV_STAGES
+    .filter(s => s.key !== currentStatus)
+    .map(s => `<button class="status-menu-item" data-stage="${esc(s.key)}">${esc(s.label)}</button>`)
+    .join("");
+  const rect = ev.currentTarget.getBoundingClientRect();
+  menu.style.position = "fixed";
+  menu.style.left = rect.left + "px";
+  menu.style.top  = (rect.bottom + 4) + "px";
+  menu.style.zIndex = "1000";
+  document.body.appendChild(menu);
+  menu.querySelectorAll(".status-menu-item").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setDeferralStatus(key, btn.dataset.stage);
+      closeDeferralStatusMenu();
+      applyDeferral();
+    });
+  });
+  setTimeout(() => document.addEventListener("click", _deferralMenuOutside, true), 0);
+}
+
+// Stack row click for a deferral-ONLY property: no dedicated CRM drawer
+// yet, so open the county tax page where the live deferred balance lives.
+function openDeferralFromStack(r){
+  const can = String((r && r.ncad_account_num) || "").replace(/\D/g, "");
+  if (can) window.open("https://actweb.acttax.com/nueces/nueces/account-details.jsp?can=" + encodeURIComponent(can), "_blank", "noopener");
+}
+
+function applyDeferral(){
+  const emptyEl = document.getElementById("deferral-empty");
+  const tbody   = document.querySelector("#deferral-table tbody");
+  const countEl = document.getElementById("deferral-count");
+  if (countEl) countEl.textContent = DEFERRAL_RAW.length ? DEFERRAL_RAW.length.toLocaleString() : "\u2014";
+  if (!DEFERRAL_RAW.length) {
+    if (tbody) tbody.innerHTML = "";
+    const tf = document.getElementById("deferral-dead-foot"); if (tf) tf.innerHTML = "";
+    if (emptyEl) emptyEl.hidden = false;
+    renderDeferralStats();
+    return;
+  }
+  if (emptyEl) emptyEl.hidden = true;
+  DEFERRAL_FILTERED = DEFERRAL_RAW.slice();
+  const type = DEFERRAL_SORT_TYPES[DEFERRAL_SORT_KEY] || "string";
+  DEFERRAL_FILTERED.sort((a, b) => _cvCompare(a, b, DEFERRAL_SORT_KEY, DEFERRAL_SORT_DIR, type));
+  renderDeferral();
+  renderDeferralStats();
+  document.querySelectorAll("#deferral-table th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === DEFERRAL_SORT_KEY)
+      th.classList.add(DEFERRAL_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
+  });
+}
+function renderDeferral(){
+  const tb = document.querySelector("#deferral-table tbody");
+  const tf = document.getElementById("deferral-dead-foot");
+  if (!tb || !tf) return;
+  tb.innerHTML = ""; tf.innerHTML = "";
+  const active = [], dead = [];
+  for (const r of DEFERRAL_FILTERED) {
+    if (getDeferralStatus(r.geo_id) === "dead") dead.push(r); else active.push(r);
+  }
+  for (const r of active) tb.appendChild(buildDeferralRow(r, false));
+  if (dead.length > 0) {
+    const expanded = localStorage.getItem("deferral_dead_expanded") === "true";
+    const toggleTr = document.createElement("tr");
+    toggleTr.className = "dead-toggle-row" + (expanded ? " expanded" : "");
+    toggleTr.innerHTML = `<td colspan="11"><span class="chev">▶</span>
+        <span>${dead.length} deleted lead${dead.length === 1 ? "" : "s"}</span>
+        <span style="margin-left:8px;color:var(--muted);font-weight:400;">— click to ${expanded ? "collapse" : "expand"}</span></td>`;
+    toggleTr.onclick = () => {
+      localStorage.setItem("deferral_dead_expanded", toggleTr.classList.contains("expanded") ? "false" : "true");
+      renderDeferral();
+    };
+    tf.appendChild(toggleTr);
+    if (expanded) for (const r of dead) tf.appendChild(buildDeferralRow(r, true));
+  }
+}
+function _deferralTypeBadges(types){
+  if (!types) return "";
+  return String(types).split(";").filter(Boolean).map(t => {
+    const tt = t.trim();
+    return `<span class="deferral-type-badge" title="${esc(tt)} deferral">${esc(tt)}</span>`;
+  }).join(" ");
+}
+function buildDeferralRow(r, isDead){
+  const tr = document.createElement("tr");
+  if (isDead) tr.classList.add("dead-lead");
+  const key = r.geo_id || "";
+  const dash = '<span style="color:var(--muted)">\u2014</span>';
+  let statusCell;
+  if (isDead) {
+    statusCell = `<span class="pill status status-dead">Dead</span>
+      <button class="restore-btn" style="margin-top:4px;" title="Restore this lead"
+              onclick="setDeferralStatus('${esc(key)}','new'); applyDeferral(); event.stopPropagation();">Restore</button>`;
+  } else {
+    const st = getDeferralStatus(key);
+    const stageDef = CV_STAGES.find(s => s.key === st) || CV_STAGES[0];
+    const pillClassMap = { new:"status-new", contacted:"status-contacted", negotiating:"status-negotiating", under_contract:"status-negotiating", closed_won:"status-closed", dead:"status-dead" };
+    const pillClass = pillClassMap[st] || "status-new";
+    statusCell = `<span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status"
+            onclick="openDeferralStatusMenu(event, '${esc(key)}', '${esc(st)}')">${esc(stageDef.label)} ▾</span>`;
+  }
+  const startCell = r.deferral_start ? esc(r.deferral_start) : dash;
+  const ownerCell = (esc(fmtOwner(r.owner || "")) || dash) + exemptionTagsHtml(r.ncad_account_num);
+  const propCityLine = [r.prop_city, r.prop_zip].filter(Boolean);
+  const propCell = r.prop_address
+    ? esc(fmtTitle(r.prop_address)) + (propCityLine.length
+        ? `<br><small>${esc(fmtTitle(r.prop_city || "") + (r.prop_zip ? " " + r.prop_zip : ""))}</small>` : "")
+    : dash;
+  const typeCell = _deferralTypeBadges(r.deferral_types) || dash;
+  const mv = Number(r.market_value) || 0;
+  const mvCell = mv > 0 ? "$" + mv.toLocaleString("en-US", {maximumFractionDigits: 0}) : dash;
+  const exCell = r.exemptions ? esc(r.exemptions.split(";").join(", ")) : dash;
+  const legal = r.legal || "";
+  const legalCell = legal ? `<span title="${esc(legal)}">${esc(legal)}</span>` : dash;
+  tr.innerHTML = `
+    <td>${statusCell}</td>
+    <td>${startCell}</td>
+    <td>${ownerCell}</td>
+    <td>${propCell}</td>
+    <td style="text-align:center;">${mapCellHtml(r)}</td>
+    <td>${typeCell}</td>
+    <td>${mvCell}</td>
+    <td>${exCell}</td>
+    <td class="legal">${legalCell}</td>
+    <td style="text-align:center;">${ncadCellHtml(r)}</td>
+    <td style="text-align:center;">${nctaxCellHtml(r)}</td>`;
+  return tr;
+}
+function renderDeferralStats(){
+  const el = document.getElementById("deferral-stats");
+  if (!el) return;
+  const total = DEFERRAL_RAW.length;
+  const has = (code) => DEFERRAL_RAW.filter(r => (";" + (r.deferral_types || "") + ";").indexOf(";" + code + ";") >= 0).length;
+  const ov65 = has("OV65") + has("OV65S");
+  const dp = has("DP") + has("DPS");
+  const dv = DEFERRAL_RAW.filter(r => /DV/.test(r.deferral_types || "")).length;
+  el.innerHTML = `
+    <div class="stats-title">Tax Deferrals</div>
+    <div class="stat"><div class="v">${total.toLocaleString()}</div><div class="k">Total Deferred</div></div>
+    <div class="stat"><div class="v">${ov65.toLocaleString()}</div><div class="k">Over-65</div></div>
+    <div class="stat"><div class="v">${dp.toLocaleString()}</div><div class="k">Disabled Person</div></div>
+    <div class="stat"><div class="v">${dv.toLocaleString()}</div><div class="k">Disabled Veteran</div></div>`;
+}
+
+
 function _renderPaneIfNeeded(paneId) {
   // Today: always re-render on visit — its counts (follow-ups due,
   // pipeline stages, parsed-pending) change as the user works other
@@ -9645,6 +9938,8 @@ function _renderPaneIfNeeded(paneId) {
     applyCv();
   } else if (paneId === "pane-vacanthouses") {
     applyVacant();
+  } else if (paneId === "pane-taxdeferral") {
+    applyDeferral();
   }
 }
 
@@ -9807,6 +10102,49 @@ async function loadAll() {
       }
     }
   } catch (e) { /* delq_records.json optional — empty-state covers it */ }
+
+  // --- Tax Deferral + Exemptions (NCAD/PACS appraisal export) ---
+  // One file, two payloads, built on Sergio's PC by
+  // scraper/extract_ncad_exemptions.py then enriched with situs address:
+  //   deferrals  — parcels with an ACTIVE §33.06 tax deferral (the
+  //                authoritative list from export File #19; catches what
+  //                the "(TD)" owner-name tag misses). Powers the Tax
+  //                Deferral tab + Stack source.
+  //   exemptions — geo_id -> exemption codes (HS/OV65/DP/DVHS/EX/...),
+  //                used to tag every lead with owner-occupancy / age /
+  //                disability context.
+  // First-deploy safe: missing file -> empty tab, tags just don't render.
+  try {
+    const r = await fetch("ncad_exemptions.json", {cache:"no-store"});
+    if (r.ok) {
+      const data = await r.json();
+      DEFERRAL_RAW = data.deferrals || [];
+      EXEMPTIONS_MAP = data.exemptions || {};
+      DEFERRAL_GENERATED = data.generated || "";
+      // Alias for the shared NCAD / map cell helpers:
+      //   ncad_prop_id — ncadCellHtml() deep-links by it (strip pad zeros)
+      //   prop_state   — map-link disambiguation
+      for (const rec of DEFERRAL_RAW) {
+        rec.ncad_prop_id = String(rec.prop_id || "").replace(/^0+/, "");
+        if (!rec.prop_state) rec.prop_state = "TX";
+      }
+      const dc = document.getElementById("deferral-count");
+      if (dc) dc.textContent = DEFERRAL_RAW.length ? DEFERRAL_RAW.length.toLocaleString() : "—";
+      renderDeferralStats();
+      if (_activePane === "pane-taxdeferral") {
+        _renderedPanes.add("pane-taxdeferral");
+        applyDeferral();
+      }
+      // Deferrals feed the Stack — refresh its count/render now that the
+      // source has data (mirrors the CCLN pattern).
+      if (_activePane === "pane-stack" && typeof applyStack === "function") {
+        applyStack();
+      } else if (typeof _stackBuildList === "function") {
+        const sc = document.getElementById("stack-count");
+        if (sc) { try { sc.textContent = _stackBuildList().length.toLocaleString(); } catch (e) {} }
+      }
+    }
+  } catch (e) { /* ncad_exemptions.json optional — empty-state covers it */ }
 
   // Code Violations — same optional-fetch pattern.
   await loadCv();
@@ -10367,6 +10705,7 @@ function buildDelqRow(r, isDead) {
          (e.split(/\s+/)[0] || "").slice(0, 6))
       )}</span>`).join("");
     ownerCell += badges;
+  ownerCell += exemptionTagsHtml(ncad);
   }
 
   // --- Property address with zip on line 2, acres tooltip ----------
@@ -11117,7 +11456,7 @@ function buildCclnRow(r, isDead) {
   tr.innerHTML = `
     <td>${statusCell}</td>
     <td>${esc(formatDate(r.filed || ""))}</td>
-    <td>${esc(fmtOwner(r.owner || ""))}</td>
+    <td>${esc(fmtOwner(r.owner || "")) + exemptionTagsHtml(r.ncad_account_num)}</td>
     <td>${esc(fmtTitle(r.prop_address || ""))}${r.prop_city ? "<br><small>" + esc(fmtTitle(r.prop_city + " " + (r.prop_zip||""))) + "</small>" : ""}</td>
     <td style="text-align:center;">${mapCellHtml(r)}</td>
     <td>${esc(fmtTitle(r.mail_address || ""))}${r.mail_city ? "<br><small>" + esc(fmtTitle(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||""))) + "</small>" : ""}</td>
@@ -11324,6 +11663,20 @@ const STACK_SOURCES = [
     ownerKey: (r) => r.owner,
     filedKey: (r) => r.cited,
     openCrm: (r) => openCrm("cv", r.case_num, CV_RAW),
+  },
+  {
+    type: "deferral",
+    label: "Tax Deferral",
+    badgeClass: "stack-badge-deferral",
+    autoInclude: true,    // a §33.06 deferral is a real distress signal on its own
+    getRecords: () => (typeof DEFERRAL_RAW !== "undefined" ? DEFERRAL_RAW : []),
+    isActive: (r) => getDeferralStatus(r.geo_id) !== "dead",
+    primaryKey: (r) => r.geo_id,
+    addressKey: (r) => r.prop_address,
+    ncadKey: (r) => r.ncad_account_num,   // dashed geo_id — same format as CCLN/CV → cross-matches cleanly
+    ownerKey: (r) => r.owner,
+    filedKey: (r) => r.deferral_start,
+    openCrm: (r) => openDeferralFromStack(r),
   },
 ];
 
@@ -11910,7 +12263,7 @@ function _buildStackRow(entry) {
   tr.innerHTML = `
     <td>${statusCell}</td>
     <td>${(badgeHtml + delqBadge + taxFlagBadges) || dash}</td>
-    <td>${esc(fmtOwner(entry.owner || "")) || dash}</td>
+    <td>${(esc(fmtOwner(entry.owner || "")) || dash) + exemptionTagsHtml(entry.ncad_account_num)}</td>
     <td>${entry.prop_address ? esc(fmtTitle(entry.prop_address)) : dash}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
     <td>${mailCell}</td>
@@ -14845,6 +15198,19 @@ document.querySelectorAll("#vh-table th[data-sort]").forEach(th => {
       VH_SORT_DIR = (key === "market_value" || key === "cited") ? "desc" : "asc";
     }
     applyVacant();
+  });
+});
+
+document.querySelectorAll("#deferral-table th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (DEFERRAL_SORT_KEY === key) {
+      DEFERRAL_SORT_DIR = DEFERRAL_SORT_DIR === "asc" ? "desc" : "asc";
+    } else {
+      DEFERRAL_SORT_KEY = key;
+      DEFERRAL_SORT_DIR = (key === "market_value" || key === "deferral_start") ? "desc" : "asc";
+    }
+    applyDeferral();
   });
 });
 
