@@ -247,8 +247,9 @@ EXPECTED_HEADER: tuple[tuple[int, str], ...] = (
 #                                        across re-imports
 #   _last_seen           "2026-05-18"    updated every import
 #
-# Note: bankruptcy records are filtered OUT at ingestion (not
-# kept with a flag). Sergio doesn't work bankruptcy leads.
+# Note: bankruptcy records are KEPT and carry a "bankruptcy":True
+# flag (like suit/judgment/deferral) so they surface with context
+# rather than being silently dropped.
 # Adjust _process_row if that ever changes.
 #
 # Note: the county XLS labels column 0 as "ACCOUNT #" — this is
@@ -420,9 +421,10 @@ def _flags(row) -> dict[str, Any]:
     is significantly more actionable (closer to tax sale) than a
     pending suit. 'A' is too rare to model — we ignore it.
 
-    Note: bankruptcy is NOT in this dict because the importer
-    drops bankruptcy rows entirely at ingestion (Sergio does not
-    work bankruptcy leads). See _process_row.
+    Note: "bankruptcy" is included here. Bankruptcy rows are KEPT
+    (not dropped) and flagged so the operator can see a property
+    owes taxes even while it's in bankruptcy, and decide how to
+    handle it. See _process_row.
     """
     suit_flag = _clean(row[COL_SUIT_JUDGEMENT]).upper()
     return {
@@ -431,6 +433,7 @@ def _flags(row) -> dict[str, Any]:
         "bad_address":       bool(_clean(row[COL_BAD_ADDR])),
         "tax_deferral":      bool(_clean(row[COL_TAX_DEF])),
         "payment_agreement": _clean(row[COL_PAY_AGREE]),
+        "bankruptcy":        bool(_clean(row[COL_BANKRUPTCY])),
     }
 
 
@@ -473,7 +476,6 @@ def _process_row(row: list[Any]) -> dict[str, Any] | None:
     Convert one raw XLS row into a slim JSON record, OR return
     None if the row should be filtered out:
       - non-residential state code (per KEEP_CODES)
-      - bankruptcy filed (Sergio doesn't work bankruptcy leads)
       - missing NCAD account number (can't track)
       - non-CC ZIP code (per CC_ZIPS; blank ZIP is kept)
       - corporate / government / institutional owner (per CCLN
@@ -483,11 +485,6 @@ def _process_row(row: list[Any]) -> dict[str, Any] | None:
     """
     state_prop = _clean(row[COL_STATE_PROP]).upper()
     if state_prop not in KEEP_CODES:
-        return None
-
-    # Bankruptcy filter — drop entirely. ~67 records out of 11.6k
-    # residential in the 2026-05 file.
-    if _clean(row[COL_BANKRUPTCY]):
         return None
 
     ncad = _ncad_canonical(row[COL_ACCOUNT_NUM])
@@ -611,17 +608,19 @@ def _read_xls(path: Path) -> list[dict[str, Any]]:
     # at most one bucket, evaluated in priority order matching the
     # filter checks in _process_row).
     drop_non_residential = 0
-    drop_bankruptcy = 0
     drop_no_ncad = 0
     drop_non_cc_zip = 0
     drop_corporate = 0
     drop_high_value = 0
+    kept_bankruptcy = 0   # informational: KEPT records carrying the bankruptcy flag
 
     for r in range(1, sheet.nrows):
         row = sheet.row_values(r)
         rec = _process_row(row)
         if rec is not None:
             records.append(rec)
+            if _clean(row[COL_BANKRUPTCY]):
+                kept_bankruptcy += 1
             continue
 
         # Row was filtered — figure out why so we can report it.
@@ -630,9 +629,6 @@ def _read_xls(path: Path) -> list[dict[str, Any]]:
         state_prop = _clean(row[COL_STATE_PROP]).upper()
         if state_prop not in KEEP_CODES:
             drop_non_residential += 1
-            continue
-        if _clean(row[COL_BANKRUPTCY]):
-            drop_bankruptcy += 1
             continue
         if not _ncad_canonical(row[COL_ACCOUNT_NUM]):
             drop_no_ncad += 1
@@ -655,14 +651,15 @@ def _read_xls(path: Path) -> list[dict[str, Any]]:
         # none of the above filters triggered. Count it generically.
         drop_non_residential += 1   # closest catch-all bucket
 
-    total_dropped = (drop_non_residential + drop_bankruptcy +
+    total_dropped = (drop_non_residential +
                      drop_no_ncad + drop_non_cc_zip +
                      drop_corporate + drop_high_value)
-    log.info("Processed %d data rows: %d kept", sheet.nrows - 1, len(records))
-    log.info("  dropped: non-residential=%d, bankruptcy=%d, "
+    log.info("Processed %d data rows: %d kept (%d flagged bankruptcy)",
+             sheet.nrows - 1, len(records), kept_bankruptcy)
+    log.info("  dropped: non-residential=%d, "
              "no_ncad=%d, non_cc_zip=%d, corporate=%d, "
              "market_value>=$%d=%d  (total=%d)",
-             drop_non_residential, drop_bankruptcy, drop_no_ncad,
+             drop_non_residential, drop_no_ncad,
              drop_non_cc_zip, drop_corporate,
              MAX_MARKET_VALUE, drop_high_value,
              total_dropped)
