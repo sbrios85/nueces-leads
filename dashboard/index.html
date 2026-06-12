@@ -11881,8 +11881,15 @@ function _buildStackRow(entry) {
     if (f.has_judgment) badges.push("JUDGMENT");
     if (f.tax_deferral) badges.push("TAX DEFERRAL");
     if (f.payment_agreement) badges.push("PAYMENT PLAN");
+    if (f.bankruptcy) badges.push("BANKRUPTCY");
     taxStatusCell = badges.length
-      ? badges.map(b => `<span class="pill" style="background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.35);font-size:11px;">${esc(b)}</span>`).join(" ")
+      ? badges.map(b => {
+          const purple = b === "BANKRUPTCY";
+          const bg = purple ? "rgba(168,85,247,.15)" : "rgba(239,68,68,.15)";
+          const col = purple ? "#c084fc" : "#ef4444";
+          const bd = purple ? "rgba(168,85,247,.35)" : "rgba(239,68,68,.35)";
+          return `<span class="pill" style="background:${bg};color:${col};border:1px solid ${bd};font-size:11px;">${esc(b)}</span>`;
+        }).join(" ")
       : `<span class="pill" style="background:rgba(148,163,184,.15);color:var(--muted);border:1px solid rgba(148,163,184,.3);font-size:11px;">DELINQUENT</span>`;
   }
 
