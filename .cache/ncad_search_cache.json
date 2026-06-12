@@ -54,7 +54,7 @@
   },
   "ccln_addr::15302 BONASSE CT": {
     "miss": true,
-    "miss_reason": "no_results"
+    "miss_reason": "no_corroboration"
   },
   "ccln_addr::1634": {
     "miss": true,
@@ -62,7 +62,7 @@
   },
   "ccln_addr::1712 AYERS ST": {
     "miss": true,
-    "miss_reason": "no_results"
+    "miss_reason": "no_corroboration"
   },
   "ccln_addr::2009 ANTELOPE ST": {
     "miss": true,
@@ -78,11 +78,11 @@
   },
   "ccln_addr::3949 BALDWIN BLVD": {
     "miss": true,
-    "miss_reason": "no_results"
+    "miss_reason": "no_corroboration"
   },
   "ccln_addr::4005 ACUSHNET DR": {
     "miss": true,
-    "miss_reason": "no_results"
+    "miss_reason": "no_corroboration"
   },
   "ccln_addr::4016 OAK FOREST DR": {
     "miss": true,

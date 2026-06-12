@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-06-11T18:50:30.930390+00:00",
+  "fetched_at": "2026-06-12T18:11:25.480885+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-05-12",
-    "end": "2026-06-11"
+    "start": "2026-05-13",
+    "end": "2026-06-12"
   },
-  "total": 76,
-  "with_address": 33,
+  "total": 73,
+  "with_address": 32,
   "records": [
     {
       "doc_num": "2026019660",
@@ -275,30 +275,6 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017184",
       "flags": [
         "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026019468",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-04",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "U S BANK NATIONAL ASSOCIATION",
-      "grantee": "SISK JOHN",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019468",
-      "flags": [
-        "New this week"
       ],
       "score": 45
     },
@@ -711,30 +687,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026017106",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-18",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "GARCIA ARTURO",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 540661526",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017106",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026017107",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-18",
@@ -759,15 +711,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026018544",
+      "doc_num": "2026017106",
       "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-28",
+      "filed": "2026-05-18",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "VALDEZ JOSE",
-      "grantee": "UNITED STATES",
+      "owner": "GARCIA ARTURO",
+      "grantee": "INTERNAL REVENUE SERVICE",
       "amount": null,
-      "legal": "SERIAL NUMBER 2024A54688",
+      "legal": "SERIAL NO 540661526",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -776,7 +728,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018544",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017106",
       "flags": [
         "Tax lien"
       ],
@@ -807,15 +759,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026018077",
+      "doc_num": "2026018544",
       "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-26",
+      "filed": "2026-05-28",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "WIMBERLY JEREMY J",
-      "grantee": "USA INTERNAL REVENUE",
+      "owner": "VALDEZ JOSE",
+      "grantee": "UNITED STATES",
       "amount": null,
-      "legal": "SERIAL NO 541298026",
+      "legal": "SERIAL NUMBER 2024A54688",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -824,7 +776,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018077",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018544",
       "flags": [
         "Tax lien"
       ],
@@ -849,6 +801,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017108",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026018077",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-26",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "WIMBERLY JEREMY J",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NO 541298026",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018077",
       "flags": [
         "Tax lien"
       ],
@@ -1319,28 +1295,6 @@
       "score": 35
     },
     {
-      "doc_num": "2026016373",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-05-12",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "DELGADO JOSE BENITO JR",
-      "grantee": "AUCTION.COM LLC",
-      "amount": null,
-      "legal": "",
-      "prop_address": "11537 PINTAS CREEK CIR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78410",
-      "mail_address": "11537 Pintas Creek Cir Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78410",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016373",
-      "flags": [],
-      "score": 35
-    },
-    {
       "doc_num": "2026019129",
       "doc_type": "LIEN",
       "filed": "2026-06-02",
@@ -1649,15 +1603,15 @@
       "score": 30
     },
     {
-      "doc_num": "2026016445",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-05-12",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "GUNNA JOEL A",
-      "grantee": "VALUEBANK TEXAS",
+      "doc_num": "2026019468",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-06-04",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "U S BANK NATIONAL ASSOCIATION",
+      "grantee": "SISK JOHN",
       "amount": null,
-      "legal": "BLDG C (Lot 3137)",
+      "legal": "",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -1666,7 +1620,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016445",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019468",
       "flags": [],
       "score": 30
     },
@@ -1733,28 +1687,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017588",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026016478",
-      "doc_type": "DEED",
-      "filed": "2026-05-12",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "NUECES COUNTY JUDGE",
-      "grantee": "TAX LIEN DEED ASSET BUYER LLC",
-      "amount": null,
-      "legal": "SUIT NO 2019DCV 4332 F (Lot 6, Block 6)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016478",
       "flags": [],
       "score": 30
     }
