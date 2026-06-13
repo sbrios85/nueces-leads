@@ -2619,7 +2619,8 @@
       <span>Tax Deferral</span>
       <span class="tab-count" id="deferral-count">—</span></div>
     <div class="nav-item" data-pane="taxoveragesraw">
-      <span>Tax Overages</span></div>
+      <span>Tax Overages</span>
+      <span class="tab-count" id="tov-count">—</span></div>
     <div class="nav-item" data-pane="mortgageoveragesraw">
       <span>Mortgage Overages</span></div>
     <div class="nav-item" data-pane="stack">
@@ -2959,29 +2960,29 @@
        2 years from sale). Last-known mailing address from NCAD at
        time of sale, often stale by definition. -->
   <div class="stats" id="tov-stats"></div>
+  <div style="margin: 0 0 10px;">
+    <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; color:var(--muted); font-size:13px;">
+      <input type="checkbox" id="tov-show-claimed"
+             onchange="EXCESS_SHOW_CLAIMED = this.checked; applyOverage();">
+      Show claimed / disbursed (gone)
+    </label>
+  </div>
   <table id="tov-table">
     <thead><tr>
-      <th data-sort="status"          style="width: 74px;">Status</th>
-      <th data-sort="sale_date"       style="width: 110px;">Sale Date</th>
-      <th data-sort="prior_owner"     style="width: 200px;">Prior Owner</th>
-      <th data-sort="prop_address"    style="width: 210px;">Property Address</th>
-      <th style="width: 50px;">Map</th>
-      <th data-sort="last_known_addr" style="width: 200px;">Last Known Address</th>
-      <th data-sort="sale_amount"     style="width: 110px;">Sale Amount</th>
-      <th data-sort="taxes_owed"      style="width: 110px;">Taxes Owed</th>
-      <th data-sort="overage_amount"  style="width: 110px;">Overage</th>
-      <th data-sort="cause_num"       style="width: 110px;">Cause #</th>
-      <th data-sort="claim_deadline"  style="width: 110px;">Claim Deadline</th>
-      <th style="width: 50px;">NCAD</th>
-      <th style="width: 50px;">NCTAX</th>
+      <th data-sort="status"       style="width: 80px;">Status</th>
+      <th data-sort="owner"        style="width: 240px;">Owner</th>
+      <th data-sort="case_number"  style="width: 150px;">Case #</th>
+      <th data-sort="balance"      style="width: 130px;">Excess Proceeds</th>
+      <th data-sort="months_on"    style="width: 90px; text-align:center;">Months on Report</th>
+      <th data-sort="first_seen"   style="width: 100px;">First Seen</th>
+      <th data-sort="last_seen"    style="width: 110px;">Last Seen</th>
+      <th data-sort="plaintiff"    style="width: 220px;">Plaintiff</th>
     </tr></thead>
     <tbody></tbody>
   </table>
-  <div class="empty">
-    Tax Overages data source not yet wired up.<br>
-    Once the tax-foreclosure-surplus feed is connected (county clerk
-    or treasurer's office), this table will populate automatically.
-    The CRM view of these leads lives under Work → Tax Overages.
+  <div class="empty" id="tov-empty" hidden>
+    Tax Overages data not loaded yet. Upload dashboard/excess_proceeds.json
+    (built from the County Clerk's monthly Excess Proceeds report).
   </div>
 </div>
 
@@ -10027,6 +10028,122 @@ function renderDeferralStats(){
 }
 
 
+// ============================================================
+// Tax Overages — County Clerk excess-proceeds registry
+// ============================================================
+let EXCESS_RAW = [];
+let EXCESS_META = null;
+let EXCESS_FILTERED = [];
+let EXCESS_SORT_KEY = "balance";
+let EXCESS_SORT_DIR = "desc";
+let EXCESS_SHOW_CLAIMED = false;
+const EXCESS_SORT_TYPES = {
+  status:"string", owner:"string", case_number:"string",
+  balance:"number", months_on:"number", first_seen:"string",
+  last_seen:"string", plaintiff:"string",
+};
+const _MON3 = ["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function _ymLabel(ym){
+  if (!ym) return "—";
+  const m = /^(\d{4})-(\d{2})$/.exec(ym);
+  return m ? (_MON3[parseInt(m[2],10)] + " " + m[1]) : ym;
+}
+function applyOverage(){
+  const tbody  = document.querySelector("#tov-table tbody");
+  const emptyEl= document.getElementById("tov-empty");
+  const countEl= document.getElementById("tov-count");
+  const active = EXCESS_RAW.filter(c => c.status === "active");
+  if (countEl) countEl.textContent = active.length ? active.length.toLocaleString() : "—";
+  if (!EXCESS_RAW.length) {
+    if (tbody) tbody.innerHTML = "";
+    if (emptyEl) emptyEl.hidden = false;
+    renderOverageStats();
+    return;
+  }
+  if (emptyEl) emptyEl.hidden = true;
+  let rows = EXCESS_SHOW_CLAIMED ? EXCESS_RAW.slice() : active.slice();
+  const type = EXCESS_SORT_TYPES[EXCESS_SORT_KEY] || "string";
+  rows.sort((a,b)=>_cvCompare(a,b,EXCESS_SORT_KEY,EXCESS_SORT_DIR,type));
+  if (EXCESS_SHOW_CLAIMED) {
+    // keep claimed grouped below active, preserving the key order within each
+    rows.sort((a,b)=>((a.status==="claimed")?1:0)-((b.status==="claimed")?1:0));
+  }
+  EXCESS_FILTERED = rows;
+  renderOverage();
+  renderOverageStats();
+  document.querySelectorAll("#tov-table th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc","sort-desc");
+    if (th.dataset.sort === EXCESS_SORT_KEY)
+      th.classList.add(EXCESS_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
+  });
+}
+function renderOverage(){
+  const tb = document.querySelector("#tov-table tbody");
+  if (!tb) return;
+  tb.innerHTML = "";
+  for (const c of EXCESS_FILTERED) tb.appendChild(buildOverageRow(c));
+}
+function buildOverageRow(c){
+  const tr = document.createElement("tr");
+  const dash = '<span style="color:var(--muted)">—</span>';
+  const claimed = c.status === "claimed";
+  if (claimed) tr.classList.add("dead-lead");
+  const statusCell = claimed
+    ? '<span class="pill status status-dead">Claimed</span>'
+    : '<span class="pill status status-closed">Active</span>';
+  const totalMonths = (EXCESS_META && EXCESS_META.summary && EXCESS_META.summary.months_tracked) || 0;
+  const ripe = !claimed && totalMonths && c.months_on >= totalMonths;
+  const ownerCell = esc(fmtOwner(c.owner || "")) || dash;
+  const caseCell = esc(c.case_number) +
+    '<br><small style="color:var(--muted);">' +
+    (c.case_type === "district_civil" ? "District civil" : "Tax cause") + '</small>';
+  const bal = Number(c.balance) || 0;
+  const balCell = bal > 0 ? "<strong>$" + bal.toLocaleString("en-US",{maximumFractionDigits:0}) + "</strong>" : "$0";
+  const monthsCell = String(c.months_on) + (ripe
+    ? ' <span title="On every report since tracking began — long unclaimed" style="color:var(--accent);">★</span>' : "");
+  const firstCell = esc(_ymLabel(c.first_seen));
+  const lastCell = claimed
+    ? '<span style="color:var(--bad);">gone ' + esc(_ymLabel(c.claimed_month)) + '</span>'
+    : esc(_ymLabel(c.last_seen));
+  const plaintiffCell = c.plaintiff ? '<small style="color:var(--muted);">' + esc(c.plaintiff) + '</small>' : dash;
+  tr.innerHTML =
+    "<td>" + statusCell + "</td>" +
+    "<td>" + ownerCell + "</td>" +
+    "<td>" + caseCell + "</td>" +
+    "<td>" + balCell + "</td>" +
+    '<td style="text-align:center;">' + monthsCell + "</td>" +
+    "<td>" + firstCell + "</td>" +
+    "<td>" + lastCell + "</td>" +
+    "<td>" + plaintiffCell + "</td>";
+  return tr;
+}
+function renderOverageStats(){
+  const el = document.getElementById("tov-stats");
+  if (!el) return;
+  const active  = EXCESS_RAW.filter(c => c.status === "active");
+  const claimed = EXCESS_RAW.filter(c => c.status === "claimed");
+  const totalMonths = (EXCESS_META && EXCESS_META.summary && EXCESS_META.summary.months_tracked) || 0;
+  const ripe = active.filter(c => totalMonths && c.months_on >= totalMonths).length;
+  const totalBal = active.reduce((s,c)=>s+(Number(c.balance)||0),0);
+  const balFmt = totalBal > 0 ? "$" + Math.round(totalBal).toLocaleString() : "—";
+  const months = (EXCESS_META && EXCESS_META.months) || [];
+  const last = months.length ? months[months.length-1] : null;
+  let moveHtml = "";
+  if (last) {
+    moveHtml = '<div class="stats-meta" style="text-align:right;">' +
+      "<div>Latest report: " + esc(last.label) + "</div>" +
+      '<div style="color:var(--muted);">+' + last.added + " new · " + last.removed_claimed + " claimed</div></div>";
+  }
+  el.innerHTML =
+    '<div class="stats-title">Tax Overages</div>' +
+    '<div class="stat"><div class="v">' + active.length.toLocaleString() + '</div><div class="k">Active Leads</div></div>' +
+    '<div class="stat"><div class="v">' + balFmt + '</div><div class="k">Total Unclaimed</div></div>' +
+    '<div class="stat"><div class="v">' + ripe.toLocaleString() + '</div><div class="k">On Every Report</div></div>' +
+    '<div class="stat"><div class="v">' + claimed.length.toLocaleString() + '</div><div class="k">Claimed To Date</div></div>' +
+    moveHtml;
+}
+
+
 function _renderPaneIfNeeded(paneId) {
   // Today: always re-render on visit — its counts (follow-ups due,
   // pipeline stages, parsed-pending) change as the user works other
@@ -10071,6 +10188,8 @@ function _renderPaneIfNeeded(paneId) {
     applyVacant();
   } else if (paneId === "pane-taxdeferral") {
     applyDeferral();
+  } else if (paneId === "pane-taxoveragesraw") {
+    applyOverage();
   }
 }
 
@@ -10295,6 +10414,25 @@ async function loadAll() {
       }
     }
   } catch (e) { /* ncad_exemptions.json optional — empty-state covers it */ }
+
+  // Tax Overages — County Clerk excess-proceeds registry (optional file).
+  try {
+    const er = await fetch("excess_proceeds.json", {cache:"no-store"});
+    if (er.ok) {
+      const ed = await er.json();
+      EXCESS_META = { months: ed.months || [], summary: ed.summary || {}, generated: ed.generated || "" };
+      EXCESS_RAW = Object.values(ed.cases || {}).map(c => Object.assign({}, c, {
+        months_on: Object.keys(c.balance_history || {}).length,
+      }));
+      const oc = document.getElementById("tov-count");
+      const nActive = EXCESS_RAW.filter(c => c.status === "active").length;
+      if (oc) oc.textContent = nActive ? nActive.toLocaleString() : "—";
+      if (_activePane === "pane-taxoveragesraw") {
+        _renderedPanes.add("pane-taxoveragesraw");
+        applyOverage();
+      }
+    }
+  } catch (e) { /* excess_proceeds.json optional */ }
 
   // Code Violations — same optional-fetch pattern.
   await loadCv();
@@ -15463,6 +15601,19 @@ document.querySelectorAll("#deferral-table th[data-sort]").forEach(th => {
       DEFERRAL_SORT_DIR = (key === "market_value" || key === "deferral_start" || key === "tax_owed") ? "desc" : "asc";
     }
     applyDeferral();
+  });
+});
+
+document.querySelectorAll("#tov-table th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (EXCESS_SORT_KEY === key) {
+      EXCESS_SORT_DIR = EXCESS_SORT_DIR === "asc" ? "desc" : "asc";
+    } else {
+      EXCESS_SORT_KEY = key;
+      EXCESS_SORT_DIR = (key === "balance" || key === "months_on") ? "desc" : "asc";
+    }
+    applyOverage();
   });
 });
 
