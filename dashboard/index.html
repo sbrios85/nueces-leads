@@ -587,6 +587,11 @@
     color: #f472b6;
     border-color: rgba(244, 114, 182, 0.4);
   }
+  .stack-badge-noo {
+    background: rgba(251, 146, 60, 0.15);
+    color: #fb923c;
+    border-color: rgba(251, 146, 60, 0.4);
+  }
   /* Exemption context tags appended under a lead's owner cell.
      HS = owner-occupied; the amber "elig" tags (OV65/DP/DV/DVHS)
      mean the owner could file a §33.06 tax deferral; EXEMPT = a
@@ -11856,6 +11861,34 @@ const _stackStreetSuffixes = {
   "WAY": "WAY", "ST": "ST",
 };
 
+const _STACK_SUFFIX_SET = new Set([
+  ...Object.keys(_stackStreetSuffixes), ...Object.values(_stackStreetSuffixes),
+]);
+// Core address for owner-occupancy comparison: normalized, then trailing
+// street-suffix token dropped so "1822 KEYS ST" === "1822 KEYS".
+function _stackAddrCore(addr) {
+  const s = _stackNormalizeAddress(addr);
+  if (!s) return "";
+  const t = s.split(" ");
+  if (t.length >= 3 && _STACK_SUFFIX_SET.has(t[t.length - 1])) t.pop();
+  return t.join(" ");
+}
+// Non-owner-occupied (absentee): mailing street differs from the property
+// street, both present. Can't be determined with no mailing address.
+function _stackIsNonOwnerOccupied(propAddress, mailStreet) {
+  if (!mailStreet || !propAddress) return false;
+  const p = _stackAddrCore(propAddress);
+  const m = _stackAddrCore(mailStreet);
+  return !!(p && m && p !== m);
+}
+// 2nd property-address line: "City, ST ZIP" from whatever parts exist.
+function _stackPropCsz(e) {
+  let line = e.prop_city ? fmtTitle(e.prop_city) : "";
+  if (e.prop_state) line += (line ? ", " : "") + e.prop_state;
+  if (e.prop_zip)   line += (line ? " " : "") + e.prop_zip;
+  return line ? `<br><small style="color:var(--muted);">${esc(line)}</small>` : "";
+}
+
 function _stackNormalizeAddress(addr) {
   if (!addr) return "";
   let s = String(addr).toUpperCase().trim();
@@ -11952,7 +11985,9 @@ function _stackBuildList() {
     if (!entry) continue;
     const isDelq = !!(entry.ncad_account_num && _delqInc[entry.ncad_account_num]);
 
-    if (!g.hasAuto && !multiType && !isDelq) continue;   // doesn't qualify
+    // Non-owner-occupied (absentee) is a decorator too: alone it forms no
+    // group, but on a single-source parcel it counts as a 2nd signal.
+    if (!g.hasAuto && !multiType && !isDelq && !entry.non_owner_occupied) continue;
     list.push(entry);
   }
   return list;
@@ -12072,6 +12107,15 @@ function _stackBuildEntry(key, group) {
     if (!ncadOwnerId && rec.ncad_owner_id) ncadOwnerId = rec.ncad_owner_id;
     if (!ncadYear && rec.ncad_year) ncadYear = rec.ncad_year;
   }
+  // Property city / state / zip for the 2nd address line. CV / DELQ /
+  // deferral records carry these; CCLN usually doesn't.
+  let propCity = "", propState = "", propZip = "";
+  for (const sig of group.signals) {
+    const rec = sig.record;
+    if (!propCity && rec.prop_city) propCity = rec.prop_city;
+    if (!propState && rec.prop_state) propState = rec.prop_state;
+    if (!propZip && rec.prop_zip) propZip = rec.prop_zip;
+  }
   // Latest filed date across all signals (for sorting / tie-break)
   let latestFiled = "";
   for (const sig of group.signals) {
@@ -12108,6 +12152,10 @@ function _stackBuildEntry(key, group) {
     distinctTypeCount: types.length,
     signals: group.signals, // [{source, record}, ...]
     prop_address: propAddress,
+    prop_city: propCity,
+    prop_state: propState,
+    prop_zip: propZip,
+    non_owner_occupied: _stackIsNonOwnerOccupied(propAddress, mailStreet),
     owner,
     ncad_account_num: ncad,
     ncad_prop_id: ncadPropId,
@@ -12171,6 +12219,7 @@ function _stackIsBankruptcy(e) {
 function _stackPillCount(entry) {
   return (entry.distinctTypeCount || 0)
        + (entry.delq_hit ? 1 : 0)
+       + (entry.non_owner_occupied ? 1 : 0)
        + _stackTaxFlags(entry).length;
 }
 const STACK_SORT_TYPES = {
@@ -12242,6 +12291,9 @@ function applyStack() {
     if (!e.market_value && d && Number(d.market_value)) e.market_value = Number(d.market_value);
     if (!e.property_type && d && d.state_prop_code) e.property_type = propTypeLabel(d.state_prop_code);
     if (!e.ncad_prop_id && d && d.ncad_prop_id) e.ncad_prop_id = d.ncad_prop_id;
+    if (!e.prop_zip && d && d.prop_zip) e.prop_zip = d.prop_zip;
+    if (!e.prop_city && d && d.prop_city) e.prop_city = d.prop_city;
+    if (!e.prop_state && d && d.prop_state) e.prop_state = d.prop_state;
   }
   // Sidebar count badge reflects the FULL stacked total (the Hide Lots
   // toggle is a view filter, so it shouldn't move the global nav count).
@@ -12410,8 +12462,11 @@ function _buildStackRow(entry) {
   }
 
   // Mail address — 2-line (street / City, ST ZIP)
+  const nooPill = entry.non_owner_occupied
+    ? `<br><span class="stack-badge stack-badge-noo" style="margin-top:3px;">Non-Owner Occupied</span>`
+    : "";
   const mailCell = entry.mail_street
-    ? esc(fmtTitle(entry.mail_street)) + (entry.mail_csz ? `<br><small>${esc(fmtTitle(entry.mail_csz))}</small>` : "")
+    ? esc(fmtTitle(entry.mail_street)) + (entry.mail_csz ? `<br><small>${esc(fmtTitle(entry.mail_csz))}</small>` : "") + nooPill
     : dash;
 
   // Tax Status — badges from the DELQ flags (only when the parcel is delinquent)
@@ -12458,7 +12513,7 @@ function _buildStackRow(entry) {
     <td>${statusCell}</td>
     <td>${(badgeHtml + delqBadge + taxFlagBadges) || dash}</td>
     <td>${(esc(fmtOwner(entry.owner || "")) || dash) + exemptionTagsHtml(entry.ncad_account_num)}</td>
-    <td>${entry.prop_address ? esc(fmtTitle(entry.prop_address)) : dash}</td>
+    <td>${entry.prop_address ? esc(fmtTitle(entry.prop_address)) + _stackPropCsz(entry) : dash}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
     <td>${mailCell}</td>
     <td>${money(entry.market_value) || dash}</td>
