@@ -3094,7 +3094,7 @@
       <th style="width: 190px;">Mail Address</th>
       <th data-sort="market_value"  style="width: 110px;">Market Value</th>
       <th data-sort="lien_total"    style="width: 120px;">Total Lien Amount</th>
-      <th data-sort="delq_owed"     style="width: 120px;">Delinquent Taxes<br><small style="font-weight:400;color:var(--muted);">Years Behind</small></th>
+      <th data-sort="owed_combined" style="width: 120px;">Delinquent Taxes<br><small style="font-weight:400;color:var(--muted);">Years Behind</small></th>
       <th style="width: 140px;">Tax Status</th>
       <th style="width: 170px;">Violation Type</th>
       <th data-sort="property_type" style="width: 120px;">Property Type</th>
@@ -11819,7 +11819,7 @@ const STACK_SOURCES = [
     type: "deferral",
     label: "Tax Deferral",
     badgeClass: "stack-badge-deferral",
-    autoInclude: true,    // a §33.06 deferral is a real distress signal on its own
+    autoInclude: false,   // a deferral only stacks when the property also carries another signal (city lien / code violation / foreclosure / vacant)
     getRecords: () => (typeof DEFERRAL_RAW !== "undefined" ? DEFERRAL_RAW : []),
     isActive: (r) => getDeferralStatus(r.geo_id) !== "dead",
     primaryKey: (r) => r.geo_id,
@@ -12157,6 +12157,7 @@ const STACK_SORT_TYPES = {
   market_value:  "num",
   lien_total:    "num",
   delq_owed:     "num",
+  owed_combined: "num",
   delq_years:    "num",
   property_type: "string",
   latest_filed:  "string",     // column removed, kept for stable secondary sort
@@ -12203,6 +12204,15 @@ function applyStack() {
     e.delq_years_list = d ? (d.del_years || []) : [];
     e.delq_flags = d ? (d.flags || {}) : null;
     e.delq_hit   = !!d;
+    // Deferred-tax balance (from the NCTAX scrape). A tax-deferral owner
+    // owes back taxes too, just under a deferral instead of delinquent
+    // status, so attach it for the merged Delinquent Taxes column.
+    const _tb = (e.ncad_account_num && typeof NCTAX_BALANCES !== "undefined") ? NCTAX_BALANCES[e.ncad_account_num] : null;
+    e.deferral_owed = (_tb && typeof _tb.total_due === "number") ? _tb.total_due : 0;
+    e.is_deferral = !!(e.byType && e.byType.deferral);
+    // Unified back-taxes figure for the column's sort: delinquent amount
+    // when delinquent, otherwise the deferred balance.
+    e.owed_combined = e.delq_hit ? e.delq_owed : e.deferral_owed;
     // CCLN carries no market value / property type — backfill from DELQ
     // (NCAD-enriched) when the parcel is also on the delinquent list.
     if (!e.market_value && d && Number(d.market_value)) e.market_value = Number(d.market_value);
@@ -12409,6 +12419,11 @@ function _buildStackRow(entry) {
       ? `<br><small style="color:var(--muted);cursor:help;"${yrList ? ` title="Delinquent years: ${esc(yrList)}"` : ""}>${yrs} yr${yrs === 1 ? "" : "s"} behind</small>`
       : "";
     delqCell = top + bottom;
+  } else if (entry.is_deferral) {
+    // Not on the delinquent list, but a tax-deferral owner still owes back
+    // taxes — show the deferred balance (when scraped) + a Tax Deferral pill.
+    const dtop = money(entry.deferral_owed) || dash;
+    delqCell = dtop + `<br><span class="stack-badge stack-badge-deferral" style="margin-top:3px;">Tax Deferral</span>`;
   }
 
   tr.innerHTML = `
