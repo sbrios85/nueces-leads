@@ -12422,6 +12422,9 @@ function _buildStackRow(entry) {
   const delqBadge = entry.delq_hit
     ? `<span class="stack-badge stack-badge-delq">Delinquent Taxes</span>`
     : "";
+  const nooBadge = entry.non_owner_occupied
+    ? `<span class="stack-badge stack-badge-noo">Non-Owner Occupied</span>`
+    : "";
   // Specific tax-status pills (Suit Filed / Judgment / Tax Deferral /
   // Payment Plan) — anything beyond plain "delinquent". Each is its own
   // pill and counts toward the row's pill total.
@@ -12511,7 +12514,7 @@ function _buildStackRow(entry) {
 
   tr.innerHTML = `
     <td>${statusCell}</td>
-    <td>${(badgeHtml + delqBadge + taxFlagBadges) || dash}</td>
+    <td>${(badgeHtml + delqBadge + nooBadge + taxFlagBadges) || dash}</td>
     <td>${(esc(fmtOwner(entry.owner || "")) || dash) + exemptionTagsHtml(entry.ncad_account_num)}</td>
     <td>${entry.prop_address ? esc(fmtTitle(entry.prop_address)) + _stackPropCsz(entry) : dash}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
