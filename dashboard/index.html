@@ -2989,12 +2989,14 @@
   <table id="tov-table">
     <thead><tr>
       <th data-sort="status"       style="width: 80px;">Status</th>
-      <th data-sort="owner"        style="width: 240px;">Owner</th>
-      <th style="width: 220px;">Property Address</th>
+      <th data-sort="owner"        style="width: 200px;">Owner</th>
+      <th style="width: 180px;">New Owner</th>
+      <th style="width: 200px;">Property Address</th>
       <th style="width: 50px;">Map</th>
       <th data-sort="balance"      style="width: 130px;">Excess Proceeds</th>
       <th data-sort="case_number"  style="width: 150px;">Case #</th>
-      <th data-sort="plaintiff"    style="width: 200px;">Plaintiff</th>
+      <th style="width: 200px;">Legal Description</th>
+      <th data-sort="plaintiff"    style="width: 180px;">Plaintiff</th>
       <th style="width: 50px;">NCAD</th>
       <th style="width: 50px;">NCTAX</th>
     </tr></thead>
@@ -10095,7 +10097,10 @@ function _tovSaveField(inp){
 function _tovEff(c){
   const o = _tovGet(c.case_number);
   return {
-    owner: c.owner || "",
+    // After a tax-sale the parcel is under the GRANTEE, so NCAD/NCTAX
+    // owner-searches should use the new owner when we have it; fall back
+    // to the former owner (the lead) from the excess-proceeds report.
+    owner: o.new_owner || c.owner || "",
     prop_address: o.prop_address || "",
     ncad_account_num: o.ncad_account_num || "",
     ncad_prop_id: o.ncad_prop_id || "",
@@ -10171,6 +10176,13 @@ function buildOverageRow(c){
         ' data-case="' + _cse + '" data-field="ncad_account_num"' +
         ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
     '</div>';
+  const _o = _tovGet(c.case_number);
+  const newOwnerCell = '<input class="tov-addr" type="text" value="' + esc(_o.new_owner || "") +
+    '" placeholder="+ new owner (grantee)" data-case="' + _cse + '" data-field="new_owner"' +
+    ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">';
+  const legalCell = '<input class="tov-addr" type="text" value="' + esc(_o.legal_description || "") +
+    '" placeholder="+ legal description" data-case="' + _cse + '" data-field="legal_description"' +
+    ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">';
   const mapCell   = (typeof mapCellHtml   === "function") ? mapCellHtml(eff)   : dash;
   const ncadCell  = (typeof ncadCellHtml  === "function") ? ncadCellHtml(eff)  : dash;
   const nctaxCell = (typeof nctaxCellHtml === "function") ? nctaxCellHtml(eff) : dash;
@@ -10189,10 +10201,12 @@ function buildOverageRow(c){
   tr.innerHTML =
     "<td>" + statusCell + "</td>" +
     "<td>" + ownerCell + "</td>" +
+    '<td class="addr-cell">' + newOwnerCell + "</td>" +
     '<td class="addr-cell">' + addrCell + "</td>" +
     '<td style="text-align:center;">' + mapCell + "</td>" +
     "<td>" + balCell + "</td>" +
     "<td>" + caseCell + "</td>" +
+    '<td class="addr-cell">' + legalCell + "</td>" +
     "<td>" + plaintiffCell + "</td>" +
     '<td style="text-align:center;">' + ncadCell + "</td>" +
     '<td style="text-align:center;">' + nctaxCell + "</td>";
