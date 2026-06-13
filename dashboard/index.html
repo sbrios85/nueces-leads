@@ -2973,10 +2973,8 @@
       <th data-sort="owner"        style="width: 240px;">Owner</th>
       <th data-sort="case_number"  style="width: 150px;">Case #</th>
       <th data-sort="balance"      style="width: 130px;">Excess Proceeds</th>
-      <th data-sort="months_on"    style="width: 90px; text-align:center;">Months on Report</th>
-      <th data-sort="first_seen"   style="width: 100px;">First Seen</th>
-      <th data-sort="last_seen"    style="width: 110px;">Last Seen</th>
-      <th data-sort="plaintiff"    style="width: 220px;">Plaintiff</th>
+      <th style="width: 50px;">NCAD</th>
+      <th data-sort="plaintiff"    style="width: 260px;">Plaintiff</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -10037,10 +10035,17 @@ let EXCESS_FILTERED = [];
 let EXCESS_SORT_KEY = "balance";
 let EXCESS_SORT_DIR = "desc";
 let EXCESS_SHOW_CLAIMED = false;
+// Hide leads below this balance. Raise it later to tighten the list.
+let EXCESS_MIN_BALANCE = 5000;
+function _excessInScope(c){ return (Number(c.balance) || 0) >= EXCESS_MIN_BALANCE; }
+// Latest report period (e.g. "2026-06"); a lead first seen here is brand new.
+function _excessLatestPeriod(){
+  const m = (EXCESS_META && EXCESS_META.months) || [];
+  return m.length ? m[m.length - 1].period : null;
+}
 const EXCESS_SORT_TYPES = {
   status:"string", owner:"string", case_number:"string",
-  balance:"number", months_on:"number", first_seen:"string",
-  last_seen:"string", plaintiff:"string",
+  balance:"number", plaintiff:"string",
 };
 const _MON3 = ["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function _ymLabel(ym){
@@ -10052,7 +10057,8 @@ function applyOverage(){
   const tbody  = document.querySelector("#tov-table tbody");
   const emptyEl= document.getElementById("tov-empty");
   const countEl= document.getElementById("tov-count");
-  const active = EXCESS_RAW.filter(c => c.status === "active");
+  const inScope = EXCESS_RAW.filter(_excessInScope);
+  const active = inScope.filter(c => c.status === "active");
   if (countEl) countEl.textContent = active.length ? active.length.toLocaleString() : "—";
   if (!EXCESS_RAW.length) {
     if (tbody) tbody.innerHTML = "";
@@ -10061,7 +10067,7 @@ function applyOverage(){
     return;
   }
   if (emptyEl) emptyEl.hidden = true;
-  let rows = EXCESS_SHOW_CLAIMED ? EXCESS_RAW.slice() : active.slice();
+  let rows = EXCESS_SHOW_CLAIMED ? inScope.slice() : active.slice();
   const type = EXCESS_SORT_TYPES[EXCESS_SORT_KEY] || "string";
   rows.sort((a,b)=>_cvCompare(a,b,EXCESS_SORT_KEY,EXCESS_SORT_DIR,type));
   if (EXCESS_SHOW_CLAIMED) {
@@ -10093,7 +10099,15 @@ function buildOverageRow(c){
     : '<span class="pill status status-closed">Active</span>';
   const totalMonths = (EXCESS_META && EXCESS_META.summary && EXCESS_META.summary.months_tracked) || 0;
   const ripe = !claimed && totalMonths && c.months_on >= totalMonths;
-  const ownerCell = esc(fmtOwner(c.owner || "")) || dash;
+  const isNew = !claimed && c.first_seen && c.first_seen === _excessLatestPeriod();
+  const newIcon = isNew
+    ? ' <span title="New this month" style="color:#22c55e;font-weight:700;font-size:11px;vertical-align:middle;">● NEW</span>'
+    : "";
+  const ownerCell = (esc(fmtOwner(c.owner || "")) || dash) + newIcon;
+  // Report has no parcel link, only the owner name. NCAD cell falls back to
+  // an owner-name search (the helper shows a search glass when no prop_id).
+  const ncadRec = { owner: c.owner || "" };
+  const ncadCell = (typeof ncadCellHtml === "function") ? ncadCellHtml(ncadRec) : dash;
   const caseCell = esc(c.case_number) +
     '<br><small style="color:var(--muted);">' +
     (c.case_type === "district_civil" ? "District civil" : "Tax cause") + '</small>';
@@ -10111,19 +10125,18 @@ function buildOverageRow(c){
     "<td>" + ownerCell + "</td>" +
     "<td>" + caseCell + "</td>" +
     "<td>" + balCell + "</td>" +
-    '<td style="text-align:center;">' + monthsCell + "</td>" +
-    "<td>" + firstCell + "</td>" +
-    "<td>" + lastCell + "</td>" +
+    '<td style="text-align:center;">' + ncadCell + "</td>" +
     "<td>" + plaintiffCell + "</td>";
   return tr;
 }
 function renderOverageStats(){
   const el = document.getElementById("tov-stats");
   if (!el) return;
-  const active  = EXCESS_RAW.filter(c => c.status === "active");
-  const claimed = EXCESS_RAW.filter(c => c.status === "claimed");
-  const totalMonths = (EXCESS_META && EXCESS_META.summary && EXCESS_META.summary.months_tracked) || 0;
-  const ripe = active.filter(c => totalMonths && c.months_on >= totalMonths).length;
+  const inScope = EXCESS_RAW.filter(_excessInScope);
+  const active  = inScope.filter(c => c.status === "active");
+  const claimed = inScope.filter(c => c.status === "claimed");
+  const latestP = _excessLatestPeriod();
+  const newCount = active.filter(c => c.first_seen === latestP).length;
   const totalBal = active.reduce((s,c)=>s+(Number(c.balance)||0),0);
   const balFmt = totalBal > 0 ? "$" + Math.round(totalBal).toLocaleString() : "—";
   const months = (EXCESS_META && EXCESS_META.months) || [];
@@ -10138,7 +10151,7 @@ function renderOverageStats(){
     '<div class="stats-title">Tax Overages</div>' +
     '<div class="stat"><div class="v">' + active.length.toLocaleString() + '</div><div class="k">Active Leads</div></div>' +
     '<div class="stat"><div class="v">' + balFmt + '</div><div class="k">Total Unclaimed</div></div>' +
-    '<div class="stat"><div class="v">' + ripe.toLocaleString() + '</div><div class="k">On Every Report</div></div>' +
+    '<div class="stat"><div class="v">' + newCount.toLocaleString() + '</div><div class="k">New This Month</div></div>' +
     '<div class="stat"><div class="v">' + claimed.length.toLocaleString() + '</div><div class="k">Claimed To Date</div></div>' +
     moveHtml;
 }
@@ -10425,7 +10438,7 @@ async function loadAll() {
         months_on: Object.keys(c.balance_history || {}).length,
       }));
       const oc = document.getElementById("tov-count");
-      const nActive = EXCESS_RAW.filter(c => c.status === "active").length;
+      const nActive = EXCESS_RAW.filter(c => c.status === "active" && _excessInScope(c)).length;
       if (oc) oc.textContent = nActive ? nActive.toLocaleString() : "—";
       if (_activePane === "pane-taxoveragesraw") {
         _renderedPanes.add("pane-taxoveragesraw");
@@ -15611,7 +15624,7 @@ document.querySelectorAll("#tov-table th[data-sort]").forEach(th => {
       EXCESS_SORT_DIR = EXCESS_SORT_DIR === "asc" ? "desc" : "asc";
     } else {
       EXCESS_SORT_KEY = key;
-      EXCESS_SORT_DIR = (key === "balance" || key === "months_on") ? "desc" : "asc";
+      EXCESS_SORT_DIR = (key === "balance") ? "desc" : "asc";
     }
     applyOverage();
   });
