@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-06-12T11:17:32+00:00",
+  "ran_at": "2026-06-13T10:19:22+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -7,68 +7,44 @@
     {
       "uid": "1008122147",
       "prop_address": "2214 NOGALES ST, CORPUS CHRISTI TX 78416-1657",
-      "result": "matched",
-      "ncad_prop_id": "295938",
-      "ncad_owner": "BITONI ROSA",
-      "ncad_legal": "SAN DIEGO BLK 6 LOT 26",
-      "market_value": 69721.0,
-      "additions": {
-        "owner": "BITONI ROSA",
-        "legal": "SAN DIEGO BLK 6 LOT 26",
-        "market_value": 69721.0,
-        "ncad_prop_id": "295938",
-        "ncad_owner_id": "705441",
-        "ncad_year": "2026",
-        "mail_address": "2214 Nogales St",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78416",
-        "ncad_account_num": "7614-0006-0260"
-      }
+      "result": "no-match",
+      "query": [
+        "StreetNumber:2214 StreetName:NOGALES"
+      ]
+    },
+    {
+      "uid": "1009210282",
+      "prop_address": "2730 GUADALUPE ST, CORPUS CHRISTI TX 78405-2923",
+      "result": "no-match",
+      "query": [
+        "StreetNumber:2730 StreetName:GUADALUPE"
+      ]
     },
     {
       "uid": "1008251510",
       "prop_address": "2114 HARVARD ST, CORPUS CHRISTI TX 78416-1231",
-      "result": "matched",
-      "ncad_prop_id": "267354",
-      "ncad_owner": "REYNA LEE OSWALD",
-      "ncad_legal": "MIDWAY BLK 8 LOT 7",
-      "market_value": 104742.0,
-      "additions": {
-        "owner": "REYNA LEE OSWALD",
-        "legal": "MIDWAY BLK 8 LOT 7",
-        "market_value": 104742.0,
-        "ncad_prop_id": "267354",
-        "ncad_owner_id": "764625",
-        "ncad_year": "2026",
-        "mail_address": "PO Box 484",
-        "mail_city": "Ingleside",
-        "mail_state": "TX",
-        "mail_zip": "78362",
-        "ncad_account_num": "5175-0008-0070"
-      }
+      "result": "no-match",
+      "query": [
+        "StreetNumber:2114 StreetName:HARVARD"
+      ]
+    },
+    {
+      "uid": "1009689817",
+      "prop_address": "114 LAS PALMAS DR, CORPUS CHRISTI TX 78418",
+      "result": "no-match",
+      "query": [
+        "StreetNumber:114 StreetName:LAS PALMAS",
+        "StreetNumber:114 StreetName:PALMAS",
+        "StreetNumber:114 StreetName:LAS"
+      ]
     },
     {
       "uid": "1008227652",
       "prop_address": "3725 PANAMA DR, CORPUS CHRISTI TX 78415-3329",
-      "result": "matched",
-      "ncad_prop_id": "208290",
-      "ncad_owner": "CARRIER BRENT LEE JR",
-      "ncad_legal": "CARROLL PLACE ADD LT 16 BK 3",
-      "market_value": 155938.0,
-      "additions": {
-        "owner": "CARRIER BRENT LEE JR",
-        "legal": "CARROLL PLACE ADD LT 16 BK 3",
-        "market_value": 155938.0,
-        "ncad_prop_id": "208290",
-        "ncad_owner_id": "787758",
-        "ncad_year": "2026",
-        "mail_address": "PO Box 270156",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78427",
-        "ncad_account_num": "1330-0003-0160"
-      }
+      "result": "no-match",
+      "query": [
+        "StreetNumber:3725 StreetName:PANAMA"
+      ]
     },
     {
       "uid": "1007738835",
