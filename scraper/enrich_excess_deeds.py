@@ -56,6 +56,7 @@ NAV_TIMEOUT_MS = 25_000
 
 _DEED_RE = re.compile(r"\bDEED\b", re.I)
 _SHERIFF_RE = re.compile(r"sheriff|nueces\s+county\s+sh", re.I)
+_SUFFIX_RE = re.compile(r",?\s+(JR|SR|II|III|IV)\.?$", re.I)
 
 
 def _last_first(owner: str) -> str:
@@ -65,8 +66,11 @@ def _last_first(owner: str) -> str:
     o = re.sub(r"\s+", " ", (owner or "").strip())
     if not o:
         return ""
-    if "," in o:                       # already Last, First
-        return o.replace(",", " ").strip()
+    m = _SUFFIX_RE.search(o)            # pull off trailing Jr/Sr/II/III/IV
+    if m:
+        o = o[:m.start()].strip()
+    if "," in o:                       # still Last, First -> leave as-is
+        return re.sub(r"\s+", " ", o.replace(",", " ")).strip()
     parts = o.split(" ")
     if len(parts) < 2:
         return o
