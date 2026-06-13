@@ -10096,14 +10096,18 @@ function _tovSaveField(inp){
 }
 function _tovEff(c){
   const o = _tovGet(c.case_number);
+  // Effective value = your manual edit (localStorage) first, then whatever
+  // the deed/NCAD scraper wrote into excess_proceeds.json, then blank.
+  const newOwner = o.new_owner || c.new_owner || "";
   return {
+    new_owner: newOwner,
+    legal_description: o.legal_description || c.legal_description || "",
     // After a tax-sale the parcel is under the GRANTEE, so NCAD/NCTAX
-    // owner-searches should use the new owner when we have it; fall back
-    // to the former owner (the lead) from the excess-proceeds report.
-    owner: o.new_owner || c.owner || "",
-    prop_address: o.prop_address || "",
-    ncad_account_num: o.ncad_account_num || "",
-    ncad_prop_id: o.ncad_prop_id || "",
+    // owner-searches use the new owner when present; else the former owner.
+    owner: newOwner || c.owner || "",
+    prop_address: o.prop_address || c.prop_address || "",
+    ncad_account_num: o.ncad_account_num || c.ncad_account_num || "",
+    ncad_prop_id: o.ncad_prop_id || c.ncad_prop_id || "",
   };
 }
 function applyOverage(){
@@ -10176,11 +10180,10 @@ function buildOverageRow(c){
         ' data-case="' + _cse + '" data-field="ncad_account_num"' +
         ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
     '</div>';
-  const _o = _tovGet(c.case_number);
-  const newOwnerCell = '<input class="tov-addr" type="text" value="' + esc(_o.new_owner || "") +
+  const newOwnerCell = '<input class="tov-addr" type="text" value="' + esc(eff.new_owner || "") +
     '" placeholder="+ new owner (grantee)" data-case="' + _cse + '" data-field="new_owner"' +
     ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">';
-  const legalCell = '<input class="tov-addr" type="text" value="' + esc(_o.legal_description || "") +
+  const legalCell = '<input class="tov-addr" type="text" value="' + esc(eff.legal_description || "") +
     '" placeholder="+ legal description" data-case="' + _cse + '" data-field="legal_description"' +
     ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">';
   const mapCell   = (typeof mapCellHtml   === "function") ? mapCellHtml(eff)   : dash;
