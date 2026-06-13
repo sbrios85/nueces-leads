@@ -9099,7 +9099,17 @@ function renderToday() {
       <div class="tc-count">${noNcad.length}</div>
     </div>`);
 
-  document.getElementById("today-actions").innerHTML = actions.join("");
+  // Sort Needs-Attention cards by urgency so they re-order themselves as their
+  // state changes: red (tc-urgent) on top, orange (tc-alert) in the middle,
+  // completed/green (tc-clear/tc-ok) at the bottom. The index tiebreaker keeps
+  // it stable, so cards in the same tier hold their original push order.
+  const _cardRank = (html) =>
+    /tc-urgent/.test(html) ? 0 : (/tc-alert/.test(html) ? 1 : 2);
+  const _sortedActions = actions
+    .map((html, i) => [html, i])
+    .sort((a, b) => (_cardRank(a[0]) - _cardRank(b[0])) || (a[1] - b[1]))
+    .map((o) => o[0]);
+  document.getElementById("today-actions").innerHTML = _sortedActions.join("");
 
   // ---------- Render: pipeline ----------
   const stageDefs = [
@@ -9195,6 +9205,20 @@ function _dueDateLabel(dt) {
   const M = ["January","February","March","April","May","June","July",
              "August","September","October","November","December"];
   return M[dt.getMonth()] + " " + dt.getDate() + ", " + dt.getFullYear();
+}
+// Stats-bar line for the monthly CV / delinquent imports: "Next import |
+// <list> (due Mon D, YYYY)" — amber once that day arrives, muted before.
+function _monthlyNextDueHtml(importDateStr, dayOfMonth, valText) {
+  const nd = _monthlyNextDue(importDateStr, dayOfMonth);
+  if (!nd) return "";
+  const due = Date.now() >= nd.getTime();
+  const color = due ? "var(--bad)" : "var(--muted)";
+  const tail = due ? "(due now)" : "(due " + _dueDateLabel(nd) + ")";
+  return '<div class="stats-meta">' +
+         '<span class="lbl">Next import</span>' +
+         '<span><span class="val">' + valText + '</span> ' +
+         '<span class="ago" style="color:' + color + ';">' + tail + '</span></span>' +
+         '</div>';
 }
 function _ncadNextExport(lastDateStr) {
   const d = new Date(lastDateStr);
@@ -9486,6 +9510,7 @@ function renderCvStats() {
   const statsEl = document.getElementById("cv-stats");
   if (!statsEl) return;
   const fresh = _freshnessHtml("Last Code-Violation Import", CV_IMPORT_DATE);
+  const cvNext = _monthlyNextDueHtml(CV_IMPORT_DATE, 1, "CV list");
   if (!CV_RAW.length) {
     statsEl.innerHTML = `
       <div class="stats-title">Code Violations</div>
@@ -9498,7 +9523,8 @@ function renderCvStats() {
       <div class="stat"><div class="v">—</div><div class="k">Junked Vehicle</div></div>
       <div class="stat"><div class="v">—</div><div class="k">PMC Standards</div></div>
       <div class="stat"><div class="v">—</div><div class="k">Total market value</div></div>
-      ${fresh}`;
+      ${fresh}
+      ${cvNext}`;
     return;
   }
   let nActive = 0, totMv = 0;
@@ -9530,7 +9556,8 @@ function renderCvStats() {
     <div class="stat"><div class="v">${_vc("Junked Vehicle")}</div><div class="k">Junked Vehicle</div></div>
     <div class="stat"><div class="v">${_vc("PMC Standards")}</div><div class="k">PMC Standards</div></div>
     <div class="stat"><div class="v">$${Math.round(totMv).toLocaleString()}</div><div class="k">Total market value</div></div>
-    ${fresh}`;
+    ${fresh}
+    ${cvNext}`;
 }
 
 function closeCvStatusMenu() {
@@ -10565,6 +10592,7 @@ function renderDelqStats() {
   const delqFreshHtml = _freshnessHtml(
     "Last Delinquent Taxes Upload",
     DELQ_IMPORT_DATE);
+  const delqNextHtml = _monthlyNextDueHtml(DELQ_IMPORT_DATE, 2, "Delinquent-tax list");
 
   // Zero-state when no data has loaded.
   if (!DELQ_RAW.length) {
@@ -10575,6 +10603,7 @@ function renderDelqStats() {
       <div class="stat"><div class="v">—</div><div class="k">Judgment</div></div>
       <div class="stat"><div class="v">—</div><div class="k">Suit filed</div></div>
       ${delqFreshHtml}
+      ${delqNextHtml}
     `;
     return;
   }
@@ -10606,6 +10635,7 @@ function renderDelqStats() {
     <div class="stat"><div class="v">${nSuit.toLocaleString()}</div><div class="k">Suit filed</div></div>
     <div class="stat"><div class="v">${nBankruptcy.toLocaleString()}</div><div class="k">Bankruptcy</div></div>
     ${delqFreshHtml}
+    ${delqNextHtml}
     <button id="delq-hide-bankruptcy-btn" type="button"
         onclick="DELQ_HIDE_BANKRUPTCY = !DELQ_HIDE_BANKRUPTCY; applyDelq();"
         title="Hide bankruptcy-flagged properties (automatic stay paused collection)"
