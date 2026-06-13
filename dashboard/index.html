@@ -11936,14 +11936,24 @@ function _stackBuildList() {
   //   - It has signals from 2+ distinct source TYPES (overlap). Multiple
   //     records from the SAME type still count as one type for inclusion.
   const list = [];
+  // Delinquent taxes is a decorator (not a stacking source), but it counts
+  // as a SECOND signal for inclusion: a single-source property that is also
+  // tax-delinquent qualifies (e.g. code violation + delinquent, or tax
+  // deferral + delinquent). Delinquent-only never reaches here — with no
+  // stacking source of its own it forms no group.
+  const _delqInc = _stackDelqByNcad();
   for (const [key, g] of groups.entries()) {
     const distinctTypes = Object.keys(g.byType);
     const multiType = distinctTypes.length >= 2;
-    if (!g.hasAuto && !multiType) continue;   // doesn't qualify
 
-    // Build the consolidated stack row
+    // Build the row first so the delinquent check uses the same NCAD
+    // account the row will display.
     const entry = _stackBuildEntry(key, g);
-    if (entry) list.push(entry);
+    if (!entry) continue;
+    const isDelq = !!(entry.ncad_account_num && _delqInc[entry.ncad_account_num]);
+
+    if (!g.hasAuto && !multiType && !isDelq) continue;   // doesn't qualify
+    list.push(entry);
   }
   return list;
 }
