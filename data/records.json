@@ -1,38 +1,13 @@
 {
-  "fetched_at": "2026-06-12T18:11:25.480885+00:00",
+  "fetched_at": "2026-06-13T17:27:52.979662+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-05-13",
-    "end": "2026-06-12"
+    "start": "2026-05-14",
+    "end": "2026-06-13"
   },
-  "total": 73,
+  "total": 71,
   "with_address": 32,
   "records": [
-    {
-      "doc_num": "2026019660",
-      "doc_type": "LIEN",
-      "filed": "2026-06-05",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "JK HOSPITALITY MANAGEMENT LLC",
-      "grantee": "CITY OF CORPUS CHRISTI",
-      "amount": null,
-      "legal": "5224 INTERSTATE HWY 37 CORPUS CHRISTI TX 78407 (Lot 3)",
-      "prop_address": "5224 INTERSTATE HWY",
-      "prop_city": "37 CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78407",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019660",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 60
-    },
     {
       "doc_num": "2026018188",
       "doc_type": "LIS PENDENS",
@@ -79,31 +54,6 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018084",
       "flags": [
         "Lis pendens",
-        "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026016583",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-13",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "ORION HEALTH SERVICES INC",
-      "grantee": "USA INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NUMBER 540232326",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016583",
-      "flags": [
-        "Tax lien",
         "LLC / corp owner"
       ],
       "score": 50
@@ -159,6 +109,30 @@
       "score": 50
     },
     {
+      "doc_num": "2026019660",
+      "doc_type": "LIEN",
+      "filed": "2026-06-05",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "JK HOSPITALITY MANAGEMENT LLC",
+      "grantee": "CITY OF CORPUS CHRISTI",
+      "amount": null,
+      "legal": "5224 INTERSTATE HWY 37 CORPUS CHRISTI TX 78407 (Lot 3)",
+      "prop_address": "5224 INTERSTATE HWY",
+      "prop_city": "37 CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78407",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019660",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 45
+    },
+    {
       "doc_num": "2026018661",
       "doc_type": "LIEN",
       "filed": "2026-05-29",
@@ -203,30 +177,6 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018652",
       "flags": [
         "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026019631",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-05",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "BERRY GABRIELA",
-      "grantee": "LOANDEPOT.COM",
-      "amount": null,
-      "legal": "BAYSIDE ACRES Lot: 5 Block: 1 (Lot 5, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019631",
-      "flags": [
-        "New this week"
       ],
       "score": 45
     },
@@ -591,30 +541,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026016582",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-13",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "VILLARREAL ALBERT",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NUMBER 540213026",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026016582",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026019146",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-06-02",
@@ -687,30 +613,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026017107",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-18",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "BLANCO JUAN L",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 540662526",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017107",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026017106",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-18",
@@ -735,15 +637,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026018076",
+      "doc_num": "2026017107",
       "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-26",
+      "filed": "2026-05-18",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "COASTAL BEND ONCOLOGY HEMATOLOGY P A",
-      "grantee": "USA INTERNAL REVENUE",
+      "owner": "BLANCO JUAN L",
+      "grantee": "INTERNAL REVENUE SERVICE",
       "amount": null,
-      "legal": "SERIAL NO 541263526",
+      "legal": "SERIAL NO 540662526",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -752,7 +654,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018076",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017107",
       "flags": [
         "Tax lien"
       ],
@@ -783,15 +685,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026017108",
+      "doc_num": "2026018076",
       "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-18",
+      "filed": "2026-05-26",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "CLEM ESMERALDA",
-      "grantee": "INTERNAL REVENUE SERVICE",
+      "owner": "COASTAL BEND ONCOLOGY HEMATOLOGY P A",
+      "grantee": "USA INTERNAL REVENUE",
       "amount": null,
-      "legal": "SERIAL NO 540666326",
+      "legal": "SERIAL NO 541263526",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -800,7 +702,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017108",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018076",
       "flags": [
         "Tax lien"
       ],
@@ -825,6 +727,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018077",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026017108",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-18",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "CLEM ESMERALDA",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 540666326",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017108",
       "flags": [
         "Tax lien"
       ],
@@ -1577,6 +1503,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018097",
+      "flags": [],
+      "score": 30
+    },
+    {
+      "doc_num": "2026019631",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-06-05",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "BERRY GABRIELA",
+      "grantee": "LOANDEPOT.COM",
+      "amount": null,
+      "legal": "BAYSIDE ACRES Lot: 5 Block: 1 (Lot 5, Block 1)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019631",
       "flags": [],
       "score": 30
     },
