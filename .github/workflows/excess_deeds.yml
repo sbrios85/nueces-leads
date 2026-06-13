@@ -1,0 +1,50 @@
+name: Excess Proceeds — Deed Lookup
+
+on:
+  workflow_dispatch:
+    inputs:
+      min_balance:
+        description: "Only process active leads at/above this balance"
+        default: "5000"
+      limit:
+        description: "Max leads to process (0 = no limit)"
+        default: "0"
+      only_missing:
+        description: "Skip leads that already have a New Owner (true/false)"
+        default: "false"
+
+permissions:
+  contents: write
+
+jobs:
+  deeds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 lxml playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Run deed lookup
+        run: |
+          EXTRA=""
+          if [ "${{ inputs.only_missing }}" = "true" ]; then EXTRA="--only-missing"; fi
+          python scraper/enrich_excess_deeds.py \
+            --min-balance "${{ inputs.min_balance }}" \
+            --limit "${{ inputs.limit }}" $EXTRA
+
+      - name: Commit results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dashboard/excess_proceeds.json
+          git diff --staged --quiet || git commit -m "Excess proceeds: deed lookup (new owner + legal)"
+          git push
