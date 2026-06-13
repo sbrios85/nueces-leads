@@ -2929,6 +2929,7 @@
       <th style="width: 46px;">Map</th>
       <th data-sort="deferral_types" style="width: 130px;">Deferral Type</th>
       <th data-sort="market_value"   style="width: 110px;">Market Value</th>
+      <th data-sort="tax_owed"       style="width: 110px;">Tax Owed</th>
       <th data-sort="exemptions"     style="width: 150px;">Exemptions</th>
       <th data-sort="legal"          style="width: 160px;">Legal Description</th>
       <th style="width: 46px;">NCAD</th>
@@ -9796,6 +9797,7 @@ function renderVacantStats() {
 let DEFERRAL_RAW = [];
 let EXEMPTIONS_MAP = {};
 let DEFERRAL_GENERATED = "";
+let NCTAX_BALANCES = {};
 let DEFERRAL_FILTERED = [];
 let DEFERRAL_SORT_KEY = "deferral_start";
 let DEFERRAL_SORT_DIR = "desc";
@@ -9852,7 +9854,7 @@ function setDeferralStatus(key, status){ const s = loadDeferralStatus(); s[key] 
 const DEFERRAL_SORT_TYPES = {
   status:"string", deferral_start:"string", owner:"string",
   prop_address:"string", deferral_types:"string",
-  market_value:"number", exemptions:"string",
+  market_value:"number", tax_owed:"number", exemptions:"string",
 };
 
 function closeDeferralStatusMenu(){ const m = document.getElementById("deferral-status-menu"); if (m) m.remove(); document.removeEventListener("click", _deferralMenuOutside, true); }
@@ -9975,6 +9977,9 @@ function buildDeferralRow(r, isDead){
   const typeCell = _deferralTypeBadges(r.deferral_types) || dash;
   const mv = Number(r.market_value) || 0;
   const mvCell = mv > 0 ? "$" + mv.toLocaleString("en-US", {maximumFractionDigits: 0}) : dash;
+  const owed = (typeof r.tax_owed === "number") ? r.tax_owed : null;
+  const owedCell = (owed === null) ? dash
+                 : (owed > 0 ? "$" + owed.toLocaleString("en-US", {maximumFractionDigits: 0}) : "$0");
   const exCell = r.exemptions ? esc(r.exemptions.split(";").join(", ")) : dash;
   const legal = r.legal || "";
   const legalCell = legal ? `<span title="${esc(legal)}">${esc(legal)}</span>` : dash;
@@ -9986,6 +9991,7 @@ function buildDeferralRow(r, isDead){
     <td style="text-align:center;">${mapCellHtml(r)}</td>
     <td>${typeCell}</td>
     <td>${mvCell}</td>
+    <td>${owedCell}</td>
     <td>${exCell}</td>
     <td class="legal">${legalCell}</td>
     <td style="text-align:center;">${ncadCellHtml(r)}</td>
@@ -10000,6 +10006,8 @@ function renderDeferralStats(){
   const ov65 = has("OV65") + has("OV65S");
   const dp = has("DP") + has("DPS");
   const dv = DEFERRAL_RAW.filter(r => /DV/.test(r.deferral_types || "")).length;
+  const totalOwed = DEFERRAL_RAW.reduce((s, r) => s + (typeof r.tax_owed === "number" ? r.tax_owed : 0), 0);
+  const owedFmt = totalOwed > 0 ? "$" + Math.round(totalOwed).toLocaleString() : "\u2014";
   const fresh = _freshnessHtml("Last Appraisal Export Update", DEFERRAL_GENERATED);
   const nextEx = _ncadNextExportHtml(DEFERRAL_GENERATED);
   el.innerHTML = `
@@ -10008,6 +10016,7 @@ function renderDeferralStats(){
     <div class="stat"><div class="v">${ov65.toLocaleString()}</div><div class="k">Over-65</div></div>
     <div class="stat"><div class="v">${dp.toLocaleString()}</div><div class="k">Disabled Person</div></div>
     <div class="stat"><div class="v">${dv.toLocaleString()}</div><div class="k">Disabled Veteran</div></div>
+    <div class="stat"><div class="v">${owedFmt}</div><div class="k">Total Tax Owed</div></div>
     ${fresh}
     ${nextEx}`;
 }
@@ -10245,6 +10254,21 @@ async function loadAll() {
         rec.ncad_prop_id = String(rec.prop_id || "").replace(/^0+/, "");
         if (!rec.prop_state) rec.prop_state = "TX";
       }
+      // NCTAX balances (amount owed per deferral) — optional file from
+      // scraper/enrich_nctax_balances.py. Merge total_due onto each record as
+      // tax_owed so the Tax Owed column + sort behave like Market Value.
+      // First-deploy safe: missing file just leaves tax_owed undefined ("—").
+      try {
+        const nb = await fetch("nctax_balances.json", {cache:"no-store"});
+        if (nb.ok) {
+          const ndata = await nb.json();
+          NCTAX_BALANCES = ndata.balances || {};
+          for (const rec of DEFERRAL_RAW) {
+            const b = NCTAX_BALANCES[rec.ncad_account_num];
+            if (b && typeof b.total_due === "number") rec.tax_owed = b.total_due;
+          }
+        }
+      } catch (e) {}
       const dc = document.getElementById("deferral-count");
       if (dc) dc.textContent = DEFERRAL_RAW.length ? DEFERRAL_RAW.length.toLocaleString() : "—";
       renderDeferralStats();
@@ -15335,7 +15359,7 @@ document.querySelectorAll("#deferral-table th[data-sort]").forEach(th => {
       DEFERRAL_SORT_DIR = DEFERRAL_SORT_DIR === "asc" ? "desc" : "asc";
     } else {
       DEFERRAL_SORT_KEY = key;
-      DEFERRAL_SORT_DIR = (key === "market_value" || key === "deferral_start") ? "desc" : "asc";
+      DEFERRAL_SORT_DIR = (key === "market_value" || key === "deferral_start" || key === "tax_owed") ? "desc" : "asc";
     }
     applyDeferral();
   });
