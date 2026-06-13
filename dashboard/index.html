@@ -601,6 +601,16 @@
   }
   .tov-addr::placeholder { color: var(--muted); }
   .tov-addr:focus { outline: none; border-color: var(--accent); }
+  .tov-ids { display: flex; gap: 4px; margin-top: 4px; }
+  .tov-id {
+    width: 50%; box-sizing: border-box; font-family: inherit;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border, #2a3a4a);
+    border-radius: 4px; color: var(--fg, #e2e8f0);
+    font-size: 11px; padding: 3px 5px;
+  }
+  .tov-id::placeholder { color: var(--muted); }
+  .tov-id:focus { outline: none; border-color: var(--accent); }
   /* Exemption context tags appended under a lead's owner cell.
      HS = owner-occupied; the amber "elig" tags (OV65/DP/DV/DVHS)
      mean the owner could file a §33.06 tax deferral; EXEMPT = a
@@ -10071,12 +10081,13 @@ function _ymLabel(ym){
 const _TOV_STORE_KEY = "nueces_tov_manual_v1";
 function _tovStoreAll(){ try { return JSON.parse(localStorage.getItem(_TOV_STORE_KEY) || "{}"); } catch(e){ return {}; } }
 function _tovGet(caseNum){ const s = _tovStoreAll(); return s[caseNum] || {}; }
-function _tovSaveAddr(inp){
+function _tovSaveField(inp){
   const caseNum = inp.dataset.case;
+  const field = inp.dataset.field;
   const val = (inp.value || "").trim();
   const s = _tovStoreAll();
   const rec = Object.assign({}, s[caseNum]);
-  if (val) rec.prop_address = val; else delete rec.prop_address;
+  if (val) rec[field] = val; else delete rec[field];
   if (Object.keys(rec).length) s[caseNum] = rec; else delete s[caseNum];
   try { localStorage.setItem(_TOV_STORE_KEY, JSON.stringify(s)); } catch(e){}
   applyOverage();
@@ -10145,9 +10156,21 @@ function buildOverageRow(c){
   // Map / NCAD / NCTAX derive from that effective record, so they light up
   // the moment an address (and later an NCAD account) is filled in.
   const eff = _tovEff(c);
-  const addrCell = '<input class="tov-addr" type="text" value="' + esc(eff.prop_address || "") +
-    '" placeholder="+ add address" data-case="' + esc(c.case_number) +
-    '" onchange="_tovSaveAddr(this)" onclick="event.stopPropagation()">';
+  const _cse = esc(c.case_number);
+  const addrCell =
+    '<input class="tov-addr" type="text" value="' + esc(eff.prop_address || "") +
+      '" placeholder="+ add address" data-case="' + _cse + '" data-field="prop_address"' +
+      ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
+    '<div class="tov-ids">' +
+      '<input class="tov-id" type="text" value="' + esc(eff.ncad_prop_id || "") +
+        '" placeholder="NCAD ID" title="NCAD Property ID (the number in the NCAD property-page URL) → makes the NCAD icon a direct link"' +
+        ' data-case="' + _cse + '" data-field="ncad_prop_id"' +
+        ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
+      '<input class="tov-id" type="text" value="' + esc(eff.ncad_account_num || "") +
+        '" placeholder="Tax acct" title="Tax account / geo ID → makes the NCTAX icon a direct link"' +
+        ' data-case="' + _cse + '" data-field="ncad_account_num"' +
+        ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
+    '</div>';
   const mapCell   = (typeof mapCellHtml   === "function") ? mapCellHtml(eff)   : dash;
   const ncadCell  = (typeof ncadCellHtml  === "function") ? ncadCellHtml(eff)  : dash;
   const nctaxCell = (typeof nctaxCellHtml === "function") ? nctaxCellHtml(eff) : dash;
