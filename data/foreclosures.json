@@ -103,7 +103,9 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 25
+      "days_until_sale": 25,
+      "prop_lat": 27.688615,
+      "prop_lng": -97.384134
     },
     {
       "doc_num": "2026000341",
@@ -353,7 +355,9 @@
       "legal_block": "16",
       "legal_subdivision": "Arcadi",
       "pdf_parsed_at": "2026-06-06T19:31:40.131715+00:00",
-      "ncad_account_num": "0232-0016-0190"
+      "ncad_account_num": "0232-0016-0190",
+      "prop_lat": 27.757457,
+      "prop_lng": -97.407456
     },
     {
       "doc_num": "2026000326",
@@ -414,7 +418,9 @@
       "legal_block": "2",
       "legal_subdivision": "CALLICOATTE ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:40.088851+00:00",
-      "ncad_account_num": "1238-0002-0200"
+      "ncad_account_num": "1238-0002-0200",
+      "prop_lat": 27.847163,
+      "prop_lng": -97.607463
     },
     {
       "doc_num": "2026000318",
@@ -446,7 +452,9 @@
       "legal_block": "7",
       "legal_subdivision": "ARCADIA OF PROPERTY",
       "pdf_parsed_at": "2026-06-06T19:31:40.063082+00:00",
-      "ncad_account_num": "0232-0007-0140"
+      "ncad_account_num": "0232-0007-0140",
+      "prop_lat": 27.762399,
+      "prop_lng": -97.405572
     },
     {
       "doc_num": "2026000325",
@@ -478,7 +486,9 @@
       "legal_block": "1",
       "legal_subdivision": "SANDPIPER ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:40.106066+00:00",
-      "ncad_account_num": "7656-0001-0060"
+      "ncad_account_num": "7656-0001-0060",
+      "prop_lat": 27.823802,
+      "prop_lng": -97.066444
     },
     {
       "doc_num": "2026000320",
@@ -511,7 +521,9 @@
       "legal_block": "1",
       "legal_subdivision": "COLLIER",
       "pdf_parsed_at": "2026-06-06T19:31:40.076024+00:00",
-      "ncad_account_num": "1685-0001-0020"
+      "ncad_account_num": "1685-0001-0020",
+      "prop_lat": 27.737253,
+      "prop_lng": -97.393505
     },
     {
       "doc_num": "2026000322",
@@ -543,7 +555,9 @@
       "legal_block": "8",
       "legal_subdivision": "GREEN ACRES VILLAGE NO 2",
       "pdf_parsed_at": "2026-06-06T19:31:40.083198+00:00",
-      "ncad_account_num": "2938-0008-0020"
+      "ncad_account_num": "2938-0008-0020",
+      "prop_lat": 27.714753,
+      "prop_lng": -97.366111
     },
     {
       "doc_num": "2026000324",
@@ -576,7 +590,9 @@
       "legal_block": "6",
       "legal_subdivision": "LINCOLN TERRACE",
       "pdf_parsed_at": "2026-06-06T19:31:40.100755+00:00",
-      "ncad_account_num": "4465-0006-0240"
+      "ncad_account_num": "4465-0006-0240",
+      "prop_lat": 27.724231,
+      "prop_lng": -97.391429
     },
     {
       "doc_num": "2026000315",
@@ -607,7 +623,9 @@
       "legal_lot": "2",
       "legal_block": "3",
       "legal_subdivision": "Washington",
-      "pdf_parsed_at": "2026-06-06T19:31:40.045322+00:00"
+      "pdf_parsed_at": "2026-06-06T19:31:40.045322+00:00",
+      "prop_lat": 27.749569,
+      "prop_lng": -97.447529
     },
     {
       "doc_num": "2026000316",
@@ -764,7 +782,9 @@
       "legal_block": "19",
       "legal_subdivision": "THE LAKES",
       "pdf_parsed_at": "2026-06-06T19:31:39.999463+00:00",
-      "ncad_account_num": "4137-0019-0010"
+      "ncad_account_num": "4137-0019-0010",
+      "prop_lat": 27.678807,
+      "prop_lng": -97.413367
     },
     {
       "doc_num": "2026000301",
@@ -827,7 +847,9 @@
       "legal_block": "1",
       "legal_subdivision": "MELDO PARK",
       "pdf_parsed_at": "2026-06-06T19:31:39.943621+00:00",
-      "ncad_account_num": "5074-0001-0010"
+      "ncad_account_num": "5074-0001-0010",
+      "prop_lat": 27.746399,
+      "prop_lng": -97.381705
     },
     {
       "doc_num": "2026000308",
@@ -891,7 +913,9 @@
       "legal_block": "1",
       "legal_subdivision": "SARATOGA DOWNS UNIT 1A",
       "pdf_parsed_at": "2026-06-06T19:31:39.916439+00:00",
-      "ncad_account_num": "7717-0001-0060"
+      "ncad_account_num": "7717-0001-0060",
+      "prop_lat": 27.724716,
+      "prop_lng": -97.451149
     },
     {
       "doc_num": "2026000302",
@@ -923,7 +947,9 @@
       "legal_block": "3",
       "legal_subdivision": "BERVONNE TERRACE",
       "pdf_parsed_at": "2026-06-06T19:31:39.922158+00:00",
-      "ncad_account_num": "0661-0003-0140"
+      "ncad_account_num": "0661-0003-0140",
+      "prop_lat": 27.837383,
+      "prop_lng": -97.57726
     },
     {
       "doc_num": "2026000303",
@@ -953,7 +979,9 @@
       "legal_block": "1",
       "legal_subdivision": "GUTH PARKSIDE",
       "pdf_parsed_at": "2026-06-06T19:31:39.934156+00:00",
-      "ncad_account_num": "3119-0001-0130"
+      "ncad_account_num": "3119-0001-0130",
+      "prop_lat": 27.831488,
+      "prop_lng": -97.549697
     },
     {
       "doc_num": "2026000309",
@@ -2021,7 +2049,9 @@
       "legal_block": "4",
       "legal_subdivision": "LEXINGTON PARK",
       "pdf_parsed_at": "2026-06-06T19:31:40.068094+00:00",
-      "ncad_account_num": "4414-0004-0180"
+      "ncad_account_num": "4414-0004-0180",
+      "prop_lat": 27.692219,
+      "prop_lng": -97.35119
     },
     {
       "doc_num": "2026000321",
@@ -2053,7 +2083,9 @@
       "legal_block": "3",
       "legal_subdivision": "TRUE",
       "pdf_parsed_at": "2026-06-06T19:31:40.080347+00:00",
-      "ncad_account_num": "8902-0003-0200"
+      "ncad_account_num": "8902-0003-0200",
+      "prop_lat": 27.579663,
+      "prop_lng": -97.797487
     },
     {
       "doc_num": "2026000317",
@@ -2088,7 +2120,9 @@
       "legal_block": "10",
       "legal_subdivision": "CENTRAL PARK",
       "pdf_parsed_at": "2026-06-06T19:31:40.053965+00:00",
-      "ncad_account_num": "1493-0010-0240"
+      "ncad_account_num": "1493-0010-0240",
+      "prop_lat": 27.730004,
+      "prop_lng": -97.403848
     },
     {
       "doc_num": "2026000306",
@@ -2120,7 +2154,9 @@
       "legal_block": "3",
       "legal_subdivision": "OVERLAND MEADOWS",
       "pdf_parsed_at": "2026-06-06T19:31:39.962902+00:00",
-      "ncad_account_num": "6102-0003-0010"
+      "ncad_account_num": "6102-0003-0010",
+      "prop_lat": 27.833695,
+      "prop_lng": -97.571989
     },
     {
       "doc_num": "2026000307",
@@ -2153,7 +2189,9 @@
       "legal_block": "3",
       "legal_subdivision": "Edgewood Park",
       "pdf_parsed_at": "2026-06-06T19:31:39.973351+00:00",
-      "ncad_account_num": "2255-0003-0030"
+      "ncad_account_num": "2255-0003-0030",
+      "prop_lat": 27.745165,
+      "prop_lng": -97.413145
     },
     {
       "doc_num": "2026000305",
