@@ -1,0 +1,47 @@
+name: Extract Excess Proceeds
+
+# Monthly tax-overage report ingest.
+# Usage: drop the clerk's new month PDF into pdfs/excess_pending/, then run
+# this workflow (Actions tab -> Extract Excess Proceeds -> Run workflow).
+# It parses the PDF, diffs it against dashboard/excess_proceeds.json (marking
+# newly-claimed cases gone and newly-filed cases added), commits the updated
+# JSON, and removes the processed PDF.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install poppler-utils
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Extract and diff
+        run: |
+          python scraper/extract_excess_proceeds.py \
+            --pending-dir pdfs/excess_pending \
+            --out dashboard/excess_proceeds.json
+
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dashboard/excess_proceeds.json
+          git add pdfs/excess_pending 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Excess proceeds: ingest new monthly report"
+            git push
+          fi
