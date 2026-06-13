@@ -2980,13 +2980,13 @@
     <thead><tr>
       <th data-sort="status"       style="width: 80px;">Status</th>
       <th data-sort="owner"        style="width: 240px;">Owner</th>
-      <th data-sort="case_number"  style="width: 150px;">Case #</th>
-      <th data-sort="balance"      style="width: 130px;">Excess Proceeds</th>
       <th style="width: 220px;">Property Address</th>
       <th style="width: 50px;">Map</th>
+      <th data-sort="balance"      style="width: 130px;">Excess Proceeds</th>
+      <th data-sort="case_number"  style="width: 150px;">Case #</th>
+      <th data-sort="plaintiff"    style="width: 200px;">Plaintiff</th>
       <th style="width: 50px;">NCAD</th>
       <th style="width: 50px;">NCTAX</th>
-      <th data-sort="plaintiff"    style="width: 200px;">Plaintiff</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -10166,13 +10166,13 @@ function buildOverageRow(c){
   tr.innerHTML =
     "<td>" + statusCell + "</td>" +
     "<td>" + ownerCell + "</td>" +
-    "<td>" + caseCell + "</td>" +
-    "<td>" + balCell + "</td>" +
     '<td class="addr-cell">' + addrCell + "</td>" +
     '<td style="text-align:center;">' + mapCell + "</td>" +
+    "<td>" + balCell + "</td>" +
+    "<td>" + caseCell + "</td>" +
+    "<td>" + plaintiffCell + "</td>" +
     '<td style="text-align:center;">' + ncadCell + "</td>" +
-    '<td style="text-align:center;">' + nctaxCell + "</td>" +
-    "<td>" + plaintiffCell + "</td>";
+    '<td style="text-align:center;">' + nctaxCell + "</td>";
   return tr;
 }
 function renderOverageStats(){
