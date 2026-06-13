@@ -12061,6 +12061,17 @@ function _stackBuildEntry(key, group) {
     const n = sig.source.ncadKey ? sig.source.ncadKey(sig.record) : "";
     if (n) { ncad = n; break; }
   }
+  // NCAD prop_id / owner_id / year for the direct property deep-link (the
+  // house icon). Picked independently of the account because CCLN records
+  // carry an account but no prop_id, while a CV / DELQ / deferral signal on
+  // the same grouped parcel usually supplies the prop_id.
+  let ncadPropId = "", ncadOwnerId = "", ncadYear = "";
+  for (const sig of group.signals) {
+    const rec = sig.record;
+    if (!ncadPropId && rec.ncad_prop_id) ncadPropId = rec.ncad_prop_id;
+    if (!ncadOwnerId && rec.ncad_owner_id) ncadOwnerId = rec.ncad_owner_id;
+    if (!ncadYear && rec.ncad_year) ncadYear = rec.ncad_year;
+  }
   // Latest filed date across all signals (for sorting / tie-break)
   let latestFiled = "";
   for (const sig of group.signals) {
@@ -12099,6 +12110,9 @@ function _stackBuildEntry(key, group) {
     prop_address: propAddress,
     owner,
     ncad_account_num: ncad,
+    ncad_prop_id: ncadPropId,
+    ncad_owner_id: ncadOwnerId,
+    ncad_year: ncadYear,
     latest_filed: latestFiled,
     market_value: marketValue,
     lien_total: lienTotal,
@@ -12227,6 +12241,7 @@ function applyStack() {
     // (NCAD-enriched) when the parcel is also on the delinquent list.
     if (!e.market_value && d && Number(d.market_value)) e.market_value = Number(d.market_value);
     if (!e.property_type && d && d.state_prop_code) e.property_type = propTypeLabel(d.state_prop_code);
+    if (!e.ncad_prop_id && d && d.ncad_prop_id) e.ncad_prop_id = d.ncad_prop_id;
   }
   // Sidebar count badge reflects the FULL stacked total (the Hide Lots
   // toggle is a view filter, so it shouldn't move the global nav count).
@@ -12369,6 +12384,9 @@ function _buildStackRow(entry) {
   // synthetic record-shaped object.
   const ncadSyntheticRec = {
     ncad_account_num: entry.ncad_account_num,
+    ncad_prop_id: entry.ncad_prop_id,
+    ncad_owner_id: entry.ncad_owner_id,
+    ncad_year: entry.ncad_year,
     owner: entry.owner,
     prop_address: entry.prop_address,
   };
