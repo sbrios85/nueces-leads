@@ -592,6 +592,15 @@
     color: #fb923c;
     border-color: rgba(251, 146, 60, 0.4);
   }
+  .tov-addr {
+    width: 100%; box-sizing: border-box; font-family: inherit;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border, #2a3a4a);
+    border-radius: 4px; color: var(--fg, #e2e8f0);
+    font-size: 12px; padding: 4px 6px;
+  }
+  .tov-addr::placeholder { color: var(--muted); }
+  .tov-addr:focus { outline: none; border-color: var(--accent); }
   /* Exemption context tags appended under a lead's owner cell.
      HS = owner-occupied; the amber "elig" tags (OV65/DP/DV/DVHS)
      mean the owner could file a §33.06 tax deferral; EXEMPT = a
@@ -2973,8 +2982,11 @@
       <th data-sort="owner"        style="width: 240px;">Owner</th>
       <th data-sort="case_number"  style="width: 150px;">Case #</th>
       <th data-sort="balance"      style="width: 130px;">Excess Proceeds</th>
+      <th style="width: 220px;">Property Address</th>
+      <th style="width: 50px;">Map</th>
       <th style="width: 50px;">NCAD</th>
-      <th data-sort="plaintiff"    style="width: 260px;">Plaintiff</th>
+      <th style="width: 50px;">NCTAX</th>
+      <th data-sort="plaintiff"    style="width: 200px;">Plaintiff</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -10053,6 +10065,31 @@ function _ymLabel(ym){
   const m = /^(\d{4})-(\d{2})$/.exec(ym);
   return m ? (_MON3[parseInt(m[2],10)] + " " + m[1]) : ym;
 }
+// Manual per-case entry (court-record property address; optional NCAD acct),
+// persisted in this browser. Map / NCAD / NCTAX all derive from these, so
+// they light up as soon as an address is filled in.
+const _TOV_STORE_KEY = "nueces_tov_manual_v1";
+function _tovStoreAll(){ try { return JSON.parse(localStorage.getItem(_TOV_STORE_KEY) || "{}"); } catch(e){ return {}; } }
+function _tovGet(caseNum){ const s = _tovStoreAll(); return s[caseNum] || {}; }
+function _tovSaveAddr(inp){
+  const caseNum = inp.dataset.case;
+  const val = (inp.value || "").trim();
+  const s = _tovStoreAll();
+  const rec = Object.assign({}, s[caseNum]);
+  if (val) rec.prop_address = val; else delete rec.prop_address;
+  if (Object.keys(rec).length) s[caseNum] = rec; else delete s[caseNum];
+  try { localStorage.setItem(_TOV_STORE_KEY, JSON.stringify(s)); } catch(e){}
+  applyOverage();
+}
+function _tovEff(c){
+  const o = _tovGet(c.case_number);
+  return {
+    owner: c.owner || "",
+    prop_address: o.prop_address || "",
+    ncad_account_num: o.ncad_account_num || "",
+    ncad_prop_id: o.ncad_prop_id || "",
+  };
+}
 function applyOverage(){
   const tbody  = document.querySelector("#tov-table tbody");
   const emptyEl= document.getElementById("tov-empty");
@@ -10104,10 +10141,16 @@ function buildOverageRow(c){
     ? ' <span title="New this month" style="color:#22c55e;font-weight:700;font-size:11px;vertical-align:middle;">● NEW</span>'
     : "";
   const ownerCell = (esc(fmtOwner(c.owner || "")) || dash) + newIcon;
-  // Report has no parcel link, only the owner name. NCAD cell falls back to
-  // an owner-name search (the helper shows a search glass when no prop_id).
-  const ncadRec = { owner: c.owner || "" };
-  const ncadCell = (typeof ncadCellHtml === "function") ? ncadCellHtml(ncadRec) : dash;
+  // The court-record property address is entered manually (stored per case).
+  // Map / NCAD / NCTAX derive from that effective record, so they light up
+  // the moment an address (and later an NCAD account) is filled in.
+  const eff = _tovEff(c);
+  const addrCell = '<input class="tov-addr" type="text" value="' + esc(eff.prop_address || "") +
+    '" placeholder="+ add address" data-case="' + esc(c.case_number) +
+    '" onchange="_tovSaveAddr(this)" onclick="event.stopPropagation()">';
+  const mapCell   = (typeof mapCellHtml   === "function") ? mapCellHtml(eff)   : dash;
+  const ncadCell  = (typeof ncadCellHtml  === "function") ? ncadCellHtml(eff)  : dash;
+  const nctaxCell = (typeof nctaxCellHtml === "function") ? nctaxCellHtml(eff) : dash;
   const caseCell = esc(c.case_number) +
     '<br><small style="color:var(--muted);">' +
     (c.case_type === "district_civil" ? "District civil" : "Tax cause") + '</small>';
@@ -10125,7 +10168,10 @@ function buildOverageRow(c){
     "<td>" + ownerCell + "</td>" +
     "<td>" + caseCell + "</td>" +
     "<td>" + balCell + "</td>" +
+    '<td class="addr-cell">' + addrCell + "</td>" +
+    '<td style="text-align:center;">' + mapCell + "</td>" +
     '<td style="text-align:center;">' + ncadCell + "</td>" +
+    '<td style="text-align:center;">' + nctaxCell + "</td>" +
     "<td>" + plaintiffCell + "</td>";
   return tr;
 }
