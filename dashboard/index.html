@@ -169,7 +169,7 @@
        and vertically when there are more rows than fit. */
     overflow: auto;
   }
-  .stats { display: flex; gap: 24px; padding: 6px 0;
+  .stats { display: flex; gap: 14px; padding: 6px 0;
            border-bottom: 1px solid var(--border); flex-wrap: wrap;
            align-items: center; }
   /* Section title that prefixes each lead-type's stats row. Sits as
@@ -178,10 +178,10 @@
      the metric numbers. The trailing border-right adds a vertical
      separator that visually anchors the title to the stats that follow. */
   .stats-title {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--fg);
-    padding-right: 20px;
+    padding-right: 14px;
     border-right: 1px solid var(--border);
     line-height: 1.2;
     align-self: center;
@@ -212,8 +212,8 @@
     font-weight: 500; margin-left: 6px; font-size: 13px;
   }
   .stat { display: flex; flex-direction: column; gap: 2px; }
-  .stat .v { font-size: 22px; font-weight: 600; }
-  .stat .k { color: var(--muted); font-size: 12px;
+  .stat .v { font-size: 17px; font-weight: 600; }
+  .stat .k { color: var(--muted); font-size: 10px;
              text-transform: uppercase; letter-spacing: .04em; }
   .controls { padding: 6px 0; display: flex; gap: 10px;
               flex-wrap: wrap; border-bottom: 1px solid var(--border);
@@ -9212,12 +9212,14 @@ function _monthlyNextDueHtml(importDateStr, dayOfMonth, valText) {
   const nd = _monthlyNextDue(importDateStr, dayOfMonth);
   if (!nd) return "";
   const due = Date.now() >= nd.getTime();
-  const color = due ? "var(--bad)" : "var(--muted)";
-  const tail = due ? "(due now)" : "(due " + _dueDateLabel(nd) + ")";
+  const dlabel = _dueDateLabel(nd);
+  const tail = due ? "(due " + dlabel + " — overdue)" : "(due " + dlabel + ")";
+  const valStyle = due ? ' style="color:var(--bad);"' : '';
+  const agoStyle = due ? 'color:var(--bad);font-weight:700;' : 'color:var(--muted);';
   return '<div class="stats-meta">' +
          '<span class="lbl">Next import</span>' +
-         '<span><span class="val">' + valText + '</span> ' +
-         '<span class="ago" style="color:' + color + ';">' + tail + '</span></span>' +
+         '<span><span class="val"' + valStyle + '>' + valText + '</span> ' +
+         '<span class="ago" style="' + agoStyle + '">' + tail + '</span></span>' +
          '</div>';
 }
 function _ncadNextExport(lastDateStr) {
@@ -9250,13 +9252,13 @@ function _ncadNextExportHtml(lastDateStr) {
   const nx = _ncadNextExport(lastDateStr);
   if (!nx) return "";
   const due = Date.now() >= nx.target.getTime();
-  const color = due ? "var(--bad)" : "var(--muted)";
-  const valText = due ? nx.type + " report due now" : nx.type + " report";
-  const tail = due ? "(upload it)" : "(due " + nx.monthYear + ")";
+  const tail = due ? "(due " + nx.monthYear + " — overdue)" : "(due " + nx.monthYear + ")";
+  const valStyle = due ? ' style="color:var(--bad);"' : '';
+  const agoStyle = due ? 'color:var(--bad);font-weight:700;' : 'color:var(--muted);';
   return '<div class="stats-meta">' +
          '<span class="lbl">Next export</span>' +
-         '<span><span class="val">' + valText + '</span> ' +
-         '<span class="ago" style="color:' + color + ';">' + tail + '</span></span>' +
+         '<span><span class="val"' + valStyle + '>' + nx.type + ' report</span> ' +
+         '<span class="ago" style="' + agoStyle + '">' + tail + '</span></span>' +
          '</div>';
 }
 function _todayToggleImport(kind) {
