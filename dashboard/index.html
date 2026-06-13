@@ -8890,26 +8890,14 @@ function renderToday() {
   // The dashboard can't see the city portal, so this is a manual
   // cadence reminder: tracks the last time the user marked CV imported
   // (localStorage 'today-cv-last-import'); nudges after CV_CADENCE_DAYS.
-  const CV_CADENCE_DAYS = 30;
-  let cvDaysSince = null, cvLast = "";
-  try { cvLast = localStorage.getItem("today-cv-last-import") || ""; } catch (e) {}
-  if (cvLast) {
-    const ms = Date.now() - new Date(cvLast).getTime();
-    cvDaysSince = Math.floor(ms / 86400000);
-  }
-
-  // ===== 8b. Delinquent-tax import reminder (cadence-based) =====
-  // Same manual-cadence pattern as the CV reminder: the delinquent-tax
-  // list is pulled by hand roughly monthly. Tracks the last import in
-  // localStorage 'today-delq-last-import'; nudges after
-  // DELQ_CADENCE_DAYS.
-  const DELQ_CADENCE_DAYS = 30;
-  let delqDaysSince = null, delqLast = "";
-  try { delqLast = localStorage.getItem("today-delq-last-import") || ""; } catch (e) {}
-  if (delqLast) {
-    const ms = Date.now() - new Date(delqLast).getTime();
-    delqDaysSince = Math.floor(ms / 86400000);
-  }
+  // CV + delinquent-tax imports are monthly files, driven by each file's own
+  // stamped import_date (CV_IMPORT_DATE / DELQ_IMPORT_DATE). The card greys out
+  // on import and colors back in when the next month's file is due — CV on
+  // the 1st, DELQ on the 2nd. (Same auto grey/colored model as the NCAD card.)
+  const cvNextDue   = _monthlyNextDue(CV_IMPORT_DATE, 1);
+  const cvDue       = !CV_IMPORT_DATE   || !cvNextDue   || (Date.now() >= cvNextDue.getTime());
+  const delqNextDue = _monthlyNextDue(DELQ_IMPORT_DATE, 2);
+  const delqDue     = !DELQ_IMPORT_DATE || !delqNextDue || (Date.now() >= delqNextDue.getTime());
 
   // ===== 8c. NCAD appraisal-export refresh reminder (ANNUAL) =====
   // The exemption + tax-deferral data comes from NCAD's yearly
@@ -9051,39 +9039,32 @@ function renderToday() {
       <div class="tc-count">${pending.length}</div>
     </div>`);
 
-  // CV import reminder
-  const cvDue = (cvDaysSince === null) || (cvDaysSince >= CV_CADENCE_DAYS);
+  // CV import reminder (monthly; cvDue computed above)
   actions.push(`
-    <div class="today-card ${cvDue ? "tc-alert" : "tc-clear tc-ok"}" style="cursor:pointer"
-         onclick="_todayToggleImport('cv')">
+    <div class="today-card ${cvDue ? "tc-alert" : "tc-clear tc-ok"}">
       <div class="tc-icon">🏛️</div>
       <div class="tc-body">
         <div class="tc-title">Code-violation (CV) import</div>
-        <div class="tc-sub">${cvLast
-          ? (cvDaysSince === 0
-              ? "Imported today. Tap to undo."
-              : (cvDue ? "Last imported " + cvDaysSince + " days ago — due for a refresh. Tap when done."
-                       : "Last imported " + cvDaysSince + " days ago. Tap to undo."))
-          : "No import logged yet. Tap when you download & upload the CV list."}</div>
+        <div class="tc-sub">${CV_IMPORT_DATE
+          ? (cvDue
+              ? "A new monthly CV list should be out — download it from the city portal and run the CV import."
+              : "Imported " + esc2(CV_IMPORT_DATE) + ". Next list due " + _dueDateLabel(cvNextDue) + ".")
+          : "No CV list loaded yet. Download it from the city portal and run the CV import."}</div>
       </div>
       <div class="tc-count">${cvDue ? "!" : "✓"}</div>
     </div>`);
 
-  // Delinquent-tax import reminder (same cadence pattern as CV; sits
-  // directly under the CV card).
-  const delqDue = (delqDaysSince === null) || (delqDaysSince >= DELQ_CADENCE_DAYS);
+  // Delinquent-tax import reminder (monthly; delqDue computed above)
   actions.push(`
-    <div class="today-card ${delqDue ? "tc-alert" : "tc-clear tc-ok"}" style="cursor:pointer"
-         onclick="_todayToggleImport('delq')">
+    <div class="today-card ${delqDue ? "tc-alert" : "tc-clear tc-ok"}">
       <div class="tc-icon">💰</div>
       <div class="tc-body">
         <div class="tc-title">Delinquent-tax list import</div>
-        <div class="tc-sub">${delqLast
-          ? (delqDaysSince === 0
-              ? "Imported today. Tap to undo."
-              : (delqDue ? "Last imported " + delqDaysSince + " days ago — due for a refresh. Tap when done."
-                         : "Last imported " + delqDaysSince + " days ago. Tap to undo."))
-          : "No import logged yet. Tap when you download & upload the delinquent-tax list."}</div>
+        <div class="tc-sub">${DELQ_IMPORT_DATE
+          ? (delqDue
+              ? "A new monthly delinquent-tax list should be out — download it from the tax office and run the import."
+              : "Imported " + esc2(DELQ_IMPORT_DATE) + ". Next list due " + _dueDateLabel(delqNextDue) + ".")
+          : "No delinquent-tax list loaded yet. Download it from the tax office and run the import."}</div>
       </div>
       <div class="tc-count">${delqDue ? "!" : "✓"}</div>
     </div>`);
@@ -9202,6 +9183,19 @@ function _todayOpenLead(kind, id) {
 // work out which one is next and roughly when. Because this reads the data
 // file's own date, loading a September file automatically flips the reminder to
 // next April's Preliminary, and vice-versa.
+// Monthly import reminders (CV, DELQ): from a file's last import_date, the next
+// file is due on a fixed day of the FOLLOWING month (CV = 1st, DELQ = 2nd).
+function _monthlyNextDue(importDateStr, dayOfMonth) {
+  const d = new Date(importDateStr);
+  if (isNaN(d.getTime())) return null;
+  return new Date(d.getFullYear(), d.getMonth() + 1, dayOfMonth);  // rolls into next year in Dec
+}
+function _dueDateLabel(dt) {
+  if (!dt) return "—";
+  const M = ["January","February","March","April","May","June","July",
+             "August","September","October","November","December"];
+  return M[dt.getMonth()] + " " + dt.getDate() + ", " + dt.getFullYear();
+}
 function _ncadNextExport(lastDateStr) {
   const d = new Date(lastDateStr);
   if (isNaN(d.getTime())) return null;
@@ -10246,6 +10240,9 @@ async function loadAll() {
 
   // Code Violations — same optional-fetch pattern.
   await loadCv();
+  // CV's import_date is set inside loadCv(), which runs after the earlier render
+  // passes — re-render Today so the CV card reflects it.
+  try { renderToday(); } catch (e) {}
 
   // Render the meta block. We use innerHTML (not textContent) so the
   // colored "X days ago" badge renders. All inputs come from trusted
