@@ -117,7 +117,32 @@ jobs:
             echo "no changes to commit"
           else
             git commit -m "chore: refresh leads $(date -u +'%Y-%m-%dT%H:%MZ')"
-            git push
+            # main can move during the ~12-min run (the Backfill workflow,
+            # or a manual index.html upload). A bare `git push` then dies
+            # with a non-fast-forward "fetch first" rejection and loses the
+            # whole scrape. Instead: rebase our data commit on top of the
+            # latest remote and retry. If main moves again between rebase
+            # and push, the loop re-fetches and tries again.
+            pushed=0
+            for attempt in 1 2 3 4 5; do
+              git fetch origin main
+              if ! git rebase origin/main; then
+                git rebase --abort || true
+                echo "rebase hit a real conflict on attempt $attempt — leaving it for a fresh run rather than guessing"
+                exit 1
+              fi
+              if git push origin HEAD:main; then
+                echo "push succeeded on attempt $attempt"
+                pushed=1
+                break
+              fi
+              echo "push attempt $attempt rejected (remote moved again); backing off and retrying..."
+              sleep $((RANDOM % 8 + 3))
+            done
+            if [ "$pushed" != "1" ]; then
+              echo "push still failing after 5 attempts"
+              exit 1
+            fi
           fi
 
       - name: Upload dashboard artifact
