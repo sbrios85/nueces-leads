@@ -2489,12 +2489,13 @@
     min-width: 640px;
     max-width: 880px;
     width: 90vw;
-    max-height: 88vh;
+    max-height: 92vh;
+    padding: 16px 18px;
     overflow-y: auto;
   }
   .portals-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
   .portals-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
   .portals-close {
@@ -2506,8 +2507,8 @@
   .portals-legend {
     display: flex; gap: 14px; flex-wrap: wrap;
     font-size: 11px; color: var(--muted);
-    margin-bottom: 9px;
-    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+    padding-bottom: 5px; border-bottom: 1px solid var(--border);
     align-items: center;
   }
   .portals-legend .tag { vertical-align: middle; }
@@ -2525,7 +2526,7 @@
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 9px 13px;
+    padding: 7px 12px;
     display: flex; flex-direction: column; gap: 3px;
   }
   .portal-card .card-row1 {
@@ -2535,6 +2536,7 @@
   .portal-card .card-name {
     font-size: 13px; font-weight: 600; color: var(--fg);
   }
+  .portal-card .card-tags { display: inline-flex; gap: 5px; align-items: center; }
   .portal-card .card-desc {
     font-size: 12px; color: var(--muted);
     line-height: 1.4;
@@ -2582,8 +2584,8 @@
   /* PIA email template block at the bottom of the modal — distinct
      amber tint so it reads as a callout, not a card. */
   .portals-pia {
-    margin-top: 10px;
-    padding: 11px 14px;
+    margin-top: 8px;
+    padding: 9px 12px;
     background: rgba(245,158,11,.08);
     border: 1px solid rgba(245,158,11,.25);
     border-radius: 8px;
@@ -2593,16 +2595,16 @@
     color: var(--warn);
   }
   .portals-pia .pia-to {
-    font-size: 12px; color: var(--muted); margin-bottom: 8px;
+    font-size: 12px; color: var(--muted); margin-bottom: 4px;
   }
   .portals-pia .pia-to a { color: var(--accent); }
   .portals-pia .pia-body {
-    font-size: 12px; line-height: 1.5;
+    font-size: 11px; line-height: 1.35;
     color: var(--fg);
     font-style: italic;
   }
   .portals-pia .pia-copy {
-    margin-top: 10px;
+    margin-top: 7px;
     background: transparent;
     border: 1px solid var(--warn);
     color: var(--warn);
@@ -2615,7 +2617,7 @@
     background: rgba(245,158,11,.12);
   }
   .portals-pia .pia-copy.copied { color: var(--good); border-color: var(--good); }
-  .portals-pia .pia-tabs { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .portals-pia .pia-tabs { display: flex; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
   .portals-pia .pia-tab {
     flex: 1 1 200px; text-align: left;
     background: transparent; border: 1px solid rgba(245,158,11,.4);
@@ -3366,7 +3368,7 @@
       <div class="portal-card">
         <div class="card-row1">
           <span class="card-name">Nueces County Clerk</span>
-          <span class="portal-tag semi">Semi</span>
+          <span class="card-tags"><span class="portal-tag auto">Auto</span><span class="portal-tag semi">Semi</span></span>
         </div>
         <div class="card-desc">Manual search → CSV export → import here.</div>
         <div class="card-row-link">
@@ -3384,12 +3386,21 @@
       </div>
       <div class="portal-card">
         <div class="card-row1">
-          <span class="card-name">Nueces CAD Property Search</span>
-          <span class="portal-tag auto">Auto</span>
+          <span class="card-name">Nueces County Appraisal District</span>
+          <span class="card-tags"><span class="portal-tag auto">Auto</span><span class="portal-tag semi">Semi</span></span>
         </div>
-        <div class="card-desc">Free search. Filter absentee owners.</div>
-        <a class="card-link" target="_blank" rel="noopener"
-           href="https://esearch.nuecescad.net/">Open ↗</a>
+        <div class="card-row-link">
+          <span class="card-link-row">
+            <span class="lbl">NCAD Property Search</span>
+            <a target="_blank" rel="noopener"
+               href="https://esearch.nuecescad.net/">Open ↗</a>
+          </span>
+          <span class="card-link-row">
+            <span class="lbl">Nueces County Appraisal Roll Report Download</span>
+            <a target="_blank" rel="noopener"
+               href="https://nuecescad.net/downloads-reports/">Open ↗</a>
+          </span>
+        </div>
       </div>
       <div class="portal-card">
         <div class="card-row1">
@@ -3403,7 +3414,7 @@
       <div class="portal-card">
         <div class="card-row1">
           <span class="card-name">Nueces County Tax Assessor</span>
-          <span class="portal-tag semi">Semi</span>
+          <span class="card-tags"><span class="portal-tag semi">Semi</span><span class="portal-tag auto">Auto</span></span>
         </div>
         <div class="card-row-link">
           <span class="card-link-row">
@@ -3421,7 +3432,7 @@
       <div class="portal-card">
         <div class="card-row1">
           <span class="card-name">Linebarger Foreclosures</span>
-          <span class="portal-tag semi">Semi</span>
+          <span class="portal-tag auto">Auto</span>
         </div>
         <div class="card-desc">State-wide tax foreclosures with address and pictures.</div>
         <a class="card-link" target="_blank" rel="noopener"
@@ -3457,7 +3468,7 @@
       <div class="portal-card">
         <div class="card-row1">
           <span class="card-name">Skiptrace</span>
-          <span class="portal-tag auto">Auto</span>
+          <span class="portal-tag semi">Semi</span>
         </div>
         <div class="card-row-link">
           <span class="card-link-row">
@@ -3475,7 +3486,7 @@
       <div class="portal-card">
         <div class="card-row1">
           <span class="card-name">Find People</span>
-          <span class="portal-tag auto">Auto</span>
+          <span class="portal-tag semi">Semi</span>
         </div>
         <div class="card-row-link">
           <span class="card-link-row">
@@ -3493,7 +3504,7 @@
       <div class="portal-card">
         <div class="card-row1">
           <span class="card-name">Jail and Prison</span>
-          <span class="portal-tag auto">Auto</span>
+          <span class="portal-tag semi">Semi</span>
         </div>
         <div class="card-row-link">
           <span class="card-link-row">
@@ -3510,12 +3521,22 @@
       </div>
       <div class="portal-card">
         <div class="card-row1">
-          <span class="card-name">Bankruptcy</span>
-          <span class="portal-tag auto">Auto</span>
+          <span class="card-name">PACER</span>
+          <span class="portal-tag semi">Semi</span>
         </div>
         <div class="card-row-link">
           <span class="card-link-row">
-            <span class="lbl">Pacer</span>
+            <span class="lbl">Bankruptcy</span>
+            <a target="_blank" rel="noopener"
+               href="https://pacer.uscourts.gov/">Open ↗</a>
+          </span>
+          <span class="card-link-row">
+            <span class="lbl">Federal Liens</span>
+            <a target="_blank" rel="noopener"
+               href="https://pacer.uscourts.gov/">Open ↗</a>
+          </span>
+          <span class="card-link-row">
+            <span class="lbl">Federal Judgements</span>
             <a target="_blank" rel="noopener"
                href="https://pacer.uscourts.gov/">Open ↗</a>
           </span>
