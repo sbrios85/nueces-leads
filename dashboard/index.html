@@ -593,11 +593,14 @@
     border-color: rgba(251, 146, 60, 0.4);
   }
   /* Lead-type pill layout in the Stack table. 1-3 pills stack vertically;
-     4+ switch to a 2-column grid so the row height stays compact. */
+     4+ wrap two-up (compact) so the row height stays low without the
+     fixed-width cell clipping them. */
   .stack-pills { display: inline-flex; flex-direction: column;
     align-items: flex-start; gap: 3px; }
-  .stack-pills.grid2 { display: grid; grid-template-columns: auto auto;
-    justify-content: start; align-items: start; gap: 3px 5px; }
+  .stack-pills.grid2 { display: flex; flex-wrap: wrap;
+    align-items: flex-start; gap: 3px 4px; }
+  .stack-pills.grid2 .stack-badge { font-size: 10px; padding: 2px 6px;
+    letter-spacing: 0.2px; }
   .stack-pills .stack-badge { margin: 0; }
   /* Map popup: per-lead-type detail rows, stacked vertically. */
   .map-pop-stack { margin-top: 6px; display: flex; flex-direction: column; gap: 6px; }
@@ -1157,6 +1160,14 @@
   }
   .map-cov { color: var(--muted); font-size: 12px; }
   .map-hint { color: var(--muted); font-size: 12px; margin-left: auto; }
+  .map-pf-sep { width: 1px; height: 20px; background: var(--border); }
+  .map-propfilter { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .map-pf-btn { padding: 5px 11px; border-radius: 7px; font-size: 12px; font-weight: 600;
+    cursor: pointer; color: var(--muted); background: transparent;
+    border: 1px solid rgba(148,163,184,.4); font-family: inherit; }
+  .map-pf-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .map-pf-btn.active { background: rgba(56,189,248,.15);
+    border-color: var(--accent); color: var(--accent); }
   #lead-map {
     flex: 1; min-height: 420px; width: 100%;
     background: var(--panel); border-radius: 6px; margin-top: 6px;
@@ -3133,7 +3144,7 @@
   <table id="stack-table">
     <thead><tr>
       <th data-sort="status"        style="width: 130px;">Status</th>
-      <th data-sort="types"         style="width: 160px;">Lead Type</th>
+      <th data-sort="types"         style="width: 250px;">Lead Type</th>
       <th data-sort="owner"         style="width: 180px;">Owner</th>
       <th data-sort="prop_address"  style="width: 200px;">Property Address</th>
       <th style="width: 46px;">Map</th>
@@ -3235,6 +3246,13 @@
     <label class="map-toggle"><input type="checkbox" id="map-layer-stack" checked>
       <span class="map-swatch" style="background:#8b5cf6"></span>
       Stack <span class="map-cov" id="map-cov-stack"></span></label>
+    <span class="map-pf-sep"></span>
+    <div class="map-propfilter" id="map-propfilter">
+      <button type="button" class="map-pf-btn active" data-pf="all">All properties</button>
+      <button type="button" class="map-pf-btn" data-pf="house">Resident houses</button>
+      <button type="button" class="map-pf-btn" data-pf="lot">Residential lots</button>
+      <button type="button" class="map-pf-btn" data-pf="multifamily">Multifamily</button>
+    </div>
     <span class="map-hint" id="map-hint"></span>
   </div>
   <div id="lead-map"></div>
@@ -8533,6 +8551,39 @@ let _leadMap = null;
 const _mapClusters = {};               // typeKey -> markerClusterGroup (for toggles)
 let _mapPlacesBuilt = false;
 
+// Property-type filter for the map ("all" | "house" | "lot" | "multifamily").
+let _MAP_PROP_FILTER = "all";
+const _MAP_PF_LABEL = { house: "resident houses", lot: "residential lots", multifamily: "multifamily" };
+let _lastMapBounds = [];
+
+// Bucket an NCAD property-type label into a filter category.
+function _propTypeCategory(label) {
+  const s = (label || "").toLowerCase();
+  if (!s) return "";
+  if (s.indexOf("multifamily") >= 0) return "multifamily";
+  if (s.indexOf("lot") >= 0) return "lot";                 // "Vacant lot"
+  if (s.indexOf("single-family") >= 0 || s.indexOf("mobile home") >= 0
+      || s.indexOf("condo") >= 0 || s.indexOf("residential") >= 0) return "house";
+  return "other";
+}
+
+// Resolve a map place's property-type category from its records: a direct
+// property_type / state_prop_code on any record, else a DELQ lookup by NCAD
+// account number (DELQ carries the NCAD state property code).
+function _placePropCat(p) {
+  const delqMap = (typeof _stackDelqByNcad === "function") ? _stackDelqByNcad() : {};
+  for (const k in p.types) {
+    for (const r of (p.types[k] || [])) {
+      if (r.property_type) return _propTypeCategory(r.property_type);
+      if (r.state_prop_code) return _propTypeCategory(propTypeLabel(r.state_prop_code));
+      const acct = (r.ncad_account_num || "").trim();
+      if (acct && delqMap[acct] && delqMap[acct].state_prop_code)
+        return _propTypeCategory(propTypeLabel(delqMap[acct].state_prop_code));
+    }
+  }
+  return "";
+}
+
 function _mapPinIcon(color) {
   return L.divIcon({
     className: "lead-pin",
@@ -8702,7 +8753,7 @@ function _stackMapRows(entry) {
     if (t === "ccln") {
       label = "City Lien";
       const bits = [cnt + " lien" + (cnt === 1 ? "" : "s")];
-      if (entry.lien_total > 0) bits.push(money(entry.lien_total) + " total");
+      bits.push(entry.lien_total > 0 ? money(entry.lien_total) + " total" : "amount n/a");
       detail = esc(bits.join(" · "));
     } else if (t === "vacant") {
       label = "Vacant House" + (cnt > 1 ? " ×" + cnt : "");
@@ -8736,12 +8787,13 @@ function _stackMapRows(entry) {
   return { html: rows.join(""), count: rows.length };
 }
 
-function _buildStackMapMarkers() {
+function _buildStackMapMarkers(pass) {
   if (typeof _stackBuildList !== "function") return [];
   let list = [];
   try { list = _stackDecorate(_stackBuildList()); } catch (e) { return []; }
   const markers = [];
   list.forEach(entry => {
+    if (pass && !pass(_propTypeCategory(entry.property_type))) return;
     let ll = null;
     for (const sig of (entry.signals || [])) {
       const c = _recLatLng(sig.record);
@@ -8764,46 +8816,24 @@ function _buildStackMapMarkers() {
   return markers;
 }
 
-function initLeadMap() {
-  if (_leadMap) { _leadMap.invalidateSize(); return; }
-  if (typeof L === "undefined") {
-    const hint = document.getElementById("map-hint");
-    if (hint) hint.textContent = "Loading map library…";
-    setTimeout(initLeadMap, 200);
-    return;
-  }
-  _leadMap = L.map("lead-map", { scrollWheelZoom: true }).setView([27.78, -97.40], 12);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
-  }).addTo(_leadMap);
+// (Re)build all map markers honoring the current property-type filter.
+// Called on first map open and again whenever a filter button is clicked.
+function _renderMapMarkers() {
+  if (!_leadMap) return;
+  _MAP_TYPE_ORDER.forEach(k => { if (_mapClusters[k]) _mapClusters[k].clearLayers(); });
+  if (_mapClusters.stack) _mapClusters.stack.clearLayers();
 
-  // One cluster group per type for the toggles. A multi-type place's
-  // marker is added to the cluster of EACH of its types, so toggling a
-  // type shows/hides places that include that type. (Markers are
-  // lightweight; duplicates across groups are fine and de-duplicate
-  // visually because they share the same lat/lng.)
-  _MAP_TYPE_ORDER.forEach(k => {
-    _mapClusters[k] = L.markerClusterGroup({
-      chunkedLoading: true, maxClusterRadius: 50,
-      spiderfyOnMaxZoom: true, showCoverageOnHover: false,
-      iconCreateFunction: _clusterIconFn(_MAP_TYPES[k].color),
-    });
-  });
-  // Stack overlay cluster (purple) — independent toggleable layer.
-  _mapClusters.stack = L.markerClusterGroup({
-    chunkedLoading: true, maxClusterRadius: 50,
-    spiderfyOnMaxZoom: true, showCoverageOnHover: false,
-    iconCreateFunction: _clusterIconFn(_MAP_STACK_COLOR),
-  });
+  const filt = _MAP_PROP_FILTER;
+  const pass = (cat) => filt === "all" || cat === filt;
 
   const places = _buildMapPlaces();
-  // Per-type place counts for the coverage labels.
   const typeCount = {};
   _MAP_TYPE_ORDER.forEach(k => { typeCount[k] = 0; });
   let placeCount = 0;
   const allBounds = [];
 
   Object.values(places).forEach(p => {
+    if (!pass(_placePropCat(p))) return;
     placeCount++;
     const typeKeys = _MAP_TYPE_ORDER.filter(k => p.types[k] && p.types[k].length);
     const color = typeKeys.length > 1 ? _MAP_MIXED_COLOR : _MAP_TYPES[typeKeys[0]].color;
@@ -8821,6 +8851,60 @@ function initLeadMap() {
     const totalRecs = _MAP_TYPES[k].data().length;
     const el = document.getElementById("map-cov-" + k);
     if (el) el.textContent = "(" + typeCount[k] + " mapped / " + totalRecs + ")";
+  });
+
+  // Stack overlay markers (also filtered by property type).
+  const stackMarkers = _buildStackMapMarkers(pass);
+  stackMarkers.forEach(m => _mapClusters.stack.addLayer(m));
+  let stackTotal = 0;
+  try { stackTotal = (typeof _stackBuildList === "function") ? _stackBuildList().length : 0; } catch (e) {}
+  const stackCov = document.getElementById("map-cov-stack");
+  if (stackCov) stackCov.textContent = "(" + stackMarkers.length + " mapped / " + stackTotal + ")";
+
+  const hint = document.getElementById("map-hint");
+  if (hint) hint.textContent = placeCount
+    ? placeCount.toLocaleString() + " properties plotted"
+        + (filt !== "all" ? " · " + (_MAP_PF_LABEL[filt] || filt) + " only" : "")
+    : "No coordinates yet — run the “Geocode leads (Census)” workflow to populate the map.";
+
+  _lastMapBounds = allBounds;
+}
+
+function initLeadMap() {
+  if (_leadMap) { _leadMap.invalidateSize(); return; }
+  if (typeof L === "undefined") {
+    const hint = document.getElementById("map-hint");
+    if (hint) hint.textContent = "Loading map library…";
+    setTimeout(initLeadMap, 200);
+    return;
+  }
+  _leadMap = L.map("lead-map", { scrollWheelZoom: true }).setView([27.78, -97.40], 12);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(_leadMap);
+
+  // One cluster group per type for the toggles. A multi-type place's
+  // marker is added to the cluster of EACH of its types, so toggling a
+  // type shows/hides places that include that type.
+  _MAP_TYPE_ORDER.forEach(k => {
+    _mapClusters[k] = L.markerClusterGroup({
+      chunkedLoading: true, maxClusterRadius: 50,
+      spiderfyOnMaxZoom: true, showCoverageOnHover: false,
+      iconCreateFunction: _clusterIconFn(_MAP_TYPES[k].color),
+    });
+  });
+  // Stack overlay cluster (purple) — independent toggleable layer.
+  _mapClusters.stack = L.markerClusterGroup({
+    chunkedLoading: true, maxClusterRadius: 50,
+    spiderfyOnMaxZoom: true, showCoverageOnHover: false,
+    iconCreateFunction: _clusterIconFn(_MAP_STACK_COLOR),
+  });
+
+  // Build markers (honors the current property-type filter).
+  _renderMapMarkers();
+
+  // Wire the lead-type layer toggles (add/remove the whole cluster group).
+  _MAP_TYPE_ORDER.forEach(k => {
     const toggle = document.getElementById("map-layer-" + k);
     if (toggle && toggle.checked) _leadMap.addLayer(_mapClusters[k]);
     if (toggle) toggle.onchange = () => {
@@ -8828,14 +8912,6 @@ function initLeadMap() {
       else _leadMap.removeLayer(_mapClusters[k]);
     };
   });
-
-  // Stack overlay: build its purple markers, wire its toggle + coverage.
-  const stackMarkers = _buildStackMapMarkers();
-  let stackTotal = 0;
-  try { stackTotal = (typeof _stackBuildList === "function") ? _stackBuildList().length : 0; } catch (e) {}
-  stackMarkers.forEach(m => _mapClusters.stack.addLayer(m));
-  const stackCov = document.getElementById("map-cov-stack");
-  if (stackCov) stackCov.textContent = "(" + stackMarkers.length + " mapped / " + stackTotal + ")";
   const stackToggle = document.getElementById("map-layer-stack");
   if (stackToggle && stackToggle.checked) _leadMap.addLayer(_mapClusters.stack);
   if (stackToggle) stackToggle.onchange = () => {
@@ -8843,13 +8919,22 @@ function initLeadMap() {
     else _leadMap.removeLayer(_mapClusters.stack);
   };
 
-  const hint = document.getElementById("map-hint");
-  if (hint) hint.textContent = placeCount
-    ? placeCount.toLocaleString() + " properties plotted"
-    : "No coordinates yet — run the “Geocode leads (Census)” workflow to populate the map.";
+  // Wire the property-type filter buttons (All / Houses / Lots / Multifamily).
+  document.querySelectorAll("#map-propfilter .map-pf-btn").forEach(btn => {
+    btn.onclick = () => {
+      _MAP_PROP_FILTER = btn.dataset.pf || "all";
+      document.querySelectorAll("#map-propfilter .map-pf-btn")
+        .forEach(b => b.classList.toggle("active", b === btn));
+      _renderMapMarkers();
+    };
+  });
 
-  if (allBounds.length) {
-    const b = L.latLngBounds(allBounds);
+  const hint = document.getElementById("map-hint");
+  if (!_lastMapBounds.length && hint && !hint.textContent) {
+    hint.textContent = "No coordinates yet — run the “Geocode leads (Census)” workflow to populate the map.";
+  }
+  if (_lastMapBounds.length) {
+    const b = L.latLngBounds(_lastMapBounds);
     if (b.isValid()) _leadMap.fitBounds(b, { padding: [30, 30], maxZoom: 14 });
   }
   setTimeout(() => _leadMap.invalidateSize(), 50);
@@ -12455,7 +12540,7 @@ function _stackBuildEntry(key, group) {
     if (mv && !marketValue) marketValue = mv;                 // CV / (DELQ via lookup) carry this; CCLN doesn't
     if (!propType && rec.property_type) propType = rec.property_type;
     if ((t === "cv" || t === "vacant") && rec.violation_type && !violationType) violationType = rec.violation_type;
-    if (t === "ccln") lienTotal += Number(rec.amount != null ? rec.amount : rec.pdf_amount) || 0;   // sum every lien on the parcel
+    if (t === "ccln") lienTotal += Number(rec.pdf_amount != null ? rec.pdf_amount : rec.amount) || 0;   // sum every lien on the parcel (pdf_amount is the real value; API amount is null)
     if (!mailStreet && rec.mail_address) {
       if (rec.mail_city || rec.mail_state || rec.mail_zip) {  // ccln / delq: structured fields
         mailStreet = rec.mail_address; mailCsz = _stackCsz(rec);
