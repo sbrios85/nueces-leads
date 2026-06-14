@@ -1279,6 +1279,32 @@
     opacity: 0; transition: opacity 0.15s;
   }
   .crm-saved.show { opacity: 1; }
+  /* Property CRM (shared parcel-level CRM) */
+  .prop-stagebar { display:flex; align-items:center; gap:14px; margin-bottom:24px; flex-wrap:wrap; }
+  .prop-stagebar-lbl { font-size:12px; font-weight:600; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.5px; }
+  .prop-stages { display:flex; gap:8px; flex-wrap:wrap; }
+  .prop-stage-btn { padding:7px 14px; border-radius:8px; font-size:13px; font-weight:600;
+    cursor:pointer; font-family:inherit; color:var(--muted); background:transparent;
+    border:1px solid rgba(148,163,184,.4); }
+  .prop-stage-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .prop-stage-btn.active { background:rgba(56,189,248,.15); border-color:var(--accent); color:var(--accent); }
+  .prop-stage-btn.active.won { background:rgba(34,197,94,.15); border-color:#22c55e; color:#22c55e; }
+  .prop-stage-btn.active.dead { background:rgba(239,68,68,.15); border-color:#ef4444; color:#ef4444; }
+  .prop-input, .prop-notes { width:100%; box-sizing:border-box; background:var(--bg);
+    border:1px solid var(--border); border-radius:8px; color:var(--fg); font-family:inherit;
+    font-size:13px; padding:9px 11px; }
+  .prop-notes { min-height:120px; resize:vertical; line-height:1.5; }
+  .prop-input { margin-top:10px; }
+  .prop-photo-img { width:100%; border-radius:8px; display:block; }
+  .prop-photo-empty, .prop-photo-err { font-size:13px; color:var(--muted); padding:24px;
+    text-align:center; border:1px dashed var(--border); border-radius:8px; }
+  .prop-act-list { display:flex; flex-direction:column; gap:8px; max-height:320px; overflow-y:auto; }
+  .prop-act-row { display:flex; justify-content:space-between; gap:10px; font-size:13px;
+    padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .prop-act-ev { color:var(--fg); }
+  .prop-act-ts { color:var(--muted); white-space:nowrap; font-size:12px; }
+  .prop-act-empty { font-size:13px; color:var(--muted); }
   .crm-stub-note {
     font-size: 12px; color: var(--muted); font-style: italic;
     margin-top: 4px;
@@ -4006,6 +4032,12 @@ function commitFcFields(docNum, edits) {
 // flagged with `stub:true` so the UI shows a "customize me" hint.
 
 const CRM_CONFIG = {
+  prop: {
+    storeKey: "nueces_property_crm_v1",
+    label: "Property",
+    readonly: [],
+    editable: [],
+  },
   cv: {
     storeKey: "nueces_cv_crm_v1",
     label: "Code Violations",
@@ -13131,13 +13163,162 @@ function _buildStackRow(entry) {
             anchor.nodeType === 1 ? anchor : anchor.parentNode))
         return;
     }
-    if (pickSig && pickSig.source.openCrm) {
-      try { pickSig.source.openCrm(pickSig.record); }
-      catch (e) { console.error("Stack openCrm failed:", e); }
-    }
+    try { openPropCrm(entry.key, entry); }
+    catch (e) { console.error("Stack openPropCrm failed:", e); }
   });
 
   return tr;
+}
+
+// ================================================================
+// PROPERTY CRM — shared, parcel-level CRM keyed by the Stack's
+// property_key ("ncad:…" / "addr:…"). Opened from the Stack rows;
+// later passes point CCLN / Delinquent / CV / Tax-Deferral at the
+// same record. Card data is stored under CRM type "prop".
+// STAGE is NOT stored here — it reuses the existing per-property
+// stack status store (getStackStatus / setStackStatus, STACK_STAGES)
+// so the table pill, the CRM pipeline, and the future Work-section
+// routing all share one source of truth.
+// Pass 1 cards: Stage pipeline · House Photo · Notes · Activity Log.
+// ================================================================
+function _propEntry(key) { return getCrmEntry("prop", key); }
+function _propSet(key, field, value) { setCrmField("prop", key, field, value); }
+function _propLogActivity(key, text) {
+  const store = loadCrmStore("prop");
+  const e = store[key] || {};
+  const log = Array.isArray(e.activity) ? e.activity.slice() : [];
+  log.unshift({ ts: new Date().toISOString(), ev: text });
+  if (log.length > 50) log.length = 50;
+  store[key] = Object.assign({}, e, { activity: log, _updated_at: new Date().toISOString() });
+  saveCrmStore("prop", store);
+}
+function _propActivityTs(iso) {
+  return (typeof _mfcFormatActivityTs === "function")
+    ? _mfcFormatActivityTs(iso) : new Date(iso).toLocaleString();
+}
+
+function openPropCrm(propKey, rec) {
+  if (!propKey) return;
+  rec = rec || {};
+  const _mainEl = document.querySelector(".main");
+  const crmEl = document.getElementById("crm-view");
+  const _wasOpen = crmEl && !crmEl.hidden;
+  if (!_wasOpen) {
+    const activePane = document.querySelector(".pane.active");
+    _crmReturn = { pane: activePane ? activePane.id : null,
+                   scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY };
+  }
+
+  const entry = _propEntry(propKey);
+  const stage = getStackStatus(propKey);
+
+  // Stage pipeline (reuses the stack status store)
+  const stageBtns = STACK_STAGES.map(s => {
+    const on = s.key === stage;
+    const kind = s.kind === "dead" ? "dead" : (s.kind === "closed-won" ? "won" : "");
+    return `<button type="button" class="prop-stage-btn${on ? " active" : ""} ${kind}"
+        data-stage="${esc(s.key)}">${esc(s.label)}</button>`;
+  }).join("");
+
+  // House Photo
+  const photo = entry.photo_url || "";
+  const photoCard = `
+    <div class="crm-card">
+      <h3>House Photo</h3>
+      ${photo
+        ? `<img src="${esc(photo)}" alt="House photo" class="prop-photo-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+           <div class="prop-photo-err" style="display:none;">Image failed to load — check the URL.</div>`
+        : `<div class="prop-photo-empty">No photo yet. Paste an image URL below.</div>`}
+      <input type="text" id="prop-photo-url" class="prop-input"
+             placeholder="Paste image URL (https://…)" value="${esc(photo)}">
+    </div>`;
+
+  // Notes
+  const notesCard = `
+    <div class="crm-card">
+      <h3>Notes <span class="crm-saved" id="prop-notes-saved">Saved ✓</span></h3>
+      <textarea id="prop-notes" class="prop-notes"
+                placeholder="Notes on this property…">${esc(entry.notes || "")}</textarea>
+    </div>`;
+
+  // Activity Log
+  const log = Array.isArray(entry.activity) ? entry.activity : [];
+  const logRows = log.length
+    ? log.map(a => `<div class="prop-act-row">
+          <span class="prop-act-ev">${esc(a.ev)}</span>
+          <span class="prop-act-ts">${esc(_propActivityTs(a.ts))}</span>
+        </div>`).join("")
+    : `<div class="prop-act-empty">No activity yet.</div>`;
+  const activityCard = `
+    <div class="crm-card">
+      <h3>Activity Log</h3>
+      <div class="prop-act-list">${logRows}</div>
+    </div>`;
+
+  document.getElementById("crm-title").textContent =
+    (fmtOwner(rec.owner || "") || "Property") +
+    (rec.prop_address ? " — " + fmtTitle(rec.prop_address) : "");
+
+  const body = document.getElementById("crm-body");
+  delete body.dataset.crmType;   // centered column layout
+  body.innerHTML = `
+    <div class="prop-stagebar">
+      <span class="prop-stagebar-lbl">Stage</span>
+      <div class="prop-stages">${stageBtns}</div>
+    </div>
+    <div class="crm-grid">
+      ${photoCard}
+      ${notesCard}
+      ${activityCard}
+    </div>`;
+
+  // Stage buttons
+  body.querySelectorAll(".prop-stage-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const newStage = btn.dataset.stage;
+      if (newStage === getStackStatus(propKey)) return;
+      const lbl = (STACK_STAGES.find(s => s.key === newStage) || {}).label || newStage;
+      setStackStatus(propKey, newStage);
+      _propLogActivity(propKey, "Stage → " + lbl);
+      if (typeof applyStack === "function") applyStack();
+      openPropCrm(propKey, rec);
+    });
+  });
+
+  // Notes (debounced autosave)
+  const notesEl = document.getElementById("prop-notes");
+  if (notesEl) {
+    let t = null;
+    notesEl.addEventListener("input", () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        _propSet(propKey, "notes", notesEl.value);
+        const s = document.getElementById("prop-notes-saved");
+        if (s) { s.classList.add("show"); clearTimeout(s._t);
+                 s._t = setTimeout(() => s.classList.remove("show"), 1200); }
+      }, 400);
+    });
+  }
+
+  // Photo URL (save on change + log + re-render to update the preview)
+  const photoEl = document.getElementById("prop-photo-url");
+  if (photoEl) {
+    photoEl.addEventListener("change", () => {
+      const url = photoEl.value.trim();
+      const had = !!(_propEntry(propKey).photo_url);
+      _propSet(propKey, "photo_url", url);
+      _propLogActivity(propKey, url ? (had ? "Updated house photo" : "Added house photo")
+                                    : "Removed house photo");
+      openPropCrm(propKey, rec);
+    });
+  }
+
+  document.querySelectorAll(".pane").forEach(p => p.classList.remove("active"));
+  crmEl.hidden = false;
+  _crmPushHistory();
+  if (_mainEl) _mainEl.scrollTop = 0;
+  else window.scrollTo(0, 0);
 }
 
 // Wire the Stack table's sort headers — same pattern as CCLN
