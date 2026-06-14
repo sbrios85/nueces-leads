@@ -13197,6 +13197,41 @@ function _propActivityTs(iso) {
     ? _mfcFormatActivityTs(iso) : new Date(iso).toLocaleString();
 }
 
+// Contacts (per-property list): [{id,title,name,phone,email,followup,notes}]
+function _propGenContactId() { return "c_" + Math.random().toString(36).slice(2, 10); }
+function _propSetContactField(key, contactId, field, value) {
+  const store = loadCrmStore("prop");
+  const e = store[key] || {};
+  const contacts = Array.isArray(e.contacts) ? e.contacts.slice() : [];
+  const i = contacts.findIndex(c => c.id === contactId);
+  if (i < 0) return;
+  contacts[i] = Object.assign({}, contacts[i], { [field]: value });
+  store[key] = Object.assign({}, e, { contacts: contacts, _updated_at: new Date().toISOString() });
+  saveCrmStore("prop", store);
+}
+function _propAddContact(key) {
+  const store = loadCrmStore("prop");
+  const e = store[key] || {};
+  const contacts = Array.isArray(e.contacts) ? e.contacts.slice() : [];
+  contacts.push({ id: _propGenContactId(), title: "", name: "", phone: "", email: "", followup: "", notes: "" });
+  store[key] = Object.assign({}, e, { contacts: contacts, _updated_at: new Date().toISOString() });
+  saveCrmStore("prop", store);
+}
+function _propRemoveContact(key, contactId) {
+  const e = _propEntry(key);
+  const c = (e.contacts || []).find(x => x.id === contactId);
+  const hasData = c && (c.name || c.phone || c.email || c.title || c.notes);
+  if (hasData && !confirm("Delete this contact?")) return false;
+  const store = loadCrmStore("prop");
+  const e2 = store[key] || {};
+  e2.contacts = (e2.contacts || []).filter(x => x.id !== contactId);
+  e2._updated_at = new Date().toISOString();
+  store[key] = e2;
+  saveCrmStore("prop", store);
+  if (hasData) _propLogActivity(key, `Removed contact "${c.name || "(unnamed)"}"`);
+  return true;
+}
+
 function openPropCrm(propKey, rec) {
   if (!propKey) return;
   rec = rec || {};
@@ -13234,6 +13269,41 @@ function openPropCrm(propKey, rec) {
              placeholder="Paste image URL (https://…)" value="${esc(photo)}">
     </div>`;
 
+  // Contacts (per-property list — reuses MFC contact styling)
+  const contacts = Array.isArray(entry.contacts) ? entry.contacts : [];
+  const contactBlocks = contacts.length === 0
+    ? `<div class="mfc-contacts-empty">No contacts yet. Click <strong>+ Add</strong> to add the owner, co-owner, realtor, neighbor, etc.</div>`
+    : contacts.map(c => `
+        <div class="mfc-contact" data-contact-id="${esc(c.id)}">
+          <div class="mfc-contact-head">
+            <input class="mfc-contact-title" type="text" placeholder="Title"
+                   value="${esc(c.title || "")}" data-prop-cfield="title" data-prop-cid="${esc(c.id)}">
+            <input class="mfc-contact-name" type="text" placeholder="Name"
+                   value="${esc(c.name || "")}" data-prop-cfield="name" data-prop-cid="${esc(c.id)}">
+            <button class="mfc-contact-del" title="Remove this contact"
+                    data-prop-del-cid="${esc(c.id)}">×</button>
+          </div>
+          <div class="mfc-contact-fields">
+            <div class="crm-field"><label>Phone</label>
+              <input type="text" value="${esc(c.phone || "")}" data-prop-cfield="phone" data-prop-cid="${esc(c.id)}"></div>
+            <div class="crm-field"><label>Email</label>
+              <input type="text" value="${esc(c.email || "")}" data-prop-cfield="email" data-prop-cid="${esc(c.id)}"></div>
+            <div class="crm-field"><label>Follow-up</label>
+              <input type="date" value="${esc(c.followup || "")}" data-prop-cfield="followup" data-prop-cid="${esc(c.id)}"></div>
+            <div class="crm-field mfc-contact-notes-field"><label>Notes</label>
+              <textarea rows="2" placeholder="Notes about this contact…"
+                        data-prop-cfield="notes" data-prop-cid="${esc(c.id)}">${esc(c.notes || "")}</textarea></div>
+          </div>
+        </div>`).join("");
+  const contactsCard = `
+    <div class="crm-card">
+      <div class="mfc-contacts-head">
+        <h3>Contacts</h3>
+        <button class="mfc-contacts-add-btn" id="prop-add-contact">+ Add</button>
+      </div>
+      ${contactBlocks}
+    </div>`;
+
   // Notes
   const notesCard = `
     <div class="crm-card">
@@ -13269,6 +13339,7 @@ function openPropCrm(propKey, rec) {
     </div>
     <div class="crm-grid">
       ${photoCard}
+      ${contactsCard}
       ${notesCard}
       ${activityCard}
     </div>`;
@@ -13313,6 +13384,35 @@ function openPropCrm(propKey, rec) {
       openPropCrm(propKey, rec);
     });
   }
+
+  // Contacts: add button
+  const addC = document.getElementById("prop-add-contact");
+  if (addC) addC.addEventListener("click", () => {
+    _propAddContact(propKey);
+    openPropCrm(propKey, rec);
+  });
+  // Contacts: field inputs (text/textarea debounce; date on change)
+  body.querySelectorAll("[data-prop-cfield]").forEach(el => {
+    const cid = el.dataset.propCid;
+    const field = el.dataset.propCfield;
+    const tag = el.tagName.toLowerCase();
+    const isText = (tag === "input" && el.type === "text") || tag === "textarea";
+    if (isText) {
+      let tt = null;
+      el.addEventListener("input", () => {
+        clearTimeout(tt);
+        tt = setTimeout(() => _propSetContactField(propKey, cid, field, el.value), 400);
+      });
+    } else {
+      el.addEventListener("change", () => _propSetContactField(propKey, cid, field, el.value));
+    }
+  });
+  // Contacts: delete buttons
+  body.querySelectorAll("[data-prop-del-cid]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (_propRemoveContact(propKey, btn.dataset.propDelCid)) openPropCrm(propKey, rec);
+    });
+  });
 
   document.querySelectorAll(".pane").forEach(p => p.classList.remove("active"));
   crmEl.hidden = false;
