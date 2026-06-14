@@ -2506,8 +2506,8 @@
   .portals-legend {
     display: flex; gap: 14px; flex-wrap: wrap;
     font-size: 11px; color: var(--muted);
-    margin-bottom: 14px;
-    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    margin-bottom: 9px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
     align-items: center;
   }
   .portals-legend .tag { vertical-align: middle; }
@@ -2516,7 +2516,7 @@
   .portals-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 8px;
   }
   @media (max-width: 720px) {
     .portals-grid { grid-template-columns: 1fr; }
@@ -2525,8 +2525,8 @@
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 12px 14px;
-    display: flex; flex-direction: column; gap: 4px;
+    padding: 9px 13px;
+    display: flex; flex-direction: column; gap: 3px;
   }
   .portal-card .card-row1 {
     display: flex; justify-content: space-between; align-items: center;
@@ -2554,7 +2554,7 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 8px;
     font-size: 12px;
-    margin-top: 4px;
+    margin-top: 2px;
   }
   .portal-card .card-link-row .lbl {
     color: var(--muted);
@@ -2582,8 +2582,8 @@
   /* PIA email template block at the bottom of the modal — distinct
      amber tint so it reads as a callout, not a card. */
   .portals-pia {
-    margin-top: 16px;
-    padding: 14px 16px;
+    margin-top: 10px;
+    padding: 11px 14px;
     background: rgba(245,158,11,.08);
     border: 1px solid rgba(245,158,11,.25);
     border-radius: 8px;
@@ -2615,7 +2615,7 @@
     background: rgba(245,158,11,.12);
   }
   .portals-pia .pia-copy.copied { color: var(--good); border-color: var(--good); }
-  .portals-pia .pia-tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .portals-pia .pia-tabs { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
   .portals-pia .pia-tab {
     flex: 1 1 200px; text-align: left;
     background: transparent; border: 1px solid rgba(245,158,11,.4);
@@ -3469,6 +3469,55 @@
             <span class="lbl">True People Search</span>
             <a target="_blank" rel="noopener"
                href="https://www.truepeoplesearch.com/">Open ↗</a>
+          </span>
+        </div>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">Find People</span>
+          <span class="portal-tag auto">Auto</span>
+        </div>
+        <div class="card-row-link">
+          <span class="card-link-row">
+            <span class="lbl">Ancestry</span>
+            <a target="_blank" rel="noopener"
+               href="https://www.ancestry.com/">Open ↗</a>
+          </span>
+          <span class="card-link-row">
+            <span class="lbl">Find a Grave</span>
+            <a target="_blank" rel="noopener"
+               href="https://www.findagrave.com/">Open ↗</a>
+          </span>
+        </div>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">Jail and Prison</span>
+          <span class="portal-tag auto">Auto</span>
+        </div>
+        <div class="card-row-link">
+          <span class="card-link-row">
+            <span class="lbl">Texas Dept. of Criminal Justice</span>
+            <a target="_blank" rel="noopener"
+               href="https://inmate.tdcj.texas.gov/InmateSearch/start">Open ↗</a>
+          </span>
+          <span class="card-link-row">
+            <span class="lbl">Federal Bureau of Prisons</span>
+            <a target="_blank" rel="noopener"
+               href="https://www.bop.gov/mobile/find_inmate/byname.jsp#inmate_results">Open ↗</a>
+          </span>
+        </div>
+      </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">Bankruptcy</span>
+          <span class="portal-tag auto">Auto</span>
+        </div>
+        <div class="card-row-link">
+          <span class="card-link-row">
+            <span class="lbl">Pacer</span>
+            <a target="_blank" rel="noopener"
+               href="https://pacer.uscourts.gov/">Open ↗</a>
           </span>
         </div>
       </div>
