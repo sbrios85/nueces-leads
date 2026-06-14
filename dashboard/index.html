@@ -3652,6 +3652,39 @@
   </div>
 </div>
 
+<!-- ======== Property (stack) log-attempt modal ========
+     Same UI as MFC's, bound to the shared property CRM. prop- IDs. -->
+<div class="mfc-attempt-modal-backdrop" id="prop-attempt-modal-backdrop"
+     onclick="if(event.target===this)_propCloseAttemptModal()">
+  <div class="mfc-attempt-modal" role="dialog" aria-labelledby="prop-attempt-modal-title">
+    <h3 id="prop-attempt-modal-title">Log outreach attempt</h3>
+    <div class="crm-field">
+      <label>Date</label>
+      <input type="date" id="prop-attempt-date">
+    </div>
+    <div class="crm-field">
+      <label>Method</label>
+      <select id="prop-attempt-method"></select>
+    </div>
+    <div class="crm-field">
+      <label>Response</label>
+      <select id="prop-attempt-response"></select>
+    </div>
+    <div class="crm-field">
+      <label>Try again on <span class="modal-field-hint">(optional — leave blank if no follow-up planned)</span></label>
+      <input type="date" id="prop-attempt-followup">
+    </div>
+    <div class="crm-field">
+      <label>Notes</label>
+      <textarea id="prop-attempt-notes" rows="3" placeholder="What happened? (optional)"></textarea>
+    </div>
+    <div class="mfc-attempt-modal-actions">
+      <button onclick="_propCloseAttemptModal()">Cancel</button>
+      <button class="primary" onclick="_propSaveAttempt()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- ======== TFC log-attempt modal (Upload 2) ========
      Same UI/behavior as the MFC attempt modal but bound to the
      TFC CRM. Mirrors MFC's element IDs with tfc- prefix so the
@@ -13542,6 +13575,92 @@ function _propWireSchemaDrag() {
   });
 }
 
+// ----------------------------------------------------------------
+// Property CRM — Outreach Attempts (reuses MFC_METHODS/MFC_RESPONSES)
+// ----------------------------------------------------------------
+// attempts: [{id,date,method,notes,response,followup}] (newest first)
+let _propPendingAttempt = null;
+function _propComputeNextFollowup(entry) {
+  if (!entry) return null;
+  const items = [];
+  (Array.isArray(entry.attempts) ? entry.attempts : []).forEach(a => {
+    if (!a.followup) return;
+    const rd = MFC_RESPONSES.find(r => r.key === (a.response || ""));
+    const rt = rd ? rd.label : (a.response || "");
+    items.push({ date: a.followup, source: "attempt",
+      label: "Try again — " + (a.method || "outreach") + (rt ? ` (${rt})` : "") });
+  });
+  (Array.isArray(entry.contacts) ? entry.contacts : []).forEach(c => {
+    if (!c.followup) return;
+    const who = c.name ? (c.title ? `${c.name} (${c.title})` : c.name) : (c.title || "Contact");
+    items.push({ date: c.followup, source: "contact", label: who });
+  });
+  if (items.length === 0) return null;
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const overdue = items.filter(i => i.date <= todayIso).sort((a, b) => a.date.localeCompare(b.date));
+  const upcoming = items.filter(i => i.date > todayIso).sort((a, b) => a.date.localeCompare(b.date));
+  const pick = overdue[0] || upcoming[0];
+  return { date: pick.date, source: pick.source, label: pick.label, count: items.length, isDue: pick.date <= todayIso };
+}
+function _propOpenAttemptModal(key, attemptId) {
+  _propPendingAttempt = { key, attemptId };
+  // Populate selects (rebuild each open — cheap, avoids init race).
+  const ms = document.getElementById("prop-attempt-method");
+  ms.innerHTML = MFC_METHODS.map(m => `<option value="${esc(m)}">${esc(m)}</option>`).join("");
+  const rs = document.getElementById("prop-attempt-response");
+  rs.innerHTML = MFC_RESPONSES.map(r => `<option value="${esc(r.key)}">${esc(r.label)}</option>`).join("");
+  let existing = {};
+  if (attemptId) {
+    const e = _propEntry(key);
+    const a = (e.attempts || []).find(x => x.id === attemptId);
+    if (a) existing = a;
+  }
+  const todayIso = new Date().toISOString().slice(0, 10);
+  document.getElementById("prop-attempt-date").value = existing.date || todayIso;
+  document.getElementById("prop-attempt-method").value = existing.method || "Mailed";
+  document.getElementById("prop-attempt-notes").value = existing.notes || "";
+  document.getElementById("prop-attempt-response").value = existing.response || "";
+  document.getElementById("prop-attempt-followup").value = existing.followup || "";
+  document.getElementById("prop-attempt-modal-backdrop").classList.add("open");
+  document.getElementById("prop-attempt-notes").focus();
+}
+function _propCloseAttemptModal() {
+  document.getElementById("prop-attempt-modal-backdrop").classList.remove("open");
+  _propPendingAttempt = null;
+}
+function _propSaveAttempt() {
+  if (!_propPendingAttempt) return;
+  const { key, attemptId } = _propPendingAttempt;
+  const date = document.getElementById("prop-attempt-date").value;
+  const method = document.getElementById("prop-attempt-method").value;
+  const notes = document.getElementById("prop-attempt-notes").value;
+  const response = document.getElementById("prop-attempt-response").value;
+  const followup = document.getElementById("prop-attempt-followup").value;
+  const e = _propEntry(key);
+  const attempts = Array.isArray(e.attempts) ? e.attempts.slice() : [];
+  if (attemptId) {
+    const i = attempts.findIndex(a => a.id === attemptId);
+    if (i >= 0) attempts[i] = { ...attempts[i], date, method, notes, response, followup };
+    _propLogActivity(key, `Edited outreach: ${method} (${date})`);
+  } else {
+    const id = "att_" + Math.random().toString(36).slice(2, 10);
+    attempts.unshift({ id, date, method, notes, response, followup });
+    _propLogActivity(key, `Logged outreach: ${method} (${date})` +
+      (response ? ` — ${(MFC_RESPONSES.find(r => r.key === response) || {}).label || response}` : "") +
+      (followup ? ` · follow-up ${followup}` : ""));
+  }
+  _propSet(key, "attempts", attempts);
+  _propCloseAttemptModal();
+  _propReopen();
+}
+function _propDeleteAttempt(key, attemptId) {
+  if (!confirm("Delete this outreach attempt?")) return;
+  const e = _propEntry(key);
+  _propSet(key, "attempts", (e.attempts || []).filter(a => a.id !== attemptId));
+  _propLogActivity(key, "Deleted an outreach attempt");
+  _propReopen();
+}
+
 function openPropCrm(propKey, rec) {
   if (!propKey) return;
   rec = rec || {};
@@ -13749,6 +13868,53 @@ function openPropCrm(propKey, rec) {
       <div class="prop-act-list">${logRows}</div>
     </div>`;
 
+  // Outreach Attempts
+  const attempts = Array.isArray(entry.attempts) ? entry.attempts : [];
+  const _todayIsoP = new Date().toISOString().slice(0, 10);
+  const attemptsRowsHtml = attempts.length === 0
+    ? `<div class="mfc-attempts-empty">No outreach logged yet.</div>`
+    : attempts.map(a => {
+        const rd = MFC_RESPONSES.find(r => r.key === (a.response || ""));
+        const respCls = rd ? rd.cls : "";
+        const respTxt = rd ? rd.label : "—";
+        const dateTxt = a.date ? new Date(a.date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—";
+        let fuBadge = "";
+        if (a.followup) {
+          const fuTxt = new Date(a.followup + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          fuBadge = a.followup <= _todayIsoP
+            ? `<span class="mfc-followup-badge mfc-followup-due" title="Follow-up was due ${esc(a.followup)}">Follow-up due</span>`
+            : `<span class="mfc-followup-badge" title="Try again on ${esc(a.followup)}">Try ${esc(fuTxt)}</span>`;
+        }
+        return `<div class="mfc-attempt-row" data-prop-att-edit="${esc(a.id)}" style="cursor:pointer;" title="Click to edit">
+            <span class="date">${esc(dateTxt)}</span>
+            <span class="method">${esc(a.method || "—")}</span>
+            <span class="notes">${esc(a.notes || "")}${fuBadge}</span>
+            <span class="response ${respCls}">${esc(respTxt)}</span>
+            <button class="mfc-del-attempt" data-prop-att-del="${esc(a.id)}" title="Delete this attempt">×</button>
+          </div>`;
+      }).join("");
+  const attemptsCard = `
+    <div class="crm-card">
+      <div class="mfc-attempts-head">
+        <h3>Outreach Attempts <span class="mfc-attempts-count">${attempts.length}</span></h3>
+        <button class="mfc-add-attempt-btn" id="prop-add-attempt">+ Log attempt</button>
+      </div>
+      ${attemptsRowsHtml}
+    </div>`;
+
+  // Follow-up banner (soonest pending follow-up across attempts + contacts)
+  const _fuP = _propComputeNextFollowup(entry);
+  let followupBannerHtml = "";
+  if (_fuP) {
+    const fuDateTxt = new Date(_fuP.date + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+    const moreTxt = _fuP.count > 1 ? ` <span class="mfc-fu-banner-count">+${_fuP.count - 1} more pending</span>` : "";
+    followupBannerHtml = `<div class="mfc-fu-banner ${_fuP.isDue ? "mfc-fu-banner-due" : ""}">
+        <span class="mfc-fu-banner-icon">${_fuP.isDue ? "⚠" : "📌"}</span>
+        <span class="mfc-fu-banner-text">${_fuP.isDue ? "Follow-up due" : "Next follow-up"}: <strong>${esc(fuDateTxt)}</strong> — ${esc(_fuP.label)}</span>
+        ${moreTxt}
+      </div>`;
+  }
+
   document.getElementById("crm-title").textContent =
     (fmtOwner(rec.owner || "") || "Property") +
     (rec.prop_address ? " — " + fmtTitle(rec.prop_address) : "");
@@ -13760,12 +13926,14 @@ function openPropCrm(propKey, rec) {
       <span class="prop-stagebar-lbl">Stage</span>
       <div class="prop-stages">${stageBtns}</div>
     </div>
+    ${followupBannerHtml}
     <div class="crm-grid">
       ${photoCard}
       ${contactsCard}
       ${researchCard}
       ${notesCard}
       ${activityCard}
+      ${attemptsCard}
       ${skiptraceCard}
     </div>`;
 
@@ -13895,6 +14063,16 @@ function openPropCrm(propKey, rec) {
         tt = setTimeout(() => _propSetCustom(propKey, fieldId, el.value), 400);
       });
     }
+  });
+
+  // Outreach Attempts: add + delete + edit (row click)
+  const addAtt = document.getElementById("prop-add-attempt");
+  if (addAtt) addAtt.addEventListener("click", () => _propOpenAttemptModal(propKey));
+  body.querySelectorAll("[data-prop-att-del]").forEach(btn => {
+    btn.addEventListener("click", (e) => { e.stopPropagation(); _propDeleteAttempt(propKey, btn.dataset.propAttDel); });
+  });
+  body.querySelectorAll("[data-prop-att-edit]").forEach(row => {
+    row.addEventListener("click", () => _propOpenAttemptModal(propKey, row.dataset.propAttEdit));
   });
 
   document.querySelectorAll(".pane").forEach(p => p.classList.remove("active"));
