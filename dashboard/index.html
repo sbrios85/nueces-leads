@@ -592,6 +592,24 @@
     color: #fb923c;
     border-color: rgba(251, 146, 60, 0.4);
   }
+  /* Lead-type pill layout in the Stack table. 1-3 pills stack vertically;
+     4+ switch to a 2-column grid so the row height stays compact. */
+  .stack-pills { display: inline-flex; flex-direction: column;
+    align-items: flex-start; gap: 3px; }
+  .stack-pills.grid2 { display: grid; grid-template-columns: auto auto;
+    justify-content: start; align-items: start; gap: 3px 5px; }
+  .stack-pills .stack-badge { margin: 0; }
+  /* Map popup: per-lead-type detail rows, stacked vertically. */
+  .map-pop-stack { margin-top: 6px; display: flex; flex-direction: column; gap: 6px; }
+  .map-pop-srow { display: flex; align-items: flex-start; gap: 6px; line-height: 1.35; }
+  .map-pop-srow .map-swatch { margin-top: 4px; flex: 0 0 auto; }
+  .map-pop-srow-body { min-width: 0; }
+  .map-pop-srow-label { font-weight: 600; font-size: 12px; color: #222; }
+  .map-pop-srow-detail { font-size: 11.5px; color: #555; }
+  .map-pop-defpill { display: inline-block; margin-left: 4px; padding: 0 6px;
+    border-radius: 9px; font-size: 10px; font-weight: 600;
+    background: rgba(244,114,182,0.16); color: #be3d80;
+    border: 1px solid rgba(244,114,182,0.4); }
   .tov-addr {
     width: 100%; box-sizing: border-box; font-family: inherit;
     background: rgba(255,255,255,0.04);
@@ -8647,10 +8665,81 @@ function _clusterIconFn(color) {
 // it sits ON TOP of the underlying source pin — a stacked house shows as a
 // single purple dot when the Stack layer is on, and reverts to its source/
 // mixed color when toggled off. No duplicate visible dots.
+// Swatch colors for each lead type in the stacked map popup (match the
+// Stack table badge colors).
+const _STACK_MAP_COLORS = {
+  ccln: "#38bdf8", vacant: "#2dd4bf", cv: "#ef4444",
+  deferral: "#f472b6", delq: "#c084fc", noo: "#fb923c",
+};
+
+function _delqStatusText(f) {
+  if (!f) return "Delinquent";
+  const out = [];
+  if (f.in_suit) out.push("Suit Filed");
+  if (f.has_judgment) out.push("Judgment");
+  if (f.tax_deferral) out.push("Tax Deferral");
+  if (f.payment_agreement) out.push("Payment Plan");
+  if (f.bankruptcy) out.push("Bankruptcy");
+  return out.length ? out.join(", ") : "Delinquent";
+}
+
+function _stackMapRow(color, label, detailHtml) {
+  return '<div class="map-pop-srow"><span class="map-swatch" style="background:' + color + '"></span>'
+    + '<div class="map-pop-srow-body"><div class="map-pop-srow-label">' + esc(label) + '</div>'
+    + (detailHtml ? '<div class="map-pop-srow-detail">' + detailHtml + '</div>' : '')
+    + '</div></div>';
+}
+
+// Per-lead-type detail rows for the stacked map popup. Each lead type the
+// property carries gets its own row with its key facts.
+function _stackMapRows(entry) {
+  const money = v => (v && !isNaN(v)) ? "$" + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 }) : null;
+  const rows = [];
+  STACK_SOURCES.filter(s => entry.byType[s.type]).forEach(s => {
+    const t = s.type, cnt = entry.byType[t];
+    const color = _STACK_MAP_COLORS[t] || "#888";
+    let label, detail = "";
+    if (t === "ccln") {
+      label = "City Lien";
+      const bits = [cnt + " lien" + (cnt === 1 ? "" : "s")];
+      if (entry.lien_total > 0) bits.push(money(entry.lien_total) + " total");
+      detail = esc(bits.join(" · "));
+    } else if (t === "vacant") {
+      label = "Vacant House" + (cnt > 1 ? " ×" + cnt : "");
+      detail = [entry.property_type, entry.violation_type].filter(Boolean).map(esc).join(" · ");
+    } else if (t === "cv") {
+      label = "Code Violation" + (cnt > 1 ? " ×" + cnt : "");
+      detail = entry.violation_type ? esc(entry.violation_type) : "";
+    } else if (t === "deferral") {
+      label = "Tax Deferral";
+      const amt = entry.deferral_owed > 0 ? esc(money(entry.deferral_owed) + " owed") : "owed amount n/a";
+      detail = amt + ' <span class="map-pop-defpill">Deferral</span>';
+    } else {
+      label = s.label + (cnt > 1 ? " ×" + cnt : "");
+    }
+    rows.push(_stackMapRow(color, label, detail));
+  });
+  // Delinquent tax (decorator): amount · tax status · years behind.
+  if (entry.delq_hit) {
+    const money2 = entry.delq_owed && !isNaN(entry.delq_owed)
+      ? "$" + Number(entry.delq_owed).toLocaleString(undefined, { maximumFractionDigits: 0 }) : null;
+    const bits = [];
+    if (money2) bits.push(money2);
+    bits.push(_delqStatusText(entry.delq_flags));
+    if (entry.delq_years) bits.push(entry.delq_years + " yr" + (entry.delq_years === 1 ? "" : "s") + " behind");
+    rows.push(_stackMapRow(_STACK_MAP_COLORS.delq, "Delinquent Tax", esc(bits.join(" · "))));
+  }
+  // Non-owner-occupied (decorator).
+  if (entry.non_owner_occupied) {
+    rows.push(_stackMapRow(_STACK_MAP_COLORS.noo, "Non-Owner Occupied", "absentee owner"));
+  }
+  return { html: rows.join(""), count: rows.length };
+}
+
 function _buildStackMapMarkers() {
   if (typeof _stackBuildList !== "function") return [];
   let list = [];
-  try { list = _stackBuildList(); } catch (e) { return []; }
+  try { list = _stackDecorate(_stackBuildList()); } catch (e) { return []; }
   const markers = [];
   list.forEach(entry => {
     let ll = null;
@@ -8661,15 +8750,13 @@ function _buildStackMapMarkers() {
     if (!ll) return;
     const owner = (typeof fmtOwner === "function" ? fmtOwner(entry.owner || "") : (entry.owner || "")) || "—";
     const addr  = (typeof fmtTitle === "function" ? fmtTitle(entry.prop_address || "") : (entry.prop_address || "")) || "—";
-    const parts = STACK_SOURCES
-      .filter(s => entry.byType[s.type])
-      .map(s => { const c = entry.byType[s.type]; return s.label + (c > 1 ? " ×" + c : ""); });
     const gmaps = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(addr);
+    const rows = _stackMapRows(entry);
     const html = '<div class="map-pop-owner">' + esc(owner) + '</div>'
       + '<div class="map-pop-addr">' + esc(addr) + '</div>'
       + '<div class="map-pop-type"><span class="map-swatch" style="background:' + _MAP_STACK_COLOR + '"></span>'
-      + '<span>Stacked Lead</span><span style="color:#777">· ' + parts.length + ' type' + (parts.length === 1 ? '' : 's') + '</span></div>'
-      + '<div class="map-pop-liens"><div class="map-pop-lien"><div class="l1">' + esc(parts.join(" · ") || "—") + '</div></div></div>'
+      + '<span>Stacked Lead</span><span style="color:#777">· ' + rows.count + ' type' + (rows.count === 1 ? '' : 's') + '</span></div>'
+      + '<div class="map-pop-stack">' + rows.html + '</div>'
       + '<div style="border-top:1px solid #e2e2e2;margin-top:8px;padding-top:7px">'
       + '<a class="map-pop-link" href="' + esc(gmaps) + '" target="_blank" rel="noopener">Open in Google Maps</a></div>';
     markers.push(L.marker(ll, { icon: _mapPinIcon(_MAP_STACK_COLOR), zIndexOffset: 1000 }).bindPopup(html, { maxWidth: 300 }));
@@ -12501,11 +12588,11 @@ function _stackCompare(a, b, key, dir) {
   return 0;
 }
 
-function applyStack() {
-  const list = _stackBuildList();
-  // Decorate each entry with delinquent-tax data. DELQ isn't a Stack
-  // source (it doesn't drive stacking), so it's looked up by NCAD
-  // account number and attached here for both sorting and rendering.
+// Decorate each Stack entry with delinquent-tax + deferral data. DELQ isn't
+// a Stack source (it doesn't drive stacking), so it's looked up by NCAD
+// account number and attached here for sorting, the table, AND the map popup.
+// Shared so the map's _stackBuildList() entries carry the same fields.
+function _stackDecorate(list) {
   const _delqMap = _stackDelqByNcad();
   for (const e of list) {
     const d = e.ncad_account_num ? _delqMap[e.ncad_account_num] : null;
@@ -12532,6 +12619,11 @@ function applyStack() {
     if (!e.prop_city && d && d.prop_city) e.prop_city = d.prop_city;
     if (!e.prop_state && d && d.prop_state) e.prop_state = d.prop_state;
   }
+  return list;
+}
+
+function applyStack() {
+  const list = _stackDecorate(_stackBuildList());
   // Sidebar count badge reflects the FULL stacked total (the Hide Lots
   // toggle is a view filter, so it shouldn't move the global nav count).
   const countEl = document.getElementById("stack-count");
@@ -12644,33 +12736,34 @@ function _buildStackRow(entry) {
   // "City Lien 20" instead of cluttering with a separate column.
   // Single-record types show just the label ("City Lien"), keeping
   // the pill compact when there's nothing extra to show.
-  const badgeHtml = STACK_SOURCES
+  const _pills = STACK_SOURCES
     .filter(s => entry.byType[s.type])
     .map(s => {
       const count = entry.byType[s.type];
       const label = count > 1 ? `${s.label} ${count}` : s.label;
       return `<span class="stack-badge ${s.badgeClass}">${esc(label)}</span>`;
-    })
-    .join("");
+    });
   // Delinquent-taxes pill. DELQ decorates rows (it isn't a stacking
   // source today), so append its pill whenever the parcel is on the
-  // delinquent list. (Deferred-tax accounts will get their own pill
-  // once that list is available.)
-  const delqBadge = entry.delq_hit
-    ? `<span class="stack-badge stack-badge-delq">Delinquent Taxes</span>`
-    : "";
-  const nooBadge = entry.non_owner_occupied
-    ? `<span class="stack-badge stack-badge-noo">Non-Owner Occupied</span>`
-    : "";
+  // delinquent list.
+  if (entry.delq_hit) {
+    _pills.push(`<span class="stack-badge stack-badge-delq">Delinquent Taxes</span>`);
+  }
+  if (entry.non_owner_occupied) {
+    _pills.push(`<span class="stack-badge stack-badge-noo">Non-Owner Occupied</span>`);
+  }
   // Specific tax-status pills (Suit Filed / Judgment / Tax Deferral /
   // Payment Plan) — anything beyond plain "delinquent". Each is its own
   // pill and counts toward the row's pill total.
-  const taxFlagBadges = _stackTaxFlags(entry)
-    .map(lbl => {
-      const cls = lbl === "Bankruptcy" ? "stack-badge-bankruptcy" : "stack-badge-taxstatus";
-      return `<span class="stack-badge ${cls}">${esc(lbl)}</span>`;
-    })
-    .join("");
+  _stackTaxFlags(entry).forEach(lbl => {
+    const cls = lbl === "Bankruptcy" ? "stack-badge-bankruptcy" : "stack-badge-taxstatus";
+    _pills.push(`<span class="stack-badge ${cls}">${esc(lbl)}</span>`);
+  });
+  // Layout: 1-3 pills stack vertically (one per line); 4+ switch to a
+  // 2-up grid so the row height roughly halves instead of growing tall.
+  const pillsCell = _pills.length
+    ? `<div class="stack-pills${_pills.length >= 4 ? " grid2" : ""}">${_pills.join("")}</div>`
+    : null;
 
   // NCAD / NCTAX external icons — reuse the shared helpers via a
   // synthetic record-shaped object.
@@ -12751,7 +12844,7 @@ function _buildStackRow(entry) {
 
   tr.innerHTML = `
     <td>${statusCell}</td>
-    <td>${(badgeHtml + delqBadge + nooBadge + taxFlagBadges) || dash}</td>
+    <td>${pillsCell || dash}</td>
     <td>${(esc(fmtOwner(entry.owner || "")) || dash) + exemptionTagsHtml(entry.ncad_account_num)}</td>
     <td>${entry.prop_address ? esc(fmtTitle(entry.prop_address)) + _stackPropCsz(entry) : dash}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: entry.prop_address})}</td>
