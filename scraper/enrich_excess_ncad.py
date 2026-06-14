@@ -131,6 +131,25 @@ def _lotblock_match(ours: Tuple[str, Set[str]],
     return bool(ol & pl)          # lot sets overlap
 
 
+# Strip a leading suit/cause token from a thin (unmatched) legal so the
+# dashboard doesn't show cause-number junk. Keeps any real lot/block
+# remainder; returns "" when nothing meaningful survives (a bare cause #).
+_CAUSE = re.compile(
+    r"^\s*(?:SUIT\s*(?:NO\.?|#)?\s*|CAUSE\s*(?:NO\.?|#)?\s*|#\s*)?"
+    r"(?:\d{4}\s*DCV[\s-]*\d+[\s-]*[A-Z]"          # 2012DCV-4384-A / 2023DCV 3194 E
+    r"|\d{2}-\d{4,5}-\d{2}-\d-[A-Z])"               # 93-01244-00-0-G
+    r"\b[\s,.\-]*", re.I)
+
+
+def _clean_thin_legal(legal: str) -> str:
+    s = re.sub(r"\s+", " ", (legal or "").strip())
+    s2 = _CAUSE.sub("", s).strip(" ,.-")
+    if not re.search(r"\b(?:LOT|LOTS|LT|LTS|BLK|BLOCK|BK|TR|TRACT|SUBDIVISION)\b",
+                     s2, re.I):
+        return ""
+    return s2
+
+
 # ====================================================================
 # Lead wrapper
 # ====================================================================
@@ -311,6 +330,7 @@ def writeback(cases: Dict[str, Dict[str, Any]], leads: List[ExcessLead],
     fields_set = 0
     leads_touched = 0
     legals_upgraded = 0
+    legals_cleaned = 0
     for ld in leads:
         c = cases.get(ld.case_number)
         if c is None:
@@ -330,10 +350,18 @@ def writeback(cases: Dict[str, Dict[str, Any]], leads: List[ExcessLead],
             c["legal_description"] = ld.ncad_legal
             legals_upgraded += 1
             touched = True
+        # No match: strip the cause-number junk off the thin deed legal.
+        elif not ld.ncad_prop_id:
+            cur = c.get("legal_description") or ""
+            cleaned = _clean_thin_legal(cur)
+            if cleaned != cur:
+                c["legal_description"] = cleaned
+                legals_cleaned += 1
+                touched = True
         if touched:
             leads_touched += 1
     return {"fields": fields_set, "leads": leads_touched,
-            "legals": legals_upgraded}
+            "legals": legals_upgraded, "cleaned": legals_cleaned}
 
 
 # ====================================================================
@@ -413,8 +441,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     asyncio.run(_match_all(leads))
 
     counts = writeback(cases, leads, force=args.force)
-    log.info("writeback: %d fields updated across %d leads (%d legals upgraded)",
-             counts["fields"], counts["leads"], counts["legals"])
+    log.info("writeback: %d fields across %d leads (%d legals upgraded, "
+             "%d junk legals cleaned)",
+             counts["fields"], counts["leads"], counts["legals"],
+             counts["cleaned"])
 
     summarize(leads)
 
