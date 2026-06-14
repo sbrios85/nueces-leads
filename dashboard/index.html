@@ -3721,6 +3721,27 @@
   </div>
 </div>
 
+<!-- ======== Property (stack) custom-field schema-manager modal ========
+     Same UI/behavior as MFC's, bound to the shared property CRM.
+     IDs use prop- prefix. Storage key nueces_prop_custom_field_schema_v1. -->
+<div class="mfc-schema-modal-backdrop" id="prop-schema-modal-backdrop"
+     onclick="if(event.target===this)_propCloseSchemaModal()">
+  <div class="mfc-schema-modal" role="dialog" aria-labelledby="prop-schema-modal-title">
+    <h3 id="prop-schema-modal-title">Manage research fields</h3>
+    <p class="modal-sub">
+      Define the custom fields that appear in the Research section of
+      every property. Changes apply to all properties. Deleting a field
+      removes its value from every property.
+    </p>
+    <div class="mfc-schema-list" id="prop-schema-list"></div>
+    <button class="mfc-schema-add-btn" onclick="_propSchemaAddRow()">+ Add field</button>
+    <div class="mfc-schema-modal-actions">
+      <button onclick="_propCloseSchemaModal()">Cancel</button>
+      <button class="primary" onclick="_propSaveSchema()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- ======== TFC custom-field schema-manager modal (Upload 3) ========
      Same UI/behavior as MFC's schema modal but bound to TFC.
      Element IDs use tfc- prefix for isolation. Storage key is
@@ -13334,6 +13355,193 @@ function _propOpenPhoneStatusMenu(event, key, rowId, slotIdx) {
   menu.classList.add("open");
 }
 
+// ----------------------------------------------------------------
+// Property CRM — Research card (custom fields + system fields)
+// ----------------------------------------------------------------
+// Own schema, separate from MFC/TFC (the stack is its own world).
+// System fields store on the entry root (entry.occupancy); custom
+// fields store in entry.custom_fields keyed by field id. The field
+// SET is shared across all properties (one schema in localStorage);
+// VALUES are per-property. Reuses the generic formatter/label/id
+// helpers and the mfc-schema-* / mfc-custom-* CSS classes.
+const PROP_CUSTOM_SCHEMA_KEY = "nueces_prop_custom_field_schema_v1";
+const PROP_SYSTEM_FIELDS = [
+  {
+    id: "_sys_occupancy", label: "Occupancy", type: "select",
+    key: "occupancy", isSystem: true,
+    options: [
+      { value: "",        label: "—" },
+      { value: "owner",   label: "Owner-occupied" },
+      { value: "tenant",  label: "Tenant" },
+      { value: "vacant",  label: "Vacant" },
+      { value: "unknown", label: "Unknown" },
+    ],
+  },
+];
+function _propSystemFieldById(id) { return PROP_SYSTEM_FIELDS.find(f => f.id === id) || null; }
+function loadPropCustomSchema() {
+  try { const raw = localStorage.getItem(PROP_CUSTOM_SCHEMA_KEY);
+    if (!raw) return []; const p = JSON.parse(raw); return Array.isArray(p) ? p : []; }
+  catch (e) { return []; }
+}
+function savePropCustomSchema(schema) {
+  localStorage.setItem(PROP_CUSTOM_SCHEMA_KEY, JSON.stringify(Array.isArray(schema) ? schema : []));
+}
+function loadPropSchemaForRender() {
+  let schema = loadPropCustomSchema();
+  const present = new Set(schema.map(f => f.id));
+  const missing = PROP_SYSTEM_FIELDS.filter(sf => !present.has(sf.id)).map(sf => ({ id: sf.id }));
+  if (missing.length) schema = [...missing, ...schema];
+  return schema.map(f => {
+    if (f.id && f.id.startsWith("_sys_")) { const def = _propSystemFieldById(f.id); return def ? { ...def } : null; }
+    return f;
+  }).filter(Boolean);
+}
+function _propSetCustom(key, fieldId, value) {
+  const store = loadCrmStore("prop"); const e = store[key] || {};
+  const custom = Object.assign({}, e.custom_fields || {});
+  if (value == null || String(value).trim() === "") delete custom[fieldId];
+  else custom[fieldId] = String(value);
+  store[key] = Object.assign({}, e, { custom_fields: custom, _updated_at: new Date().toISOString() });
+  saveCrmStore("prop", store);
+}
+function _propCustomFieldHasData(fieldId) {
+  const store = loadCrmStore("prop");
+  return Object.values(store).some(e => e && e.custom_fields && e.custom_fields[fieldId]);
+}
+// Click-to-edit for money/percent custom fields (mirrors _mfcCustomStartEdit
+// but keyed off the open property record instead of crm-body.docNum).
+function _propCustomStartEdit(displayEl) {
+  if (!displayEl || displayEl.dataset._editing === "1" || !_propOpenRec) return;
+  const key = _propOpenRec.key;
+  const fieldId = displayEl.dataset.propCustomId;
+  const type    = displayEl.dataset.propCustomType;
+  if (!fieldId || !type) return;
+  displayEl.dataset._editing = "1";
+  const input = document.createElement("input");
+  input.type = "number"; input.step = "any"; input.inputMode = "decimal";
+  input.className = "mfc-custom-edit-input"; input.value = displayEl.dataset.rawVal || "";
+  displayEl.style.display = "none";
+  displayEl.parentNode.insertBefore(input, displayEl);
+  input.focus(); input.select();
+  let committed = false;
+  const commit = () => { if (committed) return; committed = true; _propSetCustom(key, fieldId, input.value); _propReopen(); };
+  const cancel = () => { if (committed) return; committed = true; input.remove(); displayEl.style.display = ""; delete displayEl.dataset._editing; };
+  input.addEventListener("blur", commit);
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); commit(); }
+    else if (e.key === "Escape") { e.preventDefault(); cancel(); }
+  });
+}
+
+// --- Property schema-manager modal (own field set) ---
+let _propSchemaDraft = [];
+function _propOpenSchemaModal() {
+  _propSchemaDraft = loadPropSchemaForRender().map(f => ({ ...f }));
+  if (!_propSchemaDraft.some(f => !f.isSystem)) _propSchemaDraft.push({ id: _mfcGenFieldId(), label: "", type: "text" });
+  _propRenderSchemaList();
+  document.getElementById("prop-schema-modal-backdrop").classList.add("open");
+}
+function _propCloseSchemaModal() {
+  document.getElementById("prop-schema-modal-backdrop").classList.remove("open");
+  _propSchemaDraft = [];
+}
+function _propRenderSchemaList() {
+  const list = document.getElementById("prop-schema-list");
+  if (_propSchemaDraft.length === 0) { list.innerHTML = `<div class="mfc-schema-empty">No fields. Click "+ Add field" below to create one.</div>`; return; }
+  list.innerHTML = _propSchemaDraft.map((f, i) => {
+    if (f.isSystem) {
+      return `<div class="mfc-schema-row mfc-schema-row-system" data-schema-idx="${i}">
+          <span class="mfc-schema-grip" title="Drag to reorder">⋮⋮</span>
+          <div class="mfc-schema-system-label">${esc(f.label)}<span class="mfc-systemfield-tag">SYSTEM</span></div>
+          <span class="mfc-schema-system-type">${esc(_mfcSystemTypeLabel(f.type))}</span>
+          <span class="mfc-schema-system-spacer" title="System fields can't be deleted"></span>
+        </div>`;
+    }
+    return `<div class="mfc-schema-row" data-schema-idx="${i}">
+      <span class="mfc-schema-grip" title="Drag to reorder">⋮⋮</span>
+      <input type="text" placeholder="Field name (e.g. ARV, Year Built)" value="${esc(f.label || "")}"
+             oninput="_propSchemaUpdate(${i}, 'label', this.value)">
+      <select onchange="_propSchemaUpdate(${i}, 'type', this.value)">
+        <option value="text"${f.type==="text"?" selected":""}>Text</option>
+        <option value="number"${f.type==="number"?" selected":""}>Number</option>
+        <option value="money"${f.type==="money"?" selected":""}>Money ($)</option>
+        <option value="percent"${f.type==="percent"?" selected":""}>Percent (%)</option>
+        <option value="date"${f.type==="date"?" selected":""}>Date</option>
+        <option value="yesno"${f.type==="yesno"?" selected":""}>Yes / No</option>
+      </select>
+      <button class="del-btn" title="Delete this field" onclick="_propSchemaDeleteRow(${i})">×</button>
+    </div>`;
+  }).join("");
+  _propWireSchemaDrag();
+}
+function _propSchemaUpdate(idx, key, value) { if (_propSchemaDraft[idx]) _propSchemaDraft[idx][key] = value; }
+function _propSchemaAddRow() { _propSchemaDraft.push({ id: _mfcGenFieldId(), label: "", type: "text" }); _propRenderSchemaList(); }
+function _propSchemaDeleteRow(idx) {
+  const f = _propSchemaDraft[idx]; if (!f || f.isSystem) return;
+  if (f.label && _propCustomFieldHasData(f.id)) {
+    if (!confirm(`Delete field "${f.label}"?\n\nThis will remove its value from EVERY property that has it. This cannot be undone.`)) return;
+  }
+  _propSchemaDraft.splice(idx, 1); _propRenderSchemaList();
+}
+function _propSaveSchema() {
+  const cleaned = _propSchemaDraft
+    .filter(f => f.isSystem || (f.label && f.label.trim()))
+    .map(f => f.isSystem ? { id: f.id } : { id: f.id || _mfcGenFieldId(), label: f.label.trim(), type: f.type || "text" });
+  const oldSchema = loadPropCustomSchema();
+  const newIds = new Set(cleaned.map(f => f.id));
+  const deletedIds = oldSchema.map(f => f.id).filter(id => id && !id.startsWith("_sys_") && !newIds.has(id));
+  if (deletedIds.length > 0) {
+    const store = loadCrmStore("prop"); let touched = false;
+    for (const e of Object.values(store)) {
+      if (!e || !e.custom_fields) continue;
+      for (const id of deletedIds) { if (id in e.custom_fields) { delete e.custom_fields[id]; touched = true; } }
+    }
+    if (touched) saveCrmStore("prop", store);
+  }
+  savePropCustomSchema(cleaned);
+  _propCloseSchemaModal();
+  _propReopen();
+}
+function _propWireSchemaDrag() {
+  const rows = document.querySelectorAll("#prop-schema-list .mfc-schema-row");
+  let srcIdx = null;
+  const clearHover = () => rows.forEach(r => r.classList.remove("drag-over-top", "drag-over-bottom"));
+  rows.forEach(row => {
+    const grip = row.querySelector(".mfc-schema-grip");
+    if (grip) grip.addEventListener("mousedown", () => row.setAttribute("draggable", "true"));
+    row.addEventListener("mouseleave", () => { if (!row.classList.contains("dragging")) row.removeAttribute("draggable"); });
+    row.addEventListener("dragstart", e => {
+      srcIdx = parseInt(row.dataset.schemaIdx, 10);
+      row.classList.add("dragging");
+      if (e.dataTransfer) { e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", String(srcIdx)); }
+    });
+    row.addEventListener("dragend", () => { row.classList.remove("dragging"); row.removeAttribute("draggable"); clearHover(); srcIdx = null; });
+    row.addEventListener("dragover", e => {
+      e.preventDefault(); if (srcIdx == null) return;
+      const tgtIdx = parseInt(row.dataset.schemaIdx, 10);
+      if (tgtIdx === srcIdx) { clearHover(); return; }
+      const rect = row.getBoundingClientRect();
+      const isTop = (e.clientY - rect.top) < (rect.height / 2);
+      clearHover(); row.classList.add(isTop ? "drag-over-top" : "drag-over-bottom");
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+    });
+    row.addEventListener("dragleave", () => row.classList.remove("drag-over-top", "drag-over-bottom"));
+    row.addEventListener("drop", e => {
+      e.preventDefault(); if (srcIdx == null) return;
+      const tgtIdx = parseInt(row.dataset.schemaIdx, 10);
+      const rect = row.getBoundingClientRect();
+      const isTop = (e.clientY - rect.top) < (rect.height / 2);
+      let insertAt = isTop ? tgtIdx : tgtIdx + 1;
+      if (srcIdx < insertAt) insertAt -= 1;
+      if (insertAt === srcIdx) { clearHover(); return; }
+      const [moved] = _propSchemaDraft.splice(srcIdx, 1);
+      _propSchemaDraft.splice(insertAt, 0, moved);
+      clearHover(); srcIdx = null; _propRenderSchemaList();
+    });
+  });
+}
+
 function openPropCrm(propKey, rec) {
   if (!propKey) return;
   rec = rec || {};
@@ -13405,6 +13613,54 @@ function openPropCrm(propKey, rec) {
         <button class="mfc-contacts-add-btn" id="prop-add-contact">+ Add</button>
       </div>
       ${contactBlocks}
+    </div>`;
+
+  // Research (custom fields + system fields — own schema)
+  const propMerged = loadPropSchemaForRender();
+  const propRawSchema = loadPropCustomSchema();
+  const propCustomVals = entry.custom_fields || {};
+  const propHasUserFields = propRawSchema.some(f => !(f.id && f.id.startsWith("_sys_")));
+  const propFieldRows = propMerged.map(f => {
+    let control;
+    if (f.isSystem && f.type === "select") {
+      const cur = entry[f.key] || "";
+      control = `<select data-prop-skey="${esc(f.key)}">${f.options.map(o =>
+          `<option value="${esc(o.value)}"${cur===o.value?" selected":""}>${esc(o.label)}</option>`).join("")}</select>`;
+    } else {
+      const cur = propCustomVals[f.id] || "";
+      if (f.type === "yesno") {
+        control = `<select data-prop-custom-id="${esc(f.id)}">
+          <option value=""${cur===""?" selected":""}>—</option>
+          <option value="yes"${cur==="yes"?" selected":""}>Yes</option>
+          <option value="no"${cur==="no"?" selected":""}>No</option>
+          <option value="unknown"${cur==="unknown"?" selected":""}>Unknown</option>
+        </select>`;
+      } else if (f.type === "date") {
+        control = `<input type="date" data-prop-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+      } else if (f.type === "money" || f.type === "percent") {
+        const formatted = _mfcFormatCustomValue(cur, f.type);
+        control = `<div class="mfc-custom-formatted${cur===""?" empty":""}"
+                        data-prop-custom-id="${esc(f.id)}" data-prop-custom-type="${esc(f.type)}"
+                        data-raw-val="${esc(cur)}" onclick="_propCustomStartEdit(this)"
+                        title="Click to edit">${esc(formatted)}</div>`;
+      } else if (f.type === "number") {
+        control = `<input type="number" data-prop-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+      } else {
+        control = `<input type="text" data-prop-custom-id="${esc(f.id)}" value="${esc(cur)}">`;
+      }
+    }
+    const systemTag = f.isSystem ? ` <span class="mfc-systemfield-tag" title="System field (always present)">SYSTEM</span>` : "";
+    return `<div class="mfc-custom-field${f.isSystem ? " mfc-custom-systemfield" : ""}">
+      <label>${esc(f.label)}${systemTag}</label>${control}</div>`;
+  }).join("");
+  const researchCard = `
+    <div class="crm-card">
+      <div class="mfc-custom-head">
+        <h3>Research</h3>
+        <button class="mfc-custom-manage-btn" onclick="_propOpenSchemaModal()">Manage fields</button>
+      </div>
+      <div class="mfc-custom-grid">${propFieldRows}</div>
+      ${!propHasUserFields ? `<div class="mfc-custom-empty">No custom research fields yet. Click <strong>Manage fields</strong> to add fields like ARV, Year Built, Sqft, Vacant?, etc.</div>` : ""}
     </div>`;
 
   // Skiptrace (family-tree style — reuses MFC skiptrace styling)
@@ -13507,9 +13763,10 @@ function openPropCrm(propKey, rec) {
     <div class="crm-grid">
       ${photoCard}
       ${contactsCard}
-      ${skiptraceCard}
+      ${researchCard}
       ${notesCard}
       ${activityCard}
+      ${skiptraceCard}
     </div>`;
 
   // Stage buttons
@@ -13616,6 +13873,28 @@ function openPropCrm(propKey, rec) {
   // Skiptrace: delete entry
   body.querySelectorAll("[data-prop-skip-del]").forEach(btn => {
     btn.addEventListener("click", () => _propRemoveSkiptrace(propKey, btn.dataset.propSkipDel));
+  });
+
+  // Research: system fields (stored at entry root, e.g. occupancy)
+  body.querySelectorAll("[data-prop-skey]").forEach(sel => {
+    sel.addEventListener("change", () => {
+      _propSet(propKey, sel.dataset.propSkey, sel.value);
+      _propLogActivity(propKey, `Research: ${sel.dataset.propSkey} → ${sel.value || "—"}`);
+    });
+  });
+  // Research: custom fields (text/number/date debounce; yesno change)
+  body.querySelectorAll("[data-prop-custom-id]").forEach(el => {
+    if (el.classList.contains("mfc-custom-formatted")) return; // money/percent handled by click-to-edit
+    const fieldId = el.dataset.propCustomId;
+    if (el.tagName === "SELECT" || el.type === "date") {
+      el.addEventListener("change", () => _propSetCustom(propKey, fieldId, el.value));
+    } else {
+      let tt = null;
+      el.addEventListener("input", () => {
+        clearTimeout(tt);
+        tt = setTimeout(() => _propSetCustom(propKey, fieldId, el.value), 400);
+      });
+    }
   });
 
   document.querySelectorAll(".pane").forEach(p => p.classList.remove("active"));
