@@ -2615,6 +2615,17 @@
     background: rgba(245,158,11,.12);
   }
   .portals-pia .pia-copy.copied { color: var(--good); border-color: var(--good); }
+  .portals-pia .pia-tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .portals-pia .pia-tab {
+    flex: 1 1 200px; text-align: left;
+    background: transparent; border: 1px solid rgba(245,158,11,.4);
+    color: var(--warn); border-radius: 6px; font-size: 12px; font-weight: 600;
+    padding: 8px 12px; cursor: pointer; font-family: inherit;
+  }
+  .portals-pia .pia-tab:hover { background: rgba(245,158,11,.12); }
+  .portals-pia .pia-tab.active { background: rgba(245,158,11,.20); border-color: var(--warn); }
+  .portals-pia .pia-info { font-size: 12px; line-height: 1.55; color: var(--fg); }
+  .portals-pia .pia-info a { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -3358,8 +3369,18 @@
           <span class="portal-tag semi">Semi</span>
         </div>
         <div class="card-desc">Manual search → CSV export → import here.</div>
-        <a class="card-link" target="_blank" rel="noopener"
-           href="https://nueces.tx.publicsearch.us/">Open ↗</a>
+        <div class="card-row-link">
+          <span class="card-link-row">
+            <span class="lbl">Real Property Records</span>
+            <a target="_blank" rel="noopener"
+               href="https://nueces.tx.publicsearch.us/">Open ↗</a>
+          </span>
+          <span class="card-link-row">
+            <span class="lbl">Real Property Records Before 1982</span>
+            <a target="_blank" rel="noopener"
+               href="https://kofilequicklinks.com/">Open ↗</a>
+          </span>
+        </div>
       </div>
       <div class="portal-card">
         <div class="card-row1">
@@ -3433,17 +3454,48 @@
         <a class="card-link" target="_blank" rel="noopener"
            href="https://cctexas.jotform.com/203084314220036">Open ↗</a>
       </div>
+      <div class="portal-card">
+        <div class="card-row1">
+          <span class="card-name">Skiptrace</span>
+          <span class="portal-tag auto">Auto</span>
+        </div>
+        <div class="card-row-link">
+          <span class="card-link-row">
+            <span class="lbl">BeenVerified</span>
+            <a target="_blank" rel="noopener"
+               href="https://www.beenverified.com/rf/dashboard">Open ↗</a>
+          </span>
+          <span class="card-link-row">
+            <span class="lbl">True People Search</span>
+            <a target="_blank" rel="noopener"
+               href="https://www.truepeoplesearch.com/">Open ↗</a>
+          </span>
+        </div>
+      </div>
     </div>
     <div class="portals-pia">
-      <h4>PIA request template — CC Code Violation list:</h4>
-      <div class="pia-to">
-        Submit via:
-        <a href="https://cctexas.jotform.com/203084314220036"
-           target="_blank" rel="noopener">City of Corpus Christi General Request Form ↗</a>
+      <div class="pia-tabs">
+        <button type="button" class="pia-tab active" data-pia="cv"
+                onclick="switchPiaTab('cv')">PIA request template — CC Code Violation list</button>
+        <button type="button" class="pia-tab" data-pia="overage"
+                onclick="switchPiaTab('overage')">Request Nueces County Tax Overage List</button>
       </div>
-      <div class="pia-body" id="pia-body">"Under the Texas Public Information Act (Gov't Code Ch. 552), I request all code enforcement case records for single-family homes active in the past 12 months: case #, dates, status, address, parcel ID, owner name/address, violation code/type, lien status/amount, narrative, and any other available fields. CSV or Excel, one row per case."</div>
-      <button class="pia-copy" id="pia-copy-btn"
-              onclick="copyPiaTemplate(this)">Copy template</button>
+      <div class="pia-panel" id="pia-panel-cv">
+        <div class="pia-to">
+          Submit via:
+          <a href="https://cctexas.jotform.com/203084314220036"
+             target="_blank" rel="noopener">City of Corpus Christi General Request Form ↗</a>
+        </div>
+        <div class="pia-body" id="pia-body">"Under the Texas Public Information Act (Gov't Code Ch. 552), I request all code enforcement case records for single-family homes active in the past 12 months: case #, dates, status, address, parcel ID, owner name/address, violation code/type, lien status/amount, narrative, and any other available fields. CSV or Excel, one row per case."</div>
+        <button class="pia-copy" id="pia-copy-btn"
+                onclick="copyPiaTemplate(this)">Copy template</button>
+      </div>
+      <div class="pia-panel" id="pia-panel-overage" hidden>
+        <div class="pia-info">For the Nueces County Tax Overage List contact Patricia (Patty) Davila by email at
+          <a href="mailto:Patricia.Davila@nuecescountytx.gov">Patricia.Davila@nuecescountytx.gov</a>
+          or call her office at <a href="tel:+13618880454">361-888-0454</a>.
+          She comes out with the updated list every month.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -15954,6 +16006,17 @@ function copyPiaTemplate(btn) {
     try { document.execCommand("copy"); flashCopied(); } catch (e) {}
     document.body.removeChild(ta);
   }
+}
+
+// Toggle the PIA box between the CC Code Violation template and the
+// Tax Overage List contact info.
+function switchPiaTab(which) {
+  const cv = document.getElementById("pia-panel-cv");
+  const ov = document.getElementById("pia-panel-overage");
+  if (cv) cv.hidden = (which !== "cv");
+  if (ov) ov.hidden = (which !== "overage");
+  document.querySelectorAll(".portals-pia .pia-tab").forEach(b =>
+    b.classList.toggle("active", b.dataset.pia === which));
 }
 
 applySidebarState();
