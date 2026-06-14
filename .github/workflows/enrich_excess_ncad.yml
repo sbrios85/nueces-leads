@@ -1,0 +1,85 @@
+name: Enrich Tax Overages — NCAD match (Stage B)
+
+# Stage B for the Tax Overages pipeline. Takes the active overage leads that
+# Stage A filled (new_owner + legal_description) and finds the parcel on NCAD,
+# writing prop_address / ncad_prop_id / ncad_account_num / appraised_value back
+# into dashboard/excess_proceeds.json so the dashboard's Property Address, Map,
+# NCAD, and NCTAX columns light up.
+#
+# Reuses scraper/fetch.py (owner-name search + legal corroboration) and
+# scraper/enrich_fc_ncad_search.py (Geographic ID off the detail page). Must run
+# from scraper/ so fetch.py's `from pdf_text_extractor import ...` resolves.
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Write excess_proceeds.json (uncheck for a dry-run)"
+        type: boolean
+        default: true
+      limit:
+        description: "Process only the first N eligible leads (0 = all). Use 5 for a test run."
+        type: string
+        default: "0"
+      only_missing:
+        description: "Skip leads that already have BOTH prop_id and account number"
+        type: boolean
+        default: true
+      min_balance:
+        description: "Only leads with balance >= this (0 = no filter)"
+        type: string
+        default: "0"
+      cases:
+        description: "Optional: comma-separated case numbers to restrict to"
+        type: string
+        default: ""
+      force:
+        description: "Overwrite existing fields (default: additive only)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # required: this workflow commits the updated JSON back
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 lxml playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Run Stage B (NCAD match)
+        working-directory: scraper
+        env:
+          APPLY: ${{ inputs.apply }}
+          LIMIT: ${{ inputs.limit }}
+          ONLY_MISSING: ${{ inputs.only_missing }}
+          MIN_BALANCE: ${{ inputs.min_balance }}
+          CASES: ${{ inputs.cases }}
+          FORCE: ${{ inputs.force }}
+        run: python enrich_excess_ncad.py
+
+      - name: Commit updated excess_proceeds.json
+        if: ${{ inputs.apply }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- dashboard/excess_proceeds.json; then
+            echo "No changes to commit."
+          else
+            git add dashboard/excess_proceeds.json
+            git commit -m "Tax Overages Stage B: NCAD parcel match (prop_id/geo/value)"
+            git push
+            echo "Committed updated excess_proceeds.json."
+          fi
