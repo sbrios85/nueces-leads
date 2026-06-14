@@ -1,50 +1,44 @@
 """
-Tax Overages (Excess Proceeds) — Stage B: NCAD parcel match
-===========================================================
+Tax Overages (Excess Proceeds) — Stage B: NCAD parcel match  (v2, lot/block)
+============================================================================
 
-Stage A (enrich_excess_deeds.py) found each active overage lead's NEW owner
-(the tax-sale grantee) and the legal description off the sheriff's deed and
-wrote them into dashboard/excess_proceeds.json as `new_owner` +
-`legal_description`.
+Stage A wrote each active overage lead's NEW owner (the tax-sale grantee) plus
+a legal description. The deed legals are thin/garbled for tax-sale deeds — they
+carry the cause number and a lot/block but usually NOT the subdivision name
+(e.g. "2014DCV-5081-H Lot 14 Block 1" for what NCAD calls "BLUNTZER PT LOS DOS
+PALOMAS UNREC OUT SHR F, TR 14 BLK 1"). The lot/block themselves are correct.
 
-Stage B (this script) takes those leads and finds the parcel on NCAD, writing
-back the fields the dashboard already reads so Property Address / Map / NCAD /
-NCTAX light up automatically:
+So instead of relying on subdivision-name corroboration (which rejected almost
+everything), Stage B:
 
-    prop_address, prop_city, prop_zip,
-    ncad_prop_id, ncad_year, ncad_owner_id,
-    ncad_account_num   (the dashed Geographic ID NCTAX needs),
-    appraised_value
+  1. Searches NCAD by the NEW owner name and pulls EVERY parcel that buyer owns
+     (the result list gives owner, situs, type, prop_id, owner_id, year, legal,
+     appraised value).
+  2. Parses lot + block from our lead's legal AND from each NCAD parcel's legal
+     (treating Tract == Lot, expanding "122&123" / "18 & 19" / "15 THRU 17").
+  3. If exactly ONE of the buyer's parcels matches our lot+block, attaches it:
+     prop_address, ncad_prop_id/year/owner_id, appraised_value, and OVERWRITES
+     legal_description with NCAD's clean legal (fixes the junk in the dashboard).
+  4. Reads the dashed Geographic ID off that parcel's detail page for NCTAX.
 
-It REUSES Sergio's proven NCAD code verbatim — no new esearch logic:
+A unique match is required, so a buyer's other parcels can't cause a mis-attach.
+Cases where the grantee flipped the parcel (no longer in their NCAD holdings) or
+whose legal has no lot/block correctly fall through to manual entry.
 
-  * Pass B1 — find the parcel by OWNER NAME, corroborated by LEGAL:
-        fetch.enrich_via_ncad_search(leads, always_lookup=True)
-    That handles the session token, throttle, query variants, best-row pick,
-    and the legal-description corroboration guard (rejects loose surname hits).
-    It sets ncad_prop_id / ncad_year / ncad_owner_id / appraised_value / address
-    but NOT the account number.
+Reuses Sergio's proven NCAD code: fetch._esearch_query_variants,
+fetch._parse_esearch_result_list, fetch._split_us_address, and
+enrich_fc_ncad_search's _mint_session_token / _fetch_detail_html /
+_extract_account_num. Heavy deps are imported lazily so this module compiles and
+its matcher unit-tests without playwright installed.
 
-  * Pass B2 — read the Geographic ID (account number) off each matched parcel's
-    detail page, reusing enrich_fc_ncad_search's helpers:
-        _mint_session_token -> _fetch_detail_html -> _extract_account_num
-
-Heavy deps (fetch, enrich_fc_ncad_search, playwright) are imported lazily inside
-the functions that use them, so this module can be compiled / unit-tested for
-its data plumbing without playwright installed.
-
-RUN LOCATION MATTERS: run from the scraper/ directory so `import fetch` and its
-`from pdf_text_extractor import legal_descriptions_match` resolve. Without that
-matcher, the corroboration guard disables and NO prop_id attaches to leads that
-carry a legal (i.e. all of them) — the script warns loudly if that happens.
-
-Env (the GitHub Actions workflow sets these; CLI flags override):
+Env (the workflow sets these; CLI flags override):
     APPLY=1         write excess_proceeds.json (default: dry-run)
-    LIMIT=5         only process the first N eligible leads (0 = all)
-    ONLY_MISSING=1  skip leads that already have BOTH prop_id and account_num
+    LIMIT=5         only the first N eligible leads (0 = all)
+    ONLY_MISSING=1  skip leads that already have prop_id AND account_num
     MIN_BALANCE=0   only leads with balance >= this (0 = no filter)
-    CASES=a,b,c     only these specific case numbers (comma-separated)
-    FORCE=1         overwrite existing case fields (default: additive only)
+    CASES=a,b,c     only these case numbers
+    FORCE=1         overwrite existing case fields (default: additive,
+                    except legal_description which is always upgraded on a match)
 """
 
 from __future__ import annotations
@@ -57,31 +51,23 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set, Tuple
 
-# REPO_ROOT is independent of CWD so the JSON path resolves no matter where the
-# script is launched from. (Same convention as fetch.py / enrich_fc.)
 REPO_ROOT = Path(__file__).resolve().parent.parent
 EXCESS_JSON = REPO_ROOT / "dashboard" / "excess_proceeds.json"
 
-# Owners we can't match to a private NCAD parcel — struck-off properties sit
-# under the county trustee, and tax-sale title sometimes lands with a public
-# agency (port authority, HUD). None of these resolve to a private NCAD owner,
-# so skip them up front rather than burn an NCAD lookup that can only miss.
-# NOTE: fetch.py's _looks_institutional catches HUD/COUNTY/CO but NOT the
-# "NUECES CTY TRUSTEE" abbreviation seen in the real clerk data — hence the
-# explicit CTY alternation here.
 NON_PRIVATE_OWNER_RE = re.compile(
-    r"NUECES\s+(?:COUNTY|CTY|CO\b)"                  # the county itself
-    r"|\b(?:COUNTY|CTY)\s+TRUSTEE"                   # struck-off via county trustee
+    r"NUECES\s+(?:COUNTY|CTY|CO\b)"
+    r"|\b(?:COUNTY|CTY)\s+TRUSTEE"
     r"|STRUCK\s*OFF"
-    r"|PORT\s+OF\s+CORPUS\s+CHRISTI"                 # navigation district / port authority
+    r"|PORT\s+OF\s+CORPUS\s+CHRISTI"
     r"|\bCOUNTY\s+OF\b|\bCITY\s+OF\b|STATE\s+OF\s+TEXAS"
     r"|HOUSING\s+AND\s+URBAN\s+DEVELOPMENT|SECRETARY\s+OF\s+HOUSING|\bHUD\b",
     re.I,
 )
 
-# The 8 fields Stage B is responsible for writing back (documented JSON shape).
+# Fields Stage B writes back. legal_description is handled specially (upgraded
+# from NCAD's clean legal on a match), so it's not in this additive set.
 WRITEBACK_FIELDS = (
     "prop_address", "prop_city", "prop_zip",
     "ncad_prop_id", "ncad_year", "ncad_owner_id",
@@ -97,22 +83,65 @@ log = logging.getLogger("enrich-excess-ncad")
 
 
 # ====================================================================
-# Lead wrapper — duck-types what fetch.enrich_via_ncad_search reads/writes
+# Lot / block parsing + matching  (validated against real NCAD legals)
+# ====================================================================
+
+_RANGE = re.compile(r"^\s*(\d+)\s*(?:thru|through|to|-)\s*(\d+)\s*$", re.I)
+_BLK = re.compile(r"\b(?:BLOCK|BLK|BK)\s*[:#]?\s*(\d+[A-Za-z]?|[A-Za-z])\b", re.I)
+_LOTVAL = r"\d+[A-Za-z]?(?:\s*(?:&|,|and|thru|through|to|-)\s*\d+[A-Za-z]?)*"
+_LOT = re.compile(
+    rf"\b(?:LOTS|LOT|LTS|LT|TRACTS|TRACT|TRS|TR)\s*[:#]?\s*({_LOTVAL})", re.I)
+
+
+def _expand_lots(tok: str) -> Set[str]:
+    out: Set[str] = set()
+    for part in re.split(r"\s*(?:&|,|and)\s*", (tok or "").strip(), flags=re.I):
+        if not part:
+            continue
+        m = _RANGE.match(part)
+        if m:
+            a, b = int(m.group(1)), int(m.group(2))
+            for n in range(min(a, b), max(a, b) + 1):
+                out.add(str(n))
+        else:
+            out.add(part.strip().upper())
+    return out
+
+
+def _lotblock(legal: str) -> Tuple[str, Set[str]]:
+    """Return (block, {lots}) parsed from a legal description. Handles both our
+    thin legals ('... Lot 14 Block 1') and NCAD's ('... TR 14 BLK 1',
+    'BLK 1 LOT 122&123', 'LTS 18 & 19 BLK 7', 'LTS 15 THRU 17 BLK 15')."""
+    legal = re.sub(r"\s+", " ", legal or "")
+    b = _BLK.search(legal)
+    block = b.group(1).upper() if b else ""
+    l = _LOT.search(legal)
+    lots = _expand_lots(l.group(1)) if l else set()
+    return block, lots
+
+
+def _lotblock_match(ours: Tuple[str, Set[str]],
+                    parcel: Tuple[str, Set[str]]) -> bool:
+    ob, ol = ours
+    pb, pl = parcel
+    if not ol or not pl:
+        return False
+    if ob and pb and ob != pb:    # blocks present on both and disagree
+        return False
+    return bool(ol & pl)          # lot sets overlap
+
+
+# ====================================================================
+# Lead wrapper
 # ====================================================================
 
 class ExcessLead:
-    """A single overage lead, shaped so enrich_via_ncad_search can treat it
-    like a ClerkRecord. `.owner` is the NEW (tax-sale) owner and `.legal` is
-    the deed's legal description — those two drive the name search + legal
-    corroboration. The remaining attributes are the fields the search fills in.
-    """
-
     __slots__ = (
         "case_number", "owner", "legal",
         "prop_address", "prop_city", "prop_state", "prop_zip",
-        "mail_address", "mail_city", "mail_state", "mail_zip",
         "ncad_prop_id", "ncad_year", "ncad_owner_id",
-        "appraised_value", "ncad_account_num",
+        "ncad_account_num", "appraised_value",
+        "ncad_legal", "n_candidates", "n_hits",
     )
 
     def __init__(self, case_number: str, owner: str, legal: str,
@@ -121,24 +150,20 @@ class ExcessLead:
         self.case_number = case_number
         self.owner = owner
         self.legal = legal
-        # Seed pre-existing values so enrich_via_ncad_search's "only fill if
-        # blank" guards preserve anything already in the JSON.
-        self.prop_address = (e.get("prop_address") or "")
-        self.prop_city = (e.get("prop_city") or "")
-        self.prop_state = (e.get("prop_state") or "TX")
-        self.prop_zip = (e.get("prop_zip") or "")
-        self.mail_address = ""
-        self.mail_city = ""
-        self.mail_state = "TX"
-        self.mail_zip = ""
-        self.ncad_prop_id = (e.get("ncad_prop_id") or "")
-        self.ncad_year = (e.get("ncad_year") or "")
-        self.ncad_owner_id = (e.get("ncad_owner_id") or "")
+        self.prop_address = e.get("prop_address") or ""
+        self.prop_city = e.get("prop_city") or ""
+        self.prop_state = e.get("prop_state") or "TX"
+        self.prop_zip = e.get("prop_zip") or ""
+        self.ncad_prop_id = e.get("ncad_prop_id") or ""
+        self.ncad_year = e.get("ncad_year") or ""
+        self.ncad_owner_id = e.get("ncad_owner_id") or ""
+        self.ncad_account_num = e.get("ncad_account_num") or ""
         self.appraised_value = e.get("appraised_value")
-        self.ncad_account_num = (e.get("ncad_account_num") or "")
+        self.ncad_legal = ""          # clean legal from the matched NCAD parcel
+        self.n_candidates = 0          # how many parcels the buyer owns
+        self.n_hits = 0                # how many matched our lot/block
 
     def values(self) -> Dict[str, Any]:
-        """The Stage-B writeback fields and their current values."""
         return {f: getattr(self, f) for f in WRITEBACK_FIELDS}
 
 
@@ -150,8 +175,7 @@ def select_leads(cases: Dict[str, Dict[str, Any]],
                  *, only_missing: bool, min_balance: float,
                  wanted: Optional[set], limit: int) -> List[ExcessLead]:
     out: List[ExcessLead] = []
-    skipped_no_data = skipped_county = skipped_done = skipped_balance = 0
-
+    skipped_no_data = skipped_np = skipped_done = skipped_balance = 0
     for case_num, c in cases.items():
         if wanted is not None and case_num not in wanted:
             continue
@@ -161,7 +185,7 @@ def select_leads(cases: Dict[str, Dict[str, Any]],
             skipped_no_data += 1
             continue
         if NON_PRIVATE_OWNER_RE.search(new_owner):
-            skipped_county += 1
+            skipped_np += 1
             continue
         if min_balance and float(c.get("balance") or 0) < min_balance:
             skipped_balance += 1
@@ -170,12 +194,10 @@ def select_leads(cases: Dict[str, Dict[str, Any]],
             skipped_done += 1
             continue
         out.append(ExcessLead(case_num, new_owner, legal, existing=c))
-
-    log.info(
-        "select: %d eligible (skipped: %d no new_owner/legal, %d non-private/agency-owned, "
-        "%d already-complete, %d below min-balance)",
-        len(out), skipped_no_data, skipped_county, skipped_done, skipped_balance,
-    )
+    log.info("select: %d eligible (skipped: %d no new_owner/legal, "
+             "%d non-private/agency-owned, %d already-complete, "
+             "%d below min-balance)",
+             len(out), skipped_no_data, skipped_np, skipped_done, skipped_balance)
     if limit and limit > 0:
         out = out[:limit]
         log.info("select: limited to first %d", len(out))
@@ -183,82 +205,101 @@ def select_leads(cases: Dict[str, Dict[str, Any]],
 
 
 # ====================================================================
-# Pass B1 — NCAD name search (+ legal corroboration)
+# NCAD search + match
 # ====================================================================
 
-def _check_legal_matcher() -> None:
-    import fetch  # lazy
-    if getattr(fetch, "_legal_match", None) is None:
-        log.warning(
-            "!! legal_descriptions_match UNAVAILABLE — pdf_text_extractor failed "
-            "to import. The corroboration guard is DISABLED, so leads that carry "
-            "a legal (all of them) will NOT attach a prop_id and Stage B will "
-            "produce nothing. Run from the scraper/ directory so "
-            "scraper/pdf_text_extractor.py is importable."
-        )
+async def _search_owner(page, fetch, owner: str, token: str, year: str) -> List[Dict[str, Any]]:
+    """Run NCAD esearch for an owner name and return ALL parsed result rows.
+    Tries fetch.py's proven name variants; returns the first that yields rows."""
+    from urllib.parse import urlencode
+    for cand in fetch._esearch_query_variants(owner):
+        params = {"keywords": f"OwnerName:{cand} Year:{year} "}
+        if token:
+            params["searchSessionToken"] = token
+        url = f"{fetch.NCAD_ESEARCH_BASE}/search/result?{urlencode(params)}"
+        try:
+            await page.goto(url, wait_until="domcontentloaded", timeout=20_000)
+            try:
+                await page.wait_for_selector(
+                    "table tbody tr, [class*='no-results'], [class*='NoResults']",
+                    timeout=8_000)
+            except Exception:
+                pass
+            await page.wait_for_timeout(400)
+            html = await page.content()
+        except Exception as exc:
+            log.debug("   esearch nav failed for %r: %s", cand, exc)
+            continue
+        rows = fetch._parse_esearch_result_list(html)
+        if rows:
+            return rows
+    return []
 
 
-def run_name_search(leads: List[ExcessLead]) -> int:
-    import fetch  # lazy
-    _check_legal_matcher()
-    log.info("Pass B1: NCAD owner-name search for %d leads (legal-corroborated)",
-             len(leads))
-    matched = fetch.enrich_via_ncad_search(leads, always_lookup=True)
-    got_pid = sum(1 for ld in leads if ld.ncad_prop_id)
-    log.info("Pass B1 done: %d gained an address, %d carry a prop_id", matched, got_pid)
-    return got_pid
-
-
-# ====================================================================
-# Pass B2 — Geographic ID (account number) off each detail page
-# ====================================================================
-
-async def _collect_account_numbers(leads: List[ExcessLead]) -> int:
-    from playwright.async_api import async_playwright  # lazy
-    import enrich_fc_ncad_search as efc  # lazy
+async def _match_all(leads: List[ExcessLead]) -> int:
+    from playwright.async_api import async_playwright
+    import fetch
+    import enrich_fc_ncad_search as efc
 
     year_default = getattr(efc, "NCAD_YEAR", "2026")
     delay_ms = int(getattr(efc, "INTER_FETCH_DELAY_S", 1.5) * 1000)
     refresh_every = int(getattr(efc, "TOKEN_REFRESH_INTERVAL", 25))
-    user_agent = getattr(efc, "USER_AGENT", None)
+    ua = getattr(efc, "USER_AGENT", None)
 
-    targets = [ld for ld in leads if ld.ncad_prop_id and not ld.ncad_account_num]
-    if not targets:
-        log.info("Pass B2: no leads need an account number")
-        return 0
-
-    log.info("Pass B2: fetching Geographic ID for %d parcels", len(targets))
-    filled = 0
+    matched = 0
     async with async_playwright() as pw:
-        browser = await pw.chromium.launch(headless=True)
-        ctx = await (browser.new_context(user_agent=user_agent)
-                     if user_agent else browser.new_context())
+        browser = await pw.chromium.launch(headless=True, args=["--no-sandbox"])
+        ctx = await (browser.new_context(user_agent=ua) if ua
+                     else browser.new_context())
         page = await ctx.new_page()
         try:
-            await efc._mint_session_token(page)  # warm the session
-            since_refresh = 0
-            for i, ld in enumerate(targets, 1):
-                year = ld.ncad_year or year_default
-                html = await efc._fetch_detail_html(
-                    page, ld.ncad_prop_id, year, ld.ncad_owner_id)
-                acct = efc._extract_account_num(html) if html else ""
-                if acct:
-                    ld.ncad_account_num = acct
-                    filled += 1
-                    log.info("  [%d/%d] %s  prop_id=%s -> geo %s",
-                             i, len(targets), ld.case_number, ld.ncad_prop_id, acct)
+            token = await efc._mint_session_token(page)
+            since = 0
+            for i, ld in enumerate(leads, 1):
+                rows = await _search_owner(page, fetch, ld.owner, token, year_default)
+                since += 1
+                cand = [r for r in rows
+                        if (r.get("type") or "").upper().startswith("R")]
+                ld.n_candidates = len(cand)
+                ours = _lotblock(ld.legal)
+                hits = [r for r in cand if _lotblock_match(ours, _lotblock(r.get("legal", "")))]
+                ld.n_hits = len(hits)
+
+                if len(hits) == 1:
+                    r = hits[0]
+                    ld.ncad_prop_id = r.get("prop_id", "") or ""
+                    ld.ncad_year = r.get("year", "") or year_default
+                    ld.ncad_owner_id = r.get("owner_id", "") or ""
+                    addr, city, state, zc = fetch._split_us_address(r.get("situs", "") or "")
+                    ld.prop_address = addr
+                    ld.prop_city = city or "CORPUS CHRISTI"
+                    ld.prop_state = state or "TX"
+                    ld.prop_zip = zc
+                    ld.appraised_value = r.get("appraised_value")
+                    ld.ncad_legal = (r.get("legal") or "").strip()
+                    # Geographic ID (account number) off the detail page.
+                    html = await efc._fetch_detail_html(
+                        page, ld.ncad_prop_id, ld.ncad_year, ld.ncad_owner_id)
+                    ld.ncad_account_num = efc._extract_account_num(html) if html else ""
+                    matched += 1
+                    log.info("  [%d/%d] %s  %s -> prop_id=%s geo=%s | %s",
+                             i, len(leads), ld.case_number, ld.owner,
+                             ld.ncad_prop_id, ld.ncad_account_num or "(none)",
+                             ld.ncad_legal[:48])
+                    await page.wait_for_timeout(delay_ms)
                 else:
-                    log.warning("  [%d/%d] %s  prop_id=%s -> no geo id found",
-                                i, len(targets), ld.case_number, ld.ncad_prop_id)
-                since_refresh += 1
-                if since_refresh >= refresh_every:
-                    await efc._mint_session_token(page)
-                    since_refresh = 0
+                    why = ("no parcels for owner" if not cand
+                           else f"{len(cand)} parcels, {len(hits)} lot/block hits")
+                    log.info("  [%d/%d] %s  %s -> no unique match (%s)",
+                             i, len(leads), ld.case_number, ld.owner, why)
+
+                if since >= refresh_every:
+                    token = await efc._mint_session_token(page)
+                    since = 0
                 await page.wait_for_timeout(delay_ms)
         finally:
             await browser.close()
-    log.info("Pass B2 done: %d account numbers", filled)
-    return filled
+    return matched
 
 
 # ====================================================================
@@ -269,6 +310,7 @@ def writeback(cases: Dict[str, Dict[str, Any]], leads: List[ExcessLead],
               *, force: bool) -> Dict[str, int]:
     fields_set = 0
     leads_touched = 0
+    legals_upgraded = 0
     for ld in leads:
         c = cases.get(ld.case_number)
         if c is None:
@@ -283,9 +325,15 @@ def writeback(cases: Dict[str, Dict[str, Any]], leads: List[ExcessLead],
                     c[field] = val
                     fields_set += 1
                     touched = True
+        # Upgrade legal_description to NCAD's clean legal whenever we matched.
+        if ld.ncad_legal and ld.ncad_prop_id and c.get("legal_description") != ld.ncad_legal:
+            c["legal_description"] = ld.ncad_legal
+            legals_upgraded += 1
+            touched = True
         if touched:
             leads_touched += 1
-    return {"fields": fields_set, "leads": leads_touched}
+    return {"fields": fields_set, "leads": leads_touched,
+            "legals": legals_upgraded}
 
 
 # ====================================================================
@@ -294,21 +342,23 @@ def writeback(cases: Dict[str, Dict[str, Any]], leads: List[ExcessLead],
 
 def summarize(leads: List[ExcessLead]) -> None:
     full = [ld for ld in leads if ld.ncad_prop_id and ld.ncad_account_num]
-    pid_only = [ld for ld in leads if ld.ncad_prop_id and not ld.ncad_account_num]
-    misses = [ld for ld in leads if not ld.ncad_prop_id]
-    log.info("=" * 60)
-    log.info("SUMMARY: %d leads | %d fully matched (prop_id + geo) | "
-             "%d prop_id only (no geo) | %d no match",
-             len(leads), len(full), len(pid_only), len(misses))
-    if pid_only:
-        log.info("  prop_id-only (NCTAX link will fall back to owner search):")
-        for ld in pid_only:
+    pid = [ld for ld in leads if ld.ncad_prop_id and not ld.ncad_account_num]
+    no_owner = [ld for ld in leads if ld.n_candidates == 0]
+    ambiguous = [ld for ld in leads if ld.n_candidates and not ld.ncad_prop_id]
+    log.info("=" * 64)
+    log.info("SUMMARY: %d leads | %d fully matched | %d prop_id only (no geo) | "
+             "%d owner not on NCAD | %d no unique lot/block",
+             len(leads), len(full), len(pid), len(no_owner), len(ambiguous))
+    if ambiguous:
+        log.info("  buyer found but no unique lot/block (flipped or thin legal):")
+        for ld in ambiguous:
+            log.info("    %s  %s  (%d parcels, %d hits)",
+                     ld.case_number, ld.owner, ld.n_candidates, ld.n_hits)
+    if no_owner:
+        log.info("  owner not found on NCAD (resold, or name format):")
+        for ld in no_owner:
             log.info("    %s  %s", ld.case_number, ld.owner)
-    if misses:
-        log.info("  no NCAD match (check legal/owner, may be county-owned or typo):")
-        for ld in misses:
-            log.info("    %s  %s", ld.case_number, ld.owner)
-    log.info("=" * 60)
+    log.info("=" * 64)
 
 
 # ====================================================================
@@ -325,30 +375,22 @@ def _env_flag(name: str, default: bool) -> bool:
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Tax Overages Stage B — NCAD match")
     p.add_argument("--apply", action="store_true",
-                   default=_env_flag("APPLY", False),
-                   help="write excess_proceeds.json (default: dry-run)")
+                   default=_env_flag("APPLY", False))
     p.add_argument("--limit", type=int,
-                   default=int(os.getenv("LIMIT", "0") or "0"),
-                   help="process only the first N eligible leads (0 = all)")
+                   default=int(os.getenv("LIMIT", "0") or "0"))
     p.add_argument("--only-missing", dest="only_missing", action="store_true",
-                   default=_env_flag("ONLY_MISSING", True),
-                   help="skip leads that already have prop_id AND account_num")
-    p.add_argument("--all", dest="only_missing", action="store_false",
-                   help="re-process every eligible lead, even completed ones")
+                   default=_env_flag("ONLY_MISSING", True))
+    p.add_argument("--all", dest="only_missing", action="store_false")
     p.add_argument("--min-balance", type=float,
-                   default=float(os.getenv("MIN_BALANCE", "0") or "0"),
-                   help="only leads with balance >= this (0 = no filter)")
-    p.add_argument("--cases", default=os.getenv("CASES", ""),
-                   help="comma-separated case numbers to restrict to")
+                   default=float(os.getenv("MIN_BALANCE", "0") or "0"))
+    p.add_argument("--cases", default=os.getenv("CASES", ""))
     p.add_argument("--force", action="store_true",
-                   default=_env_flag("FORCE", False),
-                   help="overwrite existing case fields (default: additive only)")
+                   default=_env_flag("FORCE", False))
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-
     if not EXCESS_JSON.exists():
         log.error("excess_proceeds.json not found at %s", EXCESS_JSON)
         return 1
@@ -361,23 +403,18 @@ def main(argv: Optional[List[str]] = None) -> int:
     if args.cases:
         wanted = {c.strip() for c in args.cases.split(",") if c.strip()}
 
-    leads = select_leads(
-        cases,
-        only_missing=args.only_missing,
-        min_balance=args.min_balance,
-        wanted=wanted,
-        limit=args.limit,
-    )
+    leads = select_leads(cases, only_missing=args.only_missing,
+                         min_balance=args.min_balance, wanted=wanted,
+                         limit=args.limit)
     if not leads:
         log.info("No eligible leads. Nothing to do.")
         return 0
 
-    run_name_search(leads)                       # Pass B1
-    asyncio.run(_collect_account_numbers(leads)) # Pass B2
+    asyncio.run(_match_all(leads))
 
     counts = writeback(cases, leads, force=args.force)
-    log.info("writeback: %d fields updated across %d leads",
-             counts["fields"], counts["leads"])
+    log.info("writeback: %d fields updated across %d leads (%d legals upgraded)",
+             counts["fields"], counts["leads"], counts["legals"])
 
     summarize(leads)
 
