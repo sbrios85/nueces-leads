@@ -1168,6 +1168,13 @@
   .map-pf-btn:hover { border-color: var(--accent); color: var(--accent); }
   .map-pf-btn.active { background: rgba(56,189,248,.15);
     border-color: var(--accent); color: var(--accent); }
+  .stack-pf-bar { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 14px; }
+  .stack-pf-btn { padding: 7px 14px; border-radius: 8px; font-size: 13px;
+    font-weight: 600; cursor: pointer; color: var(--muted); background: transparent;
+    border: 1px solid rgba(148,163,184,.4); font-family: inherit; }
+  .stack-pf-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .stack-pf-btn.active { background: rgba(56,189,248,.15);
+    border-color: var(--accent); color: var(--accent); }
   #lead-map {
     flex: 1; min-height: 420px; width: 100%;
     background: var(--panel); border-radius: 6px; margin-top: 6px;
@@ -3154,6 +3161,16 @@
 =================================================================== -->
 <div class="pane" id="pane-stack">
   <div class="stats" id="stack-stats"></div>
+  <div class="stack-pf-bar" id="stack-propfilter">
+    <button type="button" class="stack-pf-btn active" data-pf="all"
+            onclick="setStackPropFilter('all')">All Properties</button>
+    <button type="button" class="stack-pf-btn" data-pf="house"
+            onclick="setStackPropFilter('house')">Residential Houses</button>
+    <button type="button" class="stack-pf-btn" data-pf="lot"
+            onclick="setStackPropFilter('lot')">Residential Lots</button>
+    <button type="button" class="stack-pf-btn" data-pf="multifamily"
+            onclick="setStackPropFilter('multifamily')">Multifamily</button>
+  </div>
   <table id="stack-table">
     <thead><tr>
       <th data-sort="status"        style="width: 130px;">Status</th>
@@ -12733,6 +12750,16 @@ let STACK_SORT_DIR = "desc";
 // (vacant land) but not a vacant building, so you can focus on structures.
 let STACK_HIDE_LOTS = false;
 let STACK_HIDE_BANKRUPTCY = false;
+// Property-type view filter for the stack table ("all" | "house" | "lot"
+// | "multifamily"), mirroring the map's filter. Categorizes via
+// _propTypeCategory(entry.property_type).
+let _STACK_PROP_FILTER = "all";
+function setStackPropFilter(which) {
+  _STACK_PROP_FILTER = which || "all";
+  document.querySelectorAll("#stack-propfilter .stack-pf-btn").forEach(b =>
+    b.classList.toggle("active", b.dataset.pf === _STACK_PROP_FILTER));
+  applyStack();
+}
 function _stackIsLot(e) {
   const v = e.violation_type || "";
   return /vacant lot/i.test(v) && !/vacant building/i.test(v);
@@ -12850,6 +12877,8 @@ function applyStack() {
   // rendered set + stats only (the nav count stays the full total).
   let view = STACK_HIDE_LOTS ? list.filter(e => !_stackIsLot(e)) : list;
   if (STACK_HIDE_BANKRUPTCY) view = view.filter(e => !_stackIsBankruptcy(e));
+  if (_STACK_PROP_FILTER !== "all")
+    view = view.filter(e => _propTypeCategory(e.property_type) === _STACK_PROP_FILTER);
 
   // Stable secondary sort: latest_filed desc as tie-breaker after
   // the user's chosen primary sort. Without this, ties (e.g. two
@@ -12889,9 +12918,9 @@ function _renderStackStats(list) {
   // Filed / Judgment / etc.). A property carrying 4 of these is a much
   // stronger lead than 20 records of a single type.
   const total = list.length;
-  const byTypeCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  const byTypeCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
   for (const e of list) {
-    const t = Math.min(_stackPillCount(e), 5);
+    const t = Math.min(_stackPillCount(e), 6);
     byTypeCount[t] = (byTypeCount[t] || 0) + 1;
   }
   el.innerHTML = `
@@ -12918,22 +12947,16 @@ function _renderStackStats(list) {
     </div>
     <div class="stat-card">
       <div class="num">${byTypeCount[5] || 0}</div>
-      <div class="lbl">5+ Types</div>
+      <div class="lbl">5 Types</div>
     </div>
-    <button id="stack-hide-lots-btn" type="button"
-        onclick="STACK_HIDE_LOTS = !STACK_HIDE_LOTS; applyStack();"
-        title="Hide parcels whose violation is a vacant lot (vacant land)"
-        style="margin-left:auto; align-self:center; cursor:pointer; padding:8px 14px;
-               border-radius:8px; font-size:13px; font-weight:600;
-               border:1px solid ${STACK_HIDE_LOTS ? 'var(--accent)' : 'rgba(148,163,184,.4)'};
-               background:${STACK_HIDE_LOTS ? 'rgba(56,189,248,.15)' : 'transparent'};
-               color:${STACK_HIDE_LOTS ? 'var(--accent)' : 'var(--muted)'};">
-      ${STACK_HIDE_LOTS ? '✓ Lots Hidden' : 'Hide Lots'}
-    </button>
+    <div class="stat-card">
+      <div class="num">${byTypeCount[6] || 0}</div>
+      <div class="lbl">6+ Types</div>
+    </div>
     <button id="stack-hide-bankruptcy-btn" type="button"
         onclick="STACK_HIDE_BANKRUPTCY = !STACK_HIDE_BANKRUPTCY; applyStack();"
         title="Hide bankruptcy-flagged delinquent properties (automatic stay paused collection)"
-        style="margin-left:10px; align-self:center; cursor:pointer; padding:8px 14px;
+        style="margin-left:auto; align-self:center; cursor:pointer; padding:8px 14px;
                border-radius:8px; font-size:13px; font-weight:600;
                border:1px solid ${STACK_HIDE_BANKRUPTCY ? '#c084fc' : 'rgba(148,163,184,.4)'};
                background:${STACK_HIDE_BANKRUPTCY ? 'rgba(168,85,247,.15)' : 'transparent'};
