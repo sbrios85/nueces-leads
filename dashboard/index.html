@@ -4266,6 +4266,22 @@ function setCrmField(type, docNum, key, value) {
 // Tracks where to return when the user hits Back: which pane was
 // active, plus the scrollY at the moment they clicked into the CRM.
 let _crmReturn = { pane: null, scrollY: 0 };
+// Set true when a property-CRM stage button changes the shared stage,
+// so closeCrm re-renders the dashboard we came from (otherwise its pill
+// would be stale on Back). Reset on fresh CRM open and after refresh.
+let _propStageChanged = false;
+function _crmRefreshReturnPane() {
+  const map = {
+    "pane-stack": "applyStack",
+    "pane-ccln": "applyCcln",
+    "pane-delinquenttaxes": "applyDelq",
+    "pane-codeviolation": "applyCv",
+    "pane-vacanthouses": "renderVacant",
+    "pane-taxdeferral": "applyDeferral",
+  };
+  const fn = map[_crmReturn && _crmReturn.pane];
+  if (fn && typeof window[fn] === "function") { try { window[fn](); } catch (e) { console.error("return-pane refresh failed", e); } }
+}
 
 function moneyFmt(v) {
   if (v == null || v === "") return "—";
@@ -8597,6 +8613,9 @@ function closeCrm() {
     const p = document.getElementById(_crmReturn.pane);
     if (p) p.classList.add("active");
   }
+  // If a stage was changed inside the property CRM, re-render the
+  // dashboard we're returning to so its status pill reflects the change.
+  if (_propStageChanged) { _crmRefreshReturnPane(); _propStageChanged = false; }
   // Defer scroll until after layout reflows the restored table.
   // Scroll the .main container (the scroll context), not the window.
   const y = _crmReturn.scrollY;
@@ -12732,8 +12751,16 @@ function _stackBuildList() {
 // CCLN/CV/etc. CRM; it tracks how you're working the stacked lead.
 const STACK_STATUS_KEY = "nueces_stack_status_v1";
 const STACK_STAGES = MFC_STAGES;
-function loadStackStatus() { try { return JSON.parse(localStorage.getItem(STACK_STATUS_KEY) || "{}"); } catch (e) { return {}; } }
-function saveStackStatus(s) { localStorage.setItem(STACK_STATUS_KEY, JSON.stringify(s)); }
+// Cached parse — getStackStatus is called once per row (and more during
+// status sorts), so re-parsing localStorage each time froze big tables.
+let _stackStatusCache = null;
+function loadStackStatus() {
+  if (_stackStatusCache) return _stackStatusCache;
+  try { _stackStatusCache = JSON.parse(localStorage.getItem(STACK_STATUS_KEY) || "{}"); }
+  catch (e) { _stackStatusCache = {}; }
+  return _stackStatusCache;
+}
+function saveStackStatus(s) { _stackStatusCache = s; localStorage.setItem(STACK_STATUS_KEY, JSON.stringify(s)); }
 function getStackStatus(key) { const s = loadStackStatus(); return (s[key] && s[key].status) || "new"; }
 function setStackStatus(key, status) {
   const s = loadStackStatus();
@@ -13765,6 +13792,7 @@ function openPropCrm(propKey, rec) {
     const activePane = document.querySelector(".pane.active");
     _crmReturn = { pane: activePane ? activePane.id : null,
                    scrollY: _mainEl ? _mainEl.scrollTop : window.scrollY };
+    _propStageChanged = false;
   }
 
   const entry = _propEntry(propKey);
@@ -14076,7 +14104,7 @@ function openPropCrm(propKey, rec) {
       const lbl = (STACK_STAGES.find(s => s.key === newStage) || {}).label || newStage;
       setStackStatus(propKey, newStage);
       _propLogActivity(propKey, "Stage → " + lbl);
-      if (typeof applyStack === "function") applyStack();
+      _propStageChanged = true;   // closeCrm re-renders the originating dashboard
       openPropCrm(propKey, rec);
     });
   });
