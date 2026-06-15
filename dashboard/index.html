@@ -12284,11 +12284,15 @@ function buildCclnRow(r, isDead) {
             anchor.nodeType === 1 ? anchor : anchor.parentNode))
         return;
     }
-    // Pass the property_key so openCrm can look up the
-    // consolidated entry (and its full lien history). The third
-    // arg stays CCLN_RAW so openCrm can re-run consolidation if
-    // it needs to (in case the user reloaded data mid-session).
-    openCrm("ccln", propKey, CCLN_RAW);
+    // Open the SHARED property CRM (same record the Stack uses).
+    // CCLN's consolidated property_key (r.property_key) is a super-
+    // group signature ("OWNER||ADDR") or "_solo_…" — NOT the Stack's
+    // scheme. _cclnPropertyKey(r) re-derives the parcel-level
+    // "ncad:…/addr:…" key (same normalizer as the Stack), so the CRM
+    // record is shared across both dashboards.
+    const sharedKey = (typeof _cclnPropertyKey === "function" ? _cclnPropertyKey(r) : null) || propKey;
+    try { openPropCrm(sharedKey, r); }
+    catch (e) { console.error("openPropCrm failed, falling back to CCLN CRM", e); openCrm("ccln", propKey, CCLN_RAW); }
   });
   return tr;
 }
