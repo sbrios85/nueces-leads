@@ -9834,7 +9834,9 @@ function renderCv() {
   for (const r of CV_FILTERED) {
     if (getCvStatus(r.case_num) === "dead") dead.push(r); else active.push(r);
   }
-  for (const r of active) tb.appendChild(buildCvRow(r, false));
+  { const _f = document.createDocumentFragment();
+    for (const r of active) _f.appendChild(buildCvRow(r, false));
+    tb.appendChild(_f); }
   if (dead.length > 0) {
     const expanded = localStorage.getItem("cv_dead_expanded") === "true";
     const toggleTr = document.createElement("tr");
@@ -9852,7 +9854,9 @@ function renderCv() {
       renderCv();
     };
     tf.appendChild(toggleTr);
-    if (expanded) for (const r of dead) tf.appendChild(buildCvRow(r, true));
+    if (expanded) { const _f = document.createDocumentFragment();
+      for (const r of dead) _f.appendChild(buildCvRow(r, true));
+      tf.appendChild(_f); }
   }
 }
 
@@ -10156,7 +10160,9 @@ function renderVacant() {
   for (const r of VACANT_FILTERED) {
     if (getCvStatus(r.case_num) === "dead") dead.push(r); else active.push(r);
   }
-  for (const r of active) tb.appendChild(buildVacantRow(r, false));
+  { const _f = document.createDocumentFragment();
+    for (const r of active) _f.appendChild(buildVacantRow(r, false));
+    tb.appendChild(_f); }
   if (dead.length > 0) {
     const expanded = localStorage.getItem("vh_dead_expanded") === "true";
     const toggleTr = document.createElement("tr");
@@ -10169,7 +10175,9 @@ function renderVacant() {
       renderVacant();
     };
     tf.appendChild(toggleTr);
-    if (expanded) for (const r of dead) tf.appendChild(buildVacantRow(r, true));
+    if (expanded) { const _f = document.createDocumentFragment();
+      for (const r of dead) _f.appendChild(buildVacantRow(r, true));
+      tf.appendChild(_f); }
   }
 }
 function buildVacantRow(r, isDead) {
@@ -10389,7 +10397,9 @@ function renderDeferral(){
   for (const r of DEFERRAL_FILTERED) {
     if (getDeferralStatus(r.geo_id) === "dead") dead.push(r); else active.push(r);
   }
-  for (const r of active) tb.appendChild(buildDeferralRow(r, false));
+  { const _f = document.createDocumentFragment();
+    for (const r of active) _f.appendChild(buildDeferralRow(r, false));
+    tb.appendChild(_f); }
   if (dead.length > 0) {
     const expanded = localStorage.getItem("deferral_dead_expanded") === "true";
     const toggleTr = document.createElement("tr");
@@ -10402,7 +10412,9 @@ function renderDeferral(){
       renderDeferral();
     };
     tf.appendChild(toggleTr);
-    if (expanded) for (const r of dead) tf.appendChild(buildDeferralRow(r, true));
+    if (expanded) { const _f = document.createDocumentFragment();
+      for (const r of dead) _f.appendChild(buildDeferralRow(r, true));
+      tf.appendChild(_f); }
   }
 }
 function _deferralTypeBadges(types){
@@ -11144,10 +11156,10 @@ function renderCclnStats() {
 
   let nNew = 0, nWorking = 0, nDead = 0;
   for (const r of consolidated) {
-    const st = getCclnStatus(r.property_key || r.doc_num);
-    if (st === "working") nWorking++;
-    else if (st === "dead") nDead++;
-    else nNew++;
+    const st = getStackStatus(_cclnSharedKey(r));
+    if (st === "dead") nDead++;
+    else if (st === "new") nNew++;
+    else nWorking++;
   }
   const totalLive = consolidated.length - nDead;
 
@@ -11209,9 +11221,10 @@ function _cclnCompare(a, b, key, dir, type) {
     // Use property_key (consolidated identity) for status lookup,
     // matching the new keying scheme; fall back to doc_num for
     // safety on entries lacking a property_key.
-    const rank = {new:0, working:1, dead:2};
-    const sa = rank[getCclnStatus(a.property_key || a.doc_num)] ?? 0;
-    const sb = rank[getCclnStatus(b.property_key || b.doc_num)] ?? 0;
+    const rank = {};
+    STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
+    const sa = rank[getStackStatus(_cclnSharedKey(a))] ?? 0;
+    const sb = rank[getStackStatus(_cclnSharedKey(b))] ?? 0;
     return dir === "asc" ? sa - sb : sb - sa;
   }
   let va = a[key], vb = b[key];
@@ -11470,9 +11483,8 @@ function renderDelq() {
     else active.push(r);
   }
 
-  // Insert all rows in ONE DOM operation via a fragment — appending
-  // 6k+ rows individually to the live table forces a reflow per row
-  // (that was the 10-20s load freeze).
+  // Insert all rows in ONE DOM operation via a fragment (one reflow
+  // instead of one per row).
   const _frag = document.createDocumentFragment();
   for (const r of active) _frag.appendChild(buildDelqRow(r, false));
   tb.appendChild(_frag);
@@ -12249,11 +12261,13 @@ function renderCcln() {
   // to property-keyed status.
   const active = [], dead = [];
   for (const r of CCLN_FILTERED) {
-    if (getCclnStatus(r.property_key || r.doc_num) === "dead") dead.push(r);
+    if (getStackStatus(_cclnSharedKey(r)) === "dead") dead.push(r);
     else active.push(r);
   }
 
-  for (const r of active) tb.appendChild(buildCclnRow(r, false));
+  const _frag = document.createDocumentFragment();
+  for (const r of active) _frag.appendChild(buildCclnRow(r, false));
+  tb.appendChild(_frag);
 
   if (dead.length > 0) {
     const expanded =
@@ -12274,7 +12288,9 @@ function renderCcln() {
       renderCcln();
     };
     tf.appendChild(toggleTr);
-    if (expanded) for (const r of dead) tf.appendChild(buildCclnRow(r, true));
+    if (expanded) { const _f = document.createDocumentFragment();
+      for (const r of dead) _f.appendChild(buildCclnRow(r, true));
+      tf.appendChild(_f); }
   }
 }
 
@@ -12307,6 +12323,13 @@ function propTypeLabel(code) {
   return c;
 }
 
+// Canonical parcel-level key for a CCLN row — the SAME key the shared
+// property CRM opens with (so the unified stage pill matches the CRM),
+// NOT the consolidated super-group signature CCLN used for its old pill.
+function _cclnSharedKey(r) {
+  return (typeof _cclnPropertyKey === "function" ? _cclnPropertyKey(r) : null) || r.property_key || r.doc_num;
+}
+
 function buildCclnRow(r, isDead) {
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
@@ -12330,22 +12353,23 @@ function buildCclnRow(r, isDead) {
   // menu (Working / Dead Lead, or New / Dead Lead when already
   // Working). Dead rows show a grey "Deleted" pill + Restore button.
   let statusCell;
+  const _cclnKey = _cclnSharedKey(r);
   if (isDead) {
     statusCell = `
       <span class="pill status status-dead">Deleted</span>
       <button class="restore-btn" style="margin-top:4px;"
               title="Restore this lead"
-              onclick="restoreCclnLead('${esc(propKey)}'); event.stopPropagation();">
+              onclick="setStackStatus('${esc(_cclnKey)}','new'); applyCcln(); event.stopPropagation();">
         Restore</button>`;
   } else {
-    const st = getCclnStatus(propKey);   // "new" or "working"
-    const pillClass = st === "working" ? "status-working" : "status-new";
-    const label = st === "working" ? "Working" : "New";
+    const st = getStackStatus(_cclnKey);
+    const stageDef = STACK_STAGES.find(s => s.key === st) || STACK_STAGES[0];
+    const pillClass = STACK_PILL_CLASS[st] || "status-new";
     statusCell = `
       <span class="pill status ${pillClass}" style="cursor:pointer;"
-            title="Click to change status"
-            onclick="openCclnStatusMenu(event, '${esc(propKey)}', '${st}')">
-        ${label} ▾</span>`;
+            title="Click to change status" data-stagekey="${esc(_cclnKey)}"
+            onclick="openStackStatusMenu(event, '${esc(_cclnKey)}', getStackStatus('${esc(_cclnKey)}'), applyCcln)">
+        ${esc(stageDef.label)} ▾</span>`;
   }
 
   // Lien Count + Total Lien Amount columns — populated from the
@@ -12407,7 +12431,7 @@ function buildCclnRow(r, isDead) {
     // scheme. _cclnPropertyKey(r) re-derives the parcel-level
     // "ncad:…/addr:…" key (same normalizer as the Stack), so the CRM
     // record is shared across both dashboards.
-    const sharedKey = (typeof _cclnPropertyKey === "function" ? _cclnPropertyKey(r) : null) || propKey;
+    const sharedKey = _cclnSharedKey(r);
     try { openPropCrm(sharedKey, r); }
     catch (e) { console.error("openPropCrm failed, falling back to CCLN CRM", e); openCrm("ccln", propKey, CCLN_RAW); }
   });
@@ -12521,7 +12545,7 @@ const STACK_SOURCES = [
     badgeClass: "stack-badge-ccln",
     autoInclude: true,
     getRecords: () => (typeof CCLN_RAW !== "undefined" ? CCLN_RAW : []),
-    isActive: (r) => getCclnStatus(r.doc_num) !== "dead",
+    isActive: (r) => getStackStatus(_cclnPropertyKey(r)) !== "dead",
     primaryKey: (r) => r.doc_num,
     addressKey: (r) => r.prop_address,
     ncadKey: (r) => r.ncad_account_num,
@@ -13141,9 +13165,9 @@ function applyStack() {
   }
   if (empty) empty.hidden = true;
 
-  for (const entry of view) {
-    tbody.appendChild(_buildStackRow(entry));
-  }
+  { const _f = document.createDocumentFragment();
+    for (const entry of view) _f.appendChild(_buildStackRow(entry));
+    tbody.appendChild(_f); }
 }
 
 function _renderStackStats(list) {
