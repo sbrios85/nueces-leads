@@ -10393,6 +10393,22 @@ function _deferralTypeBadges(types){
     return `<span class="deferral-type-badge" title="${esc(tt)} deferral">${esc(tt)}</span>`;
   }).join(" ");
 }
+// Open the SHARED property CRM from a Tax Deferral row. Deferral
+// records carry ncad_account_num (== geo_id, dashed), so the shared
+// key is the same "ncad:…/addr:…" form every other dashboard uses.
+function _openDeferralShared(r) {
+  let sharedKey = null;
+  const ncad = (r.ncad_account_num || r.geo_id || "").trim();
+  if (ncad) sharedKey = "ncad:" + ncad;
+  else if (r.prop_address && typeof _stackNormalizeAddress === "function") {
+    const norm = _stackNormalizeAddress(r.prop_address);
+    if (norm) sharedKey = "addr:" + norm;
+  }
+  if (!sharedKey) return;
+  try { openPropCrm(sharedKey, r); }
+  catch (e) { console.error("openPropCrm failed for Deferral row", e); }
+}
+
 function buildDeferralRow(r, isDead){
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
@@ -10440,6 +10456,25 @@ function buildDeferralRow(r, isDead){
     <td class="legal">${legalCell}</td>
     <td style="text-align:center;">${ncadCellHtml(r)}</td>
     <td style="text-align:center;">${nctaxCellHtml(r)}</td>`;
+
+  // Whole-row click opens the SHARED property CRM (same record as the
+  // Stack / CCLN / DELQ / CV). Skip interactive elements + drag-select.
+  if (!isDead) {
+    tr.style.cursor = "pointer";
+    let _fDownX = 0, _fDownY = 0;
+    tr.addEventListener("mousedown", (ev) => { _fDownX = ev.clientX; _fDownY = ev.clientY; });
+    tr.addEventListener("click", (ev) => {
+      if (ev.target.closest("a, button, .pill.status, .ccln-status-menu, .ext-icon, .map-icon")) return;
+      if (Math.abs(ev.clientX - _fDownX) > 5 || Math.abs(ev.clientY - _fDownY) > 5) return;
+      const sel = window.getSelection && window.getSelection();
+      if (sel && !sel.isCollapsed && sel.toString().trim() !== "") {
+        const anchor = sel.anchorNode;
+        if (anchor && tr.contains(anchor.nodeType === 1 ? anchor : anchor.parentNode)) return;
+      }
+      _openDeferralShared(r);
+    });
+  }
+
   return tr;
 }
 function renderDeferralStats(){
