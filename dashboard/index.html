@@ -11330,7 +11330,7 @@ function renderDelqStats() {
   let nActive = 0, nDead = 0, totalOwed = 0;
   let nJudgment = 0, nSuit = 0, nBankruptcy = 0;
   for (const r of DELQ_RAW) {
-    const st = getDelqStatus(r.ncad_account_num);
+    const st = getStackStatus(_delqSharedKey(r));
     if (st === "dead") nDead++;
     else {
       nActive++;
@@ -11394,9 +11394,9 @@ function _delqCompare(a, b, key, dir, type) {
     // ordering from DELQ_STAGES so this stays consistent if the stage
     // list is reordered.
     const rank = {};
-    DELQ_STAGES.forEach((s, i) => { rank[s.key] = i; });
-    const sa = rank[getDelqStatus(a.ncad_account_num)] ?? 0;
-    const sb = rank[getDelqStatus(b.ncad_account_num)] ?? 0;
+    STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
+    const sa = rank[getStackStatus(_delqSharedKey(a))] ?? 0;
+    const sb = rank[getStackStatus(_delqSharedKey(b))] ?? 0;
     return dir === "asc" ? sa - sb : sb - sa;
   }
   if (type === "tax_status") {
@@ -11447,7 +11447,7 @@ function renderDelq() {
 
   const active = [], dead = [];
   for (const r of DELQ_FILTERED) {
-    if (getDelqStatus(r.ncad_account_num) === "dead") dead.push(r);
+    if (getStackStatus(_delqSharedKey(r)) === "dead") dead.push(r);
     else active.push(r);
   }
 
@@ -11490,42 +11490,55 @@ function renderDelq() {
 //   Legal Description (truncated)
 //   Tax Status badges (judgment / suit / tax def / payment plan)
 //   NCAD (clickable to NCAD via ncadCellHtml)
+// Canonical parcel-level key for a DELQ row — the SAME key the shared
+// property CRM and the unified stage pill use. Prefer the NCAD account
+// ("ncad:<dashed geo_id>"), fall back to a normalized address, then a
+// stable last resort. Must stay in sync with the CRM-open above.
+function _delqSharedKey(r) {
+  const ncad = (r.ncad_account_num || "").trim();
+  if (ncad) return "ncad:" + ncad;
+  const addr = (r.prop_address || "").trim();
+  if (addr && typeof _stackNormalizeAddress === "function") {
+    const norm = _stackNormalizeAddress(addr);
+    if (norm) return "addr:" + norm;
+  }
+  return "delq:" + (r.ncad_account_num || r.prop_address || "row");
+}
+
 function buildDelqRow(r, isDead) {
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
   const ncad = r.ncad_account_num || "";
 
   // --- Status cell -------------------------------------------------
+  // Unified: reads/writes the SHARED stage (stack-status store), keyed
+  // by the same parcel key the CRM uses, so the table pill, the CRM
+  // pipeline, and Work-routing are one source of truth.
+  const _delqKey = _delqSharedKey(r);
   let statusCell;
   if (isDead) {
     statusCell = `
       <span class="pill status status-dead">Dead</span>
       <button class="restore-btn" style="margin-top:4px;"
               title="Restore this lead"
-              onclick="setDelqStatus('${esc(ncad)}', 'new'); applyDelq(); event.stopPropagation();">
+              onclick="setStackStatus('${esc(_delqKey)}', 'new'); applyDelq(); event.stopPropagation();">
         Restore</button>`;
   } else {
-    const st = getDelqStatus(ncad);
-    const stageDef = DELQ_STAGES.find(s => s.key === st) || DELQ_STAGES[0];
-    // Pill color uses the same status-* classes already defined for
-    // MFC/TFC/CCLN, so a "Negotiating" stage looks identical across
-    // lead types. status-new/contacted/negotiating/closed/dead are
-    // already in the stylesheet; new entries below map any DELQ-
-    // specific stages to a status-* class.
+    const st = getStackStatus(_delqKey);
+    const stageDef = STACK_STAGES.find(s => s.key === st) || STACK_STAGES[0];
     const pillClassMap = {
       new:            "status-new",
       contacted:      "status-contacted",
       negotiating:    "status-negotiating",
       under_contract: "status-negotiating",
       closed_won:     "status-closed",
-      watching:       "status-interested",
       dead:           "status-dead",
     };
     const pillClass = pillClassMap[st] || "status-new";
     statusCell = `
       <span class="pill status ${pillClass}" style="cursor:pointer;"
             title="Click to change status"
-            onclick="openDelqStatusMenu(event, '${esc(ncad)}', '${esc(st)}')">
+            onclick="openStackStatusMenu(event, '${esc(_delqKey)}', '${esc(st)}', applyDelq)">
         ${esc(stageDef.label)} ▾</span>`;
   }
 
@@ -11672,10 +11685,8 @@ function buildDelqRow(r, isDead) {
   // Whole-row click opens the SHARED property CRM (same record as the
   // Stack / CCLN). Skip clicks on interactive elements (status pill,
   // links, buttons, icons) and text drag-selection. The shared key is
-  // the parcel-level "ncad:…/addr:…" form (_cclnPropertyKey is the
-  // canonical deriver — reads ncad_account_num / prop_address with the
-  // same normalizer the Stack uses), NOT the raw ncad used by the DELQ
-  // status store.
+  // the parcel-level "ncad:…/addr:…" form (_delqSharedKey), the SAME
+  // key the unified status pill + filters use, NOT the raw ncad.
   if (!isDead) {
     tr.style.cursor = "pointer";
     let _dDownX = 0, _dDownY = 0;
@@ -11688,8 +11699,7 @@ function buildDelqRow(r, isDead) {
         const anchor = sel.anchorNode;
         if (anchor && tr.contains(anchor.nodeType === 1 ? anchor : anchor.parentNode)) return;
       }
-      const sharedKey = (typeof _cclnPropertyKey === "function" ? _cclnPropertyKey(r) : null)
-        || (ncad ? "ncad:" + ncad : null);
+      const sharedKey = _delqSharedKey(r);
       if (sharedKey) { try { openPropCrm(sharedKey, r); } catch (e) { console.error("openPropCrm failed for DELQ row", e); } }
     });
   }
@@ -12739,7 +12749,7 @@ function _stackMenuOutside(e) {
   const m = document.getElementById("stack-status-menu");
   if (m && !m.contains(e.target)) closeStackStatusMenu();
 }
-function openStackStatusMenu(ev, key, currentStatus) {
+function openStackStatusMenu(ev, key, currentStatus, onChange) {
   ev.stopPropagation();
   closeStackStatusMenu();
   const menu = document.createElement("div");
@@ -12760,7 +12770,7 @@ function openStackStatusMenu(ev, key, currentStatus) {
       e.stopPropagation();
       setStackStatus(key, btn.dataset.stage);
       closeStackStatusMenu();
-      applyStack();
+      if (typeof onChange === "function") onChange(); else applyStack();
     });
   });
   setTimeout(() => document.addEventListener("click", _stackMenuOutside, true), 0);
