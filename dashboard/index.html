@@ -11556,8 +11556,8 @@ function buildDelqRow(r, isDead) {
     const pillClass = pillClassMap[st] || "status-new";
     statusCell = `
       <span class="pill status ${pillClass}" style="cursor:pointer;"
-            title="Click to change status"
-            onclick="openStackStatusMenu(event, '${esc(_delqKey)}', '${esc(st)}', applyDelq)">
+            title="Click to change status" data-stagekey="${esc(_delqKey)}"
+            onclick="openStackStatusMenu(event, '${esc(_delqKey)}', getStackStatus('${esc(_delqKey)}'), applyDelq)">
         ${esc(stageDef.label)} ▾</span>`;
   }
 
@@ -12795,12 +12795,40 @@ function openStackStatusMenu(ev, key, currentStatus, onChange) {
   menu.querySelectorAll(".status-menu-item").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      setStackStatus(key, btn.dataset.stage);
+      const newStage = btn.dataset.stage;
+      setStackStatus(key, newStage);
       closeStackStatusMenu();
-      if (typeof onChange === "function") onChange(); else applyStack();
+      // Fast path: update the pill(s) for this property IN PLACE instead
+      // of rebuilding the whole table (6k+ rows froze the page). Only
+      // fall back to a full re-render when no tagged pill is on screen.
+      const updated = _updateStagePills(key, newStage);
+      if (!updated) { if (typeof onChange === "function") onChange(); else applyStack(); }
     });
   });
   setTimeout(() => document.addEventListener("click", _stackMenuOutside, true), 0);
+}
+// Pill color map shared by every unified dashboard pill.
+const STACK_PILL_CLASS = { new:"status-new", contacted:"status-contacted", negotiating:"status-negotiating", under_contract:"status-negotiating", closed_won:"status-closed", dead:"status-dead" };
+function _cssEscKey(k){ return (window.CSS && CSS.escape) ? CSS.escape(k) : String(k).replace(/(["\\\]])/g, "\\$1"); }
+// In-place stage pill update for every row bound to `key` (pills carry
+// data-stagekey). Active→active just recolors/relabels; →dead hides the
+// row from the active list; →active un-hides it. Returns true if it
+// found at least one pill (so the caller can skip a full table rebuild).
+function _updateStagePills(key, newStatus) {
+  const stageDef = STACK_STAGES.find(s => s.key === newStatus) || STACK_STAGES[0];
+  const cls = STACK_PILL_CLASS[newStatus] || "status-new";
+  const pills = document.querySelectorAll(`.pill.status[data-stagekey="${_cssEscKey(key)}"]`);
+  pills.forEach(pill => {
+    const row = pill.closest("tr");
+    if (newStatus === "dead") {
+      if (row) row.style.display = "none";
+    } else {
+      pill.className = "pill status " + cls;
+      pill.innerHTML = esc(stageDef.label) + " ▾";
+      if (row) row.style.display = "";
+    }
+  });
+  return pills.length > 0;
 }
 
 // DELQ isn't a Stack SOURCE (it doesn't auto-include or drive stacking),
@@ -13238,7 +13266,7 @@ function _buildStackRow(entry) {
     const pillClassMap = { new:"status-new", contacted:"status-contacted", negotiating:"status-negotiating", under_contract:"status-negotiating", closed_won:"status-closed", dead:"status-dead" };
     const stageDef = STACK_STAGES.find(s => s.key === sst) || STACK_STAGES[0];
     const pillClass = pillClassMap[sst] || "status-new";
-    statusCell = `<span class="pill status ${pillClass} js-stack-status" style="cursor:pointer;" title="Click to change status">${esc(stageDef.label)} ▾</span>`;
+    statusCell = `<span class="pill status ${pillClass} js-stack-status" style="cursor:pointer;" title="Click to change status" data-stagekey="${esc(entry.key)}">${esc(stageDef.label)} ▾</span>`;
   }
 
   // Mail address — 2-line (street / City, ST ZIP)
@@ -13308,7 +13336,7 @@ function _buildStackRow(entry) {
 
   // Wire the editable status pill / restore button (closure over entry.key).
   const _pill = tr.querySelector(".js-stack-status");
-  if (_pill) _pill.addEventListener("click", (e) => openStackStatusMenu(e, entry.key, sst));
+  if (_pill) _pill.addEventListener("click", (e) => openStackStatusMenu(e, entry.key, getStackStatus(entry.key)));
   const _restore = tr.querySelector(".js-stack-restore");
   if (_restore) _restore.addEventListener("click", (e) => { e.stopPropagation(); setStackStatus(entry.key, "new"); applyStack(); });
 
@@ -14104,7 +14132,9 @@ function openPropCrm(propKey, rec) {
       const lbl = (STACK_STAGES.find(s => s.key === newStage) || {}).label || newStage;
       setStackStatus(propKey, newStage);
       _propLogActivity(propKey, "Stage → " + lbl);
-      _propStageChanged = true;   // closeCrm re-renders the originating dashboard
+      // Update any dashboard/Stack pills bound to this property in place
+      // (they're tagged data-stagekey) — no full table rebuild, so no freeze.
+      if (typeof _updateStagePills === "function") _updateStagePills(propKey, newStage);
       openPropCrm(propKey, rec);
     });
   });
