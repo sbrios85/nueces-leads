@@ -11470,7 +11470,12 @@ function renderDelq() {
     else active.push(r);
   }
 
-  for (const r of active) tb.appendChild(buildDelqRow(r, false));
+  // Insert all rows in ONE DOM operation via a fragment — appending
+  // 6k+ rows individually to the live table forces a reflow per row
+  // (that was the 10-20s load freeze).
+  const _frag = document.createDocumentFragment();
+  for (const r of active) _frag.appendChild(buildDelqRow(r, false));
+  tb.appendChild(_frag);
 
   if (dead.length > 0) {
     const expanded =
@@ -11491,7 +11496,11 @@ function renderDelq() {
       renderDelq();
     };
     tf.appendChild(toggleTr);
-    if (expanded) for (const r of dead) tf.appendChild(buildDelqRow(r, true));
+    if (expanded) {
+      const _df = document.createDocumentFragment();
+      for (const r of dead) _df.appendChild(buildDelqRow(r, true));
+      tf.appendChild(_df);
+    }
   }
 }
 
