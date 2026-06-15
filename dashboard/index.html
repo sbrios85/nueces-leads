@@ -9782,8 +9782,8 @@ const CV_SORT_TYPES = {
 function _cvCompare(a, b, key, dir, type) {
   if (type === "status") {
     const rank = {}; CV_STAGES.forEach((s, i) => { rank[s.key] = i; });
-    const sa = rank[getCvStatus(a.case_num)] ?? 0;
-    const sb = rank[getCvStatus(b.case_num)] ?? 0;
+    const sa = rank[getStackStatus(_cvSharedKey(a))] ?? 0;
+    const sb = rank[getStackStatus(_cvSharedKey(b))] ?? 0;
     return dir === "asc" ? sa - sb : sb - sa;
   }
   let va = a[key], vb = b[key];
@@ -9832,7 +9832,7 @@ function renderCv() {
   tb.innerHTML = ""; tf.innerHTML = "";
   const active = [], dead = [];
   for (const r of CV_FILTERED) {
-    if (getCvStatus(r.case_num) === "dead") dead.push(r); else active.push(r);
+    if (getStackStatus(_cvSharedKey(r)) === "dead") dead.push(r); else active.push(r);
   }
   { const _f = document.createDocumentFragment();
     for (const r of active) _f.appendChild(buildCvRow(r, false));
@@ -9865,15 +9865,20 @@ function renderCv() {
 // shared key is the same "ncad:…/addr:…" form the Stack uses. Unlike
 // _cclnPropertyKey's random orphan fallback, CV uses a STABLE
 // "cv:<case_num>" key when there's no parcel id, so notes persist.
-function _openCvShared(r, cn) {
-  let sharedKey = null;
+// Canonical parcel-level key for a CV / Vacant row — the SAME key the
+// shared property CRM and unified stage pill use. Stable "cv:<case#>"
+// fallback when there's no parcel id, so status/notes persist.
+function _cvSharedKey(r) {
   const ncad = (r.ncad_account_num || "").trim();
-  if (ncad) sharedKey = "ncad:" + ncad;
-  else if (r.prop_address && typeof _stackNormalizeAddress === "function") {
+  if (ncad) return "ncad:" + ncad;
+  if (r.prop_address && typeof _stackNormalizeAddress === "function") {
     const norm = _stackNormalizeAddress(r.prop_address);
-    if (norm) sharedKey = "addr:" + norm;
+    if (norm) return "addr:" + norm;
   }
-  if (!sharedKey) sharedKey = cn ? "cv:" + cn : null;
+  return r.case_num ? "cv:" + r.case_num : null;
+}
+function _openCvShared(r, cn) {
+  const sharedKey = _cvSharedKey(r) || (cn ? "cv:" + cn : null);
   if (!sharedKey) return;
   try { openPropCrm(sharedKey, r); }
   catch (e) { console.error("openPropCrm failed for CV row", e); openCrm("cv", cn, CV_RAW); }
@@ -9885,25 +9890,21 @@ function buildCvRow(r, isDead) {
   const cn = r.case_num || "";
 
   let statusCell;
+  const _cvKey = _cvSharedKey(r);
   if (isDead) {
     statusCell = `
       <span class="pill status status-dead">Dead</span>
       <button class="restore-btn" style="margin-top:4px;" title="Restore this lead"
-              onclick="setCvStatus('${esc(cn)}', 'new'); applyCv(); event.stopPropagation();">
+              onclick="setStackStatus('${esc(_cvKey)}', 'new'); applyCv(); event.stopPropagation();">
         Restore</button>`;
   } else {
-    const st = getCvStatus(cn);
-    const stageDef = CV_STAGES.find(s => s.key === st) || CV_STAGES[0];
-    const pillClassMap = {
-      new: "status-new", contacted: "status-contacted",
-      negotiating: "status-negotiating", under_contract: "status-negotiating",
-      closed_won: "status-closed", dead: "status-dead",
-    };
-    const pillClass = pillClassMap[st] || "status-new";
+    const st = getStackStatus(_cvKey);
+    const stageDef = STACK_STAGES.find(s => s.key === st) || STACK_STAGES[0];
+    const pillClass = STACK_PILL_CLASS[st] || "status-new";
     statusCell = `
       <span class="pill status ${pillClass}" style="cursor:pointer;"
-            title="Click to change status"
-            onclick="openCvStatusMenu(event, '${esc(cn)}', '${esc(st)}')">
+            title="Click to change status" data-stagekey="${esc(_cvKey)}"
+            onclick="openStackStatusMenu(event, '${esc(_cvKey)}', getStackStatus('${esc(_cvKey)}'), applyCv)">
         ${esc(stageDef.label)} ▾</span>`;
   }
 
@@ -10000,7 +10001,7 @@ function renderCvStats() {
   let nActive = 0, totMv = 0;
   const vtCounts = {};   // base violation type -> # of active leads carrying it
   for (const r of CV_RAW) {
-    if (getCvStatus(r.case_num) === "dead") continue;
+    if (getStackStatus(_cvSharedKey(r)) === "dead") continue;
     nActive++;
     totMv += Number(r.market_value) || 0;
     const vt = (r.violation_type || "");
@@ -10158,7 +10159,7 @@ function renderVacant() {
   tb.innerHTML = ""; tf.innerHTML = "";
   const active = [], dead = [];
   for (const r of VACANT_FILTERED) {
-    if (getCvStatus(r.case_num) === "dead") dead.push(r); else active.push(r);
+    if (getStackStatus(_cvSharedKey(r)) === "dead") dead.push(r); else active.push(r);
   }
   { const _f = document.createDocumentFragment();
     for (const r of active) _f.appendChild(buildVacantRow(r, false));
@@ -10186,17 +10187,17 @@ function buildVacantRow(r, isDead) {
   const cn = r.case_num || "";
   const dash = '<span style="color:var(--muted)">—</span>';
   let statusCell;
+  const _cvKey = _cvSharedKey(r);
   if (isDead) {
     statusCell = `<span class="pill status status-dead">Dead</span>
       <button class="restore-btn" style="margin-top:4px;" title="Restore this lead"
-              onclick="setCvStatus('${esc(cn)}','new'); applyVacant(); event.stopPropagation();">Restore</button>`;
+              onclick="setStackStatus('${esc(_cvKey)}','new'); applyVacant(); event.stopPropagation();">Restore</button>`;
   } else {
-    const st = getCvStatus(cn);
-    const stageDef = CV_STAGES.find(s => s.key === st) || CV_STAGES[0];
-    const pillClassMap = { new:"status-new", contacted:"status-contacted", negotiating:"status-negotiating", under_contract:"status-negotiating", closed_won:"status-closed", dead:"status-dead" };
-    const pillClass = pillClassMap[st] || "status-new";
-    statusCell = `<span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status"
-            onclick="openCvStatusMenu(event, '${esc(cn)}', '${esc(st)}')">${esc(stageDef.label)} ▾</span>`;
+    const st = getStackStatus(_cvKey);
+    const stageDef = STACK_STAGES.find(s => s.key === st) || STACK_STAGES[0];
+    const pillClass = STACK_PILL_CLASS[st] || "status-new";
+    statusCell = `<span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status" data-stagekey="${esc(_cvKey)}"
+            onclick="openStackStatusMenu(event, '${esc(_cvKey)}', getStackStatus('${esc(_cvKey)}'), applyVacant)">${esc(stageDef.label)} ▾</span>`;
   }
   const citedCell = r.cited ? esc(formatDate(r.cited)) : dash;
   const ownerCell = (esc(fmtOwnerCV(r.owner || "")) || dash) + exemptionTagsHtml(r.ncad_account_num);
@@ -12577,7 +12578,7 @@ const STACK_SOURCES = [
     badgeClass: "stack-badge-vacant",
     autoInclude: true,    // Vacant Building / Unsecured Vacant Building stand alone as leads
     getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW.filter(_cvIsVacantBuilding) : []),
-    isActive: (r) => getCvStatus(r.case_num) !== "dead",
+    isActive: (r) => getStackStatus(_cvSharedKey(r)) !== "dead",
     primaryKey: (r) => r.case_num,
     addressKey: (r) => r.prop_address,
     ncadKey: (r) => r.ncad_account_num,
@@ -12591,7 +12592,7 @@ const STACK_SOURCES = [
     badgeClass: "stack-badge-cv",
     autoInclude: false,   // all non-vacant CV types are overlap-only (need a 2nd list to appear)
     getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW.filter(_cvHasNonVacant) : []),
-    isActive: (r) => getCvStatus(r.case_num) !== "dead",
+    isActive: (r) => getStackStatus(_cvSharedKey(r)) !== "dead",
     primaryKey: (r) => r.case_num,
     addressKey: (r) => r.prop_address,
     ncadKey: (r) => r.ncad_account_num,   // dashed geo_id, same format as CCLN → cross-matches cleanly
