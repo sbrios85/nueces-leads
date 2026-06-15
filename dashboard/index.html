@@ -11615,6 +11615,31 @@ function buildDelqRow(r, isDead) {
     <td style="text-align:center;">${ncadCell}</td>
     <td style="text-align:center;">${nctaxCell}</td>`;
 
+  // Whole-row click opens the SHARED property CRM (same record as the
+  // Stack / CCLN). Skip clicks on interactive elements (status pill,
+  // links, buttons, icons) and text drag-selection. The shared key is
+  // the parcel-level "ncad:…/addr:…" form (_cclnPropertyKey is the
+  // canonical deriver — reads ncad_account_num / prop_address with the
+  // same normalizer the Stack uses), NOT the raw ncad used by the DELQ
+  // status store.
+  if (!isDead) {
+    tr.style.cursor = "pointer";
+    let _dDownX = 0, _dDownY = 0;
+    tr.addEventListener("mousedown", (ev) => { _dDownX = ev.clientX; _dDownY = ev.clientY; });
+    tr.addEventListener("click", (ev) => {
+      if (ev.target.closest("a, button, .pill.status, .ccln-status-menu, .ext-icon, .map-icon")) return;
+      if (Math.abs(ev.clientX - _dDownX) > 5 || Math.abs(ev.clientY - _dDownY) > 5) return;
+      const sel = window.getSelection && window.getSelection();
+      if (sel && !sel.isCollapsed && sel.toString().trim() !== "") {
+        const anchor = sel.anchorNode;
+        if (anchor && tr.contains(anchor.nodeType === 1 ? anchor : anchor.parentNode)) return;
+      }
+      const sharedKey = (typeof _cclnPropertyKey === "function" ? _cclnPropertyKey(r) : null)
+        || (ncad ? "ncad:" + ncad : null);
+      if (sharedKey) { try { openPropCrm(sharedKey, r); } catch (e) { console.error("openPropCrm failed for DELQ row", e); } }
+    });
+  }
+
   return tr;
 }
 
@@ -13924,21 +13949,59 @@ function openPropCrm(propKey, rec) {
     (rec.prop_address ? " — " + fmtTitle(rec.prop_address) : "");
 
   const body = document.getElementById("crm-body");
-  delete body.dataset.crmType;   // centered column layout
+
+  // --- Property snapshot (read-only county facts, MFC-style) ---
+  const _snapMoney = v => (v == null || v === "" || isNaN(Number(v))) ? "—" : "$" + Number(v).toLocaleString("en-US", { maximumFractionDigits: 0 });
+  const _snapPropCity = [rec.prop_city, rec.prop_state, rec.prop_zip].filter(Boolean).join(" ");
+  const _snapMail = [rec.mail_address, rec.mail_address2].filter(Boolean).join(" ");
+  const _snapMailCity = [rec.mail_city, rec.mail_state, rec.mail_zip].filter(Boolean).join(" ");
+  const _snapMarket = (rec.market_value != null && rec.market_value !== "") ? rec.market_value : rec.appraised_value;
+  const _snapLegal = (rec.legal || "").replace(/^Subdivision\s*-\s*Name:\s*/i, "");
+  const _snapType = rec.property_type || (rec.state_class ? propTypeLabel(rec.state_class) : "");
+  const _snapRow = (k, vHtml, sub) => `<div class="mfc-snap-row"><span class="k">${esc(k)}</span><span class="v">${vHtml}${sub ? `<div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(sub)}</div>` : ""}</span></div>`;
+  const _snapHasMore = rec.total_owed || rec.years_behind || rec.lien_count || rec.ncad_prop_id || _snapMail;
+  const snapshotCard = `
+    <div class="mfc-snapshot">
+      ${_snapRow("Owner", esc(fmtOwner(rec.owner || "")) || "—")}
+      ${_snapRow("Property", esc(fmtTitle(rec.prop_address || "")) || "—", _snapPropCity ? fmtTitle(_snapPropCity) : "")}
+      ${_snapMail ? _snapRow("Mailing", esc(fmtTitle(_snapMail)), _snapMailCity ? fmtTitle(_snapMailCity) : "") : ""}
+      ${_snapRow("NCAD Acct", esc(rec.ncad_account_num || "—"))}
+      <div class="mfc-snap-row"><span class="k">Market Value</span><span class="v big">${_snapMoney(_snapMarket)}</span></div>
+      ${_snapType ? _snapRow("Type", esc(_snapType)) : ""}
+      ${_snapLegal ? _snapRow("Legal", esc(_snapLegal)) : ""}
+      ${_snapHasMore ? `<details class="mfc-details">
+        <summary>More details</summary>
+        <div class="mfc-details-grid">
+          ${rec.total_owed ? `<div class="mfc-details-row"><span class="k">Delinquent Owed</span><span class="v">${_snapMoney(rec.total_owed)}</span></div>` : ""}
+          ${rec.years_behind ? `<div class="mfc-details-row"><span class="k">Years Behind</span><span class="v">${esc(String(rec.years_behind))}</span></div>` : ""}
+          ${rec.lien_count ? `<div class="mfc-details-row"><span class="k">City Liens</span><span class="v">${esc(String(rec.lien_count))} (${_snapMoney(rec.total_lien_amount)})</span></div>` : ""}
+          ${rec.ncad_prop_id ? `<div class="mfc-details-row"><span class="k">NCAD prop_id</span><span class="v">${esc(rec.ncad_prop_id)}</span></div>` : ""}
+        </div>
+      </details>` : ""}
+    </div>`;
+
+  delete body.dataset.crmType;   // .mfc-layout below triggers full-width via :has()
   body.innerHTML = `
     <div class="prop-stagebar">
       <span class="prop-stagebar-lbl">Stage</span>
       <div class="prop-stages">${stageBtns}</div>
     </div>
     ${followupBannerHtml}
-    <div class="crm-grid">
-      ${photoCard}
-      ${contactsCard}
-      ${researchCard}
-      ${notesCard}
-      ${activityCard}
-      ${attemptsCard}
-      ${skiptraceCard}
+    <div class="mfc-layout">
+      <div class="mfc-col mfc-col-1">
+        ${snapshotCard}
+        ${photoCard}
+      </div>
+      <div class="mfc-col mfc-col-2">
+        ${researchCard}
+      </div>
+      <div class="mfc-col mfc-col-3">
+        ${contactsCard}
+      </div>
+      <div class="mfc-fullrow">${skiptraceCard}</div>
+      <div class="mfc-fullrow">${attemptsCard}</div>
+      <div class="mfc-fullrow">${notesCard}</div>
+      <div class="mfc-fullrow">${activityCard}</div>
     </div>`;
 
   // Stage buttons
