@@ -12814,11 +12814,15 @@ function _cssEscKey(k){ return (window.CSS && CSS.escape) ? CSS.escape(k) : Stri
 // data-stagekey). Active→active just recolors/relabels; →dead hides the
 // row from the active list; →active un-hides it. Returns true if it
 // found at least one pill (so the caller can skip a full table rebuild).
+// Matches by comparing dataset in JS — robust against ":"/space keys
+// that an attribute-selector + CSS.escape can mishandle.
 function _updateStagePills(key, newStatus) {
   const stageDef = STACK_STAGES.find(s => s.key === newStatus) || STACK_STAGES[0];
   const cls = STACK_PILL_CLASS[newStatus] || "status-new";
-  const pills = document.querySelectorAll(`.pill.status[data-stagekey="${_cssEscKey(key)}"]`);
-  pills.forEach(pill => {
+  let found = 0;
+  document.querySelectorAll(".pill.status[data-stagekey]").forEach(pill => {
+    if (pill.dataset.stagekey !== key) return;
+    found++;
     const row = pill.closest("tr");
     if (newStatus === "dead") {
       if (row) row.style.display = "none";
@@ -12828,7 +12832,7 @@ function _updateStagePills(key, newStatus) {
       if (row) row.style.display = "";
     }
   });
-  return pills.length > 0;
+  return found > 0;
 }
 
 // DELQ isn't a Stack SOURCE (it doesn't auto-include or drive stacking),
