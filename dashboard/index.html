@@ -9837,6 +9837,25 @@ function renderCv() {
   }
 }
 
+// Open the SHARED property CRM from a CV / Vacant row. CV records
+// carry ncad_account_num (dashed geo_id) + prop_address, so the
+// shared key is the same "ncad:…/addr:…" form the Stack uses. Unlike
+// _cclnPropertyKey's random orphan fallback, CV uses a STABLE
+// "cv:<case_num>" key when there's no parcel id, so notes persist.
+function _openCvShared(r, cn) {
+  let sharedKey = null;
+  const ncad = (r.ncad_account_num || "").trim();
+  if (ncad) sharedKey = "ncad:" + ncad;
+  else if (r.prop_address && typeof _stackNormalizeAddress === "function") {
+    const norm = _stackNormalizeAddress(r.prop_address);
+    if (norm) sharedKey = "addr:" + norm;
+  }
+  if (!sharedKey) sharedKey = cn ? "cv:" + cn : null;
+  if (!sharedKey) return;
+  try { openPropCrm(sharedKey, r); }
+  catch (e) { console.error("openPropCrm failed for CV row", e); openCrm("cv", cn, CV_RAW); }
+}
+
 function buildCvRow(r, isDead) {
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
@@ -9929,7 +9948,7 @@ function buildCvRow(r, isDead) {
   tr.style.cursor = "pointer";
   tr.addEventListener("click", (ev) => {
     if (ev.target.closest("a, button, .status-menu-item, .pill.status")) return;
-    openCrm("cv", cn, CV_RAW);
+    _openCvShared(r, cn);
   });
   return tr;
 }
@@ -10195,7 +10214,7 @@ function buildVacantRow(r, isDead) {
   tr.style.cursor = "pointer";
   tr.addEventListener("click", (ev) => {
     if (ev.target.closest("a, button, .status-menu-item, .pill.status")) return;
-    openCrm("cv", cn, CV_RAW);
+    _openCvShared(r, cn);
   });
   return tr;
 }
