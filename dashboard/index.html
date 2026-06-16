@@ -10396,7 +10396,7 @@ function renderDeferral(){
   tb.innerHTML = ""; tf.innerHTML = "";
   const active = [], dead = [];
   for (const r of DEFERRAL_FILTERED) {
-    if (getDeferralStatus(r.geo_id) === "dead") dead.push(r); else active.push(r);
+    if (getStackStatus(_deferralSharedKey(r)) === "dead") dead.push(r); else active.push(r);
   }
   { const _f = document.createDocumentFragment();
     for (const r of active) _f.appendChild(buildDeferralRow(r, false));
@@ -10428,14 +10428,20 @@ function _deferralTypeBadges(types){
 // Open the SHARED property CRM from a Tax Deferral row. Deferral
 // records carry ncad_account_num (== geo_id, dashed), so the shared
 // key is the same "ncad:…/addr:…" form every other dashboard uses.
-function _openDeferralShared(r) {
-  let sharedKey = null;
+// Canonical parcel-level key for a Tax Deferral row — the SAME key the
+// shared property CRM and unified stage pill use (ncad_account_num ==
+// geo_id, dashed). Stable "deferral:<geo_id>" fallback.
+function _deferralSharedKey(r) {
   const ncad = (r.ncad_account_num || r.geo_id || "").trim();
-  if (ncad) sharedKey = "ncad:" + ncad;
-  else if (r.prop_address && typeof _stackNormalizeAddress === "function") {
+  if (ncad) return "ncad:" + ncad;
+  if (r.prop_address && typeof _stackNormalizeAddress === "function") {
     const norm = _stackNormalizeAddress(r.prop_address);
-    if (norm) sharedKey = "addr:" + norm;
+    if (norm) return "addr:" + norm;
   }
+  return r.geo_id ? "deferral:" + r.geo_id : null;
+}
+function _openDeferralShared(r) {
+  const sharedKey = _deferralSharedKey(r);
   if (!sharedKey) return;
   try { openPropCrm(sharedKey, r); }
   catch (e) { console.error("openPropCrm failed for Deferral row", e); }
@@ -10445,19 +10451,19 @@ function buildDeferralRow(r, isDead){
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
   const key = r.geo_id || "";
+  const _defKey = _deferralSharedKey(r);
   const dash = '<span style="color:var(--muted)">\u2014</span>';
   let statusCell;
   if (isDead) {
     statusCell = `<span class="pill status status-dead">Dead</span>
       <button class="restore-btn" style="margin-top:4px;" title="Restore this lead"
-              onclick="setDeferralStatus('${esc(key)}','new'); applyDeferral(); event.stopPropagation();">Restore</button>`;
+              onclick="setStackStatus('${esc(_defKey)}','new'); applyDeferral(); event.stopPropagation();">Restore</button>`;
   } else {
-    const st = getDeferralStatus(key);
-    const stageDef = CV_STAGES.find(s => s.key === st) || CV_STAGES[0];
-    const pillClassMap = { new:"status-new", contacted:"status-contacted", negotiating:"status-negotiating", under_contract:"status-negotiating", closed_won:"status-closed", dead:"status-dead" };
-    const pillClass = pillClassMap[st] || "status-new";
-    statusCell = `<span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status"
-            onclick="openDeferralStatusMenu(event, '${esc(key)}', '${esc(st)}')">${esc(stageDef.label)} ▾</span>`;
+    const st = getStackStatus(_defKey);
+    const stageDef = STACK_STAGES.find(s => s.key === st) || STACK_STAGES[0];
+    const pillClass = STACK_PILL_CLASS[st] || "status-new";
+    statusCell = `<span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status" data-stagekey="${esc(_defKey)}"
+            onclick="openStackStatusMenu(event, '${esc(_defKey)}', getStackStatus('${esc(_defKey)}'), applyDeferral)">${esc(stageDef.label)} ▾</span>`;
   }
   const startCell = r.deferral_start ? esc(r.deferral_start) : dash;
   const ownerCell = (esc(fmtOwner(r.owner || "")) || dash) + exemptionTagsHtml(r.ncad_account_num);
@@ -12606,7 +12612,7 @@ const STACK_SOURCES = [
     badgeClass: "stack-badge-deferral",
     autoInclude: false,   // a deferral only stacks when the property also carries another signal (city lien / code violation / foreclosure / vacant)
     getRecords: () => (typeof DEFERRAL_RAW !== "undefined" ? DEFERRAL_RAW : []),
-    isActive: (r) => getDeferralStatus(r.geo_id) !== "dead",
+    isActive: (r) => getStackStatus(_deferralSharedKey(r)) !== "dead",
     primaryKey: (r) => r.geo_id,
     addressKey: (r) => r.prop_address,
     ncadKey: (r) => r.ncad_account_num,   // dashed geo_id — same format as CCLN/CV → cross-matches cleanly
