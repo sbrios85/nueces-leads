@@ -682,11 +682,13 @@
   }
   /* Stack row clickability — same hover treatment as CCLN/MFC rows. */
   #stack-table tbody tr,
-  #worktax-table tbody tr {
+  #worktax-table tbody tr,
+  #workfc-table tbody tr {
     cursor: pointer;
   }
   #stack-table tbody tr:hover,
-  #worktax-table tbody tr:hover {
+  #worktax-table tbody tr:hover,
+  #workfc-table tbody tr:hover {
     background: rgba(56, 189, 248, 0.06);
   }
   /* Loan modification flag: the PDF references a loan mod, so the
@@ -3224,14 +3226,23 @@
 
 <!-- ======== WORK: FORECLOSURE LEADS (CRM) ======== -->
 <div class="pane" id="pane-foreclosureleads">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Foreclosure Leads coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      CRM view combining Mortgage and Tax foreclosures you're actively
-      working — last contact, phone numbers, relatives, notes, and
-      follow-up status. Built on top of the raw foreclosure data.
+  <div class="stats" id="workfc-stats"></div>
+  <table id="workfc-table" class="stack-table">
+    <thead><tr>
+      <th style="width: 140px;">Status</th>
+      <th style="width: 110px;">Type</th>
+      <th style="width: 220px;">Owner</th>
+      <th style="width: 260px;">Property Address</th>
+      <th style="width: 130px;">Sale Date</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div id="workfc-empty" class="empty" hidden>
+    <div style="font-size:18px;margin-bottom:12px;color:var(--fg);">No foreclosure leads being worked</div>
+    <div style="max-width:540px;margin:0 auto;line-height:1.6;">
+      Mortgage and Tax foreclosure leads appear here once you move them
+      past <strong>New</strong> in their CRM (on the Foreclosures or Tax
+      Foreclosures tabs). Click any row to open that lead's CRM.
     </div>
   </div>
 </div>
@@ -10774,6 +10785,12 @@ function _renderPaneIfNeeded(paneId) {
     renderWorkTax();
     return;
   }
+  // Foreclosure Leads work view: MFC + TFC worked leads. Always
+  // re-render on visit (their stages change in their own CRMs).
+  if (paneId === "pane-foreclosureleads") {
+    renderWorkForeclosures();
+    return;
+  }
   // Map: init on first visit; on later visits recompute size (the pane
   // was hidden, so Leaflet measured the container at 0×0).
   if (paneId === "pane-map") {
@@ -12820,6 +12837,93 @@ function renderWorkTax() {
   if (empty) empty.hidden = true;
   const frag = document.createDocumentFragment();
   for (const entry of list) frag.appendChild(_buildStackRow(entry));
+  tb.appendChild(frag);
+}
+
+// ---- Foreclosure Leads Work view (Mortgage + Tax foreclosures) -------
+// MFC and TFC are case-level and were never folded into the shared
+// stage — each keeps its own CRM store (mfc / tfc) keyed by doc_num /
+// uid. This view collects records from BOTH whose own stage is past New
+// (and not Dead), tagged by kind so the row opens the right CRM.
+function _fmtSaleDate(sd) {
+  if (!sd) return '<span style="color:var(--muted)">\u2014</span>';
+  const m = String(sd).slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return esc(String(sd));
+  const mo = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const i = parseInt(m[2], 10); if (i < 1 || i > 12) return esc(String(sd));
+  return mo[i - 1] + " " + parseInt(m[3], 10) + ", " + m[1];
+}
+function _workForeclosureList() {
+  const out = [];
+  const mfc = loadCrmStore("mfc") || {};
+  for (const r of FC_RAW) {
+    const e = mfc[r.doc_num] || {};
+    const st = e.stage || "new";
+    if (st === "new" || st === "dead" || e.status === "dead") continue;
+    out.push({ kind: "mfc", rec: r, stage: st });
+  }
+  const tfc = loadCrmStore("tfc") || {};
+  for (const r of TFC_RAW) {
+    const e = tfc[r.uid] || {};
+    const st = e.stage || "new";
+    if (st === "new" || st === "dead" || e.status === "dead") continue;
+    out.push({ kind: "tfc", rec: r, stage: st });
+  }
+  const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
+  out.sort((a, b) => {
+    const ra = rank[a.stage] ?? 0, rb = rank[b.stage] ?? 0;
+    if (ra !== rb) return rb - ra;
+    return (a.rec.owner || "").localeCompare(b.rec.owner || "");
+  });
+  return out;
+}
+function _workFcRow(item) {
+  const r = item.rec;
+  const dash = '<span style="color:var(--muted)">\u2014</span>';
+  const tr = document.createElement("tr");
+  const pillClass = STACK_PILL_CLASS[item.stage] || "status-new";
+  const stageDef = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
+  const typeBadge = item.kind === "mfc"
+    ? '<span class="pill" style="background:rgba(56,189,248,.15);color:#38bdf8;">Mortgage</span>'
+    : '<span class="pill" style="background:rgba(239,159,39,.15);color:#EF9F27;">Tax</span>';
+  const owner = (esc(fmtOwner(r.owner || "")) || dash);
+  const cityLine = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ");
+  const prop = r.prop_address
+    ? esc(fmtTitle(r.prop_address)) + (cityLine ? `<br><small style="color:var(--muted)">${esc(fmtTitle(cityLine))}</small>` : "")
+    : dash;
+  const saleRaw = item.kind === "mfc" ? r.sale_date : (r.sale_date_only || r.sale_date);
+  tr.innerHTML = `
+    <td><span class="pill status ${pillClass}">${esc(stageDef.label)}</span></td>
+    <td>${typeBadge}</td>
+    <td>${owner}</td>
+    <td>${prop}</td>
+    <td>${_fmtSaleDate(saleRaw)}</td>`;
+  tr.style.cursor = "pointer";
+  tr.addEventListener("click", () => {
+    if (item.kind === "mfc") openMfcCrm(r.doc_num, FC_RAW);
+    else openTfcCrm(r.uid, TFC_RAW);
+  });
+  return tr;
+}
+function renderWorkForeclosures() {
+  const tb = document.querySelector("#workfc-table tbody");
+  if (!tb) return;
+  const empty = document.getElementById("workfc-empty");
+  const stats = document.getElementById("workfc-stats");
+  tb.innerHTML = "";
+  const list = _workForeclosureList();
+  if (stats) {
+    const nMfc = list.filter(x => x.kind === "mfc").length;
+    const nTfc = list.filter(x => x.kind === "tfc").length;
+    stats.innerHTML = `<div class="stats-title">Foreclosure Leads</div>
+      <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Working</div></div>
+      <div class="stat-card"><div class="num">${nMfc.toLocaleString()}</div><div class="lbl">Mortgage</div></div>
+      <div class="stat-card"><div class="num">${nTfc.toLocaleString()}</div><div class="lbl">Tax</div></div>`;
+  }
+  if (list.length === 0) { if (empty) empty.hidden = false; return; }
+  if (empty) empty.hidden = true;
+  const frag = document.createDocumentFragment();
+  for (const item of list) frag.appendChild(_workFcRow(item));
   tb.appendChild(frag);
 }
 
