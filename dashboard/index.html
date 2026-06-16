@@ -681,10 +681,12 @@
     color: #ef4444;
   }
   /* Stack row clickability — same hover treatment as CCLN/MFC rows. */
-  #stack-table tbody tr {
+  #stack-table tbody tr,
+  #worktax-table tbody tr {
     cursor: pointer;
   }
-  #stack-table tbody tr:hover {
+  #stack-table tbody tr:hover,
+  #worktax-table tbody tr:hover {
     background: rgba(56, 189, 248, 0.06);
   }
   /* Loan modification flag: the PDF references a loan mod, so the
@@ -3236,14 +3238,33 @@
 
 <!-- ======== WORK: TAX CC LIEN VACANT CV STACK (CRM) ======== -->
 <div class="pane" id="pane-taxccvcvstack">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Tax CC Lien Vacant CV Stack coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      CRM view for properties combining Delinquent Taxes + City of
-      Corpus Christi Liens + Vacant + Code Violation. Worked leads with
-      contact info and follow-up tracking.
+  <div class="stats" id="worktax-stats"></div>
+  <table id="worktax-table" class="stack-table">
+    <thead><tr>
+      <th style="width: 130px;">Status</th>
+      <th style="width: 250px;">Lead Type</th>
+      <th style="width: 168px;">Owner</th>
+      <th style="width: 192px;">Property Address</th>
+      <th style="width: 46px;">Map</th>
+      <th style="width: 178px;">Mail Address</th>
+      <th style="width: 110px;">Market Value</th>
+      <th style="width: 120px;">Total Lien Amount</th>
+      <th style="width: 120px;">Delinquent Taxes<br><small style="font-weight:400;color:var(--muted);">Years Behind</small></th>
+      <th style="width: 140px;">Tax Status</th>
+      <th style="width: 170px;">Violation Type</th>
+      <th style="width: 120px;">Property Type</th>
+      <th style="width: 62px;">NCAD</th>
+      <th style="width: 72px;">NCTAX</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div id="worktax-empty" class="empty" hidden>
+    <div style="font-size:18px;margin-bottom:12px;color:var(--fg);">No worked leads yet</div>
+    <div style="max-width:540px;margin:0 auto;line-height:1.6;">
+      Properties appear here automatically once you move them past
+      <strong>New</strong> on any of the Delinquent Taxes, CCLN, Code
+      Violation, Vacant Houses, or Tax Deferral lists. Set a stage and the
+      lead shows up here — click any row to open its shared CRM.
     </div>
   </div>
 </div>
@@ -10747,6 +10768,12 @@ function _renderPaneIfNeeded(paneId) {
     applyStack();
     return;
   }
+  // Work view: worked leads across the five shared-stage lists. Always
+  // re-render on visit since stages change while working other panes.
+  if (paneId === "pane-taxccvcvstack") {
+    renderWorkTax();
+    return;
+  }
   // Map: init on first visit; on later visits recompute size (the pane
   // was hidden, so Leaflet measured the container at 0×0).
   if (paneId === "pane-map") {
@@ -12719,10 +12746,9 @@ function _stackPropertyKey(record, source) {
 // Build the stack list: group records by property_key, apply
 // inclusion rule, return one entry per qualifying property.
 // ----------------------------------------------------------------
-function _stackBuildList() {
+function _stackBuildGroups() {
   // property_key -> { signals: [{source, record}, ...], byType: {type: count} }
   const groups = new Map();
-
   for (const source of STACK_SOURCES) {
     const records = source.getRecords() || [];
     for (const rec of records) {
@@ -12748,6 +12774,57 @@ function _stackBuildList() {
       if (auto) g.hasAuto = true;
     }
   }
+  return groups;
+}
+
+// Worked-leads list for the "Tax CC Lien Vacant CV Stack" Work view:
+// every property across the stacking sources whose SHARED stage is past
+// New (dead are already dropped by each source's isActive). Reuses the
+// Stack's entry + row builders so it looks/behaves identically.
+function _workTaxList() {
+  const groups = _stackBuildGroups();
+  const list = [];
+  for (const [key, g] of groups.entries()) {
+    const st = getStackStatus(key);
+    if (st === "new" || st === "dead") continue;
+    const entry = _stackBuildEntry(key, g);
+    if (entry) list.push(entry);
+  }
+  const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
+  list.sort((a, b) => {
+    const ra = rank[getStackStatus(a.key)] ?? 0, rb = rank[getStackStatus(b.key)] ?? 0;
+    if (ra !== rb) return rb - ra;          // further along the pipeline first
+    return (a.owner || "").localeCompare(b.owner || "");
+  });
+  return list;
+}
+
+// Render the "Tax CC Lien Vacant CV Stack" Work view — worked leads
+// across all five shared-stage lists, using the Stack's row builder.
+function renderWorkTax() {
+  const tb = document.querySelector("#worktax-table tbody");
+  if (!tb) return;
+  const empty = document.getElementById("worktax-empty");
+  const stats = document.getElementById("worktax-stats");
+  tb.innerHTML = "";
+  const list = _workTaxList();
+  if (stats) {
+    const counts = {};
+    list.forEach(e => { const s = getStackStatus(e.key); counts[s] = (counts[s] || 0) + 1; });
+    const cards = STACK_STAGES.filter(s => s.key !== "new" && s.key !== "dead")
+      .map(s => `<div class="stat-card"><div class="num">${(counts[s.key] || 0).toLocaleString()}</div><div class="lbl">${esc(s.label)}</div></div>`).join("");
+    stats.innerHTML = `<div class="stats-title">Worked Leads</div>
+      <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Worked</div></div>${cards}`;
+  }
+  if (list.length === 0) { if (empty) empty.hidden = false; return; }
+  if (empty) empty.hidden = true;
+  const frag = document.createDocumentFragment();
+  for (const entry of list) frag.appendChild(_buildStackRow(entry));
+  tb.appendChild(frag);
+}
+
+function _stackBuildList() {
+  const groups = _stackBuildGroups();
 
   // Apply inclusion rule. A property qualifies if:
   //   - It has at least one AUTO-INCLUDE signal (autoInclude source whose
