@@ -1,14 +1,158 @@
 {
-  "fetched_at": "2026-06-15T19:52:38.343973+00:00",
+  "fetched_at": "2026-06-16T19:42:23.608191+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
-    "start": "2026-06-15",
-    "end": "2026-10-13"
+    "start": "2026-06-16",
+    "end": "2026-10-14"
   },
-  "total": 83,
-  "pre_foreclosure": 83,
+  "total": 90,
+  "pre_foreclosure": 90,
   "post_foreclosure": 0,
   "records": [
+    {
+      "doc_num": "2026000366",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-06-16",
+      "sale_date": "2026-07-07",
+      "legal": "OSO PLACE #4- LOT 25, BLOCK 10",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000366",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 21
+    },
+    {
+      "doc_num": "2026000365",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-06-16",
+      "sale_date": "2026-07-07",
+      "legal": "DELLWOOD ADDITION #2- LOT 6, BLOCK 3",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000365",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 21
+    },
+    {
+      "doc_num": "2026000362",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-06-16",
+      "sale_date": "2026-07-07",
+      "legal": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000362",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 21
+    },
+    {
+      "doc_num": "2026000361",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-06-16",
+      "sale_date": "2026-07-07",
+      "legal": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000361",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 21
+    },
+    {
+      "doc_num": "2026000363",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-06-16",
+      "sale_date": "2026-07-07",
+      "legal": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000363",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 21
+    },
+    {
+      "doc_num": "2026000360",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-06-15",
+      "sale_date": "2026-07-07",
+      "legal": "100 SOUTH PADRE LOT 18 BLOCK 5 UNNIT 6",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000360",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 21
+    },
     {
       "doc_num": "2026000358",
       "doc_type": "FORECLOSURE NOTICE",
@@ -31,7 +175,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000359",
@@ -55,7 +199,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000354",
@@ -79,7 +223,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000353",
@@ -103,33 +247,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
-      "prop_lat": 27.649236,
-      "prop_lng": -97.352594
-    },
-    {
-      "doc_num": "2026000355",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-06-15",
-      "sale_date": "2026-07-07",
-      "legal": "KINGS POINT LT 6 BLK 1 UNIT 2",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000355",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "appraised_value": null,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000357",
@@ -153,7 +271,31 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
+    },
+    {
+      "doc_num": "2026000355",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-06-15",
+      "sale_date": "2026-07-07",
+      "legal": "KINGS POINT LT 6 BLK 1 UNIT 2",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000355",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000349",
@@ -177,31 +319,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
-    },
-    {
-      "doc_num": "2026000345",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-06-11",
-      "sale_date": "2026-07-07",
-      "legal": "ARCADIA LT 14 BLK 7",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000345",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "appraised_value": null,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000346",
@@ -225,7 +343,31 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
+    },
+    {
+      "doc_num": "2026000345",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-06-11",
+      "sale_date": "2026-07-07",
+      "legal": "ARCADIA LT 14 BLK 7",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000345",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000351",
@@ -249,9 +391,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
-      "prop_lat": 27.688615,
-      "prop_lng": -97.384134
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000341",
@@ -275,7 +415,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000340",
@@ -299,7 +439,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000338",
@@ -323,7 +463,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000339",
@@ -347,7 +487,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000334",
@@ -371,7 +511,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000332",
@@ -395,7 +535,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000331",
@@ -419,7 +559,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000330",
@@ -443,7 +583,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000329",
@@ -467,7 +607,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2022-03-16",
       "loan_doc": "2022016410",
       "lender": "NEXTLOTS NOW, LLC, a Texas limited liability company",
@@ -495,15 +635,13 @@
       "ncad_year": "2026",
       "ncad_owner_id": "802526",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "lender": "liability company",
       "legal_lot": "19",
       "legal_block": "16",
       "legal_subdivision": "Arcadi",
       "pdf_parsed_at": "2026-06-06T19:31:40.131715+00:00",
-      "ncad_account_num": "0232-0016-0190",
-      "prop_lat": 27.757457,
-      "prop_lng": -97.407456
+      "ncad_account_num": "0232-0016-0190"
     },
     {
       "doc_num": "2026000326",
@@ -527,7 +665,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "loan_doc": "2026011532",
       "legal_lot": "7",
       "legal_block": "3",
@@ -556,7 +694,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "573242",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "owner_raw": "MOHAMMAD AL- SECURED: BARNAWI, AN UNMARRIED MAN",
       "deed_date": "2019-06-18",
       "lender": "WILMINGTON SAVINGS FUND SOCIETY, FSB, AS OWNER TRUSTEE OF THE RESIDENTIAL CREDIT OPPORTUNITIES TRUST IX-C",
@@ -564,9 +702,7 @@
       "legal_block": "7",
       "legal_subdivision": "ARCADIA OF PROPERTY",
       "pdf_parsed_at": "2026-06-06T19:31:40.063082+00:00",
-      "ncad_account_num": "0232-0007-0140",
-      "prop_lat": 27.762399,
-      "prop_lng": -97.405572
+      "ncad_account_num": "0232-0007-0140"
     },
     {
       "doc_num": "2026000323",
@@ -590,7 +726,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "793355",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2022-08-12",
       "loan_doc": "2022038671",
       "lender": "Carrington Mortgage Services, LLC",
@@ -598,9 +734,7 @@
       "legal_block": "2",
       "legal_subdivision": "CALLICOATTE ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:40.088851+00:00",
-      "ncad_account_num": "1238-0002-0200",
-      "prop_lat": 27.847163,
-      "prop_lng": -97.607463
+      "ncad_account_num": "1238-0002-0200"
     },
     {
       "doc_num": "2026000320",
@@ -624,7 +758,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "357352",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "owner_raw": "Gerline J. Bray as mortgagor",
       "deed_date": "2020-01-29",
       "loan_doc": "2020005734",
@@ -633,9 +767,7 @@
       "legal_block": "1",
       "legal_subdivision": "COLLIER",
       "pdf_parsed_at": "2026-06-06T19:31:40.076024+00:00",
-      "ncad_account_num": "1685-0001-0020",
-      "prop_lat": 27.737253,
-      "prop_lng": -97.393505
+      "ncad_account_num": "1685-0001-0020"
     },
     {
       "doc_num": "2026000325",
@@ -659,7 +791,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "761964",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2020-07-27",
       "loan_doc": "2020031985",
       "lender": "UNITED HOME LOANS, A MISSOURI LIMITED LIABILITY COMPANY",
@@ -667,9 +799,7 @@
       "legal_block": "1",
       "legal_subdivision": "SANDPIPER ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:40.106066+00:00",
-      "ncad_account_num": "7656-0001-0060",
-      "prop_lat": 27.823802,
-      "prop_lng": -97.066444
+      "ncad_account_num": "7656-0001-0060"
     },
     {
       "doc_num": "2026000322",
@@ -693,7 +823,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "813730",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2024-03-28",
       "loan_doc": "2024010380",
       "lender": "LAKEVIEW LOAN SERVICING, LLC",
@@ -701,9 +831,7 @@
       "legal_block": "8",
       "legal_subdivision": "GREEN ACRES VILLAGE NO 2",
       "pdf_parsed_at": "2026-06-06T19:31:40.083198+00:00",
-      "ncad_account_num": "2938-0008-0020",
-      "prop_lat": 27.714753,
-      "prop_lng": -97.366111
+      "ncad_account_num": "2938-0008-0020"
     },
     {
       "doc_num": "2026000324",
@@ -727,7 +855,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "800850",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "owner_raw": "AMBER LEANNE PAIZ AND ISHMAEL GONZALES PAIZ JR, WIFE",
       "deed_date": "2023-03-22",
       "loan_doc": "2023009928",
@@ -736,9 +864,7 @@
       "legal_block": "6",
       "legal_subdivision": "LINCOLN TERRACE",
       "pdf_parsed_at": "2026-06-06T19:31:40.100755+00:00",
-      "ncad_account_num": "4465-0006-0240",
-      "prop_lat": 27.724231,
-      "prop_lng": -97.391429
+      "ncad_account_num": "4465-0006-0240"
     },
     {
       "doc_num": "2026000315",
@@ -762,16 +888,14 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2026-02-11",
       "loan_doc": "2026009714",
       "lender": "Sonder Holdings, LLC, a Texas limited liability company",
       "legal_lot": "2",
       "legal_block": "3",
       "legal_subdivision": "Washington",
-      "pdf_parsed_at": "2026-06-06T19:31:40.045322+00:00",
-      "prop_lat": 27.749569,
-      "prop_lng": -97.447529
+      "pdf_parsed_at": "2026-06-06T19:31:40.045322+00:00"
     },
     {
       "doc_num": "2026000316",
@@ -795,7 +919,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2026-02-11",
       "loan_doc": "2026009712",
       "lender": "Sonder Holdings, LLC, a Texas limited liability company",
@@ -826,7 +950,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2023-10-23",
       "loan_doc": "2023040731",
       "lender": "Hindsight Properties, LLC, a Texas limited liability company",
@@ -857,7 +981,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2024-06-26",
       "loan_doc": "2024026478",
       "lender": "Hindsight Properties, LLC, a Texas limited liability company",
@@ -888,7 +1012,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "753882",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2026-05-22",
       "loan_doc": "2023036574",
       "loan_mod_doc": "2025018574",
@@ -921,16 +1045,14 @@
       "ncad_year": "2026",
       "ncad_owner_id": "830269",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2025-06-13",
       "lender": "NATIONS LENDING CORPORATION",
       "legal_lot": "1",
       "legal_block": "19",
       "legal_subdivision": "THE LAKES",
       "pdf_parsed_at": "2026-06-06T19:31:39.999463+00:00",
-      "ncad_account_num": "4137-0019-0010",
-      "prop_lat": 27.678807,
-      "prop_lng": -97.413367
+      "ncad_account_num": "4137-0019-0010"
     },
     {
       "doc_num": "2026000301",
@@ -954,7 +1076,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "360279",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2022-09-14",
       "loan_doc": "2022043611",
       "lender": "SECURITY SERVICE FEDERAL CREDIT UNION",
@@ -986,16 +1108,14 @@
       "ncad_year": "2026",
       "ncad_owner_id": "796425",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "loan_doc": "2018041053",
       "lender": "JACKIE BIGGS as",
       "legal_lot": "1",
       "legal_block": "1",
       "legal_subdivision": "MELDO PARK",
       "pdf_parsed_at": "2026-06-06T19:31:39.943621+00:00",
-      "ncad_account_num": "5074-0001-0010",
-      "prop_lat": 27.746399,
-      "prop_lng": -97.381705
+      "ncad_account_num": "5074-0001-0010"
     },
     {
       "doc_num": "2026000308",
@@ -1019,7 +1139,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "538297",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2006-07-06",
       "loan_doc": "2006035428",
       "lender": "Steven J. Karg April R. Karg. NewRez LLC",
@@ -1051,7 +1171,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "454202",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2001-10-10",
       "loan_doc": "2001044150",
       "lender": "GSMPS MORTGAGE LOAN TRUST 2005-RP2, MORTGAGE PASS-THROUGH CERTIFICATES, SERIES",
@@ -1059,43 +1179,7 @@
       "legal_block": "1",
       "legal_subdivision": "SARATOGA DOWNS UNIT 1A",
       "pdf_parsed_at": "2026-06-06T19:31:39.916439+00:00",
-      "ncad_account_num": "7717-0001-0060",
-      "prop_lat": 27.724716,
-      "prop_lng": -97.451149
-    },
-    {
-      "doc_num": "2026000302",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-05-21",
-      "sale_date": "2026-07-07",
-      "legal": "BERVONNE LOT 14 BLOCK 3",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000302",
-      "owner": "JOSE SAMUEL GARZA",
-      "loan_amount": 124699.0,
-      "prop_address": "10606 EMMORD LOOP",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78410",
-      "mail_address": "10606 Emmord Loop",
-      "mail_city": "Corpus Christi",
-      "mail_state": "TX",
-      "mail_zip": "78410",
-      "appraised_value": 179996.0,
-      "ncad_prop_id": "194374",
-      "ncad_year": "2026",
-      "ncad_owner_id": "701066",
-      "status": "pre-foreclosure",
-      "days_until_sale": 22,
-      "deed_date": "2015-10-22",
-      "loan_doc": "2015043525",
-      "lender": "U.S. BANK NATIONAL ASSOCIATION",
-      "legal_lot": "14",
-      "legal_block": "3",
-      "legal_subdivision": "BERVONNE TERRACE",
-      "pdf_parsed_at": "2026-06-06T19:31:39.922158+00:00",
-      "ncad_account_num": "0661-0003-0140",
-      "prop_lat": 27.837383,
-      "prop_lng": -97.57726
+      "ncad_account_num": "7717-0001-0060"
     },
     {
       "doc_num": "2026000303",
@@ -1119,15 +1203,45 @@
       "ncad_year": "2026",
       "ncad_owner_id": "811803",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "lender": "Rally Credit Union",
       "legal_lot": "13",
       "legal_block": "1",
       "legal_subdivision": "GUTH PARKSIDE",
       "pdf_parsed_at": "2026-06-06T19:31:39.934156+00:00",
-      "ncad_account_num": "3119-0001-0130",
-      "prop_lat": 27.831488,
-      "prop_lng": -97.549697
+      "ncad_account_num": "3119-0001-0130"
+    },
+    {
+      "doc_num": "2026000302",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-05-21",
+      "sale_date": "2026-07-07",
+      "legal": "BERVONNE LOT 14 BLOCK 3",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000302",
+      "owner": "JOSE SAMUEL GARZA",
+      "loan_amount": 124699.0,
+      "prop_address": "10606 EMMORD LOOP",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78410",
+      "mail_address": "10606 Emmord Loop",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "appraised_value": 179996.0,
+      "ncad_prop_id": "194374",
+      "ncad_year": "2026",
+      "ncad_owner_id": "701066",
+      "status": "pre-foreclosure",
+      "days_until_sale": 21,
+      "deed_date": "2015-10-22",
+      "loan_doc": "2015043525",
+      "lender": "U.S. BANK NATIONAL ASSOCIATION",
+      "legal_lot": "14",
+      "legal_block": "3",
+      "legal_subdivision": "BERVONNE TERRACE",
+      "pdf_parsed_at": "2026-06-06T19:31:39.922158+00:00",
+      "ncad_account_num": "0661-0003-0140"
     },
     {
       "doc_num": "2026000309",
@@ -1151,7 +1265,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "680650",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2014-02-26",
       "loan_doc": "2014007306",
       "lender": "RALLY CREDIT UNION FORMERLY KNOWN AS NAVY ARMY COMMUNITY CREDIT UNION",
@@ -1159,9 +1273,7 @@
       "legal_block": "5",
       "legal_subdivision": "W.B RAY HEIGHTS",
       "pdf_parsed_at": "2026-06-06T19:31:39.984623+00:00",
-      "ncad_account_num": "7122-0005-0090",
-      "prop_lat": 27.745599,
-      "prop_lng": -97.394683
+      "ncad_account_num": "7122-0005-0090"
     },
     {
       "doc_num": "2026000310",
@@ -1185,7 +1297,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "405336",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2018-01-26",
       "loan_doc": "2018004536",
       "lender": "Idaho Housing and Finance Association",
@@ -1193,9 +1305,7 @@
       "legal_block": "10",
       "legal_subdivision": "WILLOWOOD",
       "pdf_parsed_at": "2026-06-06T19:31:39.993577+00:00",
-      "ncad_account_num": "9708-0010-0080",
-      "prop_lat": 27.841609,
-      "prop_lng": -97.599475
+      "ncad_account_num": "9708-0010-0080"
     },
     {
       "doc_num": "2026000299",
@@ -1219,7 +1329,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22
+      "days_until_sale": 21
     },
     {
       "doc_num": "2026000298",
@@ -1243,7 +1353,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "owner_raw": "Robert Earl Garrisori Hf and Ashley Garrison, busband and wife",
       "lender": "NEWREZ LLC",
       "pdf_parsed_at": "2026-06-06T19:31:39.907179+00:00"
@@ -1270,12 +1380,10 @@
       "ncad_year": "2026",
       "ncad_owner_id": "662523",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "loan_doc": "414459",
       "pdf_parsed_at": "2026-06-06T19:31:39.891347+00:00",
-      "ncad_account_num": "2702-0009-0146",
-      "prop_lat": 27.700616,
-      "prop_lng": -97.380478
+      "ncad_account_num": "2702-0009-0146"
     },
     {
       "doc_num": "2026000296",
@@ -1299,7 +1407,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "818860",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2024-08-01",
       "loan_doc": "2024026213",
       "lender": "LAKEVIEW LOAN SERVICING, LLC",
@@ -1307,9 +1415,7 @@
       "legal_block": "1",
       "legal_subdivision": "GRANGE PARK",
       "pdf_parsed_at": "2026-06-06T19:31:39.885043+00:00",
-      "ncad_account_num": "2905-0001-0090",
-      "prop_lat": 27.653521,
-      "prop_lng": -97.354431
+      "ncad_account_num": "2905-0001-0090"
     },
     {
       "doc_num": "2026000268",
@@ -1333,7 +1439,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "395887",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2005-11-19",
       "loan_doc": "2005062181",
       "lender": "U.S. BANK NATIONAL ASSOCIATION, AS TRUSTEE, ON BEHALF OF THE HOLDERS OF",
@@ -1341,9 +1447,7 @@
       "legal_block": "4",
       "legal_subdivision": "ARCADIA",
       "pdf_parsed_at": "2026-06-06T19:31:39.751496+00:00",
-      "ncad_account_num": "0232-0004-0090",
-      "prop_lat": 27.760441,
-      "prop_lng": -97.403814
+      "ncad_account_num": "0232-0004-0090"
     },
     {
       "doc_num": "2026000265",
@@ -1367,16 +1471,14 @@
       "ncad_year": "2026",
       "ncad_owner_id": "787861",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2022-04-22",
       "lender": "PHH MORTGAGE CORPORATION",
       "legal_lot": "16",
       "legal_block": "10",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.718897+00:00",
-      "ncad_account_num": "1847-0010-0160",
-      "prop_lat": 27.692961,
-      "prop_lng": -97.390376
+      "ncad_account_num": "1847-0010-0160"
     },
     {
       "doc_num": "2026000262",
@@ -1400,16 +1502,14 @@
       "ncad_year": "2026",
       "ncad_owner_id": "767087",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "owner_raw": "PHILANDER SALONE AND ROBERT A. SALONE HUSBAND AND WIFE",
       "lender": "U.S. BANK TRUST COMPANY, NATIONAL ASSOCIATION, NOT IN ITS INDIVIDUAL",
       "legal_lot": "9",
       "legal_block": "9",
       "legal_subdivision": "SCHANEN ESTATES WEST",
       "pdf_parsed_at": "2026-06-06T19:31:39.699383+00:00",
-      "ncad_account_num": "7790-0009-0090",
-      "prop_lat": 27.706763,
-      "prop_lng": -97.413835
+      "ncad_account_num": "7790-0009-0090"
     },
     {
       "doc_num": "2026000264",
@@ -1433,14 +1533,12 @@
       "ncad_year": "2026",
       "ncad_owner_id": "565591",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2016-12-19",
       "loan_doc": "2016052992",
       "lender": "U.S. Bank Trust National Association, not in its individual capacity, but solely in its capacity as Owner Trustee of Citigroup Mortgage Loan Trast 2025-RP2",
       "pdf_parsed_at": "2026-06-06T19:31:39.713516+00:00",
-      "ncad_account_num": "7410-0002-0071",
-      "prop_lat": 27.836248,
-      "prop_lng": -97.063253
+      "ncad_account_num": "7410-0002-0071"
     },
     {
       "doc_num": "2026000257",
@@ -1464,7 +1562,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "473020",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "owner_raw": "Brandon C Cordell and Arlene Madali Cordell husband and wife",
       "deed_date": "2024-06-20",
       "deed_date_original": "2014-09-15",
@@ -1476,9 +1574,7 @@
       "legal_block": "1",
       "legal_subdivision": "BLUE GRASS ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.671727+00:00",
-      "ncad_account_num": "0768-0001-0070",
-      "prop_lat": 27.654602,
-      "prop_lng": -97.308183
+      "ncad_account_num": "0768-0001-0070"
     },
     {
       "doc_num": "2026000251",
@@ -1502,7 +1598,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "762253",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2011-10-17",
       "loan_doc": "2011038644",
       "lender": "Freedom Mortgage Corporation",
@@ -1510,9 +1606,7 @@
       "legal_block": "3",
       "legal_subdivision": "BARCELONA ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.633392+00:00",
-      "ncad_account_num": "1585-0004-0180",
-      "prop_lat": 27.75524,
-      "prop_lng": -97.430567
+      "ncad_account_num": "1585-0004-0180"
     },
     {
       "doc_num": "2026000256",
@@ -1536,16 +1630,14 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2012-06-13",
       "loan_doc": "2012023281",
       "lender": "MIDFIRST BANK",
       "legal_lot": "18",
       "legal_block": "1",
       "legal_subdivision": "COUNTRY CLUB ESTATES",
-      "pdf_parsed_at": "2026-06-06T19:31:39.667934+00:00",
-      "prop_lat": 27.696677,
-      "prop_lng": -97.409634
+      "pdf_parsed_at": "2026-06-06T19:31:39.667934+00:00"
     },
     {
       "doc_num": "2026000250",
@@ -1569,7 +1661,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "754752",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2021-08-09",
       "loan_doc": "2021041800",
       "lender": "LLC, P.O. Box 30597, Los Angeles, CA 90030",
@@ -1577,9 +1669,7 @@
       "legal_block": "8",
       "legal_subdivision": "RIDGEWOOD",
       "pdf_parsed_at": "2026-06-06T19:31:39.624433+00:00",
-      "ncad_account_num": "7224-0008-0210",
-      "prop_lat": 27.701106,
-      "prop_lng": -97.387128
+      "ncad_account_num": "7224-0008-0210"
     },
     {
       "doc_num": "2026000253",
@@ -1603,14 +1693,12 @@
       "ncad_year": "2026",
       "ncad_owner_id": "810846",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2024-01-03",
       "loan_doc": "2024000263",
       "lender": "Servicing, Inc., 3217 S. Decker Lake Dr., Salt Lake City, UT 84119",
       "pdf_parsed_at": "2026-06-06T19:31:39.649341+00:00",
-      "ncad_account_num": "2843-0000-0120",
-      "prop_lat": 27.640811,
-      "prop_lng": -97.293761
+      "ncad_account_num": "2843-0000-0120"
     },
     {
       "doc_num": "2026000242",
@@ -1634,7 +1722,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "539881",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2009-06-25",
       "loan_doc": "2009034283",
       "lender": "CORPORATION",
@@ -1642,9 +1730,7 @@
       "legal_block": "2",
       "legal_subdivision": "WOODBEND",
       "pdf_parsed_at": "2026-06-06T19:31:39.575854+00:00",
-      "ncad_account_num": "9810-0002-0110",
-      "prop_lat": 27.691248,
-      "prop_lng": -97.358411
+      "ncad_account_num": "9810-0002-0110"
     },
     {
       "doc_num": "2026000247",
@@ -1668,7 +1754,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "688421",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2014-10-07",
       "loan_doc": "2014039330",
       "lender": "WELLS FARGO BANK, N.A",
@@ -1676,9 +1762,7 @@
       "legal_block": "3",
       "legal_subdivision": "SAXET HEIGHTS",
       "pdf_parsed_at": "2026-06-06T19:31:39.610498+00:00",
-      "ncad_account_num": "7749-0003-0010",
-      "prop_lat": 27.790908,
-      "prop_lng": -97.436718
+      "ncad_account_num": "7749-0003-0010"
     },
     {
       "doc_num": "2026000233",
@@ -1702,7 +1786,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "806883",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2024-06-14",
       "loan_doc": "2024021521",
       "lender": "United Wholesale Mortgage, LLC",
@@ -1710,9 +1794,7 @@
       "legal_block": "1",
       "legal_subdivision": "HILL COUNTRY ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.523012+00:00",
-      "ncad_account_num": "3433-0001-0070",
-      "prop_lat": 27.829866,
-      "prop_lng": -97.572119
+      "ncad_account_num": "3433-0001-0070"
     },
     {
       "doc_num": "2026000239",
@@ -1736,7 +1818,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "792797",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2022-07-27",
       "loan_doc": "2022035986",
       "lender": "Idaho Housing and Finance Association",
@@ -1744,9 +1826,7 @@
       "legal_block": "5",
       "legal_subdivision": "WESTWOOD VILLAGE",
       "pdf_parsed_at": "2026-06-06T19:31:39.560523+00:00",
-      "ncad_account_num": "9563-0005-0120",
-      "prop_lat": 27.736618,
-      "prop_lng": -97.396982
+      "ncad_account_num": "9563-0005-0120"
     },
     {
       "doc_num": "2026000227",
@@ -1770,7 +1850,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "786771",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "owner_raw": "Marissa Jacquelyn Montoya, an unmarried woman",
       "deed_date": "2022-03-30",
       "loan_doc": "2022015469",
@@ -1779,9 +1859,7 @@
       "legal_block": "20",
       "legal_subdivision": "London Towne",
       "pdf_parsed_at": "2026-06-06T19:31:39.478469+00:00",
-      "ncad_account_num": "4557-0020-0170",
-      "prop_lat": 27.697387,
-      "prop_lng": -97.470158
+      "ncad_account_num": "4557-0020-0170"
     },
     {
       "doc_num": "2026000228",
@@ -1805,7 +1883,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "793355",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2022-08-12",
       "loan_doc": "2022038671",
       "lender": "Carrington Mortgage Services, LLC",
@@ -1813,9 +1891,7 @@
       "legal_block": "2",
       "legal_subdivision": "CALLICOATTE ESTATES",
       "pdf_parsed_at": "2026-06-06T19:31:39.484432+00:00",
-      "ncad_account_num": "1238-0002-0200",
-      "prop_lat": 27.847163,
-      "prop_lng": -97.607463
+      "ncad_account_num": "1238-0002-0200"
     },
     {
       "doc_num": "2026000229",
@@ -1839,16 +1915,14 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "deed_date": "2016-05-13",
       "loan_doc": "2016023986",
       "lender": "Wells Fargo Bank, N.A",
       "legal_lot": "38",
       "legal_block": "4",
       "legal_subdivision": "AIRLINE CROSSING",
-      "pdf_parsed_at": "2026-06-06T19:31:39.490302+00:00",
-      "prop_lat": 27.659735,
-      "prop_lng": -97.3711
+      "pdf_parsed_at": "2026-06-06T19:31:39.490302+00:00"
     },
     {
       "doc_num": "2026000211",
@@ -1872,7 +1946,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "791275",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "owner_raw": "ROGER ANTHONY GARCIA AND SHEILA RAE GARCIA AS COMMUNITY PROPERTY",
       "deed_date": "2022-06-21",
       "loan_doc": "2022030395",
@@ -1905,7 +1979,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 22,
+      "days_until_sale": 21,
       "owner_raw": "GINGER S. WILLIAMS, UNMARRIED",
       "loan_doc": "2021001663",
       "lender": "TOMMY BASTIAN as Trustee, MORTGAGE",
@@ -1933,7 +2007,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "818614",
       "status": "pre-foreclosure",
-      "days_until_sale": 34,
+      "days_until_sale": 33,
       "deed_date": "2024-07-19",
       "loan_doc": "2024925131",
       "lender": "New American Funding, LLC",
@@ -1941,9 +2015,7 @@
       "legal_block": "10",
       "legal_subdivision": "NORTHWEST CROSSING",
       "pdf_parsed_at": "2026-06-06T19:31:39.330471+00:00",
-      "ncad_account_num": "5791-0010-0290",
-      "prop_lat": 27.814542,
-      "prop_lng": -97.549812
+      "ncad_account_num": "5791-0010-0290"
     },
     {
       "doc_num": "2026000356",
@@ -1967,9 +2039,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50,
-      "prop_lat": 27.851345,
-      "prop_lng": -97.603002
+      "days_until_sale": 49
     },
     {
       "doc_num": "2026000343",
@@ -1993,7 +2063,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50
+      "days_until_sale": 49
     },
     {
       "doc_num": "2026000344",
@@ -2017,7 +2087,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50
+      "days_until_sale": 49
     },
     {
       "doc_num": "2026000350",
@@ -2041,7 +2111,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50
+      "days_until_sale": 49
     },
     {
       "doc_num": "2026000347",
@@ -2065,7 +2135,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50
+      "days_until_sale": 49
     },
     {
       "doc_num": "2026000336",
@@ -2089,7 +2159,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50
+      "days_until_sale": 49
     },
     {
       "doc_num": "2026000337",
@@ -2113,7 +2183,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50
+      "days_until_sale": 49
     },
     {
       "doc_num": "2026000335",
@@ -2137,7 +2207,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50
+      "days_until_sale": 49
     },
     {
       "doc_num": "2026000333",
@@ -2161,7 +2231,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50
+      "days_until_sale": 49
     },
     {
       "doc_num": "2026000328",
@@ -2185,7 +2255,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 50,
+      "days_until_sale": 49,
       "deed_date": "2026-05-19",
       "loan_doc": "2004055108",
       "pdf_parsed_at": "2026-06-06T19:31:40.139274+00:00"
@@ -2212,7 +2282,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "583526",
       "status": "pre-foreclosure",
-      "days_until_sale": 50,
+      "days_until_sale": 49,
       "owner_raw": "RICHARD GONZALES A SINGLE MAN",
       "deed_date": "2010-01-08",
       "loan_doc": "2010001022",
@@ -2221,9 +2291,7 @@
       "legal_block": "4",
       "legal_subdivision": "LEXINGTON PARK",
       "pdf_parsed_at": "2026-06-06T19:31:40.068094+00:00",
-      "ncad_account_num": "4414-0004-0180",
-      "prop_lat": 27.692219,
-      "prop_lng": -97.35119
+      "ncad_account_num": "4414-0004-0180"
     },
     {
       "doc_num": "2026000321",
@@ -2247,7 +2315,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "775834",
       "status": "pre-foreclosure",
-      "days_until_sale": 50,
+      "days_until_sale": 49,
       "deed_date": "2021-06-18",
       "loan_doc": "2021034141",
       "lender": "LLC, 3637 Sentara Way, Virginia Beach, VA 23452",
@@ -2255,9 +2323,7 @@
       "legal_block": "3",
       "legal_subdivision": "TRUE",
       "pdf_parsed_at": "2026-06-06T19:31:40.080347+00:00",
-      "ncad_account_num": "8902-0003-0200",
-      "prop_lat": 27.579663,
-      "prop_lng": -97.797487
+      "ncad_account_num": "8902-0003-0200"
     },
     {
       "doc_num": "2026000317",
@@ -2281,7 +2347,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "747600",
       "status": "pre-foreclosure",
-      "days_until_sale": 50,
+      "days_until_sale": 49,
       "deed_date": "2022-06-14",
       "deed_date_original": "2019-06-17",
       "loan_doc": "2019023868",
@@ -2292,9 +2358,7 @@
       "legal_block": "10",
       "legal_subdivision": "CENTRAL PARK",
       "pdf_parsed_at": "2026-06-06T19:31:40.053965+00:00",
-      "ncad_account_num": "1493-0010-0240",
-      "prop_lat": 27.730004,
-      "prop_lng": -97.403848
+      "ncad_account_num": "1493-0010-0240"
     },
     {
       "doc_num": "2026000306",
@@ -2318,7 +2382,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "687946",
       "status": "pre-foreclosure",
-      "days_until_sale": 50,
+      "days_until_sale": 49,
       "owner_raw": "TANIA ENCINIA AND FRANCISCO C ALVAREZ WIFE AND HUSBAND",
       "loan_doc": "2014037943",
       "lender": "ENVOY MORTGAGE, LTD",
@@ -2326,9 +2390,7 @@
       "legal_block": "3",
       "legal_subdivision": "OVERLAND MEADOWS",
       "pdf_parsed_at": "2026-06-06T19:31:39.962902+00:00",
-      "ncad_account_num": "6102-0003-0010",
-      "prop_lat": 27.833695,
-      "prop_lng": -97.571989
+      "ncad_account_num": "6102-0003-0010"
     },
     {
       "doc_num": "2026000307",
@@ -2352,7 +2414,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "757692",
       "status": "pre-foreclosure",
-      "days_until_sale": 50,
+      "days_until_sale": 49,
       "owner_raw": "Frank Cordova, an unmarried man",
       "deed_date": "2020-04-01",
       "loan_doc": "2020014101",
@@ -2361,9 +2423,7 @@
       "legal_block": "3",
       "legal_subdivision": "Edgewood Park",
       "pdf_parsed_at": "2026-06-06T19:31:39.973351+00:00",
-      "ncad_account_num": "2255-0003-0030",
-      "prop_lat": 27.745165,
-      "prop_lng": -97.413145
+      "ncad_account_num": "2255-0003-0030"
     },
     {
       "doc_num": "2026000305",
@@ -2387,7 +2447,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "808065",
       "status": "pre-foreclosure",
-      "days_until_sale": 50,
+      "days_until_sale": 49,
       "deed_date": "2023-09-19",
       "loan_doc": "2023036639",
       "lender": "CORPORATION",
@@ -2419,7 +2479,7 @@
       "ncad_year": "2026",
       "ncad_owner_id": "768028",
       "status": "pre-foreclosure",
-      "days_until_sale": 50,
+      "days_until_sale": 49,
       "deed_date": "2020-12-21",
       "loan_doc": "2020059019",
       "lender": "State College Blvd. Suites 1030, 1300 and 1400, Orange, CA 92868",
@@ -2427,9 +2487,31 @@
       "legal_block": "1",
       "legal_subdivision": "KING'S CROSSING",
       "pdf_parsed_at": "2026-06-06T19:31:39.288268+00:00",
-      "ncad_account_num": "3960-0001-0220",
-      "prop_lat": 27.664985,
-      "prop_lng": -97.395101
+      "ncad_account_num": "3960-0001-0220"
+    },
+    {
+      "doc_num": "2026000364",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-06-16",
+      "sale_date": "2026-09-01",
+      "legal": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000364",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 77
     },
     {
       "doc_num": "2026000348",
@@ -2453,7 +2535,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 78
+      "days_until_sale": 77
     },
     {
       "doc_num": "2026000342",
@@ -2477,8 +2559,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 78
+      "days_until_sale": 77
     }
-  ],
-  "ncad_account_enriched_at": "2026-06-15T20:08:38+00:00"
+  ]
 }
