@@ -687,9 +687,16 @@
     cursor: pointer;
   }
   #tov-table tbody tr:hover,
-  #workov-table tbody tr:hover {
+  #workov-table tbody tr:hover,
+  #mov-table tbody tr:hover {
     background: rgba(56, 189, 248, 0.06);
   }
+  #mov-table tbody tr { cursor: pointer; }
+  .mov-edit {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+    color: var(--fg); padding: 4px 6px; font-size: 12px; font-family: inherit;
+  }
+  .mov-edit:focus { outline: none; border-color: var(--accent); }
   #tov-table tbody tr.deadbar-row:hover,
   #workov-table tbody tr.deadbar-row:hover { background: rgba(239,68,68,.12); }
   #tov-table tbody tr.deadbar-row,
@@ -2704,7 +2711,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16f</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16g</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3113,6 +3120,9 @@
        rather than tax-vs-sale. Lender column matters for follow-up
        (some lenders retain a junior claim on the surplus). -->
   <div class="stats" id="mov-stats"></div>
+  <div style="margin:0 0 10px;">
+    <button onclick="_moAddManual()" style="background:rgba(56,189,248,.12);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:500;">+ Add Mortgage Overage</button>
+  </div>
   <table id="mov-table">
     <thead><tr>
       <th data-sort="status"          style="width: 74px;">Status</th>
@@ -3130,11 +3140,11 @@
     </tr></thead>
     <tbody></tbody>
   </table>
-  <div class="empty">
-    Mortgage Overages data source not yet wired up.<br>
-    Once the mortgage-foreclosure-surplus feed is connected, this table
-    will populate automatically. The CRM view of these leads lives
-    under Work → Mortgage Overages.
+  <div class="empty" id="mov-empty" hidden>
+    No mortgage overages yet. Convert a foreclosure lead
+    (open it → <strong>Convert to Mortgage Overage</strong>), or click
+    <strong>+ Add Mortgage Overage</strong> to enter one by hand. Enter the
+    winning bid and opening bid in the row and the surplus calculates itself.
   </div>
 </div>
 
@@ -4311,6 +4321,12 @@ const CRM_CONFIG = {
       ["notes",         "Notes", "textarea"],
     ],
   },
+  mov: {
+    storeKey: "nueces_mov_crm_v1",
+    label: "Mortgage Overage",
+    readonly: [],
+    editable: [],
+  },
   mfc: {
     storeKey: "nueces_mfc_crm_v1",
     label: "Mortgage Foreclosures",
@@ -4442,6 +4458,7 @@ function _crmRefreshReturnPane() {
     "pane-vacanthouses": "renderVacant",
     "pane-taxdeferral": "applyDeferral",
     "pane-taxoveragesraw": "applyOverage",
+    "pane-mortgageoveragesraw": "applyMov",
     "pane-taxoverages": "renderWorkOverages",
     "pane-taxccvcvstack": "renderWorkTax",
     "pane-foreclosureleads": "renderWorkForeclosures",
@@ -5968,11 +5985,19 @@ function openMfcCrm(docNum, sourceRecords) {
       ${(() => {
         const _e = (loadFcCrm() || {})[docNum] || {};
         const _marked = !!_e.sold_at_auction;
-        return `<div style="margin-top:10px;">
+        if (_e.mov_converted) {
+          return `<div style="margin-top:10px;">
+            <button class="mfc-stage-pill" style="border-color:#22c55e;color:#22c55e;"
+                    onclick="openMovCrm('${esc(_e.mov_converted)}')">✓ Converted — open Mortgage Overage</button>
+          </div>`;
+        }
+        return `<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
           <button class="mfc-stage-pill" style="${_marked ? "border-color:#ef4444;color:#ef4444;" : ""}"
                   onclick="_mfcToggleSoldAtAuction('${esc(docNum)}')">
             ${_marked ? "✓ Sold at Auction? — click to undo" : "Mark Sold at Auction?"}
           </button>
+          <button class="mfc-stage-pill" style="border-color:var(--accent);color:var(--accent);"
+                  onclick="_mfcConvertToOverage('${esc(docNum)}')">→ Convert to Mortgage Overage</button>
         </div>`;
       })()}
     </div>
@@ -11116,6 +11141,149 @@ function openTovCrm(caseNum) {
   });
 }
 
+// ================= MORTGAGE OVERAGES (manual / converted from MFC) =========
+// Self-contained records (not scraped) so they survive even after the source
+// foreclosure lead drops off. Keyed by id ("mov_<docnum>" or "mov_m_<ts>").
+const MO_KEY = "nueces_mortgage_overages_v1";
+function _moStore(){ try { return JSON.parse(localStorage.getItem(MO_KEY) || "{}"); } catch(e){ return {}; } }
+function _moSave(s){ try { localStorage.setItem(MO_KEY, JSON.stringify(s)); } catch(e){} }
+function _moList(){ const s = _moStore(); return Object.keys(s).map(k => s[k]); }
+function _moGet(id){ return _moStore()[id] || null; }
+function _moPut(rec){ const s = _moStore(); s[rec.id] = rec; _moSave(s); }
+function _moSetField(id, f, v){ const s = _moStore(); if (!s[id]) return; s[id][f] = v; _moSave(s); }
+function _moDelete(id){
+  const s = _moStore(); if (s[id]) { delete s[id]; _moSave(s); }
+  try { const c = loadCrmStore("mov"); if (c[id]) { delete c[id]; saveCrmStore("mov", c); } } catch(e){}
+}
+function _moSurplus(rec){ const w = Number(rec.winning_bid)||0, o = Number(rec.opening_bid)||0; return w > 0 ? (w - o) : 0; }
+
+function _movSnapshotCard(rec){
+  const money = v => (v == null || v === "" || isNaN(Number(v))) ? "—" : "$" + Number(v).toLocaleString("en-US", { maximumFractionDigits: 0 });
+  const row = (k, v, sub) => `<div class="mfc-snap-row"><span class="k">${esc(k)}</span><span class="v">${v}${sub ? `<div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(sub)}</div>` : ""}</span></div>`;
+  const city = [rec.prop_city, rec.prop_state, rec.prop_zip].filter(Boolean).join(" ");
+  const surplus = _moSurplus(rec);
+  return `<div class="mfc-snapshot">
+    ${row("Former Owner", (esc(fmtOwner(rec.owner || "")) || "—"))}
+    ${row("Property", (esc(fmtTitle(rec.prop_address || "")) || "—"), city ? fmtTitle(city) : "")}
+    ${row("Opening Bid (debt)", money(rec.opening_bid))}
+    ${row("Winning Bid", money(rec.winning_bid))}
+    <div class="mfc-snap-row"><span class="k">Surplus</span><span class="v big" style="${surplus>0?'color:#22c55e':''}">${rec.winning_bid>0?money(surplus):"—"}</span></div>
+    ${rec.sale_date ? row("Sale Date", esc(rec.sale_date)) : ""}
+    ${rec.lender ? row("Lender", esc(rec.lender)) : ""}
+    ${rec.legal ? row("Legal", esc(rec.legal)) : ""}
+    ${row("Source", rec.source_doc && rec.source_doc !== "manual" ? esc("Foreclosure " + rec.source_doc) : "Manual entry")}
+  </div>`;
+}
+function openMovCrm(id){
+  const rec = _moGet(id);
+  if (!rec) return;
+  openPropCrm(id, rec, {
+    type: "mov",
+    stages: STACK_STAGES,
+    getStage: () => (_moGet(id) || {}).stage || "new",
+    setStage: (k, s) => _moSetField(id, "stage", s),
+    onStageChange: () => { if (typeof applyMov === "function") applyMov(); },
+    snapshot: _movSnapshotCard,
+  });
+}
+// Convert a mortgage-foreclosure lead into a standalone Mortgage Overage:
+// snapshot its fields + copy its CRM data, then mark the lead converted so
+// it leaves the foreclosure list (its data now lives independently here).
+function _mfcConvertToOverage(docNum){
+  const r = (FC_RAW || []).find(x => x.doc_num === docNum);
+  if (!r) return;
+  const id = "mov_" + docNum;
+  if (_moGet(id)) { openMovCrm(id); return; }
+  _moPut({
+    id, source_doc: docNum,
+    owner: r.owner || "",
+    prop_address: r.prop_address || "",
+    prop_city: r.prop_city || "", prop_state: r.prop_state || "", prop_zip: r.prop_zip || "",
+    mail_address: r.mail_address || r.mailing_address || "",
+    opening_bid: Number(r.loan_amount) || 0,
+    winning_bid: 0,
+    sale_date: r.sale_date || "",
+    lender: r.lender || "",
+    legal: r.legal || r.legal_description || "",
+    stage: "new",
+    created_at: new Date().toISOString(),
+  });
+  try {
+    const mfcEntry = loadCrmStore("mfc")[docNum];
+    if (mfcEntry) { const c = loadCrmStore("mov"); c[id] = Object.assign({}, mfcEntry); saveCrmStore("mov", c); }
+  } catch(e){}
+  try { const fc = loadFcCrm(); fc[docNum] = Object.assign({}, fc[docNum], { mov_converted: id }); saveFcCrm(fc); } catch(e){}
+  if (typeof applyFc === "function") applyFc();
+  openMovCrm(id);
+}
+function _moAddManual(){
+  const id = "mov_m_" + Date.now();
+  _moPut({ id, source_doc: "manual", owner: "", prop_address: "", opening_bid: 0, winning_bid: 0, sale_date: "", lender: "", legal: "", stage: "new", created_at: new Date().toISOString() });
+  applyMov();
+}
+
+// ---- Mortgage Overages dashboard render ----
+function applyMov(){
+  renderMovStats();
+  renderMov();
+}
+function renderMovStats(){
+  const el = document.getElementById("mov-stats");
+  if (!el) return;
+  const list = _moList();
+  const totalSurplus = list.reduce((s, r) => s + Math.max(0, _moSurplus(r)), 0);
+  el.innerHTML = `<div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Mortgage Overages</div></div>
+    <div class="stat-card"><div class="num">$${totalSurplus.toLocaleString("en-US",{maximumFractionDigits:0})}</div><div class="lbl">Total Surplus</div></div>`;
+}
+function renderMov(){
+  const tb = document.querySelector("#mov-table tbody");
+  if (!tb) return;
+  const empty = document.getElementById("mov-empty");
+  tb.innerHTML = "";
+  const list = _moList().sort((a,b) => _moSurplus(b) - _moSurplus(a));
+  if (empty) empty.hidden = list.length > 0;
+  const frag = document.createDocumentFragment();
+  for (const rec of list) frag.appendChild(_buildMovRow(rec));
+  tb.appendChild(frag);
+}
+function _buildMovRow(rec){
+  const tr = document.createElement("tr");
+  const dash = '<span style="color:var(--muted)">\u2014</span>';
+  const stage = rec.stage || "new";
+  const pillClass = STACK_PILL_CLASS[stage] || "status-new";
+  const stageDef = STACK_STAGES.find(s => s.key === stage) || STACK_STAGES[0];
+  const surplus = _moSurplus(rec);
+  const city = [rec.prop_city, rec.prop_state, rec.prop_zip].filter(Boolean).join(" ");
+  const numInput = (field, val) =>
+    `<input type="number" class="mov-edit" data-id="${esc(rec.id)}" data-field="${esc(field)}" value="${val ? esc(String(val)) : ""}" placeholder="$" style="width:96px;" onclick="event.stopPropagation();">`;
+  const txtInput = (field, val, ph, w) =>
+    `<input type="text" class="mov-edit" data-id="${esc(rec.id)}" data-field="${esc(field)}" value="${esc(val || "")}" placeholder="${esc(ph)}" style="width:${w||"100%"};" onclick="event.stopPropagation();">`;
+  tr.innerHTML =
+    `<td><span class="pill status ${pillClass}">${esc(stageDef.label)}</span></td>` +
+    `<td>${esc(rec.sale_date || "") || dash}</td>` +
+    `<td>${txtInput("owner", rec.owner, "owner / former owner")}</td>` +
+    `<td>${txtInput("prop_address", rec.prop_address, "property address")}${city ? `<div style="color:var(--muted);font-size:11px;">${esc(fmtTitle(city))}</div>` : ""}</td>` +
+    `<td>${rec.prop_address ? `<a href="https://www.google.com/maps/search/${encodeURIComponent(rec.prop_address + " " + city)}" target="_blank" rel="noopener" onclick="event.stopPropagation();" title="Open in Google Maps">📍</a>` : dash}</td>` +
+    `<td>${esc(rec.mail_address || "") || dash}</td>` +
+    `<td>${numInput("winning_bid", rec.winning_bid)}</td>` +
+    `<td>${numInput("opening_bid", rec.opening_bid)}</td>` +
+    `<td>${rec.winning_bid > 0 ? `<strong style="${surplus>0?'color:#22c55e':''}">$${surplus.toLocaleString("en-US",{maximumFractionDigits:0})}</strong>` : dash}</td>` +
+    `<td>${esc(rec.lender || "") || dash}</td>` +
+    `<td>${rec.source_doc && rec.source_doc !== "manual" ? esc(rec.source_doc) : '<span style="color:var(--muted)">manual</span>'}</td>` +
+    `<td>${dash}</td>`;
+  tr.style.cursor = "pointer";
+  tr.addEventListener("click", () => openMovCrm(rec.id));
+  tr.querySelectorAll(".mov-edit").forEach(inp => {
+    inp.addEventListener("change", () => {
+      const f = inp.dataset.field;
+      const v = inp.type === "number" ? (inp.value === "" ? 0 : Number(inp.value)) : inp.value;
+      _moSetField(rec.id, f, v);
+      applyMov();
+    });
+  });
+  return tr;
+}
+
 // ---- Work → Tax Overages view: overages moved past New ----------
 function _workOverageList() {
   const raw = Array.isArray(EXCESS_RAW) ? EXCESS_RAW : [];
@@ -11439,6 +11607,8 @@ function _renderPaneIfNeeded(paneId) {
     applyDeferral();
   } else if (paneId === "pane-taxoveragesraw") {
     applyOverage();
+  } else if (paneId === "pane-mortgageoveragesraw") {
+    applyMov();
   }
 }
 
