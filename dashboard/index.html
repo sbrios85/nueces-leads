@@ -2712,7 +2712,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16i</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16j</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -16839,7 +16839,15 @@ function buildFcRow(r, isDead) {
   // already contains whatever they typed (including city/zip),
   // so re-appending the NCAD city/zip would double them up.
   const _ownerEff = fcFieldValue(r, "owner") || "";
-  const _propOverride = fcFieldValue(r, "prop_address");
+  // A TRUE user override only — read the override store directly (NOT
+  // fcFieldValue, which falls back to the scraped street and would make
+  // _propOverride truthy on every row, so the city/state/zip merge below
+  // would never run and the edit box would only ever hold the street).
+  const _propOvObj = getFcOverride(r.doc_num);
+  const _propOverride = (_propOvObj.fields &&
+      _propOvObj.fields.prop_address != null &&
+      _propOvObj.fields.prop_address !== "")
+        ? _propOvObj.fields.prop_address : "";
   const _propEff = _propOverride ||
       [r.prop_address,
        [r.prop_city, r.prop_state, r.prop_zip]
@@ -17268,7 +17276,7 @@ function buildFcRow(r, isDead) {
     <td>${esc(formatDate(r.recorded))}</td>
     <td>${_ecell("owner", _ownerEff)}</td>
     <td class="addr-cell">${_ecell("prop_address", _propEff)}${absenteeBadge}${shortSaleBadge}</td>
-    <td style="text-align:center;">${mapCellHtml({prop_address: _propEff, prop_city: r.prop_city, prop_state: r.prop_state, prop_zip: r.prop_zip})}</td>
+    <td style="text-align:center;">${mapCellHtml({prop_address: r.prop_address, prop_city: r.prop_city, prop_state: r.prop_state, prop_zip: r.prop_zip})}</td>
     <td class="addr-cell">${_ecell("mail_address", _mailEff)}</td>
     <td>
       ${_editable ? `
