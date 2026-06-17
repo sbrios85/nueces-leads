@@ -910,6 +910,16 @@
   .dead-toggle-row .chev { display: inline-block; transition: transform 0.15s;
                            margin-right: 8px; font-size: 10px; color: var(--muted); }
   .dead-toggle-row.expanded .chev { transform: rotate(90deg); }
+  .sold-toggle-row td {
+    padding: 12px 14px !important;
+    background: rgba(239,68,68,.06);
+    border-top: 2px solid rgba(239,68,68,.4);
+    cursor: pointer; user-select: none; font-weight: 600; color: var(--bad);
+  }
+  .sold-toggle-row td:hover { background: rgba(239,68,68,.12); }
+  .sold-toggle-row .chev { display: inline-block; transition: transform .15s;
+                           margin-right: 8px; font-size: 10px; color: var(--bad); }
+  .sold-toggle-row.expanded .chev { transform: rotate(90deg); }
   .dead-reason-cell { font-size: 11px; color: var(--muted); font-style: italic;
                        white-space: nowrap; }
 
@@ -2694,7 +2704,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16e</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16f</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3904,6 +3914,88 @@ function loadFcCrm() {
 }
 function saveFcCrm(crm) {
   localStorage.setItem(FC_CRM_KEY, JSON.stringify(crm));
+}
+
+// ---- Sold at Auction? — post-auction grace period for foreclosure leads ----
+// When a lead reaches its auction date (or you mark it by hand), it moves into
+// the "Sold at Auction?" section for 7 days so you can confirm what actually
+// sold downtown and convert any overages. After 7 days unconverted, it's
+// purged. A seen-registry snapshots every scraped lead so it keeps showing
+// here even after the county pulls the notice and the scraper drops it.
+const MFC_SEEN_KEY = "nueces_mfc_seen_v1";
+const MFC_SOLD_GRACE_DAYS = 7;
+function _mfcSeenStore(){ try { return JSON.parse(localStorage.getItem(MFC_SEEN_KEY) || "{}"); } catch(e){ return {}; } }
+function _mfcSeenSave(s){ try { localStorage.setItem(MFC_SEEN_KEY, JSON.stringify(s)); } catch(e){} }
+function _mfcTodayISO(){ return new Date().toISOString().slice(0,10); }
+function _mfcAddDaysISO(iso, n){ const d = new Date(iso + "T00:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0,10); }
+// Date a lead entered Sold at Auction? — its manual-mark date, else its sale date.
+function _mfcSoldEntryDate(r, e){
+  if (e && e.sold_at_auction) return String(e.sold_at_auction).slice(0,10);
+  if (r && r.sale_date) return String(r.sale_date).slice(0,10);
+  return null;
+}
+// Currently a Sold at Auction? member (auction reached or manually marked, within grace, not dead/converted)?
+function _mfcIsSold(r, e){
+  e = e || {};
+  if (e.status === "dead" || e.mov_converted) return false;
+  const entry = _mfcSoldEntryDate(r, e);
+  if (!entry) return false;
+  const today = _mfcTodayISO();
+  if (e.sold_at_auction) return today <= _mfcAddDaysISO(entry, MFC_SOLD_GRACE_DAYS);
+  return entry <= today && today <= _mfcAddDaysISO(entry, MFC_SOLD_GRACE_DAYS);
+}
+// Past the 7-day grace window → purge/hide.
+function _mfcSoldExpired(r, e){
+  e = e || {};
+  if (e.status === "dead" || e.mov_converted) return false;
+  const entry = _mfcSoldEntryDate(r, e);
+  if (!entry) return false;
+  return _mfcTodayISO() > _mfcAddDaysISO(entry, MFC_SOLD_GRACE_DAYS);
+}
+function _mfcSoldDaysLeft(r, e){
+  const entry = _mfcSoldEntryDate(r, e || {});
+  if (!entry) return MFC_SOLD_GRACE_DAYS;
+  const purge = _mfcAddDaysISO(entry, MFC_SOLD_GRACE_DAYS);
+  const ms = new Date(purge + "T00:00:00") - new Date(_mfcTodayISO() + "T00:00:00");
+  return Math.max(0, Math.round(ms / 86400000));
+}
+function _mfcPurgeLead(doc){
+  try { const fc = loadFcCrm(); if (fc[doc]) { delete fc[doc]; saveFcCrm(fc); } } catch(e){}
+  try { const m = loadCrmStore("mfc"); if (m[doc]) { delete m[doc]; saveCrmStore("mfc", m); } } catch(e){}
+}
+// Run once right after FC_RAW loads: refresh the registry, purge expired leads,
+// and merge surviving dropped-off leads back into FC_RAW so they keep rendering
+// (and the existing CRM, which looks up records in FC_RAW, still opens them).
+function _mfcSyncSold(){
+  const reg = _mfcSeenStore();
+  const fcCrm = loadFcCrm();
+  const today = _mfcTodayISO();
+  const liveDocs = new Set();
+  for (const r of FC_RAW) {
+    if (!r.doc_num) continue;
+    liveDocs.add(r.doc_num);
+    reg[r.doc_num] = { last_seen: today, rec: r };
+  }
+  let dirty = false;
+  for (const doc of Object.keys(reg)) {
+    const r = reg[doc].rec || {};
+    const e = fcCrm[doc] || {};
+    if (_mfcSoldExpired(r, e)) { delete reg[doc]; dirty = true; _mfcPurgeLead(doc); continue; }
+    if (!liveDocs.has(doc)) {
+      if (_mfcIsSold(r, e)) FC_RAW.push(r);          // dropped off but still in grace → keep showing
+      else { delete reg[doc]; dirty = true; }        // dropped off, not a sold member → forget
+    }
+  }
+  if (dirty) _mfcSeenSave(reg);
+}
+function _mfcToggleSoldAtAuction(docNum){
+  const fc = loadFcCrm();
+  const e = fc[docNum] || {};
+  if (e.sold_at_auction) delete e.sold_at_auction;
+  else e.sold_at_auction = _mfcTodayISO();
+  fc[docNum] = e; saveFcCrm(fc);
+  if (typeof applyFc === "function") applyFc();
+  openMfcCrm(docNum, FC_RAW);
 }
 function getFcEntry(docNum) {
   const crm = loadFcCrm();
@@ -5873,6 +5965,16 @@ function openMfcCrm(docNum, sourceRecords) {
           </button>
         `).join("")}
       </div>
+      ${(() => {
+        const _e = (loadFcCrm() || {})[docNum] || {};
+        const _marked = !!_e.sold_at_auction;
+        return `<div style="margin-top:10px;">
+          <button class="mfc-stage-pill" style="${_marked ? "border-color:#ef4444;color:#ef4444;" : ""}"
+                  onclick="_mfcToggleSoldAtAuction('${esc(docNum)}')">
+            ${_marked ? "✓ Sold at Auction? — click to undo" : "Mark Sold at Auction?"}
+          </button>
+        </div>`;
+      })()}
     </div>
   `;
 
@@ -11437,6 +11539,7 @@ async function loadAll() {
     const r = await fetch("foreclosures.json", {cache:"no-store"});
     const data = await r.json();
     FC_RAW = data.records || [];
+    if (typeof _mfcSyncSold === "function") _mfcSyncSold();
     document.getElementById("fc-count").textContent = data.total || 0;
     renderFcStats(data);
     // Same lazy-render pattern for the foreclosures pane.
@@ -15447,16 +15550,42 @@ function renderFc() {
   // store. Dead records collapse into an expandable footer section.
   const fcCrm = loadFcCrm();
   const activeRecords = [];
+  const soldRecords = [];
   const deadRecords = [];
   for (const r of FC_FILTERED) {
-    const e = fcCrm[r.doc_num];
-    if (e && e.status === "dead") deadRecords.push(r);
+    const e = fcCrm[r.doc_num] || {};
+    if (e.mov_converted) continue;                 // converted → lives in Mortgage Overages
+    if (e.status === "dead") deadRecords.push(r);
+    else if (_mfcIsSold(r, e)) soldRecords.push(r);
     else activeRecords.push(r);
   }
 
   // Render active records normally.
   for (const r of activeRecords) {
     tb.appendChild(buildFcRow(r, false));
+  }
+
+  // Sold at Auction? — collapsible, sits ABOVE the dead-leads section.
+  if (soldRecords.length > 0) {
+    const sExpanded = localStorage.getItem("fc_sold_expanded") !== "false"; // default open
+    const sToggle = document.createElement("tr");
+    sToggle.className = "sold-toggle-row" + (sExpanded ? " expanded" : "");
+    sToggle.innerHTML = `
+      <td colspan="17">
+        <span class="chev">▶</span>
+        <span>Sold at Auction? (${soldRecords.length})</span>
+        <span style="margin-left:8px;color:var(--muted);font-weight:400;">
+          — auto-deletes 7 days after the auction unless converted to a Mortgage Overage · click to ${sExpanded ? "collapse" : "expand"}
+        </span>
+      </td>`;
+    sToggle.onclick = () => {
+      localStorage.setItem("fc_sold_expanded", sExpanded ? "false" : "true");
+      renderFc();
+    };
+    tb.appendChild(sToggle);
+    if (sExpanded) {
+      for (const r of soldRecords) tb.appendChild(buildFcRow(r, false));
+    }
   }
 
   // If there are dead records, append the collapsible toggle row +
