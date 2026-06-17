@@ -686,7 +686,8 @@
   #workfc-table tbody tr {
     cursor: pointer;
   }
-  #tov-table tbody tr:hover {
+  #tov-table tbody tr:hover,
+  #workov-table tbody tr:hover {
     background: rgba(56, 189, 248, 0.06);
   }
   #stack-table tbody tr:hover,
@@ -3285,13 +3286,22 @@
 
 <!-- ======== WORK: TAX OVERAGES ======== -->
 <div class="pane" id="pane-taxoverages">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Tax Overages coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      Surplus funds left over after a tax foreclosure sale. Data source
-      to be wired up later.
+  <div class="stats" id="workov-stats"></div>
+  <table id="workov-table" class="stack-table">
+    <thead><tr>
+      <th style="width:150px;">Status</th>
+      <th style="width:230px;">Former Owner</th>
+      <th style="width:280px;">Property</th>
+      <th style="width:130px;">Overage Balance</th>
+      <th style="width:160px;">Case #</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div id="workov-empty" class="empty" hidden>
+    <div style="font-size:18px;margin-bottom:12px;color:var(--fg);">No overages being worked</div>
+    <div style="max-width:540px;margin:0 auto;line-height:1.6;">
+      Tax overages appear here once you move them past <strong>New</strong>
+      on the Tax Overages list. Click a row to open its CRM.
     </div>
   </div>
 </div>
@@ -10923,6 +10933,72 @@ function openTovCrm(caseNum) {
   });
 }
 
+// ---- Work → Tax Overages view: overages moved past New ----------
+function _workOverageList() {
+  const raw = Array.isArray(EXCESS_RAW) ? EXCESS_RAW : [];
+  const list = [];
+  for (const c of raw) {
+    if (typeof _excessInScope === "function" && !_excessInScope(c)) continue;
+    const st = getOverageStatus(c.case_number);
+    if (st === "new" || st === "dead") continue;
+    list.push({ rec: c, stage: st });
+  }
+  const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
+  list.sort((a, b) => {
+    const ra = rank[a.stage] ?? 0, rb = rank[b.stage] ?? 0;
+    if (ra !== rb) return rb - ra;                       // furthest along first
+    return (Number(b.rec.balance) || 0) - (Number(a.rec.balance) || 0);  // then biggest surplus
+  });
+  return list;
+}
+function _workOvRow(item) {
+  const c = item.rec;
+  const eff = (typeof _tovEff === "function") ? _tovEff(c) : {};
+  const dash = '<span style="color:var(--muted)">\u2014</span>';
+  const tr = document.createElement("tr");
+  const pillClass = STACK_PILL_CLASS[item.stage] || "status-new";
+  const stageDef = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
+  const funds = c.status === "claimed"
+    ? '<span class="pill status status-dead" style="font-size:10px;">Claimed</span>'
+    : '<span class="pill status status-closed" style="font-size:10px;">Active</span>';
+  const owner = esc(fmtOwner(c.owner || "")) || dash;
+  const addr = eff.prop_address ? esc(fmtTitle(eff.prop_address)) : dash;
+  const bal = Number(c.balance) || 0;
+  tr.innerHTML =
+    '<td><span class="pill status ' + pillClass + '">' + esc(stageDef.label) + '</span>' +
+    '<div style="margin-top:4px;">' + funds + '</div></td>' +
+    '<td>' + owner + '</td>' +
+    '<td>' + addr + '</td>' +
+    '<td>' + (bal > 0 ? "<strong>$" + bal.toLocaleString("en-US", { maximumFractionDigits: 0 }) + "</strong>" : "$0") + '</td>' +
+    '<td>' + esc(c.case_number || "") + '</td>';
+  tr.style.cursor = "pointer";
+  tr.addEventListener("click", () => openTovCrm(c.case_number));
+  return tr;
+}
+function renderWorkOverages() {
+  const tb = document.querySelector("#workov-table tbody");
+  if (!tb) return;
+  const empty = document.getElementById("workov-empty");
+  const stats = document.getElementById("workov-stats");
+  tb.innerHTML = "";
+  const list = _workOverageList();
+  if (stats) {
+    const total = list.reduce((s, x) => s + (Number(x.rec.balance) || 0), 0);
+    const counts = {};
+    list.forEach(x => { counts[x.stage] = (counts[x.stage] || 0) + 1; });
+    const cards = STACK_STAGES.filter(s => s.key !== "new" && s.key !== "dead")
+      .map(s => `<div class="stat-card"><div class="num">${(counts[s.key] || 0).toLocaleString()}</div><div class="lbl">${esc(s.label)}</div></div>`).join("");
+    stats.innerHTML = `<div class="stats-title">Tax Overages — Working</div>
+      <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Working</div></div>
+      <div class="stat-card"><div class="num">$${total.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div><div class="lbl">Total Surplus</div></div>${cards}`;
+  }
+  if (list.length === 0) { if (empty) empty.hidden = false; return; }
+  if (empty) empty.hidden = true;
+  const frag = document.createDocumentFragment();
+  for (const item of list) frag.appendChild(_workOvRow(item));
+  tb.appendChild(frag);
+}
+
 function applyOverage(){
   const tbody  = document.querySelector("#tov-table tbody");
   const emptyEl= document.getElementById("tov-empty");
@@ -11098,6 +11174,11 @@ function _renderPaneIfNeeded(paneId) {
   // re-render on visit (their stages change in their own CRMs).
   if (paneId === "pane-foreclosureleads") {
     renderWorkForeclosures();
+    return;
+  }
+  // Work → Tax Overages: overages moved past New. Always re-render.
+  if (paneId === "pane-taxoverages") {
+    renderWorkOverages();
     return;
   }
   // Map: init on first visit; on later visits recompute size (the pane
