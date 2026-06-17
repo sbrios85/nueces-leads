@@ -2699,6 +2699,33 @@
   .portals-pia .pia-tab.active { background: rgba(245,158,11,.20); border-color: var(--warn); }
   .portals-pia .pia-info { font-size: 12px; line-height: 1.55; color: var(--fg); }
   .portals-pia .pia-info a { color: var(--accent); }
+  /* Auto-Research: read-only fields pulled live from the dashboards */
+  .auto-research {
+    border: 1px solid rgba(96,165,250,.35);
+    background: rgba(59,130,246,.06);
+    border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;
+  }
+  .auto-research.empty { opacity: .65; }
+  .auto-research-head {
+    font-size: 11px; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+  }
+  .auto-research-tag {
+    font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 6px;
+    background: rgba(96,165,250,.2); color: #60a5fa; letter-spacing: .06em;
+  }
+  .auto-research-grid { display: flex; flex-direction: column; gap: 5px; }
+  .ar-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; line-height: 1.35; }
+  .ar-label { color: var(--muted); white-space: nowrap; }
+  .ar-val { font-weight: 600; text-align: right; }
+  .ar-src {
+    display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 600;
+    padding: 1px 6px; border-radius: 6px; background: rgba(148,163,184,.18);
+    color: var(--muted); vertical-align: middle;
+  }
+  .ar-src-ok { background: rgba(34,197,94,.18); color: #22c55e; }
+  .ar-none { font-size: 12px; color: var(--muted); font-style: italic; }
 </style>
 </head>
 <body>
@@ -2712,7 +2739,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17a</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17b</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -6169,6 +6196,7 @@ function openMfcCrm(docNum, sourceRecords) {
         <button class="mfc-custom-manage-btn"
                 onclick="_mfcOpenSchemaModal()">Manage fields</button>
       </div>
+      ${_autoResearchHtml(rec, null)}
       ${customFieldRowsHtml}
     </div>
   `;
@@ -14974,6 +15002,164 @@ function _propDeleteAttempt(key, attemptId) {
   _propReopen();
 }
 
+// ================================================================
+// Auto-Research: read-only fields pulled LIVE from the loaded
+// dashboards (Delinquent, Tax Deferral, Code Violation/Vacant,
+// CCLN, and the verified NCTAX balances) for a property's parcel.
+// It reads the in-memory RAW arrays each time a CRM opens, so the
+// values refresh automatically on every new upload — no copy, no
+// merge, nothing to maintain. Matches by NCAD account #, NCAD
+// prop_id, OR normalized address, so it joins the dashed-account
+// datasets AND the foreclosure list (which keys on prop_id) to the
+// same property. Nothing here is editable — the manual Research
+// fields below it are untouched.
+// ================================================================
+function _arNormAddr(a) {
+  if (a && typeof _stackNormalizeAddress === "function") return _stackNormalizeAddress(a);
+  return (a || "").toUpperCase().trim();
+}
+function _arIdents(rec) {
+  rec = rec || {};
+  const ncad = String(rec.ncad_account_num || rec.geo_id || "").trim();
+  const pid  = String(rec.prop_id || rec.ncad_prop_id || "").replace(/^0+/, "").trim();
+  const addr = rec.prop_address ? _arNormAddr(rec.prop_address) : "";
+  return { ncad, pid, addr };
+}
+function _arMatch(t, b) {
+  if (t.ncad && b.ncad && t.ncad === b.ncad) return true;
+  if (t.pid  && b.pid  && t.pid  === b.pid)  return true;
+  if (t.addr && b.addr && t.addr === b.addr) return true;
+  return false;
+}
+function _arTargetIdents(rec, propKey) {
+  const t = _arIdents(rec);
+  if (propKey) {
+    if (propKey.indexOf("ncad:") === 0 && !t.ncad) t.ncad = propKey.slice(5).trim();
+    else if (propKey.indexOf("addr:") === 0 && !t.addr) t.addr = propKey.slice(5).trim();
+  }
+  return t;
+}
+function _arMoney(n) {
+  const v = Number(n);
+  if (!isFinite(v)) return null;
+  return "$" + Math.round(v).toLocaleString("en-US");
+}
+function _autoResearch(rec, propKey) {
+  const T = _arTargetIdents(rec, propKey);
+  if (!T.ncad && !T.pid && !T.addr) return [];
+  const rows = [];
+  const findOne = (arr) => {
+    if (!Array.isArray(arr)) return null;
+    for (const r of arr) { if (_arMatch(T, _arIdents(r))) return r; }
+    return null;
+  };
+  const findAll = (arr) => {
+    const res = []; if (!Array.isArray(arr)) return res;
+    for (const r of arr) { if (_arMatch(T, _arIdents(r))) res.push(r); }
+    return res;
+  };
+  let ptCcln = "", ptNcad = "", ptCv = "";
+
+  // --- Delinquent taxes (verified NCTAX balance first) ---
+  const d = (typeof DELQ_RAW !== "undefined") ? findOne(DELQ_RAW) : null;
+  if (d) {
+    const verified = (typeof _delqNctax === "function") ? _delqNctax(d) : null;
+    const owed = (typeof _delqOwed === "function") ? _delqOwed(d) : (Number(d.total_owed) || 0);
+    const m = _arMoney(owed);
+    if (m !== null) {
+      rows.push({ label: "Delinquent taxes", value: m,
+        src: verified ? "Tax Office \u2713" : "County roll", verified: !!verified });
+    }
+    if (d.years_behind != null && d.years_behind !== "") {
+      rows.push({ label: "Years behind", value: String(d.years_behind), src: "Delinquent" });
+    }
+    const f = d.flags || {};
+    const stat = [];
+    if (f.has_judgment) stat.push("Judgment");
+    if (f.in_suit) stat.push("Suit filed");
+    if (f.tax_deferral) stat.push("Tax deferral");
+    if (f.payment_agreement) stat.push("Payment plan");
+    if (f.bankruptcy) stat.push("Bankruptcy");
+    if (!stat.length && d.tax_status) stat.push(String(d.tax_status));
+    if (stat.length) rows.push({ label: "Tax status", value: stat.join(", "), src: "Delinquent" });
+    const code = d.state_prop_code || d.state_class || "";
+    if (code && typeof propTypeLabel === "function") ptNcad = propTypeLabel(code);
+  }
+
+  // --- Exemptions (Tax Deferral data) ---
+  const fd = (typeof DEFERRAL_RAW !== "undefined") ? findOne(DEFERRAL_RAW) : null;
+  if (fd) {
+    let ex = "";
+    if (fd.exemptions) ex = String(fd.exemptions).split(";").filter(Boolean).join(", ");
+    if (!ex && fd.deferral_types) ex = String(fd.deferral_types).split(";").filter(Boolean).join(", ");
+    if (ex) rows.push({ label: "Exemptions", value: ex, src: "Tax Deferral" });
+    if (!ptNcad && fd.state_code && typeof propTypeLabel === "function") ptNcad = propTypeLabel(fd.state_code);
+  }
+
+  // --- Code Violation / Vacant Houses ---
+  const cvs = (typeof CV_RAW !== "undefined") ? findAll(CV_RAW) : [];
+  if (cvs.length) {
+    let c = cvs[0];
+    for (const x of cvs) { if ((x.cited || "") > (c.cited || "")) c = x; }
+    if (c.cited) rows.push({ label: "Date identified", value: String(c.cited), src: "Code Violation" });
+    const vtype = c.violation_type || "", narr = c.violation_narrative || "";
+    if (vtype || narr) {
+      const more = cvs.length > 1 ? " (+" + (cvs.length - 1) + " more)" : "";
+      rows.push({ label: "Violation", value: (vtype || narr) + more,
+        title: (narr && narr !== vtype) ? narr : "", src: "Code Violation" });
+    }
+    if (c.property_type) ptCv = c.property_type;
+  }
+
+  // --- City liens (CCLN) ---
+  const ccs = (typeof CCLN_RAW !== "undefined") ? findAll(CCLN_RAW) : [];
+  if (ccs.length) {
+    let count = 0, total = 0;
+    for (const r of ccs) {
+      count += (r.lien_count != null) ? (Number(r.lien_count) || 0) : 1;
+      if (r.total_lien_amount != null) total += Number(r.total_lien_amount) || 0;
+      else if (typeof lienAmount === "function") total += Number(lienAmount(r)) || 0;
+      else total += Number(r.pdf_amount || r.amount) || 0;
+      if (!ptCcln && r.property_type) ptCcln = r.property_type;
+    }
+    if (count) rows.push({ label: "Lien count", value: String(count), src: "CCLN" });
+    const tm = _arMoney(total);
+    if (total > 0 && tm !== null) rows.push({ label: "Total lien amount", value: tm, src: "CCLN" });
+  }
+
+  // --- Property type (CCLN first, then NCAD class, then CV) ---
+  const ptype = ptCcln || ptNcad || ptCv;
+  if (ptype) {
+    const psrc = ptCcln ? "CCLN" : (ptNcad ? "NCAD" : "Code Violation");
+    rows.push({ label: "Property type", value: ptype, src: psrc });
+  }
+
+  return rows;
+}
+function _autoResearchHtml(rec, propKey) {
+  let rows;
+  try { rows = _autoResearch(rec, propKey); } catch (e) { rows = []; }
+  if (!rows || !rows.length) {
+    return `<div class="auto-research empty">
+      <div class="auto-research-head">From your dashboards <span class="auto-research-tag">AUTO</span></div>
+      <div class="ar-none">No linked dashboard data found for this property yet.</div>
+    </div>`;
+  }
+  const items = rows.map(r => {
+    const titleAttr = r.title ? ` title="${esc(r.title)}"` : "";
+    const srcCls = r.verified ? "ar-src ar-src-ok" : "ar-src";
+    const srcHtml = r.src ? ` <span class="${srcCls}">${esc(r.src)}</span>` : "";
+    return `<div class="ar-row">
+        <span class="ar-label">${esc(r.label)}</span>
+        <span class="ar-val"${titleAttr}>${esc(r.value)}${srcHtml}</span>
+      </div>`;
+  }).join("");
+  return `<div class="auto-research">
+    <div class="auto-research-head">From your dashboards <span class="auto-research-tag">AUTO</span></div>
+    <div class="auto-research-grid">${items}</div>
+  </div>`;
+}
+
 function openPropCrm(propKey, rec, ctx) {
   if (!propKey) return;
   rec = rec || {};
@@ -15096,6 +15282,7 @@ function openPropCrm(propKey, rec, ctx) {
         <h3>Research</h3>
         <button class="mfc-custom-manage-btn" onclick="_propOpenSchemaModal()">Manage fields</button>
       </div>
+      ${_autoResearchHtml(rec, propKey)}
       <div class="mfc-custom-grid">${propFieldRows}</div>
       ${!propHasUserFields ? `<div class="mfc-custom-empty">No custom research fields yet. Click <strong>Manage fields</strong> to add fields like ARV, Year Built, Sqft, Vacant?, etc.</div>` : ""}
     </div>`;
