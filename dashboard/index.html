@@ -10873,9 +10873,8 @@ function setOverageStatus(caseNum, status) {
 }
 // Overage CRM has its own pipeline: the shared 6 stages plus a terminal
 // "Claimed (Dead)" that is set AUTOMATICALLY when the county data shows the
-// surplus was claimed (the case dropped off a newly uploaded list).
-const OVERAGE_STAGES = STACK_STAGES.concat([{ key: "claimed_dead", label: "Claimed (Dead)", kind: "dead" }]);
-const OVERAGE_PILL_CLASS = Object.assign({}, STACK_PILL_CLASS, { claimed_dead: "status-dead" });
+// surplus was claimed. OVERAGE_STAGES / OVERAGE_PILL_CLASS are defined just
+// after STACK_STAGES / STACK_PILL_CLASS (they depend on those).
 
 // A case claimed for >= this many days is PURGED: the row is hidden AND its
 // CRM data (notes, contacts, skiptrace, stage, manual edits) is deleted.
@@ -13512,6 +13511,11 @@ function openStackStatusMenu(ev, key, currentStatus, onChange) {
 }
 // Pill color map shared by every unified dashboard pill.
 const STACK_PILL_CLASS = { new:"status-new", contacted:"status-contacted", negotiating:"status-negotiating", under_contract:"status-negotiating", closed_won:"status-closed", dead:"status-dead" };
+// Overage pipeline = shared 6 stages + terminal "Claimed (Dead)" (auto-set
+// when the county marks the surplus claimed). Defined here so STACK_STAGES /
+// STACK_PILL_CLASS are already initialized.
+const OVERAGE_STAGES = STACK_STAGES.concat([{ key: "claimed_dead", label: "Claimed (Dead)", kind: "dead" }]);
+const OVERAGE_PILL_CLASS = Object.assign({}, STACK_PILL_CLASS, { claimed_dead: "status-dead" });
 function _cssEscKey(k){ return (window.CSS && CSS.escape) ? CSS.escape(k) : String(k).replace(/(["\\\]])/g, "\\$1"); }
 // In-place stage pill update for every row bound to `key` (pills carry
 // data-stagekey). Active→active just recolors/relabels; →dead hides the
