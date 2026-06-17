@@ -690,6 +690,13 @@
   #workov-table tbody tr:hover {
     background: rgba(56, 189, 248, 0.06);
   }
+  #tov-table tbody tr.tov-section-row:hover { background: transparent; }
+  #tov-table tbody tr.tov-section-row { cursor: default; }
+  .tov-section-cell {
+    padding: 14px 12px 6px; font-size: 12px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--bad);
+    border-top: 2px solid var(--bad); background: rgba(239,68,68,.05);
+  }
   #stack-table tbody tr:hover,
   #worktax-table tbody tr:hover,
   #workfc-table tbody tr:hover {
@@ -3066,7 +3073,7 @@
     <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; color:var(--muted); font-size:13px;">
       <input type="checkbox" id="tov-show-claimed"
              onchange="EXCESS_SHOW_CLAIMED = this.checked; applyOverage();">
-      Show claimed / disbursed (gone)
+      Show Dead &amp; Claimed (work-stage Dead + county-claimed; auto-removed 30 days after claimed)
     </label>
   </div>
   <table id="tov-table">
@@ -10784,6 +10791,7 @@ function renderDeferralStats(){
 let EXCESS_RAW = [];
 let EXCESS_META = null;
 let EXCESS_FILTERED = [];
+let EXCESS_DEAD_START = -1;   // index in EXCESS_FILTERED where the Dead & Claimed section begins (-1 = none)
 let EXCESS_SORT_KEY = "balance";
 let EXCESS_SORT_DIR = "desc";
 let EXCESS_SHOW_CLAIMED = false;
@@ -10863,6 +10871,72 @@ function setOverageStatus(caseNum, status) {
   s[caseNum] = Object.assign({}, s[caseNum], { status: status, updated_at: new Date().toISOString() });
   saveOverageStatus(s);
 }
+// Overage CRM has its own pipeline: the shared 6 stages plus a terminal
+// "Claimed (Dead)" that is set AUTOMATICALLY when the county data shows the
+// surplus was claimed (the case dropped off a newly uploaded list).
+const OVERAGE_STAGES = STACK_STAGES.concat([{ key: "claimed_dead", label: "Claimed (Dead)", kind: "dead" }]);
+const OVERAGE_PILL_CLASS = Object.assign({}, STACK_PILL_CLASS, { claimed_dead: "status-dead" });
+
+// A case claimed for >= this many days is PURGED: the row is hidden AND its
+// CRM data (notes, contacts, skiptrace, stage, manual edits) is deleted.
+// Measured from when THIS dashboard first observed it claimed (the source
+// data only updates monthly, so we stamp the day we first see it).
+const OVERAGE_PURGE_DAYS = 30;
+const OVERAGE_CLAIMED_KEY = "nueces_overage_claimed_v1";
+function _ovClaimedStore() {
+  try { return JSON.parse(localStorage.getItem(OVERAGE_CLAIMED_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function _ovClaimedSave(s) { try { localStorage.setItem(OVERAGE_CLAIMED_KEY, JSON.stringify(s)); } catch (e) {} }
+
+// Effective stage shown on pills + in the CRM: a claimed case is always
+// Claimed (Dead), regardless of whatever work stage you last set.
+function overageEffStage(c) {
+  return c.status === "claimed" ? "claimed_dead" : getOverageStatus(c.case_number);
+}
+
+// Wipe every trace of a case (CRM entry, manual edits, work stage). The
+// claimed-stamp itself is managed by the sweep below.
+function _ovPurge(caseNum) {
+  try { const cs = loadCrmStore("tov"); if (cs[caseNum]) { delete cs[caseNum]; saveCrmStore("tov", cs); } } catch (e) {}
+  try { const s = loadOverageStatus(); if (s[caseNum]) { delete s[caseNum]; saveOverageStatus(s); } } catch (e) {}
+  try { const m = _tovStoreAll(); if (m[caseNum]) { delete m[caseNum]; localStorage.setItem(_TOV_STORE_KEY, JSON.stringify(m)); } } catch (e) {}
+}
+
+// Runs on every overage render: stamps newly-claimed cases, purges any that
+// have been claimed past the window, resets the clock on cases that came
+// back as active, and returns the set of case numbers to HIDE this render.
+function _ovSweepPurges(list) {
+  const hidden = new Set();
+  const cl = _ovClaimedStore();
+  let dirty = false;
+  const today = new Date().toISOString().slice(0, 10);
+  for (const c of list) {
+    const cn = c.case_number;
+    if (c.status === "claimed") {
+      if (!cl[cn]) { cl[cn] = today; dirty = true; }            // first sighting → stamp
+      const since = new Date(cl[cn] + "T00:00:00").getTime();
+      const days = Math.floor((Date.now() - since) / 86400000);
+      if (days >= OVERAGE_PURGE_DAYS) {
+        _ovPurge(cn);
+        delete cl[cn]; dirty = true;
+        hidden.add(cn);
+      }
+    } else if (cl[cn]) {                                         // back to active → reset
+      delete cl[cn]; dirty = true;
+    }
+  }
+  if (dirty) _ovClaimedSave(cl);
+  return hidden;
+}
+// Days a claimed case has left before auto-purge (for the pill tooltip).
+function _ovDaysLeft(caseNum) {
+  const cl = _ovClaimedStore();
+  if (!cl[caseNum]) return OVERAGE_PURGE_DAYS;
+  const since = new Date(cl[caseNum] + "T00:00:00").getTime();
+  return Math.max(0, OVERAGE_PURGE_DAYS - Math.floor((Date.now() - since) / 86400000));
+}
+
 function openOverageStatusMenu(ev, caseNum, currentStage) {
   ev.stopPropagation();
   closeStackStatusMenu();
@@ -10926,7 +11000,8 @@ function openTovCrm(caseNum) {
   });
   openPropCrm(caseNum, rec, {
     type: "tov",
-    getStage: (k) => getOverageStatus(k),
+    stages: OVERAGE_STAGES,
+    getStage: (k) => raw.status === "claimed" ? "claimed_dead" : getOverageStatus(k),
     setStage: (k, s) => setOverageStatus(k, s),
     onStageChange: () => applyOverage(),
     snapshot: _tovSnapshotCard,
@@ -10939,6 +11014,7 @@ function _workOverageList() {
   const list = [];
   for (const c of raw) {
     if (typeof _excessInScope === "function" && !_excessInScope(c)) continue;
+    if (c.status === "claimed") continue;          // claimed = terminal, lives in Dead & Claimed
     const st = getOverageStatus(c.case_number);
     if (st === "new" || st === "dead") continue;
     list.push({ rec: c, stage: st });
@@ -10958,15 +11034,11 @@ function _workOvRow(item) {
   const tr = document.createElement("tr");
   const pillClass = STACK_PILL_CLASS[item.stage] || "status-new";
   const stageDef = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
-  const funds = c.status === "claimed"
-    ? '<span class="pill status status-dead" style="font-size:10px;">Claimed</span>'
-    : '<span class="pill status status-closed" style="font-size:10px;">Active</span>';
   const owner = esc(fmtOwner(c.owner || "")) || dash;
   const addr = eff.prop_address ? esc(fmtTitle(eff.prop_address)) : dash;
   const bal = Number(c.balance) || 0;
   tr.innerHTML =
-    '<td><span class="pill status ' + pillClass + '">' + esc(stageDef.label) + '</span>' +
-    '<div style="margin-top:4px;">' + funds + '</div></td>' +
+    '<td><span class="pill status ' + pillClass + '">' + esc(stageDef.label) + '</span></td>' +
     '<td>' + owner + '</td>' +
     '<td>' + addr + '</td>' +
     '<td>' + (bal > 0 ? "<strong>$" + bal.toLocaleString("en-US", { maximumFractionDigits: 0 }) + "</strong>" : "$0") + '</td>' +
@@ -11003,9 +11075,14 @@ function applyOverage(){
   const tbody  = document.querySelector("#tov-table tbody");
   const emptyEl= document.getElementById("tov-empty");
   const countEl= document.getElementById("tov-count");
-  const inScope = EXCESS_RAW.filter(_excessInScope);
-  const active = inScope.filter(c => c.status === "active");
-  if (countEl) countEl.textContent = active.length ? active.length.toLocaleString() : "—";
+  let inScope = EXCESS_RAW.filter(_excessInScope);
+  // Stamp/purge claimed cases, then drop anything purged this render.
+  const hidden = _ovSweepPurges(inScope);
+  if (hidden.size) inScope = inScope.filter(c => !hidden.has(c.case_number));
+  const isTerminal = c => { const st = overageEffStage(c); return st === "dead" || st === "claimed_dead"; };
+  const live = inScope.filter(c => !isTerminal(c));
+  const deadClaimed = inScope.filter(isTerminal);
+  if (countEl) countEl.textContent = live.length ? live.length.toLocaleString() : "—";
   if (!EXCESS_RAW.length) {
     if (tbody) tbody.innerHTML = "";
     if (emptyEl) emptyEl.hidden = false;
@@ -11013,12 +11090,14 @@ function applyOverage(){
     return;
   }
   if (emptyEl) emptyEl.hidden = true;
-  let rows = EXCESS_SHOW_CLAIMED ? inScope.slice() : active.slice();
   const type = EXCESS_SORT_TYPES[EXCESS_SORT_KEY] || "string";
-  rows.sort((a,b)=>_cvCompare(a,b,EXCESS_SORT_KEY,EXCESS_SORT_DIR,type));
-  if (EXCESS_SHOW_CLAIMED) {
-    // keep claimed grouped below active, preserving the key order within each
-    rows.sort((a,b)=>((a.status==="claimed")?1:0)-((b.status==="claimed")?1:0));
+  const cmp = (a,b)=>_cvCompare(a,b,EXCESS_SORT_KEY,EXCESS_SORT_DIR,type);
+  live.sort(cmp); deadClaimed.sort(cmp);
+  let rows = live.slice();
+  EXCESS_DEAD_START = -1;
+  if (EXCESS_SHOW_CLAIMED && deadClaimed.length) {
+    EXCESS_DEAD_START = live.length;     // where the "Dead & Claimed" header goes
+    rows = rows.concat(deadClaimed);
   }
   EXCESS_FILTERED = rows;
   renderOverage();
@@ -11034,7 +11113,15 @@ function renderOverage(){
   if (!tb) return;
   tb.innerHTML = "";
   const _frag = document.createDocumentFragment();
-  for (const c of EXCESS_FILTERED) _frag.appendChild(buildOverageRow(c));
+  EXCESS_FILTERED.forEach((c, i) => {
+    if (i === EXCESS_DEAD_START && EXCESS_DEAD_START >= 0) {
+      const dr = document.createElement("tr");
+      dr.className = "tov-section-row";
+      dr.innerHTML = '<td colspan="11" class="tov-section-cell">Dead &amp; Claimed</td>';
+      _frag.appendChild(dr);
+    }
+    _frag.appendChild(buildOverageRow(c));
+  });
   tb.appendChild(_frag);
 }
 function buildOverageRow(c){
@@ -11042,19 +11129,24 @@ function buildOverageRow(c){
   const dash = '<span style="color:var(--muted)">—</span>';
   const claimed = c.status === "claimed";
   if (claimed) tr.classList.add("dead-lead");
-  // Work-stage pill (your surplus-recovery pipeline) + funds badge
-  // (county data: is the money still unclaimed).
-  const wstage = getOverageStatus(c.case_number);
-  const wpillClass = STACK_PILL_CLASS[wstage] || "status-new";
-  const wstageDef = STACK_STAGES.find(s => s.key === wstage) || STACK_STAGES[0];
-  const fundsBadge = claimed
-    ? '<span class="pill status status-dead" style="font-size:10px;">Claimed</span>'
-    : '<span class="pill status status-closed" style="font-size:10px;">Active</span>';
-  const statusCell =
-    '<span class="pill status ' + wpillClass + '" style="cursor:pointer;" title="Click to change work stage"' +
-    " onclick=\"openOverageStatusMenu(event, '" + esc(c.case_number) + "', '" + wstage + "')\">" +
-    esc(wstageDef.label) + ' \u25BE</span>' +
-    '<div style="margin-top:4px;">' + fundsBadge + '</div>';
+  // Status pill = effective overage stage. While the surplus is available it
+  // shows your work stage (clickable). Once the county data marks it claimed
+  // it auto-flips to "Claimed (Dead)" and locks (auto-purges after the window).
+  const estage = overageEffStage(c);
+  const epillClass = OVERAGE_PILL_CLASS[estage] || "status-new";
+  const estageDef = OVERAGE_STAGES.find(s => s.key === estage) || OVERAGE_STAGES[0];
+  let statusCell;
+  if (claimed) {
+    const left = _ovDaysLeft(c.case_number);
+    statusCell =
+      '<span class="pill status status-dead" title="Surplus claimed — auto-removes in ' + left +
+      ' day' + (left === 1 ? "" : "s") + '">' + esc(estageDef.label) + '</span>';
+  } else {
+    statusCell =
+      '<span class="pill status ' + epillClass + '" style="cursor:pointer;" title="Click to change work stage"' +
+      " onclick=\"openOverageStatusMenu(event, '" + esc(c.case_number) + "', '" + estage + "')\">" +
+      esc(estageDef.label) + ' \u25BE</span>';
+  }
   const totalMonths = (EXCESS_META && EXCESS_META.summary && EXCESS_META.summary.months_tracked) || 0;
   const ripe = !claimed && totalMonths && c.months_on >= totalMonths;
   const isNew = !claimed && c.first_seen && c.first_seen === _excessLatestPeriod();
@@ -14454,9 +14546,10 @@ function openPropCrm(propKey, rec, ctx) {
 
   const entry = _propEntry(propKey);
   const stage = _propCtx.getStage(propKey);
+  const _stages = _propCtx.stages || STACK_STAGES;
 
   // Stage pipeline (reuses the stack status store)
-  const stageBtns = STACK_STAGES.map(s => {
+  const stageBtns = _stages.map(s => {
     const on = s.key === stage;
     const kind = s.kind === "dead" ? "dead" : (s.kind === "closed-won" ? "won" : "");
     return `<button type="button" class="prop-stage-btn${on ? " active" : ""} ${kind}"
@@ -14758,7 +14851,7 @@ function openPropCrm(propKey, rec, ctx) {
     btn.addEventListener("click", () => {
       const newStage = btn.dataset.stage;
       if (newStage === _propCtx.getStage(propKey)) return;
-      const lbl = (STACK_STAGES.find(s => s.key === newStage) || {}).label || newStage;
+      const lbl = (_stages.find(s => s.key === newStage) || {}).label || newStage;
       _propCtx.setStage(propKey, newStage);
       _propLogActivity(propKey, "Stage → " + lbl);
       _propCtx.onStageChange(propKey, newStage);
