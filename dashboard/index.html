@@ -2712,7 +2712,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16j</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17a</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -11907,6 +11907,16 @@ async function loadAll() {
             const b = NCTAX_BALANCES[rec.ncad_account_num];
             if (b && typeof b.total_due === "number") rec.tax_owed = b.total_due;
           }
+          // The Delinquent Taxes tab also reads NCTAX_BALANCES (verified
+          // owed). If it was already rendered before this file arrived,
+          // refresh it so the accurate figures replace the county roll.
+          try {
+            if (typeof applyDelq === "function" &&
+                typeof _renderedPanes !== "undefined" &&
+                _renderedPanes.has("pane-delinquenttaxes")) {
+              applyDelq();
+            }
+          } catch (e) {}
         }
       } catch (e) {}
       const dc = document.getElementById("deferral-count");
@@ -12268,6 +12278,21 @@ function applyDelq() {
 // the per-stage breakdown for the active subset, total dollars
 // owed across active records, and how many have a JUDGMENT or
 // SUIT FILED flag (the urgent sub-cohorts).
+// Verified tax-office balance for a DELQ record (or null). Joins on the
+// shared tax account number (ncad_account_num, e.g. "0001-0001-0080").
+// When present, its total_due is the ACCURATE amount owed — the county
+// delinquent roll lags and is often wrong, so we fall back to the county
+// total_owed only when there is no verified figure for that account.
+function _delqNctax(r) {
+  if (!r || !r.ncad_account_num || typeof NCTAX_BALANCES === "undefined") return null;
+  const b = NCTAX_BALANCES[r.ncad_account_num];
+  return (b && typeof b.total_due === "number") ? b : null;
+}
+function _delqOwed(r) {
+  const b = _delqNctax(r);
+  return b ? b.total_due : (Number(r.total_owed) || 0);
+}
+
 function renderDelqStats() {
   const statsEl = document.getElementById("delq-stats");
   if (!statsEl) return;
@@ -12301,7 +12326,7 @@ function renderDelqStats() {
     if (st === "dead") nDead++;
     else {
       nActive++;
-      totalOwed += Number(r.total_owed) || 0;
+      totalOwed += _delqOwed(r);
       if (r.flags && r.flags.has_judgment) nJudgment++;
       if (r.flags && r.flags.in_suit) nSuit++;
       if (r.flags && r.flags.bankruptcy) nBankruptcy++;
@@ -12383,7 +12408,9 @@ function _delqCompare(a, b, key, dir, type) {
     const sa = sev(a), sb = sev(b);
     return dir === "asc" ? sa - sb : sb - sa;
   }
-  let va = a[key], vb = b[key];
+  let va, vb;
+  if (key === "total_owed") { va = _delqOwed(a); vb = _delqOwed(b); }
+  else { va = a[key]; vb = b[key]; }
   const aE = va == null || va === "";
   const bE = vb == null || vb === "";
   if (aE && bE) return 0;
@@ -12566,14 +12593,25 @@ function buildDelqRow(r, isDead) {
     mailCell += ` <span class="delq-bad-addr" title="Tax office flagged this mailing address as bad — letters may bounce">⚠</span>`;
   }
 
-  // --- Delinquent Taxes with current/back breakdown tooltip --------
-  const totalOwed = Number(r.total_owed) || 0;
+  // --- Delinquent Taxes — prefer the verified NCTAX (tax-office) balance.
+  // The county roll's total_owed is often stale/wrong, so when we have a
+  // scraped tax-office figure we show that and mark it verified.
+  const _nbal = _delqNctax(r);
+  const totalOwed = _delqOwed(r);
   let owedCell = `<span style="color:var(--muted)">—</span>`;
   if (totalOwed > 0) {
-    const current = Number(r.current_levy_owed) || 0;
-    const back = Number(r.back_levy_owed) || 0;
-    const tip = `Current year: $${current.toLocaleString()}\nPrior years: $${back.toLocaleString()}\nTotal: $${totalOwed.toLocaleString()}`;
-    owedCell = `<span title="${esc(tip)}">$${totalOwed.toLocaleString("en-US", {maximumFractionDigits: 0})}</span>`;
+    let tip, mark = "";
+    if (_nbal) {
+      const cy = Number(_nbal.current_year_due) || 0;
+      const py = Number(_nbal.prior_year_due) || 0;
+      tip = `Verified — Nueces County Tax Office\nCurrent year: $${cy.toLocaleString()}\nPrior years: $${py.toLocaleString()}\nTotal due: $${totalOwed.toLocaleString()}`;
+      mark = ` <span style="color:#52c47d;font-weight:700;" title="Verified balance from the Nueces County Tax Office (NCTAX)">✓</span>`;
+    } else {
+      const current = Number(r.current_levy_owed) || 0;
+      const back = Number(r.back_levy_owed) || 0;
+      tip = `From county delinquent roll (may be outdated)\nCurrent year: $${current.toLocaleString()}\nPrior years: $${back.toLocaleString()}\nTotal: $${totalOwed.toLocaleString()}`;
+    }
+    owedCell = `<span title="${esc(tip)}">$${totalOwed.toLocaleString("en-US", {maximumFractionDigits: 0})}</span>${mark}`;
   }
 
   // --- Years Behind with del_years tooltip -------------------------
