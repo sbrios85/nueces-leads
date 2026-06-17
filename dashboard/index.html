@@ -690,12 +690,15 @@
   #workov-table tbody tr:hover {
     background: rgba(56, 189, 248, 0.06);
   }
-  #tov-table tbody tr.tov-section-row:hover { background: transparent; }
-  #tov-table tbody tr.tov-section-row { cursor: default; }
-  .tov-section-cell {
-    padding: 14px 12px 6px; font-size: 12px; font-weight: 700;
+  #tov-table tbody tr.deadbar-row:hover,
+  #workov-table tbody tr.deadbar-row:hover { background: rgba(239,68,68,.12); }
+  #tov-table tbody tr.deadbar-row,
+  #workov-table tbody tr.deadbar-row { cursor: pointer; }
+  .deadbar-cell {
+    padding: 12px; font-size: 12px; font-weight: 700;
     letter-spacing: .06em; text-transform: uppercase; color: var(--bad);
-    border-top: 2px solid var(--bad); background: rgba(239,68,68,.05);
+    border-top: 2px solid var(--bad); background: rgba(239,68,68,.06);
+    user-select: none;
   }
   #stack-table tbody tr:hover,
   #worktax-table tbody tr:hover,
@@ -2691,7 +2694,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch</div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16e</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3071,13 +3074,6 @@
        2 years from sale). Last-known mailing address from NCAD at
        time of sale, often stale by definition. -->
   <div class="stats" id="tov-stats"></div>
-  <div style="margin: 0 0 10px;">
-    <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; color:var(--muted); font-size:13px;">
-      <input type="checkbox" id="tov-show-claimed"
-             onchange="EXCESS_SHOW_CLAIMED = this.checked; applyOverage();">
-      Show Dead &amp; Claimed (work-stage Dead + county-claimed; auto-removed 30 days after claimed)
-    </label>
-  </div>
   <table id="tov-table">
     <thead><tr>
       <th data-sort="status"       style="width: 80px;">Status</th>
@@ -4353,6 +4349,10 @@ function _crmRefreshReturnPane() {
     "pane-codeviolation": "applyCv",
     "pane-vacanthouses": "renderVacant",
     "pane-taxdeferral": "applyDeferral",
+    "pane-taxoveragesraw": "applyOverage",
+    "pane-taxoverages": "renderWorkOverages",
+    "pane-taxccvcvstack": "renderWorkTax",
+    "pane-foreclosureleads": "renderWorkForeclosures",
   };
   const fn = map[_crmReturn && _crmReturn.pane];
   if (fn && typeof window[fn] === "function") { try { window[fn](); } catch (e) { console.error("return-pane refresh failed", e); } }
@@ -7426,6 +7426,7 @@ function _tfcSetStage(uid, newStage) {
   const oldLbl = (TFC_STAGES.find(s => s.key === oldStage) || {}).label || oldStage;
   const newLbl = (TFC_STAGES.find(s => s.key === newStage) || {}).label || newStage;
   _tfcLogActivity(uid, `Stage: ${oldLbl} → ${newLbl}`);
+  _propStageChanged = true;     // refresh the return pane (e.g. Foreclosure Leads) on close
   openTfcCrm(uid, TFC_RAW);
 }
 
@@ -8433,6 +8434,7 @@ function _mfcSetStage(docNum, newStage) {
   const oldLbl = (MFC_STAGES.find(s => s.key === oldStage) || {}).label || oldStage;
   const newLbl = (MFC_STAGES.find(s => s.key === newStage) || {}).label || newStage;
   _mfcLogActivity(docNum, `Stage: ${oldLbl} → ${newLbl}`);
+  _propStageChanged = true;     // refresh the return pane (e.g. Foreclosure Leads) on close
   // Refresh the underlying FC table (hidden behind the CRM) so the
   // Status-column pill reflects the new stage the moment the user
   // hits Back — closeCrm() only un-hides the pane, it doesn't
@@ -10792,8 +10794,8 @@ function renderDeferralStats(){
 // ============================================================
 let EXCESS_RAW = [];
 let EXCESS_META = null;
-let EXCESS_FILTERED = [];
-let EXCESS_DEAD_START = -1;   // index in EXCESS_FILTERED where the Dead & Claimed section begins (-1 = none)
+let EXCESS_LIVE = [];
+let EXCESS_DEAD = [];   // work-stage Dead + county-claimed (not yet purged)
 let EXCESS_SORT_KEY = "balance";
 let EXCESS_SORT_DIR = "desc";
 let EXCESS_SHOW_CLAIMED = false;
@@ -11035,8 +11037,8 @@ function _workOvRow(item) {
   const eff = (typeof _tovEff === "function") ? _tovEff(c) : {};
   const dash = '<span style="color:var(--muted)">\u2014</span>';
   const tr = document.createElement("tr");
-  const pillClass = STACK_PILL_CLASS[item.stage] || "status-new";
-  const stageDef = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
+  const pillClass = OVERAGE_PILL_CLASS[item.stage] || "status-new";
+  const stageDef = OVERAGE_STAGES.find(s => s.key === item.stage) || OVERAGE_STAGES[0];
   const owner = esc(fmtOwner(c.owner || "")) || dash;
   const addr = eff.prop_address ? esc(fmtTitle(eff.prop_address)) : dash;
   const bal = Number(c.balance) || 0;
@@ -11050,6 +11052,23 @@ function _workOvRow(item) {
   tr.addEventListener("click", () => openTovCrm(c.case_number));
   return tr;
 }
+// Worked-then-terminal overages: leads you've touched (have a stored stage)
+// that are now Dead or county-Claimed. These fill the work view's bottom bar.
+let WORKOV_SHOW_DEAD = false;
+function _workOverageDeadList() {
+  const raw = Array.isArray(EXCESS_RAW) ? EXCESS_RAW : [];
+  const store = (typeof loadOverageStatus === "function") ? loadOverageStatus() : {};
+  const list = [];
+  for (const c of raw) {
+    if (typeof _excessInScope === "function" && !_excessInScope(c)) continue;
+    const st = overageEffStage(c);
+    if (st !== "dead" && st !== "claimed_dead") continue;     // only terminal
+    if (!store[c.case_number]) continue;                       // only ones you actually worked
+    list.push({ rec: c, stage: st });
+  }
+  list.sort((a, b) => (Number(b.rec.balance) || 0) - (Number(a.rec.balance) || 0));
+  return list;
+}
 function renderWorkOverages() {
   const tb = document.querySelector("#workov-table tbody");
   if (!tb) return;
@@ -11057,6 +11076,7 @@ function renderWorkOverages() {
   const stats = document.getElementById("workov-stats");
   tb.innerHTML = "";
   const list = _workOverageList();
+  const dead = _workOverageDeadList();
   if (stats) {
     const total = list.reduce((s, x) => s + (Number(x.rec.balance) || 0), 0);
     const counts = {};
@@ -11067,10 +11087,16 @@ function renderWorkOverages() {
       <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Working</div></div>
       <div class="stat-card"><div class="num">$${total.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div><div class="lbl">Total Surplus</div></div>${cards}`;
   }
-  if (list.length === 0) { if (empty) empty.hidden = false; return; }
+  if (list.length === 0 && dead.length === 0) { if (empty) empty.hidden = false; return; }
   if (empty) empty.hidden = true;
   const frag = document.createDocumentFragment();
   for (const item of list) frag.appendChild(_workOvRow(item));
+  if (dead.length) {
+    frag.appendChild(_deadBar(dead.length, WORKOV_SHOW_DEAD, 5, () => {
+      WORKOV_SHOW_DEAD = !WORKOV_SHOW_DEAD; renderWorkOverages();
+    }));
+    if (WORKOV_SHOW_DEAD) for (const item of dead) frag.appendChild(_workOvRow(item));
+  }
   tb.appendChild(frag);
 }
 
@@ -11096,13 +11122,8 @@ function applyOverage(){
   const type = EXCESS_SORT_TYPES[EXCESS_SORT_KEY] || "string";
   const cmp = (a,b)=>_cvCompare(a,b,EXCESS_SORT_KEY,EXCESS_SORT_DIR,type);
   live.sort(cmp); deadClaimed.sort(cmp);
-  let rows = live.slice();
-  EXCESS_DEAD_START = -1;
-  if (EXCESS_SHOW_CLAIMED && deadClaimed.length) {
-    EXCESS_DEAD_START = live.length;     // where the "Dead & Claimed" header goes
-    rows = rows.concat(deadClaimed);
-  }
-  EXCESS_FILTERED = rows;
+  EXCESS_LIVE = live;
+  EXCESS_DEAD = deadClaimed;
   renderOverage();
   renderOverageStats();
   document.querySelectorAll("#tov-table th[data-sort]").forEach(th => {
@@ -11111,20 +11132,29 @@ function applyOverage(){
       th.classList.add(EXCESS_SORT_DIR === "asc" ? "sort-asc" : "sort-desc");
   });
 }
+// Clickable footer bar that toggles a Dead & Claimed section. colspan adapts
+// to the table; onToggle flips the relevant show-flag and re-renders.
+function _deadBar(count, expanded, colspan, onToggle) {
+  const tr = document.createElement("tr");
+  tr.className = "deadbar-row";
+  const caret = expanded ? "\u25BE" : "\u25B8";
+  tr.innerHTML = '<td colspan="' + colspan + '" class="deadbar-cell">' +
+    caret + ' Dead &amp; Claimed (' + count + ')</td>';
+  tr.addEventListener("click", onToggle);
+  return tr;
+}
 function renderOverage(){
   const tb = document.querySelector("#tov-table tbody");
   if (!tb) return;
   tb.innerHTML = "";
   const _frag = document.createDocumentFragment();
-  EXCESS_FILTERED.forEach((c, i) => {
-    if (i === EXCESS_DEAD_START && EXCESS_DEAD_START >= 0) {
-      const dr = document.createElement("tr");
-      dr.className = "tov-section-row";
-      dr.innerHTML = '<td colspan="11" class="tov-section-cell">Dead &amp; Claimed</td>';
-      _frag.appendChild(dr);
-    }
-    _frag.appendChild(buildOverageRow(c));
-  });
+  EXCESS_LIVE.forEach(c => _frag.appendChild(buildOverageRow(c)));
+  if (EXCESS_DEAD.length) {
+    _frag.appendChild(_deadBar(EXCESS_DEAD.length, EXCESS_SHOW_CLAIMED, 11, () => {
+      EXCESS_SHOW_CLAIMED = !EXCESS_SHOW_CLAIMED; applyOverage();
+    }));
+    if (EXCESS_SHOW_CLAIMED) EXCESS_DEAD.forEach(c => _frag.appendChild(buildOverageRow(c)));
+  }
   tb.appendChild(_frag);
 }
 function buildOverageRow(c){
@@ -14124,7 +14154,7 @@ function _propLogActivity(key, text) {
   log.unshift({ ts: new Date().toISOString(), ev: text });
   if (log.length > 50) log.length = 50;
   store[key] = Object.assign({}, e, { activity: log, _updated_at: new Date().toISOString() });
-  saveCrmStore("prop", store);
+  saveCrmStore(_propCtx.type, store);
 }
 function _propActivityTs(iso) {
   return (typeof _mfcFormatActivityTs === "function")
@@ -14866,6 +14896,7 @@ function openPropCrm(propKey, rec, ctx) {
       _propCtx.setStage(propKey, newStage);
       _propLogActivity(propKey, "Stage → " + lbl);
       _propCtx.onStageChange(propKey, newStage);
+      _propStageChanged = true;     // so closeCrm re-renders whichever pane we return to
       openPropCrm(propKey, rec, _propCtx);
     });
   });
