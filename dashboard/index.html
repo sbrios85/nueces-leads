@@ -1306,6 +1306,8 @@
   .prop-stage-btn.active { background:rgba(56,189,248,.15); border-color:var(--accent); color:var(--accent); }
   .prop-stage-btn.active.won { background:rgba(34,197,94,.15); border-color:#22c55e; color:#22c55e; }
   .prop-stage-btn.active.dead { background:rgba(239,68,68,.15); border-color:#ef4444; color:#ef4444; }
+  .prop-stage-btn.auto:not(.active) { opacity:.4; cursor:default; }
+  .prop-stage-btn.auto:not(.active):hover { border-color:var(--border); color:inherit; }
   .prop-input, .prop-notes { width:100%; box-sizing:border-box; background:var(--bg);
     border:1px solid var(--border); border-radius:8px; color:var(--fg); font-family:inherit;
     font-size:13px; padding:9px 11px; }
@@ -10889,9 +10891,12 @@ function _ovClaimedStore() {
 function _ovClaimedSave(s) { try { localStorage.setItem(OVERAGE_CLAIMED_KEY, JSON.stringify(s)); } catch (e) {} }
 
 // Effective stage shown on pills + in the CRM: a claimed case is always
-// Claimed (Dead), regardless of whatever work stage you last set.
+// Claimed (Dead). claimed_dead is AUTO-only — it never comes from the manual
+// work store, so a stale/mis-set value falls back to New on an active case.
 function overageEffStage(c) {
-  return c.status === "claimed" ? "claimed_dead" : getOverageStatus(c.case_number);
+  if (c.status === "claimed") return "claimed_dead";
+  const s = getOverageStatus(c.case_number);
+  return s === "claimed_dead" ? "new" : s;
 }
 
 // Wipe every trace of a case (CRM entry, manual edits, work stage). The
@@ -11000,7 +11005,7 @@ function openTovCrm(caseNum) {
   openPropCrm(caseNum, rec, {
     type: "tov",
     stages: OVERAGE_STAGES,
-    getStage: (k) => raw.status === "claimed" ? "claimed_dead" : getOverageStatus(k),
+    getStage: () => overageEffStage(raw),
     setStage: (k, s) => setOverageStatus(k, s),
     onStageChange: () => applyOverage(),
     snapshot: _tovSnapshotCard,
@@ -11013,9 +11018,8 @@ function _workOverageList() {
   const list = [];
   for (const c of raw) {
     if (typeof _excessInScope === "function" && !_excessInScope(c)) continue;
-    if (c.status === "claimed") continue;          // claimed = terminal, lives in Dead & Claimed
-    const st = getOverageStatus(c.case_number);
-    if (st === "new" || st === "dead") continue;
+    const st = overageEffStage(c);                         // sanitized; claimed → claimed_dead
+    if (st === "new" || st === "dead" || st === "claimed_dead") continue;
     list.push({ rec: c, stage: st });
   }
   const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
@@ -13514,7 +13518,7 @@ const STACK_PILL_CLASS = { new:"status-new", contacted:"status-contacted", negot
 // Overage pipeline = shared 6 stages + terminal "Claimed (Dead)" (auto-set
 // when the county marks the surplus claimed). Defined here so STACK_STAGES /
 // STACK_PILL_CLASS are already initialized.
-const OVERAGE_STAGES = STACK_STAGES.concat([{ key: "claimed_dead", label: "Claimed (Dead)", kind: "dead" }]);
+const OVERAGE_STAGES = STACK_STAGES.concat([{ key: "claimed_dead", label: "Claimed (Dead)", kind: "dead", auto: true }]);
 const OVERAGE_PILL_CLASS = Object.assign({}, STACK_PILL_CLASS, { claimed_dead: "status-dead" });
 function _cssEscKey(k){ return (window.CSS && CSS.escape) ? CSS.escape(k) : String(k).replace(/(["\\\]])/g, "\\$1"); }
 // In-place stage pill update for every row bound to `key` (pills carry
@@ -14556,8 +14560,10 @@ function openPropCrm(propKey, rec, ctx) {
   const stageBtns = _stages.map(s => {
     const on = s.key === stage;
     const kind = s.kind === "dead" ? "dead" : (s.kind === "closed-won" ? "won" : "");
-    return `<button type="button" class="prop-stage-btn${on ? " active" : ""} ${kind}"
-        data-stage="${esc(s.key)}">${esc(s.label)}</button>`;
+    const auto = s.auto ? " auto" : "";
+    const autoAttr = s.auto ? ' data-auto="1" title="Set automatically when the county marks the surplus claimed"' : "";
+    return `<button type="button" class="prop-stage-btn${on ? " active" : ""} ${kind}${auto}"
+        data-stage="${esc(s.key)}"${autoAttr}>${esc(s.label)}</button>`;
   }).join("");
 
   // House Photo
@@ -14853,6 +14859,7 @@ function openPropCrm(propKey, rec, ctx) {
   // Stage buttons
   body.querySelectorAll(".prop-stage-btn").forEach(btn => {
     btn.addEventListener("click", () => {
+      if (btn.dataset.auto) return;          // auto-only stages (e.g. Claimed (Dead)) aren't manually settable
       const newStage = btn.dataset.stage;
       if (newStage === _propCtx.getStage(propKey)) return;
       const lbl = (_stages.find(s => s.key === newStage) || {}).label || newStage;
