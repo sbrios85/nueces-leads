@@ -800,6 +800,7 @@
   .fmt-cell.editing .fmt-disp { display: none; }
   .fmt-cell .cell-edit { display: none; }
   .fmt-cell.editing .cell-edit { display: block; }
+  .fmt-cell .fmt-subline { display: block; margin-top: 2px; }
   /* Save column: empty until the row has unsaved edits, then a save
      icon appears; on save it briefly flips to a green check. */
   .save-cell { text-align: center; width: 44px; }
@@ -2711,7 +2712,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16g</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16h</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -11576,6 +11577,12 @@ function _renderPaneIfNeeded(paneId) {
     renderWorkOverages();
     return;
   }
+  // Mortgage Overages: records change as leads are converted while the
+  // user is on the foreclosure pane, so always re-render on visit.
+  if (paneId === "pane-mortgageoveragesraw") {
+    applyMov();
+    return;
+  }
   // Map: init on first visit; on later visits recompute size (the pane
   // was hidden, so Leaflet measured the container at 0×0).
   if (paneId === "pane-map") {
@@ -11607,8 +11614,6 @@ function _renderPaneIfNeeded(paneId) {
     applyDeferral();
   } else if (paneId === "pane-taxoveragesraw") {
     applyOverage();
-  } else if (paneId === "pane-mortgageoveragesraw") {
-    applyMov();
   }
 }
 
@@ -17108,10 +17113,10 @@ function buildFcRow(r, isDead) {
       const _pLine1 = r.prop_address
         ? esc(fmtTitle(r.prop_address))
         : '<span style="color:var(--muted)">\u2014</span>';
-      const _pDispHtml = _pLocParts.length
-        ? _pLine1 + '<br><small style="color:var(--muted)">' + _pCityState + '</small>'
-        : _pLine1;
-      return _fmtCellWrap(ctrl, fmtTitle(val), _pDispHtml);
+      const _pPersist = _pLocParts.length
+        ? '<small class="fmt-subline" style="color:var(--muted)">' + _pCityState + '</small>'
+        : "";
+      return _fmtCellWrap(ctrl, fmtTitle(val), _pLine1, _pPersist);
     }
     if (key === "mail_address") {
       // Two-line display: street on line 1, "City, ST ZIP" on line 2
@@ -17128,10 +17133,10 @@ function buildFcRow(r, isDead) {
       const _line1 = r.mail_address
         ? esc(fmtTitle(r.mail_address))
         : '<span style="color:var(--muted)">\u2014</span>';
-      const _dispHtml = _locParts.length
-        ? _line1 + '<br><small style="color:var(--muted)">' + _cityState + '</small>'
-        : _line1;
-      return _fmtCellWrap(ctrl, fmtTitle(val), _dispHtml);
+      const _mPersist = _locParts.length
+        ? '<small class="fmt-subline" style="color:var(--muted)">' + _cityState + '</small>'
+        : "";
+      return _fmtCellWrap(ctrl, fmtTitle(val), _line1, _mPersist);
     }
     return ctrl;
   };
@@ -17757,16 +17762,20 @@ function fmtOwnerCV(raw) {
 // data-field/dirty/save wiring is preserved). `dispText` is the
 // formatted text to show at rest. Clicking the display reveals + focuses
 // the control; the control's own value remains the RAW value to save.
-function _fmtCellWrap(controlHtml, dispText, dispHtml) {
+function _fmtCellWrap(controlHtml, dispText, dispHtml, persistHtml) {
   // dispHtml (optional): pre-built, already-escaped HTML for the
   // display line — used by the mailing-address cell to show a second
   // "City, ST ZIP" line. When omitted, dispText is escaped as before.
+  // persistHtml (optional): HTML rendered OUTSIDE .fmt-disp so it stays
+  // visible even while editing — used to keep the "City, ST ZIP" line
+  // on screen when the street field is being edited/selected.
   const disp = dispHtml != null
     ? dispHtml
     : (dispText && dispText.trim() ? esc(dispText)
         : '<span style="color:var(--muted)">—</span>');
   return `<div class="fmt-cell" onclick="fmtCellReveal(this, event)">` +
-         `<span class="fmt-disp">${disp}</span>${controlHtml}</div>`;
+         `<span class="fmt-disp">${disp}</span>${controlHtml}` +
+         (persistHtml || "") + `</div>`;
 }
 function fmtCellReveal(wrap, ev) {
   // Don't let a click on an editable cell bubble up to the row's
