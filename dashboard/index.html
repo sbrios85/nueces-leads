@@ -2712,7 +2712,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16h</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-16i</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3334,13 +3334,22 @@
 
 <!-- ======== WORK: MORTGAGE OVERAGES ======== -->
 <div class="pane" id="pane-mortgageoverages">
-  <div class="empty" style="padding: 80px 28px;">
-    <div style="font-size: 18px; margin-bottom: 12px; color: var(--fg);">
-      Mortgage Overages coming soon
-    </div>
-    <div style="max-width: 540px; margin: 0 auto; line-height: 1.6;">
-      Surplus funds left over after a mortgage foreclosure sale. Data
-      source to be wired up later.
+  <div class="stats" id="workmov-stats"></div>
+  <table id="workmov-table" class="stack-table">
+    <thead><tr>
+      <th style="width:150px;">Status</th>
+      <th style="width:230px;">Former Owner</th>
+      <th style="width:300px;">Property</th>
+      <th style="width:130px;">Surplus</th>
+      <th style="width:130px;">Sale Date</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div id="workmov-empty" class="empty" hidden>
+    <div style="font-size:18px;margin-bottom:12px;color:var(--fg);">No mortgage overages being worked</div>
+    <div style="max-width:540px;margin:0 auto;line-height:1.6;">
+      Mortgage overages appear here once you move them past <strong>New</strong>
+      on the Mortgage Overages list. Click a row to open its CRM.
     </div>
   </div>
 </div>
@@ -4460,6 +4469,7 @@ function _crmRefreshReturnPane() {
     "pane-taxdeferral": "applyDeferral",
     "pane-taxoveragesraw": "applyOverage",
     "pane-mortgageoveragesraw": "applyMov",
+    "pane-mortgageoverages": "renderWorkMov",
     "pane-taxoverages": "renderWorkOverages",
     "pane-taxccvcvstack": "renderWorkTax",
     "pane-foreclosureleads": "renderWorkForeclosures",
@@ -11371,6 +11381,82 @@ function renderWorkOverages() {
   tb.appendChild(frag);
 }
 
+// ---- Work → Mortgage Overages view: mov records moved past New ----
+function _workMovList() {
+  const list = [];
+  for (const rec of _moList()) {
+    const st = rec.stage || "new";
+    if (st === "new" || st === "dead") continue;
+    list.push({ rec, stage: st });
+  }
+  const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
+  list.sort((a, b) => {
+    const ra = rank[a.stage] ?? 0, rb = rank[b.stage] ?? 0;
+    if (ra !== rb) return rb - ra;
+    return _moSurplus(b.rec) - _moSurplus(a.rec);
+  });
+  return list;
+}
+let WORKMOV_SHOW_DEAD = false;
+function _workMovDeadList() {
+  return _moList()
+    .filter(r => (r.stage || "new") === "dead")
+    .map(r => ({ rec: r, stage: "dead" }))
+    .sort((a, b) => _moSurplus(b.rec) - _moSurplus(a.rec));
+}
+function _workMovRow(item) {
+  const rec = item.rec;
+  const dash = '<span style="color:var(--muted)">\u2014</span>';
+  const tr = document.createElement("tr");
+  const pillClass = STACK_PILL_CLASS[item.stage] || "status-new";
+  const stageDef = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
+  const owner = esc(fmtOwner(rec.owner || "")) || dash;
+  const city = [rec.prop_city, rec.prop_state, rec.prop_zip].filter(Boolean).join(" ");
+  const addr = rec.prop_address
+    ? esc(fmtTitle(rec.prop_address)) + (city ? `<br><small style="color:var(--muted)">${esc(fmtTitle(city))}</small>` : "")
+    : dash;
+  const surplus = _moSurplus(rec);
+  tr.innerHTML =
+    '<td><span class="pill status ' + pillClass + '">' + esc(stageDef.label) + '</span></td>' +
+    '<td>' + owner + '</td>' +
+    '<td>' + addr + '</td>' +
+    '<td>' + (rec.winning_bid > 0 ? '<strong style="' + (surplus > 0 ? 'color:#22c55e' : '') + '">$' + surplus.toLocaleString("en-US", { maximumFractionDigits: 0 }) + '</strong>' : dash) + '</td>' +
+    '<td>' + (esc(rec.sale_date || "") || dash) + '</td>';
+  tr.style.cursor = "pointer";
+  tr.addEventListener("click", () => openMovCrm(rec.id));
+  return tr;
+}
+function renderWorkMov() {
+  const tb = document.querySelector("#workmov-table tbody");
+  if (!tb) return;
+  const empty = document.getElementById("workmov-empty");
+  const stats = document.getElementById("workmov-stats");
+  tb.innerHTML = "";
+  const list = _workMovList();
+  const dead = _workMovDeadList();
+  if (stats) {
+    const total = list.reduce((s, x) => s + Math.max(0, _moSurplus(x.rec)), 0);
+    const counts = {};
+    list.forEach(x => { counts[x.stage] = (counts[x.stage] || 0) + 1; });
+    const cards = STACK_STAGES.filter(s => s.key !== "new" && s.key !== "dead")
+      .map(s => `<div class="stat-card"><div class="num">${(counts[s.key] || 0).toLocaleString()}</div><div class="lbl">${esc(s.label)}</div></div>`).join("");
+    stats.innerHTML = `<div class="stats-title">Mortgage Overages — Working</div>
+      <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Working</div></div>
+      <div class="stat-card"><div class="num">$${total.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div><div class="lbl">Total Surplus</div></div>${cards}`;
+  }
+  if (list.length === 0 && dead.length === 0) { if (empty) empty.hidden = false; return; }
+  if (empty) empty.hidden = true;
+  const frag = document.createDocumentFragment();
+  for (const item of list) frag.appendChild(_workMovRow(item));
+  if (dead.length) {
+    frag.appendChild(_deadBar(dead.length, WORKMOV_SHOW_DEAD, 5, () => {
+      WORKMOV_SHOW_DEAD = !WORKMOV_SHOW_DEAD; renderWorkMov();
+    }));
+    if (WORKMOV_SHOW_DEAD) for (const item of dead) frag.appendChild(_workMovRow(item));
+  }
+  tb.appendChild(frag);
+}
+
 function applyOverage(){
   const tbody  = document.querySelector("#tov-table tbody");
   const emptyEl= document.getElementById("tov-empty");
@@ -11581,6 +11667,11 @@ function _renderPaneIfNeeded(paneId) {
   // user is on the foreclosure pane, so always re-render on visit.
   if (paneId === "pane-mortgageoveragesraw") {
     applyMov();
+    return;
+  }
+  // Work → Mortgage Overages: mov records moved past New. Always re-render.
+  if (paneId === "pane-mortgageoverages") {
+    renderWorkMov();
     return;
   }
   // Map: init on first visit; on later visits recompute size (the pane
@@ -17113,10 +17204,13 @@ function buildFcRow(r, isDead) {
       const _pLine1 = r.prop_address
         ? esc(fmtTitle(r.prop_address))
         : '<span style="color:var(--muted)">\u2014</span>';
-      const _pPersist = _pLocParts.length
-        ? '<small class="fmt-subline" style="color:var(--muted)">' + _pCityState + '</small>'
-        : "";
-      return _fmtCellWrap(ctrl, fmtTitle(val), _pLine1, _pPersist);
+      // Read view shows two lines (street / City, ST ZIP). The editable
+      // textarea holds the FULL merged address (street + city/state/zip
+      // via _propEff), so clicking in lets the user fix ANY part of it.
+      const _pDispHtml = _pLocParts.length
+        ? _pLine1 + '<br><small style="color:var(--muted)">' + _pCityState + '</small>'
+        : _pLine1;
+      return _fmtCellWrap(ctrl, fmtTitle(val), _pDispHtml);
     }
     if (key === "mail_address") {
       // Two-line display: street on line 1, "City, ST ZIP" on line 2
@@ -17133,10 +17227,10 @@ function buildFcRow(r, isDead) {
       const _line1 = r.mail_address
         ? esc(fmtTitle(r.mail_address))
         : '<span style="color:var(--muted)">\u2014</span>';
-      const _mPersist = _locParts.length
-        ? '<small class="fmt-subline" style="color:var(--muted)">' + _cityState + '</small>'
-        : "";
-      return _fmtCellWrap(ctrl, fmtTitle(val), _line1, _mPersist);
+      const _dispHtml = _locParts.length
+        ? _line1 + '<br><small style="color:var(--muted)">' + _cityState + '</small>'
+        : _line1;
+      return _fmtCellWrap(ctrl, fmtTitle(val), _dispHtml);
     }
     return ctrl;
   };
