@@ -10874,6 +10874,49 @@ function openOverageStatusMenu(ev, caseNum, currentStage) {
   setTimeout(() => document.addEventListener("click", _stackMenuOutside, true), 0);
 }
 
+// Overage-specific snapshot card for the rich CRM (replaces the property
+// snapshot when an overage is open).
+function _tovSnapshotCard(rec) {
+  const money = v => (v == null || v === "" || isNaN(Number(v))) ? "—" : "$" + Number(v).toLocaleString("en-US", { maximumFractionDigits: 0 });
+  const row = (k, v, sub) => `<div class="mfc-snap-row"><span class="k">${esc(k)}</span><span class="v">${v}${sub ? `<div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(sub)}</div>` : ""}</span></div>`;
+  const city = [rec.prop_city, rec.prop_state, rec.prop_zip].filter(Boolean).join(" ");
+  const funds = rec.status === "claimed"
+    ? '<span style="color:var(--bad)">Claimed</span>'
+    : '<span style="color:#22c55e">Active (unclaimed)</span>';
+  return `<div class="mfc-snapshot">
+    ${row("Former Owner", (esc(fmtOwner(rec.owner || "")) || "—"))}
+    ${rec.new_owner ? row("New Owner", esc(fmtOwner(rec.new_owner))) : ""}
+    ${row("Property", (esc(fmtTitle(rec.prop_address || "")) || "—"), city ? fmtTitle(city) : "")}
+    <div class="mfc-snap-row"><span class="k">Overage Balance</span><span class="v big">${money(rec.balance)}</span></div>
+    ${row("Case #", esc(rec.case_number || "—"))}
+    ${row("Funds Status", funds)}
+    ${rec.plaintiff ? row("Plaintiff", esc(rec.plaintiff)) : ""}
+    ${rec.ncad_account_num ? row("NCAD Acct", esc(rec.ncad_account_num)) : ""}
+    ${rec.legal ? row("Legal", esc(rec.legal)) : ""}
+  </div>`;
+}
+// Open the FULL rich CRM for a Tax Overage, backed by its own separate
+// store + stage (via the _propCtx context), keyed by case_number.
+function openTovCrm(caseNum) {
+  const raw = (EXCESS_RAW || []).find(x => x.case_number === caseNum);
+  if (!raw) return;
+  const eff = (typeof _tovEff === "function") ? _tovEff(raw) : {};
+  const rec = Object.assign({}, raw, {
+    new_owner: eff.new_owner || raw.new_owner || "",
+    prop_address: eff.prop_address || raw.prop_address || "",
+    legal: eff.legal_description || raw.legal_description || raw.legal || "",
+    ncad_account_num: eff.ncad_account_num || raw.ncad_account_num || "",
+    owner: raw.owner || "",
+  });
+  openPropCrm(caseNum, rec, {
+    type: "tov",
+    getStage: (k) => getOverageStatus(k),
+    setStage: (k, s) => setOverageStatus(k, s),
+    onStageChange: () => applyOverage(),
+    snapshot: _tovSnapshotCard,
+  });
+}
+
 function applyOverage(){
   const tbody  = document.querySelector("#tov-table tbody");
   const emptyEl= document.getElementById("tov-empty");
@@ -10992,7 +11035,7 @@ function buildOverageRow(c){
   tr.style.cursor = "pointer";
   tr.addEventListener("click", (e) => {
     if (e.target.closest("a, button, input, textarea, select, .pill.status, .ext-icon, .map-icon")) return;
-    openCrm("tov", c.case_number, EXCESS_RAW);
+    openTovCrm(c.case_number);
   });
   return tr;
 }
@@ -13868,14 +13911,27 @@ function _buildStackRow(entry) {
 // routing all share one source of truth.
 // Pass 1 cards: Stage pipeline · House Photo · Notes · Activity Log.
 // ================================================================
-function _propEntry(key) { return getCrmEntry("prop", key); }
-function _propSet(key, field, value) { setCrmField("prop", key, field, value); }
+// Context for the rich property-CRM renderer — lets the SAME renderer
+// drive a different CRM store + stage source + snapshot, so Tax Overages
+// gets full CRM parity (skiptrace, contacts, attempts, activity, stage)
+// with its OWN separate store. Defaults to the shared property CRM;
+// openTovCrm swaps in the overage store + overage stage + overage card.
+const _PROP_CTX_DEFAULT = {
+  type: "prop",
+  getStage: (k) => getStackStatus(k),
+  setStage: (k, s) => setStackStatus(k, s),
+  onStageChange: (k, s) => { if (typeof _updateStagePills === "function") _updateStagePills(k, s); },
+  snapshot: null,    // null → default property snapshot
+};
+let _propCtx = _PROP_CTX_DEFAULT;
+function _propEntry(key) { return getCrmEntry(_propCtx.type, key); }
+function _propSet(key, field, value) { setCrmField(_propCtx.type, key, field, value); }
 // Cache of the currently-open property CRM so top-level helpers
 // (status menu, add/remove) can re-render without threading `rec`.
 let _propOpenRec = null;
-function _propReopen() { if (_propOpenRec) openPropCrm(_propOpenRec.key, _propOpenRec.rec); }
+function _propReopen() { if (_propOpenRec) openPropCrm(_propOpenRec.key, _propOpenRec.rec, _propOpenRec.ctx); }
 function _propLogActivity(key, text) {
-  const store = loadCrmStore("prop");
+  const store = loadCrmStore(_propCtx.type);
   const e = store[key] || {};
   const log = Array.isArray(e.activity) ? e.activity.slice() : [];
   log.unshift({ ts: new Date().toISOString(), ev: text });
@@ -13891,7 +13947,7 @@ function _propActivityTs(iso) {
 // Contacts (per-property list): [{id,title,name,phone,email,followup,notes}]
 function _propGenContactId() { return "c_" + Math.random().toString(36).slice(2, 10); }
 function _propSetContactField(key, contactId, field, value) {
-  const store = loadCrmStore("prop");
+  const store = loadCrmStore(_propCtx.type);
   const e = store[key] || {};
   const contacts = Array.isArray(e.contacts) ? e.contacts.slice() : [];
   const i = contacts.findIndex(c => c.id === contactId);
@@ -13901,7 +13957,7 @@ function _propSetContactField(key, contactId, field, value) {
   saveCrmStore("prop", store);
 }
 function _propAddContact(key) {
-  const store = loadCrmStore("prop");
+  const store = loadCrmStore(_propCtx.type);
   const e = store[key] || {};
   const contacts = Array.isArray(e.contacts) ? e.contacts.slice() : [];
   contacts.push({ id: _propGenContactId(), title: "", name: "", phone: "", email: "", followup: "", notes: "" });
@@ -13913,7 +13969,7 @@ function _propRemoveContact(key, contactId) {
   const c = (e.contacts || []).find(x => x.id === contactId);
   const hasData = c && (c.name || c.phone || c.email || c.title || c.notes);
   if (hasData && !confirm("Delete this contact?")) return false;
-  const store = loadCrmStore("prop");
+  const store = loadCrmStore(_propCtx.type);
   const e2 = store[key] || {};
   e2.contacts = (e2.contacts || []).filter(x => x.id !== contactId);
   e2._updated_at = new Date().toISOString();
@@ -13927,7 +13983,7 @@ function _propRemoveContact(key, contactId) {
 // Entry: {id,title,name,address,facebook,been_verified,notes,
 //         phones:[{value,status}]×14, emails:[]×2}
 function _propSetSkiptraceField(key, rowId, field, value) {
-  const store = loadCrmStore("prop"); const e = store[key] || {};
+  const store = loadCrmStore(_propCtx.type); const e = store[key] || {};
   const rows = Array.isArray(e.skiptrace) ? e.skiptrace.slice() : [];
   const i = rows.findIndex(r => r.id === rowId); if (i < 0) return;
   rows[i] = Object.assign({}, rows[i], { [field]: value });
@@ -13935,7 +13991,7 @@ function _propSetSkiptraceField(key, rowId, field, value) {
   saveCrmStore("prop", store);
 }
 function _propSetSkiptracePhone(key, rowId, idx, value) {
-  const store = loadCrmStore("prop"); const e = store[key] || {};
+  const store = loadCrmStore(_propCtx.type); const e = store[key] || {};
   const rows = Array.isArray(e.skiptrace) ? e.skiptrace.slice() : [];
   const i = rows.findIndex(r => r.id === rowId); if (i < 0) return;
   const phones = _mfcNormalizePhones(rows[i].phones);
@@ -13945,7 +14001,7 @@ function _propSetSkiptracePhone(key, rowId, idx, value) {
   saveCrmStore("prop", store);
 }
 function _propSetSkiptracePhoneStatus(key, rowId, idx, status) {
-  const store = loadCrmStore("prop"); const e = store[key] || {};
+  const store = loadCrmStore(_propCtx.type); const e = store[key] || {};
   const rows = Array.isArray(e.skiptrace) ? e.skiptrace.slice() : [];
   const i = rows.findIndex(r => r.id === rowId); if (i < 0) return;
   const phones = _mfcNormalizePhones(rows[i].phones);
@@ -13958,7 +14014,7 @@ function _propSetSkiptracePhoneStatus(key, rowId, idx, status) {
   _propReopen();
 }
 function _propSetSkiptraceEmail(key, rowId, idx, value) {
-  const store = loadCrmStore("prop"); const e = store[key] || {};
+  const store = loadCrmStore(_propCtx.type); const e = store[key] || {};
   const rows = Array.isArray(e.skiptrace) ? e.skiptrace.slice() : [];
   const i = rows.findIndex(r => r.id === rowId); if (i < 0) return;
   const emails = Array.isArray(rows[i].emails) ? rows[i].emails.slice() : Array(MFC_SKIPTRACE_EMAIL_COUNT).fill("");
@@ -13969,7 +14025,7 @@ function _propSetSkiptraceEmail(key, rowId, idx, value) {
   saveCrmStore("prop", store);
 }
 function _propAddSkiptrace(key) {
-  const store = loadCrmStore("prop"); const e = store[key] || {};
+  const store = loadCrmStore(_propCtx.type); const e = store[key] || {};
   const rows = Array.isArray(e.skiptrace) ? e.skiptrace.slice() : [];
   rows.push(_mfcBlankSkiptraceEntry());
   store[key] = Object.assign({}, e, { skiptrace: rows, _updated_at: new Date().toISOString() });
@@ -13982,7 +14038,7 @@ function _propRemoveSkiptrace(key, rowId) {
   const hasData = r && (r.title || r.name || r.address || r.facebook || r.been_verified || r.notes ||
     _mfcNormalizePhones(r.phones).some(p => p.value) || (r.emails || []).some(x => x));
   if (hasData && !confirm("Delete this skiptrace entry?")) return;
-  const store = loadCrmStore("prop"); const e2 = store[key] || {};
+  const store = loadCrmStore(_propCtx.type); const e2 = store[key] || {};
   e2.skiptrace = (e2.skiptrace || []).filter(x => x.id !== rowId);
   e2._updated_at = new Date().toISOString();
   store[key] = e2;
@@ -14064,7 +14120,7 @@ function loadPropSchemaForRender() {
   }).filter(Boolean);
 }
 function _propSetCustom(key, fieldId, value) {
-  const store = loadCrmStore("prop"); const e = store[key] || {};
+  const store = loadCrmStore(_propCtx.type); const e = store[key] || {};
   const custom = Object.assign({}, e.custom_fields || {});
   if (value == null || String(value).trim() === "") delete custom[fieldId];
   else custom[fieldId] = String(value);
@@ -14072,7 +14128,7 @@ function _propSetCustom(key, fieldId, value) {
   saveCrmStore("prop", store);
 }
 function _propCustomFieldHasData(fieldId) {
-  const store = loadCrmStore("prop");
+  const store = loadCrmStore(_propCtx.type);
   return Object.values(store).some(e => e && e.custom_fields && e.custom_fields[fieldId]);
 }
 // Click-to-edit for money/percent custom fields (mirrors _mfcCustomStartEdit
@@ -14158,7 +14214,7 @@ function _propSaveSchema() {
   const newIds = new Set(cleaned.map(f => f.id));
   const deletedIds = oldSchema.map(f => f.id).filter(id => id && !id.startsWith("_sys_") && !newIds.has(id));
   if (deletedIds.length > 0) {
-    const store = loadCrmStore("prop"); let touched = false;
+    const store = loadCrmStore(_propCtx.type); let touched = false;
     for (const e of Object.values(store)) {
       if (!e || !e.custom_fields) continue;
       for (const id of deletedIds) { if (id in e.custom_fields) { delete e.custom_fields[id]; touched = true; } }
@@ -14294,10 +14350,11 @@ function _propDeleteAttempt(key, attemptId) {
   _propReopen();
 }
 
-function openPropCrm(propKey, rec) {
+function openPropCrm(propKey, rec, ctx) {
   if (!propKey) return;
   rec = rec || {};
-  _propOpenRec = { key: propKey, rec: rec };
+  _propCtx = ctx || _PROP_CTX_DEFAULT;
+  _propOpenRec = { key: propKey, rec: rec, ctx: _propCtx };
   const _mainEl = document.querySelector(".main");
   const crmEl = document.getElementById("crm-view");
   const _wasOpen = crmEl && !crmEl.hidden;
@@ -14309,7 +14366,7 @@ function openPropCrm(propKey, rec) {
   }
 
   const entry = _propEntry(propKey);
-  const stage = getStackStatus(propKey);
+  const stage = _propCtx.getStage(propKey);
 
   // Stage pipeline (reuses the stack status store)
   const stageBtns = STACK_STAGES.map(s => {
@@ -14565,7 +14622,7 @@ function openPropCrm(propKey, rec) {
   const _snapType = rec.property_type || (rec.state_class ? propTypeLabel(rec.state_class) : "");
   const _snapRow = (k, vHtml, sub) => `<div class="mfc-snap-row"><span class="k">${esc(k)}</span><span class="v">${vHtml}${sub ? `<div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(sub)}</div>` : ""}</span></div>`;
   const _snapHasMore = rec.total_owed || rec.years_behind || rec.lien_count || rec.ncad_prop_id || _snapMail;
-  const snapshotCard = `
+  const snapshotCard = _propCtx.snapshot ? _propCtx.snapshot(rec) : `
     <div class="mfc-snapshot">
       ${_snapRow("Owner", esc(fmtOwner(rec.owner || "")) || "—")}
       ${_snapRow("Property", esc(fmtTitle(rec.prop_address || "")) || "—", _snapPropCity ? fmtTitle(_snapPropCity) : "")}
@@ -14613,14 +14670,12 @@ function openPropCrm(propKey, rec) {
   body.querySelectorAll(".prop-stage-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const newStage = btn.dataset.stage;
-      if (newStage === getStackStatus(propKey)) return;
+      if (newStage === _propCtx.getStage(propKey)) return;
       const lbl = (STACK_STAGES.find(s => s.key === newStage) || {}).label || newStage;
-      setStackStatus(propKey, newStage);
+      _propCtx.setStage(propKey, newStage);
       _propLogActivity(propKey, "Stage → " + lbl);
-      // Update any dashboard/Stack pills bound to this property in place
-      // (they're tagged data-stagekey) — no full table rebuild, so no freeze.
-      if (typeof _updateStagePills === "function") _updateStagePills(propKey, newStage);
-      openPropCrm(propKey, rec);
+      _propCtx.onStageChange(propKey, newStage);
+      openPropCrm(propKey, rec, _propCtx);
     });
   });
 
