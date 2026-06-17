@@ -686,6 +686,9 @@
   #workfc-table tbody tr {
     cursor: pointer;
   }
+  #tov-table tbody tr:hover {
+    background: rgba(56, 189, 248, 0.06);
+  }
   #stack-table tbody tr:hover,
   #worktax-table tbody tr:hover,
   #workfc-table tbody tr:hover {
@@ -4179,6 +4182,27 @@ const CRM_CONFIG = {
     // once we decide how property-level vs. lien-level CRM data
     // should be tracked.
     editable: [],
+  },
+  tov: {
+    storeKey: "nueces_tov_crm_v1",
+    label: "Tax Overage",
+    readonly: [
+      ["owner",             "Former Owner"],
+      ["new_owner",         "New Owner (Grantee)"],
+      ["prop_address",      "Property Address"],
+      ["balance",           "Overage Balance", "money"],
+      ["case_number",       "Case #"],
+      ["plaintiff",         "Plaintiff"],
+      ["status",            "Funds Status"],
+      ["legal_description", "Legal Description"],
+    ],
+    editable: [
+      ["phone",         "Phone", "text"],
+      ["email",         "Email", "text"],
+      ["last_contact",  "Last Contact", "date"],
+      ["next_followup", "Next Follow-up", "date"],
+      ["notes",         "Notes", "textarea"],
+    ],
   },
   mfc: {
     storeKey: "nueces_mfc_crm_v1",
@@ -8497,6 +8521,19 @@ function openCrm(type, docNum, sourceRecords) {
         Array.isArray(x.liens) &&
         x.liens.some(l => l.doc_num === docNum));
     }
+  } else if (type === "tov") {
+    // Overages key by case_number; merge in the user's manual edits
+    // (effective address / new owner / legal) but KEEP the raw former
+    // owner (the defendant), not _tovEff's NCAD-search owner.
+    const raw = (sourceRecords || []).find(x => x.case_number === docNum);
+    if (raw) {
+      const eff = (typeof _tovEff === "function") ? _tovEff(raw) : {};
+      rec = Object.assign({}, raw, {
+        new_owner: eff.new_owner || raw.new_owner || "",
+        prop_address: eff.prop_address || raw.prop_address || "",
+        legal_description: eff.legal_description || raw.legal_description || "",
+      });
+    }
   } else {
     rec = (sourceRecords || []).find(x => x.doc_num === docNum);
   }
@@ -10785,6 +10822,58 @@ function _tovEff(c){
     ncad_prop_id: o.ncad_prop_id || c.ncad_prop_id || "",
   };
 }
+// Tax Overage WORK-STAGE store — deliberately SEPARATE from the shared
+// parcel stage (overages are their own surplus-recovery workflow: the
+// lead is the FORMER owner of an already-sold property). Keyed by
+// case_number. Reuses STACK_STAGES labels + the shared menu styling.
+const OVERAGE_STATUS_KEY = "nueces_overage_status_v1";
+let _overageStatusCache = null;
+function loadOverageStatus() {
+  if (_overageStatusCache) return _overageStatusCache;
+  try { _overageStatusCache = JSON.parse(localStorage.getItem(OVERAGE_STATUS_KEY) || "{}"); }
+  catch (e) { _overageStatusCache = {}; }
+  return _overageStatusCache;
+}
+function saveOverageStatus(s) {
+  _overageStatusCache = s;
+  try { localStorage.setItem(OVERAGE_STATUS_KEY, JSON.stringify(s)); } catch (e) {}
+}
+function getOverageStatus(caseNum) {
+  const s = loadOverageStatus();
+  return (s[caseNum] && s[caseNum].status) || "new";
+}
+function setOverageStatus(caseNum, status) {
+  const s = loadOverageStatus();
+  s[caseNum] = Object.assign({}, s[caseNum], { status: status, updated_at: new Date().toISOString() });
+  saveOverageStatus(s);
+}
+function openOverageStatusMenu(ev, caseNum, currentStage) {
+  ev.stopPropagation();
+  closeStackStatusMenu();
+  const menu = document.createElement("div");
+  menu.className = "ccln-status-menu";
+  menu.id = "stack-status-menu";
+  menu.innerHTML = STACK_STAGES
+    .filter(s => s.key !== currentStage)
+    .map(s => `<button class="status-menu-item" data-stage="${esc(s.key)}">${esc(s.label)}</button>`)
+    .join("");
+  const rect = ev.currentTarget.getBoundingClientRect();
+  menu.style.position = "fixed";
+  menu.style.left = rect.left + "px";
+  menu.style.top = (rect.bottom + 4) + "px";
+  menu.style.zIndex = "1000";
+  document.body.appendChild(menu);
+  menu.querySelectorAll(".status-menu-item").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setOverageStatus(caseNum, btn.dataset.stage);
+      closeStackStatusMenu();
+      applyOverage();
+    });
+  });
+  setTimeout(() => document.addEventListener("click", _stackMenuOutside, true), 0);
+}
+
 function applyOverage(){
   const tbody  = document.querySelector("#tov-table tbody");
   const emptyEl= document.getElementById("tov-empty");
@@ -10819,16 +10908,28 @@ function renderOverage(){
   const tb = document.querySelector("#tov-table tbody");
   if (!tb) return;
   tb.innerHTML = "";
-  for (const c of EXCESS_FILTERED) tb.appendChild(buildOverageRow(c));
+  const _frag = document.createDocumentFragment();
+  for (const c of EXCESS_FILTERED) _frag.appendChild(buildOverageRow(c));
+  tb.appendChild(_frag);
 }
 function buildOverageRow(c){
   const tr = document.createElement("tr");
   const dash = '<span style="color:var(--muted)">—</span>';
   const claimed = c.status === "claimed";
   if (claimed) tr.classList.add("dead-lead");
-  const statusCell = claimed
-    ? '<span class="pill status status-dead">Claimed</span>'
-    : '<span class="pill status status-closed">Active</span>';
+  // Work-stage pill (your surplus-recovery pipeline) + funds badge
+  // (county data: is the money still unclaimed).
+  const wstage = getOverageStatus(c.case_number);
+  const wpillClass = STACK_PILL_CLASS[wstage] || "status-new";
+  const wstageDef = STACK_STAGES.find(s => s.key === wstage) || STACK_STAGES[0];
+  const fundsBadge = claimed
+    ? '<span class="pill status status-dead" style="font-size:10px;">Claimed</span>'
+    : '<span class="pill status status-closed" style="font-size:10px;">Active</span>';
+  const statusCell =
+    '<span class="pill status ' + wpillClass + '" style="cursor:pointer;" title="Click to change work stage"' +
+    " onclick=\"openOverageStatusMenu(event, '" + esc(c.case_number) + "', '" + wstage + "')\">" +
+    esc(wstageDef.label) + ' \u25BE</span>' +
+    '<div style="margin-top:4px;">' + fundsBadge + '</div>';
   const totalMonths = (EXCESS_META && EXCESS_META.summary && EXCESS_META.summary.months_tracked) || 0;
   const ripe = !claimed && totalMonths && c.months_on >= totalMonths;
   const isNew = !claimed && c.first_seen && c.first_seen === _excessLatestPeriod();
@@ -10888,6 +10989,11 @@ function buildOverageRow(c){
     "<td>" + plaintiffCell + "</td>" +
     '<td style="text-align:center;">' + ncadCell + "</td>" +
     '<td style="text-align:center;">' + nctaxCell + "</td>";
+  tr.style.cursor = "pointer";
+  tr.addEventListener("click", (e) => {
+    if (e.target.closest("a, button, input, textarea, select, .pill.status, .ext-icon, .map-icon")) return;
+    openCrm("tov", c.case_number, EXCESS_RAW);
+  });
   return tr;
 }
 function renderOverageStats(){
