@@ -9274,6 +9274,44 @@ function _todayIndexBy(arr, keyFn) {
   return m;
 }
 
+// ---- "New today" first-seen tracker (Today tab New tile) ----------
+// Records carry county filing dates, not a "first appeared in the
+// dashboard" stamp, so we keep our own. Each lead id is stamped the
+// first time it's ever seen; "new today" = ids stamped with today's
+// date. On the very first run we seed all existing ids as already-seen
+// so day one doesn't flag the whole backlog as new.
+const TODAY_FIRSTSEEN_KEY = "nueces_today_firstseen_v1";
+function _todayLoadFirstSeen() {
+  try { return JSON.parse(localStorage.getItem(TODAY_FIRSTSEEN_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function _todayStampAndCountNew(ids) {
+  const today = _todayISO();
+  const m = _todayLoadFirstSeen();
+  let changed = false;
+  if (!m.__init) {                       // first ever run → seed as already-seen
+    m.__init = today;
+    for (const id of ids) if (!(id in m)) m[id] = "seed";
+    changed = true;
+  } else {
+    for (const id of ids) if (!(id in m)) { m[id] = today; changed = true; }
+  }
+  if (changed) { try { localStorage.setItem(TODAY_FIRSTSEEN_KEY, JSON.stringify(m)); } catch (e) {} }
+  let n = 0;
+  for (const id of ids) if (m[id] === today) n++;
+  return n;
+}
+// Soonest follow-up date that's already due (<= today) across attempts.
+function _soonestDueFollowup(attempts, today) {
+  const arr = Array.isArray(attempts) ? attempts : [];
+  let due = "";
+  for (const a of arr) {
+    const f = (a && a.followup) ? String(a.followup) : "";
+    if (f && f <= today) { if (!due || f < due) due = f; }
+  }
+  return due;
+}
+
 function renderToday() {
   const esc2 = (typeof esc === "function") ? esc : (s => String(s == null ? "" : s));
   const dateEl = document.getElementById("today-datestr");
@@ -9293,11 +9331,26 @@ function renderToday() {
   const fcById = _todayIndexBy(fc, r => String(r.doc_num));
   const tfcById = _todayIndexBy(tfc, r => String(r.uid));
 
-  // ===== 1. Follow-ups due today / overdue =====
-  const fups = [
-    ..._todayCollectFollowups(mfcCrm, fcById, "mfc", _todayFcIsDead),
-    ..._todayCollectFollowups(tfcCrm, tfcById, "tfc", null),
-  ].sort((a, b) => a.due.localeCompare(b.due));
+  // ===== 1. Follow-ups due today / overdue — WORK SECTION ONLY =====
+  // Only leads you're actively working (past New) contribute: worked
+  // MFC/TFC foreclosures + worked shared-stage properties (the prop CRM,
+  // which covers CCLN / Delinquent / CV / Vacant / Tax Deferral).
+  const _todayNow = _todayISO();
+  const propStore = (function () { try { return loadCrmStore("prop") || {}; } catch (e) { return {}; } })();
+  const fups = [];
+  for (const item of _workForeclosureList()) {
+    const store = item.kind === "mfc" ? mfcCrm : tfcCrm;
+    const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
+    const due = _soonestDueFollowup((store[id] || {}).attempts, _todayNow);
+    if (due) fups.push({ kind: item.kind, id, due,
+      name: item.rec.owner || item.rec.prop_address || ("Lead " + id), overdue: due < _todayNow });
+  }
+  for (const entry of _workTaxList()) {
+    const due = _soonestDueFollowup((propStore[entry.key] || {}).attempts, _todayNow);
+    if (due) fups.push({ kind: "prop", id: entry.key, due,
+      name: entry.owner || entry.prop_address || entry.key, overdue: due < _todayNow });
+  }
+  fups.sort((a, b) => a.due.localeCompare(b.due));
   const fupOverdue = fups.filter(f => f.overdue).length;
 
   // ===== 2. Parsed-pending (FC records with doc_num but no owner) =====
@@ -9313,22 +9366,26 @@ function renderToday() {
     (r.prop_address && String(r.prop_address).trim()) &&
     !r.ncad_prop_id);
 
-  // ===== 4. Pipeline stage counters (MFC + TFC, excluding dead) =====
-  // Stage lives on the CRM entry; default "new" when no entry. Dead
-  // (FC store for MFC; stage "dead" for TFC) is excluded.
-  const stageCount = { new: 0, contacted: 0, negotiating: 0, under_contract: 0 };
-  function _tallyStage(rawArr, crm, keyFn, deadFn) {
-    for (const r of rawArr) {
-      const id = String(keyFn(r));
-      if (deadFn && deadFn(id)) continue;
-      const e = crm[id] || {};
-      const st = e.stage || "new";
-      if (st === "dead") continue;
-      if (st in stageCount) stageCount[st]++;
-    }
+  // ===== 4. Pipeline counters =====
+  // New = leads first seen TODAY across MFC + TFC + Stack (CCLN and the
+  //       other shared-stage lists ride along inside the Stack).
+  // Working / Negotiating / Under Contract = every lead in the WORK
+  //       SECTION at that stage (foreclosures by their own stage +
+  //       shared-stage properties), NOT date-limited.
+  const _newIds = [];
+  for (const r of fc) if (r && r.doc_num) _newIds.push("mfc:" + r.doc_num);
+  for (const r of tfc) if (r && r.uid) _newIds.push("tfc:" + r.uid);
+  try { for (const e of _stackBuildList()) if (e && e.key) _newIds.push("stack:" + e.key); } catch (e) {}
+  const newToday = _todayStampAndCountNew(_newIds);
+
+  const stageCount = { new: newToday, contacted: 0, negotiating: 0, under_contract: 0 };
+  for (const item of _workForeclosureList()) {
+    if (item.stage !== "new" && item.stage in stageCount) stageCount[item.stage]++;
   }
-  _tallyStage(fc, mfcCrm, r => r.doc_num, _todayFcIsDead);
-  _tallyStage(tfc, tfcCrm, r => r.uid, null);
+  for (const entry of _workTaxList()) {
+    const st = getStackStatus(entry.key);
+    if (st !== "new" && st in stageCount) stageCount[st]++;
+  }
 
   // ===== 5. Verified review progress (FC) =====
   let verifiedCount = 0;
@@ -9499,7 +9556,7 @@ function renderToday() {
         <div class="today-list-item" onclick="_todayOpenLead('${f.kind}','${esc2(f.id)}')">
           <span class="tli-name">${esc2(f.name)}</span>
           <span class="tli-meta ${f.overdue ? "tli-overdue" : ""}">
-            ${f.overdue ? "overdue " : "due "}${esc2(f.due)} · ${f.kind.toUpperCase()}</span>
+            ${f.overdue ? "overdue " : "due "}${esc2(f.due)} · ${f.kind === "prop" ? "PROPERTY" : f.kind.toUpperCase()}</span>
         </div>`).join("")}
     </div>`);
 
@@ -9597,6 +9654,7 @@ function renderToday() {
     <div class="today-stat">
       <div class="ts-num">${stageCount[k]}</div>
       <div class="ts-label">${lbl}</div>
+      <div class="ts-sub">${k === "new" ? "new today" : "in work area"}</div>
     </div>`).join("");
 
   // ---------- Render: at-a-glance ----------
@@ -9652,6 +9710,14 @@ function _todayOpenLead(kind, id) {
   try {
     if (kind === "mfc") openMfcCrm(id, FC_RAW);
     else if (kind === "tfc") openTfcCrm(id, TFC_RAW);
+    else if (kind === "prop") {
+      let rec = {};
+      try {
+        const g = _stackBuildGroups().get(id);
+        if (g && g.signals && g.signals[0]) rec = g.signals[0].record || {};
+      } catch (e) {}
+      openPropCrm(id, rec);
+    }
   } catch (e) { console.warn("could not open lead", kind, id, e); }
 }
 // Toggle a monthly import reminder (CV or DELQ). First tap stamps
