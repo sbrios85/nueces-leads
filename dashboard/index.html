@@ -9288,15 +9288,18 @@ function _todayLoadFirstSeen() {
 function _todayStampAndCountNew(ids) {
   const today = _todayISO();
   const m = _todayLoadFirstSeen();
+  // The whole INSTALL DAY counts as backlog seeding → show 0 today, no
+  // matter when each list finishes loading. (Data loads in stages, so a
+  // one-shot seed on first render would miss late-arriving lists and
+  // mis-flag them as "new".) Every id present today is stamped with
+  // today's date; starting tomorrow, only ids never seen before get
+  // tomorrow's date and are counted.
+  const firstDay = !m.__init || m.__init === today;
   let changed = false;
-  if (!m.__init) {                       // first ever run → seed as already-seen
-    m.__init = today;
-    for (const id of ids) if (!(id in m)) m[id] = "seed";
-    changed = true;
-  } else {
-    for (const id of ids) if (!(id in m)) { m[id] = today; changed = true; }
-  }
+  if (!m.__init) { m.__init = today; changed = true; }
+  for (const id of ids) if (!(id in m)) { m[id] = today; changed = true; }
   if (changed) { try { localStorage.setItem(TODAY_FIRSTSEEN_KEY, JSON.stringify(m)); } catch (e) {} }
+  if (firstDay) return 0;
   let n = 0;
   for (const id of ids) if (m[id] === today) n++;
   return n;
@@ -9308,6 +9311,43 @@ function _soonestDueFollowup(attempts, today) {
   for (const a of arr) {
     const f = (a && a.followup) ? String(a.followup) : "";
     if (f && f <= today) { if (!due || f < due) due = f; }
+  }
+  return due;
+}
+// Whole days from dateStr to today (positive = in the past).
+function _daysPast(dateStr, today) {
+  if (!dateStr) return -1;
+  const a = new Date(String(dateStr).slice(0, 10) + "T00:00:00");
+  const b = new Date(String(today).slice(0, 10) + "T00:00:00");
+  if (isNaN(a.getTime()) || isNaN(b.getTime())) return -1;
+  return Math.floor((b.getTime() - a.getTime()) / 86400000);
+}
+// "Going cold" is measured from the day you were SUPPOSED to follow up,
+// not the last time you touched the lead. Take the follow-up date set on
+// the most recently-dated attempt; the lead is cold when that date is
+// 7+ days past AND no attempt was logged after it (you never acted on
+// the call-back). Leads with no scheduled follow-up don't count.
+// Returns the overdue follow-up date if cold, else "".
+function _coldDueDate(attempts, today) {
+  const arr = Array.isArray(attempts) ? attempts : [];
+  let dueDate = "", planSet = "", lastAttempt = "";
+  for (const a of arr) {
+    const d = (a && a.date) ? String(a.date) : "";
+    if (d && d > lastAttempt) lastAttempt = d;
+    const f = (a && a.followup) ? String(a.followup) : "";
+    if (f && (!planSet || (d && d >= planSet))) { planSet = d; dueDate = f; }
+  }
+  if (!dueDate) return "";
+  if (lastAttempt && lastAttempt > dueDate) return "";   // acted after it came due → not cold
+  return _daysPast(dueDate, today) >= 7 ? dueDate : "";
+}
+// Soonest follow-up scheduled on/after today (the next planned call-back).
+function _soonestUpcomingFollowup(attempts, today) {
+  const arr = Array.isArray(attempts) ? attempts : [];
+  let due = "";
+  for (const a of arr) {
+    const f = (a && a.followup) ? String(a.followup) : "";
+    if (f && f >= today) { if (!due || f < due) due = f; }
   }
   return due;
 }
@@ -9352,6 +9392,46 @@ function renderToday() {
   }
   fups.sort((a, b) => a.due.localeCompare(b.due));
   const fupOverdue = fups.filter(f => f.overdue).length;
+
+  // ===== 1b. Going cold — Work-section leads 7+ days past a scheduled
+  // follow-up with no contact logged since. =====
+  const coldList = [];
+  for (const item of _workForeclosureList()) {
+    const store = item.kind === "mfc" ? mfcCrm : tfcCrm;
+    const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
+    const due = _coldDueDate((store[id] || {}).attempts, _todayNow);
+    if (due) coldList.push({ kind: item.kind, id, due,
+      name: item.rec.owner || item.rec.prop_address || ("Lead " + id) });
+  }
+  for (const entry of _workTaxList()) {
+    const due = _coldDueDate((propStore[entry.key] || {}).attempts, _todayNow);
+    if (due) coldList.push({ kind: "prop", id: entry.key, due,
+      name: entry.owner || entry.prop_address || entry.key });
+  }
+  coldList.sort((a, b) => a.due.localeCompare(b.due));
+
+  // ===== 1c. Follow-ups this week — Work-section leads with a follow-up
+  // scheduled in the next 7 days (today inclusive). =====
+  const _weekAhead = (function () {
+    const d = new Date(_todayNow + "T00:00:00");
+    d.setDate(d.getDate() + 7);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") +
+      "-" + String(d.getDate()).padStart(2, "0");
+  })();
+  const weekList = [];
+  for (const item of _workForeclosureList()) {
+    const store = item.kind === "mfc" ? mfcCrm : tfcCrm;
+    const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
+    const due = _soonestUpcomingFollowup((store[id] || {}).attempts, _todayNow);
+    if (due && due <= _weekAhead) weekList.push({ kind: item.kind, id, due,
+      name: item.rec.owner || item.rec.prop_address || ("Lead " + id) });
+  }
+  for (const entry of _workTaxList()) {
+    const due = _soonestUpcomingFollowup((propStore[entry.key] || {}).attempts, _todayNow);
+    if (due && due <= _weekAhead) weekList.push({ kind: "prop", id: entry.key, due,
+      name: entry.owner || entry.prop_address || entry.key });
+  }
+  weekList.sort((a, b) => a.due.localeCompare(b.due));
 
   // ===== 2. Parsed-pending (FC records with doc_num but no owner) =====
   // A filing exists but its PDF hasn't been parsed → owner is blank.
@@ -9666,10 +9746,11 @@ function renderToday() {
       <div class="ts-sub">foreclosures reviewed</div>
     </div>`);
   glance.push(`
-    <div class="today-stat">
-      <div class="ts-num">${newSince}</div>
-      <div class="ts-label">New leads</div>
-      <div class="ts-sub">${sinceLabel || "this scrape"}</div>
+    <div class="today-stat ${coldList.length ? "clickable" : ""}"
+         ${coldList.length ? 'onclick="_todayToggleList(\'cold\')"' : ""}>
+      <div class="ts-num">${coldList.length}</div>
+      <div class="ts-label">Going cold</div>
+      <div class="ts-sub">${coldList.length ? "7+ days past follow-up — tap" : "all followed up"}</div>
     </div>`);
   glance.push(`
     <div class="today-stat">
@@ -9678,18 +9759,25 @@ function renderToday() {
       <div class="ts-sub">contact attempts</div>
     </div>`);
   glance.push(`
-    <div class="today-stat ${upcomingSales.length ? "clickable" : ""}"
-         ${upcomingSales.length ? 'onclick="_todayToggleList(\'sales\')"' : ""}>
-      <div class="ts-num">${upcomingSales.length}</div>
-      <div class="ts-label">Sales ≤ 14 days</div>
-      <div class="ts-sub">${upcomingSales.length ? "tap to view" : "none upcoming"}</div>
+    <div class="today-stat ${weekList.length ? "clickable" : ""}"
+         ${weekList.length ? 'onclick="_todayToggleList(\'week\')"' : ""}>
+      <div class="ts-num">${weekList.length}</div>
+      <div class="ts-label">Follow-ups this week</div>
+      <div class="ts-sub">${weekList.length ? "next 7 days — tap" : "none scheduled"}</div>
     </div>`);
   document.getElementById("today-glance").innerHTML = glance.join("") + `
-    <div id="today-list-sales" class="today-list" style="display:none;grid-column:1/-1">
-      ${upcomingSales.map(r => `
-        <div class="today-list-item" onclick="_todayOpenLead('mfc','${esc2(String(r.doc_num))}')">
-          <span class="tli-name">${esc2(r.owner || r.prop_address || r.doc_num)}</span>
-          <span class="tli-meta">sale ${esc2(r.sale_date)}</span>
+    <div id="today-list-cold" class="today-list" style="display:none;grid-column:1/-1">
+      ${coldList.map(c => `
+        <div class="today-list-item" onclick="_todayOpenLead('${c.kind}','${esc2(String(c.id))}')">
+          <span class="tli-name">${esc2(c.name)}</span>
+          <span class="tli-meta tli-overdue">follow-up was ${esc2(c.due)} · ${c.kind === "prop" ? "PROPERTY" : c.kind.toUpperCase()}</span>
+        </div>`).join("")}
+    </div>
+    <div id="today-list-week" class="today-list" style="display:none;grid-column:1/-1">
+      ${weekList.map(w => `
+        <div class="today-list-item" onclick="_todayOpenLead('${w.kind}','${esc2(String(w.id))}')">
+          <span class="tli-name">${esc2(w.name)}</span>
+          <span class="tli-meta">follow-up ${esc2(w.due)} · ${w.kind === "prop" ? "PROPERTY" : w.kind.toUpperCase()}</span>
         </div>`).join("")}
     </div>`;
 
