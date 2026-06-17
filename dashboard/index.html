@@ -8205,6 +8205,12 @@ function openTfcCrm(uid, sourceRecords) {
   // Col 3: contacts
   // Full row: skiptrace, attempts, notes, activity
   const crmBody = document.getElementById("crm-body");
+  // Set the page title (openTfcCrm previously never did this, so the TFC
+  // CRM inherited whatever title the last-opened CRM left behind).
+  const _tfcTitleParts = ["Tax Foreclosure"];
+  if (rec.owner) _tfcTitleParts.push(titleCase(rec.owner));
+  if (rec.prop_address) _tfcTitleParts.push(titleCase(rec.prop_address));
+  document.getElementById("crm-title").textContent = _tfcTitleParts.join(" | ");
   crmBody.dataset.crmType = "tfc";
   crmBody.dataset.uid = uid;
   crmBody.innerHTML = `
