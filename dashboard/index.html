@@ -2813,7 +2813,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026l</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026m</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -7318,7 +7318,7 @@ function loadTfcSchemaForRender() {
     { id: "contract_price", label: "Contract Price", type: "money" },
     { id: "rent_comps",     label: "Rent Comps",     type: "money" },
     { id: "est_taxes_owed", label: "Estimated Total Taxes Owed", type: "money" },
-    { id: "judgement_year", label: "Judgement Year", type: "number" },
+    { id: "judgement_year", label: "Judgement Year", type: "text" },
   ].map(f => ({ ...f }));
 }
 
@@ -13440,6 +13440,11 @@ function buildCclnRow(r, isDead) {
   // ncad_account_num (the dashed 12-digit form), so this builds a
   // direct link to the property's tax-balance page.
   let nctaxCell = nctaxCellHtml(r);
+  // Non-owner-occupied pill for the Mailing Address cell (mailing street
+  // differs from the property street) — replaces the old blue signal badge.
+  const _cclnNoo = (typeof _stackIsNonOwnerOccupied === "function" && _stackIsNonOwnerOccupied(r.prop_address, r.mail_address))
+    ? ` <span class="pill absentee" title="Owner's mailing address differs from the property">NON-OWNER-OCCUPIED</span>`
+    : "";
 
   // Status cell. Active rows show a clickable pill that opens a small
   // menu (Working / Dead Lead, or New / Dead Lead when already
@@ -13482,7 +13487,7 @@ function buildCclnRow(r, isDead) {
     <td>${esc(fmtOwner(r.owner || "")) + exemptionTagsHtml(r.ncad_account_num)}</td>
     <td>${esc(fmtTitle(r.prop_address || ""))}${r.prop_city ? "<br><small>" + esc(fmtTitle(r.prop_city + " " + (r.prop_zip||""))) + "</small>" : ""}</td>
     <td style="text-align:center;">${mapCellHtml(r)}</td>
-    <td>${esc(fmtTitle(r.mail_address || ""))}${r.mail_city ? "<br><small>" + esc(fmtTitle(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||""))) + "</small>" : ""}</td>
+    <td>${esc(fmtTitle(r.mail_address || ""))}${r.mail_city ? "<br><small>" + esc(fmtTitle(r.mail_city + " " + (r.mail_state||"") + " " + (r.mail_zip||""))) + "</small>" : ""}${_cclnNoo}</td>
     <td>${r.amount ? "$" + Number(r.amount).toLocaleString("en-US", {maximumFractionDigits: 0}) : ""}</td>
     <td style="text-align:center;">${lienCountCell}</td>
     <td>${totalLienCell}</td>
@@ -13570,21 +13575,15 @@ function cclnFlagBadges(r) {
   if (!r) return "";
   const flags = Array.isArray(r.ccln_pdf_flags) ? r.ccln_pdf_flags : [];
   const errors  = flags.filter(f => CCLN_ERROR_FLAGS.has(f));
-  const signals = flags.filter(f => CCLN_SIGNAL_FLAGS.has(f));
   const parts = [];
   if (errors.length > 0) {
+    // Crisp vector warning triangle (the emoji ⚠ rendered pixelated).
+    const warnSvg = `<svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-2px;margin-left:4px;" aria-hidden="true"><path d="M12 2.8 L22.4 21 H1.6 Z" fill="#ef4444" stroke="#ef4444" stroke-width="1.3" stroke-linejoin="round"/><path d="M12 8.8 V14.2" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.6" r="1.15" fill="#fff"/></svg>`;
     parts.push(`<span class="ccln-pdf-flag" title="${esc(
-      "PDF extraction errors: " + errors.join(", "))}">⚠</span>`);
+      "PDF extraction errors: " + errors.join(", "))}">${warnSvg}</span>`);
   }
-  if (signals.length > 0) {
-    // Friendlier signal-flag tooltip — explain in plain English.
-    const sigText = signals.map(s => {
-      if (s === "absentee_owner")  return "Owner doesn't live at lien property";
-      if (s === "zip_outside_cc")  return "Owner mailing address is outside Corpus Christi";
-      return s;
-    }).join("; ");
-    parts.push(`<span class="ccln-pdf-signal" title="${esc(sigText)}">⓵</span>`);
-  }
+  // SIGNAL flags (absentee / zip-outside-CC) no longer render a badge here;
+  // non-owner-occupied now shows as a pill on the Mailing Address cell.
   if (parts.length === 0 && r.ccln_pdf_processed) {
     parts.push(`<span class="ccln-pdf-ok" title="PDF processed cleanly">✓</span>`);
   }
@@ -14060,10 +14059,12 @@ function openStackStatusMenu(ev, key, currentStatus, onChange) {
       const newStage = btn.dataset.stage;
       setStackStatus(key, newStage);
       closeStackStatusMenu();
-      // Fast path: update the pill(s) for this property IN PLACE instead
-      // of rebuilding the whole table (6k+ rows froze the page). Only
-      // fall back to a full re-render when no tagged pill is on screen.
-      const updated = _updateStagePills(key, newStage);
+      // Moving INTO or OUT OF "dead" changes which section the row lives in
+      // (active list vs. the "deleted leads" footer), so it needs a full
+      // re-render to build/update that footer. The fast in-place pill update
+      // is only safe for status changes that stay within the active list.
+      const deadTransition = (newStage === "dead" || currentStatus === "dead");
+      const updated = deadTransition ? false : _updateStagePills(key, newStage);
       if (!updated) { if (typeof onChange === "function") onChange(); else applyStack(); }
     });
   });
