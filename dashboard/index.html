@@ -215,6 +215,9 @@
   .stat .v { font-size: 17px; font-weight: 600; }
   .stat .k { color: var(--muted); font-size: 10px;
              text-transform: uppercase; letter-spacing: .04em; }
+  /* CV stats: wrap multi-word labels to ~2 lines so the cards stay narrow
+     and the property-type filter buttons fit on the same header row. */
+  #cv-stats .stat .k { white-space: normal; max-width: 72px; line-height: 1.2; }
   .controls { padding: 6px 0; display: flex; gap: 10px;
               flex-wrap: wrap; border-bottom: 1px solid var(--border);
               align-items: center; }
@@ -2821,7 +2824,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026u</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026v</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -10546,7 +10549,6 @@ function renderCvStats() {
       <div class="stat"><div class="v">—</div><div class="k">Care of Premises</div></div>
       <div class="stat"><div class="v">—</div><div class="k">Junked Vehicle</div></div>
       <div class="stat"><div class="v">—</div><div class="k">PMC Standards</div></div>
-      <div class="stat"><div class="v">—</div><div class="k">Total market value</div></div>
       ${fresh}
       ${cvNext}`;
     return;
@@ -10579,7 +10581,6 @@ function renderCvStats() {
     <div class="stat"><div class="v">${_vc("Care of Premises")}</div><div class="k">Care of Premises</div></div>
     <div class="stat"><div class="v">${_vc("Junked Vehicle")}</div><div class="k">Junked Vehicle</div></div>
     <div class="stat"><div class="v">${_vc("PMC Standards")}</div><div class="k">PMC Standards</div></div>
-    <div class="stat"><div class="v">$${Math.round(totMv).toLocaleString()}</div><div class="k">Total market value</div></div>
     ${fresh}
     ${cvNext}
     ${_dashPropFilterBtns('cv', true)}`;
