@@ -293,13 +293,13 @@
   .pill.status-dead { background: rgba(100,116,139,.20); color: var(--status-dead); }
   .pill.status-working { background: rgba(245,158,11,.18); color: var(--warn); }
   .pill.status-new:hover, .pill.status-working:hover { filter: brightness(1.25); }
-  /* FC Status column shows pipeline stage labels (New / Working /
-     Negotiating / Under Contract / Closed). The table is
-     table-layout:fixed with overflow:hidden cells, so the global
-     .pill white-space:nowrap clipped the longer labels. In the FC
-     table only, let the stage pill wrap (so "Under Contract" breaks
-     to two lines) instead of being cut off. */
-  #fc-table td .pill.status { white-space: normal; line-height: 1.25;
+  /* Stage pill labels (New / Working / Negotiating / Under Contract /
+     Closed / Dead) are longer than the fixed status columns. With
+     table-layout:fixed + overflow:hidden cells, the global
+     .pill white-space:nowrap clipped them. Let the stage pill wrap
+     in EVERY table (so "Negotiating"/"Under Contract" break to a
+     second line) instead of being cut off. */
+  td .pill.status { white-space: normal; line-height: 1.25;
                               text-align: center; }
   /* CV Violation Narrative — clamp to 2 lines; "Show more" expands it */
   #cv-table td .cv-narr, #vh-table td .cv-narr {
@@ -2813,7 +2813,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-18a</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026b</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -6076,6 +6076,21 @@ function openMfcCrm(docNum, sourceRecords) {
     </div>
   `;
 
+  // NCAD + NCTAX house links for the stage bar (resolve IDs from the
+  // parcel so they work even when the foreclosure record lacks them).
+  const _mfcExtRec = {
+    ncad_prop_id:     rec.ncad_prop_id || (typeof _arPickField === "function" ? _arPickField(rec, docNum, "ncad_prop_id") : ""),
+    ncad_account_num: rec.ncad_account_num || (typeof _arPickField === "function" ? _arPickField(rec, docNum, "ncad_account_num") : ""),
+    ncad_year:        rec.ncad_year,
+    ncad_owner_id:    rec.ncad_owner_id,
+    owner:            rec.owner,
+    prop_address:     rec.prop_address || (typeof _arPickField === "function" ? _arPickField(rec, docNum, "prop_address") : ""),
+  };
+  const _mfcExtLinks = `<div class="prop-ext-links" style="margin-top:10px;">
+      <span class="prop-ext-link">${(typeof ncadCellHtml === "function") ? ncadCellHtml(_mfcExtRec) : ""}<span class="prop-ext-lbl">NCAD</span></span>
+      <span class="prop-ext-link">${(typeof nctaxCellHtml === "function") ? nctaxCellHtml(_mfcExtRec) : ""}<span class="prop-ext-lbl">NCTAX</span></span>
+    </div>`;
+
   // --- Stage tracker ---
   const stageHtml = `
     <div class="mfc-stages">
@@ -6095,6 +6110,7 @@ function openMfcCrm(docNum, sourceRecords) {
           </button>
         `).join("")}
       </div>
+      ${_mfcExtLinks}
       ${_leadTypePillsHtml(rec, null, "lead-mfc")}
       ${(() => {
         const _e = (loadFcCrm() || {})[docNum] || {};
@@ -6616,7 +6632,8 @@ function openMfcCrm(docNum, sourceRecords) {
   // the clerk records.
   const _titleParts = ["Mortgage Foreclosure"];
   if (rec.owner) _titleParts.push(titleCase(rec.owner));
-  if (rec.prop_address) _titleParts.push(titleCase(rec.prop_address));
+  const _mfcTitleAddr = rec.prop_address || (typeof _arPickField === "function" ? _arPickField(rec, docNum, "prop_address") : "");
+  if (_mfcTitleAddr) _titleParts.push(titleCase(_mfcTitleAddr));
   document.getElementById("crm-title").textContent =
     _titleParts.join(" | ");
 
@@ -7996,6 +8013,19 @@ function openTfcCrm(uid, sourceRecords) {
   `;
 
   // -------- Stage tracker pills --------
+  // NCAD + NCTAX house links for the stage bar (resolve IDs from the parcel).
+  const _tfcExtRec = {
+    ncad_prop_id:     rec.ncad_prop_id || (typeof _arPickField === "function" ? _arPickField(rec, uid, "ncad_prop_id") : ""),
+    ncad_account_num: rec.ncad_account_num || (typeof _arPickField === "function" ? _arPickField(rec, uid, "ncad_account_num") : ""),
+    ncad_year:        rec.ncad_year,
+    ncad_owner_id:    rec.ncad_owner_id,
+    owner:            rec.owner,
+    prop_address:     rec.prop_address || (typeof _arPickField === "function" ? _arPickField(rec, uid, "prop_address") : ""),
+  };
+  const _tfcExtLinks = `<div class="prop-ext-links" style="margin-top:10px;">
+      <span class="prop-ext-link">${(typeof ncadCellHtml === "function") ? ncadCellHtml(_tfcExtRec) : ""}<span class="prop-ext-lbl">NCAD</span></span>
+      <span class="prop-ext-link">${(typeof nctaxCellHtml === "function") ? nctaxCellHtml(_tfcExtRec) : ""}<span class="prop-ext-lbl">NCTAX</span></span>
+    </div>`;
   const stageHtml = `
     <div class="mfc-stages">
       <div class="mfc-stages-label">Stage</div>
@@ -8014,6 +8044,7 @@ function openTfcCrm(uid, sourceRecords) {
           </button>
         `).join("")}
       </div>
+      ${_tfcExtLinks}
     </div>
   `;
 
