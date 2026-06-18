@@ -2813,7 +2813,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026b</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026d</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -2887,7 +2887,7 @@
   <div class="stats" id="ccln-stats"></div>
   <table id="ccln-table">
     <thead><tr>
-      <th data-sort="status"        style="width: 74px;">Status</th>
+      <th data-sort="status"        style="width: 100px;">Status</th>
       <th data-sort="filed"         style="width: 110px;">Most Recent Filed</th>
       <th data-sort="owner"         style="width: 200px;">Owner</th>
       <th data-sort="prop_address"  style="width: 210px;">Property Address</th>
@@ -2980,7 +2980,7 @@
   <table id="tfc-table">
     <thead><tr>
       <th style="width: 40px;" title="Save manual edits"></th>
-      <th data-sort="status"         style="width: 72px;">Status</th>
+      <th data-sort="status"         style="width: 100px;">Status</th>
       <th data-sort="sale_type"      style="width: 90px;">Sales Type</th>
       <th data-sort="fc_status"      style="width: 130px;">FC Status</th>
       <th data-sort="sale_date"      style="width: 130px;">Sale Date</th>
@@ -3052,7 +3052,7 @@
   <div class="stats" id="cv-stats"></div>
   <table id="cv-table">
     <thead><tr>
-      <th data-sort="status"        style="width: 74px;">Status</th>
+      <th data-sort="status"        style="width: 100px;">Status</th>
       <th data-sort="cited"         style="width: 92px;">Cited</th>
       <th data-sort="owner"         style="width: 180px;">Owner</th>
       <th data-sort="prop_address"  style="width: 190px;">Property Address</th>
@@ -3085,7 +3085,7 @@
   <div class="stats" id="ws-stats"></div>
   <table id="ws-table">
     <thead><tr>
-      <th data-sort="status"        style="width: 74px;">Status</th>
+      <th data-sort="status"        style="width: 100px;">Status</th>
       <th data-sort="shutoff_date"  style="width: 110px;">Shutoff Date</th>
       <th data-sort="owner"         style="width: 200px;">Owner</th>
       <th data-sort="prop_address"  style="width: 210px;">Property Address</th>
@@ -3116,7 +3116,7 @@
   <div class="stats" id="vh-stats"></div>
   <table id="vh-table">
     <thead><tr>
-      <th data-sort="status"        style="width: 74px;">Status</th>
+      <th data-sort="status"        style="width: 100px;">Status</th>
       <th data-sort="cited"         style="width: 100px;">Identified</th>
       <th data-sort="owner"         style="width: 180px;">Owner</th>
       <th data-sort="prop_address"  style="width: 200px;">Property Address</th>
@@ -3161,7 +3161,7 @@
   <div class="stats" id="deferral-stats"></div>
   <table id="deferral-table">
     <thead><tr>
-      <th data-sort="status"         style="width: 74px;">Status</th>
+      <th data-sort="status"         style="width: 100px;">Status</th>
       <th data-sort="deferral_start" style="width: 110px;">Deferred Since</th>
       <th data-sort="owner"          style="width: 190px;">Owner</th>
       <th data-sort="prop_address"   style="width: 210px;">Property Address</th>
@@ -3195,7 +3195,7 @@
   <div class="stats" id="tov-stats"></div>
   <table id="tov-table">
     <thead><tr>
-      <th data-sort="status"       style="width: 80px;">Status</th>
+      <th data-sort="status"       style="width: 100px;">Status</th>
       <th data-sort="owner"        style="width: 200px;">Owner</th>
       <th style="width: 180px;">New Owner</th>
       <th style="width: 200px;">Property Address</th>
@@ -3227,7 +3227,7 @@
   </div>
   <table id="mov-table">
     <thead><tr>
-      <th data-sort="status"          style="width: 74px;">Status</th>
+      <th data-sort="status"          style="width: 100px;">Status</th>
       <th data-sort="sale_date"       style="width: 110px;">Sale Date</th>
       <th data-sort="prior_owner"     style="width: 200px;">Prior Owner</th>
       <th data-sort="prop_address"    style="width: 210px;">Property Address</th>
@@ -3282,7 +3282,7 @@
   <div class="stats" id="delq-stats"></div>
   <table id="delq-table">
     <thead><tr>
-      <th data-sort="status"          style="width: 74px;">Status</th>
+      <th data-sort="status"          style="width: 100px;">Status</th>
       <th data-sort="owner"           style="width: 200px;">Owner</th>
       <th data-sort="prop_address"    style="width: 210px;">Property Address</th>
       <th style="width: 50px;">Map</th>
@@ -6086,51 +6086,47 @@ function openMfcCrm(docNum, sourceRecords) {
     owner:            rec.owner,
     prop_address:     rec.prop_address || (typeof _arPickField === "function" ? _arPickField(rec, docNum, "prop_address") : ""),
   };
-  const _mfcExtLinks = `<div class="prop-ext-links" style="margin-top:10px;">
+  const _mfcExtLinks = `<div class="prop-ext-links">
       <span class="prop-ext-link">${(typeof ncadCellHtml === "function") ? ncadCellHtml(_mfcExtRec) : ""}<span class="prop-ext-lbl">NCAD</span></span>
       <span class="prop-ext-link">${(typeof nctaxCellHtml === "function") ? nctaxCellHtml(_mfcExtRec) : ""}<span class="prop-ext-lbl">NCTAX</span></span>
     </div>`;
 
-  // --- Stage tracker ---
+  // --- Stage tracker (compact bar — matches the lead-dashboard CRMs) ---
+  const _mfcStageBtns = MFC_STAGES.map(s => {
+    const on = s.key === currentStage;
+    const kind = s.kind === "dead" ? "dead" : (s.kind === "closed-won" ? "won" : "");
+    return `<button type="button" class="prop-stage-btn${on ? " active" : ""} ${kind}"
+        onclick="_mfcSetStage('${esc(docNum)}', '${esc(s.key)}')">${esc(s.label)}</button>`;
+  }).join("");
+  const _mfcLeadPills = _leadTypePillsHtml(rec, null, "");
+  const _mfcLeadGroup = _mfcLeadPills
+    ? `<span class="prop-bar-sep push-right"></span><span class="prop-leadtype-lbl">Lead Type</span>${_mfcLeadPills}`
+    : "";
+  const _mfcActionBtns = (() => {
+    const _e = (loadFcCrm() || {})[docNum] || {};
+    const _marked = !!_e.sold_at_auction;
+    if (_e.mov_converted) {
+      return `<div style="margin-top:12px;">
+        <button class="prop-stage-btn" style="border-color:#22c55e;color:#22c55e;"
+                onclick="openMovCrm('${esc(_e.mov_converted)}')">✓ Converted — open Mortgage Overage</button>
+      </div>`;
+    }
+    return `<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="prop-stage-btn" style="${_marked ? "border-color:#ef4444;color:#ef4444;" : ""}"
+              onclick="_mfcToggleSoldAtAuction('${esc(docNum)}')">${_marked ? "✓ Sold at Auction? — click to undo" : "Mark Sold at Auction?"}</button>
+      <button class="prop-stage-btn" style="border-color:var(--accent);color:var(--accent);"
+              onclick="_mfcConvertToOverage('${esc(docNum)}')">→ Convert to Mortgage Overage</button>
+    </div>`;
+  })();
   const stageHtml = `
-    <div class="mfc-stages">
-      <div class="mfc-stages-label">Stage</div>
-      <div class="mfc-stage-row">
-        ${MFC_STAGES.filter(s => !s.terminal).map(s => `
-          <button class="mfc-stage-pill ${s.key === currentStage ? "active" : ""}"
-                  onclick="_mfcSetStage('${esc(docNum)}', '${s.key}')">
-            ${esc(s.label)}
-          </button>
-        `).join("")}
-        <div class="mfc-stage-sep"></div>
-        ${MFC_STAGES.filter(s => s.terminal).map(s => `
-          <button class="mfc-stage-pill ${s.key === currentStage ? "active " + (s.kind || "") : ""}"
-                  onclick="_mfcSetStage('${esc(docNum)}', '${s.key}')">
-            ${esc(s.label)}
-          </button>
-        `).join("")}
-      </div>
+    <div class="prop-stagebar">
+      <span class="prop-stagebar-lbl">Stage</span>
+      <div class="prop-stages">${_mfcStageBtns}</div>
+      <span class="prop-bar-sep"></span>
       ${_mfcExtLinks}
-      ${_leadTypePillsHtml(rec, null, "lead-mfc")}
-      ${(() => {
-        const _e = (loadFcCrm() || {})[docNum] || {};
-        const _marked = !!_e.sold_at_auction;
-        if (_e.mov_converted) {
-          return `<div style="margin-top:10px;">
-            <button class="mfc-stage-pill" style="border-color:#22c55e;color:#22c55e;"
-                    onclick="openMovCrm('${esc(_e.mov_converted)}')">✓ Converted — open Mortgage Overage</button>
-          </div>`;
-        }
-        return `<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="mfc-stage-pill" style="${_marked ? "border-color:#ef4444;color:#ef4444;" : ""}"
-                  onclick="_mfcToggleSoldAtAuction('${esc(docNum)}')">
-            ${_marked ? "✓ Sold at Auction? — click to undo" : "Mark Sold at Auction?"}
-          </button>
-          <button class="mfc-stage-pill" style="border-color:var(--accent);color:var(--accent);"
-                  onclick="_mfcConvertToOverage('${esc(docNum)}')">→ Convert to Mortgage Overage</button>
-        </div>`;
-      })()}
+      ${_mfcLeadGroup}
     </div>
+    ${_mfcActionBtns}
   `;
 
   // --- Follow-up banner (top of CRM) ---
@@ -8022,29 +8018,27 @@ function openTfcCrm(uid, sourceRecords) {
     owner:            rec.owner,
     prop_address:     rec.prop_address || (typeof _arPickField === "function" ? _arPickField(rec, uid, "prop_address") : ""),
   };
-  const _tfcExtLinks = `<div class="prop-ext-links" style="margin-top:10px;">
+  const _tfcExtLinks = `<div class="prop-ext-links">
       <span class="prop-ext-link">${(typeof ncadCellHtml === "function") ? ncadCellHtml(_tfcExtRec) : ""}<span class="prop-ext-lbl">NCAD</span></span>
       <span class="prop-ext-link">${(typeof nctaxCellHtml === "function") ? nctaxCellHtml(_tfcExtRec) : ""}<span class="prop-ext-lbl">NCTAX</span></span>
     </div>`;
+  const _tfcStageBtns = TFC_STAGES.map(s => {
+    const on = s.key === currentStage;
+    const kind = s.kind === "dead" ? "dead" : (s.kind === "closed-won" ? "won" : "");
+    return `<button type="button" class="prop-stage-btn${on ? " active" : ""} ${kind}"
+        onclick="_tfcSetStage('${esc(uid)}', '${esc(s.key)}')">${esc(s.label)}</button>`;
+  }).join("");
+  const _tfcLeadPills = (typeof _leadTypePillsHtml === "function") ? _leadTypePillsHtml(rec, null, "") : "";
+  const _tfcLeadGroup = _tfcLeadPills
+    ? `<span class="prop-bar-sep push-right"></span><span class="prop-leadtype-lbl">Lead Type</span>${_tfcLeadPills}`
+    : "";
   const stageHtml = `
-    <div class="mfc-stages">
-      <div class="mfc-stages-label">Stage</div>
-      <div class="mfc-stage-row">
-        ${TFC_STAGES.filter(s => !s.terminal).map(s => `
-          <button class="mfc-stage-pill ${s.key === currentStage ? "active" : ""}"
-                  onclick="_tfcSetStage('${esc(uid)}', '${s.key}')">
-            ${esc(s.label)}
-          </button>
-        `).join("")}
-        <div class="mfc-stage-sep"></div>
-        ${TFC_STAGES.filter(s => s.terminal).map(s => `
-          <button class="mfc-stage-pill ${s.key === currentStage ? "active " + (s.kind || "") : ""}"
-                  onclick="_tfcSetStage('${esc(uid)}', '${s.key}')">
-            ${esc(s.label)}
-          </button>
-        `).join("")}
-      </div>
+    <div class="prop-stagebar">
+      <span class="prop-stagebar-lbl">Stage</span>
+      <div class="prop-stages">${_tfcStageBtns}</div>
+      <span class="prop-bar-sep"></span>
       ${_tfcExtLinks}
+      ${_tfcLeadGroup}
     </div>
   `;
 
