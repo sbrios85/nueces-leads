@@ -2819,7 +2819,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026p</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026r</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -2861,7 +2861,8 @@
       <span>Tax Overages</span>
       <span class="tab-count" id="tov-count">—</span></div>
     <div class="nav-item" data-pane="mortgageoveragesraw">
-      <span>Mortgage Overages</span></div>
+      <span>Mortgage Overages</span>
+      <span class="tab-count" id="mov-count">—</span></div>
     <div class="nav-item" data-pane="stack">
       <span>Stack</span>
       <span class="tab-count" id="stack-count">—</span></div>
@@ -10978,7 +10979,7 @@ function buildDeferralRow(r, isDead){
     statusCell = `<span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status" data-stagekey="${esc(_defKey)}"
             onclick="openStackStatusMenu(event, '${esc(_defKey)}', getStackStatus('${esc(_defKey)}'), applyDeferral)">${esc(stageDef.label)} ▾</span>`;
   }
-  const startCell = r.deferral_start ? esc(r.deferral_start) : dash;
+  const startCell = r.deferral_start ? esc(formatDate(r.deferral_start)) : dash;
   const ownerCell = (esc(fmtOwner(r.owner || "")) || dash) + exemptionTagsHtml(r.ncad_account_num);
   const propCityLine = [r.prop_city, r.prop_zip].filter(Boolean);
   const propCell = r.prop_address
@@ -11363,10 +11364,20 @@ function applyMov(){
   renderMovStats();
   renderMov();
 }
+// Sidebar count badge for Mortgage Overages (localStorage-backed, so it can
+// be set on load without waiting on a fetch). Updated on every applyMov.
+function _updateMovCount(n){
+  const el = document.getElementById("mov-count");
+  if (!el) return;
+  const c = (n != null) ? n : _moList().length;
+  el.textContent = c ? c.toLocaleString() : "—";
+}
+document.addEventListener("DOMContentLoaded", () => _updateMovCount());
 function renderMovStats(){
+  const list = _moList();
+  _updateMovCount(list.length);
   const el = document.getElementById("mov-stats");
   if (!el) return;
-  const list = _moList();
   const totalSurplus = list.reduce((s, r) => s + Math.max(0, _moSurplus(r)), 0);
   el.innerHTML = `<div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Mortgage Overages</div></div>
     <div class="stat-card"><div class="num">$${totalSurplus.toLocaleString("en-US",{maximumFractionDigits:0})}</div><div class="lbl">Total Surplus</div></div>`;
@@ -11396,7 +11407,7 @@ function _buildMovRow(rec){
     `<input type="text" class="mov-edit" data-id="${esc(rec.id)}" data-field="${esc(field)}" value="${esc(val || "")}" placeholder="${esc(ph)}" style="width:${w||"100%"};" onclick="event.stopPropagation();">`;
   tr.innerHTML =
     `<td><span class="pill status ${pillClass}">${esc(stageDef.label)}</span></td>` +
-    `<td>${esc(rec.sale_date || "") || dash}</td>` +
+    `<td>${rec.sale_date ? esc(formatDate(rec.sale_date)) : dash}</td>` +
     `<td>${txtInput("owner", rec.owner, "owner / former owner")}</td>` +
     `<td>${txtInput("prop_address", rec.prop_address, "property address")}${city ? `<div style="color:var(--muted);font-size:11px;">${esc(fmtTitle(city))}</div>` : ""}</td>` +
     `<td>${rec.prop_address ? `<a href="https://www.google.com/maps/search/${encodeURIComponent(rec.prop_address + " " + city)}" target="_blank" rel="noopener" onclick="event.stopPropagation();" title="Open in Google Maps">📍</a>` : dash}</td>` +
@@ -11406,7 +11417,7 @@ function _buildMovRow(rec){
     `<td>${rec.winning_bid > 0 ? `<strong style="${surplus>0?'color:#22c55e':''}">$${surplus.toLocaleString("en-US",{maximumFractionDigits:0})}</strong>` : dash}</td>` +
     `<td>${esc(rec.lender || "") || dash}</td>` +
     `<td>${rec.source_doc && rec.source_doc !== "manual" ? esc(rec.source_doc) : '<span style="color:var(--muted)">manual</span>'}</td>` +
-    `<td>${dash}</td>`;
+    `<td style="text-align:center;">${ncadCellHtml(rec)}</td>`;
   tr.style.cursor = "pointer";
   tr.addEventListener("click", () => openMovCrm(rec.id));
   tr.querySelectorAll(".mov-edit").forEach(inp => {
@@ -15718,7 +15729,7 @@ function openPropCrm(propKey, rec, ctx) {
       <div class="mfc-custom-head">
         <h3>Research</h3>
       </div>
-      ${_autoResearchHtml(rec, propKey)}
+      ${(_propCtx && _propCtx.type === "mov") ? "" : _autoResearchHtml(rec, propKey)}
       <div class="mfc-custom-grid">${propFieldRows}</div>
     </div>`;
 
