@@ -2737,9 +2737,10 @@
   .ar-field.ar-dragging { opacity: .45; }
   .ar-field-wide { grid-column: 1 / -1; }
   /* Reserve a 2-line label height in the auto-research grid so a single-line
-     label (e.g. Tax Status) lines up with a wrapped two-word combo label
-     (e.g. "Delinquent Taxes") instead of riding its value box up. */
-  .ar-grid .ar-field > label,
+     label (e.g. Tax Status, Violation Narrative) lines up with a wrapped
+     two-word combo label (e.g. "Delinquent Taxes") instead of riding its
+     value box up. Covers single fields, combos, and the locked CV row. */
+  .ar-grid label,
   .ar-grid .ar-combo-labels { min-height: 26px; }
   /* Combo: two half-labels above a single bordered box with an internal divider */
   .ar-combo-labels { display: flex; }
@@ -2818,7 +2819,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026o</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026p</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -13707,7 +13708,7 @@ const STACK_SOURCES = [
   },
   {
     type: "cv",
-    label: "Code Viol.",
+    label: "Code Violation",
     badgeClass: "stack-badge-cv",
     autoInclude: false,   // all non-vacant CV types are overlap-only (need a 2nd list to appear)
     getRecords: () => (typeof CV_RAW !== "undefined" ? CV_RAW.filter(_cvHasNonVacant) : []),
