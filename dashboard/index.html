@@ -2736,11 +2736,30 @@
   .ar-field:active { cursor: grabbing; }
   .ar-field.ar-dragging { opacity: .45; }
   .ar-field-wide { grid-column: 1 / -1; }
-  .ar-combo .ar-combo-row { display: flex; align-items: stretch; gap: 0; }
-  .ar-combo-half { flex: 1 1 0; min-width: 0; }
-  .ar-combo-half:first-child { padding-right: 10px; }
-  .ar-combo-half:last-child { padding-left: 10px; }
-  .ar-combo-div { width: 1px; background: var(--border); align-self: stretch; margin: 2px 0; flex: 0 0 1px; }
+  /* Combo: two half-labels above a single bordered box with an internal divider */
+  .ar-combo-labels { display: flex; }
+  .ar-combo-label {
+    flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 4px;
+    font-size: 10px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .03em; line-height: 1.3; margin-bottom: 1px;
+  }
+  .ar-combo-label:first-child { padding-right: 9px; }
+  .ar-combo-label:last-child { padding-left: 9px; }
+  .ar-combo-box { display: flex; align-items: stretch; padding: 0; }
+  .ar-combo-val {
+    flex: 1 1 0; min-width: 0; padding: 3px 8px; line-height: 1.45;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .ar-combo-inner-div { width: 1px; align-self: stretch; background: var(--border); margin: 3px 0; flex: 0 0 1px; }
+  /* Info icon: circled "i" by the label; native tooltip shows the source */
+  .ar-info {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 12px; height: 12px; border: 1px solid currentColor; border-radius: 50%;
+    font-size: 8px; font-weight: 700; font-style: normal; line-height: 1;
+    color: var(--muted); opacity: .65; cursor: help; flex: 0 0 auto;
+  }
+  .ar-info:hover { opacity: 1; color: var(--fg); }
+  .ar-info.ok { color: #22c55e; opacity: .9; }
   .ar-box.ar-expandable {
     cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     padding-right: 20px; position: relative;
@@ -2770,7 +2789,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17e</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17f</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -15290,28 +15309,35 @@ function _autoResearchHtml(rec, propKey) {
   rows = _arSortRows(rows);
   const byKey = {}; rows.forEach(r => { byKey[r.key] = r; });
   const consumed = {};
-  // Inner label+box for one value (used in both single and combo cells)
-  const _inner = (r) => {
-    const titleAttr = r.title ? ` title="${esc(r.title)}"` : "";
-    const tagCls = r.verified ? "ar-srctag ok" : "ar-srctag";
-    const tag = r.src ? ` <span class="${tagCls}">${esc(r.src)}</span>` : "";
-    const boxCls = r.expandable ? "ar-box ar-expandable" : "ar-box";
-    const boxClick = r.expandable ? ` onclick="this.classList.toggle('expanded')"` : "";
-    return `<label>${esc(r.label)}${tag}</label>
-        <div class="${boxCls}"${boxClick}${titleAttr}>${esc(r.value)}</div>`;
+  // Small info icon by the label; hover shows where the value came from.
+  const _info = (r) => {
+    if (!r.src) return "";
+    const srcText = String(r.src).replace(" \u2713", "");
+    const title = "Source: " + srcText + (r.verified ? " (verified)" : "");
+    return ` <span class="ar-info${r.verified ? " ok" : ""}" title="${esc(title)}">i</span>`;
   };
+  // Single field: label + read-only box.
   const cellSingle = (r) => {
     const wide = r.expandable ? " ar-field-wide" : "";
+    const titleAttr = r.title ? ` title="${esc(r.title)}"` : "";
+    const boxCls = r.expandable ? "ar-box ar-expandable" : "ar-box";
+    const boxClick = r.expandable ? ` onclick="this.classList.toggle('expanded')"` : "";
     return `<div class="mfc-custom-field ar-field${wide}" draggable="true" data-ar-key="${esc(r.key || r.label)}" title="Drag to reorder">
-        ${_inner(r)}
+        <label>${esc(r.label)}${_info(r)}</label>
+        <div class="${boxCls}"${boxClick}${titleAttr}>${esc(r.value)}</div>
       </div>`;
   };
+  // Combo: two half-labels above ONE bordered box split by an internal divider.
   const cellCombo = (l, rt) => {
     return `<div class="mfc-custom-field ar-field ar-combo" draggable="true" data-ar-key="${esc(l.key)}" data-ar-pair="${esc(rt.key)}" title="Drag to reorder">
-        <div class="ar-combo-row">
-          <div class="ar-combo-half">${_inner(l)}</div>
-          <div class="ar-combo-div"></div>
-          <div class="ar-combo-half">${_inner(rt)}</div>
+        <div class="ar-combo-labels">
+          <span class="ar-combo-label">${esc(l.label)}${_info(l)}</span>
+          <span class="ar-combo-label">${esc(rt.label)}${_info(rt)}</span>
+        </div>
+        <div class="ar-box ar-combo-box">
+          <span class="ar-combo-val">${esc(l.value)}</span>
+          <span class="ar-combo-inner-div"></span>
+          <span class="ar-combo-val">${esc(rt.value)}</span>
         </div>
       </div>`;
   };
