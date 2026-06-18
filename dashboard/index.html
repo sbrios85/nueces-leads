@@ -2789,7 +2789,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17f</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17g</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -15095,15 +15095,25 @@ function _arMoney(n) {
   if (!isFinite(v)) return null;
   return "$" + Math.round(v).toLocaleString("en-US");
 }
+function _arShortDate(s) {
+  const m = String(s || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return String(s || "");
+  return (+m[2]) + "-" + (+m[3]) + "-" + m[1].slice(2);
+}
 // ---- Auto-Research field ordering (user-draggable, persisted) ----
 const AR_ORDER_KEY = "nueces_ar_field_order";
-const AR_DEFAULT_ORDER = ["delinquent", "years_behind", "tax_status", "exemptions",
-  "date_identified", "violation", "violation_narrative", "lien_count",
-  "total_lien_amount", "property_type"];
+const AR_DEFAULT_ORDER = ["delinquent", "years_behind", "tax_status",
+  "property_type", "exemptions", "total_lien_amount", "lien_count",
+  "date_identified", "violation", "violation_narrative"];
 // Field pairs rendered together in one cell, split 50/50 with a divider.
-// [leftKey, rightKey]. Both must be present for a property to combine;
-// otherwise each renders as a normal single field.
-const AR_PAIRS = [["delinquent", "years_behind"], ["exemptions", "property_type"]];
+// [leftKey, rightKey]. Both must be present to combine; otherwise each
+// renders as a normal single field.
+const AR_PAIRS = [
+  ["delinquent", "years_behind"],
+  ["property_type", "exemptions"],
+  ["total_lien_amount", "lien_count"],
+  ["date_identified", "violation"],
+];
 function _arLoadOrder() {
   let saved = [];
   try { saved = JSON.parse(localStorage.getItem(AR_ORDER_KEY) || "[]"); } catch (e) { saved = []; }
@@ -15257,7 +15267,7 @@ function _autoResearch(rec, propKey) {
   if (cvs.length) {
     let c = cvs[0];
     for (const x of cvs) { if ((x.cited || "") > (c.cited || "")) c = x; }
-    if (c.cited) rows.push({ key: "date_identified", label: "Date identified", value: String(c.cited), src: "Code Violation" });
+    if (c.cited) rows.push({ key: "date_identified", label: "Date identified", value: _arShortDate(c.cited), src: "Code Violation" });
     const vtype = c.violation_type || "", narr = c.violation_narrative || "";
     if (vtype || narr) {
       const more = cvs.length > 1 ? " (+" + (cvs.length - 1) + " more)" : "";
@@ -15318,11 +15328,10 @@ function _autoResearchHtml(rec, propKey) {
   };
   // Single field: label + read-only box.
   const cellSingle = (r) => {
-    const wide = r.expandable ? " ar-field-wide" : "";
     const titleAttr = r.title ? ` title="${esc(r.title)}"` : "";
     const boxCls = r.expandable ? "ar-box ar-expandable" : "ar-box";
     const boxClick = r.expandable ? ` onclick="this.classList.toggle('expanded')"` : "";
-    return `<div class="mfc-custom-field ar-field${wide}" draggable="true" data-ar-key="${esc(r.key || r.label)}" title="Drag to reorder">
+    return `<div class="mfc-custom-field ar-field" draggable="true" data-ar-key="${esc(r.key || r.label)}" title="Drag to reorder">
         <label>${esc(r.label)}${_info(r)}</label>
         <div class="${boxCls}"${boxClick}${titleAttr}>${esc(r.value)}</div>
       </div>`;
