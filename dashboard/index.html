@@ -2758,6 +2758,7 @@
   .ar-combo-wleft .ar-combo-box .ar-combo-val:last-child { flex: 0.8 1 0; }
   .ar-combo-wleft .ar-combo-label:first-child { white-space: nowrap; }
   /* Locked CV row: combo (left) + narrative (right), always one row */
+  .ar-grid { grid-auto-flow: row dense; }
   .ar-cvrow { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 9px 12px; }
   .ar-cvrow > .ar-cv-cell { min-width: 0; }
   .ar-combo-val.ar-expandable { cursor: pointer; padding-right: 16px; position: relative; }
@@ -2790,6 +2791,10 @@
   .ar-box.ar-expandable.expanded::after { content: "\25BE"; }
   .prop-leadpills { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .prop-leadpills.lead-right { margin-left: auto; }
+  .prop-ext-links { display: flex; align-items: center; gap: 14px; }
+  .prop-ext-link { display: inline-flex; align-items: center; gap: 5px; }
+  .prop-ext-link .ncad-icon { vertical-align: middle; }
+  .prop-ext-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
   .prop-leadpills.lead-mfc { justify-content: flex-end; margin-top: 8px; width: 100%; }
   .stack-badge-fc { background: rgba(168,85,247,.16); color: #c084fc; border-color: rgba(168,85,247,.4); }
 </style>
@@ -2805,7 +2810,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17l</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17n</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -15743,8 +15748,21 @@ function openPropCrm(propKey, rec, ctx) {
   const _snapMailCity = [rec.mail_city, rec.mail_state, rec.mail_zip].filter(Boolean).join(" ");
   const _snapMarket = (rec.market_value != null && rec.market_value !== "") ? rec.market_value : rec.appraised_value;
   const _mail = _arMailing(rec, propKey);
-  const _snapLegal = String(_arPickField(rec, propKey, "legal") || "").replace(/^Subdivision\s*-\s*Name:\s*/i, "");
   const _snapType = rec.property_type || (rec.state_class ? propTypeLabel(rec.state_class) : "");
+  // NCAD + NCTAX house links for the stage bar (resolve IDs from the parcel
+  // so they work even if the opened record is missing one).
+  const _extRec = {
+    ncad_prop_id:     rec.ncad_prop_id || _arPickField(rec, propKey, "ncad_prop_id"),
+    ncad_account_num: rec.ncad_account_num || _arPickField(rec, propKey, "ncad_account_num"),
+    ncad_year:        rec.ncad_year,
+    ncad_owner_id:    rec.ncad_owner_id,
+    owner:            rec.owner,
+    prop_address:     rec.prop_address || _arPickField(rec, propKey, "prop_address"),
+  };
+  const _extLinks = `<div class="prop-ext-links">
+      <span class="prop-ext-link">${(typeof ncadCellHtml === "function") ? ncadCellHtml(_extRec) : ""}<span class="prop-ext-lbl">NCAD</span></span>
+      <span class="prop-ext-link">${(typeof nctaxCellHtml === "function") ? nctaxCellHtml(_extRec) : ""}<span class="prop-ext-lbl">NCTAX</span></span>
+    </div>`;
   const _snapRow = (k, vHtml, sub) => `<div class="mfc-snap-row"><span class="k">${esc(k)}</span><span class="v">${vHtml}${sub ? `<div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(sub)}</div>` : ""}</span></div>`;
   const _snapHasMore = rec.total_owed || rec.years_behind || rec.lien_count || rec.ncad_prop_id || _snapMail;
   const snapshotCard = _propCtx.snapshot ? _propCtx.snapshot(rec) : `
@@ -15753,7 +15771,6 @@ function openPropCrm(propKey, rec, ctx) {
       ${_snapRow("Property", esc(fmtTitle(rec.prop_address || "")) || "—", _snapPropCity ? fmtTitle(_snapPropCity) : "")}
       ${_mail ? _snapRow("Mailing", esc(fmtTitle(_mail.l1)), _mail.l2 ? fmtTitle(_mail.l2) : "") : ""}
       <div class="mfc-snap-row"><span class="k">Market Value</span><span class="v big">${_snapMoney(_snapMarket)}</span></div>
-      ${_snapLegal ? _snapRow("Legal", esc(_snapLegal)) : ""}
     </div>`;
 
   delete body.dataset.crmType;   // .mfc-layout below triggers full-width via :has()
@@ -15761,6 +15778,7 @@ function openPropCrm(propKey, rec, ctx) {
     <div class="prop-stagebar">
       <span class="prop-stagebar-lbl">Stage</span>
       <div class="prop-stages">${stageBtns}</div>
+      ${_extLinks}
       ${_leadTypePillsHtml(rec, propKey, "lead-right")}
     </div>
     ${followupBannerHtml}
