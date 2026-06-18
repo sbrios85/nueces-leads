@@ -2813,7 +2813,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026e</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026g</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -2958,7 +2958,7 @@
       <th data-sort="loan_doc"       style="width: 108px;">Loan Document</th>
       <th data-sort="lender"         style="width: 150px;">Lender</th>
       <th data-sort="legal"          style="width: 170px;">Legal Description</th>
-      <th data-sort="doc_num"        style="width: 82px;">Doc#</th>
+      <th data-sort="doc_num"        style="width: 104px;">Doc#</th>
       <th style="width: 50px;">NCAD</th>
       <th style="width: 72px;">NCTAX</th>
     </tr></thead>
@@ -6626,12 +6626,13 @@ function openMfcCrm(docNum, sourceRecords) {
   // owner name, then property address for context. All parts are
   // title-cased for readability — source data is ALL CAPS from
   // the clerk records.
-  const _titleParts = ["Mortgage Foreclosure"];
-  if (rec.owner) _titleParts.push(titleCase(rec.owner));
+  // Title: "Lead Type - Name | Address" — dash after the lead type,
+  // pipe before the address; consistent across all dashboards.
   const _mfcTitleAddr = rec.prop_address || (typeof _arPickField === "function" ? _arPickField(rec, docNum, "prop_address") : "");
-  if (_mfcTitleAddr) _titleParts.push(titleCase(_mfcTitleAddr));
-  document.getElementById("crm-title").textContent =
-    _titleParts.join(" | ");
+  let _mfcTitle = "Mortgage Foreclosure";
+  if (rec.owner) _mfcTitle += " - " + titleCase(rec.owner);
+  if (_mfcTitleAddr) _mfcTitle += " | " + titleCase(_mfcTitleAddr);
+  document.getElementById("crm-title").textContent = _mfcTitle;
 
   // Stage row spans the top (full width). Below, a 3-column grid
   // fills the whole page: snapshot + research + contacts, with
@@ -8480,10 +8481,10 @@ function openTfcCrm(uid, sourceRecords) {
   const crmBody = document.getElementById("crm-body");
   // Set the page title (openTfcCrm previously never did this, so the TFC
   // CRM inherited whatever title the last-opened CRM left behind).
-  const _tfcTitleParts = ["Tax Foreclosure"];
-  if (rec.owner) _tfcTitleParts.push(titleCase(rec.owner));
-  if (rec.prop_address) _tfcTitleParts.push(titleCase(rec.prop_address));
-  document.getElementById("crm-title").textContent = _tfcTitleParts.join(" | ");
+  let _tfcTitle = "Tax Foreclosure";
+  if (rec.owner) _tfcTitle += " - " + titleCase(rec.owner);
+  if (rec.prop_address) _tfcTitle += " | " + titleCase(rec.prop_address);
+  document.getElementById("crm-title").textContent = _tfcTitle;
   crmBody.dataset.crmType = "tfc";
   crmBody.dataset.uid = uid;
   crmBody.innerHTML = `
@@ -8879,7 +8880,8 @@ function openCrm(type, docNum, sourceRecords) {
   }).join("");
 
   document.getElementById("crm-title").textContent =
-    (rec.owner || "Lead") + " — " + cfg.label;
+    cfg.label + (rec.owner ? " - " + fmtOwner(rec.owner) : "") +
+    (rec.prop_address ? " | " + fmtTitle(rec.prop_address) : "");
   const _crmBodyEl = document.getElementById("crm-body");
   // Clear any per-type data attribute set by other CRM views (e.g.
   // the MFC view sets data-crm-type="mfc" to enable full-width
@@ -15315,6 +15317,34 @@ function _leadTypePillsHtml(rec, propKey, extraClass) {
   return `<div class="prop-leadpills${extraClass ? " " + extraClass : ""}">${pills.join("")}</div>`;
 }
 
+// Primary lead-type label for a property, used as the CRM title prefix.
+// Mirrors _leadTypePillsHtml's source logic but returns just the first
+// matching label (no count). For a multi-type property (e.g. Stack) this
+// is the highest-priority source; the full set still shows as pills.
+// tov/mov contexts are explicit since those aren't in STACK_SOURCES.
+function _propLeadLabel(rec, propKey) {
+  if (typeof _propCtx !== "undefined" && _propCtx) {
+    if (_propCtx.type === "tov") return "Tax Overage";
+    if (_propCtx.type === "mov") return "Mortgage Overage";
+  }
+  const T = _arTargetIdents(rec, propKey);
+  if (!T.ncad && !T.pid && !T.addr) return "";
+  const hits = (arr) => {
+    if (!Array.isArray(arr)) return false;
+    for (const r of arr) { if (_arMatch(T, _arIdents(r))) return true; }
+    return false;
+  };
+  if (typeof STACK_SOURCES !== "undefined") {
+    for (const s of STACK_SOURCES) {
+      let recs; try { recs = s.getRecords() || []; } catch (e) { recs = []; }
+      if (hits(recs)) return s.label;
+    }
+  }
+  if (typeof DELQ_RAW !== "undefined" && hits(DELQ_RAW)) return "Delinquent Taxes";
+  if (typeof FC_RAW !== "undefined" && hits(FC_RAW)) return "Foreclosure";
+  return "";
+}
+
 function _autoResearch(rec, propKey) {
   const T = _arTargetIdents(rec, propKey);
   if (!T.ncad && !T.pid && !T.addr) return [];
@@ -15769,9 +15799,11 @@ function openPropCrm(propKey, rec, ctx) {
       </div>`;
   }
 
+  const _propLead = (typeof _propLeadLabel === "function") ? _propLeadLabel(rec, propKey) : "";
+  const _propNm = fmtOwner(rec.owner || "") || "Property";
+  const _propAd = rec.prop_address ? fmtTitle(rec.prop_address) : "";
   document.getElementById("crm-title").textContent =
-    (fmtOwner(rec.owner || "") || "Property") +
-    (rec.prop_address ? " — " + fmtTitle(rec.prop_address) : "");
+    (_propLead ? _propLead + " - " : "") + _propNm + (_propAd ? " | " + _propAd : "");
 
   const body = document.getElementById("crm-body");
 
@@ -17063,7 +17095,7 @@ function buildTfcRow(r, mode) {
   // ---- Editable cells (owner / prop_address / mail_address / legal) ----
   // Mirror MFC's _ecell pattern: textarea for long free-text, input
   // for short. Save button persists via tfcSaveRow.
-  const _tfcEcell = (key, val, isLong) => {
+  const _tfcEcell = (key, val, isLong, dispHtmlOverride) => {
     const common = `class="cell-edit" data-field="${key}"
       data-uid="${esc(uid)}"
       oninput="tfcMarkDirty(this)"
@@ -17078,7 +17110,7 @@ function buildTfcRow(r, mode) {
     if (key === "owner")
       return _fmtCellWrap(ctrl, fmtOwner(val));
     if (key === "prop_address" || key === "mail_address")
-      return _fmtCellWrap(ctrl, fmtTitle(val));
+      return _fmtCellWrap(ctrl, fmtTitle(val), dispHtmlOverride);
     return ctrl;
   };
 
@@ -17093,20 +17125,42 @@ function buildTfcRow(r, mode) {
   // has saved an override for mail_address, use it AS-IS — their
   // override already contains whatever they typed (including city/
   // zip), so re-appending the NCAD city/zip would double them up.
-  const _mailOverride = tfcFieldValue(r, "mail_address");
+  // Use the saved override ONLY (not the raw scraped street). Reading via
+  // tfcFieldValue() returns r.mail_address (street only) as a fallback, which
+  // previously made _mailEff drop city/state/zip — so read the override
+  // straight from the CRM entry instead.
+  const _mailOverrideRaw = (getTfcEntry(r.uid).overrides || {}).mail_address;
+  const _mailOverride = (_mailOverrideRaw != null && _mailOverrideRaw !== "") ? _mailOverrideRaw : "";
   const _mailEff = _mailOverride ||
       [r.mail_address,
        [r.mail_city, r.mail_state, r.mail_zip]
            .filter(Boolean).join(" ").trim()
       ].filter(Boolean).join(" ").trim();
+  // Two-line display: street on line 1, muted "City, ST ZIP" on line 2 —
+  // matches the MFC and lead-dashboard mailing cells. A saved override
+  // shows as-is on one line (it already contains whatever the user typed).
+  const _tfcMailDispHtml = (() => {
+    if (_mailOverride) return esc(fmtTitle(_mailOverride));
+    const _loc = [r.mail_city, r.mail_state, r.mail_zip].filter(Boolean);
+    const _line1 = r.mail_address
+      ? esc(fmtTitle(r.mail_address))
+      : '<span style="color:var(--muted)">\u2014</span>';
+    if (!_loc.length) return _line1;
+    const _cityState = r.mail_city
+      ? esc(fmtTitle(r.mail_city)) +
+          (r.mail_state || r.mail_zip ? ", " : "") +
+          esc([r.mail_state, r.mail_zip].filter(Boolean).join(" "))
+      : esc([r.mail_state, r.mail_zip].filter(Boolean).join(" "));
+    return _line1 + '<br><small style="color:var(--muted)">' + _cityState + '</small>';
+  })();
   const _legalEff = tfcFieldValue(r, "legal") || legal;
 
   // Note: r.prop_address is the FULL property address as one string
   // ("1058 BEECHCRAFT AVE, CORPUS CHRISTI TX 78405-2802"), so the
   // property column doesn't need a separate city/state/zip line —
-  // that would just duplicate info. The mailing column now ALSO
-  // shows one merged line (see _mailEff construction above), so
-  // there's no separate "addr-loc" subline either.
+  // that would just duplicate info. The mailing column DOES show a
+  // separate muted "City, ST ZIP" subline (see _tfcMailDispHtml above),
+  // matching the MFC and lead-dashboard mailing cells.
 
   tr.innerHTML = `
     <td class="save-cell">
@@ -17121,7 +17175,7 @@ function buildTfcRow(r, mode) {
     <td>${_tfcEcell("owner", _ownerEff, true)}</td>
     <td class="addr-cell">${_tfcEcell("prop_address", _propEff, true)}</td>
     <td style="text-align:center;">${mapCellHtml({prop_address: _propEff, prop_city: r.prop_city, prop_state: r.prop_state, prop_zip: r.prop_zip})}</td>
-    <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true)}</td>
+    <td class="addr-cell">${_tfcEcell("mail_address", _mailEff, true, _tfcMailDispHtml)}</td>
     <td>${minBid == null ? '<span style="color:var(--muted)">—</span>' : moneyFmt(minBid)}</td>
     <td>${(r.market_value == null || r.market_value === "") ? '<span style="color:var(--muted)">—</span>' : moneyFmt(r.market_value)}</td>
     <td>${_tfcEcell("legal", _legalEff, true)}</td>
