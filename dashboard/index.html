@@ -2801,6 +2801,7 @@
   .prop-ext-links { display: flex; align-items: center; gap: 14px; }
   .prop-ext-link { display: inline-flex; align-items: center; gap: 6px; }
   .prop-ext-link .ncad-icon { vertical-align: middle; width: 27px; height: 27px; }
+  .prop-ext-link .map-icon { vertical-align: middle; width: 27px; height: 27px; }
   .prop-ext-lbl { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
   .prop-bar-sep { width: 1px; height: 26px; background: var(--border); flex: 0 0 1px; }
   .prop-bar-sep.push-right { margin-left: auto; }
@@ -2820,7 +2821,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026s</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026t</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3230,7 +3231,7 @@
        rather than tax-vs-sale. Lender column matters for follow-up
        (some lenders retain a junior claim on the surplus). -->
   <div class="stats" id="mov-stats"></div>
-  <div style="margin:0 0 10px;">
+  <div style="margin:16px 0 10px;">
     <button onclick="_moAddManual()" style="background:rgba(56,189,248,.12);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:500;">+ Add Mortgage Overage</button>
   </div>
   <table id="mov-table">
@@ -6097,6 +6098,7 @@ function openMfcCrm(docNum, sourceRecords) {
   const _mfcExtLinks = `<div class="prop-ext-links">
       <span class="prop-ext-link">${(typeof ncadCellHtml === "function") ? ncadCellHtml(_mfcExtRec) : ""}<span class="prop-ext-lbl">NCAD</span></span>
       <span class="prop-ext-link">${(typeof nctaxCellHtml === "function") ? nctaxCellHtml(_mfcExtRec) : ""}<span class="prop-ext-lbl">NCTAX</span></span>
+      <span class="prop-ext-link">${(typeof mapCellHtml === "function") ? mapCellHtml(_mfcExtRec) : ""}<span class="prop-ext-lbl">MAP</span></span>
     </div>`;
 
   // --- Stage tracker (compact bar — matches the lead-dashboard CRMs) ---
@@ -8030,6 +8032,7 @@ function openTfcCrm(uid, sourceRecords) {
   const _tfcExtLinks = `<div class="prop-ext-links">
       <span class="prop-ext-link">${(typeof ncadCellHtml === "function") ? ncadCellHtml(_tfcExtRec) : ""}<span class="prop-ext-lbl">NCAD</span></span>
       <span class="prop-ext-link">${(typeof nctaxCellHtml === "function") ? nctaxCellHtml(_tfcExtRec) : ""}<span class="prop-ext-lbl">NCTAX</span></span>
+      <span class="prop-ext-link">${(typeof mapCellHtml === "function") ? mapCellHtml(_tfcExtRec) : ""}<span class="prop-ext-lbl">MAP</span></span>
     </div>`;
   const _tfcStageBtns = TFC_STAGES.map(s => {
     const on = s.key === currentStage;
@@ -11429,7 +11432,7 @@ function _buildMovRow(rec){
     `<td>${rec.sale_date ? esc(formatDate(rec.sale_date)) : dash}</td>` +
     `<td>${txtInput("owner", rec.owner, "owner / former owner")}</td>` +
     `<td>${txtInput("prop_address", rec.prop_address, "property address")}${city ? `<div style="color:var(--muted);font-size:11px;">${esc(fmtTitle(city))}</div>` : ""}</td>` +
-    `<td>${rec.prop_address ? `<a href="https://www.google.com/maps/search/${encodeURIComponent(rec.prop_address + " " + city)}" target="_blank" rel="noopener" onclick="event.stopPropagation();" title="Open in Google Maps">📍</a>` : dash}</td>` +
+    `<td style="text-align:center;">${mapCellHtml(rec)}</td>` +
     `<td>${rec.mail_address ? esc(fmtTitle(rec.mail_address)) : dash}${mailCszHtml}</td>` +
     `<td>${numInput("winning_bid", rec.winning_bid)}</td>` +
     `<td>${numInput("opening_bid", rec.opening_bid)}</td>` +
@@ -15915,6 +15918,7 @@ function openPropCrm(propKey, rec, ctx) {
   const _extLinks = `<div class="prop-ext-links">
       <span class="prop-ext-link">${(typeof ncadCellHtml === "function") ? ncadCellHtml(_extRec) : ""}<span class="prop-ext-lbl">NCAD</span></span>
       <span class="prop-ext-link">${(typeof nctaxCellHtml === "function") ? nctaxCellHtml(_extRec) : ""}<span class="prop-ext-lbl">NCTAX</span></span>
+      <span class="prop-ext-link">${(typeof mapCellHtml === "function") ? mapCellHtml(_extRec) : ""}<span class="prop-ext-lbl">MAP</span></span>
     </div>`;
   const _leadPills = _leadTypePillsHtml(rec, propKey, "");
   const _leadGroup = _leadPills
