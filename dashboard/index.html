@@ -2757,6 +2757,13 @@
   .ar-combo-wleft .ar-combo-label:last-child,
   .ar-combo-wleft .ar-combo-box .ar-combo-val:last-child { flex: 0.8 1 0; }
   .ar-combo-wleft .ar-combo-label:first-child { white-space: nowrap; }
+  .ar-combo-val.ar-expandable { cursor: pointer; padding-right: 16px; position: relative; }
+  .ar-combo-val.ar-expandable::after {
+    content: "\25B8"; position: absolute; right: 4px; top: 3px;
+    color: var(--muted); font-size: 10px;
+  }
+  .ar-combo-val.ar-expandable.expanded { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.5; }
+  .ar-combo-val.ar-expandable.expanded::after { content: "\25BE"; }
   /* Info icon: circled "i" by the label; native tooltip shows the source */
   .ar-info {
     display: inline-flex; align-items: center; justify-content: center;
@@ -2795,7 +2802,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17h</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17i</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -15122,7 +15129,7 @@ const AR_PAIRS = [
 ];
 // Combos whose LEFT label is long: give the left side extra width so the
 // label fits on one line (divider sits a bit past the midpoint).
-const AR_COMBO_WIDE_LEFT = { total_lien_amount: true };
+const AR_COMBO_WIDE_LEFT = { total_lien_amount: true, date_identified: true };
 function _arLoadOrder() {
   let saved = [];
   try { saved = JSON.parse(localStorage.getItem(AR_ORDER_KEY) || "[]"); } catch (e) { saved = []; }
@@ -15276,12 +15283,12 @@ function _autoResearch(rec, propKey) {
   if (cvs.length) {
     let c = cvs[0];
     for (const x of cvs) { if ((x.cited || "") > (c.cited || "")) c = x; }
-    if (c.cited) rows.push({ key: "date_identified", label: "Date identified", value: _arShortDate(c.cited), src: "Code Violation" });
+    if (c.cited) rows.push({ key: "date_identified", label: "CV Date Identified", value: _arShortDate(c.cited), src: "Code Violation" });
     const vtype = c.violation_type || "", narr = c.violation_narrative || "";
     if (vtype || narr) {
       const more = cvs.length > 1 ? " (+" + (cvs.length - 1) + " more)" : "";
       rows.push({ key: "violation", label: "Violation", value: (vtype || narr) + more,
-        title: (narr && narr !== vtype) ? narr : "", src: "Code Violation" });
+        title: (narr && narr !== vtype) ? narr : "", src: "Code Violation", expandable: true });
     }
     if (narr) {
       rows.push({ key: "violation_narrative", label: "Violation narrative",
@@ -15346,6 +15353,11 @@ function _autoResearchHtml(rec, propKey) {
       </div>`;
   };
   // Combo: two half-labels above ONE bordered box split by an internal divider.
+  const _comboVal = (r) => {
+    const t = r.title ? ` title="${esc(r.title)}"` : "";
+    if (r.expandable) return `<span class="ar-combo-val ar-expandable" onclick="this.classList.toggle('expanded')"${t}>${esc(r.value)}</span>`;
+    return `<span class="ar-combo-val"${t}>${esc(r.value)}</span>`;
+  };
   const cellCombo = (l, rt) => {
     const wideCls = AR_COMBO_WIDE_LEFT[l.key] ? " ar-combo-wleft" : "";
     return `<div class="mfc-custom-field ar-field ar-combo${wideCls}" draggable="true" data-ar-key="${esc(l.key)}" data-ar-pair="${esc(rt.key)}" title="Drag to reorder">
@@ -15354,9 +15366,9 @@ function _autoResearchHtml(rec, propKey) {
           <span class="ar-combo-label">${esc(rt.label)}${_info(rt)}</span>
         </div>
         <div class="ar-box ar-combo-box">
-          <span class="ar-combo-val">${esc(l.value)}</span>
+          ${_comboVal(l)}
           <span class="ar-combo-inner-div"></span>
-          <span class="ar-combo-val">${esc(rt.value)}</span>
+          ${_comboVal(rt)}
         </div>
       </div>`;
   };
