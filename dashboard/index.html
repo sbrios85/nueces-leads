@@ -2813,7 +2813,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026k</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026l</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -6279,7 +6279,6 @@ function openMfcCrm(docNum, sourceRecords) {
       <div class="mfc-custom-head">
         <h3>Research</h3>
       </div>
-      ${_autoResearchHtml(rec, null)}
       ${customFieldRowsHtml}
     </div>
   `;
@@ -15355,13 +15354,20 @@ function _fullPropAddr(rec, streetOverride) {
   if (!rec) return "";
   const street = String(streetOverride != null ? streetOverride : (rec.prop_address || "")).trim();
   const csz = [rec.prop_city, rec.prop_state, rec.prop_zip].filter(Boolean).join(" ").trim();
-  if (!street) return csz;
-  if (!csz) return street;
-  const su = street.toUpperCase();
-  const zip5 = String(rec.prop_zip || "").split("-")[0].trim();
-  const cityU = String(rec.prop_city || "").toUpperCase().trim();
-  if ((zip5 && su.indexOf(zip5) !== -1) || (cityU && su.indexOf(cityU) !== -1)) return street;
-  return street + ", " + csz;
+  let full;
+  if (!street) full = csz;
+  else if (!csz) full = street;
+  else {
+    const su = street.toUpperCase();
+    const zip5 = String(rec.prop_zip || "").split("-")[0].trim();
+    const cityU = String(rec.prop_city || "").toUpperCase().trim();
+    full = ((zip5 && su.indexOf(zip5) !== -1) || (cityU && su.indexOf(cityU) !== -1))
+      ? street
+      : street + " " + csz;
+  }
+  // No comma between street and city/state/zip (per user preference);
+  // also strips the comma from TFC's one-line source address.
+  return full.replace(/,/g, "").replace(/\s+/g, " ").trim();
 }
 
 function _autoResearch(rec, propKey) {
