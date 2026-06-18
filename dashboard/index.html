@@ -2813,7 +2813,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17o</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-18a</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -4971,26 +4971,27 @@ function saveMfcCustomSchema(schema) {
 //     older user who hasn't migrated yet), it's automatically
 //     prepended on load so it's always present.
 function loadMfcSchemaForRender() {
-  let schema = loadMfcCustomSchema();
-  const presentIds = new Set(schema.map(f => f.id));
-  // Prepend any missing system fields. Order: as listed in
-  // MFC_SYSTEM_FIELDS. This only fires once (the first time after
-  // adding a new system field); after the first save, the user's
-  // order persists.
-  const missing = MFC_SYSTEM_FIELDS
-    .filter(sf => !presentIds.has(sf.id))
-    .map(sf => ({ id: sf.id }));
-  if (missing.length > 0) {
-    schema = [...missing, ...schema];
-  }
-  // Hydrate system-field entries with their full definition.
-  return schema.map(f => {
-    if (f.id && f.id.startsWith("_sys_")) {
-      const def = _mfcSystemFieldById(f.id);
-      return def ? { ...def } : null;  // null = drop unknown system fields
-    }
-    return f;
-  }).filter(Boolean);
+  // Locked, hardcoded MFC research schema (no user-managed fields).
+  // Occupancy is the system field; the rest store in entry.custom_fields.
+  return [
+    MFC_SYSTEM_FIELDS[0], // Occupancy (system select)
+    { id: "arv",            label: "ARV",            type: "money" },
+    { id: "as_is_value",    label: "As-Is Value",    type: "money" },
+    { id: "ncad",           label: "NCAD",           type: "money" },
+    { id: "contract_price", label: "Contract Price", type: "money" },
+    { id: "rent_comps",     label: "Rent Comps",     type: "money" },
+    { id: "piti",           label: "PITI",           type: "money" },
+    { id: "interest_rate",  label: "Interest Rate",  type: "percent" },
+    { id: "current_lender", label: "Current Lender", type: "text" },
+    { id: "balance",        label: "Balance",        type: "money" },
+    { id: "arrears",        label: "Arrears",        type: "money" },
+    { id: "loan_type",      label: "Loan Type",      type: "text" },
+    { id: "pi",             label: "PI",             type: "money" },
+    { id: "other_liens",    label: "Other Liens",    type: "text" },
+    { id: "repairs_needed", label: "Repairs Needed", type: "text" },
+    { id: "who_bought",     label: "Who Bought The House", type: "text" },
+    { id: "payoff",         label: "Payoff",         type: "money" },
+  ].map(f => ({ ...f }));
 }
 
 function _mfcGenFieldId() {
@@ -6260,16 +6261,11 @@ function openMfcCrm(docNum, sourceRecords) {
     <div class="mfc-custom-grid">
       ${fieldRowsHtml}
     </div>
-    ${!hasUserFields
-      ? `<div class="mfc-custom-empty">No custom research fields yet. Click <strong>Manage</strong> to add fields like ARV, Year Built, Sqft, Vacant?, etc.</div>`
-      : ""}
   `;
   const customHtml = `
     <div class="mfc-custom">
       <div class="mfc-custom-head">
         <h3>Research</h3>
-        <button class="mfc-custom-manage-btn"
-                onclick="_mfcOpenSchemaModal()">Manage fields</button>
       </div>
       ${_autoResearchHtml(rec, null)}
       ${customFieldRowsHtml}
@@ -7299,21 +7295,17 @@ function saveTfcCustomSchema(schema) {
 // at render time. Missing system fields are auto-prepended so they
 // always appear (e.g. Occupancy on a fresh dashboard load).
 function loadTfcSchemaForRender() {
-  let schema = loadTfcCustomSchema();
-  const presentIds = new Set(schema.map(f => f.id));
-  const missing = TFC_SYSTEM_FIELDS
-    .filter(sf => !presentIds.has(sf.id))
-    .map(sf => ({ id: sf.id }));
-  if (missing.length > 0) {
-    schema = [...missing, ...schema];
-  }
-  return schema.map(f => {
-    if (f.id && f.id.startsWith("_sys_")) {
-      const def = _tfcSystemFieldById(f.id);
-      return def ? { ...def } : null;
-    }
-    return f;
-  }).filter(Boolean);
+  // Locked, hardcoded TFC research schema (no user-managed fields).
+  return [
+    TFC_SYSTEM_FIELDS[0], // Occupancy (system select)
+    { id: "arv",            label: "ARV",            type: "money" },
+    { id: "as_is_value",    label: "As-Is Value",    type: "money" },
+    { id: "ncad",           label: "NCAD",           type: "money" },
+    { id: "contract_price", label: "Contract Price", type: "money" },
+    { id: "rent_comps",     label: "Rent Comps",     type: "money" },
+    { id: "est_taxes_owed", label: "Estimated Total Taxes Owed", type: "money" },
+    { id: "judgement_year", label: "Judgement Year", type: "number" },
+  ].map(f => ({ ...f }));
 }
 
 function _tfcGenFieldId() {
@@ -8243,16 +8235,11 @@ function openTfcCrm(uid, sourceRecords) {
     <div class="mfc-custom-grid">
       ${fieldRowsHtml}
     </div>
-    ${!hasUserFields
-      ? `<div class="mfc-custom-empty">No custom research fields yet. Click <strong>Manage</strong> to add fields like ARV, Year Built, Sqft, Vacant?, etc.</div>`
-      : ""}
   `;
   const customHtml = `
     <div class="mfc-custom">
       <div class="mfc-custom-head">
         <h3>Research</h3>
-        <button class="mfc-custom-manage-btn"
-                onclick="_tfcOpenSchemaModal()">Manage fields</button>
       </div>
       ${customFieldRowsHtml}
     </div>
@@ -14836,15 +14823,36 @@ function loadPropCustomSchema() {
 function savePropCustomSchema(schema) {
   localStorage.setItem(PROP_CUSTOM_SCHEMA_KEY, JSON.stringify(Array.isArray(schema) ? schema : []));
 }
+// --- Hardcoded research field sets (locked; no user-managed schema) ---
+// Lead dashboards (CCLN, Delinquent, CV, Tax Deferral, Vacant Houses, Stack)
+// all run on _propCtx.type === "prop". Tax Overages ("tov") get no editable
+// research fields; Mortgage Overages ("mov") get their own three. Occupancy is
+// a system field (stored on entry.occupancy); the rest are stored in
+// entry.custom_fields keyed by the stable id below.
+const PROP_FIELDS_LEAD = [
+  PROP_SYSTEM_FIELDS[0], // Occupancy (system select)
+  { id: "months_vacant",  label: "Number of months vacant", type: "number" },
+  { id: "arv",            label: "ARV",            type: "money" },
+  { id: "as_is_value",    label: "As-Is Value",    type: "money" },
+  { id: "rent_comps",     label: "Rent Comps",     type: "money" },
+  { id: "contract_price", label: "Contract Price", type: "money" },
+  { id: "repair_amount",  label: "Repair Amount",  type: "money" },
+  { id: "move_out",       label: "How long to move out?", type: "text" },
+];
+const PROP_FIELDS_TAX_OVERAGE = []; // Tax Overages: AUTO panel only, no editable fields
+const PROP_FIELDS_MORTGAGE_OVERAGE = [
+  { id: "current_lender", label: "Current Lender",   type: "text" },
+  { id: "auction_price",  label: "Auction Price",    type: "money" },
+  { id: "overage_est",    label: "Overage Estimate", type: "money" },
+];
 function loadPropSchemaForRender() {
-  let schema = loadPropCustomSchema();
-  const present = new Set(schema.map(f => f.id));
-  const missing = PROP_SYSTEM_FIELDS.filter(sf => !present.has(sf.id)).map(sf => ({ id: sf.id }));
-  if (missing.length) schema = [...missing, ...schema];
-  return schema.map(f => {
-    if (f.id && f.id.startsWith("_sys_")) { const def = _propSystemFieldById(f.id); return def ? { ...def } : null; }
-    return f;
-  }).filter(Boolean);
+  let set;
+  switch (_propCtx && _propCtx.type) {
+    case "tov": set = PROP_FIELDS_TAX_OVERAGE; break;
+    case "mov": set = PROP_FIELDS_MORTGAGE_OVERAGE; break;
+    default:    set = PROP_FIELDS_LEAD; break;
+  }
+  return set.map(f => ({ ...f }));
 }
 function _propSetCustom(key, fieldId, value) {
   const store = loadCrmStore(_propCtx.type); const e = store[key] || {};
@@ -15598,11 +15606,9 @@ function openPropCrm(propKey, rec, ctx) {
     <div class="crm-card">
       <div class="mfc-custom-head">
         <h3>Research</h3>
-        <button class="mfc-custom-manage-btn" onclick="_propOpenSchemaModal()">Manage fields</button>
       </div>
       ${_autoResearchHtml(rec, propKey)}
       <div class="mfc-custom-grid">${propFieldRows}</div>
-      ${!propHasUserFields ? `<div class="mfc-custom-empty">No custom research fields yet. Click <strong>Manage fields</strong> to add fields like ARV, Year Built, Sqft, Vacant?, etc.</div>` : ""}
     </div>`;
 
   // Skiptrace (family-tree style — reuses MFC skiptrace styling)
