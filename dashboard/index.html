@@ -2818,7 +2818,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026n</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026o</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -12631,6 +12631,29 @@ function _delqSharedKey(r) {
   return "delq:" + (r.ncad_account_num || r.prop_address || "row");
 }
 
+// Nueces County property ZIP -> city. The delinquent tax roll carries only
+// prop_address + prop_zip (no property city/state), so we derive the city
+// from the ZIP to show a full "City TX ZIP" line like the mailing address.
+// Verified against owner-occupied mailing cities in delq_records.json: every
+// property ZIP in the data resolves to Corpus Christi; the outlying Nueces
+// towns are included for safety. Unknown ZIPs fall back to ZIP-only so a
+// property is never mislabeled with the wrong city.
+const _NUECES_ZIP_CITY = {
+  "78401":"Corpus Christi","78402":"Corpus Christi","78403":"Corpus Christi",
+  "78404":"Corpus Christi","78405":"Corpus Christi","78406":"Corpus Christi",
+  "78407":"Corpus Christi","78408":"Corpus Christi","78409":"Corpus Christi",
+  "78410":"Corpus Christi","78411":"Corpus Christi","78412":"Corpus Christi",
+  "78413":"Corpus Christi","78414":"Corpus Christi","78415":"Corpus Christi",
+  "78416":"Corpus Christi","78417":"Corpus Christi","78418":"Corpus Christi",
+  "78419":"Corpus Christi","78380":"Robstown","78343":"Bishop",
+  "78339":"Banquete","78330":"Agua Dulce","78351":"Driscoll","78373":"Port Aransas",
+};
+function _nuecesPropCsz(zip) {
+  const z5 = String(zip || "").slice(0, 5);
+  if (!z5) return "";
+  const city = _NUECES_ZIP_CITY[z5];
+  return city ? `${city} TX ${zip}` : String(zip);
+}
 function buildDelqRow(r, isDead) {
   const tr = document.createElement("tr");
   if (isDead) tr.classList.add("dead-lead");
@@ -12696,9 +12719,10 @@ function buildDelqRow(r, isDead) {
   if (r.acres) {
     propCell = `<span title="${r.acres.toFixed(3)} acres">${propCell}</span>`;
   }
-  // City / state / zip on line 2 (match the mailing-address format).
-  const _propCsz = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ");
-  const _propCszHtml = _propCsz ? `<br><small>${esc(fmtTitle(_propCsz))}</small>` : "";
+  // City / state / zip on line 2 (match the mailing-address format). The roll
+  // has no property city/state, so derive "City TX ZIP" from the ZIP.
+  const _propCsz = _nuecesPropCsz(r.prop_zip);
+  const _propCszHtml = _propCsz ? `<br><small>${esc(_propCsz)}</small>` : "";
   propCell += _propCszHtml;
   // Empty property addresses (vacant-lot listings sometimes have no
   // street, just "X ST @ Y AVE" or similar) — show a placeholder
