@@ -693,10 +693,11 @@
   }
   #mov-table tbody tr { cursor: pointer; }
   .mov-edit {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+    background: transparent; border: 1px solid transparent; border-radius: 4px;
     color: var(--fg); padding: 4px 6px; font-size: 12px; font-family: inherit;
   }
-  .mov-edit:focus { outline: none; border-color: var(--accent); }
+  .mov-edit:hover { border-color: var(--border); }
+  .mov-edit:focus { outline: none; border-color: var(--accent); background: var(--bg); }
   #tov-table tbody tr.deadbar-row:hover,
   #workov-table tbody tr.deadbar-row:hover { background: rgba(239,68,68,.12); }
   #tov-table tbody tr.deadbar-row,
@@ -2819,7 +2820,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026r</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026s</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -11337,6 +11338,7 @@ function _mfcConvertToOverage(docNum){
     prop_address: r.prop_address || "",
     prop_city: r.prop_city || "", prop_state: r.prop_state || "", prop_zip: r.prop_zip || "",
     mail_address: r.mail_address || r.mailing_address || "",
+    mail_city: r.mail_city || "", mail_state: r.mail_state || "", mail_zip: r.mail_zip || "",
     opening_bid: Number(r.loan_amount) || 0,
     winning_bid: 0,
     sale_date: r.sale_date || "",
@@ -11401,6 +11403,23 @@ function _buildMovRow(rec){
   const stageDef = STACK_STAGES.find(s => s.key === stage) || STACK_STAGES[0];
   const surplus = _moSurplus(rec);
   const city = [rec.prop_city, rec.prop_state, rec.prop_zip].filter(Boolean).join(" ");
+  // Resolve NCAD ids + mailing city/state/zip the same way the CRM does — from a
+  // matching parcel in the other dashboards (CCLN/CV/DELQ/Deferral/Foreclosure),
+  // since a converted/manual overage record may not carry them itself. This is
+  // why the CRM showed a working house link while the table only had the search
+  // fallback: the table was reading rec.ncad_prop_id directly without resolving.
+  const _movPick = (f) => rec[f] || (typeof _arPickField === "function" ? _arPickField(rec, rec.id, f) : "");
+  const ncadRec = Object.assign({}, rec, {
+    ncad_prop_id: _movPick("ncad_prop_id"),
+    ncad_account_num: _movPick("ncad_account_num"),
+  });
+  const _mailZip = _movPick("mail_zip");
+  const _mailCsz = [_movPick("mail_city"), _movPick("mail_state"), _mailZip].filter(Boolean).join(" ");
+  // Guard against doubling when the mail_address already contains the city/zip
+  // (some out-of-state mailings come through as one un-parsed blob).
+  const _mailHasCsz = _mailZip && (rec.mail_address || "").includes(String(_mailZip).slice(0, 5));
+  const mailCszHtml = (_mailCsz && !_mailHasCsz)
+    ? `<div style="color:var(--muted);font-size:11px;">${esc(fmtTitle(_mailCsz))}</div>` : "";
   const numInput = (field, val) =>
     `<input type="number" class="mov-edit" data-id="${esc(rec.id)}" data-field="${esc(field)}" value="${val ? esc(String(val)) : ""}" placeholder="$" style="width:96px;" onclick="event.stopPropagation();">`;
   const txtInput = (field, val, ph, w) =>
@@ -11411,13 +11430,13 @@ function _buildMovRow(rec){
     `<td>${txtInput("owner", rec.owner, "owner / former owner")}</td>` +
     `<td>${txtInput("prop_address", rec.prop_address, "property address")}${city ? `<div style="color:var(--muted);font-size:11px;">${esc(fmtTitle(city))}</div>` : ""}</td>` +
     `<td>${rec.prop_address ? `<a href="https://www.google.com/maps/search/${encodeURIComponent(rec.prop_address + " " + city)}" target="_blank" rel="noopener" onclick="event.stopPropagation();" title="Open in Google Maps">📍</a>` : dash}</td>` +
-    `<td>${esc(rec.mail_address || "") || dash}</td>` +
+    `<td>${rec.mail_address ? esc(fmtTitle(rec.mail_address)) : dash}${mailCszHtml}</td>` +
     `<td>${numInput("winning_bid", rec.winning_bid)}</td>` +
     `<td>${numInput("opening_bid", rec.opening_bid)}</td>` +
     `<td>${rec.winning_bid > 0 ? `<strong style="${surplus>0?'color:#22c55e':''}">$${surplus.toLocaleString("en-US",{maximumFractionDigits:0})}</strong>` : dash}</td>` +
     `<td>${esc(rec.lender || "") || dash}</td>` +
     `<td>${rec.source_doc && rec.source_doc !== "manual" ? esc(rec.source_doc) : '<span style="color:var(--muted)">manual</span>'}</td>` +
-    `<td style="text-align:center;">${ncadCellHtml(rec)}</td>`;
+    `<td style="text-align:center;">${ncadCellHtml(ncadRec)}</td>`;
   tr.style.cursor = "pointer";
   tr.addEventListener("click", () => openMovCrm(rec.id));
   tr.querySelectorAll(".mov-edit").forEach(inp => {
