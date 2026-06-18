@@ -2813,7 +2813,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026j</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026k</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -6628,7 +6628,8 @@ function openMfcCrm(docNum, sourceRecords) {
   // the clerk records.
   // Title: "Lead Type - Name | Address" — dash after the lead type,
   // pipe before the address; consistent across all dashboards.
-  const _mfcTitleAddr = rec.prop_address || (typeof _arPickField === "function" ? _arPickField(rec, docNum, "prop_address") : "");
+  const _mfcStreet = rec.prop_address || (typeof _arPickField === "function" ? _arPickField(rec, docNum, "prop_address") : "");
+  const _mfcTitleAddr = (typeof _fullPropAddr === "function") ? _fullPropAddr(rec, _mfcStreet) : _mfcStreet;
   let _mfcTitle = "Mortgage Foreclosure";
   if (rec.owner) _mfcTitle += " - " + titleCase(rec.owner);
   if (_mfcTitleAddr) _mfcTitle += " - " + titleCase(_mfcTitleAddr);
@@ -8483,7 +8484,8 @@ function openTfcCrm(uid, sourceRecords) {
   // CRM inherited whatever title the last-opened CRM left behind).
   let _tfcTitle = "Tax Foreclosure";
   if (rec.owner) _tfcTitle += " - " + titleCase(rec.owner);
-  if (rec.prop_address) _tfcTitle += " - " + titleCase(rec.prop_address);
+  const _tfcAddr = (typeof _fullPropAddr === "function") ? _fullPropAddr(rec) : (rec.prop_address || "");
+  if (_tfcAddr) _tfcTitle += " - " + titleCase(_tfcAddr);
   document.getElementById("crm-title").textContent = _tfcTitle;
   crmBody.dataset.crmType = "tfc";
   crmBody.dataset.uid = uid;
@@ -8879,9 +8881,10 @@ function openCrm(type, docNum, sourceRecords) {
     </div>`;
   }).join("");
 
+  const _genAddr = (typeof _fullPropAddr === "function") ? _fullPropAddr(rec) : (rec.prop_address || "");
   document.getElementById("crm-title").textContent =
     cfg.label + (rec.owner ? " - " + fmtOwner(rec.owner) : "") +
-    (rec.prop_address ? " - " + fmtTitle(rec.prop_address) : "");
+    (_genAddr ? " - " + fmtTitle(_genAddr) : "");
   const _crmBodyEl = document.getElementById("crm-body");
   // Clear any per-type data attribute set by other CRM views (e.g.
   // the MFC view sets data-crm-type="mfc" to enable full-width
@@ -15345,6 +15348,22 @@ function _propLeadLabel(rec, propKey) {
   return "";
 }
 
+// Full property address for CRM titles: "Street, City ST ZIP". Appends
+// city/state/zip only when the street doesn't already contain them — TFC
+// stores prop_address as one full-line string, so this avoids doubling.
+function _fullPropAddr(rec, streetOverride) {
+  if (!rec) return "";
+  const street = String(streetOverride != null ? streetOverride : (rec.prop_address || "")).trim();
+  const csz = [rec.prop_city, rec.prop_state, rec.prop_zip].filter(Boolean).join(" ").trim();
+  if (!street) return csz;
+  if (!csz) return street;
+  const su = street.toUpperCase();
+  const zip5 = String(rec.prop_zip || "").split("-")[0].trim();
+  const cityU = String(rec.prop_city || "").toUpperCase().trim();
+  if ((zip5 && su.indexOf(zip5) !== -1) || (cityU && su.indexOf(cityU) !== -1)) return street;
+  return street + ", " + csz;
+}
+
 function _autoResearch(rec, propKey) {
   const T = _arTargetIdents(rec, propKey);
   if (!T.ncad && !T.pid && !T.addr) return [];
@@ -15801,7 +15820,8 @@ function openPropCrm(propKey, rec, ctx) {
 
   const _propLead = (typeof _propLeadLabel === "function") ? _propLeadLabel(rec, propKey) : "";
   const _propNm = fmtOwner(rec.owner || "") || "Property";
-  const _propAd = rec.prop_address ? fmtTitle(rec.prop_address) : "";
+  const _propAdRaw = (typeof _fullPropAddr === "function") ? _fullPropAddr(rec) : (rec.prop_address || "");
+  const _propAd = _propAdRaw ? fmtTitle(_propAdRaw) : "";
   document.getElementById("crm-title").textContent =
     (_propLead ? _propLead + " - " : "") + _propNm + (_propAd ? " - " + _propAd : "");
 
