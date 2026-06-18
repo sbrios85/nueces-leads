@@ -2757,6 +2757,9 @@
   .ar-combo-wleft .ar-combo-label:last-child,
   .ar-combo-wleft .ar-combo-box .ar-combo-val:last-child { flex: 0.8 1 0; }
   .ar-combo-wleft .ar-combo-label:first-child { white-space: nowrap; }
+  /* Locked CV row: combo (left) + narrative (right), always one row */
+  .ar-cvrow { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 9px 12px; }
+  .ar-cvrow > .ar-cv-cell { min-width: 0; }
   .ar-combo-val.ar-expandable { cursor: pointer; padding-right: 16px; position: relative; }
   .ar-combo-val.ar-expandable::after {
     content: "\25B8"; position: absolute; right: 4px; top: 3px;
@@ -2802,7 +2805,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17j</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17l</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -15113,6 +15116,51 @@ function _arShortDate(s) {
   if (!m) return String(s || "");
   return (+m[2]) + "-" + (+m[3]) + "-" + m[1].slice(2);
 }
+// Mailing address for the parcel — from the opened record first, else from
+// any matched dashboard record (CCLN/CV store it as "street  City, ST ZIP").
+function _arMailingParts(r) {
+  if (!r) return null;
+  const ma = String(r.mail_address || "").trim();
+  if (ma) {
+    const di = ma.indexOf("  ");   // pipeline joins street + "City, ST ZIP" with a double space
+    if (di > -1) return { l1: ma.slice(0, di).trim(), l2: ma.slice(di + 2).trim() };
+    const csz = [r.mail_city, r.mail_state, r.mail_zip].filter(Boolean).join(" ").trim();
+    return { l1: ma, l2: csz };
+  }
+  return null;
+}
+function _arMailing(rec, propKey) {
+  let m = _arMailingParts(rec);
+  if (m) return m;
+  const T = _arTargetIdents(rec, propKey);
+  const scan = (arr) => {
+    if (!Array.isArray(arr)) return null;
+    for (const r of arr) { if (_arMatch(T, _arIdents(r))) { const x = _arMailingParts(r); if (x) return x; } }
+    return null;
+  };
+  return (typeof CCLN_RAW !== "undefined" && scan(CCLN_RAW))
+      || (typeof CV_RAW !== "undefined" && scan(CV_RAW))
+      || (typeof DELQ_RAW !== "undefined" && scan(DELQ_RAW))
+      || (typeof DEFERRAL_RAW !== "undefined" && scan(DEFERRAL_RAW))
+      || (typeof FC_RAW !== "undefined" && scan(FC_RAW))
+      || null;
+}
+// First non-empty value of a field across the opened record + matched parcel records.
+function _arPickField(rec, propKey, field) {
+  if (rec && rec[field]) return rec[field];
+  const T = _arTargetIdents(rec, propKey);
+  const scan = (arr) => {
+    if (!Array.isArray(arr)) return null;
+    for (const r of arr) { if (_arMatch(T, _arIdents(r)) && r[field]) return r[field]; }
+    return null;
+  };
+  return (typeof CCLN_RAW !== "undefined" && scan(CCLN_RAW))
+      || (typeof CV_RAW !== "undefined" && scan(CV_RAW))
+      || (typeof DELQ_RAW !== "undefined" && scan(DELQ_RAW))
+      || (typeof DEFERRAL_RAW !== "undefined" && scan(DEFERRAL_RAW))
+      || (typeof FC_RAW !== "undefined" && scan(FC_RAW))
+      || "";
+}
 // ---- Auto-Research field ordering (user-draggable, persisted) ----
 const AR_ORDER_KEY = "nueces_ar_field_order";
 const AR_DEFAULT_ORDER = ["delinquent", "years_behind", "tax_status",
@@ -15372,9 +15420,39 @@ function _autoResearchHtml(rec, propKey) {
         </div>
       </div>`;
   };
+  // Locked CV row: date|violation combo (left) + violation narrative (right),
+  // full-width on its own row so they always stay together side by side.
+  const cvRow = (dt, vio, narr) => {
+    const left = `<div class="ar-combo ar-combo-wleft ar-cv-cell">
+        <div class="ar-combo-labels">
+          <span class="ar-combo-label">${esc(dt.label)}${_info(dt)}</span>
+          <span class="ar-combo-label">${esc(vio.label)}${_info(vio)}</span>
+        </div>
+        <div class="ar-box ar-combo-box">
+          ${_comboVal(dt)}
+          <span class="ar-combo-inner-div"></span>
+          ${_comboVal(vio)}
+        </div>
+      </div>`;
+    const nTitle = narr.title ? ` title="${esc(narr.title)}"` : "";
+    const right = `<div class="mfc-custom-field ar-cv-cell">
+        <label>${esc(narr.label)}${_info(narr)}</label>
+        <div class="ar-box ar-expandable" onclick="this.classList.toggle('expanded')"${nTitle}>${esc(narr.value)}</div>
+      </div>`;
+    return `<div class="ar-cvrow">${left}${right}</div>`;
+  };
+  const cvAll = byKey["date_identified"] && byKey["violation"] && byKey["violation_narrative"];
   const out = [];
   for (const r of rows) {
     if (consumed[r.key]) continue;
+    // CV present → keep date/violation + narrative locked on their own row
+    if (cvAll && (r.key === "date_identified" || r.key === "violation" || r.key === "violation_narrative")) {
+      if (r.key === "date_identified") {
+        out.push(cvRow(byKey["date_identified"], byKey["violation"], byKey["violation_narrative"]));
+        consumed["date_identified"] = 1; consumed["violation"] = 1; consumed["violation_narrative"] = 1;
+      }
+      continue; // violation / narrative are emitted with the date_identified anchor
+    }
     const asLeft = AR_PAIRS.find(p => p[0] === r.key && byKey[p[1]] && !consumed[p[1]]);
     if (asLeft) {
       out.push(cellCombo(r, byKey[asLeft[1]]));
@@ -15664,7 +15742,8 @@ function openPropCrm(propKey, rec, ctx) {
   const _snapMail = [rec.mail_address, rec.mail_address2].filter(Boolean).join(" ");
   const _snapMailCity = [rec.mail_city, rec.mail_state, rec.mail_zip].filter(Boolean).join(" ");
   const _snapMarket = (rec.market_value != null && rec.market_value !== "") ? rec.market_value : rec.appraised_value;
-  const _snapLegal = (rec.legal || "").replace(/^Subdivision\s*-\s*Name:\s*/i, "");
+  const _mail = _arMailing(rec, propKey);
+  const _snapLegal = String(_arPickField(rec, propKey, "legal") || "").replace(/^Subdivision\s*-\s*Name:\s*/i, "");
   const _snapType = rec.property_type || (rec.state_class ? propTypeLabel(rec.state_class) : "");
   const _snapRow = (k, vHtml, sub) => `<div class="mfc-snap-row"><span class="k">${esc(k)}</span><span class="v">${vHtml}${sub ? `<div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(sub)}</div>` : ""}</span></div>`;
   const _snapHasMore = rec.total_owed || rec.years_behind || rec.lien_count || rec.ncad_prop_id || _snapMail;
@@ -15672,7 +15751,7 @@ function openPropCrm(propKey, rec, ctx) {
     <div class="mfc-snapshot">
       ${_snapRow("Owner", esc(fmtOwner(rec.owner || "")) || "—")}
       ${_snapRow("Property", esc(fmtTitle(rec.prop_address || "")) || "—", _snapPropCity ? fmtTitle(_snapPropCity) : "")}
-      ${_snapMail ? _snapRow("Mailing", esc(fmtTitle(_snapMail)), _snapMailCity ? fmtTitle(_snapMailCity) : "") : ""}
+      ${_mail ? _snapRow("Mailing", esc(fmtTitle(_mail.l1)), _mail.l2 ? fmtTitle(_mail.l2) : "") : ""}
       <div class="mfc-snap-row"><span class="k">Market Value</span><span class="v big">${_snapMoney(_snapMarket)}</span></div>
       ${_snapLegal ? _snapRow("Legal", esc(_snapLegal)) : ""}
     </div>`;
