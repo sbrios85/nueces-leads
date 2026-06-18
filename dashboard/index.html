@@ -2802,7 +2802,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17i</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17j</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -15673,19 +15673,8 @@ function openPropCrm(propKey, rec, ctx) {
       ${_snapRow("Owner", esc(fmtOwner(rec.owner || "")) || "—")}
       ${_snapRow("Property", esc(fmtTitle(rec.prop_address || "")) || "—", _snapPropCity ? fmtTitle(_snapPropCity) : "")}
       ${_snapMail ? _snapRow("Mailing", esc(fmtTitle(_snapMail)), _snapMailCity ? fmtTitle(_snapMailCity) : "") : ""}
-      ${_snapRow("NCAD Acct", esc(rec.ncad_account_num || "—"))}
       <div class="mfc-snap-row"><span class="k">Market Value</span><span class="v big">${_snapMoney(_snapMarket)}</span></div>
-      ${_snapType ? _snapRow("Type", esc(_snapType)) : ""}
       ${_snapLegal ? _snapRow("Legal", esc(_snapLegal)) : ""}
-      ${_snapHasMore ? `<details class="mfc-details">
-        <summary>More details</summary>
-        <div class="mfc-details-grid">
-          ${rec.total_owed ? `<div class="mfc-details-row"><span class="k">Delinquent Owed</span><span class="v">${_snapMoney(rec.total_owed)}</span></div>` : ""}
-          ${rec.years_behind ? `<div class="mfc-details-row"><span class="k">Years Behind</span><span class="v">${esc(String(rec.years_behind))}</span></div>` : ""}
-          ${rec.lien_count ? `<div class="mfc-details-row"><span class="k">City Liens</span><span class="v">${esc(String(rec.lien_count))} (${_snapMoney(rec.total_lien_amount)})</span></div>` : ""}
-          ${rec.ncad_prop_id ? `<div class="mfc-details-row"><span class="k">NCAD prop_id</span><span class="v">${esc(rec.ncad_prop_id)}</span></div>` : ""}
-        </div>
-      </details>` : ""}
     </div>`;
 
   delete body.dataset.crmType;   // .mfc-layout below triggers full-width via :has()
