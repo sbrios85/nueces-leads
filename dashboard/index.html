@@ -2736,6 +2736,11 @@
   .ar-field:active { cursor: grabbing; }
   .ar-field.ar-dragging { opacity: .45; }
   .ar-field-wide { grid-column: 1 / -1; }
+  .ar-combo .ar-combo-row { display: flex; align-items: stretch; gap: 0; }
+  .ar-combo-half { flex: 1 1 0; min-width: 0; }
+  .ar-combo-half:first-child { padding-right: 10px; }
+  .ar-combo-half:last-child { padding-left: 10px; }
+  .ar-combo-div { width: 1px; background: var(--border); align-self: stretch; margin: 2px 0; flex: 0 0 1px; }
   .ar-box.ar-expandable {
     cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     padding-right: 20px; position: relative;
@@ -2765,7 +2770,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17d</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17e</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -15076,6 +15081,10 @@ const AR_ORDER_KEY = "nueces_ar_field_order";
 const AR_DEFAULT_ORDER = ["delinquent", "years_behind", "tax_status", "exemptions",
   "date_identified", "violation", "violation_narrative", "lien_count",
   "total_lien_amount", "property_type"];
+// Field pairs rendered together in one cell, split 50/50 with a divider.
+// [leftKey, rightKey]. Both must be present for a property to combine;
+// otherwise each renders as a normal single field.
+const AR_PAIRS = [["delinquent", "years_behind"], ["exemptions", "property_type"]];
 function _arLoadOrder() {
   let saved = [];
   try { saved = JSON.parse(localStorage.getItem(AR_ORDER_KEY) || "[]"); } catch (e) { saved = []; }
@@ -15095,8 +15104,11 @@ function _arSortRows(rows) {
 }
 let _arDragKey = null;
 function _arApplyDomReorder(grid) {
-  const present = [].slice.call(grid.querySelectorAll(".ar-field[data-ar-key]"))
-    .map(n => n.dataset.arKey);
+  const present = [];
+  [].slice.call(grid.querySelectorAll(".ar-field[data-ar-key]")).forEach(n => {
+    present.push(n.dataset.arKey);
+    if (n.dataset.arPair) present.push(n.dataset.arPair);
+  });
   const full = _arLoadOrder();
   let i = 0;
   const out = full.map(k => (present.indexOf(k) >= 0) ? present[i++] : k);
@@ -15276,18 +15288,47 @@ function _autoResearchHtml(rec, propKey) {
     </div>`;
   }
   rows = _arSortRows(rows);
-  const items = rows.map(r => {
+  const byKey = {}; rows.forEach(r => { byKey[r.key] = r; });
+  const consumed = {};
+  // Inner label+box for one value (used in both single and combo cells)
+  const _inner = (r) => {
     const titleAttr = r.title ? ` title="${esc(r.title)}"` : "";
     const tagCls = r.verified ? "ar-srctag ok" : "ar-srctag";
     const tag = r.src ? ` <span class="${tagCls}">${esc(r.src)}</span>` : "";
-    const wide = r.expandable ? " ar-field-wide" : "";
     const boxCls = r.expandable ? "ar-box ar-expandable" : "ar-box";
     const boxClick = r.expandable ? ` onclick="this.classList.toggle('expanded')"` : "";
+    return `<label>${esc(r.label)}${tag}</label>
+        <div class="${boxCls}"${boxClick}${titleAttr}>${esc(r.value)}</div>`;
+  };
+  const cellSingle = (r) => {
+    const wide = r.expandable ? " ar-field-wide" : "";
     return `<div class="mfc-custom-field ar-field${wide}" draggable="true" data-ar-key="${esc(r.key || r.label)}" title="Drag to reorder">
-        <label>${esc(r.label)}${tag}</label>
-        <div class="${boxCls}"${boxClick}${titleAttr}>${esc(r.value)}</div>
+        ${_inner(r)}
       </div>`;
-  }).join("");
+  };
+  const cellCombo = (l, rt) => {
+    return `<div class="mfc-custom-field ar-field ar-combo" draggable="true" data-ar-key="${esc(l.key)}" data-ar-pair="${esc(rt.key)}" title="Drag to reorder">
+        <div class="ar-combo-row">
+          <div class="ar-combo-half">${_inner(l)}</div>
+          <div class="ar-combo-div"></div>
+          <div class="ar-combo-half">${_inner(rt)}</div>
+        </div>
+      </div>`;
+  };
+  const out = [];
+  for (const r of rows) {
+    if (consumed[r.key]) continue;
+    const asLeft = AR_PAIRS.find(p => p[0] === r.key && byKey[p[1]] && !consumed[p[1]]);
+    if (asLeft) {
+      out.push(cellCombo(r, byKey[asLeft[1]]));
+      consumed[r.key] = 1; consumed[asLeft[1]] = 1;
+      continue;
+    }
+    const asRight = AR_PAIRS.find(p => p[1] === r.key && byKey[p[0]] && !consumed[p[0]]);
+    if (asRight) continue; // its left partner will render the combo
+    out.push(cellSingle(r));
+  }
+  const items = out.join("");
   return `<div class="auto-research">
     <div class="auto-research-head">From your dashboards <span class="auto-research-tag">AUTO</span> <span class="ar-hint">drag to reorder</span></div>
     <div class="mfc-custom-grid ar-grid">${items}</div>
