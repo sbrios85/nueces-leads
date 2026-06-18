@@ -2792,9 +2792,12 @@
   .prop-leadpills { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .prop-leadpills.lead-right { margin-left: auto; }
   .prop-ext-links { display: flex; align-items: center; gap: 14px; }
-  .prop-ext-link { display: inline-flex; align-items: center; gap: 5px; }
-  .prop-ext-link .ncad-icon { vertical-align: middle; }
-  .prop-ext-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .prop-ext-link { display: inline-flex; align-items: center; gap: 6px; }
+  .prop-ext-link .ncad-icon { vertical-align: middle; width: 27px; height: 27px; }
+  .prop-ext-lbl { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .prop-bar-sep { width: 1px; height: 26px; background: var(--border); flex: 0 0 1px; }
+  .prop-bar-sep.push-right { margin-left: auto; }
+  .prop-leadtype-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
   .prop-leadpills.lead-mfc { justify-content: flex-end; margin-top: 8px; width: 100%; }
   .stack-badge-fc { background: rgba(168,85,247,.16); color: #c084fc; border-color: rgba(168,85,247,.4); }
 </style>
@@ -2810,7 +2813,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17n</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17o</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -15763,6 +15766,10 @@ function openPropCrm(propKey, rec, ctx) {
       <span class="prop-ext-link">${(typeof ncadCellHtml === "function") ? ncadCellHtml(_extRec) : ""}<span class="prop-ext-lbl">NCAD</span></span>
       <span class="prop-ext-link">${(typeof nctaxCellHtml === "function") ? nctaxCellHtml(_extRec) : ""}<span class="prop-ext-lbl">NCTAX</span></span>
     </div>`;
+  const _leadPills = _leadTypePillsHtml(rec, propKey, "");
+  const _leadGroup = _leadPills
+    ? `<span class="prop-bar-sep push-right"></span><span class="prop-leadtype-lbl">Lead Type</span>${_leadPills}`
+    : "";
   const _snapRow = (k, vHtml, sub) => `<div class="mfc-snap-row"><span class="k">${esc(k)}</span><span class="v">${vHtml}${sub ? `<div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(sub)}</div>` : ""}</span></div>`;
   const _snapHasMore = rec.total_owed || rec.years_behind || rec.lien_count || rec.ncad_prop_id || _snapMail;
   const snapshotCard = _propCtx.snapshot ? _propCtx.snapshot(rec) : `
@@ -15778,8 +15785,9 @@ function openPropCrm(propKey, rec, ctx) {
     <div class="prop-stagebar">
       <span class="prop-stagebar-lbl">Stage</span>
       <div class="prop-stages">${stageBtns}</div>
+      <span class="prop-bar-sep"></span>
       ${_extLinks}
-      ${_leadTypePillsHtml(rec, propKey, "lead-right")}
+      ${_leadGroup}
     </div>
     ${followupBannerHtml}
     <div class="mfc-layout">
