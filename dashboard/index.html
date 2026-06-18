@@ -2731,6 +2731,27 @@
   }
   .ar-srctag.ok { color: #22c55e; border-color: rgba(34,197,94,.5); background: rgba(34,197,94,.12); }
   .ar-none { font-size: 12px; color: var(--muted); font-style: italic; }
+  .ar-hint { font-size: 9px; font-weight: 600; color: var(--muted); opacity: .6; text-transform: none; letter-spacing: 0; }
+  .ar-field { cursor: grab; }
+  .ar-field:active { cursor: grabbing; }
+  .ar-field.ar-dragging { opacity: .45; }
+  .ar-field-wide { grid-column: 1 / -1; }
+  .ar-box.ar-expandable {
+    cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    padding-right: 20px; position: relative;
+  }
+  .ar-box.ar-expandable::after {
+    content: "\25B8"; position: absolute; right: 7px; top: 3px;
+    color: var(--muted); font-size: 11px;
+  }
+  .ar-box.ar-expandable.expanded {
+    white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.55;
+  }
+  .ar-box.ar-expandable.expanded::after { content: "\25BE"; }
+  .prop-leadpills { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .prop-leadpills.lead-right { margin-left: auto; }
+  .prop-leadpills.lead-mfc { justify-content: flex-end; margin-top: 8px; width: 100%; }
+  .stack-badge-fc { background: rgba(168,85,247,.16); color: #c084fc; border-color: rgba(168,85,247,.4); }
 </style>
 </head>
 <body>
@@ -2744,7 +2765,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17c</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17d</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -6025,6 +6046,7 @@ function openMfcCrm(docNum, sourceRecords) {
           </button>
         `).join("")}
       </div>
+      ${_leadTypePillsHtml(rec, null, "lead-mfc")}
       ${(() => {
         const _e = (loadFcCrm() || {})[docNum] || {};
         const _marked = !!_e.sold_at_auction;
@@ -15049,6 +15071,104 @@ function _arMoney(n) {
   if (!isFinite(v)) return null;
   return "$" + Math.round(v).toLocaleString("en-US");
 }
+// ---- Auto-Research field ordering (user-draggable, persisted) ----
+const AR_ORDER_KEY = "nueces_ar_field_order";
+const AR_DEFAULT_ORDER = ["delinquent", "years_behind", "tax_status", "exemptions",
+  "date_identified", "violation", "violation_narrative", "lien_count",
+  "total_lien_amount", "property_type"];
+function _arLoadOrder() {
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem(AR_ORDER_KEY) || "[]"); } catch (e) { saved = []; }
+  if (!Array.isArray(saved)) saved = [];
+  const out = saved.filter(k => AR_DEFAULT_ORDER.indexOf(k) >= 0);
+  for (const k of AR_DEFAULT_ORDER) if (out.indexOf(k) < 0) out.push(k);
+  return out;
+}
+function _arSaveOrder(arr) {
+  try { localStorage.setItem(AR_ORDER_KEY, JSON.stringify(arr)); } catch (e) {}
+}
+function _arSortRows(rows) {
+  const order = _arLoadOrder();
+  const rank = {}; order.forEach((k, i) => { rank[k] = i; });
+  return rows.slice().sort((a, b) => ((rank[a.key] == null ? 999 : rank[a.key])
+                                    - (rank[b.key] == null ? 999 : rank[b.key])));
+}
+let _arDragKey = null;
+function _arApplyDomReorder(grid) {
+  const present = [].slice.call(grid.querySelectorAll(".ar-field[data-ar-key]"))
+    .map(n => n.dataset.arKey);
+  const full = _arLoadOrder();
+  let i = 0;
+  const out = full.map(k => (present.indexOf(k) >= 0) ? present[i++] : k);
+  _arSaveOrder(out);
+}
+function _arInitDrag() {
+  if (_arInitDrag._done) return; _arInitDrag._done = true;
+  document.addEventListener("dragstart", (e) => {
+    const f = e.target.closest && e.target.closest(".ar-field[draggable]");
+    if (!f || !f.closest(".ar-grid")) return;
+    _arDragKey = f.dataset.arKey;
+    if (e.dataTransfer) { e.dataTransfer.effectAllowed = "move";
+      try { e.dataTransfer.setData("text/plain", _arDragKey); } catch (_) {} }
+    f.classList.add("ar-dragging");
+  });
+  document.addEventListener("dragend", (e) => {
+    const f = e.target.closest && e.target.closest(".ar-field");
+    if (f) f.classList.remove("ar-dragging");
+    _arDragKey = null;
+  });
+  document.addEventListener("dragover", (e) => {
+    const grid = e.target.closest && e.target.closest(".ar-grid");
+    if (!grid || !_arDragKey) return;
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+    const over = e.target.closest(".ar-field");
+    if (!over || over.dataset.arKey === _arDragKey) return;
+    const dragEl = [].slice.call(grid.querySelectorAll(".ar-field"))
+      .find(n => n.dataset.arKey === _arDragKey);
+    if (!dragEl || dragEl === over) return;
+    const rect = over.getBoundingClientRect();
+    const before = (e.clientY - rect.top) < rect.height / 2;
+    grid.insertBefore(dragEl, before ? over : over.nextSibling);
+  });
+  document.addEventListener("drop", (e) => {
+    const grid = e.target.closest && e.target.closest(".ar-grid");
+    if (!grid || !_arDragKey) return;
+    e.preventDefault();
+    _arApplyDomReorder(grid);
+    _arDragKey = null;
+  });
+}
+
+// ---- Lead-type pills (mirrors the Stack's Lead Type column) ----
+// Computed from the same datasets via parcel-identity matching, so a
+// property shows its lead types regardless of Stack inclusion rules.
+function _leadTypePillsHtml(rec, propKey, extraClass) {
+  const T = _arTargetIdents(rec, propKey);
+  if (!T.ncad && !T.pid && !T.addr) return "";
+  const countIn = (arr) => {
+    let n = 0; if (Array.isArray(arr)) for (const r of arr) { if (_arMatch(T, _arIdents(r))) n++; }
+    return n;
+  };
+  const pills = [];
+  if (typeof STACK_SOURCES !== "undefined") {
+    for (const s of STACK_SOURCES) {
+      let recs; try { recs = s.getRecords() || []; } catch (e) { recs = []; }
+      const n = countIn(recs);
+      if (n > 0) {
+        const label = n > 1 ? (s.label + " " + n) : s.label;
+        pills.push(`<span class="stack-badge ${s.badgeClass}">${esc(label)}</span>`);
+      }
+    }
+  }
+  if (typeof DELQ_RAW !== "undefined" && countIn(DELQ_RAW) > 0)
+    pills.push(`<span class="stack-badge stack-badge-delq">Delinquent Taxes</span>`);
+  if (typeof FC_RAW !== "undefined" && countIn(FC_RAW) > 0)
+    pills.push(`<span class="stack-badge stack-badge-fc">Foreclosure</span>`);
+  if (!pills.length) return "";
+  return `<div class="prop-leadpills${extraClass ? " " + extraClass : ""}">${pills.join("")}</div>`;
+}
+
 function _autoResearch(rec, propKey) {
   const T = _arTargetIdents(rec, propKey);
   if (!T.ncad && !T.pid && !T.addr) return [];
@@ -15072,11 +15192,11 @@ function _autoResearch(rec, propKey) {
     const owed = (typeof _delqOwed === "function") ? _delqOwed(d) : (Number(d.total_owed) || 0);
     const m = _arMoney(owed);
     if (m !== null) {
-      rows.push({ label: "Delinquent taxes", value: m,
+      rows.push({ key: "delinquent", label: "Delinquent taxes", value: m,
         src: verified ? "Tax Office \u2713" : "County roll", verified: !!verified });
     }
     if (d.years_behind != null && d.years_behind !== "") {
-      rows.push({ label: "Years behind", value: String(d.years_behind), src: "Delinquent" });
+      rows.push({ key: "years_behind", label: "Years behind", value: String(d.years_behind), src: "Delinquent" });
     }
     const f = d.flags || {};
     const stat = [];
@@ -15086,7 +15206,7 @@ function _autoResearch(rec, propKey) {
     if (f.payment_agreement) stat.push("Payment plan");
     if (f.bankruptcy) stat.push("Bankruptcy");
     if (!stat.length && d.tax_status) stat.push(String(d.tax_status));
-    if (stat.length) rows.push({ label: "Tax status", value: stat.join(", "), src: "Delinquent" });
+    if (stat.length) rows.push({ key: "tax_status", label: "Tax status", value: stat.join(", "), src: "Delinquent" });
     const code = d.state_prop_code || d.state_class || "";
     if (code && typeof propTypeLabel === "function") ptNcad = propTypeLabel(code);
   }
@@ -15097,7 +15217,7 @@ function _autoResearch(rec, propKey) {
     let ex = "";
     if (fd.exemptions) ex = String(fd.exemptions).split(";").filter(Boolean).join(", ");
     if (!ex && fd.deferral_types) ex = String(fd.deferral_types).split(";").filter(Boolean).join(", ");
-    if (ex) rows.push({ label: "Exemptions", value: ex, src: "Tax Deferral" });
+    if (ex) rows.push({ key: "exemptions", label: "Exemptions", value: ex, src: "Tax Deferral" });
     if (!ptNcad && fd.state_code && typeof propTypeLabel === "function") ptNcad = propTypeLabel(fd.state_code);
   }
 
@@ -15106,12 +15226,16 @@ function _autoResearch(rec, propKey) {
   if (cvs.length) {
     let c = cvs[0];
     for (const x of cvs) { if ((x.cited || "") > (c.cited || "")) c = x; }
-    if (c.cited) rows.push({ label: "Date identified", value: String(c.cited), src: "Code Violation" });
+    if (c.cited) rows.push({ key: "date_identified", label: "Date identified", value: String(c.cited), src: "Code Violation" });
     const vtype = c.violation_type || "", narr = c.violation_narrative || "";
     if (vtype || narr) {
       const more = cvs.length > 1 ? " (+" + (cvs.length - 1) + " more)" : "";
-      rows.push({ label: "Violation", value: (vtype || narr) + more,
+      rows.push({ key: "violation", label: "Violation", value: (vtype || narr) + more,
         title: (narr && narr !== vtype) ? narr : "", src: "Code Violation" });
+    }
+    if (narr) {
+      rows.push({ key: "violation_narrative", label: "Violation narrative",
+        value: narr, src: "Code Violation", expandable: true });
     }
     if (c.property_type) ptCv = c.property_type;
   }
@@ -15127,21 +15251,22 @@ function _autoResearch(rec, propKey) {
       else total += Number(r.pdf_amount || r.amount) || 0;
       if (!ptCcln && r.property_type) ptCcln = r.property_type;
     }
-    if (count) rows.push({ label: "Lien count", value: String(count), src: "CCLN" });
+    if (count) rows.push({ key: "lien_count", label: "Lien count", value: String(count), src: "CCLN" });
     const tm = _arMoney(total);
-    if (total > 0 && tm !== null) rows.push({ label: "Total lien amount", value: tm, src: "CCLN" });
+    if (total > 0 && tm !== null) rows.push({ key: "total_lien_amount", label: "Total lien amount", value: tm, src: "CCLN" });
   }
 
   // --- Property type (CCLN first, then NCAD class, then CV) ---
   const ptype = ptCcln || ptNcad || ptCv;
   if (ptype) {
     const psrc = ptCcln ? "CCLN" : (ptNcad ? "NCAD" : "Code Violation");
-    rows.push({ label: "Property type", value: ptype, src: psrc });
+    rows.push({ key: "property_type", label: "Property type", value: ptype, src: psrc });
   }
 
   return rows;
 }
 function _autoResearchHtml(rec, propKey) {
+  _arInitDrag();
   let rows;
   try { rows = _autoResearch(rec, propKey); } catch (e) { rows = []; }
   if (!rows || !rows.length) {
@@ -15150,18 +15275,22 @@ function _autoResearchHtml(rec, propKey) {
       <div class="ar-none">No linked dashboard data found for this property yet.</div>
     </div>`;
   }
+  rows = _arSortRows(rows);
   const items = rows.map(r => {
     const titleAttr = r.title ? ` title="${esc(r.title)}"` : "";
     const tagCls = r.verified ? "ar-srctag ok" : "ar-srctag";
     const tag = r.src ? ` <span class="${tagCls}">${esc(r.src)}</span>` : "";
-    return `<div class="mfc-custom-field ar-field">
+    const wide = r.expandable ? " ar-field-wide" : "";
+    const boxCls = r.expandable ? "ar-box ar-expandable" : "ar-box";
+    const boxClick = r.expandable ? ` onclick="this.classList.toggle('expanded')"` : "";
+    return `<div class="mfc-custom-field ar-field${wide}" draggable="true" data-ar-key="${esc(r.key || r.label)}" title="Drag to reorder">
         <label>${esc(r.label)}${tag}</label>
-        <div class="ar-box"${titleAttr}>${esc(r.value)}</div>
+        <div class="${boxCls}"${boxClick}${titleAttr}>${esc(r.value)}</div>
       </div>`;
   }).join("");
   return `<div class="auto-research">
-    <div class="auto-research-head">From your dashboards <span class="auto-research-tag">AUTO</span></div>
-    <div class="mfc-custom-grid">${items}</div>
+    <div class="auto-research-head">From your dashboards <span class="auto-research-tag">AUTO</span> <span class="ar-hint">drag to reorder</span></div>
+    <div class="mfc-custom-grid ar-grid">${items}</div>
   </div>`;
 }
 
@@ -15466,6 +15595,7 @@ function openPropCrm(propKey, rec, ctx) {
     <div class="prop-stagebar">
       <span class="prop-stagebar-lbl">Stage</span>
       <div class="prop-stages">${stageBtns}</div>
+      ${_leadTypePillsHtml(rec, propKey, "lead-right")}
     </div>
     ${followupBannerHtml}
     <div class="mfc-layout">
