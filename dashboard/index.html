@@ -2821,7 +2821,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026t</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026u</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -9175,6 +9175,40 @@ function _propTypeCategory(label) {
   return "other";
 }
 
+// ---- Per-dashboard property-type filter (mirrors the Stack's All/Houses/
+// Lots/Multifamily buttons). State per scope; the table list is filtered,
+// stat-card counts stay full (read from *_RAW). ----
+var _PROP_FILTERS = { ccln: "all", cv: "all", delq: "all", vh: "all" };
+function _rowPropCat(r) {
+  var lbl = (r && r.property_type) ||
+    ((typeof propTypeLabel === "function") ? propTypeLabel((r && (r.state_class || r.state_prop_code)) || "") : "");
+  return (typeof _propTypeCategory === "function") ? _propTypeCategory(lbl) : "";
+}
+function setDashPropFilter(scope, which) {
+  _PROP_FILTERS[scope] = which || "all";
+  var grp = document.querySelector('.dash-propfilter[data-scope="' + scope + '"]');
+  if (grp) grp.querySelectorAll(".stack-pf-btn").forEach(function (b) {
+    b.classList.toggle("active", b.dataset.pf === _PROP_FILTERS[scope]);
+  });
+  var fns = { ccln: (typeof applyCcln === "function" ? applyCcln : null),
+              cv:   (typeof applyCv   === "function" ? applyCv   : null),
+              delq: (typeof applyDelq === "function" ? applyDelq : null),
+              vh:   (typeof applyVacant === "function" ? applyVacant : null) };
+  if (fns[scope]) fns[scope]();
+}
+function _dashPropFilterBtns(scope, withLot) {
+  var cur = _PROP_FILTERS[scope] || "all";
+  var opts = withLot
+    ? [["all","All Properties"],["house","Residential Houses"],["lot","Residential Lots"],["multifamily","Multifamily"]]
+    : [["all","All Properties"],["house","Residential Houses"],["multifamily","Multifamily"]];
+  return '<span class="dash-propfilter" data-scope="' + scope +
+    '" style="margin-left:auto; display:inline-flex; gap:8px; flex-wrap:wrap; align-items:center;">' +
+    opts.map(function (o) {
+      return '<button type="button" class="stack-pf-btn' + (cur === o[0] ? " active" : "") +
+        '" data-pf="' + o[0] + '" onclick="setDashPropFilter(\'' + scope + '\',\'' + o[0] + '\')">' + o[1] + '</button>';
+    }).join("") + '</span>';
+}
+
 // Resolve a map place's property-type category from its records: a direct
 // property_type / state_prop_code on any record, else a DELQ lookup by NCAD
 // account number (DELQ carries the NCAD state property code).
@@ -10332,6 +10366,7 @@ function applyCv() {
   }
   if (emptyEl) emptyEl.hidden = true;
   CV_FILTERED = CV_RAW.slice();
+  if (_PROP_FILTERS.cv !== "all") CV_FILTERED = CV_FILTERED.filter(function(r){ return _rowPropCat(r) === _PROP_FILTERS.cv; });
   const type = CV_SORT_TYPES[CV_SORT_KEY] || "string";
   CV_FILTERED.sort((a, b) => _cvCompare(a, b, CV_SORT_KEY, CV_SORT_DIR, type));
   renderCv();
@@ -10546,7 +10581,8 @@ function renderCvStats() {
     <div class="stat"><div class="v">${_vc("PMC Standards")}</div><div class="k">PMC Standards</div></div>
     <div class="stat"><div class="v">$${Math.round(totMv).toLocaleString()}</div><div class="k">Total market value</div></div>
     ${fresh}
-    ${cvNext}`;
+    ${cvNext}
+    ${_dashPropFilterBtns('cv', true)}`;
 }
 
 function closeCvStatusMenu() {
@@ -10660,6 +10696,7 @@ function applyVacant() {
   }
   if (emptyEl) emptyEl.hidden = true;
   VACANT_FILTERED = VACANT_RAW.slice();
+  if (_PROP_FILTERS.vh !== "all") VACANT_FILTERED = VACANT_FILTERED.filter(function(r){ return _rowPropCat(r) === _PROP_FILTERS.vh; });
   const type = VH_SORT_TYPES[VH_SORT_KEY] || "string";
   VACANT_FILTERED.sort((a, b) => _cvCompare(a, b, VH_SORT_KEY, VH_SORT_DIR, type));
   renderVacant();
@@ -10774,7 +10811,7 @@ function renderVacantStats() {
     <div class="stats-title">Vacant Houses</div>
     <div class="stat"><div class="v">${total.toLocaleString()}</div><div class="k">Total</div></div>
     <div class="stat"><div class="v">${vb.toLocaleString()}</div><div class="k">Vacant Building</div></div>
-    <div class="stat"><div class="v">${uvb.toLocaleString()}</div><div class="k">Unsecured Vacant Building</div></div>`;
+    <div class="stat"><div class="v">${uvb.toLocaleString()}</div><div class="k">Unsecured Vacant Building</div></div>${_dashPropFilterBtns('vh', false)}`;
 }
 
 // ============================================================
@@ -12295,6 +12332,7 @@ function renderCclnStats() {
       <div class="stat"><div class="v">${nWorking.toLocaleString()}</div><div class="k">Working</div></div>
       <div class="stat"><div class="v">${nDead.toLocaleString()}</div><div class="k">Dead</div></div>
       ${cclnFreshHtml}
+      ${_dashPropFilterBtns('ccln', true)}
     `;
   }
 }
@@ -12365,6 +12403,7 @@ function applyCcln() {
   // normalized address (same logic as Stack tab).
   const consolidated = _cclnConsolidate(CCLN_RAW);
   CCLN_FILTERED = consolidated;
+  if (_PROP_FILTERS.ccln !== "all") CCLN_FILTERED = CCLN_FILTERED.filter(function(r){ return _rowPropCat(r) === _PROP_FILTERS.ccln; });
   const type = CCLN_SORT_TYPES[CCLN_SORT_KEY] || "string";
   CCLN_FILTERED.sort((a,b) =>
       _cclnCompare(a, b, CCLN_SORT_KEY, CCLN_SORT_DIR, type));
@@ -12413,6 +12452,7 @@ function applyDelq() {
   // Populated branch: sort, render rows, render stats.
   if (emptyEl) emptyEl.hidden = true;
   DELQ_FILTERED = DELQ_RAW.slice();
+  if (_PROP_FILTERS.delq !== "all") DELQ_FILTERED = DELQ_FILTERED.filter(function(r){ return _rowPropCat(r) === _PROP_FILTERS.delq; });
   if (DELQ_HIDE_BANKRUPTCY)
     DELQ_FILTERED = DELQ_FILTERED.filter(r => !(r.flags && r.flags.bankruptcy));
   const type = DELQ_SORT_TYPES[DELQ_SORT_KEY] || "string";
@@ -12505,10 +12545,11 @@ function renderDelqStats() {
     <div class="stat"><div class="v">${nBankruptcy.toLocaleString()}</div><div class="k">Bankruptcy</div></div>
     ${delqFreshHtml}
     ${delqNextHtml}
+    ${_dashPropFilterBtns('delq', true)}
     <button id="delq-hide-bankruptcy-btn" type="button"
         onclick="DELQ_HIDE_BANKRUPTCY = !DELQ_HIDE_BANKRUPTCY; applyDelq();"
         title="Hide bankruptcy-flagged properties (automatic stay paused collection)"
-        style="margin-left:auto; align-self:center; cursor:pointer; padding:8px 14px;
+        style="margin-left:8px; align-self:center; cursor:pointer; padding:8px 14px;
                border-radius:8px; font-size:13px; font-weight:600;
                border:1px solid ${DELQ_HIDE_BANKRUPTCY ? '#c084fc' : 'rgba(148,163,184,.4)'};
                background:${DELQ_HIDE_BANKRUPTCY ? 'rgba(168,85,247,.15)' : 'transparent'};
