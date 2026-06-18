@@ -2751,6 +2751,12 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .ar-combo-inner-div { width: 1px; align-self: stretch; background: var(--border); margin: 3px 0; flex: 0 0 1px; }
+  /* Wide-left combo: left label/value get more room (e.g. "Total lien amount") */
+  .ar-combo-wleft .ar-combo-label:first-child,
+  .ar-combo-wleft .ar-combo-box .ar-combo-val:first-child { flex: 1.5 1 0; }
+  .ar-combo-wleft .ar-combo-label:last-child,
+  .ar-combo-wleft .ar-combo-box .ar-combo-val:last-child { flex: 0.8 1 0; }
+  .ar-combo-wleft .ar-combo-label:first-child { white-space: nowrap; }
   /* Info icon: circled "i" by the label; native tooltip shows the source */
   .ar-info {
     display: inline-flex; align-items: center; justify-content: center;
@@ -2789,7 +2795,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17g</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 2026-06-17h</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -15114,6 +15120,9 @@ const AR_PAIRS = [
   ["total_lien_amount", "lien_count"],
   ["date_identified", "violation"],
 ];
+// Combos whose LEFT label is long: give the left side extra width so the
+// label fits on one line (divider sits a bit past the midpoint).
+const AR_COMBO_WIDE_LEFT = { total_lien_amount: true };
 function _arLoadOrder() {
   let saved = [];
   try { saved = JSON.parse(localStorage.getItem(AR_ORDER_KEY) || "[]"); } catch (e) { saved = []; }
@@ -15338,7 +15347,8 @@ function _autoResearchHtml(rec, propKey) {
   };
   // Combo: two half-labels above ONE bordered box split by an internal divider.
   const cellCombo = (l, rt) => {
-    return `<div class="mfc-custom-field ar-field ar-combo" draggable="true" data-ar-key="${esc(l.key)}" data-ar-pair="${esc(rt.key)}" title="Drag to reorder">
+    const wideCls = AR_COMBO_WIDE_LEFT[l.key] ? " ar-combo-wleft" : "";
+    return `<div class="mfc-custom-field ar-field ar-combo${wideCls}" draggable="true" data-ar-key="${esc(l.key)}" data-ar-pair="${esc(rt.key)}" title="Drag to reorder">
         <div class="ar-combo-labels">
           <span class="ar-combo-label">${esc(l.label)}${_info(l)}</span>
           <span class="ar-combo-label">${esc(rt.label)}${_info(rt)}</span>
