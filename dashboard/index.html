@@ -2842,7 +2842,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ag</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ah</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3460,12 +3460,18 @@
   <div class="stats" id="workov-stats"></div>
   <table id="workov-table" class="stack-table">
     <thead><tr>
-      <th data-sort="status" onclick="_workOvSetSort('status')" style="width:140px;cursor:pointer;">Status</th>
+      <th data-sort="status" onclick="_workOvSetSort('status')" style="width:100px;cursor:pointer;">Status</th>
       <th data-sort="followup" onclick="_workOvSetSort('followup')" style="width:96px;cursor:pointer;">Follow-up</th>
-      <th data-sort="owner" onclick="_workOvSetSort('owner')" style="width:210px;cursor:pointer;">Former Owner</th>
-      <th data-sort="prop_address" onclick="_workOvSetSort('prop_address')" style="width:260px;cursor:pointer;">Property</th>
-      <th data-sort="balance" onclick="_workOvSetSort('balance')" style="width:130px;cursor:pointer;">Overage Balance</th>
-      <th data-sort="case_number" onclick="_workOvSetSort('case_number')" style="width:160px;cursor:pointer;">Case #</th>
+      <th data-sort="owner" onclick="_workOvSetSort('owner')" style="width:200px;cursor:pointer;">Owner</th>
+      <th style="width:180px;">New Owner</th>
+      <th data-sort="prop_address" onclick="_workOvSetSort('prop_address')" style="width:200px;cursor:pointer;">Property Address</th>
+      <th style="width:50px;">Map</th>
+      <th data-sort="balance" onclick="_workOvSetSort('balance')" style="width:130px;cursor:pointer;">Excess Proceeds</th>
+      <th data-sort="case_number" onclick="_workOvSetSort('case_number')" style="width:150px;cursor:pointer;">Case #</th>
+      <th style="width:200px;">Legal Description</th>
+      <th style="width:180px;">Plaintiff</th>
+      <th style="width:50px;">NCAD</th>
+      <th style="width:72px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -3483,12 +3489,19 @@
   <div class="stats" id="workmov-stats"></div>
   <table id="workmov-table" class="stack-table">
     <thead><tr>
-      <th data-sort="status" onclick="_workMovSetSort('status')" style="width:140px;cursor:pointer;">Status</th>
+      <th data-sort="status" onclick="_workMovSetSort('status')" style="width:100px;cursor:pointer;">Status</th>
       <th data-sort="followup" onclick="_workMovSetSort('followup')" style="width:96px;cursor:pointer;">Follow-up</th>
-      <th data-sort="owner" onclick="_workMovSetSort('owner')" style="width:210px;cursor:pointer;">Former Owner</th>
-      <th data-sort="prop_address" onclick="_workMovSetSort('prop_address')" style="width:280px;cursor:pointer;">Property</th>
-      <th data-sort="surplus" onclick="_workMovSetSort('surplus')" style="width:130px;cursor:pointer;">Surplus</th>
-      <th data-sort="sale_date" onclick="_workMovSetSort('sale_date')" style="width:130px;cursor:pointer;">Sale Date</th>
+      <th data-sort="sale_date" onclick="_workMovSetSort('sale_date')" style="width:110px;cursor:pointer;">Sale Date</th>
+      <th data-sort="owner" onclick="_workMovSetSort('owner')" style="width:200px;cursor:pointer;">Prior Owner</th>
+      <th data-sort="prop_address" onclick="_workMovSetSort('prop_address')" style="width:210px;cursor:pointer;">Property Address</th>
+      <th style="width:50px;">Map</th>
+      <th style="width:200px;">Last Known Address</th>
+      <th style="width:110px;">Sale Amount</th>
+      <th style="width:110px;">Loan Balance</th>
+      <th data-sort="surplus" onclick="_workMovSetSort('surplus')" style="width:110px;cursor:pointer;">Overage</th>
+      <th style="width:160px;">Lender</th>
+      <th style="width:110px;">Foreclosure Doc#</th>
+      <th style="width:50px;">NCAD</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -6165,6 +6178,15 @@ function openMfcCrm(docNum, sourceRecords) {
               onclick="_mfcConvertToOverage('${esc(docNum)}')">→ Convert to Mortgage Overage</button>
     </div>`;
   })();
+  const _fu = _mfcComputeNextFollowup(entry);
+  let followupBannerHtml = "";
+  if (_fu) {
+    const _fuOff = _fu.isDue || Number(_fu.date.slice(0,4)) !== new Date().getFullYear();
+    const fuDateTxt = new Date(_fu.date + "T00:00:00").toLocaleDateString("en-US",
+      _fuOff ? { weekday: "short", month: "short", day: "numeric", year: "numeric" } : { weekday: "short", month: "short", day: "numeric" });
+    const moreTxt = _fu.count > 1 ? ` <span class="prop-fu-inline-more">+${_fu.count - 1}</span>` : "";
+    followupBannerHtml = `<span class="prop-bar-sep"></span><span class="prop-fu-inline${_fu.isDue ? " due" : ""}" title="${esc(_fu.label || "")}"><span class="prop-fu-inline-icon">${_fu.isDue ? "⚠" : "📌"}</span>${_fu.isDue ? "Follow-up due" : "Next follow-up"}: <strong>${esc(fuDateTxt)}</strong>${moreTxt}</span>`;
+  }
   const stageHtml = `
     <div class="prop-stagebar">
       <span class="prop-stagebar-lbl">Stage</span>
@@ -6182,15 +6204,6 @@ function openMfcCrm(docNum, sourceRecords) {
   // all attempts AND all contacts. Helps the user see "what needs
   // attention" without scanning the whole CRM. Shows nothing when
   // there are no follow-ups at all.
-  const _fu = _mfcComputeNextFollowup(entry);
-  let followupBannerHtml = "";
-  if (_fu) {
-    const _fuOff = _fu.isDue || Number(_fu.date.slice(0,4)) !== new Date().getFullYear();
-    const fuDateTxt = new Date(_fu.date + "T00:00:00").toLocaleDateString("en-US",
-      _fuOff ? { weekday: "short", month: "short", day: "numeric", year: "numeric" } : { weekday: "short", month: "short", day: "numeric" });
-    const moreTxt = _fu.count > 1 ? ` <span class="prop-fu-inline-more">+${_fu.count - 1}</span>` : "";
-    followupBannerHtml = `<span class="prop-bar-sep"></span><span class="prop-fu-inline${_fu.isDue ? " due" : ""}" title="${esc(_fu.label || "")}"><span class="prop-fu-inline-icon">${_fu.isDue ? "⚠" : "📌"}</span>${_fu.isDue ? "Follow-up due" : "Next follow-up"}: <strong>${esc(fuDateTxt)}</strong>${moreTxt}</span>`;
-  }
   // --- Outreach attempts log ---
   // Each attempt may have a `followup` ISO date (set via the
   // attempt modal's "Try again on" field). The badge logic:
@@ -8075,6 +8088,15 @@ function openTfcCrm(uid, sourceRecords) {
   const _tfcLeadGroup = _tfcLeadPills
     ? `<span class="prop-bar-sep push-right"></span><span class="prop-leadtype-lbl">Lead Type</span>${_tfcLeadPills}`
     : "";
+  const _fu = _tfcComputeNextFollowup(entry);
+  let followupBannerHtml = "";
+  if (_fu) {
+    const _fuOff = _fu.isDue || Number(_fu.date.slice(0,4)) !== new Date().getFullYear();
+    const fuDateTxt = new Date(_fu.date + "T00:00:00").toLocaleDateString("en-US",
+      _fuOff ? { weekday: "short", month: "short", day: "numeric", year: "numeric" } : { weekday: "short", month: "short", day: "numeric" });
+    const moreTxt = _fu.count > 1 ? ` <span class="prop-fu-inline-more">+${_fu.count - 1}</span>` : "";
+    followupBannerHtml = `<span class="prop-bar-sep"></span><span class="prop-fu-inline${_fu.isDue ? " due" : ""}" title="${esc(_fu.label || "")}"><span class="prop-fu-inline-icon">${_fu.isDue ? "⚠" : "📌"}</span>${_fu.isDue ? "Follow-up due" : "Next follow-up"}: <strong>${esc(fuDateTxt)}</strong>${moreTxt}</span>`;
+  }
   const stageHtml = `
     <div class="prop-stagebar">
       <span class="prop-stagebar-lbl">Stage</span>
@@ -8087,15 +8109,6 @@ function openTfcCrm(uid, sourceRecords) {
   `;
 
   // -------- Follow-up banner (top of CRM) --------
-  const _fu = _tfcComputeNextFollowup(entry);
-  let followupBannerHtml = "";
-  if (_fu) {
-    const _fuOff = _fu.isDue || Number(_fu.date.slice(0,4)) !== new Date().getFullYear();
-    const fuDateTxt = new Date(_fu.date + "T00:00:00").toLocaleDateString("en-US",
-      _fuOff ? { weekday: "short", month: "short", day: "numeric", year: "numeric" } : { weekday: "short", month: "short", day: "numeric" });
-    const moreTxt = _fu.count > 1 ? ` <span class="prop-fu-inline-more">+${_fu.count - 1}</span>` : "";
-    followupBannerHtml = `<span class="prop-bar-sep"></span><span class="prop-fu-inline${_fu.isDue ? " due" : ""}" title="${esc(_fu.label || "")}"><span class="prop-fu-inline-icon">${_fu.isDue ? "⚠" : "📌"}</span>${_fu.isDue ? "Follow-up due" : "Next follow-up"}: <strong>${esc(fuDateTxt)}</strong>${moreTxt}</span>`;
-  }
 
   // -------- Outreach attempts log --------
   const _todayIso = new Date().toISOString().slice(0, 10);
@@ -11629,24 +11642,17 @@ function _workTaxSetSort(key) {
   renderWorkTax();
 }
 function _workOvRow(item) {
-  const c = item.rec;
-  const eff = (typeof _tovEff === "function") ? _tovEff(c) : {};
-  const dash = '<span style="color:var(--muted)">\u2014</span>';
-  const tr = document.createElement("tr");
-  const pillClass = OVERAGE_PILL_CLASS[item.stage] || "status-new";
-  const stageDef = OVERAGE_STAGES.find(s => s.key === item.stage) || OVERAGE_STAGES[0];
-  const owner = esc(fmtOwner(c.owner || "")) || dash;
-  const addr = eff.prop_address ? esc(fmtTitle(eff.prop_address)) : dash;
-  const bal = Number(c.balance) || 0;
-  tr.innerHTML =
-    '<td><span class="pill status ' + pillClass + '" onclick="openWorkOvStatusMenu(event, \'' + esc(c.case_number) + '\', \'' + item.stage + '\')">' + esc(stageDef.label) + ' \u25BE</span></td>' +
-    '<td>' + _fuCellFromDates(item._fuDates || []) + '</td>' +
-    '<td>' + owner + '</td>' +
-    '<td>' + addr + '</td>' +
-    '<td>' + (bal > 0 ? "<strong>$" + bal.toLocaleString("en-US", { maximumFractionDigits: 0 }) + "</strong>" : "$0") + '</td>' +
-    '<td>' + esc(c.case_number || "") + '</td>';
-  tr.style.cursor = "pointer";
-  tr.addEventListener("click", (ev) => { if (ev.target.closest(".pill.status, .ccln-status-menu")) return; openTovCrm(c.case_number); });
+  // Reuse the lead-type Tax Overages row so the Work table shows every column
+  // (New Owner, Legal, Plaintiff, NCAD/NCTAX, Map). Then swap the status pill
+  // for the in-table Work stage menu and insert Follow-up as column 2.
+  const tr = buildOverageRow(item.rec);
+  const def = OVERAGE_STAGES.find(s => s.key === item.stage) || OVERAGE_STAGES[0];
+  const pc = OVERAGE_PILL_CLASS[item.stage] || "status-new";
+  if (tr.children[0]) tr.children[0].innerHTML =
+    '<span class="pill status ' + pc + '" onclick="openWorkOvStatusMenu(event, \'' + esc(item.rec.case_number) + '\', \'' + item.stage + '\')">' + esc(def.label) + ' \u25BE</span>';
+  const fuTd = document.createElement("td");
+  fuTd.innerHTML = _fuCellFromDates(item._fuDates || []);
+  if (tr.children[1]) tr.insertBefore(fuTd, tr.children[1]); else tr.appendChild(fuTd);
   return tr;
 }
 // Worked-then-terminal overages: leads you've touched (have a stored stage)
@@ -11695,7 +11701,7 @@ function renderWorkOverages() {
   const frag = document.createDocumentFragment();
   for (const item of list) frag.appendChild(_workOvRow(item));
   if (dead.length) {
-    frag.appendChild(_deadBar(dead.length, WORKOV_SHOW_DEAD, 5, () => {
+    frag.appendChild(_deadBar(dead.length, WORKOV_SHOW_DEAD, 12, () => {
       WORKOV_SHOW_DEAD = !WORKOV_SHOW_DEAD; renderWorkOverages();
     }));
     if (WORKOV_SHOW_DEAD) for (const item of dead) frag.appendChild(_workOvRow(item));
@@ -11728,26 +11734,17 @@ function _workMovDeadList() {
     .sort((a, b) => _moSurplus(b.rec) - _moSurplus(a.rec));
 }
 function _workMovRow(item) {
-  const rec = item.rec;
-  const dash = '<span style="color:var(--muted)">\u2014</span>';
-  const tr = document.createElement("tr");
-  const pillClass = STACK_PILL_CLASS[item.stage] || "status-new";
-  const stageDef = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
-  const owner = esc(fmtOwner(rec.owner || "")) || dash;
-  const city = [rec.prop_city, rec.prop_state, rec.prop_zip].filter(Boolean).join(" ");
-  const addr = rec.prop_address
-    ? esc(fmtTitle(rec.prop_address)) + (city ? `<br><small style="color:var(--muted)">${esc(fmtTitle(city))}</small>` : "")
-    : dash;
-  const surplus = _moSurplus(rec);
-  tr.innerHTML =
-    '<td><span class="pill status ' + pillClass + '" onclick="openWorkMovStatusMenu(event, \'' + esc(rec.id) + '\', \'' + item.stage + '\')">' + esc(stageDef.label) + ' \u25BE</span></td>' +
-    '<td>' + _fuCellFromDates(item._fuDates || []) + '</td>' +
-    '<td>' + owner + '</td>' +
-    '<td>' + addr + '</td>' +
-    '<td>' + (rec.winning_bid > 0 ? '<strong style="' + (surplus > 0 ? 'color:#22c55e' : '') + '">$' + surplus.toLocaleString("en-US", { maximumFractionDigits: 0 }) + '</strong>' : dash) + '</td>' +
-    '<td>' + (esc(rec.sale_date || "") || dash) + '</td>';
-  tr.style.cursor = "pointer";
-  tr.addEventListener("click", (ev) => { if (ev.target.closest(".pill.status, .ccln-status-menu")) return; openMovCrm(rec.id); });
+  // Reuse the lead-type Mortgage Overages row for full column parity, then make
+  // the status pill open the in-table Work stage menu and insert Follow-up as
+  // column 2.
+  const tr = _buildMovRow(item.rec);
+  const def = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
+  const pc = STACK_PILL_CLASS[item.stage] || "status-new";
+  if (tr.children[0]) tr.children[0].innerHTML =
+    '<span class="pill status ' + pc + '" onclick="openWorkMovStatusMenu(event, \'' + esc(item.rec.id) + '\', \'' + item.stage + '\')">' + esc(def.label) + ' \u25BE</span>';
+  const fuTd = document.createElement("td");
+  fuTd.innerHTML = _fuCellFromDates(item._fuDates || []);
+  if (tr.children[1]) tr.insertBefore(fuTd, tr.children[1]); else tr.appendChild(fuTd);
   return tr;
 }
 function renderWorkMov() {
@@ -11779,7 +11776,7 @@ function renderWorkMov() {
   const frag = document.createDocumentFragment();
   for (const item of list) frag.appendChild(_workMovRow(item));
   if (dead.length) {
-    frag.appendChild(_deadBar(dead.length, WORKMOV_SHOW_DEAD, 5, () => {
+    frag.appendChild(_deadBar(dead.length, WORKMOV_SHOW_DEAD, 13, () => {
       WORKMOV_SHOW_DEAD = !WORKMOV_SHOW_DEAD; renderWorkMov();
     }));
     if (WORKMOV_SHOW_DEAD) for (const item of dead) frag.appendChild(_workMovRow(item));
