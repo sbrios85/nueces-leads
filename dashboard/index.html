@@ -2824,7 +2824,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026v</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026w</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3372,11 +3372,19 @@
   <div class="stats" id="workfc-stats"></div>
   <table id="workfc-table" class="stack-table">
     <thead><tr>
-      <th style="width: 140px;">Status</th>
-      <th style="width: 110px;">Type</th>
-      <th style="width: 220px;">Owner</th>
-      <th style="width: 260px;">Property Address</th>
-      <th style="width: 130px;">Sale Date</th>
+      <th style="width: 96px;">Status</th>
+      <th style="width: 92px;">Sales Type</th>
+      <th style="width: 150px;">Owner</th>
+      <th style="width: 180px;">Property Address</th>
+      <th style="width: 44px;">Map</th>
+      <th style="width: 150px;">Mailing Address</th>
+      <th style="width: 104px;">Loan Amt / Min Bid</th>
+      <th style="width: 96px;">Market Value</th>
+      <th style="width: 88px;">Loan Date</th>
+      <th style="width: 130px;">Lender</th>
+      <th style="width: 150px;">Legal Description</th>
+      <th style="width: 50px;">NCAD</th>
+      <th style="width: 64px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -14026,25 +14034,81 @@ function _workFcRow(item) {
   const r = item.rec;
   const dash = '<span style="color:var(--muted)">\u2014</span>';
   const tr = document.createElement("tr");
+  const key = item.kind === "mfc" ? r.doc_num : r.uid;
+  // Pull a field from the record, falling back to a matching parcel
+  // (CCLN/CV/DELQ/etc.) when the foreclosure record left it blank.
+  const pick = (f) => (r[f] != null && r[f] !== "") ? r[f]
+        : (typeof _arPickField === "function" ? (_arPickField(r, key, f) || "") : "");
   const pillClass = STACK_PILL_CLASS[item.stage] || "status-new";
   const stageDef = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
-  const typeBadge = item.kind === "mfc"
-    ? '<span class="pill" style="background:rgba(56,189,248,.15);color:#38bdf8;">Mortgage</span>'
-    : '<span class="pill" style="background:rgba(239,159,39,.15);color:#EF9F27;">Tax</span>';
+
+  // Sales Type pill: MFC -> Mortgage; TFC "FUTURE SALE" -> Future; TFC "SALE" -> Tax Sale.
+  let stLabel, stBg, stFg;
+  if (item.kind === "mfc") { stLabel = "Mortgage"; stBg = "rgba(56,189,248,.15)"; stFg = "#38bdf8"; }
+  else if (String(r.sale_type || "").toUpperCase() === "FUTURE SALE") { stLabel = "Future"; stBg = "rgba(168,85,247,.16)"; stFg = "#c084fc"; }
+  else { stLabel = "Tax Sale"; stBg = "rgba(239,159,39,.15)"; stFg = "#EF9F27"; }
+  const salesTypePill = `<span class="pill" style="background:${stBg};color:${stFg};">${stLabel}</span>`;
+
   const owner = (esc(fmtOwner(r.owner || "")) || dash);
-  const cityLine = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean).join(" ");
+
+  const cityLine = [pick("prop_city"), pick("prop_state"), pick("prop_zip")].filter(Boolean).join(" ");
   const prop = r.prop_address
     ? esc(fmtTitle(r.prop_address)) + (cityLine ? `<br><small style="color:var(--muted)">${esc(fmtTitle(cityLine))}</small>` : "")
     : dash;
-  const saleRaw = item.kind === "mfc" ? r.sale_date : (r.sale_date_only || r.sale_date);
+
+  // Resolved record for the icon-link cells (Map / NCAD / NCTAX).
+  const linkRec = {
+    ncad_prop_id:     pick("ncad_prop_id"),
+    ncad_account_num: pick("ncad_account_num"),
+    ncad_year:        r.ncad_year,
+    ncad_owner_id:    r.ncad_owner_id,
+    owner:            r.owner,
+    prop_address:     r.prop_address || pick("prop_address"),
+    prop_city:        pick("prop_city"),
+    prop_state:       pick("prop_state"),
+    prop_zip:         pick("prop_zip"),
+  };
+  const mapHtml   = (typeof mapCellHtml   === "function") ? mapCellHtml(linkRec)   : dash;
+  const ncadHtml  = (typeof ncadCellHtml  === "function") ? ncadCellHtml(linkRec)  : dash;
+  const nctaxHtml = (typeof nctaxCellHtml === "function") ? nctaxCellHtml(linkRec) : dash;
+
+  const mailCity = [pick("mail_city"), pick("mail_state"), pick("mail_zip")].filter(Boolean).join(" ");
+  const mailAddr = r.mail_address || pick("mail_address");
+  const mail = mailAddr
+    ? esc(fmtTitle(mailAddr)) + (mailCity ? `<br><small style="color:var(--muted)">${esc(fmtTitle(mailCity))}</small>` : "")
+    : dash;
+
+  // Loan Amount (MFC loan_amount) / Min Tax Bid (TFC minimum_bid).
+  const amtRaw = item.kind === "mfc" ? r.loan_amount : r.minimum_bid;
+  const amt = (amtRaw == null || amtRaw === "") ? dash : moneyFmt(amtRaw);
+
+  // Market Value: MFC stores appraised_value, TFC stores market_value.
+  const mvRaw = item.kind === "mfc" ? r.appraised_value : r.market_value;
+  const mv = (mvRaw == null || mvRaw === "") ? dash : moneyFmt(mvRaw);
+
+  // Loan Date + Lender are MFC-only fields.
+  const loanDate = item.kind === "mfc" ? (r.deed_date ? esc(formatDate(r.deed_date)) : dash) : dash;
+  const lender   = item.kind === "mfc" ? (esc(fmtTitle(r.lender || "")) || dash) : dash;
+
+  const legal = esc(r.legal || "") || dash;
+
   tr.innerHTML = `
     <td><span class="pill status ${pillClass}">${esc(stageDef.label)}</span></td>
-    <td>${typeBadge}</td>
+    <td>${salesTypePill}</td>
     <td>${owner}</td>
     <td>${prop}</td>
-    <td>${_fmtSaleDate(saleRaw)}</td>`;
+    <td>${mapHtml}</td>
+    <td>${mail}</td>
+    <td>${amt}</td>
+    <td>${mv}</td>
+    <td>${loanDate}</td>
+    <td>${lender}</td>
+    <td><small style="color:var(--muted)">${legal}</small></td>
+    <td>${ncadHtml}</td>
+    <td>${nctaxHtml}</td>`;
   tr.style.cursor = "pointer";
-  tr.addEventListener("click", () => {
+  tr.addEventListener("click", (e) => {
+    if (e.target.closest("a")) return;   // let Map/NCAD/NCTAX links work
     if (item.kind === "mfc") openMfcCrm(r.doc_num, FC_RAW);
     else openTfcCrm(r.uid, TFC_RAW);
   });
