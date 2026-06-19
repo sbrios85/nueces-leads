@@ -186,6 +186,16 @@
     line-height: 1.2;
     align-self: center;
   }
+  /* Follow-up tiles stand out — they drive the day's outreach work, so
+     they read louder than the descriptive count tiles beside them. */
+  .stat-card.fu-stat {
+    border: 1px solid var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-radius: 8px;
+    padding: 2px 12px;
+  }
+  .stat-card.fu-stat .num { color: var(--accent); font-weight: 700; }
+  .stat-card.fu-stat .lbl { color: var(--accent); opacity: 0.85; }
   /* Per-tab freshness indicator — shows when each tab's data source
      was last refreshed. Floats to the right of the stats row via
      margin-left: auto so it sits at the opposite end from the title.
@@ -2826,7 +2836,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ab</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ad</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -2878,13 +2888,17 @@
   <div class="sidebar-section">
     <div class="sidebar-section-title">Work</div>
     <div class="nav-item" data-pane="foreclosureleads">
-      <span>Foreclosure Leads</span></div>
+      <span>Foreclosure Leads</span>
+      <span class="tab-count" id="workfc-count">—</span></div>
     <div class="nav-item" data-pane="taxccvcvstack">
-      <span>Tax CC Lien Vacant CV Stack</span></div>
+      <span>Tax CC Lien Vacant CV Stack</span>
+      <span class="tab-count" id="worktax-count">—</span></div>
     <div class="nav-item" data-pane="taxoverages">
-      <span>Tax Overages</span></div>
+      <span>Tax Overages</span>
+      <span class="tab-count" id="workov-count">—</span></div>
     <div class="nav-item" data-pane="mortgageoverages">
-      <span>Mortgage Overages</span></div>
+      <span>Mortgage Overages</span>
+      <span class="tab-count" id="workmov-count">—</span></div>
   </div>
 
   <div class="sidebar-map">
@@ -9761,18 +9775,29 @@ function renderToday() {
   // which covers CCLN / Delinquent / CV / Vacant / Tax Deferral).
   const _todayNow = _todayISO();
   const propStore = (function () { try { return loadCrmStore("prop") || {}; } catch (e) { return {}; } })();
+  _updateWorkCounts();
   const fups = [];
   for (const item of _workForeclosureList()) {
     const store = item.kind === "mfc" ? mfcCrm : tfcCrm;
     const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
-    const due = _soonestDueFollowup((store[id] || {}).attempts, _todayNow);
+    const due = _soonestDueFollowup(_fuItems(store[id]), _todayNow);
     if (due) fups.push({ kind: item.kind, id, due,
       name: item.rec.owner || item.rec.prop_address || ("Lead " + id), overdue: due < _todayNow });
   }
   for (const entry of _workTaxList()) {
-    const due = _soonestDueFollowup((propStore[entry.key] || {}).attempts, _todayNow);
+    const due = _soonestDueFollowup(_fuItems(propStore[entry.key]), _todayNow);
     if (due) fups.push({ kind: "prop", id: entry.key, due,
       name: entry.owner || entry.prop_address || entry.key, overdue: due < _todayNow });
+  }
+  for (const x of _workOverageList()) {
+    const due = _soonestDueFollowup(_fuItems(propStore[x.rec.case_number]), _todayNow);
+    if (due) fups.push({ kind: "prop", id: x.rec.case_number, due,
+      name: x.rec.owner || x.rec.prop_address || x.rec.case_number, overdue: due < _todayNow });
+  }
+  for (const x of _workMovList()) {
+    const due = _soonestDueFollowup(_fuItems(propStore[x.rec.id]), _todayNow);
+    if (due) fups.push({ kind: "prop", id: x.rec.id, due,
+      name: x.rec.owner || x.rec.prop_address || x.rec.id, overdue: due < _todayNow });
   }
   fups.sort((a, b) => a.due.localeCompare(b.due));
   const fupOverdue = fups.filter(f => f.overdue).length;
@@ -9792,6 +9817,16 @@ function renderToday() {
     if (due) coldList.push({ kind: "prop", id: entry.key, due,
       name: entry.owner || entry.prop_address || entry.key });
   }
+  for (const x of _workOverageList()) {
+    const due = _coldDueDate((propStore[x.rec.case_number] || {}).attempts, _todayNow);
+    if (due) coldList.push({ kind: "prop", id: x.rec.case_number, due,
+      name: x.rec.owner || x.rec.prop_address || x.rec.case_number });
+  }
+  for (const x of _workMovList()) {
+    const due = _coldDueDate((propStore[x.rec.id] || {}).attempts, _todayNow);
+    if (due) coldList.push({ kind: "prop", id: x.rec.id, due,
+      name: x.rec.owner || x.rec.prop_address || x.rec.id });
+  }
   coldList.sort((a, b) => a.due.localeCompare(b.due));
 
   // ===== 1c. Follow-ups this week — Work-section leads with a follow-up
@@ -9806,14 +9841,24 @@ function renderToday() {
   for (const item of _workForeclosureList()) {
     const store = item.kind === "mfc" ? mfcCrm : tfcCrm;
     const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
-    const due = _soonestUpcomingFollowup((store[id] || {}).attempts, _todayNow);
+    const due = _soonestUpcomingFollowup(_fuItems(store[id]), _todayNow);
     if (due && due <= _weekAhead) weekList.push({ kind: item.kind, id, due,
       name: item.rec.owner || item.rec.prop_address || ("Lead " + id) });
   }
   for (const entry of _workTaxList()) {
-    const due = _soonestUpcomingFollowup((propStore[entry.key] || {}).attempts, _todayNow);
+    const due = _soonestUpcomingFollowup(_fuItems(propStore[entry.key]), _todayNow);
     if (due && due <= _weekAhead) weekList.push({ kind: "prop", id: entry.key, due,
       name: entry.owner || entry.prop_address || entry.key });
+  }
+  for (const x of _workOverageList()) {
+    const due = _soonestUpcomingFollowup(_fuItems(propStore[x.rec.case_number]), _todayNow);
+    if (due && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.case_number, due,
+      name: x.rec.owner || x.rec.prop_address || x.rec.case_number });
+  }
+  for (const x of _workMovList()) {
+    const due = _soonestUpcomingFollowup(_fuItems(propStore[x.rec.id]), _todayNow);
+    if (due && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.id, due,
+      name: x.rec.owner || x.rec.prop_address || x.rec.id });
   }
   weekList.sort((a, b) => a.due.localeCompare(b.due));
 
@@ -11437,7 +11482,8 @@ function renderMovStats(){
   const el = document.getElementById("mov-stats");
   if (!el) return;
   const totalSurplus = list.reduce((s, r) => s + Math.max(0, _moSurplus(r)), 0);
-  el.innerHTML = `<div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Mortgage Overages</div></div>
+  el.innerHTML = `<div class="stats-title">Mortgage Overages</div>
+    <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Mortgage Overages</div></div>
     <div class="stat-card"><div class="num">$${totalSurplus.toLocaleString("en-US",{maximumFractionDigits:0})}</div><div class="lbl">Total Surplus</div></div>`;
 }
 function renderMov(){
@@ -11568,6 +11614,7 @@ function renderWorkOverages() {
   const stats = document.getElementById("workov-stats");
   tb.innerHTML = "";
   const list = _workOverageList();
+  { const _c = document.getElementById("workov-count"); if (_c) _c.textContent = list.length.toLocaleString(); }
   const dead = _workOverageDeadList();
   if (stats) {
     const total = list.reduce((s, x) => s + (Number(x.rec.balance) || 0), 0);
@@ -11646,6 +11693,7 @@ function renderWorkMov() {
   const stats = document.getElementById("workmov-stats");
   tb.innerHTML = "";
   const list = _workMovList();
+  { const _c = document.getElementById("workmov-count"); if (_c) _c.textContent = list.length.toLocaleString(); }
   const dead = _workMovDeadList();
   if (stats) {
     const total = list.reduce((s, x) => s + Math.max(0, _moSurplus(x.rec)), 0);
@@ -13989,6 +14037,7 @@ function renderWorkTax() {
   const stats = document.getElementById("worktax-stats");
   tb.innerHTML = "";
   const list = _workTaxList();
+  { const _c = document.getElementById("worktax-count"); if (_c) _c.textContent = list.length.toLocaleString(); }
   if (stats) {
     const counts = {};
     list.forEach(e => { const s = getStackStatus(e.key); counts[s] = (counts[s] || 0) + 1; });
@@ -14151,6 +14200,27 @@ function _entryFollowupDates(entry) {
   (entry.contacts || []).forEach(c => { if (c && c.followup) out.push(String(c.followup).slice(0, 10)); });
   return out.filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d));
 }
+// Follow-up-bearing items (attempts + each contact's follow-up + the
+// lead-level next_followup) so the Today card's due/upcoming logic reads
+// the same three sources as the Work-dashboard counters. Each item just
+// needs a .followup; attempts also carry .date (used by "going cold").
+function _fuItems(entry) {
+  if (!entry) return [];
+  const items = [];
+  (entry.attempts || []).forEach(a => { if (a) items.push(a); });
+  (entry.contacts || []).forEach(c => { if (c && c.followup) items.push({ followup: c.followup }); });
+  if (entry.next_followup) items.push({ followup: entry.next_followup });
+  return items;
+}
+// Sidebar lead counts for the 4 Work nav items (parallels the lead-type
+// tab counts). Recomputes all four; called on the Today landing render.
+function _updateWorkCounts() {
+  const set = (id, fn) => { const el = document.getElementById(id); if (!el) return; try { el.textContent = fn().length.toLocaleString(); } catch (e) { el.textContent = "\u2014"; } };
+  set("workfc-count", _workForeclosureList);
+  set("worktax-count", _workTaxList);
+  set("workov-count", _workOverageList);
+  set("workmov-count", _workMovList);
+}
 // Today = soonest pending follow-up is due today-or-earlier (incl. overdue).
 // This Week = soonest pending follow-up falls within the next 7 days.
 function _fuCountsFromEntries(entries) {
@@ -14180,8 +14250,8 @@ function _fuCountsFromItems(list) {
 }
 // The two follow-up stat cards shared by every Work dashboard.
 function _fuCards(fu) {
-  return `<div class="stat-card"><div class="num">${fu.today.toLocaleString()}</div><div class="lbl">Follow-ups Today</div></div>`
-       + `<div class="stat-card"><div class="num">${fu.week.toLocaleString()}</div><div class="lbl">Follow-ups This Week</div></div>`;
+  return `<div class="stat-card fu-stat"><div class="num">${fu.today.toLocaleString()}</div><div class="lbl">Follow-ups Today</div></div>`
+       + `<div class="stat-card fu-stat"><div class="num">${fu.week.toLocaleString()}</div><div class="lbl">Follow-ups This Week</div></div>`;
 }
 // Follow-up column cell (read-only; follow-ups are set by logging an
 // outreach attempt in the CRM). Shows the soonest pending date, red if
@@ -14328,6 +14398,7 @@ function renderWorkForeclosures() {
   const stats = document.getElementById("workfc-stats");
   tb.innerHTML = "";
   const list = _workForeclosureList();
+  { const _c = document.getElementById("workfc-count"); if (_c) _c.textContent = list.length.toLocaleString(); }
   // Decorate each item with its lead's follow-up dates (load stores once).
   const _mfcStore = loadCrmStore("mfc") || {};
   const _tfcStore = (typeof loadTfcCrm === "function" ? loadTfcCrm() : {}) || {};
