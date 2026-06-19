@@ -2836,7 +2836,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ad</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ae</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3420,18 +3420,19 @@
   <div class="stats" id="worktax-stats"></div>
   <table id="worktax-table" class="stack-table">
     <thead><tr>
-      <th style="width: 130px;">Status</th>
-      <th style="width: 250px;">Lead Type</th>
-      <th style="width: 168px;">Owner</th>
-      <th style="width: 192px;">Property Address</th>
+      <th data-sort="status" onclick="_workTaxSetSort('status')" style="width: 120px;cursor:pointer;">Status</th>
+      <th data-sort="followup" onclick="_workTaxSetSort('followup')" style="width: 96px;cursor:pointer;">Follow-up</th>
+      <th data-sort="types" onclick="_workTaxSetSort('types')" style="width: 250px;cursor:pointer;">Lead Type</th>
+      <th data-sort="owner" onclick="_workTaxSetSort('owner')" style="width: 168px;cursor:pointer;">Owner</th>
+      <th data-sort="prop_address" onclick="_workTaxSetSort('prop_address')" style="width: 192px;cursor:pointer;">Property Address</th>
       <th style="width: 46px;">Map</th>
       <th style="width: 178px;">Mail Address</th>
-      <th style="width: 110px;">Market Value</th>
-      <th style="width: 120px;">Total Lien Amount</th>
-      <th style="width: 120px;">Delinquent Taxes<br><small style="font-weight:400;color:var(--muted);">Years Behind</small></th>
+      <th data-sort="market_value" onclick="_workTaxSetSort('market_value')" style="width: 110px;cursor:pointer;">Market Value</th>
+      <th data-sort="lien_total" onclick="_workTaxSetSort('lien_total')" style="width: 120px;cursor:pointer;">Total Lien Amount</th>
+      <th data-sort="delq_owed" onclick="_workTaxSetSort('delq_owed')" style="width: 120px;cursor:pointer;">Delinquent Taxes<br><small style="font-weight:400;color:var(--muted);">Years Behind</small></th>
       <th style="width: 140px;">Tax Status</th>
       <th style="width: 170px;">Violation Type</th>
-      <th style="width: 120px;">Property Type</th>
+      <th data-sort="property_type" onclick="_workTaxSetSort('property_type')" style="width: 120px;cursor:pointer;">Property Type</th>
       <th style="width: 62px;">NCAD</th>
       <th style="width: 72px;">NCTAX</th>
     </tr></thead>
@@ -3453,11 +3454,12 @@
   <div class="stats" id="workov-stats"></div>
   <table id="workov-table" class="stack-table">
     <thead><tr>
-      <th style="width:150px;">Status</th>
-      <th style="width:230px;">Former Owner</th>
-      <th style="width:280px;">Property</th>
-      <th style="width:130px;">Overage Balance</th>
-      <th style="width:160px;">Case #</th>
+      <th data-sort="status" onclick="_workOvSetSort('status')" style="width:140px;cursor:pointer;">Status</th>
+      <th data-sort="followup" onclick="_workOvSetSort('followup')" style="width:96px;cursor:pointer;">Follow-up</th>
+      <th data-sort="owner" onclick="_workOvSetSort('owner')" style="width:210px;cursor:pointer;">Former Owner</th>
+      <th data-sort="prop_address" onclick="_workOvSetSort('prop_address')" style="width:260px;cursor:pointer;">Property</th>
+      <th data-sort="balance" onclick="_workOvSetSort('balance')" style="width:130px;cursor:pointer;">Overage Balance</th>
+      <th data-sort="case_number" onclick="_workOvSetSort('case_number')" style="width:160px;cursor:pointer;">Case #</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -3475,11 +3477,12 @@
   <div class="stats" id="workmov-stats"></div>
   <table id="workmov-table" class="stack-table">
     <thead><tr>
-      <th style="width:150px;">Status</th>
-      <th style="width:230px;">Former Owner</th>
-      <th style="width:300px;">Property</th>
-      <th style="width:130px;">Surplus</th>
-      <th style="width:130px;">Sale Date</th>
+      <th data-sort="status" onclick="_workMovSetSort('status')" style="width:140px;cursor:pointer;">Status</th>
+      <th data-sort="followup" onclick="_workMovSetSort('followup')" style="width:96px;cursor:pointer;">Follow-up</th>
+      <th data-sort="owner" onclick="_workMovSetSort('owner')" style="width:210px;cursor:pointer;">Former Owner</th>
+      <th data-sort="prop_address" onclick="_workMovSetSort('prop_address')" style="width:280px;cursor:pointer;">Property</th>
+      <th data-sort="surplus" onclick="_workMovSetSort('surplus')" style="width:130px;cursor:pointer;">Surplus</th>
+      <th data-sort="sale_date" onclick="_workMovSetSort('sale_date')" style="width:130px;cursor:pointer;">Sale Date</th>
     </tr></thead>
     <tbody></tbody>
   </table>
@@ -7785,6 +7788,7 @@ function _tfcSaveAttempt() {
     }
   }
   setTfcEntry(uid, { attempts });
+  _propStageChanged = true;   // refresh the return Work pane on close
   _tfcCloseAttemptModal();
   openTfcCrm(uid, TFC_RAW);
 }
@@ -8809,6 +8813,7 @@ function _mfcSaveAttempt() {
     }
   }
   setCrmField("mfc", docNum, "attempts", attempts);
+  _propStageChanged = true;   // refresh the return Work pane on close
   _mfcCloseAttemptModal();
   openMfcCrm(docNum, FC_RAW);
 }
@@ -11570,6 +11575,73 @@ function _workOverageList() {
   });
   return list;
 }
+// ---- Work → Tax Overages column sorting ----
+let WORKOV_SORT = { key: "", dir: "asc" };
+function _workOvSortVal(item, key) {
+  const c = item.rec;
+  const eff = (typeof _tovEff === "function") ? _tovEff(c) : {};
+  switch (key) {
+    case "status": { const rk = {}; OVERAGE_STAGES.forEach((s,i)=>rk[s.key]=i); return rk[item.stage] ?? 0; }
+    case "followup": return item._fuEarliest || "9999-12-31";
+    case "owner": return (c.owner || "").toLowerCase();
+    case "prop_address": return ((eff && eff.prop_address) || "").toLowerCase();
+    case "balance": return Number(c.balance) || 0;
+    case "case_number": return (c.case_number || "").toLowerCase();
+    default: return "";
+  }
+}
+function _workOvCompare(a, b) {
+  const va = _workOvSortVal(a, WORKOV_SORT.key), vb = _workOvSortVal(b, WORKOV_SORT.key);
+  let cc; if (typeof va === "number" && typeof vb === "number") cc = va - vb; else cc = String(va).localeCompare(String(vb));
+  return WORKOV_SORT.dir === "asc" ? cc : -cc;
+}
+function _workOvSetSort(key) {
+  if (WORKOV_SORT.key === key) WORKOV_SORT.dir = WORKOV_SORT.dir === "asc" ? "desc" : "asc";
+  else { WORKOV_SORT.key = key; WORKOV_SORT.dir = "asc"; }
+  renderWorkOverages();
+}
+// ---- Work → Mortgage Overages column sorting ----
+let WORKMOV_SORT = { key: "", dir: "asc" };
+function _workMovSortVal(item, key) {
+  const r = item.rec;
+  switch (key) {
+    case "status": { const rk = {}; STACK_STAGES.forEach((s,i)=>rk[s.key]=i); return rk[item.stage] ?? 0; }
+    case "followup": return item._fuEarliest || "9999-12-31";
+    case "owner": return (r.owner || "").toLowerCase();
+    case "prop_address": return (r.prop_address || "").toLowerCase();
+    case "surplus": return _moSurplus(r) || 0;
+    case "sale_date": return r.sale_date || "9999";
+    default: return "";
+  }
+}
+function _workMovCompare(a, b) {
+  const va = _workMovSortVal(a, WORKMOV_SORT.key), vb = _workMovSortVal(b, WORKMOV_SORT.key);
+  let cc; if (typeof va === "number" && typeof vb === "number") cc = va - vb; else cc = String(va).localeCompare(String(vb));
+  return WORKMOV_SORT.dir === "asc" ? cc : -cc;
+}
+function _workMovSetSort(key) {
+  if (WORKMOV_SORT.key === key) WORKMOV_SORT.dir = WORKMOV_SORT.dir === "asc" ? "desc" : "asc";
+  else { WORKMOV_SORT.key = key; WORKMOV_SORT.dir = "asc"; }
+  renderWorkMov();
+}
+// ---- Work → Tax CC Lien Vacant CV Stack column sorting ----
+// Reuses the Stack comparator; "followup" handled here, the rest defer
+// to _stackCompare so behaviour matches the Stack lead-type tab.
+let WORKTAX_SORT = { key: "", dir: "asc" };
+function _workTaxCompare(a, b) {
+  const key = WORKTAX_SORT.key, dir = WORKTAX_SORT.dir;
+  if (key === "followup") {
+    const va = a._fuEarliest || "9999-12-31", vb = b._fuEarliest || "9999-12-31";
+    const cc = va.localeCompare(vb);
+    return dir === "asc" ? cc : -cc;
+  }
+  return _stackCompare(a, b, key, dir);
+}
+function _workTaxSetSort(key) {
+  if (WORKTAX_SORT.key === key) WORKTAX_SORT.dir = WORKTAX_SORT.dir === "asc" ? "desc" : "asc";
+  else { WORKTAX_SORT.key = key; WORKTAX_SORT.dir = "asc"; }
+  renderWorkTax();
+}
 function _workOvRow(item) {
   const c = item.rec;
   const eff = (typeof _tovEff === "function") ? _tovEff(c) : {};
@@ -11582,6 +11654,7 @@ function _workOvRow(item) {
   const bal = Number(c.balance) || 0;
   tr.innerHTML =
     '<td><span class="pill status ' + pillClass + '">' + esc(stageDef.label) + '</span></td>' +
+    '<td>' + _fuCellFromDates(item._fuDates || []) + '</td>' +
     '<td>' + owner + '</td>' +
     '<td>' + addr + '</td>' +
     '<td>' + (bal > 0 ? "<strong>$" + bal.toLocaleString("en-US", { maximumFractionDigits: 0 }) + "</strong>" : "$0") + '</td>' +
@@ -11616,6 +11689,9 @@ function renderWorkOverages() {
   const list = _workOverageList();
   { const _c = document.getElementById("workov-count"); if (_c) _c.textContent = list.length.toLocaleString(); }
   const dead = _workOverageDeadList();
+  const _psFu = loadCrmStore("prop") || {};
+  [...list, ...dead].forEach(x => { const d = _entryFollowupDates(_psFu[x.rec.case_number]); x._fuDates = d; x._fuEarliest = d.length ? d.slice().sort()[0] : "9999-12-31"; });
+  if (WORKOV_SORT.key) list.sort(_workOvCompare);
   if (stats) {
     const total = list.reduce((s, x) => s + (Number(x.rec.balance) || 0), 0);
     const counts = {};
@@ -11639,6 +11715,7 @@ function renderWorkOverages() {
     if (WORKOV_SHOW_DEAD) for (const item of dead) frag.appendChild(_workOvRow(item));
   }
   tb.appendChild(frag);
+  document.querySelectorAll("#workov-table th[data-sort]").forEach(th => { th.classList.remove("sort-asc","sort-desc"); if (th.dataset.sort === WORKOV_SORT.key) th.classList.add(WORKOV_SORT.dir === "asc" ? "sort-asc" : "sort-desc"); });
 }
 
 // ---- Work → Mortgage Overages view: mov records moved past New ----
@@ -11678,6 +11755,7 @@ function _workMovRow(item) {
   const surplus = _moSurplus(rec);
   tr.innerHTML =
     '<td><span class="pill status ' + pillClass + '">' + esc(stageDef.label) + '</span></td>' +
+    '<td>' + _fuCellFromDates(item._fuDates || []) + '</td>' +
     '<td>' + owner + '</td>' +
     '<td>' + addr + '</td>' +
     '<td>' + (rec.winning_bid > 0 ? '<strong style="' + (surplus > 0 ? 'color:#22c55e' : '') + '">$' + surplus.toLocaleString("en-US", { maximumFractionDigits: 0 }) + '</strong>' : dash) + '</td>' +
@@ -11695,6 +11773,9 @@ function renderWorkMov() {
   const list = _workMovList();
   { const _c = document.getElementById("workmov-count"); if (_c) _c.textContent = list.length.toLocaleString(); }
   const dead = _workMovDeadList();
+  const _psFu = loadCrmStore("prop") || {};
+  [...list, ...dead].forEach(x => { const d = _entryFollowupDates(_psFu[x.rec.id]); x._fuDates = d; x._fuEarliest = d.length ? d.slice().sort()[0] : "9999-12-31"; });
+  if (WORKMOV_SORT.key) list.sort(_workMovCompare);
   if (stats) {
     const total = list.reduce((s, x) => s + Math.max(0, _moSurplus(x.rec)), 0);
     const counts = {};
@@ -11718,6 +11799,7 @@ function renderWorkMov() {
     if (WORKMOV_SHOW_DEAD) for (const item of dead) frag.appendChild(_workMovRow(item));
   }
   tb.appendChild(frag);
+  document.querySelectorAll("#workmov-table th[data-sort]").forEach(th => { th.classList.remove("sort-asc","sort-desc"); if (th.dataset.sort === WORKMOV_SORT.key) th.classList.add(WORKMOV_SORT.dir === "asc" ? "sort-asc" : "sort-desc"); });
 }
 
 function applyOverage(){
@@ -14050,9 +14132,19 @@ function renderWorkTax() {
   }
   if (list.length === 0) { if (empty) empty.hidden = false; return; }
   if (empty) empty.hidden = true;
+  const _psFu = loadCrmStore("prop") || {};
+  list.forEach(e => { const d = _entryFollowupDates(_psFu[e.key]); e._fuDates = d; e._fuEarliest = d.length ? d.slice().sort()[0] : "9999-12-31"; });
+  if (WORKTAX_SORT.key) list.sort(_workTaxCompare);
   const frag = document.createDocumentFragment();
-  for (const entry of list) frag.appendChild(_buildStackRow(entry));
+  for (const entry of list) {
+    const tr = _buildStackRow(entry);
+    const fuTd = document.createElement("td");
+    fuTd.innerHTML = _fuCellFromDates(entry._fuDates || []);
+    tr.insertBefore(fuTd, tr.children[1] || null);   // Follow-up cell right after Status
+    frag.appendChild(tr);
+  }
   tb.appendChild(frag);
+  document.querySelectorAll("#worktax-table th[data-sort]").forEach(th => { th.classList.remove("sort-asc","sort-desc"); if (th.dataset.sort === WORKTAX_SORT.key) th.classList.add(WORKTAX_SORT.dir === "asc" ? "sort-asc" : "sort-desc"); });
 }
 
 // ---- Foreclosure Leads Work view (Mortgage + Tax foreclosures) -------
@@ -15566,6 +15658,7 @@ function _propSaveAttempt() {
       (followup ? ` · follow-up ${followup}` : ""));
   }
   _propSet(key, "attempts", attempts);
+  _propStageChanged = true;   // refresh the return Work pane on close
   _propCloseAttemptModal();
   _propReopen();
 }
