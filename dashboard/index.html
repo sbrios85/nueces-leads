@@ -252,6 +252,21 @@
      Rows are moderately taller to fit the wrapped 2-line values. */
   table { width: 100%; border-collapse: separate; border-spacing: 0;
           table-layout: fixed; }
+  /* ---- Big-list row virtualization ----------------------------------
+     Delinquent Taxes (~10K rows), Stack, and CCLN build every row into
+     the DOM at once. content-visibility lets the browser skip layout and
+     paint for rows that aren't near the viewport, so opening the tab and
+     scrolling stay fast. Safe here because table-layout is fixed (column
+     widths come from the header, not the rows), so skipped rows can never
+     shift the columns. contain-intrinsic-size reserves an estimated row
+     height; the `auto` keyword makes the browser remember each row's real
+     height after it has rendered once, keeping the scrollbar accurate. */
+  #delq-table  tbody tr,
+  #ccln-table  tbody tr,
+  #stack-table tbody tr {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 64px;
+  }
   th, td { padding: 11px 10px; text-align: left;
            border-bottom: 1px solid var(--border); vertical-align: top;
            overflow: hidden; }
@@ -2842,7 +2857,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026al</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026am</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
