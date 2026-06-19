@@ -2842,7 +2842,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ah</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ai</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -6163,6 +6163,9 @@ function openMfcCrm(docNum, sourceRecords) {
     ? `<span class="prop-bar-sep push-right"></span><span class="prop-leadtype-lbl">Lead Type</span>${_mfcLeadPills}`
     : "";
   const _mfcActionBtns = (() => {
+    // Auction actions (Mark Sold / Convert to Overage) belong to the lead-type
+    // Mortgage Foreclosures CRM — hide them when opened from the Work view.
+    if (_crmReturn && _crmReturn.pane === "pane-foreclosureleads") return "";
     const _e = (loadFcCrm() || {})[docNum] || {};
     const _marked = !!_e.sold_at_auction;
     if (_e.mov_converted) {
@@ -6235,13 +6238,14 @@ function openMfcCrm(docNum, sourceRecords) {
                     title="Try again on ${esc(a.followup)}">Try ${esc(fuTxt)}</span>`;
         }
         return `
-          <div class="mfc-attempt-row">
+          <div class="mfc-attempt-row" style="cursor:pointer;" title="Click to edit"
+               onclick="_mfcOpenAttemptModal('${esc(docNum)}', '${esc(a.id)}')">
             <span class="date">${esc(dateTxt)}</span>
             <span class="method">${esc(a.method || "—")}</span>
             <span class="notes">${esc(a.notes || "")}${followupBadge}</span>
             <span class="response ${respCls}">${esc(respTxt)}</span>
             <button class="mfc-del-attempt"
-                    onclick="_mfcDeleteAttempt('${esc(docNum)}', '${esc(a.id)}')"
+                    onclick="event.stopPropagation(); _mfcDeleteAttempt('${esc(docNum)}', '${esc(a.id)}')"
                     title="Delete this attempt">×</button>
           </div>
         `;
@@ -8134,13 +8138,14 @@ function openTfcCrm(uid, sourceRecords) {
                     title="Try again on ${esc(a.followup)}">Try ${esc(fuTxt)}</span>`;
         }
         return `
-          <div class="mfc-attempt-row">
+          <div class="mfc-attempt-row" style="cursor:pointer;" title="Click to edit"
+               onclick="_tfcOpenAttemptModal('${esc(uid)}', '${esc(a.id)}')">
             <span class="date">${esc(dateTxt)}</span>
             <span class="method">${esc(a.method || "—")}</span>
             <span class="notes">${esc(a.notes || "")}${followupBadge}</span>
             <span class="response ${respCls}">${esc(respTxt)}</span>
             <button class="mfc-del-attempt"
-                    onclick="_tfcDeleteAttempt('${esc(uid)}', '${esc(a.id)}')"
+                    onclick="event.stopPropagation(); _tfcDeleteAttempt('${esc(uid)}', '${esc(a.id)}')"
                     title="Delete this attempt">×</button>
           </div>
         `;
@@ -14373,8 +14378,7 @@ function _fuCellFromDates(dates) {
   const todayIso = _isoAddDays(0);
   const mo = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const m = next.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  const _showYr = m && (next < todayIso || m[1] !== String(new Date().getFullYear()));
-  const disp = m ? (mo[parseInt(m[2],10)-1] + " " + parseInt(m[3],10) + (_showYr ? ", " + m[1] : "")) : next;
+  const disp = m ? (mo[parseInt(m[2],10)-1] + " " + parseInt(m[3],10)) : next;
   if (next < todayIso)
     return `<span style="color:#ef4444;font-weight:600;" title="Overdue — was due ${esc(next)}">${esc(disp)}</span>`;
   if (next === todayIso)
