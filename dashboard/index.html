@@ -2824,7 +2824,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026x</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026y</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -7690,11 +7690,15 @@ function _tfcSetStage(uid, newStage) {
   const entry = getTfcEntry(uid);
   const oldStage = entry.stage || "new";
   if (oldStage === newStage) return;  // no-op
-  setTfcEntry(uid, { stage: newStage });
+  setTfcEntry(uid, { stage: newStage, tfc_status: "" });
   const oldLbl = (TFC_STAGES.find(s => s.key === oldStage) || {}).label || oldStage;
   const newLbl = (TFC_STAGES.find(s => s.key === newStage) || {}).label || newStage;
   _tfcLogActivity(uid, `Stage: ${oldLbl} → ${newLbl}`);
   _propStageChanged = true;     // refresh the return pane (e.g. Foreclosure Leads) on close
+  // Also refresh the Tax Foreclosures table + stats live so the row's
+  // status pill behind the CRM updates immediately, not just on close.
+  if (typeof renderTfcStats === "function") renderTfcStats();
+  if (typeof renderTfcTable === "function") renderTfcTable();
   openTfcCrm(uid, TFC_RAW);
 }
 
@@ -17052,10 +17056,21 @@ function openTfcStatusMenu(ev, uid, currentStage) {
     .join("");
   const rect = ev.currentTarget.getBoundingClientRect();
   menu.style.position = "fixed";
-  menu.style.left = rect.left + "px";
-  menu.style.top  = (rect.bottom + 4) + "px";
   menu.style.zIndex = "1000";
+  menu.style.visibility = "hidden";
   document.body.appendChild(menu);
+  // Position after append so we can measure the menu: flip it upward
+  // when the row sits near the bottom of the viewport (e.g. the dead /
+  // canceled footer) so the options aren't clipped off-screen, and
+  // clamp it horizontally too.
+  const _mh = menu.offsetHeight, _mw = menu.offsetWidth;
+  let _top = rect.bottom + 4;
+  if (_top + _mh + 8 > window.innerHeight) _top = Math.max(8, rect.top - _mh - 4);
+  let _left = rect.left;
+  if (_left + _mw + 8 > window.innerWidth) _left = Math.max(8, window.innerWidth - _mw - 8);
+  menu.style.top  = _top + "px";
+  menu.style.left = _left + "px";
+  menu.style.visibility = "visible";
   menu.querySelectorAll(".status-menu-item").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
