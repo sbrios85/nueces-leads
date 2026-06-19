@@ -2842,7 +2842,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026aj</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026al</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -9967,6 +9967,15 @@ function renderToday() {
   const ncadexNext = _ncadNextExport(ncadexLoaded);
   const ncadexDue = !ncadexLoaded || !ncadexNext || (Date.now() >= ncadexNext.target.getTime());
 
+  // ===== 8d. NCTAX tax-balance refresh reminder (Feb / Apr / Jul / Sep) =====
+  // Driven purely by the 'generated' date inside nctax_balances.json
+  // (NCTAX_GENERATED). Re-run run_nctax.bat in the scraper folder and upload the
+  // new nctax_balances.json — the card greys out and shows the next due month,
+  // then colors back in once that scheduled month arrives. No manual toggle.
+  const nctaxLoaded = (typeof NCTAX_GENERATED === "string" ? NCTAX_GENERATED : "");
+  const nctaxNext = _nctaxNextRefresh(nctaxLoaded);
+  const nctaxDue = !nctaxLoaded || !nctaxNext || (Date.now() >= nctaxNext.target.getTime());
+
   // ===== 9. Hot list — top-priority leads =====
   // Leads in an ACTIVE stage (new/contacted/negotiating/under_contract)
   // that have an UPCOMING sale date, ranked soonest-first. These are the
@@ -10138,6 +10147,21 @@ function renderToday() {
       <div class="tc-count">${ncadexDue ? "!" : "\u2713"}</div>
     </div>`);
 
+  // NCTAX tax-balance refresh reminder (Feb / Apr / Jul / Sep; nctaxDue above)
+  actions.push(`
+    <div class="today-card ${nctaxDue ? "tc-alert" : "tc-clear tc-ok"}">
+      <div class="tc-icon">\u{1F9FE}</div>
+      <div class="tc-body">
+        <div class="tc-title">NCTAX balance refresh (Feb \u00b7 Apr \u00b7 Jul \u00b7 Sep)</div>
+        <div class="tc-sub">${nctaxLoaded
+          ? (nctaxDue
+              ? "Time for a tax-balance refresh \u2014 run run_nctax.bat in your scraper folder, then upload the new nctax_balances.json."
+              : "Refreshed " + esc2(nctaxLoaded) + ". Next refresh due " + (nctaxNext ? nctaxNext.monthYear : "\u2014") + ".")
+          : "No tax balances loaded yet \u2014 run run_nctax.bat and upload nctax_balances.json."}</div>
+      </div>
+      <div class="tc-count">${nctaxDue ? "!" : "\u2713"}</div>
+    </div>`);
+
   // No-NCAD-match
   actions.push(`
     <div class="today-card ${noNcad.length ? "tc-alert" : "tc-clear tc-ok"}">
@@ -10290,6 +10314,23 @@ function _monthlyNextDueHtml(importDateStr, dayOfMonth, valText) {
          '<span><span class="val"' + valStyle + '>' + valText + '</span> ' +
          '<span class="ago" style="' + agoStyle + '">' + tail + '</span></span>' +
          '</div>';
+}
+function _nctaxNextRefresh(lastDateStr) {
+  // NCTAX tax-balance refresh cadence: February, April, July, September.
+  // Returns the first scheduled month-start strictly AFTER the last refresh.
+  const d = new Date(lastDateStr);
+  if (isNaN(d.getTime())) return null;
+  const sched = [1, 3, 6, 8];   // 0-indexed: Feb, Apr, Jul, Sep
+  const M = ["January","February","March","April","May","June","July",
+             "August","September","October","November","December"];
+  const y0 = d.getFullYear();
+  for (let yr = y0; yr <= y0 + 2; yr++) {
+    for (const m of sched) {
+      const t = new Date(yr, m, 1);
+      if (t.getTime() > d.getTime()) return { monthYear: M[m] + " " + yr, target: t };
+    }
+  }
+  return null;
 }
 function _ncadNextExport(lastDateStr) {
   const d = new Date(lastDateStr);
@@ -10895,6 +10936,7 @@ let DEFERRAL_RAW = [];
 let EXEMPTIONS_MAP = {};
 let DEFERRAL_GENERATED = "";
 let NCTAX_BALANCES = {};
+let NCTAX_GENERATED = "";   // 'generated' date stamped inside nctax_balances.json
 let DEFERRAL_FILTERED = [];
 let DEFERRAL_SORT_KEY = "deferral_start";
 let DEFERRAL_SORT_DIR = "desc";
@@ -11757,8 +11799,15 @@ function _workMovRow(item) {
   if (_ownTd) _ownTd.closest("td").innerHTML = esc(fmtOwner(_r.owner || "")) || '<span style="color:var(--muted)">—</span>';
   const _adTd = tr.querySelector('.mov-edit[data-field="prop_address"]');
   if (_adTd) {
-    const _city = [_r.prop_city, _r.prop_state, _r.prop_zip].filter(Boolean).join(" ");
-    _adTd.closest("td").innerHTML = (_r.prop_address ? esc(fmtTitle(_r.prop_address)) : '<span style="color:var(--muted)">—</span>') + (_city ? '<div style="color:var(--muted);font-size:11px;">' + esc(fmtTitle(_city)) + '</div>' : "");
+    // Match the MFC/Foreclosure address: street on row 1, city/state/zip on row
+    // 2 — resolving the city parts from the matching parcel (the mov record
+    // itself often has them blank).
+    const _pick = (f) => _r[f] || (typeof _arPickField === "function" ? _arPickField(_r, _r.id, f) : "");
+    const _street = _r.prop_address || _pick("prop_address");
+    const _csz = [_pick("prop_city"), _pick("prop_state"), _pick("prop_zip")].filter(Boolean).join(" ");
+    _adTd.closest("td").innerHTML = _street
+      ? esc(fmtTitle(_street)) + (_csz ? '<br><small style="color:var(--muted)">' + esc(fmtTitle(_csz)) + '</small>' : "")
+      : '<span style="color:var(--muted)">—</span>';
   }
   const def = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
   const pc = STACK_PILL_CLASS[item.stage] || "status-new";
@@ -12253,6 +12302,7 @@ async function loadAll() {
         if (nb.ok) {
           const ndata = await nb.json();
           NCTAX_BALANCES = ndata.balances || {};
+          NCTAX_GENERATED = (typeof ndata.generated === "string") ? ndata.generated : "";
           for (const rec of DEFERRAL_RAW) {
             const b = NCTAX_BALANCES[rec.ncad_account_num];
             if (b && typeof b.total_due === "number") rec.tax_owed = b.total_due;
