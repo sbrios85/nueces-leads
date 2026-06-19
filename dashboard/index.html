@@ -2857,7 +2857,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026am</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026an</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -12851,6 +12851,43 @@ function _delqCompare(a, b, key, dir, type) {
 // ============================================================
 // Mirrors the CCLN renderer's structure: dead records collapse
 // into a tfoot "X deleted leads — click to expand" footer.
+// ============================================================
+// Incremental (chunked) row rendering
+// ============================================================
+// Appending 10K+ rows in one loop blocks the main thread long enough
+// to freeze the tab (the Delinquent Taxes first-load freeze). This
+// builds the first screenful synchronously so the tab paints right
+// away, then appends the rest in time-budgeted batches on animation
+// frames, keeping scroll and clicks responsive while it finishes.
+// Every row still lands in the DOM, so sorting, filtering, status
+// pills and CRM-open behave exactly as before. A per-key token is
+// bumped on each call; an in-flight batch loop from an earlier render
+// sees the mismatch and stops, so re-rendering mid-build (filter,
+// sort, import) never double-appends or races.
+var _chunkRenderTokens = {};
+function _renderRowsChunked(key, tbody, items, buildRow) {
+  const token = (_chunkRenderTokens[key] = (_chunkRenderTokens[key] || 0) + 1);
+  const FIRST = 60;        // rows built synchronously (about one screen)
+  let i = 0;
+  const firstEnd = Math.min(FIRST, items.length);
+  const firstFrag = document.createDocumentFragment();
+  for (; i < firstEnd; i++) firstFrag.appendChild(buildRow(items[i]));
+  tbody.appendChild(firstFrag);
+  if (i >= items.length) return;   // small list: done synchronously
+  function step() {
+    if (_chunkRenderTokens[key] !== token) return;   // canceled by newer render
+    const frag = document.createDocumentFragment();
+    const start = performance.now();
+    // Build until ~12ms of this frame is used, then yield.
+    while (i < items.length && (performance.now() - start) < 12) {
+      frag.appendChild(buildRow(items[i++]));
+    }
+    tbody.appendChild(frag);
+    if (i < items.length) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 function renderDelq() {
   const tb = document.querySelector("#delq-table tbody");
   const tf = document.getElementById("delq-dead-foot");
@@ -12864,11 +12901,10 @@ function renderDelq() {
     else active.push(r);
   }
 
-  // Insert all rows in ONE DOM operation via a fragment (one reflow
-  // instead of one per row).
-  const _frag = document.createDocumentFragment();
-  for (const r of active) _frag.appendChild(buildDelqRow(r, false));
-  tb.appendChild(_frag);
+  // Build rows incrementally (see _renderRowsChunked) so a 10K-row
+  // active set paints the first screen instantly instead of freezing
+  // the tab; remaining rows stream in over the next frames.
+  _renderRowsChunked("delq", tb, active, (r) => buildDelqRow(r, false));
 
   if (dead.length > 0) {
     const expanded =
@@ -13681,9 +13717,7 @@ function renderCcln() {
     else active.push(r);
   }
 
-  const _frag = document.createDocumentFragment();
-  for (const r of active) _frag.appendChild(buildCclnRow(r, false));
-  tb.appendChild(_frag);
+  _renderRowsChunked("ccln", tb, active, (r) => buildCclnRow(r, false));
 
   if (dead.length > 0) {
     const expanded =
@@ -15059,9 +15093,7 @@ function applyStack() {
   }
   if (empty) empty.hidden = true;
 
-  { const _f = document.createDocumentFragment();
-    for (const entry of view) _f.appendChild(_buildStackRow(entry));
-    tbody.appendChild(_f); }
+  _renderRowsChunked("stack", tbody, view, (entry) => _buildStackRow(entry));
 }
 
 function _renderStackStats(list) {
