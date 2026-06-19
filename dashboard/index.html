@@ -2824,7 +2824,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026y</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026z</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3374,6 +3374,7 @@
     <thead><tr>
       <th style="width: 96px;">Status</th>
       <th style="width: 92px;">Sales Type</th>
+      <th style="width: 118px;">Sale Date</th>
       <th style="width: 150px;">Owner</th>
       <th style="width: 180px;">Property Address</th>
       <th style="width: 44px;">Map</th>
@@ -14019,11 +14020,17 @@ function _workForeclosureList() {
     if (st === "new" || st === "dead" || e.status === "dead") continue;
     out.push({ kind: "mfc", rec: r, stage: st });
   }
-  const tfc = loadCrmStore("tfc") || {};
+  // TFC stage lives in the TFC-specific store ("tfc-crm-store"), NOT the
+  // generic CRM_CONFIG store loadCrmStore("tfc") reads — so read it via
+  // loadTfcCrm() or worked TFC leads never appear here.
+  const tfc = loadTfcCrm() || {};
   for (const r of TFC_RAW) {
     const e = tfc[r.uid] || {};
-    const st = e.stage || "new";
-    if (st === "new" || st === "dead" || e.status === "dead") continue;
+    // LGBS-cancelled sales are dead regardless of stage — exclude them
+    // (matches the Tax Foreclosures dashboard's dead bucket).
+    if (String(r.status || "").toLowerCase().includes("cancel")) continue;
+    const st = _tfcEffStage(e);
+    if (st === "new" || st === "dead") continue;
     out.push({ kind: "tfc", rec: r, stage: st });
   }
   const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
@@ -14033,6 +14040,36 @@ function _workForeclosureList() {
     return (a.rec.owner || "").localeCompare(b.rec.owner || "");
   });
   return out;
+}
+// Sale Date pill for the Foreclosure Leads work view. Same urgency
+// styling as the MFC/TFC tables: date + countdown + 60-day runway bar.
+// Works for both kinds since each stores an ISO sale date.
+function _fcWorkSaleDatePill(ymdRaw) {
+  if (!ymdRaw) return '<div class="fc-date-cell"><div class="fc-date-pill">\u2014</div></div>';
+  const ymd = String(ymdRaw).slice(0, 10);
+  const days = _tfcDaysUntil(ymd);
+  const tier = isNaN(days) ? "tier-far" : days <= 10 ? "tier-near" : days <= 30 ? "tier-mid" : "tier-far";
+  let barPct = 0;
+  if (!isNaN(days) && days >= 0) {
+    const remaining = Math.max(0, Math.min(60, days));
+    barPct = Math.round(((60 - remaining) / 60) * 100);
+  }
+  const mo = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const m = ymd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const disp = m ? (mo[parseInt(m[2],10)-1] + " " + parseInt(m[3],10)) : ymd;
+  if (isNaN(days)) {
+    return `<div class="fc-date-cell"><div class="fc-date-pill">${esc(disp)}</div></div>`;
+  }
+  if (days < 0) {
+    const pastTxt = Math.abs(days) + " days ago";
+    return `<div class="fc-date-cell"><div class="fc-date-row">`
+      + `<div class="fc-date-pill">${esc(disp)}</div>`
+      + `<div class="fc-date-past">${esc(pastTxt)}</div></div></div>`;
+  }
+  return `<div class="fc-date-cell"><div class="fc-date-row">`
+    + `<div class="fc-date-pill">${esc(disp)}</div>`
+    + `<div class="fc-date-days ${tier}">${days}d</div></div>`
+    + `<div class="fc-date-bar"><div class="fc-date-bar-fill ${tier}" style="width:${barPct}%"></div></div></div>`;
 }
 function _workFcRow(item) {
   const r = item.rec;
@@ -14049,9 +14086,12 @@ function _workFcRow(item) {
   // Sales Type pill: MFC -> Mortgage; TFC "FUTURE SALE" -> Future; TFC "SALE" -> Tax Sale.
   let stLabel, stBg, stFg;
   if (item.kind === "mfc") { stLabel = "Mortgage"; stBg = "rgba(56,189,248,.15)"; stFg = "#38bdf8"; }
-  else if (String(r.sale_type || "").toUpperCase() === "FUTURE SALE") { stLabel = "Future"; stBg = "rgba(168,85,247,.16)"; stFg = "#c084fc"; }
-  else { stLabel = "Tax Sale"; stBg = "rgba(239,159,39,.15)"; stFg = "#EF9F27"; }
+  else if (String(r.sale_type || "").toUpperCase() === "FUTURE SALE") { stLabel = "Future Sale"; stBg = "rgba(168,85,247,.16)"; stFg = "#c084fc"; }
+  else { stLabel = "Tax"; stBg = "rgba(239,159,39,.15)"; stFg = "#EF9F27"; }
   const salesTypePill = `<span class="pill" style="background:${stBg};color:${stFg};">${stLabel}</span>`;
+
+  const _saleYmd = item.kind === "mfc" ? r.sale_date : (r.sale_date_only || r.sale_date);
+  const saleCell = _fcWorkSaleDatePill(_saleYmd);
 
   const owner = (esc(fmtOwner(r.owner || "")) || dash);
 
@@ -14099,6 +14139,7 @@ function _workFcRow(item) {
   tr.innerHTML = `
     <td><span class="pill status ${pillClass}">${esc(stageDef.label)}</span></td>
     <td>${salesTypePill}</td>
+    <td>${saleCell}</td>
     <td>${owner}</td>
     <td>${prop}</td>
     <td>${mapHtml}</td>
