@@ -261,9 +261,12 @@
      shift the columns. contain-intrinsic-size reserves an estimated row
      height; the `auto` keyword makes the browser remember each row's real
      height after it has rendered once, keeping the scrollbar accurate. */
-  #delq-table  tbody tr,
-  #ccln-table  tbody tr,
-  #stack-table tbody tr {
+  #delq-table     tbody tr,
+  #ccln-table     tbody tr,
+  #stack-table    tbody tr,
+  #cv-table       tbody tr,
+  #vh-table       tbody tr,
+  #deferral-table tbody tr {
     content-visibility: auto;
     contain-intrinsic-size: auto 64px;
   }
@@ -2857,7 +2860,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026an</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ao</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -10515,9 +10518,7 @@ function renderCv() {
   for (const r of CV_FILTERED) {
     if (getStackStatus(_cvSharedKey(r)) === "dead") dead.push(r); else active.push(r);
   }
-  { const _f = document.createDocumentFragment();
-    for (const r of active) _f.appendChild(buildCvRow(r, false));
-    tb.appendChild(_f); }
+  _renderRowsChunked("cv", tb, active, (r) => buildCvRow(r, false));
   if (dead.length > 0) {
     const expanded = localStorage.getItem("cv_dead_expanded") === "true";
     const toggleTr = document.createElement("tr");
@@ -10842,9 +10843,7 @@ function renderVacant() {
   for (const r of VACANT_FILTERED) {
     if (getStackStatus(_cvSharedKey(r)) === "dead") dead.push(r); else active.push(r);
   }
-  { const _f = document.createDocumentFragment();
-    for (const r of active) _f.appendChild(buildVacantRow(r, false));
-    tb.appendChild(_f); }
+  _renderRowsChunked("vacant", tb, active, (r) => buildVacantRow(r, false));
   if (dead.length > 0) {
     const expanded = localStorage.getItem("vh_dead_expanded") === "true";
     const toggleTr = document.createElement("tr");
@@ -11080,9 +11079,7 @@ function renderDeferral(){
   for (const r of DEFERRAL_FILTERED) {
     if (getStackStatus(_deferralSharedKey(r)) === "dead") dead.push(r); else active.push(r);
   }
-  { const _f = document.createDocumentFragment();
-    for (const r of active) _f.appendChild(buildDeferralRow(r, false));
-    tb.appendChild(_f); }
+  _renderRowsChunked("deferral", tb, active, (r) => buildDeferralRow(r, false));
   if (dead.length > 0) {
     const expanded = localStorage.getItem("deferral_dead_expanded") === "true";
     const toggleTr = document.createElement("tr");
