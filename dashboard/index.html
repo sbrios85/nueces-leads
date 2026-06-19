@@ -2826,7 +2826,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026aa</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ab</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3374,17 +3374,18 @@
   <div class="stats" id="workfc-stats"></div>
   <table id="workfc-table" class="stack-table">
     <thead><tr>
-      <th style="width: 96px;">Status</th>
-      <th style="width: 118px;">Sale Date</th>
-      <th style="width: 150px;">Owner</th>
-      <th style="width: 180px;">Property Address</th>
+      <th data-sort="status" onclick="_workFcSetSort('status')" style="width: 96px; cursor:pointer;">Status</th>
+      <th data-sort="followup" onclick="_workFcSetSort('followup')" style="width: 96px; cursor:pointer;">Follow-up</th>
+      <th data-sort="saledate" onclick="_workFcSetSort('saledate')" style="width: 118px; cursor:pointer;">Sale Date</th>
+      <th data-sort="owner" onclick="_workFcSetSort('owner')" style="width: 150px; cursor:pointer;">Owner</th>
+      <th data-sort="propaddr" onclick="_workFcSetSort('propaddr')" style="width: 180px; cursor:pointer;">Property Address</th>
       <th style="width: 44px;">Map</th>
-      <th style="width: 150px;">Mailing Address</th>
-      <th style="width: 110px;">Loan Amount<br>Min Bid</th>
-      <th style="width: 96px;">Market Value</th>
-      <th style="width: 88px;">Loan Date</th>
-      <th style="width: 130px;">Lender</th>
-      <th style="width: 150px;">Legal Description</th>
+      <th data-sort="mail" onclick="_workFcSetSort('mail')" style="width: 150px; cursor:pointer;">Mailing Address</th>
+      <th data-sort="amount" onclick="_workFcSetSort('amount')" style="width: 110px; cursor:pointer;">Loan Amount<br>Min Bid</th>
+      <th data-sort="market" onclick="_workFcSetSort('market')" style="width: 96px; cursor:pointer;">Market Value</th>
+      <th data-sort="loandate" onclick="_workFcSetSort('loandate')" style="width: 88px; cursor:pointer;">Loan Date</th>
+      <th data-sort="lender" onclick="_workFcSetSort('lender')" style="width: 130px; cursor:pointer;">Lender</th>
+      <th data-sort="legal" onclick="_workFcSetSort('legal')" style="width: 150px; cursor:pointer;">Legal Description</th>
       <th style="width: 50px;">NCAD</th>
       <th style="width: 64px;">NCTAX</th>
     </tr></thead>
@@ -11574,9 +11575,11 @@ function renderWorkOverages() {
     list.forEach(x => { counts[x.stage] = (counts[x.stage] || 0) + 1; });
     const cards = STACK_STAGES.filter(s => s.key !== "new" && s.key !== "dead")
       .map(s => `<div class="stat-card"><div class="num">${(counts[s.key] || 0).toLocaleString()}</div><div class="lbl">${esc(s.label)}</div></div>`).join("");
+    const _ps = loadCrmStore("prop") || {};
+    const fu = _fuCountsFromEntries(list.map(x => _ps[x.rec.case_number]));
     stats.innerHTML = `<div class="stats-title">Tax Overages — Working</div>
       <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Working</div></div>
-      <div class="stat-card"><div class="num">$${total.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div><div class="lbl">Total Surplus</div></div>${cards}`;
+      <div class="stat-card"><div class="num">$${total.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div><div class="lbl">Total Surplus</div></div>${cards}${_fuCards(fu)}`;
   }
   if (list.length === 0 && dead.length === 0) { if (empty) empty.hidden = false; return; }
   if (empty) empty.hidden = true;
@@ -11650,9 +11653,11 @@ function renderWorkMov() {
     list.forEach(x => { counts[x.stage] = (counts[x.stage] || 0) + 1; });
     const cards = STACK_STAGES.filter(s => s.key !== "new" && s.key !== "dead")
       .map(s => `<div class="stat-card"><div class="num">${(counts[s.key] || 0).toLocaleString()}</div><div class="lbl">${esc(s.label)}</div></div>`).join("");
+    const _ps = loadCrmStore("prop") || {};
+    const fu = _fuCountsFromEntries(list.map(x => _ps[x.rec.id]));
     stats.innerHTML = `<div class="stats-title">Mortgage Overages — Working</div>
       <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Working</div></div>
-      <div class="stat-card"><div class="num">$${total.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div><div class="lbl">Total Surplus</div></div>${cards}`;
+      <div class="stat-card"><div class="num">$${total.toLocaleString("en-US", { maximumFractionDigits: 0 })}</div><div class="lbl">Total Surplus</div></div>${cards}${_fuCards(fu)}`;
   }
   if (list.length === 0 && dead.length === 0) { if (empty) empty.hidden = false; return; }
   if (empty) empty.hidden = true;
@@ -13989,8 +13994,10 @@ function renderWorkTax() {
     list.forEach(e => { const s = getStackStatus(e.key); counts[s] = (counts[s] || 0) + 1; });
     const cards = STACK_STAGES.filter(s => s.key !== "new" && s.key !== "dead")
       .map(s => `<div class="stat-card"><div class="num">${(counts[s.key] || 0).toLocaleString()}</div><div class="lbl">${esc(s.label)}</div></div>`).join("");
+    const _ps = loadCrmStore("prop") || {};
+    const fu = _fuCountsFromEntries(list.map(e => _ps[e.key]));
     stats.innerHTML = `<div class="stats-title">Worked Leads</div>
-      <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Worked</div></div>${cards}`;
+      <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Worked</div></div>${cards}${_fuCards(fu)}`;
   }
   if (list.length === 0) { if (empty) empty.hidden = false; return; }
   if (empty) empty.hidden = true;
@@ -14034,12 +14041,8 @@ function _workForeclosureList() {
     if (st === "new" || st === "dead") continue;
     out.push({ kind: "tfc", rec: r, stage: st });
   }
-  const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
-  out.sort((a, b) => {
-    const ra = rank[a.stage] ?? 0, rb = rank[b.stage] ?? 0;
-    if (ra !== rb) return rb - ra;
-    return (a.rec.owner || "").localeCompare(b.rec.owner || "");
-  });
+  // No forced sort — the column headers drive sorting now (default is
+  // natural order: mortgage leads first, then tax leads).
   return out;
 }
 // Sale Date pill for the Foreclosure Leads work view. Same urgency
@@ -14133,6 +14136,101 @@ function openWorkFcStatusMenu(ev, kind, key, currentStage) {
   });
   setTimeout(() => document.addEventListener("click", _workFcMenuOutside, true), 0);
 }
+// ---- Follow-up helpers (shared across all 4 Work dashboards) ----
+function _isoAddDays(n) {
+  const d = new Date(); d.setDate(d.getDate() + n);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+// Every follow-up date set on a lead's CRM entry: the lead-level
+// next_followup plus any per-attempt / per-contact "try again on" dates.
+function _entryFollowupDates(entry) {
+  if (!entry) return [];
+  const out = [];
+  if (entry.next_followup) out.push(String(entry.next_followup).slice(0, 10));
+  (entry.attempts || []).forEach(a => { if (a && a.followup) out.push(String(a.followup).slice(0, 10)); });
+  (entry.contacts || []).forEach(c => { if (c && c.followup) out.push(String(c.followup).slice(0, 10)); });
+  return out.filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d));
+}
+// Today = soonest pending follow-up is due today-or-earlier (incl. overdue).
+// This Week = soonest pending follow-up falls within the next 7 days.
+function _fuCountsFromEntries(entries) {
+  const todayIso = _isoAddDays(0), weekIso = _isoAddDays(6);
+  let today = 0, week = 0;
+  for (const e of entries) {
+    const d = _entryFollowupDates(e);
+    if (!d.length) continue;
+    const earliest = d.slice().sort()[0];
+    if (earliest <= todayIso) today++;
+    if (earliest <= weekIso) week++;
+  }
+  return { today, week };
+}
+// Same, for Foreclosure-Leads items already decorated with _fuDates.
+function _fuCountsFromItems(list) {
+  const todayIso = _isoAddDays(0), weekIso = _isoAddDays(6);
+  let today = 0, week = 0;
+  for (const it of list) {
+    const d = it._fuDates || [];
+    if (!d.length) continue;
+    const earliest = d.slice().sort()[0];
+    if (earliest <= todayIso) today++;
+    if (earliest <= weekIso) week++;
+  }
+  return { today, week };
+}
+// The two follow-up stat cards shared by every Work dashboard.
+function _fuCards(fu) {
+  return `<div class="stat-card"><div class="num">${fu.today.toLocaleString()}</div><div class="lbl">Follow-ups Today</div></div>`
+       + `<div class="stat-card"><div class="num">${fu.week.toLocaleString()}</div><div class="lbl">Follow-ups This Week</div></div>`;
+}
+// Follow-up column cell (read-only; follow-ups are set by logging an
+// outreach attempt in the CRM). Shows the soonest pending date, red if
+// overdue, amber "Today" if due today.
+function _fuCellFromDates(dates) {
+  const dash = '<span style="color:var(--muted)">\u2014</span>';
+  if (!dates || !dates.length) return dash;
+  const next = dates.slice().sort()[0];
+  const todayIso = _isoAddDays(0);
+  const mo = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const m = next.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const disp = m ? (mo[parseInt(m[2],10)-1] + " " + parseInt(m[3],10)) : next;
+  if (next < todayIso)
+    return `<span style="color:#ef4444;font-weight:600;" title="Overdue — was due ${esc(next)}">${esc(disp)}</span>`;
+  if (next === todayIso)
+    return `<span style="color:#f59e0b;font-weight:600;" title="Due today">Today</span>`;
+  return `<span title="Next follow-up ${esc(next)}">${esc(disp)}</span>`;
+}
+// Foreclosure Leads column sorting.
+let WORKFC_SORT = { key: "", dir: "asc" };
+function _workFcSortVal(item, key) {
+  const r = item.rec;
+  switch (key) {
+    case "status": { const rk = {}; STACK_STAGES.forEach((s,i)=>rk[s.key]=i); return rk[item.stage] ?? 0; }
+    case "followup": { const d = item._fuDates || []; return d.length ? d.slice().sort()[0] : "9999-12-31"; }
+    case "saledate": return (item.kind === "mfc" ? r.sale_date : (r.sale_date_only || r.sale_date)) || "9999";
+    case "owner": return (r.owner || "").toLowerCase();
+    case "propaddr": return (r.prop_address || "").toLowerCase();
+    case "mail": return (r.mail_address || "").toLowerCase();
+    case "amount": return Number(item.kind === "mfc" ? r.loan_amount : r.minimum_bid) || 0;
+    case "market": return Number(item.kind === "mfc" ? r.appraised_value : r.market_value) || 0;
+    case "loandate": return (item.kind === "mfc" ? r.deed_date : "") || "9999";
+    case "lender": return (item.kind === "mfc" ? (r.lender || "") : "").toLowerCase();
+    case "legal": return (r.legal || "").toLowerCase();
+    default: return "";
+  }
+}
+function _workFcCompare(a, b, key, dir) {
+  const va = _workFcSortVal(a, key), vb = _workFcSortVal(b, key);
+  let c;
+  if (typeof va === "number" && typeof vb === "number") c = va - vb;
+  else c = String(va).localeCompare(String(vb));
+  return dir === "asc" ? c : -c;
+}
+function _workFcSetSort(key) {
+  if (WORKFC_SORT.key === key) WORKFC_SORT.dir = (WORKFC_SORT.dir === "asc" ? "desc" : "asc");
+  else { WORKFC_SORT.key = key; WORKFC_SORT.dir = "asc"; }
+  renderWorkForeclosures();
+}
 function _workFcRow(item) {
   const r = item.rec;
   const dash = '<span style="color:var(--muted)">\u2014</span>';
@@ -14154,6 +14252,7 @@ function _workFcRow(item) {
 
   const _saleYmd = item.kind === "mfc" ? r.sale_date : (r.sale_date_only || r.sale_date);
   const saleCell = _fcWorkSaleDatePill(_saleYmd);
+  const fuCell = _fuCellFromDates(item._fuDates || []);
 
   const owner = (esc(fmtOwner(r.owner || "")) || dash);
 
@@ -14201,6 +14300,7 @@ function _workFcRow(item) {
   tr.innerHTML = `
     <td><span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status"
           onclick="openWorkFcStatusMenu(event, '${item.kind}', '${esc(key)}', '${esc(item.stage)}')">${esc(stageDef.label)} \u25BE</span></td>
+    <td>${fuCell}</td>
     <td>${saleCell}</td>
     <td>${owner}</td>
     <td>${prop}</td>
@@ -14228,19 +14328,34 @@ function renderWorkForeclosures() {
   const stats = document.getElementById("workfc-stats");
   tb.innerHTML = "";
   const list = _workForeclosureList();
+  // Decorate each item with its lead's follow-up dates (load stores once).
+  const _mfcStore = loadCrmStore("mfc") || {};
+  const _tfcStore = (typeof loadTfcCrm === "function" ? loadTfcCrm() : {}) || {};
+  list.forEach(it => {
+    const e = it.kind === "mfc" ? _mfcStore[it.rec.doc_num] : _tfcStore[it.rec.uid];
+    it._fuDates = _entryFollowupDates(e);
+  });
   if (stats) {
     const nMfc = list.filter(x => x.kind === "mfc").length;
     const nTfc = list.filter(x => x.kind === "tfc").length;
+    const fu = _fuCountsFromItems(list);
     stats.innerHTML = `<div class="stats-title">Foreclosure Leads</div>
       <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Working</div></div>
       <div class="stat-card"><div class="num">${nMfc.toLocaleString()}</div><div class="lbl">Mortgage</div></div>
-      <div class="stat-card"><div class="num">${nTfc.toLocaleString()}</div><div class="lbl">Tax</div></div>`;
+      <div class="stat-card"><div class="num">${nTfc.toLocaleString()}</div><div class="lbl">Tax</div></div>
+      ${_fuCards(fu)}`;
   }
   if (list.length === 0) { if (empty) empty.hidden = false; return; }
   if (empty) empty.hidden = true;
+  if (WORKFC_SORT.key) list.sort((a, b) => _workFcCompare(a, b, WORKFC_SORT.key, WORKFC_SORT.dir));
   const frag = document.createDocumentFragment();
   for (const item of list) frag.appendChild(_workFcRow(item));
   tb.appendChild(frag);
+  document.querySelectorAll("#workfc-table th[data-sort]").forEach(th => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === WORKFC_SORT.key)
+      th.classList.add(WORKFC_SORT.dir === "asc" ? "sort-asc" : "sort-desc");
+  });
 }
 
 function _stackBuildList() {
