@@ -189,13 +189,13 @@
   /* Follow-up tiles stand out — they drive the day's outreach work, so
      they read louder than the descriptive count tiles beside them. */
   .stat-card.fu-stat {
-    border: 1px solid var(--accent);
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    background: color-mix(in srgb, var(--accent) 5%, transparent);
     border-radius: 8px;
     padding: 2px 12px;
   }
-  .stat-card.fu-stat .num { color: var(--accent); font-weight: 700; }
-  .stat-card.fu-stat .lbl { color: var(--accent); opacity: 0.85; }
+  .stat-card.fu-stat .num { color: var(--fg); font-weight: 700; }
+  .stat-card.fu-stat .lbl { color: var(--muted); }
   /* Per-tab freshness indicator — shows when each tab's data source
      was last refreshed. Floats to the right of the stats row via
      margin-left: auto so it sits at the opposite end from the title.
@@ -1619,8 +1619,8 @@
      the stage row) when there's a pending follow-up on this lead,
      summarizing the soonest one. Muted style for future-dated
      follow-ups, attention-grabbing yellow for overdue. */
-  .prop-fu-inline { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); white-space:nowrap; }
-  .prop-fu-inline strong { font-weight:600; color:var(--accent); }
+  .prop-fu-inline { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); white-space:nowrap; }
+  .prop-fu-inline strong { font-weight:700; color:var(--accent); font-size:15px; }
   .prop-fu-inline.due { color:#f59e0b; }
   .prop-fu-inline.due strong { color:#facc15; }
   .prop-fu-inline-icon { font-size:13px; }
@@ -2842,7 +2842,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ai</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026aj</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -11651,6 +11651,13 @@ function _workOvRow(item) {
   // (New Owner, Legal, Plaintiff, NCAD/NCTAX, Map). Then swap the status pill
   // for the in-table Work stage menu and insert Follow-up as column 2.
   const tr = buildOverageRow(item.rec);
+  // Work view: property address as clean display text — drop the editable input
+  // and the NCAD ID / Tax-acct boxes (those belong on the lead-type tab).
+  const _adTd = tr.querySelector('.tov-addr[data-field="prop_address"]');
+  if (_adTd) {
+    const _eff = (typeof _tovEff === "function") ? _tovEff(item.rec) : {};
+    _adTd.closest("td").innerHTML = _eff.prop_address ? esc(fmtTitle(_eff.prop_address)) : '<span style="color:var(--muted)">—</span>';
+  }
   const def = OVERAGE_STAGES.find(s => s.key === item.stage) || OVERAGE_STAGES[0];
   const pc = OVERAGE_PILL_CLASS[item.stage] || "status-new";
   if (tr.children[0]) tr.children[0].innerHTML =
@@ -11743,6 +11750,16 @@ function _workMovRow(item) {
   // the status pill open the in-table Work stage menu and insert Follow-up as
   // column 2.
   const tr = _buildMovRow(item.rec);
+  // Work view: owner + property address as clean display text (no inline inputs,
+  // so the font matches the other dashboards).
+  const _r = item.rec;
+  const _ownTd = tr.querySelector('.mov-edit[data-field="owner"]');
+  if (_ownTd) _ownTd.closest("td").innerHTML = esc(fmtOwner(_r.owner || "")) || '<span style="color:var(--muted)">—</span>';
+  const _adTd = tr.querySelector('.mov-edit[data-field="prop_address"]');
+  if (_adTd) {
+    const _city = [_r.prop_city, _r.prop_state, _r.prop_zip].filter(Boolean).join(" ");
+    _adTd.closest("td").innerHTML = (_r.prop_address ? esc(fmtTitle(_r.prop_address)) : '<span style="color:var(--muted)">—</span>') + (_city ? '<div style="color:var(--muted);font-size:11px;">' + esc(fmtTitle(_city)) + '</div>' : "");
+  }
   const def = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
   const pc = STACK_PILL_CLASS[item.stage] || "status-new";
   if (tr.children[0]) tr.children[0].innerHTML =
