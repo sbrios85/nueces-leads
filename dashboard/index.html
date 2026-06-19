@@ -2836,7 +2836,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ae</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026af</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -9780,6 +9780,8 @@ function renderToday() {
   // which covers CCLN / Delinquent / CV / Vacant / Tax Deferral).
   const _todayNow = _todayISO();
   const propStore = (function () { try { return loadCrmStore("prop") || {}; } catch (e) { return {}; } })();
+  const tovStore = (function () { try { return loadCrmStore("tov") || {}; } catch (e) { return {}; } })();
+  const movStore = (function () { try { return loadCrmStore("mov") || {}; } catch (e) { return {}; } })();
   _updateWorkCounts();
   const fups = [];
   for (const item of _workForeclosureList()) {
@@ -9795,12 +9797,12 @@ function renderToday() {
       name: entry.owner || entry.prop_address || entry.key, overdue: due < _todayNow });
   }
   for (const x of _workOverageList()) {
-    const due = _soonestDueFollowup(_fuItems(propStore[x.rec.case_number]), _todayNow);
+    const due = _soonestDueFollowup(_fuItems(tovStore[x.rec.case_number]), _todayNow);
     if (due) fups.push({ kind: "prop", id: x.rec.case_number, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.case_number, overdue: due < _todayNow });
   }
   for (const x of _workMovList()) {
-    const due = _soonestDueFollowup(_fuItems(propStore[x.rec.id]), _todayNow);
+    const due = _soonestDueFollowup(_fuItems(movStore[x.rec.id]), _todayNow);
     if (due) fups.push({ kind: "prop", id: x.rec.id, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.id, overdue: due < _todayNow });
   }
@@ -9823,12 +9825,12 @@ function renderToday() {
       name: entry.owner || entry.prop_address || entry.key });
   }
   for (const x of _workOverageList()) {
-    const due = _coldDueDate((propStore[x.rec.case_number] || {}).attempts, _todayNow);
+    const due = _coldDueDate((tovStore[x.rec.case_number] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: "prop", id: x.rec.case_number, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.case_number });
   }
   for (const x of _workMovList()) {
-    const due = _coldDueDate((propStore[x.rec.id] || {}).attempts, _todayNow);
+    const due = _coldDueDate((movStore[x.rec.id] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: "prop", id: x.rec.id, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.id });
   }
@@ -9847,22 +9849,22 @@ function renderToday() {
     const store = item.kind === "mfc" ? mfcCrm : tfcCrm;
     const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
     const due = _soonestUpcomingFollowup(_fuItems(store[id]), _todayNow);
-    if (due && due <= _weekAhead) weekList.push({ kind: item.kind, id, due,
+    if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: item.kind, id, due,
       name: item.rec.owner || item.rec.prop_address || ("Lead " + id) });
   }
   for (const entry of _workTaxList()) {
     const due = _soonestUpcomingFollowup(_fuItems(propStore[entry.key]), _todayNow);
-    if (due && due <= _weekAhead) weekList.push({ kind: "prop", id: entry.key, due,
+    if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: entry.key, due,
       name: entry.owner || entry.prop_address || entry.key });
   }
   for (const x of _workOverageList()) {
-    const due = _soonestUpcomingFollowup(_fuItems(propStore[x.rec.case_number]), _todayNow);
-    if (due && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.case_number, due,
+    const due = _soonestUpcomingFollowup(_fuItems(tovStore[x.rec.case_number]), _todayNow);
+    if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.case_number, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.case_number });
   }
   for (const x of _workMovList()) {
-    const due = _soonestUpcomingFollowup(_fuItems(propStore[x.rec.id]), _todayNow);
-    if (due && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.id, due,
+    const due = _soonestUpcomingFollowup(_fuItems(movStore[x.rec.id]), _todayNow);
+    if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.id, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.id });
   }
   weekList.sort((a, b) => a.due.localeCompare(b.due));
@@ -10196,7 +10198,7 @@ function renderToday() {
     <div class="today-stat ${weekList.length ? "clickable" : ""}"
          ${weekList.length ? 'onclick="_todayToggleList(\'week\')"' : ""}>
       <div class="ts-num">${weekList.length}</div>
-      <div class="ts-label">Follow-ups this week</div>
+      <div class="ts-label">Follow-ups later this week</div>
       <div class="ts-sub">${weekList.length ? "next 7 days — tap" : "none scheduled"}</div>
     </div>`);
   document.getElementById("today-glance").innerHTML = glance.join("") + `
@@ -11689,7 +11691,7 @@ function renderWorkOverages() {
   const list = _workOverageList();
   { const _c = document.getElementById("workov-count"); if (_c) _c.textContent = list.length.toLocaleString(); }
   const dead = _workOverageDeadList();
-  const _psFu = loadCrmStore("prop") || {};
+  const _psFu = loadCrmStore("tov") || {};
   [...list, ...dead].forEach(x => { const d = _entryFollowupDates(_psFu[x.rec.case_number]); x._fuDates = d; x._fuEarliest = d.length ? d.slice().sort()[0] : "9999-12-31"; });
   if (WORKOV_SORT.key) list.sort(_workOvCompare);
   if (stats) {
@@ -11698,7 +11700,7 @@ function renderWorkOverages() {
     list.forEach(x => { counts[x.stage] = (counts[x.stage] || 0) + 1; });
     const cards = STACK_STAGES.filter(s => s.key !== "new" && s.key !== "dead")
       .map(s => `<div class="stat-card"><div class="num">${(counts[s.key] || 0).toLocaleString()}</div><div class="lbl">${esc(s.label)}</div></div>`).join("");
-    const _ps = loadCrmStore("prop") || {};
+    const _ps = loadCrmStore("tov") || {};
     const fu = _fuCountsFromEntries(list.map(x => _ps[x.rec.case_number]));
     stats.innerHTML = `<div class="stats-title">Tax Overages — Working</div>
       <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Working</div></div>
@@ -11773,7 +11775,7 @@ function renderWorkMov() {
   const list = _workMovList();
   { const _c = document.getElementById("workmov-count"); if (_c) _c.textContent = list.length.toLocaleString(); }
   const dead = _workMovDeadList();
-  const _psFu = loadCrmStore("prop") || {};
+  const _psFu = loadCrmStore("mov") || {};
   [...list, ...dead].forEach(x => { const d = _entryFollowupDates(_psFu[x.rec.id]); x._fuDates = d; x._fuEarliest = d.length ? d.slice().sort()[0] : "9999-12-31"; });
   if (WORKMOV_SORT.key) list.sort(_workMovCompare);
   if (stats) {
@@ -11782,7 +11784,7 @@ function renderWorkMov() {
     list.forEach(x => { counts[x.stage] = (counts[x.stage] || 0) + 1; });
     const cards = STACK_STAGES.filter(s => s.key !== "new" && s.key !== "dead")
       .map(s => `<div class="stat-card"><div class="num">${(counts[s.key] || 0).toLocaleString()}</div><div class="lbl">${esc(s.label)}</div></div>`).join("");
-    const _ps = loadCrmStore("prop") || {};
+    const _ps = loadCrmStore("mov") || {};
     const fu = _fuCountsFromEntries(list.map(x => _ps[x.rec.id]));
     stats.innerHTML = `<div class="stats-title">Mortgage Overages — Working</div>
       <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Working</div></div>
@@ -14314,36 +14316,36 @@ function _updateWorkCounts() {
   set("workmov-count", _workMovList);
 }
 // Today = soonest pending follow-up is due today-or-earlier (incl. overdue).
-// This Week = soonest pending follow-up falls within the next 7 days.
+// Later This Week = soonest pending follow-up AFTER today, within 7 days.
 function _fuCountsFromEntries(entries) {
-  const todayIso = _isoAddDays(0), weekIso = _isoAddDays(6);
+  const todayIso = _isoAddDays(0), weekIso = _isoAddDays(7);
   let today = 0, week = 0;
   for (const e of entries) {
     const d = _entryFollowupDates(e);
     if (!d.length) continue;
     const earliest = d.slice().sort()[0];
     if (earliest <= todayIso) today++;
-    if (earliest <= weekIso) week++;
+    if (earliest > todayIso && earliest <= weekIso) week++;
   }
   return { today, week };
 }
 // Same, for Foreclosure-Leads items already decorated with _fuDates.
 function _fuCountsFromItems(list) {
-  const todayIso = _isoAddDays(0), weekIso = _isoAddDays(6);
+  const todayIso = _isoAddDays(0), weekIso = _isoAddDays(7);
   let today = 0, week = 0;
   for (const it of list) {
     const d = it._fuDates || [];
     if (!d.length) continue;
     const earliest = d.slice().sort()[0];
     if (earliest <= todayIso) today++;
-    if (earliest <= weekIso) week++;
+    if (earliest > todayIso && earliest <= weekIso) week++;
   }
   return { today, week };
 }
 // The two follow-up stat cards shared by every Work dashboard.
 function _fuCards(fu) {
   return `<div class="stat-card fu-stat"><div class="num">${fu.today.toLocaleString()}</div><div class="lbl">Follow-ups Today</div></div>`
-       + `<div class="stat-card fu-stat"><div class="num">${fu.week.toLocaleString()}</div><div class="lbl">Follow-ups This Week</div></div>`;
+       + `<div class="stat-card fu-stat"><div class="num">${fu.week.toLocaleString()}</div><div class="lbl">Follow-ups Later This Week</div></div>`;
 }
 // Follow-up column cell (read-only; follow-ups are set by logging an
 // outreach attempt in the CRM). Shows the soonest pending date, red if
