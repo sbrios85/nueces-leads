@@ -731,6 +731,19 @@
   }
   .mov-edit:hover { border-color: var(--border); }
   .mov-edit:focus { outline: none; border-color: var(--accent); background: var(--bg); }
+  /* Auto-height wrapping field for overage owner / address (so long names
+     and addresses wrap to a 2nd line instead of clipping). */
+  .tov-wrap {
+    width: 100%; box-sizing: border-box; display: block;
+    font-family: inherit; font-size: 14px; line-height: 1.35;
+    background: transparent; border: 1px solid transparent; border-radius: 4px;
+    color: var(--fg, #e2e8f0); padding: 4px 6px;
+    resize: none; overflow: hidden; white-space: pre-wrap; word-break: break-word;
+    field-sizing: content; min-height: 1.85em;
+  }
+  .tov-wrap::placeholder { color: var(--muted); }
+  .tov-wrap:hover { border-color: var(--border, #2a3a4a); }
+  .tov-wrap:focus { outline: none; border-color: var(--accent); background: var(--bg); }
   #tov-table tbody tr.deadbar-row:hover,
   #workov-table tbody tr.deadbar-row:hover { background: rgba(239,68,68,.12); }
   #tov-table tbody tr.deadbar-row,
@@ -2869,7 +2882,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026aw</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ay</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -11332,6 +11345,7 @@ function _ymLabel(ym){
 const _TOV_STORE_KEY = "nueces_tov_manual_v1";
 function _tovStoreAll(){ try { return JSON.parse(localStorage.getItem(_TOV_STORE_KEY) || "{}"); } catch(e){ return {}; } }
 function _tovGet(caseNum){ const s = _tovStoreAll(); return s[caseNum] || {}; }
+function _taGrow(el){ if(!el) return; el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; }
 function _tovSaveField(inp){
   const caseNum = inp.dataset.case;
   const field = inp.dataset.field;
@@ -11474,6 +11488,35 @@ function openOverageStatusMenu(ev, caseNum, currentStage) {
       setOverageStatus(caseNum, btn.dataset.stage);
       closeStackStatusMenu();
       applyOverage();
+    });
+  });
+  setTimeout(() => document.addEventListener("click", _stackMenuOutside, true), 0);
+}
+
+// Mortgage Overages stage menu — mirrors the tax-overage menu. Stage lives
+// on the mov record (_moSetField id,"stage"); re-render with applyMov().
+function openMovStatusMenu(ev, id, currentStage) {
+  ev.stopPropagation();
+  closeStackStatusMenu();
+  const menu = document.createElement("div");
+  menu.className = "ccln-status-menu";
+  menu.id = "stack-status-menu";
+  menu.innerHTML = STACK_STAGES
+    .filter(s => s.key !== currentStage)
+    .map(s => `<button class="status-menu-item" data-stage="${esc(s.key)}">${esc(s.label)}</button>`)
+    .join("");
+  const rect = ev.currentTarget.getBoundingClientRect();
+  menu.style.position = "fixed";
+  menu.style.left = rect.left + "px";
+  menu.style.top = (rect.bottom + 4) + "px";
+  menu.style.zIndex = "1000";
+  document.body.appendChild(menu);
+  menu.querySelectorAll(".status-menu-item").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      _moSetField(id, "stage", btn.dataset.stage);
+      closeStackStatusMenu();
+      applyMov();
     });
   });
   setTimeout(() => document.addEventListener("click", _stackMenuOutside, true), 0);
@@ -11670,9 +11713,9 @@ function _buildMovRow(rec){
   const numInput = (field, val) =>
     `<input type="number" class="mov-edit" data-id="${esc(rec.id)}" data-field="${esc(field)}" value="${val ? esc(String(val)) : ""}" placeholder="$" style="width:96px;" onclick="event.stopPropagation();">`;
   const txtInput = (field, val, ph, w) =>
-    `<input type="text" class="mov-edit" data-id="${esc(rec.id)}" data-field="${esc(field)}" value="${esc(val || "")}" placeholder="${esc(ph)}" style="width:${w||"100%"};" onclick="event.stopPropagation();">`;
+    `<textarea rows="1" class="mov-edit tov-wrap" data-id="${esc(rec.id)}" data-field="${esc(field)}" placeholder="${esc(ph)}" style="width:${w||"100%"};" oninput="_taGrow(this)" onclick="event.stopPropagation();">${esc(fmtTitle(val || ""))}</textarea>`;
   tr.innerHTML =
-    `<td><span class="pill status ${pillClass}">${esc(stageDef.label)}</span></td>` +
+    `<td><span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change work stage" onclick="openMovStatusMenu(event, '${esc(rec.id)}', '${stage}')">${esc(stageDef.label)} \u25BE</span></td>` +
     `<td>${rec.sale_date ? esc(formatDate(rec.sale_date)) : dash}</td>` +
     `<td>${txtInput("owner", rec.owner, "owner / former owner")}</td>` +
     `<td>${txtInput("prop_address", rec.prop_address, "property address")}${city ? `<div style="color:var(--muted);font-size:11px;">${esc(fmtTitle(city))}</div>` : ""}</td>` +
@@ -11685,7 +11728,10 @@ function _buildMovRow(rec){
     `<td>${rec.source_doc && rec.source_doc !== "manual" ? esc(rec.source_doc) : '<span style="color:var(--muted)">manual</span>'}</td>` +
     `<td style="text-align:center;">${ncadCellHtml(ncadRec)}</td>`;
   tr.style.cursor = "pointer";
-  tr.addEventListener("click", () => openMovCrm(rec.id));
+  tr.addEventListener("click", (e) => {
+    if (e.target.closest("a, button, input, textarea, select, .pill.status, .ext-icon, .map-icon")) return;
+    openMovCrm(rec.id);
+  });
   tr.querySelectorAll(".mov-edit").forEach(inp => {
     inp.addEventListener("change", () => {
       const f = inp.dataset.field;
@@ -12043,12 +12089,14 @@ function buildOverageRow(c){
   const eff = _tovEff(c);
   const _cse = esc(c.case_number);
   const addrCell =
-    '<input class="tov-addr" type="text" value="' + esc(eff.prop_address || "") +
-      '" placeholder="+ add address" data-case="' + _cse + '" data-field="prop_address"' +
-      ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">';
-  const newOwnerCell = '<input class="tov-addr" type="text" value="' + esc(eff.new_owner || "") +
-    '" placeholder="+ new owner (grantee)" data-case="' + _cse + '" data-field="new_owner"' +
-    ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">';
+    '<textarea class="tov-wrap" rows="1"' +
+      ' placeholder="+ add address" data-case="' + _cse + '" data-field="prop_address"' +
+      ' oninput="_taGrow(this)" onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
+      esc(fmtTitle(eff.prop_address || "")) + '</textarea>';
+  const newOwnerCell = '<textarea class="tov-wrap" rows="1"' +
+    ' placeholder="+ new owner (grantee)" data-case="' + _cse + '" data-field="new_owner"' +
+    ' oninput="_taGrow(this)" onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
+    esc(fmtTitle(eff.new_owner || "")) + '</textarea>';
   const legalCell = '<input class="tov-addr" type="text" value="' + esc(eff.legal_description || "") +
     '" placeholder="+ legal description" data-case="' + _cse + '" data-field="legal_description"' +
     ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">';
