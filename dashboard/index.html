@@ -2882,7 +2882,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026bh</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026bi</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -12095,7 +12095,8 @@ function buildOverageRow(c){
     statusCell =
       '<span class="pill status ' + epillClass + '" style="cursor:pointer;" title="Click to change work stage"' +
       " onclick=\"openOverageStatusMenu(event, '" + esc(c.case_number) + "', '" + estage + "')\">" +
-      esc(estageDef.label) + ' \u25BE</span>';
+      esc(estageDef.label) + ' \u25BE</span>'
+      + (estage === "dead" ? '<button class="restore-btn" style="margin-top:4px;" title="Restore this lead" onclick="event.stopPropagation(); setOverageStatus(\'' + esc(c.case_number) + '\',\'new\'); applyOverage();">Restore</button>' : '');
   }
   const totalMonths = (EXCESS_META && EXCESS_META.summary && EXCESS_META.summary.months_tracked) || 0;
   const ripe = !claimed && totalMonths && c.months_on >= totalMonths;
@@ -18267,7 +18268,7 @@ function buildTfcRow(r, mode) {
     const _stageCls = STACK_PILL_CLASS[_effStage] || "status-new";
     statusCell = `<span class="pill status ${_stageCls}" data-uid="${esc(uid)}"
           style="cursor:pointer;" title="Click to change status"
-          onclick="openTfcStatusMenu(event, '${esc(uid)}', '${esc(_effStage)}')">${esc(_stageDef.label)} \u25BE</span>`;
+          onclick="openTfcStatusMenu(event, '${esc(uid)}', '${esc(_effStage)}')">${esc(_stageDef.label)} \u25BE</span>${mode === "dead" ? `<button class="restore-btn" style="margin-top:4px;" title="Restore this lead" onclick="event.stopPropagation(); restoreTfcLead('${esc(uid)}');">Restore</button>` : ""}`;
   }
 
   // ---- Editable cells (owner / prop_address / mail_address / legal) ----
@@ -18518,6 +18519,7 @@ function confirmTfcMarkDead(reason) {
 }
 function restoreTfcLead(uid) {
   setTfcEntry(uid, {
+    stage: "new",
     tfc_status: "active",
     restored_at: new Date().toISOString()
   });
@@ -19227,10 +19229,10 @@ function openFcStageMenu(ev, docNum, currentStage) {
     .filter(s => s.key !== "dead" && s.key !== currentStage)
     .map(s => `<button class="status-menu-item" data-stage="${esc(s.key)}">${esc(s.label)}</button>`)
     .join("");
-  // "Mark dead…" always shown (unless already viewing a dead row,
-  // which never reaches this menu). Routes to the reason modal.
+  // "Dead" — same as the other dashboards: a direct stage choice (no reason
+  // modal). The row moves to the dead footer; restore it from there.
   const deadItem =
-    `<button class="status-menu-item danger" data-stage="__dead__">Mark dead…</button>`;
+    `<button class="status-menu-item danger" data-stage="dead">Dead</button>`;
   menu.innerHTML = stageItems + deadItem;
 
   const rect = ev.currentTarget.getBoundingClientRect();
@@ -19245,15 +19247,7 @@ function openFcStageMenu(ev, docNum, currentStage) {
       e.stopPropagation();
       const stage = btn.dataset.stage;
       closeFcStageMenu();
-      if (stage === "__dead__") {
-        // Find the row so the reason modal can show the owner name.
-        const pill = document.querySelector(
-          `#fc-table .pill.status[data-doc="${CSS.escape(docNum)}"]`);
-        const rowEl = pill ? pill.closest("tr") : null;
-        openMarkDeadModal(docNum, rowEl);
-      } else {
-        _mfcSetStageInline(docNum, stage);
-      }
+      _mfcSetStageInline(docNum, stage);   // "dead" handled like any stage — no modal
     };
   });
 
