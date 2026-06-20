@@ -954,16 +954,16 @@
   /* Dead-leads collapsible section in tfoot */
   .dead-toggle-row td {
     padding: 12px 14px !important;
-    background: rgba(56,189,248,.04);
-    border-top: 1px solid rgba(56,189,248,.15);
+    background: rgba(239,68,68,.06);
+    border-top: 2px solid var(--bad);
     cursor: pointer;
     user-select: none;
-    font-weight: 500;
-    color: var(--muted);
+    font-weight: 700;
+    color: var(--bad);
   }
-  .dead-toggle-row td:hover { background: rgba(56,189,248,.08); }
+  .dead-toggle-row td:hover { background: rgba(239,68,68,.12); }
   .dead-toggle-row .chev { display: inline-block; transition: transform 0.15s;
-                           margin-right: 8px; font-size: 10px; color: var(--muted); }
+                           margin-right: 8px; font-size: 10px; color: var(--bad); }
   .dead-toggle-row.expanded .chev { transform: rotate(90deg); }
   .sold-toggle-row td {
     padding: 12px 14px !important;
@@ -2882,7 +2882,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026bg</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026bh</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3411,6 +3411,7 @@
       <th style="width: 72px;">NCTAX</th>
     </tr></thead>
     <tbody></tbody>
+    <tfoot id="stack-dead-foot"></tfoot>
   </table>
   <div id="stack-empty" class="empty" hidden>
     <div style="font-size:18px;margin-bottom:12px;color:var(--fg);">
@@ -11683,15 +11684,24 @@ function renderMovStats(){
     <div style="width:1px;align-self:stretch;background:var(--border);margin:2px 0;"></div>
     <button onclick="_moAddManual()" style="align-self:center;background:rgba(56,189,248,.12);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;">+ Add Mortgage Overage</button>`;
 }
+let MOV_SHOW_DEAD = false;
 function renderMov(){
   const tb = document.querySelector("#mov-table tbody");
   if (!tb) return;
   const empty = document.getElementById("mov-empty");
   tb.innerHTML = "";
-  const list = _moList().sort((a,b) => _moSurplus(b) - _moSurplus(a));
-  if (empty) empty.hidden = list.length > 0;
+  const all = _moList().sort((a,b) => _moSurplus(b) - _moSurplus(a));
+  const list = all.filter(r => (r.stage || "new") !== "dead");
+  const dead = all.filter(r => (r.stage || "new") === "dead");
+  if (empty) empty.hidden = (list.length + dead.length) > 0;
   const frag = document.createDocumentFragment();
   for (const rec of list) frag.appendChild(_buildMovRow(rec));
+  if (dead.length) {
+    frag.appendChild(_deadBar(dead.length, MOV_SHOW_DEAD, 13, () => {
+      MOV_SHOW_DEAD = !MOV_SHOW_DEAD; renderMov();
+    }, "Dead"));
+    if (MOV_SHOW_DEAD) for (const rec of dead) { const r = _buildMovRow(rec); r.classList.add("dead-lead"); frag.appendChild(r); }
+  }
   tb.appendChild(frag);
 }
 function _buildMovRow(rec){
@@ -11724,7 +11734,7 @@ function _buildMovRow(rec){
   const txtInput = (field, val, ph, w) =>
     `<textarea rows="1" class="mov-edit tov-wrap" data-id="${esc(rec.id)}" data-field="${esc(field)}" placeholder="${esc(ph)}" style="width:${w||"100%"};" oninput="_taGrow(this)" onclick="event.stopPropagation();">${esc(fmtTitle(val || ""))}</textarea>`;
   tr.innerHTML =
-    `<td><span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change work stage" onclick="openMovStatusMenu(event, '${esc(rec.id)}', '${stage}')">${esc(stageDef.label)} \u25BE</span></td>` +
+    `<td><span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change work stage" onclick="openMovStatusMenu(event, '${esc(rec.id)}', '${stage}')">${esc(stageDef.label)} \u25BE</span>${stage === "dead" ? `<button class="restore-btn" style="margin-top:4px;" title="Restore this lead" onclick="event.stopPropagation(); _moSetField('${esc(rec.id)}','stage','new'); applyMov();">Restore</button>` : ""}</td>` +
     `<td>${rec.sale_date ? esc(formatDate(rec.sale_date)) : dash}</td>` +
     `<td>${txtInput("owner", rec.owner, "owner / former owner")}</td>` +
     `<td>${txtInput("prop_address", rec.prop_address, "property address")}${city ? `<div style="color:var(--muted);font-size:11px;">${esc(fmtTitle(city))}</div>` : ""}</td>` +
@@ -14290,7 +14300,7 @@ function _stackPropertyKey(record, source) {
 // Build the stack list: group records by property_key, apply
 // inclusion rule, return one entry per qualifying property.
 // ----------------------------------------------------------------
-function _stackBuildGroups() {
+function _stackBuildGroups(includeInactive) {
   // property_key -> { signals: [{source, record}, ...], byType: {type: count} }
   const groups = new Map();
   for (const source of STACK_SOURCES) {
@@ -14298,7 +14308,7 @@ function _stackBuildGroups() {
     for (const rec of records) {
       // Skip soft-deleted records — Stack only surfaces live leads
       try {
-        if (source.isActive && !source.isActive(rec)) continue;
+        if (!includeInactive && source.isActive && !source.isActive(rec)) continue;
       } catch (e) { /* defensive: treat thrown isActive as active */ }
 
       const key = _stackPropertyKey(rec, source);
@@ -14636,7 +14646,7 @@ function _openWorkStageMenu(ev, stages, currentStage, pickFn) {
   _closeWorkStageMenu();
   const menu = document.createElement("div");
   menu.className = "ccln-status-menu";
-  menu.innerHTML = stages.filter(st => st.key !== currentStage)
+  menu.innerHTML = stages.filter(st => st.key !== currentStage && !st.auto)
     .map(st => `<button class="status-menu-item${st.key === "dead" ? " danger" : ""}" data-stage="${esc(st.key)}">${esc(st.label)}</button>`).join("");
   menu.style.position = "fixed"; menu.style.zIndex = "1000"; menu.style.visibility = "hidden";
   document.body.appendChild(menu);
@@ -14995,6 +15005,26 @@ function _stackBuildList() {
     list.push(entry);
   }
   return list;
+}
+let STACK_SHOW_DEAD = false;
+// Dead stacked leads — built from a groups pass that KEEPS soft-deleted
+// records (includeInactive), then the SAME inclusion rule as the active list,
+// kept only where the parcel's stage is "dead". Powers the Stack dashboard's
+// collapsible Dead footer.
+function _stackBuildDeadList() {
+  const groups = _stackBuildGroups(true);
+  const _delqInc = _stackDelqByNcad();
+  const list = [];
+  for (const [key, g] of groups.entries()) {
+    if (getStackStatus(key) !== "dead") continue;
+    const entry = _stackBuildEntry(key, g);
+    if (!entry) continue;
+    const multiType = Object.keys(g.byType).length >= 2;
+    const isDelq = !!(entry.ncad_account_num && _delqInc[entry.ncad_account_num]);
+    if (!g.hasAuto && !multiType && !isDelq && !entry.non_owner_occupied) continue;
+    list.push(entry);
+  }
+  return _stackDecorate(list);
 }
 
 // ---- "On the Stack" membership flag (Delinquent / CV / Tax Deferral) ----
@@ -15461,8 +15491,25 @@ function applyStack() {
   if (!tbody) return;
   tbody.innerHTML = "";
 
+  // Dead section — stacked leads marked dead, in a collapsible footer. Built
+  // from a groups pass that keeps soft-deleted records; respects the same view
+  // filters (Hide Lots / Hide Bankruptcy / property type) as the active list.
+  const tf = document.getElementById("stack-dead-foot");
+  let dead = [];
+  if (tf) {
+    tf.innerHTML = "";
+    dead = _stackBuildDeadList();
+    if (STACK_HIDE_LOTS) dead = dead.filter(e => !_stackIsLot(e));
+    if (STACK_HIDE_BANKRUPTCY) dead = dead.filter(e => !_stackIsBankruptcy(e));
+    if (_STACK_PROP_FILTER !== "all") dead = dead.filter(e => _propTypeCategory(e.property_type) === _STACK_PROP_FILTER);
+    if (dead.length) {
+      tf.appendChild(_deadBar(dead.length, STACK_SHOW_DEAD, 15, () => { STACK_SHOW_DEAD = !STACK_SHOW_DEAD; applyStack(); }, "Dead"));
+      if (STACK_SHOW_DEAD) for (const entry of dead) { const tr = _buildStackRow(entry); tr.classList.add("dead-lead"); tf.appendChild(tr); }
+    }
+  }
+
   const empty = document.getElementById("stack-empty");
-  if (view.length === 0) {
+  if (view.length === 0 && dead.length === 0) {
     if (empty) empty.hidden = false;
     return;
   }
