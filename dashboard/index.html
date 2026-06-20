@@ -1209,6 +1209,11 @@
   }
   .today-list-item:hover { border-color: var(--accent); }
   .today-list-item .tli-name { color: var(--fg); font-weight: 500; }
+  .today-list-item.tli-1line { justify-content: flex-start; align-items: baseline; gap: 8px; overflow: hidden; }
+  .today-list-item.tli-1line .tli-status, .today-list-item.tli-1line .tli-addr { flex: none; white-space: nowrap; }
+  .today-list-item.tli-1line .tli-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .today-list-item .tli-status { color: var(--muted); font-size: 12px; font-weight: 500; }
+  .today-list-item .tli-addr { color: var(--muted); font-size: 12px; font-weight: 400; }
   .today-list-item .tli-meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
   .today-list-item .tli-overdue { color: #f87171; }
   .pane.active { display: block; }
@@ -2860,7 +2865,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ap</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026at</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -9833,27 +9838,42 @@ function renderToday() {
   const movStore = (function () { try { return loadCrmStore("mov") || {}; } catch (e) { return {}; } })();
   _updateWorkCounts();
   const fups = [];
-  for (const item of _workForeclosureList()) {
+  const _delqWorked = (typeof DELQ_RAW !== "undefined") ? _workDelqList(true) : [];
+  for (const item of _workForeclosureList(true)) {
     const store = item.kind === "mfc" ? mfcCrm : tfcCrm;
     const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
     const due = _soonestDueFollowup(_fuItems(store[id]), _todayNow);
     if (due) fups.push({ kind: item.kind, id, due,
-      name: item.rec.owner || item.rec.prop_address || ("Lead " + id), overdue: due < _todayNow });
+      name: item.rec.owner || item.rec.prop_address || ("Lead " + id),
+      addr: item.rec.prop_address || "", overdue: due < _todayNow });
   }
-  for (const entry of _workTaxList()) {
+  for (const entry of _workTaxList(true)) {
     const due = _soonestDueFollowup(_fuItems(propStore[entry.key]), _todayNow);
     if (due) fups.push({ kind: "prop", id: entry.key, due,
-      name: entry.owner || entry.prop_address || entry.key, overdue: due < _todayNow });
+      name: entry.owner || entry.prop_address || entry.key,
+      addr: entry.prop_address || "", overdue: due < _todayNow });
   }
-  for (const x of _workOverageList()) {
+  for (const x of _workOverageList(true)) {
     const due = _soonestDueFollowup(_fuItems(tovStore[x.rec.case_number]), _todayNow);
     if (due) fups.push({ kind: "prop", id: x.rec.case_number, due,
-      name: x.rec.owner || x.rec.prop_address || x.rec.case_number, overdue: due < _todayNow });
+      name: x.rec.owner || x.rec.prop_address || x.rec.case_number,
+      addr: x.rec.prop_address || "", overdue: due < _todayNow });
   }
-  for (const x of _workMovList()) {
+  for (const x of _workMovList(true)) {
     const due = _soonestDueFollowup(_fuItems(movStore[x.rec.id]), _todayNow);
     if (due) fups.push({ kind: "prop", id: x.rec.id, due,
-      name: x.rec.owner || x.rec.prop_address || x.rec.id, overdue: due < _todayNow });
+      name: x.rec.owner || x.rec.prop_address || x.rec.id,
+      addr: x.rec.prop_address || "", overdue: due < _todayNow });
+  }
+  {
+    const _seen = new Set(fups.filter(f => f.kind === "prop").map(f => f.id));
+    for (const entry of _delqWorked) {
+      if (_seen.has(entry.key)) continue;
+      const due = _soonestDueFollowup(_fuItems(propStore[entry.key]), _todayNow);
+      if (due) fups.push({ kind: "prop", id: entry.key, due,
+        name: entry.owner || entry.prop_address || entry.key,
+        addr: entry.prop_address || "", overdue: due < _todayNow });
+    }
   }
   fups.sort((a, b) => a.due.localeCompare(b.due));
   const fupOverdue = fups.filter(f => f.overdue).length;
@@ -9861,27 +9881,36 @@ function renderToday() {
   // ===== 1b. Going cold — Work-section leads 7+ days past a scheduled
   // follow-up with no contact logged since. =====
   const coldList = [];
-  for (const item of _workForeclosureList()) {
+  for (const item of _workForeclosureList(true)) {
     const store = item.kind === "mfc" ? mfcCrm : tfcCrm;
     const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
     const due = _coldDueDate((store[id] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: item.kind, id, due,
       name: item.rec.owner || item.rec.prop_address || ("Lead " + id) });
   }
-  for (const entry of _workTaxList()) {
+  for (const entry of _workTaxList(true)) {
     const due = _coldDueDate((propStore[entry.key] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: "prop", id: entry.key, due,
       name: entry.owner || entry.prop_address || entry.key });
   }
-  for (const x of _workOverageList()) {
+  for (const x of _workOverageList(true)) {
     const due = _coldDueDate((tovStore[x.rec.case_number] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: "prop", id: x.rec.case_number, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.case_number });
   }
-  for (const x of _workMovList()) {
+  for (const x of _workMovList(true)) {
     const due = _coldDueDate((movStore[x.rec.id] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: "prop", id: x.rec.id, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.id });
+  }
+  {
+    const _seen = new Set(coldList.filter(f => f.kind === "prop").map(f => f.id));
+    for (const entry of _delqWorked) {
+      if (_seen.has(entry.key)) continue;
+      const due = _coldDueDate((propStore[entry.key] || {}).attempts, _todayNow);
+      if (due) coldList.push({ kind: "prop", id: entry.key, due,
+        name: entry.owner || entry.prop_address || entry.key });
+    }
   }
   coldList.sort((a, b) => a.due.localeCompare(b.due));
 
@@ -9894,27 +9923,36 @@ function renderToday() {
       "-" + String(d.getDate()).padStart(2, "0");
   })();
   const weekList = [];
-  for (const item of _workForeclosureList()) {
+  for (const item of _workForeclosureList(true)) {
     const store = item.kind === "mfc" ? mfcCrm : tfcCrm;
     const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
     const due = _soonestUpcomingFollowup(_fuItems(store[id]), _todayNow);
     if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: item.kind, id, due,
       name: item.rec.owner || item.rec.prop_address || ("Lead " + id) });
   }
-  for (const entry of _workTaxList()) {
+  for (const entry of _workTaxList(true)) {
     const due = _soonestUpcomingFollowup(_fuItems(propStore[entry.key]), _todayNow);
     if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: entry.key, due,
       name: entry.owner || entry.prop_address || entry.key });
   }
-  for (const x of _workOverageList()) {
+  for (const x of _workOverageList(true)) {
     const due = _soonestUpcomingFollowup(_fuItems(tovStore[x.rec.case_number]), _todayNow);
     if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.case_number, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.case_number });
   }
-  for (const x of _workMovList()) {
+  for (const x of _workMovList(true)) {
     const due = _soonestUpcomingFollowup(_fuItems(movStore[x.rec.id]), _todayNow);
     if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.id, due,
       name: x.rec.owner || x.rec.prop_address || x.rec.id });
+  }
+  {
+    const _seen = new Set(weekList.filter(f => f.kind === "prop").map(f => f.id));
+    for (const entry of _delqWorked) {
+      if (_seen.has(entry.key)) continue;
+      const due = _soonestUpcomingFollowup(_fuItems(propStore[entry.key]), _todayNow);
+      if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: entry.key, due,
+        name: entry.owner || entry.prop_address || entry.key });
+    }
   }
   weekList.sort((a, b) => a.due.localeCompare(b.due));
 
@@ -10126,12 +10164,18 @@ function renderToday() {
       <div class="tc-count">${fups.length}</div>
     </div>
     <div id="today-list-fups" class="today-list" style="display:none">
-      ${fups.map(f => `
-        <div class="today-list-item" onclick="_todayOpenLead('${f.kind}','${esc2(f.id)}')">
-          <span class="tli-name">${esc2(f.name)}</span>
-          <span class="tli-meta ${f.overdue ? "tli-overdue" : ""}">
-            ${f.overdue ? "overdue " : "due "}${esc2(f.due)} · ${f.kind === "prop" ? "PROPERTY" : f.kind.toUpperCase()}</span>
-        </div>`).join("")}
+      ${fups.map(f => {
+        const _md = (f.due && f.due.length === 10)
+          ? f.due.slice(5, 7) + "-" + f.due.slice(8, 10) + "-" + f.due.slice(0, 4)
+          : f.due;
+        const _type = f.kind === "prop" ? "PROPERTY" : f.kind.toUpperCase();
+        return `
+        <div class="today-list-item tli-1line" onclick="_todayOpenLead('${f.kind}','${esc2(f.id)}')">
+          <span class="tli-status ${f.overdue ? "tli-overdue" : ""}">${f.overdue ? "Overdue" : "Due"} ${esc2(_md)} · ${_type}</span>
+          ${f.addr ? `<span class="tli-addr">${esc2(fmtTitle(f.addr))}</span>` : ""}
+          <span class="tli-name">${esc2(fmtTitle(f.name))}</span>
+        </div>`;
+      }).join("")}
     </div>`);
 
   // Parsed-pending PDFs
@@ -10313,6 +10357,10 @@ function _todayOpenLead(kind, id) {
         const g = _stackBuildGroups().get(id);
         if (g && g.signals && g.signals[0]) rec = g.signals[0].record || {};
       } catch (e) {}
+      if ((!rec || !rec.prop_address) && typeof DELQ_RAW !== "undefined" && Array.isArray(DELQ_RAW)) {
+        const d = DELQ_RAW.find(r => _delqSharedKey(r) === id);
+        if (d) rec = d;
+      }
       openPropCrm(id, rec);
     }
   } catch (e) { console.warn("could not open lead", kind, id, e); }
@@ -11645,13 +11693,13 @@ function _buildMovRow(rec){
 }
 
 // ---- Work → Tax Overages view: overages moved past New ----------
-function _workOverageList() {
+function _workOverageList(includeNew) {
   const raw = Array.isArray(EXCESS_RAW) ? EXCESS_RAW : [];
   const list = [];
   for (const c of raw) {
     if (typeof _excessInScope === "function" && !_excessInScope(c)) continue;
     const st = overageEffStage(c);                         // sanitized; claimed → claimed_dead
-    if (st === "new" || st === "dead" || st === "claimed_dead") continue;
+    if (st === "dead" || st === "claimed_dead" || (!includeNew && st === "new")) continue;
     list.push({ rec: c, stage: st });
   }
   const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
@@ -11806,7 +11854,7 @@ function renderWorkOverages() {
 }
 
 // ---- Work → Mortgage Overages view: mov records moved past New ----
-function _workMovList() {
+function _workMovList(includeNew) {
   const list = [];
   for (const rec of _moList()) {
     const st = rec.stage || "new";
@@ -14222,12 +14270,12 @@ function _stackBuildGroups() {
 // every property across the stacking sources whose SHARED stage is past
 // New (dead are already dropped by each source's isActive). Reuses the
 // Stack's entry + row builders so it looks/behaves identically.
-function _workTaxList() {
+function _workTaxList(includeNew) {
   const groups = _stackBuildGroups();
   const list = [];
   for (const [key, g] of groups.entries()) {
     const st = getStackStatus(key);
-    if (st === "new" || st === "dead") continue;
+    if (st === "dead" || (!includeNew && st === "new")) continue;
     const entry = _stackBuildEntry(key, g);
     if (entry) list.push(entry);
   }
@@ -14238,6 +14286,26 @@ function _workTaxList() {
     return (a.owner || "").localeCompare(b.owner || "");
   });
   return list;
+}
+
+// ---- Work → Delinquent Taxes follow-up source ----------------------
+// Delinquent leads share the stack status store (keyed by parcel) but the
+// delinquent list itself is NOT a stacking source, so _workTaxList never
+// yields them. This standalone collector surfaces follow-ups set on a
+// delinquent-only property in the Today cards like every other dashboard.
+function _workDelqList(includeNew) {
+  const out = [];
+  if (typeof DELQ_RAW === "undefined" || !Array.isArray(DELQ_RAW)) return out;
+  const seen = new Set();
+  for (const r of DELQ_RAW) {
+    const key = _delqSharedKey(r);
+    if (!key || seen.has(key)) continue;   // one entry per parcel
+    seen.add(key);
+    const st = getStackStatus(key);
+    if (st === "dead" || (!includeNew && st === "new")) continue;
+    out.push({ key: key, owner: r.owner || "", prop_address: r.prop_address || "" });
+  }
+  return out;
 }
 
 // Render the "Tax CC Lien Vacant CV Stack" Work view — worked leads
@@ -14290,13 +14358,13 @@ function _fmtSaleDate(sd) {
   const i = parseInt(m[2], 10); if (i < 1 || i > 12) return esc(String(sd));
   return mo[i - 1] + " " + parseInt(m[3], 10) + ", " + m[1];
 }
-function _workForeclosureList() {
+function _workForeclosureList(includeNew) {
   const out = [];
   const mfc = loadCrmStore("mfc") || {};
   for (const r of FC_RAW) {
     const e = mfc[r.doc_num] || {};
     const st = e.stage || "new";
-    if (st === "new" || st === "dead" || e.status === "dead") continue;
+    if (st === "dead" || e.status === "dead" || (!includeNew && st === "new")) continue;
     out.push({ kind: "mfc", rec: r, stage: st });
   }
   // TFC stage lives in the TFC-specific store ("tfc-crm-store"), NOT the
@@ -14309,7 +14377,7 @@ function _workForeclosureList() {
     // (matches the Tax Foreclosures dashboard's dead bucket).
     if (String(r.status || "").toLowerCase().includes("cancel")) continue;
     const st = _tfcEffStage(e);
-    if (st === "new" || st === "dead") continue;
+    if (st === "dead" || (!includeNew && st === "new")) continue;
     out.push({ kind: "tfc", rec: r, stage: st });
   }
   // No forced sort — the column headers drive sorting now (default is
