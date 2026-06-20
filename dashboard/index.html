@@ -1216,6 +1216,10 @@
   .today-list-item .tli-addr { color: var(--muted); font-size: 12px; font-weight: 400; }
   .today-list-item .tli-meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
   .today-list-item .tli-overdue { color: #f87171; }
+  .stack-flag { display: inline-flex; vertical-align: -2px; margin-right: 5px; color: #a78bfa; }
+  .fc-leadtype { font-size: 10px; line-height: 1.15; margin-top: 4px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); font-weight: 600; }
+  .fc-leadtype .fc-lt-mfc { color: #38bdf8; }
+  .fc-leadtype .fc-lt-tfc { color: #f59e0b; }
   .pane.active { display: block; }
   /* ===== Map view ===== */
   #pane-map.active { display: flex; flex-direction: column; height: 100%; }
@@ -2865,7 +2869,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026at</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026au</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -10670,11 +10674,12 @@ function buildCvRow(r, isDead) {
   const citedCell = r.cited ? esc(formatDate(r.cited)) : `<span style="color:var(--muted)">—</span>`;
   const ownerCell = (esc(fmtOwnerCV(r.owner || "")) || `<span style="color:var(--muted)">—</span>`) + exemptionTagsHtml(r.ncad_account_num);
   const propCityLine = [r.prop_city, r.prop_state, r.prop_zip].filter(Boolean);
-  const propCell  = r.prop_address
+  let propCell  = r.prop_address
     ? esc(fmtTitle(r.prop_address)) + (propCityLine.length
         ? `<br><small>${esc(fmtTitle(r.prop_city || "") + (r.prop_state ? ", " + r.prop_state : "") + (r.prop_zip ? " " + r.prop_zip : ""))}</small>`
         : "")
     : `<span style="color:var(--muted)">—</span>`;
+  if (_isOnStack(r)) propCell = _stackFlagHtml(true) + propCell;
   let mailCell;
   if (r.mail_address) {
     const _mi = r.mail_address.indexOf("  ");   // pipeline joins street + "City, ST ZIP" with a double space
@@ -11224,10 +11229,11 @@ function buildDeferralRow(r, isDead){
   const startCell = r.deferral_start ? esc(formatDate(r.deferral_start)) : dash;
   const ownerCell = (esc(fmtOwner(r.owner || "")) || dash) + exemptionTagsHtml(r.ncad_account_num);
   const propCityLine = [r.prop_city, r.prop_zip].filter(Boolean);
-  const propCell = r.prop_address
+  let propCell = r.prop_address
     ? esc(fmtTitle(r.prop_address)) + (propCityLine.length
         ? `<br><small>${esc(fmtTitle(r.prop_city || "") + (r.prop_zip ? " " + r.prop_zip : ""))}</small>` : "")
     : dash;
+  if (_isOnStack(r)) propCell = _stackFlagHtml(true) + propCell;
   const typeCell = _deferralTypeBadges(r.deferral_types) || dash;
   const mv = Number(r.market_value) || 0;
   const mvCell = mv > 0 ? "$" + mv.toLocaleString("en-US", {maximumFractionDigits: 0}) : dash;
@@ -13133,6 +13139,7 @@ function buildDelqRow(r, isDead) {
   // street, just "X ST @ Y AVE" or similar) — show a placeholder
   // dash so the cell isn't oddly empty.
   if (!r.prop_address) propCell = `<span style="color:var(--muted)">—</span>` + _propCszHtml;
+  if (_stackKeySet().has(_delqKey)) propCell = _stackFlagHtml(true) + propCell;
 
   // --- Mailing address with city/state/zip on line 2 + bad-addr ----
   const mailLines = [];
@@ -14696,7 +14703,7 @@ function _workFcRow(item) {
     <td><span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status"
           onclick="openWorkFcStatusMenu(event, '${item.kind}', '${esc(key)}', '${esc(item.stage)}')">${esc(stageDef.label)} \u25BE</span></td>
     <td>${fuCell}</td>
-    <td>${saleCell}</td>
+    <td>${saleCell}<div class="fc-leadtype"><span class="fc-lt-${item.kind}">${item.kind === "mfc" ? "Mortgage" : "Tax"}</span><br>Foreclosure</div></td>
     <td>${owner}</td>
     <td>${prop}</td>
     <td>${mapHtml}</td>
@@ -14785,6 +14792,51 @@ function _stackBuildList() {
     list.push(entry);
   }
   return list;
+}
+
+// ---- "On the Stack" membership flag (Delinquent / CV / Tax Deferral) ----
+// A property is "on the Stack" when it passes the Stack's inclusion rule
+// (multi-signal, auto-include, delinquent+1, or absentee+1). These helpers
+// let the single-signal dashboards show a small flag, so you can spot — say —
+// a heavily tax-delinquent house that ALSO carries other red flags vs one
+// that's only behind on taxes. Key set is cached (rebuilding the stack per
+// row would freeze the 10K delinquent table); invalidated in applyStack().
+let _stackKeySetCache = null;
+function _invalidateStackKeySet() { _stackKeySetCache = null; }
+function _stackKeySet() {
+  if (_stackKeySetCache) return _stackKeySetCache;
+  const set = new Set();
+  let ok = false;
+  try {
+    for (const e of _stackBuildList()) { if (e && e.key) set.add(e.key); }
+    ok = true;
+  } catch (err) { /* sources not ready yet */ }
+  if (ok && set.size > 0) _stackKeySetCache = set;   // don't cache a pre-load empty
+  return set;
+}
+// Parcel key in the SAME format the stack sources use (ncad:… / addr:…),
+// so membership cross-matches cleanly.
+function _stackKeyForRow(r) {
+  if (!r) return null;
+  const ncad = (r.ncad_account_num != null) ? String(r.ncad_account_num).trim() : "";
+  if (ncad) return "ncad:" + ncad;
+  const addr = r.prop_address || "";
+  if (addr && typeof _stackNormalizeAddress === "function") {
+    const norm = _stackNormalizeAddress(addr);
+    if (norm) return "addr:" + norm;
+  }
+  return null;
+}
+function _isOnStack(r) {
+  const k = _stackKeyForRow(r);
+  return !!(k && _stackKeySet().has(k));
+}
+// Small purple "layers" glyph shown next to the address when on the Stack.
+function _stackFlagHtml(onStack) {
+  if (!onStack) return "";
+  return `<span class="stack-flag" title="Also on the Stack dashboard — this property carries multiple signals">` +
+    `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">` +
+    `<path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>`;
 }
 
 // Consolidate a group of signals into a single Stack row entry.
@@ -15150,6 +15202,7 @@ function _stackDecorate(list) {
 }
 
 function applyStack() {
+  _invalidateStackKeySet();   // stack membership may have changed (e.g. CV import)
   const list = _stackDecorate(_stackBuildList());
   // Sidebar count badge reflects the FULL stacked total (the Hide Lots
   // toggle is a view filter, so it shouldn't move the global nav count).
@@ -18391,7 +18444,7 @@ function buildFcRow(r, isDead) {
   const _editable = _isMod || !_hasScraped;
 
   const _fmt = (n) => Number(n).toLocaleString("en-US",
-      {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      {maximumFractionDigits: 0});
 
   // The value shown in the editable box (when editable).
   //   mod record  → the override (mod amount); empty until entered
