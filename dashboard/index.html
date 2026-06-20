@@ -649,7 +649,7 @@
     background: transparent;
     border: 1px solid transparent;
     border-radius: 4px; color: var(--fg, #e2e8f0);
-    font-size: 12px; padding: 4px 6px;
+    font-size: 14px; padding: 4px 6px;
   }
   .tov-addr::placeholder { color: var(--muted); }
   .tov-addr:hover { border-color: var(--border, #2a3a4a); }
@@ -727,7 +727,7 @@
   #mov-table tbody tr { cursor: pointer; }
   .mov-edit {
     background: transparent; border: 1px solid transparent; border-radius: 4px;
-    color: var(--fg); padding: 4px 6px; font-size: 12px; font-family: inherit;
+    color: var(--fg); padding: 4px 6px; font-size: 14px; font-family: inherit;
   }
   .mov-edit:hover { border-color: var(--border); }
   .mov-edit:focus { outline: none; border-color: var(--accent); background: var(--bg); }
@@ -2869,7 +2869,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026au</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026aw</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3283,9 +3283,6 @@
        rather than tax-vs-sale. Lender column matters for follow-up
        (some lenders retain a junior claim on the surplus). -->
   <div class="stats" id="mov-stats"></div>
-  <div style="margin:16px 0 10px;">
-    <button onclick="_moAddManual()" style="background:rgba(56,189,248,.12);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:500;">+ Add Mortgage Overage</button>
-  </div>
   <table id="mov-table">
     <thead><tr>
       <th data-sort="status"          style="width: 100px;">Status</th>
@@ -10679,7 +10676,7 @@ function buildCvRow(r, isDead) {
         ? `<br><small>${esc(fmtTitle(r.prop_city || "") + (r.prop_state ? ", " + r.prop_state : "") + (r.prop_zip ? " " + r.prop_zip : ""))}</small>`
         : "")
     : `<span style="color:var(--muted)">—</span>`;
-  if (_isOnStack(r)) propCell = _stackFlagHtml(true) + propCell;
+  if (_hasOtherStackSignal(r, "cv")) propCell = _stackFlagHtml(true) + propCell;
   let mailCell;
   if (r.mail_address) {
     const _mi = r.mail_address.indexOf("  ");   // pipeline joins street + "City, ST ZIP" with a double space
@@ -11233,7 +11230,7 @@ function buildDeferralRow(r, isDead){
     ? esc(fmtTitle(r.prop_address)) + (propCityLine.length
         ? `<br><small>${esc(fmtTitle(r.prop_city || "") + (r.prop_zip ? " " + r.prop_zip : ""))}</small>` : "")
     : dash;
-  if (_isOnStack(r)) propCell = _stackFlagHtml(true) + propCell;
+  if (_hasOtherStackSignal(r, "deferral")) propCell = _stackFlagHtml(true) + propCell;
   const typeCell = _deferralTypeBadges(r.deferral_types) || dash;
   const mv = Number(r.market_value) || 0;
   const mvCell = mv > 0 ? "$" + mv.toLocaleString("en-US", {maximumFractionDigits: 0}) : dash;
@@ -11630,7 +11627,9 @@ function renderMovStats(){
   const totalSurplus = list.reduce((s, r) => s + Math.max(0, _moSurplus(r)), 0);
   el.innerHTML = `<div class="stats-title">Mortgage Overages</div>
     <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Mortgage Overages</div></div>
-    <div class="stat-card"><div class="num">$${totalSurplus.toLocaleString("en-US",{maximumFractionDigits:0})}</div><div class="lbl">Total Surplus</div></div>`;
+    <div class="stat-card"><div class="num">$${totalSurplus.toLocaleString("en-US",{maximumFractionDigits:0})}</div><div class="lbl">Total Surplus</div></div>
+    <div style="width:1px;align-self:stretch;background:var(--border);margin:2px 0;"></div>
+    <button onclick="_moAddManual()" style="align-self:center;background:rgba(56,189,248,.12);border:1px solid var(--accent);color:var(--accent);border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;">+ Add Mortgage Overage</button>`;
 }
 function renderMov(){
   const tb = document.querySelector("#mov-table tbody");
@@ -12046,17 +12045,7 @@ function buildOverageRow(c){
   const addrCell =
     '<input class="tov-addr" type="text" value="' + esc(eff.prop_address || "") +
       '" placeholder="+ add address" data-case="' + _cse + '" data-field="prop_address"' +
-      ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
-    '<div class="tov-ids">' +
-      '<input class="tov-id" type="text" value="' + esc(eff.ncad_prop_id || "") +
-        '" placeholder="NCAD ID" title="NCAD Property ID (the number in the NCAD property-page URL) → makes the NCAD icon a direct link"' +
-        ' data-case="' + _cse + '" data-field="ncad_prop_id"' +
-        ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
-      '<input class="tov-id" type="text" value="' + esc(eff.ncad_account_num || "") +
-        '" placeholder="Tax acct" title="Tax account / geo ID → makes the NCTAX icon a direct link"' +
-        ' data-case="' + _cse + '" data-field="ncad_account_num"' +
-        ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">' +
-    '</div>';
+      ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">';
   const newOwnerCell = '<input class="tov-addr" type="text" value="' + esc(eff.new_owner || "") +
     '" placeholder="+ new owner (grantee)" data-case="' + _cse + '" data-field="new_owner"' +
     ' onchange="_tovSaveField(this)" onclick="event.stopPropagation()">';
@@ -13139,7 +13128,7 @@ function buildDelqRow(r, isDead) {
   // street, just "X ST @ Y AVE" or similar) — show a placeholder
   // dash so the cell isn't oddly empty.
   if (!r.prop_address) propCell = `<span style="color:var(--muted)">—</span>` + _propCszHtml;
-  if (_stackKeySet().has(_delqKey)) propCell = _stackFlagHtml(true) + propCell;
+  if (_hasOtherStackSignal(r, "delq")) propCell = _stackFlagHtml(true) + propCell;
 
   // --- Mailing address with city/state/zip on line 2 + bad-addr ----
   const mailLines = [];
@@ -14801,18 +14790,31 @@ function _stackBuildList() {
 // a heavily tax-delinquent house that ALSO carries other red flags vs one
 // that's only behind on taxes. Key set is cached (rebuilding the stack per
 // row would freeze the 10K delinquent table); invalidated in applyStack().
-let _stackKeySetCache = null;
-function _invalidateStackKeySet() { _stackKeySetCache = null; }
-function _stackKeySet() {
-  if (_stackKeySetCache) return _stackKeySetCache;
-  const set = new Set();
+// Map: parcel key -> { types:Set of stacking source types, isDelq, absentee }.
+// Cached (rebuilding the stack per row would freeze the 10K delinquent
+// table); invalidated in applyStack() when underlying data may change.
+let _stackSignalMapCache = null;
+function _invalidateStackKeySet() { _stackSignalMapCache = null; }
+function _stackSignalMap() {
+  if (_stackSignalMapCache) return _stackSignalMapCache;
+  const map = new Map();
   let ok = false;
   try {
-    for (const e of _stackBuildList()) { if (e && e.key) set.add(e.key); }
+    const groups = _stackBuildGroups();
+    const delqInc = (typeof _stackDelqByNcad === "function") ? _stackDelqByNcad() : {};
+    for (const [key, g] of groups.entries()) {
+      const entry = _stackBuildEntry(key, g);
+      const ncad = entry && entry.ncad_account_num;
+      map.set(key, {
+        types: new Set(Object.keys(g.byType)),
+        isDelq: !!(ncad && delqInc[ncad]),
+        absentee: !!(entry && entry.non_owner_occupied),
+      });
+    }
     ok = true;
   } catch (err) { /* sources not ready yet */ }
-  if (ok && set.size > 0) _stackKeySetCache = set;   // don't cache a pre-load empty
-  return set;
+  if (ok && map.size > 0) _stackSignalMapCache = map;   // don't cache a pre-load empty
+  return map;
 }
 // Parcel key in the SAME format the stack sources use (ncad:… / addr:…),
 // so membership cross-matches cleanly.
@@ -14827,9 +14829,19 @@ function _stackKeyForRow(r) {
   }
   return null;
 }
-function _isOnStack(r) {
-  const k = _stackKeyForRow(r);
-  return !!(k && _stackKeySet().has(k));
+// True when the property carries a red flag BEYOND this dashboard's own
+// signal (a different stacking type, or a delinquent/absentee decorator).
+// `ownType`: "delq" | "cv" | "deferral" | "vacant" | "ccln". This keeps the
+// flag meaning "also has other issues" everywhere, so auto-include lists
+// (vacant, city liens) don't flag every single-signal row.
+function _hasOtherStackSignal(r, ownType) {
+  const key = _stackKeyForRow(r);
+  if (!key) return false;
+  const info = _stackSignalMap().get(key);
+  if (!info) return false;
+  for (const t of info.types) { if (t !== ownType) return true; }
+  if (ownType !== "delq" && info.isDelq) return true;
+  return info.absentee;
 }
 // Small purple "layers" glyph shown next to the address when on the Stack.
 function _stackFlagHtml(onStack) {
