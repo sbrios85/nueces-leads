@@ -2882,7 +2882,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ba</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026be</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -2937,7 +2937,7 @@
       <span>Foreclosure Leads</span>
       <span class="tab-count" id="workfc-count">—</span></div>
     <div class="nav-item" data-pane="taxccvcvstack">
-      <span>Tax CC Lien Vacant CV Stack</span>
+      <span>Tax Def CCLN Delinq CV Vacant Stack</span>
       <span class="tab-count" id="worktax-count">—</span></div>
     <div class="nav-item" data-pane="taxoverages">
       <span>Tax Overages</span>
@@ -3463,19 +3463,19 @@
   <div class="stats" id="worktax-stats"></div>
   <table id="worktax-table" class="stack-table">
     <thead><tr>
-      <th data-sort="status" onclick="_workTaxSetSort('status')" style="width: 120px;cursor:pointer;">Status</th>
-      <th data-sort="followup" onclick="_workTaxSetSort('followup')" style="width: 96px;cursor:pointer;">Follow-up</th>
-      <th data-sort="types" onclick="_workTaxSetSort('types')" style="width: 250px;cursor:pointer;">Lead Type</th>
-      <th data-sort="owner" onclick="_workTaxSetSort('owner')" style="width: 168px;cursor:pointer;">Owner</th>
-      <th data-sort="prop_address" onclick="_workTaxSetSort('prop_address')" style="width: 192px;cursor:pointer;">Property Address</th>
+      <th data-sort="status" onclick="_workTaxSetSort('status')" style="width: 110px;cursor:pointer;">Status</th>
+      <th data-sort="followup" onclick="_workTaxSetSort('followup')" style="width: 88px;cursor:pointer;">Follow-up</th>
+      <th data-sort="types" onclick="_workTaxSetSort('types')" style="width: 220px;cursor:pointer;">Lead Type</th>
+      <th data-sort="owner" onclick="_workTaxSetSort('owner')" style="width: 150px;cursor:pointer;">Owner</th>
+      <th data-sort="prop_address" onclick="_workTaxSetSort('prop_address')" style="width: 170px;cursor:pointer;">Property Address</th>
       <th style="width: 46px;">Map</th>
-      <th style="width: 178px;">Mail Address</th>
-      <th data-sort="market_value" onclick="_workTaxSetSort('market_value')" style="width: 110px;cursor:pointer;">Market Value</th>
-      <th data-sort="lien_total" onclick="_workTaxSetSort('lien_total')" style="width: 120px;cursor:pointer;">Total Lien Amount</th>
-      <th data-sort="delq_owed" onclick="_workTaxSetSort('delq_owed')" style="width: 120px;cursor:pointer;">Delinquent Taxes<br><small style="font-weight:400;color:var(--muted);">Years Behind</small></th>
-      <th style="width: 140px;">Tax Status</th>
-      <th style="width: 170px;">Violation Type</th>
-      <th data-sort="property_type" onclick="_workTaxSetSort('property_type')" style="width: 120px;cursor:pointer;">Property Type</th>
+      <th style="width: 150px;">Mail Address</th>
+      <th data-sort="market_value" onclick="_workTaxSetSort('market_value')" style="width: 100px;cursor:pointer;">Market Value</th>
+      <th data-sort="lien_total" onclick="_workTaxSetSort('lien_total')" style="width: 108px;cursor:pointer;">Total Lien Amount</th>
+      <th data-sort="delq_owed" onclick="_workTaxSetSort('delq_owed')" style="width: 110px;cursor:pointer;">Delinquent Taxes<br><small style="font-weight:400;color:var(--muted);">Years Behind</small></th>
+      <th style="width: 120px;">Tax Status</th>
+      <th style="width: 140px;">Violation Type</th>
+      <th data-sort="property_type" onclick="_workTaxSetSort('property_type')" style="width: 108px;cursor:pointer;">Property Type</th>
       <th style="width: 62px;">NCAD</th>
       <th style="width: 72px;">NCTAX</th>
     </tr></thead>
@@ -4635,6 +4635,7 @@ function saveCrmStore(type, store) {
   const cfg = CRM_CONFIG[type];
   if (!cfg) return;
   localStorage.setItem(cfg.storeKey, JSON.stringify(store));
+  _crmDirty = true;
 }
 function getCrmEntry(type, docNum) {
   const store = loadCrmStore(type);
@@ -4657,6 +4658,10 @@ let _crmReturn = { pane: null, scrollY: 0 };
 // so closeCrm re-renders the dashboard we came from (otherwise its pill
 // would be stale on Back). Reset on fresh CRM open and after refresh.
 let _propStageChanged = false;
+// Set by ANY CRM data save (follow-ups, attempts, contacts, notes — not just
+// stage). closeCrm refreshes the return pane when it's set, so a work
+// dashboard's follow-up counters update on Back without a page reload.
+let _crmDirty = false;
 function _crmRefreshReturnPane() {
   const map = {
     "pane-stack": "applyStack",
@@ -9083,9 +9088,11 @@ function closeCrm() {
     const p = document.getElementById(_crmReturn.pane);
     if (p) p.classList.add("active");
   }
-  // If a stage was changed inside the property CRM, re-render the
-  // dashboard we're returning to so its status pill reflects the change.
-  if (_propStageChanged) { _crmRefreshReturnPane(); _propStageChanged = false; }
+  // If a stage OR any other CRM data (e.g. a follow-up) changed inside the
+  // CRM, re-render the dashboard we're returning to so its status pill and
+  // follow-up counters reflect the change — no page refresh needed.
+  if (_propStageChanged || _crmDirty) { _crmRefreshReturnPane(); }
+  _propStageChanged = false; _crmDirty = false;
   // Defer scroll until after layout reflows the restored table.
   // Scroll the .main container (the scroll context), not the window.
   const y = _crmReturn.scrollY;
@@ -11573,7 +11580,7 @@ function openTovCrm(caseNum) {
 // foreclosure lead drops off. Keyed by id ("mov_<docnum>" or "mov_m_<ts>").
 const MO_KEY = "nueces_mortgage_overages_v1";
 function _moStore(){ try { return JSON.parse(localStorage.getItem(MO_KEY) || "{}"); } catch(e){ return {}; } }
-function _moSave(s){ try { localStorage.setItem(MO_KEY, JSON.stringify(s)); } catch(e){} }
+function _moSave(s){ try { localStorage.setItem(MO_KEY, JSON.stringify(s)); _crmDirty = true; } catch(e){} }
 function _moList(){ const s = _moStore(); return Object.keys(s).map(k => s[k]); }
 function _moGet(id){ return _moStore()[id] || null; }
 function _moPut(rec){ const s = _moStore(); s[rec.id] = rec; _moSave(s); }
@@ -14316,15 +14323,67 @@ function _stackBuildGroups() {
 // every property across the stacking sources whose SHARED stage is past
 // New (dead are already dropped by each source's isActive). Reuses the
 // Stack's entry + row builders so it looks/behaves identically.
+// Pseudo-source that lets a delinquent-only lead be turned into a stack entry
+// (delinquent isn't a real stacking source). Mirrors a STACK_SOURCES entry's
+// key accessors so _stackBuildEntry can read its address / owner / NCAD acct.
+const _DELQ_PSEUDO_SOURCE = {
+  type: "delinquent",
+  label: "Delinquent Taxes",
+  addressKey: r => r.prop_address || "",
+  ownerKey:   r => r.owner || "",
+  ncadKey:    r => r.ncad_account_num || "",
+  filedKey:   r => "",
+};
+// Append worked single-signal leads whose parcel didn't already arrive as a
+// stack group above (deduped via `seen`). Covers a lead the user categorized
+// on a single-source dashboard: delinquent (not a stacking source at all), or
+// a CV / deferral lead whose shared key didn't line up with a group (e.g. a
+// deferral record missing its NCAD account, keyed off geo_id). Guarantees a
+// worked lead is never lost from the Tax CC Lien Vacant CV Stack work view.
+function _workTaxAppendWorked(list, seen, includeNew, rows, keyFn, sourceFor) {
+  if (!Array.isArray(rows)) return;
+  for (const r of rows) {
+    const key = keyFn(r);
+    if (!key || seen.has(key)) continue;
+    const st = getStackStatus(key);
+    if (st === "dead" || (!includeNew && st === "new")) continue;   // worked leads only
+    seen.add(key);
+    const src = sourceFor(r);
+    if (!src) continue;
+    const entry = _stackBuildEntry(key, { byType: { [src.type]: 1 }, signals: [{ source: src, record: r }] });
+    if (entry) list.push(entry);
+  }
+}
 function _workTaxList(includeNew) {
   const groups = _stackBuildGroups();
   const list = [];
+  const seen = new Set();
   for (const [key, g] of groups.entries()) {
     const st = getStackStatus(key);
     if (st === "dead" || (!includeNew && st === "new")) continue;
     const entry = _stackBuildEntry(key, g);
-    if (entry) list.push(entry);
+    if (entry) { list.push(entry); seen.add(key); }
   }
+  // Worked single-source leads the user has categorized but that didn't come
+  // through as a stack group above — surface them so a worked lead is never
+  // lost. Deduped against the groups (same "ncad:" / "addr:" key format).
+  //   • Delinquent — not a stacking source at all, so never forms a group.
+  //   • CV / Deferral — are stacking sources (so worked leads normally arrive
+  //     as groups already); this is a safety net for key-mismatch edge cases.
+  const _srcCv       = STACK_SOURCES.find(s => s.type === "cv");
+  const _srcVacant   = STACK_SOURCES.find(s => s.type === "vacant");
+  const _srcDeferral = STACK_SOURCES.find(s => s.type === "deferral");
+  if (typeof DELQ_RAW !== "undefined")
+    _workTaxAppendWorked(list, seen, includeNew, DELQ_RAW, _delqSharedKey, () => _DELQ_PSEUDO_SOURCE);
+  if (typeof CV_RAW !== "undefined" && _srcCv && _srcVacant)
+    _workTaxAppendWorked(list, seen, includeNew, CV_RAW, _cvSharedKey, r => (_cvIsVacantBuilding(r) ? _srcVacant : _srcCv));
+  if (typeof DEFERRAL_RAW !== "undefined" && _srcDeferral)
+    _workTaxAppendWorked(list, seen, includeNew, DEFERRAL_RAW, _deferralSharedKey, () => _srcDeferral);
+  // Decorate every entry with delinquent / deferral tax data (delq_hit, years
+  // behind, amount owed) so rows show the Delinquent Taxes pill + tax-status
+  // flags — the same decoration the Stack dashboard applies. No-op-safe for
+  // rows whose parcel isn't on the delinquent list.
+  try { _stackDecorate(list); } catch (e) {}
   const rank = {}; STACK_STAGES.forEach((s, i) => { rank[s.key] = i; });
   list.sort((a, b) => {
     const ra = rank[getStackStatus(a.key)] ?? 0, rb = rank[getStackStatus(b.key)] ?? 0;
@@ -14356,6 +14415,25 @@ function _workDelqList(includeNew) {
 
 // Render the "Tax CC Lien Vacant CV Stack" Work view — worked leads
 // across all five shared-stage lists, using the Stack's row builder.
+// Property-type view filter for this Work view — mirrors the Stack dashboard's
+// All / Houses / Lots / Multifamily buttons. Filters the in-pane stats + rows
+// only; the sidebar nav count stays the full worked total.
+let _WORKTAX_PROP_FILTER = "all";
+function setWorkTaxPropFilter(which) {
+  _WORKTAX_PROP_FILTER = which || "all";
+  document.querySelectorAll("#worktax-propfilter .stack-pf-btn").forEach(b =>
+    b.classList.toggle("active", b.dataset.pf === _WORKTAX_PROP_FILTER));
+  renderWorkTax();
+}
+function _workTaxPropFilterHtml() {
+  const F = _WORKTAX_PROP_FILTER;
+  return `<span id="worktax-propfilter" style="display:inline-flex; gap:8px; flex-wrap:wrap; margin-left:auto; align-self:center;">
+    <button type="button" class="stack-pf-btn${F==='all'?' active':''}" data-pf="all" onclick="setWorkTaxPropFilter('all')">All Properties</button>
+    <button type="button" class="stack-pf-btn${F==='house'?' active':''}" data-pf="house" onclick="setWorkTaxPropFilter('house')">Residential Houses</button>
+    <button type="button" class="stack-pf-btn${F==='lot'?' active':''}" data-pf="lot" onclick="setWorkTaxPropFilter('lot')">Residential Lots</button>
+    <button type="button" class="stack-pf-btn${F==='multifamily'?' active':''}" data-pf="multifamily" onclick="setWorkTaxPropFilter('multifamily')">Multifamily</button>
+  </span>`;
+}
 function renderWorkTax() {
   const tb = document.querySelector("#worktax-table tbody");
   if (!tb) return;
@@ -14364,23 +14442,27 @@ function renderWorkTax() {
   tb.innerHTML = "";
   const list = _workTaxList();
   { const _c = document.getElementById("worktax-count"); if (_c) _c.textContent = list.length.toLocaleString(); }
+  // Property-type view filter (stats + rows reflect it; nav count stays full).
+  let view = list;
+  if (_WORKTAX_PROP_FILTER !== "all")
+    view = list.filter(e => _propTypeCategory(e.property_type) === _WORKTAX_PROP_FILTER);
   if (stats) {
     const counts = {};
-    list.forEach(e => { const s = getStackStatus(e.key); counts[s] = (counts[s] || 0) + 1; });
+    view.forEach(e => { const s = getStackStatus(e.key); counts[s] = (counts[s] || 0) + 1; });
     const cards = STACK_STAGES.filter(s => s.key !== "new" && s.key !== "dead")
       .map(s => `<div class="stat-card"><div class="num">${(counts[s.key] || 0).toLocaleString()}</div><div class="lbl">${esc(s.label)}</div></div>`).join("");
     const _ps = loadCrmStore("prop") || {};
-    const fu = _fuCountsFromEntries(list.map(e => _ps[e.key]));
+    const fu = _fuCountsFromEntries(view.map(e => _ps[e.key]));
     stats.innerHTML = `<div class="stats-title">Worked Leads</div>
-      <div class="stat-card"><div class="num">${list.length.toLocaleString()}</div><div class="lbl">Total Worked</div></div>${cards}${_fuCards(fu)}`;
+      <div class="stat-card"><div class="num">${view.length.toLocaleString()}</div><div class="lbl">Total Worked</div></div>${cards}${_fuCards(fu)}${_workTaxPropFilterHtml()}`;
   }
-  if (list.length === 0) { if (empty) empty.hidden = false; return; }
+  if (view.length === 0) { if (empty) empty.hidden = false; return; }
   if (empty) empty.hidden = true;
   const _psFu = loadCrmStore("prop") || {};
-  list.forEach(e => { const d = _entryFollowupDates(_psFu[e.key]); e._fuDates = d; e._fuEarliest = d.length ? d.slice().sort()[0] : "9999-12-31"; });
-  if (WORKTAX_SORT.key) list.sort(_workTaxCompare);
+  view.forEach(e => { const d = _entryFollowupDates(_psFu[e.key]); e._fuDates = d; e._fuEarliest = d.length ? d.slice().sort()[0] : "9999-12-31"; });
+  if (WORKTAX_SORT.key) view.sort(_workTaxCompare);
   const frag = document.createDocumentFragment();
-  for (const entry of list) {
+  for (const entry of view) {
     const tr = _buildStackRow(entry);
     const fuTd = document.createElement("td");
     fuTd.innerHTML = _fuCellFromDates(entry._fuDates || []);
@@ -18257,6 +18339,7 @@ function loadTfcCrm() {
 }
 function saveTfcCrm(crm) {
   localStorage.setItem(TFC_CRM_KEY, JSON.stringify(crm));
+  _crmDirty = true;
 }
 function getTfcEntry(uid) {
   const crm = loadTfcCrm();
