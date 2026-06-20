@@ -2882,7 +2882,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ay</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026ba</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -4647,6 +4647,7 @@ function setCrmField(type, docNum, key, value) {
     _updated_at: new Date().toISOString()
   });
   saveCrmStore(type, store);
+  if (key === "stage" && typeof _scheduleWorkCounts === "function") _scheduleWorkCounts();
 }
 
 // Tracks where to return when the user hits Back: which pane was
@@ -11397,6 +11398,7 @@ function setOverageStatus(caseNum, status) {
   const s = loadOverageStatus();
   s[caseNum] = Object.assign({}, s[caseNum], { status: status, updated_at: new Date().toISOString() });
   saveOverageStatus(s);
+  if (typeof _scheduleWorkCounts === "function") _scheduleWorkCounts();
 }
 // Overage CRM has its own pipeline: the shared 6 stages plus a terminal
 // "Claimed (Dead)" that is set AUTOMATICALLY when the county data shows the
@@ -11575,7 +11577,7 @@ function _moSave(s){ try { localStorage.setItem(MO_KEY, JSON.stringify(s)); } ca
 function _moList(){ const s = _moStore(); return Object.keys(s).map(k => s[k]); }
 function _moGet(id){ return _moStore()[id] || null; }
 function _moPut(rec){ const s = _moStore(); s[rec.id] = rec; _moSave(s); }
-function _moSetField(id, f, v){ const s = _moStore(); if (!s[id]) return; s[id][f] = v; _moSave(s); }
+function _moSetField(id, f, v){ const s = _moStore(); if (!s[id]) return; s[id][f] = v; _moSave(s); if (f === "stage" && typeof _scheduleWorkCounts === "function") _scheduleWorkCounts(); }
 function _moDelete(id){
   const s = _moStore(); if (s[id]) { delete s[id]; _moSave(s); }
   try { const c = loadCrmStore("mov"); if (c[id]) { delete c[id]; saveCrmStore("mov", c); } } catch(e){}
@@ -14590,37 +14592,50 @@ function _updateWorkCounts() {
   set("workov-count", _workOverageList);
   set("workmov-count", _workMovList);
 }
+// Debounced sidebar Work-count refresh — called from every stage setter so the
+// WORK nav counts move in real time on a stage change, no reload needed.
+// Coalesces bursts (bulk seeds / migrations) into a single recompute.
+let _workCountsTimer = null;
+function _scheduleWorkCounts() {
+  if (typeof _updateWorkCounts !== "function") return;
+  if (_workCountsTimer) return;
+  _workCountsTimer = setTimeout(() => { _workCountsTimer = null; try { _updateWorkCounts(); } catch (e) {} }, 0);
+}
 // Today = soonest pending follow-up is due today-or-earlier (incl. overdue).
 // Later This Week = soonest pending follow-up AFTER today, within 7 days.
 function _fuCountsFromEntries(entries) {
   const todayIso = _isoAddDays(0), weekIso = _isoAddDays(7);
-  let today = 0, week = 0;
+  let today = 0, week = 0, cold = 0;
   for (const e of entries) {
+    if (e && _coldDueDate(e.attempts, todayIso)) cold++;
     const d = _entryFollowupDates(e);
     if (!d.length) continue;
     const earliest = d.slice().sort()[0];
     if (earliest <= todayIso) today++;
     if (earliest > todayIso && earliest <= weekIso) week++;
   }
-  return { today, week };
+  return { today, week, cold };
 }
 // Same, for Foreclosure-Leads items already decorated with _fuDates.
 function _fuCountsFromItems(list) {
   const todayIso = _isoAddDays(0), weekIso = _isoAddDays(7);
-  let today = 0, week = 0;
+  let today = 0, week = 0, cold = 0;
   for (const it of list) {
+    if (_coldDueDate(it._fuAttempts, todayIso)) cold++;
     const d = it._fuDates || [];
     if (!d.length) continue;
     const earliest = d.slice().sort()[0];
     if (earliest <= todayIso) today++;
     if (earliest > todayIso && earliest <= weekIso) week++;
   }
-  return { today, week };
+  return { today, week, cold };
 }
 // The two follow-up stat cards shared by every Work dashboard.
 function _fuCards(fu) {
-  return `<div class="stat-card fu-stat"><div class="num">${fu.today.toLocaleString()}</div><div class="lbl">Follow-ups Today</div></div>`
-       + `<div class="stat-card fu-stat"><div class="num">${fu.week.toLocaleString()}</div><div class="lbl">Follow-ups Later This Week</div></div>`;
+  return `<div class="fu-sep" style="width:1px;align-self:stretch;background:var(--border);margin:3px 2px;"></div>`
+       + `<div class="stat-card fu-stat"><div class="num">${fu.today.toLocaleString()}</div><div class="lbl">Follow-ups Today</div></div>`
+       + `<div class="stat-card fu-stat"><div class="num">${fu.week.toLocaleString()}</div><div class="lbl">Follow-ups Later This Week</div></div>`
+       + `<div class="stat-card fu-stat"><div class="num">${(fu.cold || 0).toLocaleString()}</div><div class="lbl">Going Cold</div></div>`;
 }
 // Follow-up column cell (read-only; follow-ups are set by logging an
 // outreach attempt in the CRM). Shows the soonest pending date, red if
@@ -14774,6 +14789,7 @@ function renderWorkForeclosures() {
   list.forEach(it => {
     const e = it.kind === "mfc" ? _mfcStore[it.rec.doc_num] : _tfcStore[it.rec.uid];
     it._fuDates = _entryFollowupDates(e);
+    it._fuAttempts = (e && e.attempts) || [];
   });
   if (stats) {
     const nMfc = list.filter(x => x.kind === "mfc").length;
@@ -14926,6 +14942,7 @@ function setStackStatus(key, status) {
   const s = loadStackStatus();
   s[key] = Object.assign({}, s[key], { status: status, updated_at: new Date().toISOString() });
   saveStackStatus(s);
+  if (typeof _scheduleWorkCounts === "function") _scheduleWorkCounts();
 }
 function closeStackStatusMenu() {
   const m = document.getElementById("stack-status-menu");
@@ -15535,7 +15552,7 @@ function _buildStackRow(entry) {
             anchor.nodeType === 1 ? anchor : anchor.parentNode))
         return;
     }
-    try { openPropCrm(entry.key, entry); }
+    try { openPropCrm(entry.key, entry, _PROP_CTX_STACK); }
     catch (e) { console.error("Stack openPropCrm failed:", e); }
   });
 
@@ -15565,6 +15582,9 @@ const _PROP_CTX_DEFAULT = {
   onStageChange: (k, s) => { if (typeof _updateStagePills === "function") _updateStagePills(k, s); },
   snapshot: null,    // null → default property snapshot
 };
+// Same as the default prop ctx, but forces the CRM title prefix to "Stack"
+// when the CRM is opened from the Stack dashboard (vs. a single signal name).
+const _PROP_CTX_STACK = Object.assign({}, _PROP_CTX_DEFAULT, { leadLabel: "Stack" });
 let _propCtx = _PROP_CTX_DEFAULT;
 function _propEntry(key) { return getCrmEntry(_propCtx.type, key); }
 function _propSet(key, field, value) { setCrmField(_propCtx.type, key, field, value); }
@@ -16226,6 +16246,7 @@ function _leadTypePillsHtml(rec, propKey, extraClass) {
 // tov/mov contexts are explicit since those aren't in STACK_SOURCES.
 function _propLeadLabel(rec, propKey) {
   if (typeof _propCtx !== "undefined" && _propCtx) {
+    if (_propCtx.leadLabel) return _propCtx.leadLabel;
     if (_propCtx.type === "tov") return "Tax Overage";
     if (_propCtx.type === "mov") return "Mortgage Overage";
   }
@@ -18248,6 +18269,7 @@ function setTfcEntry(uid, patch) {
     _updated_at: new Date().toISOString()
   });
   saveTfcCrm(crm);
+  if (patch && patch.stage !== undefined && typeof _scheduleWorkCounts === "function") _scheduleWorkCounts();
   return crm[uid];
 }
 // Effective field value: manual override wins over scraped data.
