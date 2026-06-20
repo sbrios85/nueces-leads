@@ -2882,7 +2882,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026bi</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026bj</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -17581,7 +17581,7 @@ function renderFc() {
   for (const r of FC_FILTERED) {
     const e = fcCrm[r.doc_num] || {};
     if (e.mov_converted) continue;                 // converted → lives in Mortgage Overages
-    if (e.status === "dead") deadRecords.push(r);
+    if (e.status === "dead" || e.stage === "dead") deadRecords.push(r);
     else if (_mfcIsSold(r, e)) soldRecords.push(r);
     else activeRecords.push(r);
   }
@@ -19196,11 +19196,12 @@ function confirmMarkDead(reason) {
 function restoreFcLead(docNum) {
   // Reset to active; we keep the previous reason in the entry as
   // history, but flipping status back to "active" hides it from the
-  // dead-leads section.
-  setFcEntry(docNum, {
-    status: "active",
-    restored_at: new Date().toISOString()
-  });
+  // dead-leads section. Also clear a leftover stage="dead" so the row
+  // doesn't get re-bucketed as dead.
+  const e = getCrmEntry("mfc", docNum) || {};
+  const patch = { status: "active", restored_at: new Date().toISOString() };
+  if ((e.stage || "") === "dead") patch.stage = "new";
+  setFcEntry(docNum, patch);
   renderFc();
 }
 
@@ -19247,7 +19248,14 @@ function openFcStageMenu(ev, docNum, currentStage) {
       e.stopPropagation();
       const stage = btn.dataset.stage;
       closeFcStageMenu();
-      _mfcSetStageInline(docNum, stage);   // "dead" handled like any stage — no modal
+      if (stage === "dead") {
+        // Dead is tracked by the FC `status` field (what renderFc buckets on),
+        // separate from the pipeline `stage`. Set it directly — no modal.
+        setFcEntry(docNum, { status: "dead", marked_dead_at: new Date().toISOString() });
+        renderFc();
+      } else {
+        _mfcSetStageInline(docNum, stage);
+      }
     };
   });
 
