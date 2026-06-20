@@ -2882,7 +2882,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026bf</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-18-2026bg</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -11852,7 +11852,8 @@ function _workOvRow(item) {
   const def = OVERAGE_STAGES.find(s => s.key === item.stage) || OVERAGE_STAGES[0];
   const pc = OVERAGE_PILL_CLASS[item.stage] || "status-new";
   if (tr.children[0]) tr.children[0].innerHTML =
-    '<span class="pill status ' + pc + '" onclick="openWorkOvStatusMenu(event, \'' + esc(item.rec.case_number) + '\', \'' + item.stage + '\')">' + esc(def.label) + ' \u25BE</span>';
+    '<span class="pill status ' + pc + '" onclick="openWorkOvStatusMenu(event, \'' + esc(item.rec.case_number) + '\', \'' + item.stage + '\')">' + esc(def.label) + ' \u25BE</span>'
+    + (item.stage === "dead" ? '<button class="restore-btn" style="margin-top:4px;" title="Restore this lead" onclick="event.stopPropagation(); _workOvSetStage(\'' + esc(item.rec.case_number) + '\',\'contacted\');">Restore</button>' : '');
   const fuTd = document.createElement("td");
   fuTd.innerHTML = _fuCellFromDates(item._fuDates || []);
   if (tr.children[1]) tr.insertBefore(fuTd, tr.children[1]); else tr.appendChild(fuTd);
@@ -11961,7 +11962,8 @@ function _workMovRow(item) {
   const def = STACK_STAGES.find(s => s.key === item.stage) || STACK_STAGES[0];
   const pc = STACK_PILL_CLASS[item.stage] || "status-new";
   if (tr.children[0]) tr.children[0].innerHTML =
-    '<span class="pill status ' + pc + '" onclick="openWorkMovStatusMenu(event, \'' + esc(item.rec.id) + '\', \'' + item.stage + '\')">' + esc(def.label) + ' \u25BE</span>';
+    '<span class="pill status ' + pc + '" onclick="openWorkMovStatusMenu(event, \'' + esc(item.rec.id) + '\', \'' + item.stage + '\')">' + esc(def.label) + ' \u25BE</span>'
+    + (item.stage === "dead" ? '<button class="restore-btn" style="margin-top:4px;" title="Restore this lead" onclick="event.stopPropagation(); _workMovSetStage(\'' + esc(item.rec.id) + '\',\'contacted\');">Restore</button>' : '');
   const fuTd = document.createElement("td");
   fuTd.innerHTML = _fuCellFromDates(item._fuDates || []);
   if (tr.children[1]) tr.insertBefore(fuTd, tr.children[1]); else tr.appendChild(fuTd);
@@ -14439,7 +14441,14 @@ function _workTaxPropFilterHtml() {
     <button type="button" class="stack-pf-btn${F==='multifamily'?' active':''}" data-pf="multifamily" onclick="setWorkTaxPropFilter('multifamily')">Multifamily</button>
   </span>`;
 }
+// Which dashboard should a shared stack-row status/restore action re-render,
+// and what stage "Restore" should resume to. Work views resume a dead lead to
+// "contacted" so it returns to the ACTIVE worked list (they hide "new"); the
+// Stack dashboard resumes to "new". Set at the top of each render below.
+let _stackRerenderTarget = null;
+let _stackRestoreStage = "new";
 function renderWorkTax() {
+  _stackRerenderTarget = renderWorkTax; _stackRestoreStage = "contacted";
   const tb = document.querySelector("#worktax-table tbody");
   if (!tb) return;
   const empty = document.getElementById("worktax-empty");
@@ -14876,7 +14885,7 @@ function _workFcRow(item) {
 
   tr.innerHTML = `
     <td><span class="pill status ${pillClass}" style="cursor:pointer;" title="Click to change status"
-          onclick="openWorkFcStatusMenu(event, '${item.kind}', '${esc(key)}', '${esc(item.stage)}')">${esc(stageDef.label)} \u25BE</span></td>
+          onclick="openWorkFcStatusMenu(event, '${item.kind}', '${esc(key)}', '${esc(item.stage)}')">${esc(stageDef.label)} \u25BE</span>${item.stage === "dead" ? `<button class="restore-btn" style="margin-top:4px;" title="Restore this lead" onclick="event.stopPropagation(); _workFcSetStage('${item.kind}','${esc(key)}','contacted');">Restore</button>` : ""}</td>
     <td>${fuCell}</td>
     <td>${saleCell}<div class="fc-leadtype"><span class="fc-lt-${item.kind}">${item.kind === "mfc" ? "Mortgage" : "Tax"}</span><br>Foreclosure</div></td>
     <td>${owner}</td>
@@ -15420,6 +15429,7 @@ function _stackDecorate(list) {
 }
 
 function applyStack() {
+  _stackRerenderTarget = applyStack; _stackRestoreStage = "new";
   _invalidateStackKeySet();   // stack membership may have changed (e.g. CV import)
   const list = _stackDecorate(_stackBuildList());
   // Sidebar count badge reflects the FULL stacked total (the Hide Lots
@@ -15663,10 +15673,11 @@ function _buildStackRow(entry) {
   `;
 
   // Wire the editable status pill / restore button (closure over entry.key).
+  const _rerender = () => (typeof _stackRerenderTarget === "function" ? _stackRerenderTarget : applyStack)();
   const _pill = tr.querySelector(".js-stack-status");
-  if (_pill) _pill.addEventListener("click", (e) => openStackStatusMenu(e, entry.key, getStackStatus(entry.key)));
+  if (_pill) _pill.addEventListener("click", (e) => openStackStatusMenu(e, entry.key, getStackStatus(entry.key), _rerender));
   const _restore = tr.querySelector(".js-stack-restore");
-  if (_restore) _restore.addEventListener("click", (e) => { e.stopPropagation(); setStackStatus(entry.key, "new"); applyStack(); });
+  if (_restore) _restore.addEventListener("click", (e) => { e.stopPropagation(); setStackStatus(entry.key, _stackRestoreStage || "new"); _rerender(); });
 
   // Row click: open the CRM of the FIRST signal on this property.
   // Today that's always CCLN. When Vacant Houses ships, a vacant-only
