@@ -1229,6 +1229,8 @@
   .today-list-item .tli-addr { color: var(--muted); font-size: 12px; font-weight: 400; }
   .today-list-item .tli-meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
   .today-list-item .tli-overdue { color: #f87171; }
+  @keyframes todayFlash { 0%, 100% { background: transparent; } 25% { background: rgba(56,189,248,0.28); } }
+  tr.today-flash > td { animation: todayFlash 1.1s ease-in-out 2; }
   .stack-flag { display: inline-flex; vertical-align: -2px; margin-right: 5px; color: #a78bfa; }
   .fc-leadtype { font-size: 10px; line-height: 1.15; margin-top: 4px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); font-weight: 600; }
   .fc-leadtype .fc-lt-mfc { color: #38bdf8; }
@@ -2882,7 +2884,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bo</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bp</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -9909,22 +9911,26 @@ function renderToday() {
     const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
     const due = _coldDueDate((store[id] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: item.kind, id, due,
-      name: item.rec.owner || item.rec.prop_address || ("Lead " + id) });
+      name: item.rec.owner || item.rec.prop_address || ("Lead " + id),
+      addr: item.rec.prop_address || "" });
   }
   for (const entry of _workTaxList(true)) {
     const due = _coldDueDate((propStore[entry.key] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: "prop", id: entry.key, due,
-      name: entry.owner || entry.prop_address || entry.key });
+      name: entry.owner || entry.prop_address || entry.key,
+      addr: entry.prop_address || "" });
   }
   for (const x of _workOverageList(true)) {
     const due = _coldDueDate((tovStore[x.rec.case_number] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: "prop", id: x.rec.case_number, due,
-      name: x.rec.owner || x.rec.prop_address || x.rec.case_number });
+      name: x.rec.owner || x.rec.prop_address || x.rec.case_number,
+      addr: x.rec.prop_address || "" });
   }
   for (const x of _workMovList(true)) {
     const due = _coldDueDate((movStore[x.rec.id] || {}).attempts, _todayNow);
     if (due) coldList.push({ kind: "prop", id: x.rec.id, due,
-      name: x.rec.owner || x.rec.prop_address || x.rec.id });
+      name: x.rec.owner || x.rec.prop_address || x.rec.id,
+      addr: x.rec.prop_address || "" });
   }
   {
     const _seen = new Set(coldList.filter(f => f.kind === "prop").map(f => f.id));
@@ -9932,7 +9938,8 @@ function renderToday() {
       if (_seen.has(entry.key)) continue;
       const due = _coldDueDate((propStore[entry.key] || {}).attempts, _todayNow);
       if (due) coldList.push({ kind: "prop", id: entry.key, due,
-        name: entry.owner || entry.prop_address || entry.key });
+        name: entry.owner || entry.prop_address || entry.key,
+        addr: entry.prop_address || "" });
     }
   }
   coldList.sort((a, b) => a.due.localeCompare(b.due));
@@ -9951,22 +9958,26 @@ function renderToday() {
     const id = item.kind === "mfc" ? String(item.rec.doc_num) : String(item.rec.uid);
     const due = _soonestUpcomingFollowup(_fuItems(store[id]), _todayNow);
     if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: item.kind, id, due,
-      name: item.rec.owner || item.rec.prop_address || ("Lead " + id) });
+      name: item.rec.owner || item.rec.prop_address || ("Lead " + id),
+      addr: item.rec.prop_address || "" });
   }
   for (const entry of _workTaxList(true)) {
     const due = _soonestUpcomingFollowup(_fuItems(propStore[entry.key]), _todayNow);
     if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: entry.key, due,
-      name: entry.owner || entry.prop_address || entry.key });
+      name: entry.owner || entry.prop_address || entry.key,
+      addr: entry.prop_address || "" });
   }
   for (const x of _workOverageList(true)) {
     const due = _soonestUpcomingFollowup(_fuItems(tovStore[x.rec.case_number]), _todayNow);
     if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.case_number, due,
-      name: x.rec.owner || x.rec.prop_address || x.rec.case_number });
+      name: x.rec.owner || x.rec.prop_address || x.rec.case_number,
+      addr: x.rec.prop_address || "" });
   }
   for (const x of _workMovList(true)) {
     const due = _soonestUpcomingFollowup(_fuItems(movStore[x.rec.id]), _todayNow);
     if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: x.rec.id, due,
-      name: x.rec.owner || x.rec.prop_address || x.rec.id });
+      name: x.rec.owner || x.rec.prop_address || x.rec.id,
+      addr: x.rec.prop_address || "" });
   }
   {
     const _seen = new Set(weekList.filter(f => f.kind === "prop").map(f => f.id));
@@ -9974,7 +9985,8 @@ function renderToday() {
       if (_seen.has(entry.key)) continue;
       const due = _soonestUpcomingFollowup(_fuItems(propStore[entry.key]), _todayNow);
       if (due && due > _todayNow && due <= _weekAhead) weekList.push({ kind: "prop", id: entry.key, due,
-        name: entry.owner || entry.prop_address || entry.key });
+        name: entry.owner || entry.prop_address || entry.key,
+        addr: entry.prop_address || "" });
     }
   }
   weekList.sort((a, b) => a.due.localeCompare(b.due));
@@ -10399,18 +10411,30 @@ function renderToday() {
     </div>`);
   document.getElementById("today-glance").innerHTML = glance.join("") + `
     <div id="today-list-cold" class="today-list" style="display:none;grid-column:1/-1">
-      ${coldList.map(c => `
-        <div class="today-list-item" onclick="_todayOpenLead('${c.kind}','${esc2(String(c.id))}')">
-          <span class="tli-name">${esc2(c.name)}</span>
-          <span class="tli-meta tli-overdue">follow-up was ${esc2(c.due)} · ${c.kind === "prop" ? "PROPERTY" : c.kind.toUpperCase()}</span>
-        </div>`).join("")}
+      ${coldList.map(c => {
+        const _md = (c.due && c.due.length === 10)
+          ? c.due.slice(5, 7) + "-" + c.due.slice(8, 10) + "-" + c.due.slice(0, 4) : c.due;
+        const _type = c.kind === "prop" ? "PROPERTY" : c.kind.toUpperCase();
+        return `
+        <div class="today-list-item tli-1line" onclick="_todayOpenLead('${c.kind}','${esc2(String(c.id))}')">
+          <span class="tli-status tli-overdue">follow-up was ${esc2(_md)} · ${_type}</span>
+          ${c.addr ? `<span class="tli-addr">${esc2(fmtTitle(c.addr))}</span>` : ""}
+          <span class="tli-name">${esc2(fmtTitle(c.name))}</span>
+        </div>`;
+      }).join("")}
     </div>
     <div id="today-list-week" class="today-list" style="display:none;grid-column:1/-1">
-      ${weekList.map(w => `
-        <div class="today-list-item" onclick="_todayOpenLead('${w.kind}','${esc2(String(w.id))}')">
-          <span class="tli-name">${esc2(w.name)}</span>
-          <span class="tli-meta">follow-up ${esc2(w.due)} · ${w.kind === "prop" ? "PROPERTY" : w.kind.toUpperCase()}</span>
-        </div>`).join("")}
+      ${weekList.map(w => {
+        const _md = (w.due && w.due.length === 10)
+          ? w.due.slice(5, 7) + "-" + w.due.slice(8, 10) + "-" + w.due.slice(0, 4) : w.due;
+        const _type = w.kind === "prop" ? "PROPERTY" : w.kind.toUpperCase();
+        return `
+        <div class="today-list-item tli-1line" onclick="_todayOpenLead('${w.kind}','${esc2(String(w.id))}')">
+          <span class="tli-status">follow-up ${esc2(_md)} · ${_type}</span>
+          ${w.addr ? `<span class="tli-addr">${esc2(fmtTitle(w.addr))}</span>` : ""}
+          <span class="tli-name">${esc2(fmtTitle(w.name))}</span>
+        </div>`;
+      }).join("")}
     </div>`;
 
   // Sidebar count badge: total things needing attention.
@@ -10428,9 +10452,20 @@ function _todayToggleList(which) {
 // Open a lead's CRM from the Today tab.
 function _todayOpenLead(kind, id) {
   try {
-    if (kind === "mfc") openMfcCrm(id, FC_RAW);
-    else if (kind === "tfc") openTfcCrm(id, TFC_RAW);
-    else if (kind === "prop") {
+    if (kind === "mfc") { openMfcCrm(id, FC_RAW); return; }
+    if (kind === "tfc") { openTfcCrm(id, TFC_RAW); return; }
+    if (kind === "prop") {
+      // "prop" is overloaded — the id may be a Mortgage Overage id, a Tax
+      // Overage case_number, or a stack/delq shared-property key. Route each
+      // to the right place so none fall through to a record-less (blank)
+      // shared-prop CRM.
+      try { if (typeof _moGet === "function" && _moGet(id)) { openMovCrm(id); return; } } catch (e) {}
+      try {
+        if (typeof EXCESS_RAW !== "undefined" && Array.isArray(EXCESS_RAW) &&
+            EXCESS_RAW.some(c => c && String(c.case_number) === String(id))) {
+          _todayGotoOverage(String(id)); return;   // overages edit inline, no modal
+        }
+      } catch (e) {}
       let rec = {};
       try {
         const g = _stackBuildGroups().get(id);
@@ -10443,6 +10478,26 @@ function _todayOpenLead(kind, id) {
       openPropCrm(id, rec);
     }
   } catch (e) { console.warn("could not open lead", kind, id, e); }
+}
+
+// Tax Overages have no popup CRM (they're edited inline), so jump to that
+// tab and scroll/flash the matching row instead of opening a blank modal.
+function _todayGotoOverage(caseNum) {
+  try {
+    const nav = document.querySelector('.nav-item[data-pane="taxoveragesraw"]');
+    if (nav) nav.click();
+    setTimeout(() => {
+      try {
+        const field = document.querySelector('[data-case="' + caseNum + '"]');
+        const row = field ? field.closest("tr") : null;
+        if (row) {
+          row.scrollIntoView({ behavior: "smooth", block: "center" });
+          row.classList.add("today-flash");
+          setTimeout(() => { try { row.classList.remove("today-flash"); } catch (e) {} }, 2200);
+        }
+      } catch (e) {}
+    }, 80);
+  } catch (e) { console.warn("could not go to overage", caseNum, e); }
 }
 // Toggle a monthly import reminder (CV or DELQ). First tap stamps
 // today's date; tapping again while it still shows today's date undoes
