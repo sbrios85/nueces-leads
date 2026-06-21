@@ -1204,8 +1204,9 @@
     border-radius: 8px; padding: 7px 12px;
     display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
   }
-  .today-stat.clickable { cursor: pointer; transition: border-color .15s; }
+  .today-stat.clickable { cursor: pointer; transition: border-color .15s, background .15s; }
   .today-stat.clickable:hover { border-color: var(--accent); }
+  .today-stat.today-stat-active { border-color: var(--accent); background: rgba(56,189,248,0.12); box-shadow: inset 0 0 0 1px var(--accent); }
   .today-stat .ts-num { font-size: 19px; font-weight: 700; color: var(--fg); line-height: 1.1; }
   .today-stat .ts-label {
     color: var(--muted); font-size: 11px;
@@ -1229,8 +1230,6 @@
   .today-list-item .tli-addr { color: var(--muted); font-size: 12px; font-weight: 400; }
   .today-list-item .tli-meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
   .today-list-item .tli-overdue { color: #f87171; }
-  @keyframes todayFlash { 0%, 100% { background: transparent; } 25% { background: rgba(56,189,248,0.28); } }
-  tr.today-flash > td { animation: todayFlash 1.1s ease-in-out 2; }
   .stack-flag { display: inline-flex; vertical-align: -2px; margin-right: 5px; color: #a78bfa; }
   .fc-leadtype { font-size: 10px; line-height: 1.15; margin-top: 4px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); font-weight: 600; }
   .fc-leadtype .fc-lt-mfc { color: #38bdf8; }
@@ -2884,7 +2883,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bp</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bq</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -10390,7 +10389,7 @@ function renderToday() {
       <div class="ts-sub">foreclosures reviewed</div>
     </div>`);
   glance.push(`
-    <div class="today-stat ${coldList.length ? "clickable" : ""}"
+    <div id="today-stat-cold" class="today-stat ${coldList.length ? "clickable" : ""}"
          ${coldList.length ? 'onclick="_todayToggleList(\'cold\')"' : ""}>
       <div class="ts-num">${coldList.length}</div>
       <div class="ts-label">Going cold</div>
@@ -10403,7 +10402,7 @@ function renderToday() {
       <div class="ts-sub">properties contacted</div>
     </div>`);
   glance.push(`
-    <div class="today-stat ${weekList.length ? "clickable" : ""}"
+    <div id="today-stat-week" class="today-stat ${weekList.length ? "clickable" : ""}"
          ${weekList.length ? 'onclick="_todayToggleList(\'week\')"' : ""}>
       <div class="ts-num">${weekList.length}</div>
       <div class="ts-label">Follow-ups later this week</div>
@@ -10444,11 +10443,6 @@ function renderToday() {
     badge.textContent = n;
   }
 }
-// Toggle a detail list open/closed.
-function _todayToggleList(which) {
-  const el = document.getElementById("today-list-" + which);
-  if (el) el.style.display = (el.style.display === "none") ? "flex" : "none";
-}
 // Open a lead's CRM from the Today tab.
 function _todayOpenLead(kind, id) {
   try {
@@ -10463,7 +10457,7 @@ function _todayOpenLead(kind, id) {
       try {
         if (typeof EXCESS_RAW !== "undefined" && Array.isArray(EXCESS_RAW) &&
             EXCESS_RAW.some(c => c && String(c.case_number) === String(id))) {
-          _todayGotoOverage(String(id)); return;   // overages edit inline, no modal
+          openTovCrm(String(id)); return;   // full rich CRM modal, back button returns to Today
         }
       } catch (e) {}
       let rec = {};
@@ -10480,24 +10474,15 @@ function _todayOpenLead(kind, id) {
   } catch (e) { console.warn("could not open lead", kind, id, e); }
 }
 
-// Tax Overages have no popup CRM (they're edited inline), so jump to that
-// tab and scroll/flash the matching row instead of opening a blank modal.
-function _todayGotoOverage(caseNum) {
-  try {
-    const nav = document.querySelector('.nav-item[data-pane="taxoveragesraw"]');
-    if (nav) nav.click();
-    setTimeout(() => {
-      try {
-        const field = document.querySelector('[data-case="' + caseNum + '"]');
-        const row = field ? field.closest("tr") : null;
-        if (row) {
-          row.scrollIntoView({ behavior: "smooth", block: "center" });
-          row.classList.add("today-flash");
-          setTimeout(() => { try { row.classList.remove("today-flash"); } catch (e) {} }, 2200);
-        }
-      } catch (e) {}
-    }, 80);
-  } catch (e) { console.warn("could not go to overage", caseNum, e); }
+// Toggle a detail list open/closed, and highlight its button while open so
+// it's clear which list is showing.
+function _todayToggleList(which) {
+  const el = document.getElementById("today-list-" + which);
+  if (!el) return;
+  const open = (el.style.display === "none");
+  el.style.display = open ? "flex" : "none";
+  const card = document.getElementById("today-stat-" + which);
+  if (card) card.classList.toggle("today-stat-active", open);
 }
 // Toggle a monthly import reminder (CV or DELQ). First tap stamps
 // today's date; tapping again while it still shows today's date undoes
