@@ -2890,7 +2890,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bs</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bt</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -10135,8 +10135,9 @@ function renderToday() {
     let e = {};
     try { e = getCrmEntry(crmType, id) || {}; } catch (er) {}
     const closing = (stage === "under_contract" && e.closing_date) ? String(e.closing_date) : "";
-    // Sale date only matters for actual foreclosure leads (MFC/TFC).
-    const sale = (kind === "mfc" || kind === "tfc") && rec.sale_date ? String(rec.sale_date) : "";
+    // Sale date only matters for actual foreclosure leads (MFC/TFC). TFC
+    // sale dates carry a time (T10:00:00) — keep just the date part.
+    const sale = (kind === "mfc" || kind === "tfc") && rec.sale_date ? String(rec.sale_date).slice(0, 10) : "";
     let tier = 2, sortDate = "9999-99-99";
     if (closing && closing >= todayISO && closing <= _hotCloseSoonMax) { tier = 0; sortDate = closing; }
     else if (sale && sale >= todayISO) { tier = 1; sortDate = sale; }
@@ -10244,18 +10245,21 @@ function renderToday() {
     if (!hotTop.length) {
       hotEl.innerHTML = `<div class="today-hot-empty">No leads in negotiating or under contract yet. Work the pipeline below.</div>`;
     } else {
-      const _hotFmt = (iso) => (iso && iso.length === 10)
-        ? iso.slice(5, 7) + "/" + iso.slice(8, 10) + "/" + iso.slice(0, 4) : iso;
+      const _hotFmt = (iso) => {
+        const s = String(iso || "").slice(0, 10);   // drop any time component
+        return s.length === 10 ? s.slice(5, 7) + "/" + s.slice(8, 10) + "/" + s.slice(0, 4) : (iso || "");
+      };
       const _hotDays = (iso) => Math.round(
-        (new Date(iso).getTime() - new Date(todayISO).getTime()) / 86400000);
+        (new Date(String(iso).slice(0, 10) + "T00:00:00").getTime() -
+         new Date(todayISO + "T00:00:00").getTime()) / 86400000);
       hotEl.innerHTML = hotTop.map((h, i) => {
         let dateLine = "";
         if (h.closing) {
           const d = _hotDays(h.closing);
-          dateLine = `<div class="today-hot-sale ${d <= 30 ? "soon" : ""}">closing ${esc2(_hotFmt(h.closing))}${d >= 0 ? " · " + d + "d" : ""}</div>`;
+          dateLine = `<div class="today-hot-sale ${d <= 30 ? "soon" : ""}">Closing Date ${esc2(_hotFmt(h.closing))}${d >= 0 ? " · " + d + "d" : ""}</div>`;
         } else if (h.sale) {
           const d = _hotDays(h.sale);
-          dateLine = `<div class="today-hot-sale ${d <= 14 ? "soon" : ""}">sale ${esc2(_hotFmt(h.sale))}${d >= 0 ? " · " + d + "d" : ""}</div>`;
+          dateLine = `<div class="today-hot-sale ${d <= 14 ? "soon" : ""}">Auction ${esc2(_hotFmt(h.sale))}${d >= 0 ? " · " + d + "d" : ""}</div>`;
         }
         const _type = h.kind === "prop" ? "PROPERTY" : h.kind.toUpperCase();
         return `
