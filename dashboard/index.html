@@ -2882,7 +2882,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bn</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bo</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -10131,21 +10131,67 @@ function renderToday() {
   hot.sort((a, b) => a.sale.localeCompare(b.sale));
   const hotTop = hot.slice(0, 7);
 
-  // ===== 10. Today's contact log — attempts logged today =====
-  // Counts attempts across MFC + TFC whose date is today. A simple
-  // productivity check ("have I made calls yet?").
-  let loggedToday = 0;
-  function _countTodayAttempts(crm) {
-    for (const id in crm) {
-      const atts = (crm[id] || {}).attempts;
-      if (!Array.isArray(atts)) continue;
-      for (const a of atts) {
-        if (a && a.date && String(a.date) === todayISO) loggedToday++;
-      }
+  // ===== 10. Today's contact log — distinct PROPERTIES contacted today =====
+  // Counts how many distinct properties have >=1 attempt logged today across
+  // ALL work areas (MFC, TFC, shared-prop Stack, Tax Overages, Mortgage
+  // Overages) — not just leads sitting in a work section, so a door-knock
+  // logged on a brand-new MFC lead still counts. Deduped by normalized
+  // property address so the SAME address worked in two places (e.g. an MFC
+  // house that's also a Stack lead) counts once, not twice.
+  const _ltNorm = (a) => { try { return _stackNormalizeAddress(String(a || "")) || ""; } catch (e) { return ""; } };
+  const _ltHasToday = (entry) => {
+    const atts = (entry || {}).attempts;
+    if (!Array.isArray(atts)) return false;
+    for (const a of atts) if (a && a.date && String(a.date) === todayISO) return true;
+    return false;
+  };
+  // ncad id -> normalized address, so propStore "ncad:" keys resolve to the
+  // same address form the other stores produce. Stores disagree on which
+  // ncad field they carry, so index both account number and prop id.
+  const _ltNcadAddr = {};
+  const _ltIndex = (r) => {
+    if (!r) return;
+    const na = _ltNorm(r.prop_address);
+    if (!na) return;
+    for (const idf of [r.ncad_account_num, r.ncad_prop_id]) {
+      const k = idf != null ? String(idf).trim() : "";
+      if (k && !_ltNcadAddr[k]) _ltNcadAddr[k] = na;
     }
+  };
+  for (const r of fc) _ltIndex(r);
+  for (const r of tfc) _ltIndex(r);
+  try { for (const r of (typeof CCLN_RAW !== "undefined" ? CCLN_RAW : [])) _ltIndex(r); } catch (e) {}
+  try { for (const r of (typeof CV_RAW !== "undefined" ? CV_RAW : [])) _ltIndex(r); } catch (e) {}
+  try { for (const r of (typeof DEFERRAL_RAW !== "undefined" ? DEFERRAL_RAW : [])) _ltIndex(r); } catch (e) {}
+  try { for (const c of (Array.isArray(EXCESS_RAW) ? EXCESS_RAW : [])) _ltIndex(c); } catch (e) {}
+  try { for (const r of _moList()) _ltIndex(r); } catch (e) {}
+  // id -> record for the stores keyed by something other than a property key
+  const _ltFc = {}, _ltTfc = {}, _ltTov = {}, _ltMov = {};
+  for (const r of fc) if (r && r.doc_num) _ltFc[String(r.doc_num)] = r;
+  for (const r of tfc) if (r && r.uid) _ltTfc[String(r.uid)] = r;
+  try { for (const c of (Array.isArray(EXCESS_RAW) ? EXCESS_RAW : [])) if (c && c.case_number) _ltTov[String(c.case_number)] = c; } catch (e) {}
+  try { for (const r of _moList()) if (r && r.id != null) _ltMov[String(r.id)] = r; } catch (e) {}
+
+  const _ltContacted = new Set();
+  const _ltAddRec = (rec, fallback) => {
+    const na = _ltNorm((rec || {}).prop_address);
+    _ltContacted.add(na ? "addr:" + na : fallback);
+  };
+  for (const id in mfcCrm) if (_ltHasToday(mfcCrm[id])) _ltAddRec(_ltFc[String(id)], "mfc:" + id);
+  for (const id in tfcCrm) if (_ltHasToday(tfcCrm[id])) _ltAddRec(_ltTfc[String(id)], "tfc:" + id);
+  for (const id in tovStore) if (_ltHasToday(tovStore[id])) _ltAddRec(_ltTov[String(id)], "tov:" + id);
+  for (const id in movStore) if (_ltHasToday(movStore[id])) _ltAddRec(_ltMov[String(id)], "mov:" + id);
+  for (const k in propStore) {
+    if (!_ltHasToday(propStore[k])) continue;
+    if (k.indexOf("addr:") === 0) { _ltContacted.add(k); continue; }   // already a normalized address
+    if (k.indexOf("ncad:") === 0) {                                    // resolve ncad -> address
+      const na = _ltNcadAddr[k.slice(5)];
+      _ltContacted.add(na ? "addr:" + na : k);
+      continue;
+    }
+    _ltContacted.add(k);
   }
-  _countTodayAttempts(mfcCrm);
-  _countTodayAttempts(tfcCrm);
+  const loggedToday = _ltContacted.size;
 
   // Stage label lookup for the hot list (shows "Working" not "contacted").
   const _stageLabel = { new: "New", contacted: "Working",
@@ -10342,7 +10388,7 @@ function renderToday() {
     <div class="today-stat">
       <div class="ts-num">${loggedToday}</div>
       <div class="ts-label">Logged today</div>
-      <div class="ts-sub">contact attempts</div>
+      <div class="ts-sub">properties contacted</div>
     </div>`);
   glance.push(`
     <div class="today-stat ${weekList.length ? "clickable" : ""}"
