@@ -2882,7 +2882,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;" id="hdr-build-stamp">· build 06-20-2026bk</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bn</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -10012,6 +10012,16 @@ function renderToday() {
     const st = getStackStatus(entry.key);
     if (st !== "new" && st in stageCount) stageCount[st]++;
   }
+  // Tax Overages + Mortgage Overages work views — both expose item.stage
+  // directly, so Working/Negotiating/Under Contract now reflect ALL 4 work
+  // dashboards. (Dead / claimed_dead / closed stages aren't in stageCount,
+  // so they're naturally excluded.)
+  for (const item of _workOverageList()) {
+    if (item.stage !== "new" && item.stage in stageCount) stageCount[item.stage]++;
+  }
+  for (const item of _workMovList()) {
+    if (item.stage !== "new" && item.stage in stageCount) stageCount[item.stage]++;
+  }
 
   // ===== 5. Verified review progress (FC) =====
   let verifiedCount = 0;
@@ -10310,7 +10320,7 @@ function renderToday() {
     <div class="today-stat">
       <div class="ts-num">${stageCount[k]}</div>
       <div class="ts-label">${lbl}</div>
-      <div class="ts-sub">${k === "new" ? "new today" : "in work area"}</div>
+      <div class="ts-sub">${k === "new" ? "new today - Foreclosures and Stack" : "in work area"}</div>
     </div>`).join("");
 
   // ---------- Render: at-a-glance ----------
@@ -11672,19 +11682,6 @@ function _updateMovCount(n){
   el.textContent = c ? c.toLocaleString() : "—";
 }
 document.addEventListener("DOMContentLoaded", () => _updateMovCount());
-document.addEventListener("DOMContentLoaded", () => {
-  // Header build stamp = live current date + deployed version letter, so the
-  // date always reflects today instead of a frozen build date. Bump
-  // BUILD_LETTER each deploy; the date fills in automatically.
-  const BUILD_LETTER = "bk";
-  const el = document.getElementById("hdr-build-stamp");
-  if (el) {
-    const d = new Date();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    el.textContent = "\u00B7 build " + mm + "-" + dd + "-" + d.getFullYear() + BUILD_LETTER;
-  }
-});
 function renderMovStats(){
   const list = _moList();
   _updateMovCount(list.length);
