@@ -1386,6 +1386,13 @@
   .prop-stage-btn.active.dead { background:rgba(239,68,68,.15); border-color:#ef4444; color:#ef4444; }
   .prop-stage-btn.auto:not(.active) { opacity:.4; cursor:default; }
   .prop-stage-btn.auto:not(.active):hover { border-color:var(--border); color:inherit; }
+  .uc-card { margin:10px 0 0; padding:13px 15px; border:1px solid var(--accent); border-radius:10px; background:rgba(56,189,248,0.06); }
+  .uc-card h3 { margin:0 0 10px; font-size:12px; color:var(--accent); text-transform:uppercase; letter-spacing:.04em; font-weight:700; }
+  .uc-fields { display:flex; gap:16px; flex-wrap:wrap; }
+  .uc-field { flex:1 1 200px; min-width:170px; }
+  .uc-field label { display:block; font-size:11px; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:.03em; }
+  .uc-field input { width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--fg); font-size:14px; box-sizing:border-box; }
+  .uc-field input:focus { outline:none; border-color:var(--accent); }
   .prop-input, .prop-notes { width:100%; box-sizing:border-box; background:var(--bg);
     border:1px solid var(--border); border-radius:8px; color:var(--fg); font-family:inherit;
     font-size:13px; padding:9px 11px; }
@@ -2883,7 +2890,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bq</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026br</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -6780,6 +6787,7 @@ function openMfcCrm(docNum, sourceRecords) {
     clearTimeout(s._t);
     s._t = setTimeout(() => s.classList.remove("show"), 1200);
   };
+  try { _ucRenderInto("mfc", docNum, currentStage); } catch (e) {}
   document.querySelectorAll("#crm-body [data-mfc-key]").forEach(el => {
     const key = el.dataset.mfcKey;
     const tag = el.tagName.toLowerCase();
@@ -8623,6 +8631,7 @@ function openTfcCrm(uid, sourceRecords) {
     clearTimeout(s._t);
     s._t = setTimeout(() => s.classList.remove("show"), 1200);
   };
+  try { _ucRenderInto("tfc", uid, currentStage); } catch (e) {}
   document.querySelectorAll("#crm-body [data-tfc-key]").forEach(el => {
     const key = el.dataset.tfcKey;
     const tag = el.tagName.toLowerCase();
@@ -8821,6 +8830,7 @@ function _mfcSetStage(docNum, newStage) {
   // re-opening the whole CRM — re-opening re-ran the auto-research and
   // lead-type scans (CCLN/CV/DELQ/DEFERRAL/FC) and froze the click ~1s.
   _mfcRefreshAfterStage(docNum, newStage);
+  try { _ucRenderInto("mfc", docNum, newStage); } catch (e) {}
 }
 
 // Open the "log attempt" modal. The actual save happens in
@@ -16787,6 +16797,43 @@ function _autoResearchHtml(rec, propKey) {
   </div>`;
 }
 
+// ---------------------------------------------------------------------
+// Under Contract details. When a lead's stage is "under_contract", show a
+// row right under the stage bar with Title Company + Closing Date fields,
+// saved into that lead's own CRM store via the generic getCrmEntry /
+// setCrmField (works for mfc / tfc / prop / tov / mov by type). The closing
+// date feeds the Hot list. Inserted via JS after the stage bar so it needs
+// no per-CRM template change; call at CRM open and on stage change.
+// ---------------------------------------------------------------------
+function _ucRenderInto(type, key, stage) {
+  try {
+    const existing = document.getElementById("uc-section");
+    if (existing) existing.remove();
+    if (stage !== "under_contract") return;
+    const stagesEl = document.querySelector("#crm-view .prop-stages");
+    if (!stagesEl) return;
+    const bar = stagesEl.closest(".prop-stagebar") || stagesEl.parentElement;
+    if (!bar || !bar.parentElement) return;
+    const e = (typeof getCrmEntry === "function" ? getCrmEntry(type, key) : {}) || {};
+    const sec = document.createElement("div");
+    sec.id = "uc-section";
+    sec.className = "uc-card";
+    sec.innerHTML =
+      '<h3>Under Contract</h3>' +
+      '<div class="uc-fields">' +
+        '<div class="uc-field"><label>Title Company</label>' +
+          '<input type="text" id="uc-title-co" placeholder="Title company" value="' + esc(e.title_company || "") + '"></div>' +
+        '<div class="uc-field"><label>Closing Date</label>' +
+          '<input type="date" id="uc-closing" value="' + esc(e.closing_date || "") + '"></div>' +
+      '</div>';
+    bar.parentElement.insertBefore(sec, bar.nextSibling);
+    const tc = sec.querySelector("#uc-title-co");
+    const cd = sec.querySelector("#uc-closing");
+    if (tc) tc.addEventListener("change", () => { try { setCrmField(type, key, "title_company", tc.value); } catch (er) {} });
+    if (cd) cd.addEventListener("change", () => { try { setCrmField(type, key, "closing_date", cd.value); } catch (er) {} });
+  } catch (er) { console.warn("uc render failed", er); }
+}
+
 function openPropCrm(propKey, rec, ctx) {
   if (!propKey) return;
   rec = rec || {};
@@ -17129,6 +17176,8 @@ function openPropCrm(propKey, rec, ctx) {
       openPropCrm(propKey, rec, _propCtx);
     });
   });
+
+  try { _ucRenderInto(_propCtx.type, propKey, stage); } catch (e) {}
 
   // Notes (debounced autosave)
   const notesEl = document.getElementById("prop-notes");
