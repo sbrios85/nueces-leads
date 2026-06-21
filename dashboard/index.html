@@ -2890,7 +2890,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026br</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bs</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -10115,41 +10115,61 @@ function renderToday() {
   const nctaxNext = _nctaxNextRefresh(nctaxLoaded);
   const nctaxDue = !nctaxLoaded || !nctaxNext || (Date.now() >= nctaxNext.target.getTime());
 
-  // ===== 9. Hot list — top-priority leads =====
-  // Leads in an ACTIVE stage (new/contacted/negotiating/under_contract)
-  // that have an UPCOMING sale date, ranked soonest-first. These are the
-  // most time-sensitive deals worth working first. Up to 7 shown.
-  const ACTIVE_STAGES = { new: 1, contacted: 1, negotiating: 1, under_contract: 1 };
+  // ===== 9. Hot list — top-priority work leads =====
+  // Only leads in the work pipeline at NEGOTIATING or UNDER CONTRACT, pulled
+  // from all four work dashboards (Foreclosures, Stack, Tax Overages,
+  // Mortgage Overages). Priority: (1) upcoming closings within
+  // HOT_CLOSE_SOON_DAYS, soonest first; (2) foreclosure leads with an
+  // upcoming sale date, soonest first; (3) everything else. Up to 7 shown.
+  const HOT_STAGES = { negotiating: 1, under_contract: 1 };
+  const HOT_CLOSE_SOON_DAYS = 30;
+  const _hotPlusDays = (iso, n) => {
+    const d = new Date(iso + "T00:00:00"); d.setDate(d.getDate() + n);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") +
+      "-" + String(d.getDate()).padStart(2, "0");
+  };
+  const _hotCloseSoonMax = _hotPlusDays(todayISO, HOT_CLOSE_SOON_DAYS);
   const hot = [];
-  // MFC
-  for (const r of fc) {
-    const doc = String(r.doc_num);
-    if (_todayFcIsDead(doc)) continue;
-    const stage = (mfcCrm[doc] || {}).stage || "new";
-    if (!ACTIVE_STAGES[stage]) continue;
-    if (!r.sale_date || String(r.sale_date) < todayISO) continue;
+  const _hotPush = (kind, id, crmType, rec, stage) => {
+    id = String(id);
+    let e = {};
+    try { e = getCrmEntry(crmType, id) || {}; } catch (er) {}
+    const closing = (stage === "under_contract" && e.closing_date) ? String(e.closing_date) : "";
+    // Sale date only matters for actual foreclosure leads (MFC/TFC).
+    const sale = (kind === "mfc" || kind === "tfc") && rec.sale_date ? String(rec.sale_date) : "";
+    let tier = 2, sortDate = "9999-99-99";
+    if (closing && closing >= todayISO && closing <= _hotCloseSoonMax) { tier = 0; sortDate = closing; }
+    else if (sale && sale >= todayISO) { tier = 1; sortDate = sale; }
     hot.push({
-      kind: "mfc", id: doc,
-      name: r.owner || r.prop_address || ("Lead " + doc),
-      addr: r.prop_address || "",
-      sale: String(r.sale_date), stage,
+      kind, id, stage,
+      name: rec.owner || rec.prop_address || ("Lead " + id),
+      addr: rec.prop_address || "",
+      sale, closing, tier, sortDate,
     });
+  };
+  for (const item of _workForeclosureList(true)) {
+    if (!HOT_STAGES[item.stage]) continue;
+    const crmType = item.kind === "mfc" ? "mfc" : "tfc";
+    const id = item.kind === "mfc" ? item.rec.doc_num : item.rec.uid;
+    _hotPush(item.kind, id, crmType, item.rec, item.stage);
   }
-  // TFC
-  for (const r of tfc) {
-    const uid = String(r.uid);
-    const e = tfcCrm[uid] || {};
-    const stage = e.stage || "new";
-    if (stage === "dead" || !ACTIVE_STAGES[stage]) continue;
-    if (!r.sale_date || String(r.sale_date) < todayISO) continue;
-    hot.push({
-      kind: "tfc", id: uid,
-      name: r.owner || r.prop_address || ("Lead " + uid),
-      addr: r.prop_address || "",
-      sale: String(r.sale_date), stage,
-    });
+  for (const entry of _workTaxList(true)) {
+    const st = getStackStatus(entry.key);
+    if (!HOT_STAGES[st]) continue;
+    _hotPush("prop", entry.key, "prop", entry, st);
   }
-  hot.sort((a, b) => a.sale.localeCompare(b.sale));
+  for (const x of _workOverageList(true)) {
+    if (!HOT_STAGES[x.stage]) continue;
+    _hotPush("prop", x.rec.case_number, "tov", x.rec, x.stage);
+  }
+  for (const x of _workMovList(true)) {
+    if (!HOT_STAGES[x.stage]) continue;
+    _hotPush("prop", x.rec.id, "mov", x.rec, x.stage);
+  }
+  hot.sort((a, b) =>
+    (a.tier - b.tier) ||
+    a.sortDate.localeCompare(b.sortDate) ||
+    String(a.name).localeCompare(String(b.name)));
   const hotTop = hot.slice(0, 7);
 
   // ===== 10. Today's contact log — distinct PROPERTIES contacted today =====
@@ -10222,23 +10242,32 @@ function renderToday() {
   const hotEl = document.getElementById("today-hotlist");
   if (hotEl) {
     if (!hotTop.length) {
-      hotEl.innerHTML = `<div class="today-hot-empty">No active leads with upcoming sale dates. Work the pipeline below.</div>`;
+      hotEl.innerHTML = `<div class="today-hot-empty">No leads in negotiating or under contract yet. Work the pipeline below.</div>`;
     } else {
+      const _hotFmt = (iso) => (iso && iso.length === 10)
+        ? iso.slice(5, 7) + "/" + iso.slice(8, 10) + "/" + iso.slice(0, 4) : iso;
+      const _hotDays = (iso) => Math.round(
+        (new Date(iso).getTime() - new Date(todayISO).getTime()) / 86400000);
       hotEl.innerHTML = hotTop.map((h, i) => {
-        const days = Math.round(
-          (new Date(h.sale).getTime() - new Date(todayISO).getTime()) / 86400000);
-        const soon = days <= 14;
+        let dateLine = "";
+        if (h.closing) {
+          const d = _hotDays(h.closing);
+          dateLine = `<div class="today-hot-sale ${d <= 30 ? "soon" : ""}">closing ${esc2(_hotFmt(h.closing))}${d >= 0 ? " · " + d + "d" : ""}</div>`;
+        } else if (h.sale) {
+          const d = _hotDays(h.sale);
+          dateLine = `<div class="today-hot-sale ${d <= 14 ? "soon" : ""}">sale ${esc2(_hotFmt(h.sale))}${d >= 0 ? " · " + d + "d" : ""}</div>`;
+        }
+        const _type = h.kind === "prop" ? "PROPERTY" : h.kind.toUpperCase();
         return `
-        <div class="today-hot-item" onclick="_todayOpenLead('${h.kind}','${esc2(h.id)}')">
+        <div class="today-hot-item" onclick="_todayOpenLead('${h.kind}','${esc2(String(h.id))}')">
           <div class="today-hot-rank">${i + 1}</div>
           <div class="today-hot-main">
-            <div class="today-hot-name">${esc2(h.name)}</div>
-            <div class="today-hot-addr">${esc2(h.addr || "—")}</div>
+            <div class="today-hot-name">${esc2(fmtTitle(h.name))}</div>
+            <div class="today-hot-addr">${esc2(fmtTitle(h.addr) || "—")}</div>
           </div>
           <div class="today-hot-meta">
-            <div class="today-hot-sale ${soon ? "soon" : ""}">sale ${esc2(h.sale)}${
-              days >= 0 ? " · " + days + "d" : ""}</div>
-            <div class="today-hot-stage">${_stageLabel[h.stage] || h.stage} · ${h.kind.toUpperCase()}</div>
+            ${dateLine}
+            <div class="today-hot-stage">${_stageLabel[h.stage] || h.stage} · ${_type}</div>
           </div>
         </div>`;
       }).join("");
