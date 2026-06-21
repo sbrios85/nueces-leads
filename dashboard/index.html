@@ -2890,7 +2890,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bt</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bu</span></div>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -7785,7 +7785,31 @@ function _tfcSetStage(uid, newStage) {
   // status pill behind the CRM updates immediately, not just on close.
   if (typeof renderTfcStats === "function") renderTfcStats();
   if (typeof renderTfcTable === "function") renderTfcTable();
-  openTfcCrm(uid, TFC_RAW);
+  // Update the stage highlight + activity log (+ Under Contract section) in
+  // place instead of re-opening the whole CRM — mirrors MFC, avoids the
+  // re-render flicker/lag.
+  _tfcRefreshAfterStage(uid, newStage);
+}
+
+function _tfcRefreshAfterStage(uid, newStage) {
+  document.querySelectorAll(".prop-stages .prop-stage-btn[data-stage]")
+    .forEach(b => b.classList.toggle("active", b.dataset.stage === newStage));
+  const list = document.querySelector(".mfc-activity-list");
+  if (list) {
+    const entry = getTfcEntry(uid) || {};
+    const activity = Array.isArray(entry.activity) ? entry.activity : [];
+    const sum = document.querySelector(".mfc-activity > summary");
+    if (sum) sum.textContent = `Activity log (${activity.length})`;
+    list.innerHTML = activity.length === 0
+      ? `<div style="color:var(--muted);font-size:12px;font-style:italic">No activity yet.</div>`
+      : activity.map(e => `
+            <div class="mfc-activity-row">
+              <span class="ts">${esc(_tfcFormatActivityTs(e.ts))}</span>
+              <span class="ev">${esc(e.ev)}</span>
+            </div>
+          `).join("");
+  }
+  try { _ucRenderInto("tfc", uid, newStage); } catch (e) {}
 }
 
 // Open the Log-Attempt modal. If attemptId is provided, the modal
@@ -8140,6 +8164,7 @@ function openTfcCrm(uid, sourceRecords) {
     const on = s.key === currentStage;
     const kind = s.kind === "dead" ? "dead" : (s.kind === "closed-won" ? "won" : "");
     return `<button type="button" class="prop-stage-btn${on ? " active" : ""} ${kind}"
+        data-stage="${esc(s.key)}"
         onclick="_tfcSetStage('${esc(uid)}', '${esc(s.key)}')">${esc(s.label)}</button>`;
   }).join("");
   const _tfcLeadPills = (typeof _leadTypePillsHtml === "function") ? _leadTypePillsHtml(rec, null, "") : "";
