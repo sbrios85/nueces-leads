@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-06-20T17:39:20.469567+00:00",
+  "fetched_at": "2026-06-21T17:44:25.089934+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-05-21",
-    "end": "2026-06-20"
+    "start": "2026-05-22",
+    "end": "2026-06-21"
   },
-  "total": 50,
+  "total": 49,
   "with_address": 21,
   "records": [
     {
@@ -416,30 +416,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019164",
-      "flags": [
-        "Lis pendens"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026017684",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-05-21",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "GARZA ANITA PEREZ",
-      "grantee": "BANUELOS DEBORAH",
-      "amount": null,
-      "legal": "CAUSE NO 2025-DCV-3784-F (Lot 14, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026017684",
       "flags": [
         "Lis pendens"
       ],
