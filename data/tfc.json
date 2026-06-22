@@ -25,7 +25,18 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331813",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260707",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "BITONI ROSA",
+      "legal": "SAN DIEGO BLK 6 LOT 26",
+      "market_value": 69721.0,
+      "ncad_prop_id": "295938",
+      "ncad_owner_id": "705441",
+      "ncad_year": "2026",
+      "mail_address": "2214 Nogales St",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78416",
+      "ncad_account_num": "7614-0006-0260"
     },
     {
       "uid": "1009210282",
@@ -52,7 +63,13 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331808",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260707",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "STONEY SAMUEL AND",
+      "legal": "CARVER LT 13 BK 2",
+      "market_value": 25118.0,
+      "ncad_prop_id": "209349",
+      "ncad_owner_id": "372013",
+      "ncad_year": "2026"
     },
     {
       "uid": "1008251510",
@@ -79,7 +96,18 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331809",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260707",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "REYNA LEE OSWALD",
+      "legal": "MIDWAY BLK 8 LOT 7",
+      "market_value": 104742.0,
+      "ncad_prop_id": "267354",
+      "ncad_owner_id": "764625",
+      "ncad_year": "2026",
+      "mail_address": "PO Box 484",
+      "mail_city": "Ingleside",
+      "mail_state": "TX",
+      "mail_zip": "78362",
+      "ncad_account_num": "5175-0008-0070"
     },
     {
       "uid": "1009689817",
@@ -106,7 +134,18 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331810",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260707",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "GUZMAN ARCELIA CRANZ",
+      "legal": "LAGUNA VISTA SHORES LT 16 BK 13",
+      "market_value": 61343.0,
+      "ncad_prop_id": "253888",
+      "ncad_owner_id": "655729",
+      "ncad_year": "2026",
+      "mail_address": "5348 DANVILLE #C",
+      "mail_city": "LAS VEGAS",
+      "mail_state": "NV",
+      "mail_zip": "89119",
+      "ncad_account_num": "4130-0013-0160"
     },
     {
       "uid": "1008227652",
@@ -133,7 +172,18 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000331812",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20260707",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "CARRIER BRENT LEE JR",
+      "legal": "CARROLL PLACE ADD LT 16 BK 3",
+      "market_value": 155938.0,
+      "ncad_prop_id": "208290",
+      "ncad_owner_id": "787758",
+      "ncad_year": "2026",
+      "mail_address": "PO Box 270156",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78427",
+      "ncad_account_num": "1330-0003-0160"
     },
     {
       "uid": "1007738835",
@@ -160,7 +210,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "ORTEGA JESSE",
+      "legal": "MOLINA 2 LT 22B BLK 11",
+      "market_value": 34000.0,
+      "ncad_prop_id": "268487",
+      "ncad_owner_id": "551061",
+      "ncad_year": "2026",
+      "mail_address": "1838 BERNANDINO ST",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78416",
+      "ncad_account_num": "5281-0011-0225"
     },
     {
       "uid": "1008915366",
@@ -187,7 +248,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "CORE PROFITS CONSULTING AND HOLDINGS LLC",
+      "legal": "LA PASCUA 2 LT 33 BK 6",
+      "market_value": 116034.0,
+      "ncad_prop_id": "252702",
+      "ncad_owner_id": "792159",
+      "ncad_year": "2026",
+      "mail_address": "322 W Woodlawn Ave",
+      "mail_city": "San Antonio",
+      "mail_state": "TX",
+      "mail_zip": "78212",
+      "ncad_account_num": "4072-0006-0330"
     },
     {
       "uid": "1008960271",
@@ -214,7 +286,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "QUINTANILLA DWIGHT AND",
+      "legal": "NEWELL - RBST BLK 1 LOT 13",
+      "market_value": 69313.0,
+      "ncad_prop_id": "272283",
+      "ncad_owner_id": "390710",
+      "ncad_year": "2026",
+      "mail_address": "900 PERKINS ST",
+      "mail_city": "ROBSTOWN",
+      "mail_state": "TX",
+      "mail_zip": "78380",
+      "ncad_account_num": "5726-0001-0130"
     },
     {
       "uid": "1008177121",
@@ -241,7 +324,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "MAYEN EDGAR ROLANDO ET UX",
+      "legal": "RIVERSIDE LT 31",
+      "market_value": 209530.0,
+      "ncad_prop_id": "292188",
+      "ncad_owner_id": "461542",
+      "ncad_year": "2026",
+      "mail_address": "5318 SEGUIN",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "ncad_account_num": "7308-0000-0310"
     },
     {
       "uid": "1008174360",
@@ -268,7 +362,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "REYES RICARDO AND WF",
+      "legal": "SEIKEL BLK 5 LOTS 11, 12 & 13",
+      "market_value": 73371.0,
+      "ncad_prop_id": "200017928",
+      "ncad_owner_id": "567028",
+      "ncad_year": "2026",
+      "mail_address": "703 ELESA ST",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78405",
+      "ncad_account_num": "7891-0005-0110"
     },
     {
       "uid": "1009330554",
@@ -295,7 +400,13 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "CANTU BENJAMIN ROSS",
+      "legal": "TIERRA VERDE UNIT 2 TRACT 25B",
+      "market_value": 51419.0,
+      "ncad_prop_id": "200042961",
+      "ncad_owner_id": "673424",
+      "ncad_year": "2026"
     },
     {
       "uid": "1009513476",
@@ -322,7 +433,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "DAVILA MARIA INEZ",
+      "legal": "TROPICAL PARK BLK 2 LOT 17",
+      "market_value": 103030.0,
+      "ncad_prop_id": "200045091",
+      "ncad_owner_id": "421348",
+      "ncad_year": "2026",
+      "mail_address": "4530 NESBITT",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "ncad_account_num": "8882-0002-0170"
     },
     {
       "uid": "1007720525",
@@ -349,7 +471,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "VEGA MONICA P AND ETALS",
+      "legal": "PORTAIRS NE23.3O' OF LT 21 & SW31.7O' OF LT 22 BK 5",
+      "market_value": 102208.0,
+      "ncad_prop_id": "287739",
+      "ncad_owner_id": "830559",
+      "ncad_year": "2026",
+      "mail_address": "4443 NAPLES ST",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "ncad_account_num": "6936-0005-0210"
     },
     {
       "uid": "1009613081",
@@ -376,7 +509,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "GUERRERO ANNA",
+      "legal": "SHADY ACRES BLK 2 LOT 8",
+      "market_value": 144846.0,
+      "ncad_prop_id": "200018363",
+      "ncad_owner_id": "735184",
+      "ncad_year": "2026",
+      "mail_address": "10854 Mayfield Dr",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "ncad_account_num": "7901-0002-0080"
     },
     {
       "uid": "1008967561",
@@ -403,7 +547,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "GARCIA VELMA",
+      "legal": "MOBIL HOME ESTATES-RBST LT 5 BK 2",
+      "market_value": 15330.0,
+      "ncad_prop_id": "267696",
+      "ncad_owner_id": "539087",
+      "ncad_year": "2026",
+      "mail_address": "506 IOWA",
+      "mail_city": "ROBSTOWN",
+      "mail_state": "TX",
+      "mail_zip": "78380",
+      "ncad_account_num": "5262-0002-0050"
     },
     {
       "uid": "1013326193",
@@ -430,7 +585,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "DJILAI EDDIE RACHID & WF TERESA",
+      "legal": "G & M ESTATES BLK 1 LOT 1RR",
+      "market_value": 1915332.0,
+      "ncad_prop_id": "524482",
+      "ncad_owner_id": "786677",
+      "ncad_year": "2026",
+      "mail_address": "3909 Roscher Rd",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_account_num": "2665-0001-0010"
     },
     {
       "uid": "1012928889",
@@ -457,7 +623,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "DJILAI EDDIE RACHID & WF TERESA",
+      "legal": "G & M ESTATES BLK 1 LOT 2RR",
+      "market_value": 662892.0,
+      "ncad_prop_id": "535341",
+      "ncad_owner_id": "786677",
+      "ncad_year": "2026",
+      "mail_address": "3909 Roscher Rd",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_account_num": "2665-0001-0020"
     },
     {
       "uid": "1015790033",
@@ -484,7 +661,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "CHACON STEPHANIE F",
+      "legal": "PADRE ISLAND SEC 2 LT 6 BLK 73",
+      "market_value": 453460.0,
+      "ncad_prop_id": "278930",
+      "ncad_owner_id": "835866",
+      "ncad_year": "2026",
+      "mail_address": "13921 SUNTAN AVE",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_account_num": "6150-0073-0060"
     },
     {
       "uid": "1008187051",
@@ -511,7 +699,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "ZUNDT EMILIO M",
+      "legal": "SEGREST LT 2 BK 5 & POR OF ALLEY",
+      "market_value": 43344.0,
+      "ncad_prop_id": "200017216",
+      "ncad_owner_id": "238178",
+      "ncad_year": "2026",
+      "mail_address": "2129 DAVID",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78405",
+      "ncad_account_num": "7886-0005-0020"
     },
     {
       "uid": "1009778654",
@@ -538,7 +737,13 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "WOOD JENESSA & MARK GONZALES",
+      "legal": "COUNTRY CLUB ESTATES #21 BLK 2 LOT 10",
+      "market_value": 308520.0,
+      "ncad_prop_id": "219123",
+      "ncad_owner_id": "736209",
+      "ncad_year": "2026"
     },
     {
       "uid": "1009679980",
@@ -565,7 +770,13 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "ANZALDUA BELINDA SAENZ",
+      "legal": "COMPRESS-RBST LTS 5 & 6 BLK 2",
+      "market_value": 86445.0,
+      "ncad_prop_id": "216100",
+      "ncad_owner_id": "679254",
+      "ncad_year": "2026"
     },
     {
       "uid": "1009010113",
@@ -592,7 +803,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "SANCHEZ ELIAS",
+      "legal": "WRIGHT - RBST BLK 3 LOT 10",
+      "market_value": 131168.0,
+      "ncad_prop_id": "200068950",
+      "ncad_owner_id": "677199",
+      "ncad_year": "2026",
+      "mail_address": "520 Industrial Ave",
+      "mail_city": "Robstown",
+      "mail_state": "TX",
+      "mail_zip": "78380",
+      "ncad_account_num": "9912-0003-0100"
     },
     {
       "uid": "1007507779",
@@ -619,7 +841,13 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "SERNA RODOLFO ET UX YOLANDA A",
+      "legal": "MALOY AND BOSQUEZ EXTN-RBST LTS 15 & 16 BK 1",
+      "market_value": 105362.0,
+      "ncad_prop_id": "262909",
+      "ncad_owner_id": "388249",
+      "ncad_year": "2026"
     },
     {
       "uid": "1008191881",
@@ -646,7 +874,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "GARCIA AUSTIN & NORMANDY",
+      "legal": "DARE H E-RBST LT 15 & W/2 OF LT 16",
+      "market_value": 205452.0,
+      "ncad_prop_id": "224274",
+      "ncad_owner_id": "728607",
+      "ncad_year": "2026",
+      "mail_address": "118 W Avenue F",
+      "mail_city": "Robstown",
+      "mail_state": "TX",
+      "mail_zip": "78380",
+      "ncad_account_num": "2030-0000-0150"
     },
     {
       "uid": "1013326563",
@@ -673,7 +912,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "THOMAS VELDA R ETALS",
+      "legal": "LA PASCUA #2 BLK 8 LOT 43",
+      "market_value": 110243.0,
+      "ncad_prop_id": "252793",
+      "ncad_owner_id": "780262",
+      "ncad_year": "2026",
+      "mail_address": "3032 Elgin St",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78405",
+      "ncad_account_num": "4072-0008-0430"
     },
     {
       "uid": "1012482142",
@@ -700,7 +950,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "HERRERA PAULITA C  ETALS",
+      "legal": "LOS ENCINOS BLK F LOT 6",
+      "market_value": 108701.0,
+      "ncad_prop_id": "261677",
+      "ncad_owner_id": "699393",
+      "ncad_year": "2026",
+      "mail_address": "1521 El Paso St",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78417",
+      "ncad_account_num": "4570-0006-0060"
     },
     {
       "uid": "1008394525",
@@ -727,7 +988,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "JOSE E RAMOS JR",
+      "legal": "CARROLL PLACE ADDN 2 LT 25 BK 3",
+      "market_value": 157574.0,
+      "ncad_prop_id": "208344",
+      "ncad_owner_id": "843755",
+      "ncad_year": "2026",
+      "mail_address": "3630 WATERLOO DR",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "ncad_account_num": "1331-0003-0250"
     },
     {
       "uid": "1009303937",
@@ -781,7 +1053,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "FARMER DOROTHY ETAL",
+      "legal": "NUECES BAY HTS LTS 15 AND 16 BK 18",
+      "market_value": 22500.0,
+      "ncad_prop_id": "273353",
+      "ncad_owner_id": "423539",
+      "ncad_year": "2026",
+      "mail_address": "9739 Marbach Hl",
+      "mail_city": "San Antonio",
+      "mail_state": "TX",
+      "mail_zip": "78245",
+      "ncad_account_num": "5820-0018-0150"
     },
     {
       "uid": "1009712579",
@@ -808,7 +1091,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "FITZSIMMONS ROBERTA L",
+      "legal": "HAMLIN PLACE UNIT 1 BLK 2 LOT 6",
+      "market_value": 37665.0,
+      "ncad_prop_id": "241112",
+      "ncad_owner_id": "672797",
+      "ncad_year": "2026",
+      "mail_address": "4238 Dody St",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "ncad_account_num": "3163-0002-0060"
     },
     {
       "uid": "1009762924",
@@ -835,7 +1129,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "SALINAS BELIA & VELIA CARRENO",
+      "legal": "JA-LIN S/D BLK 1 LOT 21",
+      "market_value": 184388.0,
+      "ncad_prop_id": "248371",
+      "ncad_owner_id": "805396",
+      "ncad_year": "2026",
+      "mail_address": "2627 N State Highway 16",
+      "mail_city": "Fredericksburg",
+      "mail_state": "TX",
+      "mail_zip": "78624",
+      "ncad_account_num": "3740-0001-0210"
     },
     {
       "uid": "1008947432",
@@ -862,7 +1167,13 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "GUERRA JESUS AND EMILIA GUERRA",
+      "legal": "HOME PLACE - RBST BLK 2 LOT 10",
+      "market_value": 92187.0,
+      "ncad_prop_id": "245090",
+      "ncad_owner_id": "550133",
+      "ncad_year": "2026"
     },
     {
       "uid": "1009010204",
@@ -889,7 +1200,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "MILLER FRANCES E",
+      "legal": "WOODCREST HGTS #3 BLK 4 LOT 10",
+      "market_value": 95485.0,
+      "ncad_prop_id": "200066054",
+      "ncad_owner_id": "346432",
+      "ncad_year": "2026",
+      "mail_address": "258 Ellis Dr",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "ncad_account_num": "9827-0004-0100"
     },
     {
       "uid": "1008438823",
@@ -916,7 +1238,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "ESTRADA LORENA",
+      "legal": "GARZA AND BENAVIDES BLK 1404 LOT 25",
+      "market_value": 111703.0,
+      "ncad_prop_id": "237390",
+      "ncad_owner_id": "541988",
+      "ncad_year": "2026",
+      "mail_address": "1729 16TH ST",
+      "mail_city": "CORPUS CHRISTI",
+      "mail_state": "TX",
+      "mail_zip": "78404",
+      "ncad_account_num": "2760-1404-0250"
     },
     {
       "uid": "1008485026",
@@ -943,7 +1276,13 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "JASSO SERBAVDO & JOSE F JASSO",
+      "legal": "MEADOW PARK LT 23-A BK 15",
+      "market_value": 102818.0,
+      "ncad_prop_id": "265167",
+      "ncad_owner_id": "803451",
+      "ncad_year": "2026"
     },
     {
       "uid": "1008173651",
@@ -970,7 +1309,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "RODRIGUEZ DE RIOJAS MARIA & LESLIE D SIFUENTES",
+      "legal": "COX AND GOUGER - RBST BLK 1 LOT 30",
+      "market_value": 37924.0,
+      "ncad_prop_id": "220682",
+      "ncad_owner_id": "725120",
+      "ncad_year": "2026",
+      "mail_address": "2750 Soledad St",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78405",
+      "ncad_account_num": "1955-0001-0300"
     },
     {
       "uid": "1007900535",
@@ -997,7 +1347,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "BURGESS SARA",
+      "legal": "ANDERSON NUECES GARDENS LT 6 BK B",
+      "market_value": 142757.0,
+      "ncad_prop_id": "183587",
+      "ncad_owner_id": "785865",
+      "ncad_year": "2026",
+      "mail_address": "10930 Shady Ln",
+      "mail_city": "Corpus Christi",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "ncad_account_num": "0202-0002-0060"
     },
     {
       "uid": "1007705294",
@@ -1024,7 +1385,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "OLIVAREZ AUGUSTINE AND",
+      "legal": "MESSER DAN L-RBST LTS 15 & 16 BLK 3",
+      "market_value": 90721.0,
+      "ncad_prop_id": "266732",
+      "ncad_owner_id": "366000",
+      "ncad_year": "2026",
+      "mail_address": "400 E Ligustrum Blvd",
+      "mail_city": "Robstown",
+      "mail_state": "TX",
+      "mail_zip": "78380",
+      "ncad_account_num": "5130-0003-0150"
     },
     {
       "uid": "1007577765",
@@ -1051,7 +1423,18 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "owner": "THOMPSON OLGA",
+      "legal": "GRIFFIN W R - RBST BLK 5 LOT 23",
+      "market_value": 85734.0,
+      "ncad_prop_id": "240091",
+      "ncad_owner_id": "483811",
+      "ncad_year": "2026",
+      "mail_address": "525 MESSER ST",
+      "mail_city": "ROBSTOWN",
+      "mail_state": "TX",
+      "mail_zip": "78380",
+      "ncad_account_num": "3020-0005-0230"
     }
   ],
   "total": 39,
@@ -1062,5 +1445,6 @@
     "SALE",
     "FUTURE SALE"
   ],
-  "phase": "1-listing-only"
+  "phase": "1-listing-only",
+  "ncad_enriched_at": "2026-06-22T13:18:53+00:00"
 }
