@@ -294,6 +294,7 @@
       "site_state": "TX",
       "site_zip": "78413"
     },
+    "AEP TEXAS INC": null,
     "AGUILAR PAZ LINO": {
       "mail_addr": "",
       "mail_city": "",
@@ -3279,6 +3280,21 @@
       "site_state": "TX",
       "site_zip": "78404"
     },
+    "GARCIA ARTHUR RINCON II": {
+      "appraised_value": 263555.0,
+      "mail_addr": "4334 Big Cyprus Byu Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "ncad_legal": "WOOD RIVER UNIT 15 BLK 3 LOT 2",
+      "ncad_owner_id": "714250",
+      "ncad_prop_id": "200104022",
+      "ncad_year": "2026",
+      "site_addr": "4334 BIG CYPRUS BAYOU DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78410"
+    },
     "GARCIA ARTURO": null,
     "GARCIA BASILIA REYNA": {
       "mail_addr": "",
@@ -3915,6 +3931,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "GULF COAST EXPRESS PIPELINE LLC": null,
     "GUNNA JOEL A": null,
     "GUTIERREZ ALEJANDRO GARCIA": {
       "mail_addr": "",
@@ -4395,6 +4412,21 @@
       "site_zip": "78412"
     },
     "HUMPHREY ROBERT": null,
+    "HURWITZ JOSEPH B": {
+      "appraised_value": 320076.0,
+      "mail_addr": "GLORIA J HURWITZ 4626 MEGAL DR CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78413",
+      "ncad_legal": "THE LAKES UNIT 1 BLK 7 LOT 3",
+      "ncad_owner_id": "654109",
+      "ncad_prop_id": "254128",
+      "ncad_year": "2026",
+      "site_addr": "4626 MEGAL DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78413"
+    },
     "Higinia R Longoria": {
       "appraised_value": 184376.0,
       "mail_addr": "3325 Orlando Dr Corpus Christi",
@@ -6176,6 +6208,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "MOLLER ERIC S": null,
     "MONDRAGON GLORIA M": {
       "mail_addr": "",
       "mail_city": "",
@@ -9628,6 +9661,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78418"
+    },
+    "WELDER LESHIN LLP": {
+      "appraised_value": 53391.0,
+      "mail_addr": "800 N SHORELINE STE #300N CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78401",
+      "ncad_legal": "PERSONAL PROPERTY LOC 800 N SHORELINE BLVD - ONE SHORELINE PLAZA STE 300N F&F M&E COMP",
+      "ncad_owner_id": "489409",
+      "ncad_prop_id": "370136",
+      "ncad_year": "2026",
+      "site_addr": "800 N SHORELINE BLVD STE 300N",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78401"
     },
     "WELLS JOYCE L": {
       "mail_addr": "",
