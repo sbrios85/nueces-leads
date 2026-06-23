@@ -1985,6 +1985,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "CORPUS CHRISTI IMAGING LP": null,
     "CORRAL INVEST CORP": {
       "mail_addr": "",
       "mail_city": "",
@@ -3753,6 +3754,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "GONZALEZ HUMBERTO": null,
     "GONZALEZ MARTIN ET UX": {
       "mail_addr": "",
       "mail_city": "",
@@ -4513,6 +4515,21 @@
       "site_state": "TX",
       "site_zip": "78417"
     },
+    "JACKSIN AVERY": {
+      "appraised_value": 239074.0,
+      "mail_addr": "3601 Pecan St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "ncad_legal": "CARROLL LANE PARK BLK 2 LOT 1",
+      "ncad_owner_id": "791800",
+      "ncad_prop_id": "208131",
+      "ncad_year": "2026",
+      "site_addr": "3601 PECAN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411"
+    },
     "JACKSON JAMES A SR": {
       "mail_addr": "",
       "mail_city": "",
@@ -5079,6 +5096,7 @@
       "site_state": "TX",
       "site_zip": "78415"
     },
+    "LA PLAYA MEXICAN GRILL LLC": null,
     "LAKEVIEW LOAN SERVICING LLC": {
       "appraised_value": 220022.0,
       "mail_addr": "4425 Ponce de Leon Blvd Mailstop MS 5/25 Coral Gables",
@@ -8337,6 +8355,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78413"
+    },
+    "SALAZAR VANESSA": {
+      "appraised_value": 222276.0,
+      "mail_addr": "829 OMAHA DR CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78408",
+      "ncad_legal": "SHIPP B E TRACT LOT 15A",
+      "ncad_owner_id": "808654",
+      "ncad_prop_id": "598523",
+      "ncad_year": "2026",
+      "site_addr": "829 OMAHA DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408"
     },
     "SALINAS ESTHER F": {
       "mail_addr": "",
