@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-06-23T18:03:08.063922+00:00",
+  "fetched_at": "2026-06-24T18:00:04.806099+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-05-24",
-    "end": "2026-06-23"
+    "start": "2026-05-25",
+    "end": "2026-06-24"
   },
   "total": 85,
   "with_address": 44,
@@ -27,32 +27,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021212",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 65
-    },
-    {
-      "doc_num": "2026021056",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-06-16",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "AEP TEXAS INC",
-      "grantee": "SUTHERLAND LUMBER & HOME CENTER INC",
-      "amount": null,
-      "legal": "ENRIQUEZ VILLARREAL SURVEY ABSTRACT 1",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021056",
       "flags": [
         "Lis pendens",
         "LLC / corp owner",
@@ -86,56 +60,6 @@
       "score": 60
     },
     {
-      "doc_num": "2026021002",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-16",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "WELDER LESHIN LLP",
-      "grantee": "MULLEN PAUL M",
-      "amount": null,
-      "legal": "",
-      "prop_address": "800 N SHORELINE BLVD STE 300N",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78401",
-      "mail_address": "800 N SHORELINE STE #300N CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78401",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021002",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 60
-    },
-    {
-      "doc_num": "2026021001",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-16",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "WELDER LESHIN LLP",
-      "grantee": "MULLEN PAUL M",
-      "amount": null,
-      "legal": "",
-      "prop_address": "800 N SHORELINE BLVD STE 300N",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78401",
-      "mail_address": "800 N SHORELINE STE #300N CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78401",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021001",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 60
-    },
-    {
       "doc_num": "2026021159",
       "doc_type": "LIEN",
       "filed": "2026-06-17",
@@ -159,6 +83,31 @@
         "New this week"
       ],
       "score": 55
+    },
+    {
+      "doc_num": "2026021056",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-06-16",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "AEP TEXAS INC",
+      "grantee": "SUTHERLAND LUMBER & HOME CENTER INC",
+      "amount": null,
+      "legal": "ENRIQUEZ VILLARREAL SURVEY ABSTRACT 1",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021056",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner"
+      ],
+      "score": 50
     },
     {
       "doc_num": "2026018188",
@@ -479,30 +428,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026020947",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-16",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "MOLLER ERIC S",
-      "grantee": "F-T SERVICE CORP",
-      "amount": null,
-      "legal": "WILLOWWOOD Lot: 42 Block: 1 Unit or Part: II Reference - 45/247 (Lot 42, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026020947",
-      "flags": [
-        "New this week"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026020400",
       "doc_type": "APPOINTMENT",
       "filed": "2026-06-11",
@@ -641,6 +566,54 @@
       "mail_state": "TX",
       "mail_zip": "78411",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019281",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026021002",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-06-16",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "WELDER LESHIN LLP",
+      "grantee": "MULLEN PAUL M",
+      "amount": null,
+      "legal": "",
+      "prop_address": "800 N SHORELINE BLVD STE 300N",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78401",
+      "mail_address": "800 N SHORELINE STE #300N CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78401",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021002",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026021001",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-06-16",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "WELDER LESHIN LLP",
+      "grantee": "MULLEN PAUL M",
+      "amount": null,
+      "legal": "",
+      "prop_address": "800 N SHORELINE BLVD STE 300N",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78401",
+      "mail_address": "800 N SHORELINE STE #300N CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78401",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021001",
       "flags": [
         "LLC / corp owner"
       ],
@@ -959,30 +932,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026018544",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-28",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "VALDEZ JOSE",
-      "grantee": "UNITED STATES",
-      "amount": null,
-      "legal": "SERIAL NUMBER 2024A54688",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018544",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026018076",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-26",
@@ -1007,15 +956,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026018077",
+      "doc_num": "2026018544",
       "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-26",
+      "filed": "2026-05-28",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "WIMBERLY JEREMY J",
-      "grantee": "USA INTERNAL REVENUE",
+      "owner": "VALDEZ JOSE",
+      "grantee": "UNITED STATES",
       "amount": null,
-      "legal": "SERIAL NO 541298026",
+      "legal": "SERIAL NUMBER 2024A54688",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -1024,7 +973,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018077",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018544",
       "flags": [
         "Tax lien"
       ],
@@ -1049,6 +998,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019838",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026018077",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-05-26",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "WIMBERLY JEREMY J",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NO 541298026",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018077",
       "flags": [
         "Tax lien"
       ],
@@ -1869,6 +1842,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019631",
+      "flags": [],
+      "score": 30
+    },
+    {
+      "doc_num": "2026020947",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-06-16",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "MOLLER ERIC S",
+      "grantee": "F-T SERVICE CORP",
+      "amount": null,
+      "legal": "WILLOWWOOD Lot: 42 Block: 1 Unit or Part: II Reference - 45/247 (Lot 42, Block 1)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026020947",
       "flags": [],
       "score": 30
     },
