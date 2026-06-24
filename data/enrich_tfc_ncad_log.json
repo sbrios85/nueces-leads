@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-06-23T10:53:08+00:00",
+  "ran_at": "2026-06-24T10:36:36+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -260,12 +260,7 @@
         "market_value": 103030.0,
         "ncad_prop_id": "200045091",
         "ncad_owner_id": "421348",
-        "ncad_year": "2026",
-        "mail_address": "4530 NESBITT",
-        "mail_city": "CORPUS CHRISTI",
-        "mail_state": "TX",
-        "mail_zip": "78415",
-        "ncad_account_num": "8882-0002-0170"
+        "ncad_year": "2026"
       }
     },
     {
