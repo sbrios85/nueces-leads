@@ -1,13 +1,13 @@
 {
-  "ran_at": "2026-06-24T18:12:41+00:00",
+  "ran_at": "2026-06-25T18:28:04+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 53,
+    "no_prop_id": 59,
     "skipped_already": 42,
-    "total": 95
+    "total": 101
   },
   "entries": [
     {
@@ -26,12 +26,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000361",
+      "doc_num": "2026000363",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000363",
+      "doc_num": "2026000361",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -61,12 +61,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000355",
+      "doc_num": "2026000357",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000357",
+      "doc_num": "2026000355",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -76,12 +76,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000345",
+      "doc_num": "2026000346",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000346",
+      "doc_num": "2026000345",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -186,6 +186,16 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000375",
+      "prop_address": "5318 CURTIS CLARK DR",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000376",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000367",
       "prop_address": "",
       "result": "no-prop-id"
@@ -257,6 +267,26 @@
     },
     {
       "doc_num": "2026000328",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000372",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000374",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000377",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000373",
       "prop_address": "",
       "result": "no-prop-id"
     },
