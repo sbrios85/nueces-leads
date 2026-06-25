@@ -1,39 +1,13 @@
 {
-  "fetched_at": "2026-06-24T18:00:04.806099+00:00",
+  "fetched_at": "2026-06-25T18:14:15.248456+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-05-25",
-    "end": "2026-06-24"
+    "start": "2026-05-26",
+    "end": "2026-06-25"
   },
   "total": 85,
   "with_address": 44,
   "records": [
-    {
-      "doc_num": "2026021212",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-06-17",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "GULF COAST EXPRESS PIPELINE LLC",
-      "grantee": "BURCH CAROLYN",
-      "amount": null,
-      "legal": "CAUSE NO 2026CCV-60839-2",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021212",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 65
-    },
     {
       "doc_num": "2026021331",
       "doc_type": "APPOINTMENT",
@@ -60,15 +34,15 @@
       "score": 60
     },
     {
-      "doc_num": "2026021159",
-      "doc_type": "LIEN",
+      "doc_num": "2026021212",
+      "doc_type": "LIS PENDENS",
       "filed": "2026-06-17",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "CORPUS CHRISTI IMAGING LP",
-      "grantee": "GARZA ANNETTE V",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "GULF COAST EXPRESS PIPELINE LLC",
+      "grantee": "BURCH CAROLYN",
       "amount": null,
-      "legal": "",
+      "legal": "CAUSE NO 2026CCV-60839-2",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -77,12 +51,12 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021159",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021212",
       "flags": [
-        "LLC / corp owner",
-        "New this week"
+        "Lis pendens",
+        "LLC / corp owner"
       ],
-      "score": 55
+      "score": 50
     },
     {
       "doc_num": "2026021056",
@@ -156,30 +130,6 @@
       "flags": [
         "Lis pendens",
         "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026021073",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-17",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "MOYA LUIS",
-      "grantee": "FREEDOM MORTGAGE CORPORATION",
-      "amount": null,
-      "legal": "5922 VANDEMERE DR CORPUS CHRISTI TX 78414 (Lot 40, Block 1)",
-      "prop_address": "5922 VANDEMERE DR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78414",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021073",
-      "flags": [
-        "New this week"
       ],
       "score": 50
     },
@@ -764,6 +714,30 @@
       "score": 40
     },
     {
+      "doc_num": "2026021159",
+      "doc_type": "LIEN",
+      "filed": "2026-06-17",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "CORPUS CHRISTI IMAGING LP",
+      "grantee": "GARZA ANNETTE V",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021159",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 40
+    },
+    {
       "doc_num": "2026020195",
       "doc_type": "MODIFICATION",
       "filed": "2026-06-10",
@@ -1094,6 +1068,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018730",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026021073",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-06-17",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "MOYA LUIS",
+      "grantee": "FREEDOM MORTGAGE CORPORATION",
+      "amount": null,
+      "legal": "5922 VANDEMERE DR CORPUS CHRISTI TX 78414 (Lot 40, Block 1)",
+      "prop_address": "5922 VANDEMERE DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78414",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021073",
       "flags": [],
       "score": 35
     },
