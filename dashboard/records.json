@@ -1,38 +1,13 @@
 {
-  "fetched_at": "2026-06-25T18:14:15.248456+00:00",
+  "fetched_at": "2026-06-26T17:52:56.003511+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-05-26",
-    "end": "2026-06-25"
+    "start": "2026-05-27",
+    "end": "2026-06-26"
   },
-  "total": 85,
-  "with_address": 44,
+  "total": 78,
+  "with_address": 42,
   "records": [
-    {
-      "doc_num": "2026021331",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-18",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "PLANET HOME LENDING LLC",
-      "grantee": "AUCTION.COM LLC",
-      "amount": null,
-      "legal": "230 CUT OFF ROAD APARTMENT 110 PORT ARANSAS TEXAS 78373",
-      "prop_address": "230 CUT OFF ROAD",
-      "prop_city": "APARTMENT 110 PORT ARANSAS TEXAS",
-      "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021331",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 60
-    },
     {
       "doc_num": "2026021212",
       "doc_type": "LIS PENDENS",
@@ -77,56 +52,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021056",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026018188",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-05-26",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "CC LAKES NORTHWEST HOMEOWNERS ASSOCIATION INC",
-      "grantee": "MARTINEZ JOSE JR",
-      "amount": null,
-      "legal": "CAUSE NO 2026DCV-1924-A (Lot 11, Block 7)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018188",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026018084",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-05-26",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "REMSA USA INC",
-      "grantee": "TIJERINA RODOLFO",
-      "amount": null,
-      "legal": "CAUSE # 2026CVI000644D3",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018084",
       "flags": [
         "Lis pendens",
         "LLC / corp owner"
@@ -230,30 +155,6 @@
       "flags": [
         "Tax lien",
         "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026021260",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-18",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "HURWITZ JOSEPH B",
-      "grantee": "GALLAGHER KELLY EILEEN",
-      "amount": null,
-      "legal": "",
-      "prop_address": "4626 MEGAL DR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78413",
-      "mail_address": "GLORIA J HURWITZ 4626 MEGAL DR CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78413",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021260",
-      "flags": [
-        "New this week"
       ],
       "score": 50
     },
@@ -372,6 +273,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026020249",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026021331",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-06-18",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "PLANET HOME LENDING LLC",
+      "grantee": "AUCTION.COM LLC",
+      "amount": null,
+      "legal": "230 CUT OFF ROAD APARTMENT 110 PORT ARANSAS TEXAS 78373",
+      "prop_address": "230 CUT OFF ROAD",
+      "prop_city": "APARTMENT 110 PORT ARANSAS TEXAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021331",
       "flags": [
         "LLC / corp owner"
       ],
@@ -590,54 +515,6 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019126",
       "flags": [
         "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026018078",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-26",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "MACDONALD ROBERT",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 541309326",
-      "prop_address": "591 TUNA",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78418",
-      "mail_address": "591 Tuna St Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78418",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018078",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026018079",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-26",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "MACDONALD ROBERT",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 541309426",
-      "prop_address": "591 TUNA",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78418",
-      "mail_address": "591 Tuna St Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78418",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018079",
-      "flags": [
-        "Tax lien"
       ],
       "score": 45
     },
@@ -906,30 +783,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026018076",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-26",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "COASTAL BEND ONCOLOGY HEMATOLOGY P A",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 541263526",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018076",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026018544",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-05-28",
@@ -972,30 +825,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019838",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026018077",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-26",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "WIMBERLY JEREMY J",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 541298026",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018077",
       "flags": [
         "Tax lien"
       ],
@@ -1578,6 +1407,28 @@
       "score": 35
     },
     {
+      "doc_num": "2026021260",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-06-18",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "HURWITZ JOSEPH B",
+      "grantee": "GALLAGHER KELLY EILEEN",
+      "amount": null,
+      "legal": "",
+      "prop_address": "4626 MEGAL DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78413",
+      "mail_address": "GLORIA J HURWITZ 4626 MEGAL DR CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78413",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021260",
+      "flags": [],
+      "score": 35
+    },
+    {
       "doc_num": "2026019021",
       "doc_type": "APPOINTMENT",
       "filed": "2026-06-01",
@@ -1750,28 +1601,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018635",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026018097",
-      "doc_type": "HOSPITAL LIEN",
-      "filed": "2026-05-26",
-      "cat": "HL",
-      "cat_label": "Hospital Lien",
-      "owner": "DRISCOLL CHILDRENS HOSPITAL",
-      "grantee": "JURRI LAURA",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018097",
       "flags": [],
       "score": 30
     },
