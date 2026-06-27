@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-06-26T17:52:56.003511+00:00",
+  "fetched_at": "2026-06-27T17:16:01.132258+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-05-27",
-    "end": "2026-06-26"
+    "start": "2026-05-28",
+    "end": "2026-06-27"
   },
-  "total": 78,
-  "with_address": 42,
+  "total": 76,
+  "with_address": 41,
   "records": [
     {
       "doc_num": "2026021212",
@@ -831,30 +831,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026018259",
-      "doc_type": "PROBATE",
-      "filed": "2026-05-27",
-      "cat": "PRO",
-      "cat_label": "Probate",
-      "owner": "ESTATE OF WILLIAM ALAN MOECK DECD",
-      "grantee": "MOECK JERRY CURTIS",
-      "amount": null,
-      "legal": "CAUSE NO 25-48955-P, PROBATE COURT OF MONTGOMERY COUNTY, TEXAS",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018259",
-      "flags": [
-        "Probate / estate"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026020409",
       "doc_type": "PROBATE",
       "filed": "2026-06-11",
@@ -1073,28 +1049,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018833",
-      "flags": [],
-      "score": 35
-    },
-    {
-      "doc_num": "2026018323",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-05-27",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "CARDENAS SANTIAGO III",
-      "grantee": "NEWREZ LLC",
-      "amount": null,
-      "legal": "1282 BREEBRT DRIVE CORPUS CHRISTI TX 78415 (Lot 32, Block 25)",
-      "prop_address": "1282 BREEBRT DRIVE",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78415",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018323",
       "flags": [],
       "score": 35
     },
