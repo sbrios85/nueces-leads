@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-06-27T17:16:01.132258+00:00",
+  "fetched_at": "2026-06-28T17:18:30.286317+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-05-28",
-    "end": "2026-06-27"
+    "start": "2026-05-29",
+    "end": "2026-06-28"
   },
-  "total": 76,
+  "total": 75,
   "with_address": 41,
   "records": [
     {
@@ -777,30 +777,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026020717",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026018544",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-05-28",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "VALDEZ JOSE",
-      "grantee": "UNITED STATES",
-      "amount": null,
-      "legal": "SERIAL NUMBER 2024A54688",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026018544",
       "flags": [
         "Tax lien"
       ],
