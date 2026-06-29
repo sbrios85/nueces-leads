@@ -1,13 +1,13 @@
 {
-  "ran_at": "2026-06-28T17:29:48+00:00",
+  "ran_at": "2026-06-29T18:30:15+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 60,
+    "no_prop_id": 62,
     "skipped_already": 42,
-    "total": 102
+    "total": 104
   },
   "entries": [
     {
@@ -176,13 +176,18 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000229",
+      "prop_address": "3921 ECKNER DR",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2025000821",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000229",
-      "prop_address": "3921 ECKNER DR",
+      "doc_num": "2026000380",
+      "prop_address": "",
       "result": "no-prop-id"
     },
     {
@@ -267,6 +272,11 @@
     },
     {
       "doc_num": "2026000328",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000379",
       "prop_address": "",
       "result": "no-prop-id"
     },
