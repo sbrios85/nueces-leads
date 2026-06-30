@@ -128,23 +128,6 @@
     "miss": true,
     "miss_reason": "no_results"
   },
-  "ccln_addr::640 SANTANA DR": {
-    "mail_address": "",
-    "mail_city": "",
-    "mail_state": "",
-    "mail_zip": "",
-    "row": {
-      "account_num": "7675-0001-0190",
-      "appraised": 32544.0,
-      "legal": "SANDY OAKS LT 19 BK 1",
-      "owner_id": "490034",
-      "owner_name": "BROOKS BRIAN JAMES",
-      "prop_id": "297695",
-      "situs": "640 SANTANA DR, CORPUS CHRISTI TX 78418",
-      "type_code": "R",
-      "year": "2026"
-    }
-  },
   "ccln_addr::905 WHITAKER. DR": {
     "miss": true,
     "miss_reason": "no_results"
