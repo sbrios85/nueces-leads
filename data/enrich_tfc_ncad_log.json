@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-06-30T10:47:44+00:00",
+  "ran_at": "2026-07-01T10:58:17+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -537,20 +537,19 @@
       "prop_address": "4613 VALDEZ DR, CORPUS CHRISTI TX 78416-2226",
       "result": "matched",
       "ncad_prop_id": "252793",
-      "ncad_owner": "THOMAS VELDA R ETALS",
+      "ncad_owner": "LAND GEEKS LLC",
       "ncad_legal": "LA PASCUA #2 BLK 8 LOT 43",
       "market_value": 110243.0,
       "additions": {
-        "owner": "THOMAS VELDA R ETALS",
+        "owner": "LAND GEEKS LLC",
         "legal": "LA PASCUA #2 BLK 8 LOT 43",
         "market_value": 110243.0,
         "ncad_prop_id": "252793",
-        "ncad_owner_id": "780262",
+        "ncad_owner_id": "845746",
         "ncad_year": "2026",
-        "mail_address": "3032 Elgin St",
-        "mail_city": "Corpus Christi",
+        "mail_address": "5565 GLENRIDGE CONNECTOR",
+        "mail_city": "STE 500",
         "mail_state": "TX",
-        "mail_zip": "78405",
         "ncad_account_num": "4072-0008-0430"
       }
     },
