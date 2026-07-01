@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-06-30T18:00:56.827695+00:00",
+  "fetched_at": "2026-07-01T18:01:51.060199+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-05-31",
-    "end": "2026-06-30"
+    "start": "2026-06-01",
+    "end": "2026-07-01"
   },
   "total": 103,
   "with_address": 47,
@@ -33,31 +33,6 @@
         "New this week"
       ],
       "score": 65
-    },
-    {
-      "doc_num": "2026021818",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-23",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "TEXAS JESTER LLC",
-      "grantee": "CENTRAL NATIONAL BANK",
-      "amount": null,
-      "legal": "104 LILY POND LN PORT ARANSAS TX 78373 (Lot 3, Block 1)",
-      "prop_address": "104 LILY POND LN",
-      "prop_city": "PORT ARANSAS",
-      "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021818",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 60
     },
     {
       "doc_num": "2026022246",
@@ -153,31 +128,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022285",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
-      "doc_num": "2026021755",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-23",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "GOLD REAL ESTATE INVESTMENTS LLC",
-      "grantee": "REALFIN FUND I LLC",
-      "amount": null,
-      "legal": "WOODCREST HEIGHTS Lot: 2 Block: 3 Unit or Part: 3 (Lot 2, Block 3)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021755",
       "flags": [
         "LLC / corp owner",
         "New this week"
@@ -648,6 +598,30 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022083",
       "flags": [
         "New this week"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026021818",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-06-23",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "TEXAS JESTER LLC",
+      "grantee": "CENTRAL NATIONAL BANK",
+      "amount": null,
+      "legal": "104 LILY POND LN PORT ARANSAS TX 78373 (Lot 3, Block 1)",
+      "prop_address": "104 LILY POND LN",
+      "prop_city": "PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021818",
+      "flags": [
+        "LLC / corp owner"
       ],
       "score": 45
     },
@@ -1150,6 +1124,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021159",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026021755",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-06-23",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "GOLD REAL ESTATE INVESTMENTS LLC",
+      "grantee": "REALFIN FUND I LLC",
+      "amount": null,
+      "legal": "WOODCREST HEIGHTS Lot: 2 Block: 3 Unit or Part: 3 (Lot 2, Block 3)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021755",
       "flags": [
         "LLC / corp owner"
       ],
