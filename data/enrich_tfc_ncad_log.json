@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-07-02T10:21:38+00:00",
+  "ran_at": "2026-07-05T09:57:09+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -115,100 +115,25 @@
       }
     },
     {
-      "uid": "1008177121",
-      "prop_address": "5694 COUNTY ROAD 73, ROBSTOWN TX 78380-5841",
+      "uid": "1008173651",
+      "prop_address": "441 W AVENUE C, ROBSTOWN TX 78380-2913",
       "result": "matched",
-      "ncad_prop_id": "292188",
-      "ncad_owner": "MAYEN EDGAR ROLANDO ET UX",
-      "ncad_legal": "RIVERSIDE LT 31",
-      "market_value": 209530.0,
+      "ncad_prop_id": "220682",
+      "ncad_owner": "RODRIGUEZ DE RIOJAS MARIA & LESLIE D SIFUENTES",
+      "ncad_legal": "COX AND GOUGER - RBST BLK 1 LOT 30",
+      "market_value": 37924.0,
       "additions": {
-        "owner": "MAYEN EDGAR ROLANDO ET UX",
-        "legal": "RIVERSIDE LT 31",
-        "market_value": 209530.0,
-        "ncad_prop_id": "292188",
-        "ncad_owner_id": "461542",
+        "owner": "RODRIGUEZ DE RIOJAS MARIA & LESLIE D SIFUENTES",
+        "legal": "COX AND GOUGER - RBST BLK 1 LOT 30",
+        "market_value": 37924.0,
+        "ncad_prop_id": "220682",
+        "ncad_owner_id": "725120",
         "ncad_year": "2026",
-        "mail_address": "5318 SEGUIN",
-        "mail_city": "CORPUS CHRISTI",
-        "mail_state": "TX",
-        "mail_zip": "78415",
-        "ncad_account_num": "7308-0000-0310"
-      }
-    },
-    {
-      "uid": "1009303937",
-      "prop_address": "1416 S 19TH ST, CORPUS CHRISTI TX 78404",
-      "result": "no-match",
-      "query": [
-        "StreetNumber:1416 StreetName:S 19TH",
-        "StreetNumber:1416 StreetName:19TH"
-      ]
-    },
-    {
-      "uid": "1009676554",
-      "prop_address": "1415 PALM DR, CORPUS CHRISTI TX 78407-2619",
-      "result": "matched",
-      "ncad_prop_id": "273353",
-      "ncad_owner": "FARMER DOROTHY ETAL",
-      "ncad_legal": "NUECES BAY HTS LTS 15 AND 16 BK 18",
-      "market_value": 22500.0,
-      "additions": {
-        "owner": "FARMER DOROTHY ETAL",
-        "legal": "NUECES BAY HTS LTS 15 AND 16 BK 18",
-        "market_value": 22500.0,
-        "ncad_prop_id": "273353",
-        "ncad_owner_id": "423539",
-        "ncad_year": "2026",
-        "mail_address": "9739 Marbach Hl",
-        "mail_city": "San Antonio",
-        "mail_state": "TX",
-        "mail_zip": "78245",
-        "ncad_account_num": "5820-0018-0150"
-      }
-    },
-    {
-      "uid": "1009712579",
-      "prop_address": "4238 DODY ST, CORPUS CHRISTI TX 78411-3002",
-      "result": "matched",
-      "ncad_prop_id": "241112",
-      "ncad_owner": "FITZSIMMONS ROBERTA L",
-      "ncad_legal": "HAMLIN PLACE UNIT 1 BLK 2 LOT 6",
-      "market_value": 37665.0,
-      "additions": {
-        "owner": "FITZSIMMONS ROBERTA L",
-        "legal": "HAMLIN PLACE UNIT 1 BLK 2 LOT 6",
-        "market_value": 37665.0,
-        "ncad_prop_id": "241112",
-        "ncad_owner_id": "672797",
-        "ncad_year": "2026",
-        "mail_address": "4238 Dody St",
+        "mail_address": "2750 Soledad St",
         "mail_city": "Corpus Christi",
         "mail_state": "TX",
-        "mail_zip": "78411",
-        "ncad_account_num": "3163-0002-0060"
-      }
-    },
-    {
-      "uid": "1009762924",
-      "prop_address": "2407 LINDSEY DR, ROBSTOWN TX 78380-4347",
-      "result": "matched",
-      "ncad_prop_id": "248371",
-      "ncad_owner": "SALINAS BELIA & VELIA CARRENO",
-      "ncad_legal": "JA-LIN S/D BLK 1 LOT 21",
-      "market_value": 184388.0,
-      "additions": {
-        "owner": "SALINAS BELIA & VELIA CARRENO",
-        "legal": "JA-LIN S/D BLK 1 LOT 21",
-        "market_value": 184388.0,
-        "ncad_prop_id": "248371",
-        "ncad_owner_id": "805396",
-        "ncad_year": "2026",
-        "mail_address": "2627 N State Highway 16",
-        "mail_city": "Fredericksburg",
-        "mail_state": "TX",
-        "mail_zip": "78624",
-        "ncad_account_num": "3740-0001-0210"
+        "mail_zip": "78405",
+        "ncad_account_num": "1955-0001-0300"
       }
     },
     {
@@ -234,28 +159,6 @@
       }
     },
     {
-      "uid": "1009010204",
-      "prop_address": "4618 NICHOLSON ST, CORPUS CHRISTI TX 78415-5048",
-      "result": "matched",
-      "ncad_prop_id": "200066054",
-      "ncad_owner": "MILLER FRANCES E",
-      "ncad_legal": "WOODCREST HGTS #3 BLK 4 LOT 10",
-      "market_value": 95485.0,
-      "additions": {
-        "owner": "MILLER FRANCES E",
-        "legal": "WOODCREST HGTS #3 BLK 4 LOT 10",
-        "market_value": 95485.0,
-        "ncad_prop_id": "200066054",
-        "ncad_owner_id": "346432",
-        "ncad_year": "2026",
-        "mail_address": "258 Ellis Dr",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78415",
-        "ncad_account_num": "9827-0004-0100"
-      }
-    },
-    {
       "uid": "1008438823",
       "prop_address": "1729 16TH ST, CORPUS CHRISTI TX 78404-3010",
       "result": "matched",
@@ -278,69 +181,34 @@
       }
     },
     {
-      "uid": "1008485026",
-      "prop_address": "246 MOHAWK ST, CORPUS CHRISTI TX 78405-2744",
-      "result": "matched",
-      "ncad_prop_id": "265167",
-      "ncad_owner": "JASSO SERBAVDO & JOSE F JASSO",
-      "ncad_legal": "MEADOW PARK LT 23-A BK 15",
-      "market_value": 102818.0,
-      "additions": {
-        "owner": "JASSO SERBAVDO & JOSE F JASSO",
-        "legal": "MEADOW PARK LT 23-A BK 15",
-        "market_value": 102818.0,
-        "ncad_prop_id": "265167",
-        "ncad_owner_id": "803451",
-        "ncad_year": "2026",
-        "mail_address": "246 Mohawk St",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78405",
-        "ncad_account_num": "5000-0015-0230"
-      }
+      "uid": "1009303937",
+      "prop_address": "1416 S 19TH ST, CORPUS CHRISTI TX 78404",
+      "result": "no-match",
+      "query": [
+        "StreetNumber:1416 StreetName:S 19TH",
+        "StreetNumber:1416 StreetName:19TH"
+      ]
     },
     {
-      "uid": "1008173651",
-      "prop_address": "441 W AVENUE C, ROBSTOWN TX 78380-2913",
+      "uid": "1009712579",
+      "prop_address": "4238 DODY ST, CORPUS CHRISTI TX 78411-3002",
       "result": "matched",
-      "ncad_prop_id": "220682",
-      "ncad_owner": "RODRIGUEZ DE RIOJAS MARIA & LESLIE D SIFUENTES",
-      "ncad_legal": "COX AND GOUGER - RBST BLK 1 LOT 30",
-      "market_value": 37924.0,
+      "ncad_prop_id": "241112",
+      "ncad_owner": "FITZSIMMONS ROBERTA L",
+      "ncad_legal": "HAMLIN PLACE UNIT 1 BLK 2 LOT 6",
+      "market_value": 37665.0,
       "additions": {
-        "owner": "RODRIGUEZ DE RIOJAS MARIA & LESLIE D SIFUENTES",
-        "legal": "COX AND GOUGER - RBST BLK 1 LOT 30",
-        "market_value": 37924.0,
-        "ncad_prop_id": "220682",
-        "ncad_owner_id": "725120",
+        "owner": "FITZSIMMONS ROBERTA L",
+        "legal": "HAMLIN PLACE UNIT 1 BLK 2 LOT 6",
+        "market_value": 37665.0,
+        "ncad_prop_id": "241112",
+        "ncad_owner_id": "672797",
         "ncad_year": "2026",
-        "mail_address": "2750 Soledad St",
+        "mail_address": "4238 Dody St",
         "mail_city": "Corpus Christi",
         "mail_state": "TX",
-        "mail_zip": "78405",
-        "ncad_account_num": "1955-0001-0300"
-      }
-    },
-    {
-      "uid": "1007900535",
-      "prop_address": "10930 SHADY LN, CORPUS CHRISTI TX 78410-2906",
-      "result": "matched",
-      "ncad_prop_id": "183587",
-      "ncad_owner": "BURGESS SARA",
-      "ncad_legal": "ANDERSON NUECES GARDENS LT 6 BK B",
-      "market_value": 142757.0,
-      "additions": {
-        "owner": "BURGESS SARA",
-        "legal": "ANDERSON NUECES GARDENS LT 6 BK B",
-        "market_value": 142757.0,
-        "ncad_prop_id": "183587",
-        "ncad_owner_id": "785865",
-        "ncad_year": "2026",
-        "mail_address": "10930 Shady Ln",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78410",
-        "ncad_account_num": "0202-0002-0060"
+        "mail_zip": "78411",
+        "ncad_account_num": "3163-0002-0060"
       }
     },
     {
@@ -366,6 +234,72 @@
       }
     },
     {
+      "uid": "1009010204",
+      "prop_address": "4618 NICHOLSON ST, CORPUS CHRISTI TX 78415-5048",
+      "result": "matched",
+      "ncad_prop_id": "200066054",
+      "ncad_owner": "MILLER FRANCES E",
+      "ncad_legal": "WOODCREST HGTS #3 BLK 4 LOT 10",
+      "market_value": 95485.0,
+      "additions": {
+        "owner": "MILLER FRANCES E",
+        "legal": "WOODCREST HGTS #3 BLK 4 LOT 10",
+        "market_value": 95485.0,
+        "ncad_prop_id": "200066054",
+        "ncad_owner_id": "346432",
+        "ncad_year": "2026",
+        "mail_address": "258 Ellis Dr",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78415",
+        "ncad_account_num": "9827-0004-0100"
+      }
+    },
+    {
+      "uid": "1009676554",
+      "prop_address": "1415 PALM DR, CORPUS CHRISTI TX 78407-2619",
+      "result": "matched",
+      "ncad_prop_id": "273353",
+      "ncad_owner": "FARMER DOROTHY ETAL",
+      "ncad_legal": "NUECES BAY HTS LTS 15 AND 16 BK 18",
+      "market_value": 22500.0,
+      "additions": {
+        "owner": "FARMER DOROTHY ETAL",
+        "legal": "NUECES BAY HTS LTS 15 AND 16 BK 18",
+        "market_value": 22500.0,
+        "ncad_prop_id": "273353",
+        "ncad_owner_id": "423539",
+        "ncad_year": "2026",
+        "mail_address": "9739 Marbach Hl",
+        "mail_city": "San Antonio",
+        "mail_state": "TX",
+        "mail_zip": "78245",
+        "ncad_account_num": "5820-0018-0150"
+      }
+    },
+    {
+      "uid": "1007900535",
+      "prop_address": "10930 SHADY LN, CORPUS CHRISTI TX 78410-2906",
+      "result": "matched",
+      "ncad_prop_id": "183587",
+      "ncad_owner": "BURGESS SARA",
+      "ncad_legal": "ANDERSON NUECES GARDENS LT 6 BK B",
+      "market_value": 142757.0,
+      "additions": {
+        "owner": "BURGESS SARA",
+        "legal": "ANDERSON NUECES GARDENS LT 6 BK B",
+        "market_value": 142757.0,
+        "ncad_prop_id": "183587",
+        "ncad_owner_id": "785865",
+        "ncad_year": "2026",
+        "mail_address": "10930 Shady Ln",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410",
+        "ncad_account_num": "0202-0002-0060"
+      }
+    },
+    {
       "uid": "1007577765",
       "prop_address": "505 MESSER AVE, ROBSTOWN TX 78380-3432",
       "result": "matched",
@@ -385,6 +319,72 @@
         "mail_state": "TX",
         "mail_zip": "78380",
         "ncad_account_num": "3020-0005-0230"
+      }
+    },
+    {
+      "uid": "1009762924",
+      "prop_address": "2407 LINDSEY DR, ROBSTOWN TX 78380-4347",
+      "result": "matched",
+      "ncad_prop_id": "248371",
+      "ncad_owner": "SALINAS BELIA & VELIA CARRENO",
+      "ncad_legal": "JA-LIN S/D BLK 1 LOT 21",
+      "market_value": 184388.0,
+      "additions": {
+        "owner": "SALINAS BELIA & VELIA CARRENO",
+        "legal": "JA-LIN S/D BLK 1 LOT 21",
+        "market_value": 184388.0,
+        "ncad_prop_id": "248371",
+        "ncad_owner_id": "805396",
+        "ncad_year": "2026",
+        "mail_address": "2627 N State Highway 16",
+        "mail_city": "Fredericksburg",
+        "mail_state": "TX",
+        "mail_zip": "78624",
+        "ncad_account_num": "3740-0001-0210"
+      }
+    },
+    {
+      "uid": "1008485026",
+      "prop_address": "246 MOHAWK ST, CORPUS CHRISTI TX 78405-2744",
+      "result": "matched",
+      "ncad_prop_id": "265167",
+      "ncad_owner": "JASSO SERBAVDO & JOSE F JASSO",
+      "ncad_legal": "MEADOW PARK LT 23-A BK 15",
+      "market_value": 102818.0,
+      "additions": {
+        "owner": "JASSO SERBAVDO & JOSE F JASSO",
+        "legal": "MEADOW PARK LT 23-A BK 15",
+        "market_value": 102818.0,
+        "ncad_prop_id": "265167",
+        "ncad_owner_id": "803451",
+        "ncad_year": "2026",
+        "mail_address": "246 Mohawk St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78405",
+        "ncad_account_num": "5000-0015-0230"
+      }
+    },
+    {
+      "uid": "1008177121",
+      "prop_address": "5694 COUNTY ROAD 73, ROBSTOWN TX 78380-5841",
+      "result": "matched",
+      "ncad_prop_id": "292188",
+      "ncad_owner": "MAYEN EDGAR ROLANDO ET UX",
+      "ncad_legal": "RIVERSIDE LT 31",
+      "market_value": 209530.0,
+      "additions": {
+        "owner": "MAYEN EDGAR ROLANDO ET UX",
+        "legal": "RIVERSIDE LT 31",
+        "market_value": 209530.0,
+        "ncad_prop_id": "292188",
+        "ncad_owner_id": "461542",
+        "ncad_year": "2026",
+        "mail_address": "5318 SEGUIN",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415",
+        "ncad_account_num": "7308-0000-0310"
       }
     }
   ]
