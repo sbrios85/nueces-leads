@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-07-04T17:10:52.669091+00:00",
+  "fetched_at": "2026-07-05T17:16:41.418791+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-04",
-    "end": "2026-07-04"
+    "start": "2026-06-05",
+    "end": "2026-07-05"
   },
-  "total": 107,
+  "total": 106,
   "with_address": 45,
   "records": [
     {
@@ -2479,28 +2479,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019991",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026019468",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-04",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "U S BANK NATIONAL ASSOCIATION",
-      "grantee": "SISK JOHN",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019468",
       "flags": [],
       "score": 30
     },
