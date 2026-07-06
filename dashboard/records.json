@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-07-05T17:16:41.418791+00:00",
+  "fetched_at": "2026-07-06T18:14:29.640267+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-05",
-    "end": "2026-07-05"
+    "start": "2026-06-06",
+    "end": "2026-07-06"
   },
-  "total": 106,
-  "with_address": 45,
+  "total": 104,
+  "with_address": 44,
   "records": [
     {
       "doc_num": "2026023136",
@@ -821,30 +821,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026020587",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026019660",
-      "doc_type": "LIEN",
-      "filed": "2026-06-05",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "JK HOSPITALITY MANAGEMENT LLC",
-      "grantee": "CITY OF CORPUS CHRISTI",
-      "amount": null,
-      "legal": "5224 INTERSTATE HWY 37 CORPUS CHRISTI TX 78407 (Lot 3)",
-      "prop_address": "5224 INTERSTATE HWY",
-      "prop_city": "37 CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78407",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019660",
       "flags": [
         "LLC / corp owner"
       ],
@@ -2325,28 +2301,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026020088",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026019631",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-05",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "BERRY GABRIELA",
-      "grantee": "LOANDEPOT.COM",
-      "amount": null,
-      "legal": "BAYSIDE ACRES Lot: 5 Block: 1 (Lot 5, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026019631",
       "flags": [],
       "score": 30
     },
