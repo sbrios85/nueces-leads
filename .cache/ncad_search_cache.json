@@ -1561,6 +1561,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "CARDONA MIA": null,
     "CARLSON JOE R": {
       "mail_addr": "",
       "mail_city": "",
@@ -2074,6 +2075,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "CRAWFORD JOEWEL": null,
     "CRISANTES LUIS W": {
       "mail_addr": "",
       "mail_city": "",
@@ -2902,6 +2904,7 @@
       "site_zip": "78401"
     },
     "ESTATE OF BEVERLY JOAN PEMBERTON": null,
+    "ESTATE OF GLORIA ORTIZ GARZA": null,
     "ESTATE OF ROEL OMAR GRACIA": {
       "appraised_value": 158505.0,
       "mail_addr": "621 W Main Ave Robstown",
@@ -3486,6 +3489,7 @@
       "site_state": "TX",
       "site_zip": "78414"
     },
+    "GARCIA SAMANTHA": null,
     "GARRETT WAYNE JOHNSTON AND SUSANA JOHNSTON": {
       "appraised_value": 282430.0,
       "mail_addr": "3902 Targaryen Way Corpus Christi",
@@ -3799,6 +3803,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "GONZALEZ AIDEN": null,
     "GONZALEZ ALEJANDRO N": {
       "mail_addr": "",
       "mail_city": "",
@@ -4332,6 +4337,21 @@
       "mail_state": "",
       "mail_zip": "",
       "site_addr": "4825 LARCADE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415"
+    },
+    "HERNANDEZ JULIO": {
+      "appraised_value": 157281.0,
+      "mail_addr": "AND LETICIA AMADOR 4129 CARLTON ST CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "ncad_legal": "CUIPER BLK 15 LOT 30",
+      "ncad_owner_id": "573491",
+      "ncad_prop_id": "223128",
+      "ncad_year": "2026",
+      "site_addr": "4129 CARLTON",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78415"
@@ -5983,6 +6003,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78416"
+    },
+    "MATA MARIO": {
+      "appraised_value": 50625.0,
+      "mail_addr": "3829 Saratoga Blvd Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "ncad_legal": "PADRE ISLAND LT 9B BLK 22",
+      "ncad_owner_id": "764419",
+      "ncad_prop_id": "277686",
+      "ncad_year": "2026",
+      "site_addr": "CROWSNEST AVE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
     },
     "MATTHEW FIDEL ESPINOSA AND EBONY CASSIE ESPINOSA": {
       "appraised_value": 200464.0,
@@ -8636,6 +8671,7 @@
       "site_state": "TX",
       "site_zip": "78404"
     },
+    "SANDIMO MANUEL MADRIZ": null,
     "SANDOR MARGIE": {
       "mail_addr": "",
       "mail_city": "",
@@ -8764,6 +8800,21 @@
       "site_zip": "78408"
     },
     "SELENE FINANCE LP": null,
+    "SELF BRIAN": {
+      "appraised_value": 500795.0,
+      "mail_addr": "9001 Currywood Dr Austin",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78759",
+      "ncad_legal": "ISLAND RETREAT, BUILDING G, UNIT 50, 2.05% COMMON AREA INTEREST",
+      "ncad_owner_id": "692272",
+      "ncad_prop_id": "248252",
+      "ncad_year": "2026",
+      "site_addr": "700 ISLAND RETREAT CT",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373"
+    },
     "SERRATA ROBERT": {
       "mail_addr": "",
       "mail_city": "",
@@ -9225,6 +9276,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78410"
+    },
+    "TAX LIEN DEED ASSET BUYER LLC": {
+      "appraised_value": 22261.0,
+      "mail_addr": "702 TORREY PNES CIBOLO",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78108",
+      "ncad_legal": "GOLLIHAR PARK #2 BLK 6 LOT 6",
+      "ncad_owner_id": "844451",
+      "ncad_prop_id": "238732",
+      "ncad_year": "2026",
+      "site_addr": "1821 JUAREZ",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78416"
     },
     "TAYLOR LAMONT C": {
       "mail_addr": "",
