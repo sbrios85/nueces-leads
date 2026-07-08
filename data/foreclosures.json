@@ -425,7 +425,9 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 27,
+      "prop_lat": 27.705508,
+      "prop_lng": -97.377935
     },
     {
       "doc_num": "2026000376",
@@ -497,7 +499,9 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 27,
+      "prop_lat": 27.676989,
+      "prop_lng": -97.409436
     },
     {
       "doc_num": "2026000370",
@@ -593,7 +597,9 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 27,
+      "prop_lat": 27.851345,
+      "prop_lng": -97.603002
     },
     {
       "doc_num": "2026000343",
@@ -845,7 +851,9 @@
       "legal_block": "4",
       "legal_subdivision": "LEXINGTON PARK",
       "pdf_parsed_at": "2026-06-06T19:31:40.068094+00:00",
-      "ncad_account_num": "4414-0004-0180"
+      "ncad_account_num": "4414-0004-0180",
+      "prop_lat": 27.692219,
+      "prop_lng": -97.35119
     },
     {
       "doc_num": "2026000321",
@@ -877,7 +885,9 @@
       "legal_block": "3",
       "legal_subdivision": "TRUE",
       "pdf_parsed_at": "2026-06-06T19:31:40.080347+00:00",
-      "ncad_account_num": "8902-0003-0200"
+      "ncad_account_num": "8902-0003-0200",
+      "prop_lat": 27.579663,
+      "prop_lng": -97.797487
     },
     {
       "doc_num": "2026000317",
@@ -912,7 +922,9 @@
       "legal_block": "10",
       "legal_subdivision": "CENTRAL PARK",
       "pdf_parsed_at": "2026-06-06T19:31:40.053965+00:00",
-      "ncad_account_num": "1493-0010-0240"
+      "ncad_account_num": "1493-0010-0240",
+      "prop_lat": 27.730004,
+      "prop_lng": -97.403848
     },
     {
       "doc_num": "2026000306",
@@ -944,7 +956,9 @@
       "legal_block": "3",
       "legal_subdivision": "OVERLAND MEADOWS",
       "pdf_parsed_at": "2026-06-06T19:31:39.962902+00:00",
-      "ncad_account_num": "6102-0003-0010"
+      "ncad_account_num": "6102-0003-0010",
+      "prop_lat": 27.833695,
+      "prop_lng": -97.571989
     },
     {
       "doc_num": "2026000307",
@@ -977,7 +991,9 @@
       "legal_block": "3",
       "legal_subdivision": "Edgewood Park",
       "pdf_parsed_at": "2026-06-06T19:31:39.973351+00:00",
-      "ncad_account_num": "2255-0003-0030"
+      "ncad_account_num": "2255-0003-0030",
+      "prop_lat": 27.745165,
+      "prop_lng": -97.413145
     },
     {
       "doc_num": "2026000305",
