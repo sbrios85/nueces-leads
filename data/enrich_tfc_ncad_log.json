@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-07-08T09:48:03+00:00",
+  "ran_at": "2026-07-09T10:53:02+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -363,6 +363,28 @@
         "mail_state": "TX",
         "mail_zip": "78405",
         "ncad_account_num": "5000-0015-0230"
+      }
+    },
+    {
+      "uid": "1007629251",
+      "prop_address": "3121 SARITA ST, CORPUS CHRISTI TX 78416-1626",
+      "result": "matched",
+      "ncad_prop_id": "295895",
+      "ncad_owner": "DURAN GLORIA G AND HUSBAND SIMON DURAN DEC'D",
+      "ncad_legal": "SAN DIEGO BLK 1 LOT 20",
+      "market_value": 116001.0,
+      "additions": {
+        "owner": "DURAN GLORIA G AND HUSBAND SIMON DURAN DEC'D",
+        "legal": "SAN DIEGO BLK 1 LOT 20",
+        "market_value": 116001.0,
+        "ncad_prop_id": "295895",
+        "ncad_owner_id": "506095",
+        "ncad_year": "2026",
+        "mail_address": "3121 SARITA",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78416",
+        "ncad_account_num": "7614-0001-0200"
       }
     },
     {
