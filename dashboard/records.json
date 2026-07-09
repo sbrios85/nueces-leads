@@ -1,39 +1,13 @@
 {
-  "fetched_at": "2026-07-08T17:41:08.268017+00:00",
+  "fetched_at": "2026-07-09T18:00:27.840248+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-08",
-    "end": "2026-07-08"
+    "start": "2026-06-09",
+    "end": "2026-07-09"
   },
   "total": 5,
   "with_address": 0,
   "records": [
-    {
-      "doc_num": "2026023136",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-07-01",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "7PRIMEPARTNERS LLC",
-      "grantee": "INTEGRATED RENOVATION S LLC",
-      "amount": null,
-      "legal": "CAUSE NO 2025DCV 1309 B (Lot 5, Block 5)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023136",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 65
-    },
     {
       "doc_num": "2026023470",
       "doc_type": "LIS PENDENS",
@@ -58,6 +32,31 @@
         "New this week"
       ],
       "score": 55
+    },
+    {
+      "doc_num": "2026023136",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-07-01",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "7PRIMEPARTNERS LLC",
+      "grantee": "INTEGRATED RENOVATION S LLC",
+      "amount": null,
+      "legal": "CAUSE NO 2025DCV 1309 B (Lot 5, Block 5)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023136",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner"
+      ],
+      "score": 50
     },
     {
       "doc_num": "2026022873",
