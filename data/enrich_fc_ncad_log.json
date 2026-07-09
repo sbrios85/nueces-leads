@@ -1,197 +1,37 @@
 {
-  "ran_at": "2026-07-07T18:20:49+00:00",
+  "ran_at": "2026-07-09T18:12:59+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 80,
-    "skipped_already": 42,
-    "total": 122
+    "no_prop_id": 49,
+    "skipped_already": 8,
+    "total": 57
   },
   "entries": [
     {
-      "doc_num": "2026000366",
+      "doc_num": "2026000412",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000365",
+      "doc_num": "2026000413",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000362",
+      "doc_num": "2026000400",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000363",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000361",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000360",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000358",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000359",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000353",
-      "prop_address": "4014 AZALI DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000354",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000355",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000357",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000349",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000345",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000346",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000351",
-      "prop_address": "5505 KENITH CIR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000341",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000340",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000338",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000339",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000334",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000332",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000331",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000330",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000329",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000326",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000315",
-      "prop_address": "817 W. POINT ROAD",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000316",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000314",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000313",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000299",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000298",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000256",
-      "prop_address": "4114 NICKLAUS LANE",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000229",
-      "prop_address": "3921 ECKNER DR",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2025000821",
+      "doc_num": "2026000399",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
       "doc_num": "2026000398",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000394",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -207,6 +47,11 @@
     },
     {
       "doc_num": "2026000387",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000394",
       "prop_address": "",
       "result": "no-prop-id"
     },
