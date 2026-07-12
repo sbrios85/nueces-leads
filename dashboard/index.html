@@ -2890,7 +2890,10 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bu</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bv</span></div>
+    <button id="backup-btn" class="portals-btn"
+      title="Export or restore all CRM data (stages, contacts, attempts, closing dates, notes) as a JSON file"
+      onclick="openBackupModal()">💾 Backup</button>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -3659,6 +3662,37 @@
       <button class="danger" onclick="confirmCclnDead()">Yes, mark dead</button>
     </div>
     <button class="cancel" onclick="cancelCclnDead()">Cancel</button>
+  </div>
+</div>
+
+<!-- ======== Backup / Restore modal ========
+     Safety net for the browser-only CRM data. Export dumps every
+     nueces_* CRM store (plus verified state) to a JSON file; Import
+     restores it. Until cloud sync is live, this is how the data
+     survives a cleared browser or a move to another machine. -->
+<div class="modal-backdrop" id="backup-backdrop">
+  <div class="modal" role="dialog" aria-labelledby="backup-title" style="max-width:520px;">
+    <div class="portals-header">
+      <h3 id="backup-title">Backup &amp; Restore</h3>
+      <button class="portals-close" aria-label="Close" onclick="closeBackupModal()">×</button>
+    </div>
+    <div style="padding:4px 2px 0;color:var(--muted);font-size:13px;line-height:1.5;">
+      Your CRM data (stages, contacts, outreach attempts, closing dates, title
+      companies, notes, verified checks) is stored in this browser only.
+      <strong style="color:var(--fg);">Export a backup regularly</strong> and keep the file
+      somewhere safe (Google Drive, the repo, etc.).
+    </div>
+    <div id="backup-stats" style="margin:14px 0;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-size:13px;color:var(--fg);"></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="portals-btn" style="flex:1 1 180px;justify-content:center;" onclick="exportCrmBackup()">⬇️ Export backup file</button>
+      <button class="portals-btn" style="flex:1 1 180px;justify-content:center;" onclick="document.getElementById('backup-import-file').click()">⬆️ Restore from file…</button>
+      <input type="file" id="backup-import-file" accept="application/json,.json" style="display:none"
+             onchange="if(this.files&&this.files[0]){importCrmBackup(this.files[0]);this.value='';}">
+    </div>
+    <div style="margin-top:12px;color:var(--muted);font-size:12px;line-height:1.5;">
+      Restoring <strong style="color:var(--bad,#f87171);">overwrites</strong> the data currently in this
+      browser with the file's contents. Export a fresh backup first if you're unsure.
+    </div>
   </div>
 </div>
 
@@ -20400,12 +20434,93 @@ function closePortalsModal() {
   const el = document.getElementById("portals-backdrop");
   if (el) el.classList.remove("open");
 }
+
+// ===== Backup / Restore of all browser-stored CRM data =====
+// Scoped to this dashboard's keys only (nueces_* CRM stores, verified
+// state, and section expand states) so it never touches other Pages apps
+// that share the sbrios85.github.io localStorage origin.
+function _crmBackupKeys() {
+  const out = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k) continue;
+    if (/^nueces_/.test(k) || k === "fc-verified-store" || /_expanded$/.test(k)) out.push(k);
+  }
+  return out;
+}
+function openBackupModal() {
+  const keys = _crmBackupKeys();
+  let records = 0, bytes = 0;
+  for (const k of keys) {
+    const v = localStorage.getItem(k) || "";
+    bytes += v.length;
+    try { const o = JSON.parse(v); if (o && typeof o === "object") records += Object.keys(o).length; } catch (e) {}
+  }
+  const el = document.getElementById("backup-stats");
+  if (el) el.innerHTML =
+    `Currently stored: <strong>${keys.length}</strong> data store(s), ` +
+    `<strong>${records}</strong> lead record(s), ~${(bytes / 1024).toFixed(0)} KB.`;
+  document.getElementById("backup-backdrop").classList.add("open");
+}
+function closeBackupModal() {
+  const el = document.getElementById("backup-backdrop");
+  if (el) el.classList.remove("open");
+}
+function exportCrmBackup() {
+  const data = {};
+  for (const k of _crmBackupKeys()) data[k] = localStorage.getItem(k);
+  const payload = {
+    _type: "nueces-crm-backup",
+    _version: 1,
+    _exported_at: new Date().toISOString(),
+    _store_count: Object.keys(data).length,
+    data,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const d = new Date();
+  const stamp = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") +
+    "-" + String(d.getDate()).padStart(2, "0");
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "nueces-crm-backup-" + stamp + ".json";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { try { URL.revokeObjectURL(url); a.remove(); } catch (e) {} }, 200);
+}
+function importCrmBackup(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed;
+    try { parsed = JSON.parse(reader.result); }
+    catch (e) { alert("Couldn't read that file — it isn't valid JSON.\n\n" + e.message); return; }
+    const data = (parsed && parsed.data && typeof parsed.data === "object") ? parsed.data
+      : (parsed && typeof parsed === "object" ? parsed : null);
+    if (!data) { alert("That file doesn't look like a CRM backup."); return; }
+    const keys = Object.keys(data).filter(k => /^nueces_/.test(k) || k === "fc-verified-store" || /_expanded$/.test(k));
+    if (!keys.length) { alert("No CRM data stores found in that file."); return; }
+    const when = parsed && parsed._exported_at ? new Date(parsed._exported_at).toLocaleString() : "unknown date";
+    if (!confirm("Restore " + keys.length + " data store(s) from this backup (" + when + ")?\n\n" +
+      "This OVERWRITES the CRM data currently in this browser. If you're unsure, cancel and export a fresh backup first.")) return;
+    for (const k of keys) { if (data[k] != null) localStorage.setItem(k, String(data[k])); }
+    alert("Restored " + keys.length + " store(s). The dashboard will reload now.");
+    location.reload();
+  };
+  reader.onerror = () => alert("Couldn't read that file.");
+  reader.readAsText(file);
+}
 // Clicking outside the modal (on the backdrop itself) closes it,
 // matching the behavior of the other modals (mark-dead, ccln-confirm).
 const _portalsBackdrop = document.getElementById("portals-backdrop");
 if (_portalsBackdrop) {
   _portalsBackdrop.addEventListener("click", (e) => {
     if (e.target.id === "portals-backdrop") closePortalsModal();
+  });
+}
+const _backupBackdrop = document.getElementById("backup-backdrop");
+if (_backupBackdrop) {
+  _backupBackdrop.addEventListener("click", (e) => {
+    if (e.target.id === "backup-backdrop") closeBackupModal();
   });
 }
 // Copy the PIA template body to clipboard, then flash a green "Copied!"
