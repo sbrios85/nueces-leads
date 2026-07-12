@@ -2612,9 +2612,12 @@
   .saved-indicator.show { opacity: 1; }
   /* ===== Header right column (Source line + Portals button) ===== */
   .header-right {
-    display: flex; flex-direction: column;
-    align-items: flex-end; gap: 8px;
+    display: flex; flex-direction: row; flex-wrap: wrap;
+    align-items: center; justify-content: flex-end; gap: 8px;
   }
+  /* Keep the "Source · build" stamp on its own line above the button
+     row so Backup / Sign-in / Data Portals sit together horizontally. */
+  .header-right > .meta { flex-basis: 100%; text-align: right; }
   .portals-btn {
     background: var(--panel);
     color: var(--fg);
@@ -2896,7 +2899,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bx</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026by</span></div>
     <button id="backup-btn" class="portals-btn"
       title="Export or restore all CRM data (stages, contacts, attempts, closing dates, notes) as a JSON file"
       onclick="openBackupModal()">💾 Backup</button>
