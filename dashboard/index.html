@@ -2890,7 +2890,7 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bv</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bw</span></div>
     <button id="backup-btn" class="portals-btn"
       title="Export or restore all CRM data (stages, contacts, attempts, closing dates, notes) as a JSON file"
       onclick="openBackupModal()">💾 Backup</button>
@@ -20436,15 +20436,23 @@ function closePortalsModal() {
 }
 
 // ===== Backup / Restore of all browser-stored CRM data =====
-// Scoped to this dashboard's keys only (nueces_* CRM stores, verified
-// state, and section expand states) so it never touches other Pages apps
-// that share the sbrios85.github.io localStorage origin.
+// Scoped to this dashboard's keys only so it never touches other Pages apps
+// that share the sbrios85.github.io localStorage origin. Most stores are
+// nueces_* prefixed; two legacy-named keys (the TFC CRM and the verified
+// store) are matched explicitly. One shared predicate drives both export
+// and import so they can't drift out of sync.
+function _isNuecesDataKey(k) {
+  if (!k) return false;
+  return /^nueces_/.test(k)          // CRM / status / schema / tracking stores
+      || k === "tfc-crm-store"        // legacy-named TFC CRM (stages, attempts, contacts)
+      || k === "fc-verified-store"    // verified checkboxes
+      || /_expanded$/.test(k);        // section expand states
+}
 function _crmBackupKeys() {
   const out = [];
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i);
-    if (!k) continue;
-    if (/^nueces_/.test(k) || k === "fc-verified-store" || /_expanded$/.test(k)) out.push(k);
+    if (_isNuecesDataKey(k)) out.push(k);
   }
   return out;
 }
@@ -20497,7 +20505,7 @@ function importCrmBackup(file) {
     const data = (parsed && parsed.data && typeof parsed.data === "object") ? parsed.data
       : (parsed && typeof parsed === "object" ? parsed : null);
     if (!data) { alert("That file doesn't look like a CRM backup."); return; }
-    const keys = Object.keys(data).filter(k => /^nueces_/.test(k) || k === "fc-verified-store" || /_expanded$/.test(k));
+    const keys = Object.keys(data).filter(_isNuecesDataKey);
     if (!keys.length) { alert("No CRM data stores found in that file."); return; }
     const when = parsed && parsed._exported_at ? new Date(parsed._exported_at).toLocaleString() : "unknown date";
     if (!confirm("Restore " + keys.length + " data store(s) from this backup (" + when + ")?\n\n" +
