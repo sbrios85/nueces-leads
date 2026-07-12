@@ -12,6 +12,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css"/>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<!-- Firebase (cloud sync): Google sign-in + Firestore. Config is safe to
+     expose; access is locked by the Firestore security rule + authorized
+     domains. Deferred so they run before the sync module's window.load. -->
+<script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <style>
   :root {
     --bg: #0f172a; --panel: #1e293b; --card: #1e293b; --border: #334155;
@@ -2890,10 +2896,16 @@
     <div class="meta" id="meta">Loading…</div>
   </div>
   <div class="header-right">
-    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bw</span></div>
+    <div class="meta">Source: Nueces County Clerk + NCAD esearch <span style="opacity:.55;">· build 06-20-2026bx</span></div>
     <button id="backup-btn" class="portals-btn"
       title="Export or restore all CRM data (stages, contacts, attempts, closing dates, notes) as a JSON file"
       onclick="openBackupModal()">💾 Backup</button>
+    <button id="gsync-btn" class="portals-btn" data-state="out"
+      title="Sign in with Google to sync CRM data"
+      style="display:inline-flex;align-items:center;gap:7px;"
+      onclick="_syncClick()"><span id="gsync-dot"
+      style="width:9px;height:9px;border-radius:50%;background:#9ca3af;flex:0 0 9px;"></span><span
+      id="gsync-txt">Sign in</span></button>
     <button id="portals-btn" class="portals-btn"
       title="Open the Data Portals reference — links to external lookup sites + PIA email template"
       onclick="openPortalsModal()">📂 Data Portals</button>
@@ -20577,6 +20589,313 @@ function switchPiaTab(which) {
 
 applySidebarState();
 loadAll();
+</script>
+<script>
+/* ============================================================
+   Nueces Dashboard — Cloud Sync (Build B / Firebase Firestore)
+   - Google sign-in, locked to allowed email by Firestore rule.
+   - Per-store docs under crm/{key}, last-write-wins by timestamp.
+   - Uses the SAME data-key set as the Backup feature.
+   - localStorage stays the instant local cache; cloud mirrors it.
+   ============================================================ */
+(function () {
+  "use strict";
+
+  var CFG = {
+    apiKey: "AIzaSyAQAg35Y3fFKQ0uLZItNzGmU_3xV5WodO8",
+    authDomain: "nueces-dashboard.firebaseapp.com",
+    projectId: "nueces-dashboard",
+    storageBucket: "nueces-dashboard.firebasestorage.app",
+    messagingSenderId: "672880661556",
+    appId: "1:672880661556:web:3779b2278440fa69f36661"
+  };
+
+  var CHUNK = 700000;          // max chars per Firestore field (stay under 1MB)
+  var DEBOUNCE_MS = 1500;      // wait after last local write before pushing
+  var MTIMES_KEY = "nueces_sync_mtimes";
+  var SEEDED_KEY = "nueces_sync_seeded";
+  var RELOAD_FLAG = "nueces_sync_reloaded";
+
+  // Same predicate as the Backup feature — TFC (legacy key) included.
+  function isDataKey(k) {
+    if (!k) return false;
+    return /^nueces_/.test(k)
+        || k === "tfc-crm-store"
+        || k === "fc-verified-store"
+        || /_expanded$/.test(k);
+  }
+
+  // ---- raw localStorage writer that does NOT re-trigger a cloud push ----
+  var _origSet = Storage.prototype.setItem;
+  function rawSet(k, v) { _origSet.call(window.localStorage, k, v); }
+
+  // Install the write interceptor immediately so no later writes are missed.
+  Storage.prototype.setItem = function (k, v) {
+    _origSet.apply(this, arguments);
+    try {
+      if (this === window.localStorage && isDataKey(k)) SYNC.onLocalWrite(k);
+    } catch (e) { /* never let sync break the app */ }
+  };
+
+  function loadMtimes() {
+    try { return JSON.parse(localStorage.getItem(MTIMES_KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function saveMtimes(m) {
+    try { rawSet(MTIMES_KEY, JSON.stringify(m)); } catch (e) {}
+  }
+  function localDataKeys() {
+    var out = [], i, k;
+    for (i = 0; i < localStorage.length; i++) {
+      k = localStorage.key(i);
+      if (isDataKey(k)) out.push(k);
+    }
+    return out;
+  }
+  function chunkStr(s) {
+    var parts = [], i;
+    if (s == null) return [""];
+    for (i = 0; i < s.length; i += CHUNK) parts.push(s.slice(i, i + CHUNK));
+    return parts.length ? parts : [""];
+  }
+
+  var SYNC = {
+    db: null, auth: null, user: null, ready: false,
+    mtimes: {}, dirty: {}, flushTimer: null,
+
+    boot: function () {
+      if (!window.firebase || !firebase.initializeApp) {
+        setStatus("off", "Sync offline");
+        console.warn("[sync] Firebase SDK not loaded");
+        return;
+      }
+      try { firebase.initializeApp(CFG); }
+      catch (e) { /* already initialized */ }
+      this.auth = firebase.auth();
+      this.db = firebase.firestore();
+      this.mtimes = loadMtimes();
+
+      var self = this;
+      this.auth.onAuthStateChanged(function (u) {
+        self.user = u;
+        if (u) {
+          setStatus("busy", "Syncing…", u.email);
+          self.connect(u).catch(function (e) {
+            console.error("[sync] connect failed", e);
+            setStatus("err", "Sync error", u.email);
+          });
+        } else {
+          self.ready = false;
+          setStatus("out", "Sign in");
+        }
+      });
+    },
+
+    signIn: function () {
+      var p = new firebase.auth.GoogleAuthProvider();
+      this.auth.signInWithPopup(p).catch(function (e) {
+        alert("Sign-in failed: " + ((e && e.message) || e));
+      });
+    },
+    signOut: function () { if (this.auth) this.auth.signOut(); },
+
+    onLocalWrite: function (k) {
+      if (!this.ready || !this.user) return;
+      this.mtimes[k] = Date.now();
+      saveMtimes(this.mtimes);
+      this.dirty[k] = true;
+      var self = this;
+      clearTimeout(this.flushTimer);
+      this.flushTimer = setTimeout(function () { self.flush(); }, DEBOUNCE_MS);
+    },
+
+    flush: function () {
+      var self = this;
+      if (!this.user) return;
+      var keys = Object.keys(this.dirty);
+      if (!keys.length) return;
+      this.dirty = {};
+      setStatus("busy", "Saving…", this.user.email);
+      this.pushKeys(keys).then(function () {
+        setStatus("ok", "Synced", self.user && self.user.email);
+      }).catch(function (e) {
+        console.error("[sync] push failed", e);
+        keys.forEach(function (k) { self.dirty[k] = true; });
+        setStatus("err", "Save failed", self.user && self.user.email);
+      });
+    },
+
+    readCloud: function (key, meta) {
+      var self = this;
+      var n = (meta && meta.chunks) || 1;
+      if (n <= 1) return Promise.resolve(meta && meta.value != null ? meta.value : null);
+      var idx = [], i;
+      for (i = 0; i < n; i++) idx.push(i);
+      return idx.reduce(function (acc, i) {
+        return acc.then(function (out) {
+          return self.db.collection("crm").doc(key + "~~" + i).get()
+            .then(function (d) {
+              if (!d.exists) throw new Error("missing chunk " + i + " for " + key);
+              return out + (d.data().p || "");
+            });
+        });
+      }, Promise.resolve(""));
+    },
+
+    pushKeys: function (keys) {
+      var self = this, batch = this.db.batch(), ops = 0, commits = Promise.resolve();
+      keys.forEach(function (k) {
+        var val = localStorage.getItem(k);
+        if (val == null) return;
+        var ts = self.mtimes[k] || Date.now();
+        self.mtimes[k] = ts;
+        var parts = chunkStr(val);
+        var ref = self.db.collection("crm").doc(k);
+        if (parts.length <= 1) {
+          batch.set(ref, { ts: ts, chunks: 1, value: parts[0] || "" });
+          ops++;
+        } else {
+          batch.set(ref, { ts: ts, chunks: parts.length });
+          ops++;
+          parts.forEach(function (p, i) {
+            batch.set(self.db.collection("crm").doc(k + "~~" + i), { p: p });
+            ops++;
+          });
+        }
+        if (ops >= 400) {
+          var b = batch; batch = self.db.batch(); ops = 0;
+          commits = commits.then(function () { return b.commit(); });
+        }
+      });
+      saveMtimes(this.mtimes);
+      var last = batch;
+      return commits.then(function () { return ops > 0 ? last.commit() : null; });
+    },
+
+    reloadOnce: function () {
+      if (sessionStorage.getItem(RELOAD_FLAG) === "1") {
+        setStatus("ok", "Synced", this.user && this.user.email);
+        this.ready = true;
+        return;
+      }
+      sessionStorage.setItem(RELOAD_FLAG, "1");
+      location.reload();
+    },
+
+    connect: function (user) {
+      var self = this;
+      return this.db.collection("crm").get().then(function (snap) {
+        var cloud = {};
+        snap.forEach(function (d) {
+          if (d.id.indexOf("~~") < 0) cloud[d.id] = d.data();
+        });
+        var cloudKeys = Object.keys(cloud);
+        var localKeys = localDataKeys();
+        var seeded = localStorage.getItem(SEEDED_KEY) === "1";
+
+        // Safety: first-ever connect on this device with BOTH sides populated.
+        if (!seeded && localKeys.length && cloudKeys.length) {
+          var keepLocal = confirm(
+            "Cloud sync — conflict on first sign-in:\n\n" +
+            "This device AND the cloud both already have data.\n\n" +
+            "OK  = keep THIS DEVICE'S data (overwrite cloud)\n" +
+            "Cancel = pull CLOUD data (overwrite this device)"
+          );
+          if (keepLocal) {
+            localKeys.forEach(function (k) { self.mtimes[k] = Date.now(); });
+            return self.pushKeys(localKeys).then(function () {
+              rawSet(SEEDED_KEY, "1");
+              self.ready = true;
+              setStatus("ok", "Synced", user.email);
+            });
+          }
+          var pulls = cloudKeys.reduce(function (acc, k) {
+            return acc.then(function (n) {
+              return self.readCloud(k, cloud[k]).then(function (v) {
+                if (v != null) { rawSet(k, v); self.mtimes[k] = cloud[k].ts || Date.now(); return n + 1; }
+                return n;
+              });
+            });
+          }, Promise.resolve(0));
+          return pulls.then(function (n) {
+            saveMtimes(self.mtimes);
+            rawSet(SEEDED_KEY, "1");
+            if (n > 0) return self.reloadOnce();
+            self.ready = true;
+            setStatus("ok", "Synced", user.email);
+          });
+        }
+
+        // Normal per-key last-write-wins merge.
+        var all = {}, i;
+        localKeys.forEach(function (k) { all[k] = 1; });
+        cloudKeys.forEach(function (k) { all[k] = 1; });
+        var keys = Object.keys(all);
+        var toPush = [], pulled = 0;
+
+        return keys.reduce(function (acc, k) {
+          return acc.then(function () {
+            var c = cloud[k];
+            var localVal = localStorage.getItem(k);
+            var localTs = self.mtimes[k] || 0;
+            if (!c) {
+              if (localVal != null) {
+                if (!self.mtimes[k]) self.mtimes[k] = Date.now();
+                toPush.push(k);
+              }
+              return;
+            }
+            var cloudTs = c.ts || 0;
+            if (cloudTs > localTs) {
+              return self.readCloud(k, c).then(function (v) {
+                if (v != null && v !== localVal) { rawSet(k, v); pulled++; }
+                self.mtimes[k] = cloudTs;
+              });
+            } else if (localTs > cloudTs) {
+              toPush.push(k);
+            }
+          });
+        }, Promise.resolve()).then(function () {
+          saveMtimes(self.mtimes);
+          var done = toPush.length ? self.pushKeys(toPush) : Promise.resolve();
+          return done.then(function () {
+            rawSet(SEEDED_KEY, "1");
+            if (pulled > 0) return self.reloadOnce();
+            self.ready = true;
+            setStatus("ok", "Synced", user.email);
+          });
+        });
+      });
+    }
+  };
+
+  // ---- tiny header UI ----
+  function setStatus(state, label, email) {
+    var btn = document.getElementById("gsync-btn");
+    var dot = document.getElementById("gsync-dot");
+    var txt = document.getElementById("gsync-txt");
+    if (!btn) return;
+    var colors = { out: "#9ca3af", busy: "#f59e0b", ok: "#22c55e", err: "#ef4444", off: "#6b7280" };
+    if (dot) dot.style.background = colors[state] || "#9ca3af";
+    if (txt) {
+      if (state === "out" || state === "off") txt.textContent = label;
+      else txt.textContent = (email ? email.split("@")[0] : "") + (state === "ok" ? " ✓" : " · " + label);
+    }
+    btn.setAttribute("data-state", state);
+    btn.title = email ? (email + " — click to sign out") : "Sign in with Google to sync CRM data";
+  }
+
+  window.SYNC = SYNC;
+  window._syncClick = function () {
+    if (SYNC.user) {
+      if (confirm("Sign out of cloud sync?\n(" + SYNC.user.email + ")")) SYNC.signOut();
+    } else {
+      SYNC.signIn();
+    }
+  };
+
+  window.addEventListener("load", function () { SYNC.boot(); });
+})();
 </script>
 </body>
 </html>
