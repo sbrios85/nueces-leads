@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-07-12T09:28:42+00:00",
+  "ran_at": "2026-07-13T10:42:26+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -379,7 +379,12 @@
         "market_value": 116001.0,
         "ncad_prop_id": "295895",
         "ncad_owner_id": "506095",
-        "ncad_year": "2026"
+        "ncad_year": "2026",
+        "mail_address": "3121 SARITA",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78416",
+        "ncad_account_num": "7614-0001-0200"
       }
     },
     {
