@@ -1,37 +1,37 @@
 {
-  "fetched_at": "2026-07-13T17:58:27.303787+00:00",
+  "fetched_at": "2026-07-14T17:18:48.275379+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-13",
-    "end": "2026-07-13"
+    "start": "2026-06-14",
+    "end": "2026-07-14"
   },
-  "total": 5,
-  "with_address": 0,
+  "total": 6,
+  "with_address": 1,
   "records": [
     {
-      "doc_num": "2026023470",
+      "doc_num": "2026024293",
       "doc_type": "LIS PENDENS",
-      "filed": "2026-07-06",
+      "filed": "2026-07-13",
       "cat": "LP",
       "cat_label": "Lis Pendens",
-      "owner": "ESTATE OF GLORIA ORTIZ GARZA",
-      "grantee": "LIRA SELEENA REANNE",
+      "owner": "TOBAR CYNTHIA A",
+      "grantee": "CANTU CASSANDRA",
       "amount": null,
-      "legal": "CAUSE NO 2025 PR 00389 1 (Lot 11, Block 7)",
-      "prop_address": "",
-      "prop_city": "",
+      "legal": "4937 SHADOWBEND DR CORPUS CHRISTI TX 78413",
+      "prop_address": "4937 SHADOWBEND DR",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "",
+      "prop_zip": "78413",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023470",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024293",
       "flags": [
         "Lis pendens",
         "New this week"
       ],
-      "score": 55
+      "score": 60
     },
     {
       "doc_num": "2026023136",
@@ -132,6 +132,30 @@
         "LLC / corp owner"
       ],
       "score": 50
+    },
+    {
+      "doc_num": "2026023470",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-07-06",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "ESTATE OF GLORIA ORTIZ GARZA",
+      "grantee": "LIRA SELEENA REANNE",
+      "amount": null,
+      "legal": "CAUSE NO 2025 PR 00389 1 (Lot 11, Block 7)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023470",
+      "flags": [
+        "Lis pendens"
+      ],
+      "score": 40
     }
   ]
 }
