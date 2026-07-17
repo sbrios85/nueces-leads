@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-07-16T17:22:07.229495+00:00",
+  "fetched_at": "2026-07-17T17:16:43.330973+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-16",
-    "end": "2026-07-16"
+    "start": "2026-06-17",
+    "end": "2026-07-17"
   },
-  "total": 6,
+  "total": 5,
   "with_address": 1,
   "records": [
     {
@@ -102,31 +102,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021212",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026021056",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-06-16",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "AEP TEXAS INC",
-      "grantee": "SUTHERLAND LUMBER & HOME CENTER INC",
-      "amount": null,
-      "legal": "ENRIQUEZ VILLARREAL SURVEY ABSTRACT 1",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021056",
       "flags": [
         "Lis pendens",
         "LLC / corp owner"
