@@ -1,13 +1,13 @@
 {
-  "ran_at": "2026-07-15T17:34:03+00:00",
+  "ran_at": "2026-07-17T17:28:52+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 80,
+    "no_prop_id": 86,
     "skipped_already": 8,
-    "total": 88
+    "total": 94
   },
   "entries": [
     {
@@ -156,17 +156,17 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000386",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000393",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
       "doc_num": "2026000388",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000386",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -281,6 +281,26 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000439",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000437",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000435",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000438",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000434",
       "prop_address": "",
       "result": "no-prop-id"
@@ -341,12 +361,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000395",
+      "doc_num": "2026000390",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000390",
+      "doc_num": "2026000395",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -397,6 +417,16 @@
     },
     {
       "doc_num": "2026000342",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000436",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000440",
       "prop_address": "",
       "result": "no-prop-id"
     },
