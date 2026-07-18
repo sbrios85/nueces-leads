@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-07-17T17:16:43.330973+00:00",
+  "fetched_at": "2026-07-18T17:01:31.869134+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-17",
-    "end": "2026-07-17"
+    "start": "2026-06-18",
+    "end": "2026-07-18"
   },
-  "total": 5,
+  "total": 4,
   "with_address": 1,
   "records": [
     {
@@ -77,31 +77,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022873",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026021212",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-06-17",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "GULF COAST EXPRESS PIPELINE LLC",
-      "grantee": "BURCH CAROLYN",
-      "amount": null,
-      "legal": "CAUSE NO 2026CCV-60839-2",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021212",
       "flags": [
         "Lis pendens",
         "LLC / corp owner"
