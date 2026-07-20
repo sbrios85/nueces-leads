@@ -1,12 +1,12 @@
 {
-  "ran_at": "2026-07-19T17:14:02+00:00",
+  "ran_at": "2026-07-20T18:19:52+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 86,
-    "skipped_already": 8,
+    "no_prop_id": 87,
+    "skipped_already": 7,
     "total": 94
   },
   "entries": [
@@ -131,16 +131,6 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000391",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000389",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
       "doc_num": "2026000387",
       "prop_address": "",
       "result": "no-prop-id"
@@ -151,7 +141,22 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000391",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000389",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000396",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000386",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -162,11 +167,6 @@
     },
     {
       "doc_num": "2026000388",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000386",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -281,6 +281,11 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000441",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000439",
       "prop_address": "",
       "result": "no-prop-id"
@@ -356,17 +361,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000397",
+      "doc_num": "2026000390",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
       "doc_num": "2026000395",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000390",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -396,12 +396,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000377",
+      "doc_num": "2026000373",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000373",
+      "doc_num": "2026000377",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -417,6 +417,11 @@
     },
     {
       "doc_num": "2026000342",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000397",
       "prop_address": "",
       "result": "no-prop-id"
     },
