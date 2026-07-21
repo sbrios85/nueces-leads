@@ -3601,6 +3601,21 @@
       "site_state": "TX",
       "site_zip": "78380"
     },
+    "GARZA JESSICA": {
+      "appraised_value": 101914.0,
+      "mail_addr": "6537 S STAPLES ST Ste 125 PMB 128 CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78413",
+      "ncad_legal": "WESTCHESTER PL LT 22 BK 3",
+      "ncad_owner_id": "831230",
+      "ncad_prop_id": "200058140",
+      "ncad_year": "2026",
+      "site_addr": "761 W CORNELIA CIR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408"
+    },
     "GARZA JIMMY A": {
       "mail_addr": "",
       "mail_city": "",
@@ -4366,6 +4381,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "HERNANDEZ PATRICIA RUSCELLO": null,
     "HERRERA RACHEL": {
       "mail_addr": "",
       "mail_city": "",
@@ -4575,6 +4591,7 @@
       "site_zip": "78409"
     },
     "IDOHO HOUSING AND FINANCE ASSOCIATION": null,
+    "IJAZ ARSLAN": null,
     "INGRAM MIDAJAH": null,
     "IRENE P HERNANDEZ": {
       "appraised_value": 240204.0,
@@ -4776,6 +4793,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78414"
+    },
+    "JHHA ENTERPRISES LLC": {
+      "appraised_value": 155361.0,
+      "mail_addr": "6262 Weber Rd Ste 112 Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78413",
+      "ncad_legal": "PARKDALE VILLAGE #4 BLK 16 LOT 16",
+      "ncad_owner_id": "807083",
+      "ncad_prop_id": "281074",
+      "ncad_year": "2026",
+      "site_addr": "4506 HAMLIN DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411"
     },
     "JIMENEZ ODILON": {
       "mail_addr": "",
@@ -5067,6 +5099,7 @@
       "site_state": "TX",
       "site_zip": "78417"
     },
+    "KARG ELIZABETH A": null,
     "KAYLA MARIE PHILLIPS AND JOSE SANTIAGO ALCARAZ": {
       "appraised_value": 197823.0,
       "mail_addr": "1037 SALEM DR CORPUS CHRISTI",
@@ -5597,6 +5630,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "LOVE ROBYN L": null,
     "LUCIA LUGO S": {
       "mail_addr": "",
       "mail_city": "",
@@ -6454,6 +6488,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78405"
+    },
+    "MORENO LUCY": {
+      "appraised_value": 151559.0,
+      "mail_addr": "5129 Larcade Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "ncad_legal": "LEXINGTON VILLAGE LT 2",
+      "ncad_owner_id": "681410",
+      "ncad_prop_id": "259480",
+      "ncad_year": "2026",
+      "site_addr": "5129 LARCADE DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415"
     },
     "MORRIS DON R": {
       "mail_addr": "",
@@ -8257,6 +8306,7 @@
       "site_state": "TX",
       "site_zip": "78412"
     },
+    "RODRIGUEZ NICOLAS AGUSTIN": null,
     "RODRIGUEZ PAULA": {
       "mail_addr": "",
       "mail_city": "",
@@ -8448,6 +8498,7 @@
       "site_state": "TX",
       "site_zip": "78412"
     },
+    "RUIZ REYNALDO": null,
     "RUNNELS MADELINE M": {
       "appraised_value": 153053.0,
       "mail_addr": "712 E AVENUE F ROBSTOWN",
@@ -8615,6 +8666,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "SAN JACINTO TITLE SERVICES": null,
     "SAN JUANA YBARRA MORROW": {
       "appraised_value": 376600.0,
       "mail_addr": "3702 Topeka Corpus Christi",
@@ -8758,6 +8810,7 @@
       "site_state": "TX",
       "site_zip": "78415"
     },
+    "SB-CSB 1 LLC": null,
     "SCALPEL PRODUCTIONS LLC": null,
     "SCHLAGIONE LLC": {
       "mail_addr": "",
@@ -8799,6 +8852,7 @@
       "site_state": "TX",
       "site_zip": "78408"
     },
+    "SEGOVIA LUIS EDUARDO GARZA": null,
     "SELENE FINANCE LP": null,
     "SELF BRIAN": {
       "appraised_value": 500795.0,
@@ -9195,6 +9249,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "STRITTMATTER MARY J": null,
     "STUBER RENE ROSS": {
       "mail_addr": "",
       "mail_city": "",
@@ -9224,6 +9279,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78411"
+    },
+    "SUN GEORGE VENTURES LLC": {
+      "appraised_value": 376859.0,
+      "mail_addr": "5626 OCEAN DR CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78412",
+      "ncad_legal": "WOOLDRIDGE CREEK UNIT 14 BLK 1 LOT 20",
+      "ncad_owner_id": "804681",
+      "ncad_prop_id": "596979",
+      "ncad_year": "2026",
+      "site_addr": "2430 MANUEL LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414"
     },
     "SUPERFROG ANESTHESIA PLLC AN LLC": null,
     "SYFERD SYRUS": null,
@@ -9467,6 +9537,7 @@
       "site_state": "TX",
       "site_zip": "78415"
     },
+    "TREATY CREEK INVESTMENTS LLC": null,
     "TREJO JESUS": {
       "mail_addr": "",
       "mail_city": "",
@@ -9568,6 +9639,7 @@
       "site_state": "TX",
       "site_zip": "78408"
     },
+    "U S BANK TRUST COMPANY NATIONAL ASSOCIATION": null,
     "U S BANK TRUST NATIONAL ASSOCIATION": null,
     "UNDERBRINK S W": {
       "mail_addr": "",
