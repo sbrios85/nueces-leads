@@ -1,5 +1,161 @@
 {
   "_version": "v6",
+  "ccln_addr::1101-1107 1/2 SAM RANKIN": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::1117 SEVENTH ST": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::11252 LEOPARD ST": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::1218 HAYWARD DR": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::1224 N STAPLES ST": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::1318 W CHERRYSTONE": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::14201 JACKFISH AVE": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::14721 WHITECAP BLVD": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::14721 WHITECAP BLVD 328": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::14802 WINDWARD DR": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::14929 S PADRE ISLAND DR": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::1512 , 1514, 1516 HOWARD ST": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::1512, 1514, 1516 HOWARD ST": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::15302 BONASSE CT": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::1634": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::1712 AYERS ST": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::2009 ANTELOPE ST": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::2626": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::3422 DR": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::3949 BALDWIN BLVD": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::4005 ACUSHNET DR": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::4016 OAK FOREST DR": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::425 ROBERT DR": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::430 MILITARY DR": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::4334 E OCEAN DR": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::45TH STW": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::475 W AVENUE G": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::4843 RAMOS": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::502 E 2ND ST": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::522 SANTA MONICA PL": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::5488 S PADRE ISLAND DR": {
+    "miss": true,
+    "miss_reason": "no_corroboration"
+  },
+  "ccln_addr::6001 CIR": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::905 WHITAKER. DR": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::9850 S PADRE ISLAND DR": {
+    "miss": true,
+    "miss_reason": "no_results"
+  },
+  "ccln_addr::COUNTY RD 105": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::FM RD 666": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::LAKE SHORE DR (NO RD)": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::MAIN DR": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
+  "ccln_addr::SHARPSBURG RD": {
+    "miss": true,
+    "miss_reason": "unparseable_address"
+  },
   "data": {
     "219 MARSHALL LLC": null,
     "247 ON SITE LLC": null,
@@ -54,6 +210,21 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "ABRIGO RENE PABLO": {
+      "appraised_value": 183460.0,
+      "mail_addr": "C/O CORTEZ PABLO FAMILY TRUST PABLO CORTEZ & VINCE CORTEZ AS TRUSTEES 1701 Treyway Ln CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78412",
+      "ncad_legal": "GULFWAY AIRLINE PARK 2 LT 11 BK 8",
+      "ncad_owner_id": "721362",
+      "ncad_prop_id": "240661",
+      "ncad_year": "2026",
+      "site_addr": "1701 TREYWAY LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412"
+    },
     "ABUSETTA SAMIR": {
       "mail_addr": "",
       "mail_city": "",
@@ -65,6 +236,7 @@
       "site_zip": ""
     },
     "ACCURATE WELDING INSPECTION LLC": null,
+    "ACEVEDO ANGEL MARIE": null,
     "ACOSTA DAVID": {
       "mail_addr": "",
       "mail_city": "",
@@ -565,6 +737,21 @@
       "site_state": "TX",
       "site_zip": "78416"
     },
+    "AUSTIN JADE": {
+      "appraised_value": 323072.0,
+      "mail_addr": "2201 Diamond Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "ncad_legal": "SANDY CREEK - UNIT 3 BLK 8 LOT 1",
+      "ncad_owner_id": "793819",
+      "ncad_prop_id": "548453",
+      "ncad_year": "2026",
+      "site_addr": "2201 DIAMOND DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414"
+    },
     "AV CLEANING INC": null,
     "AVERY RUFUS A": {
       "mail_addr": "",
@@ -729,6 +916,21 @@
       "site_zip": "78405"
     },
     "BARRERA FILIBERTO G JR": null,
+    "BARRIENTOS H MARTINEZ": {
+      "appraised_value": 75796.0,
+      "mail_addr": "702 S Clarkwood Rd Trlr 84 Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78406",
+      "ncad_legal": "MANUFACTURED HOME LOC 702 S CLARKWOOD RD - SEAMIST MH PK LOT 84 SERIAL #SFW017929TX LABEL #NTA1687772",
+      "ncad_owner_id": "703131",
+      "ncad_prop_id": "537306",
+      "ncad_year": "2026",
+      "site_addr": "702 S CLARKWOOD RD LOT 84",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78406"
+    },
     "BARRON DOMINGO E": {
       "mail_addr": "",
       "mail_city": "",
@@ -1129,6 +1331,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "BUENTELLO JESSIE BRIANNA": null,
     "BURDETTE NADINE": {
       "mail_addr": "",
       "mail_city": "",
@@ -1641,6 +1844,7 @@
       "site_zip": "78405"
     },
     "CHESTNUT JOHN K": null,
+    "CHRISTENSEN DARREN A": null,
     "CHRISTOPHER A ALVARADO": {
       "appraised_value": 142803.0,
       "mail_addr": "1814 Merriman Ave Corpus Christi",
@@ -1667,6 +1871,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "CISNEROS ALLISON MARGARE": null,
     "CISNEROS FELIPE": {
       "mail_addr": "",
       "mail_city": "",
@@ -2116,6 +2321,7 @@
       "site_state": "TX",
       "site_zip": "78416"
     },
+    "DAVIS DONNELL": null,
     "DAVIS RODNEY": null,
     "DE LA CRUZ LAURA": {
       "mail_addr": "",
@@ -2238,6 +2444,7 @@
       "site_state": "TX",
       "site_zip": "78407"
     },
+    "DEL PEREZ ADRIANA": null,
     "DELEON ABEL N": {
       "mail_addr": "",
       "mail_city": "",
@@ -2404,6 +2611,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "DOMINGUEZ ELENA OLIVAREZ": null,
     "DOMINGUEZ ROBERT": {
       "mail_addr": "",
       "mail_city": "",
@@ -2717,6 +2925,22 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "ESPARZA CASSANDRA": {
+      "appraised_value": 1722000.0,
+      "mail_addr": "5201 Tesoro Plz Laredo",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78041",
+      "ncad_legal": "CINNAMON SHORE SOUTH UNIT 5 BLK 3 LOT 15",
+      "ncad_owner_id": "801039",
+      "ncad_prop_id": "604429",
+      "ncad_year": "2026",
+      "site_addr": "140 CHARMING LN",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373"
+    },
+    "ESPITIA CAMILO": null,
     "ESQUIVEL DAVID C": {
       "mail_addr": "",
       "mail_city": "",
@@ -2748,6 +2972,7 @@
       "site_zip": "78401"
     },
     "ESTATE OF BEVERLY JOAN PEMBERTON": null,
+    "ESTATE OF DIANE CATHERINE HARGIS": null,
     "ESTATE OF GLORIA ORTIZ GARZA": null,
     "ESTATE OF ROEL OMAR GRACIA": {
       "appraised_value": 158505.0,
@@ -2800,6 +3025,21 @@
     },
     "ESTATE OF TOMMY NEIL WILLIAMS DECD": null,
     "ESTATE OF WILLIAM ALAN MOECK DECD": null,
+    "ESTRINGEL MICHAEL": {
+      "appraised_value": 152475.0,
+      "mail_addr": "SANDRA A ESTRINGEL 4025 MANHATTAN DRIVE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "ncad_legal": "MALIBU HEIGHTS 1  LT 7 BK 2",
+      "ncad_owner_id": "425830",
+      "ncad_prop_id": "262793",
+      "ncad_year": "2026",
+      "site_addr": "4025 MANHATTAN DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411"
+    },
     "EUROPEAN BUSINESS CONNECTION INC": {
       "mail_addr": "",
       "mail_city": "",
@@ -3258,6 +3498,36 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "GARCIA HAILIE NICOLE": {
+      "appraised_value": 326074.0,
+      "mail_addr": "4010 MAXIMUS DR CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "ncad_legal": "KINGS POINT UNIT 7 BLK 2 LOT 19",
+      "ncad_owner_id": "830201",
+      "ncad_prop_id": "378002",
+      "ncad_year": "2026",
+      "site_addr": "4010 MAXIMUS DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414"
+    },
+    "GARCIA JOE DAVID": {
+      "appraised_value": 265301.0,
+      "mail_addr": "6306 QUEEN BESS DRIVE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "ncad_legal": "KINGS POINT UNIT 7 BLK 3 LOT 26",
+      "ncad_owner_id": "574123",
+      "ncad_prop_id": "378030",
+      "ncad_year": "2026",
+      "site_addr": "6306 QUEEN BESS DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414"
+    },
     "GARCIA LUCILA CISNEROS": {
       "mail_addr": "",
       "mail_city": "",
@@ -3459,6 +3729,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78408"
+    },
+    "GARZA JESSICA MARIE": {
+      "appraised_value": 1148431.0,
+      "mail_addr": "6202 Green Oaks Dr Austin",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78746",
+      "ncad_legal": "CINNAMON SHORE CONDOS UNIT 2-303 BLDG 2 PLUS 3.60% INT IN COM AREA",
+      "ncad_owner_id": "807903",
+      "ncad_prop_id": "524054",
+      "ncad_year": "2026",
+      "site_addr": "160 SOCIAL CIR 2-303",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373"
     },
     "GARZA JIMMY A": {
       "mail_addr": "",
@@ -3839,6 +4124,7 @@
       "site_state": "TX",
       "site_zip": "78414"
     },
+    "GUERRERO ANTHONY": null,
     "GUERRERO ELIZABETH": {
       "mail_addr": "",
       "mail_city": "",
@@ -4226,6 +4512,21 @@
       "site_zip": "78405"
     },
     "HERNANDEZ PATRICIA RUSCELLO": null,
+    "HERRERA JAVIER": {
+      "appraised_value": 1178344.0,
+      "mail_addr": "1800 W Commerce St San Antonio",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78207",
+      "ncad_legal": "PALMILLA BEACH BLK 8 LOT 9A",
+      "ncad_owner_id": "753848",
+      "ncad_prop_id": "523678",
+      "ncad_year": "2026",
+      "site_addr": "116 WILD INDIGO ST",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373"
+    },
     "HERRERA RACHEL": {
       "mail_addr": "",
       "mail_city": "",
@@ -4959,6 +5260,7 @@
       "site_state": "TX",
       "site_zip": "78412"
     },
+    "KEEN DANNY": null,
     "KEEN LARRY": {
       "mail_addr": "",
       "mail_city": "",
@@ -5268,6 +5570,7 @@
       "site_state": "TX",
       "site_zip": "78412"
     },
+    "LINAN ANGELA M": null,
     "LINDER VENTURES LLC": null,
     "LIVINGS JAMES EVART ET UX": {
       "mail_addr": "",
@@ -5379,6 +5682,7 @@
       "site_state": "TX",
       "site_zip": "78404"
     },
+    "LOPEZ INES P": null,
     "LOPEZ ISMAEL": {
       "mail_addr": "",
       "mail_city": "",
@@ -5616,6 +5920,7 @@
       "site_state": "TX",
       "site_zip": "78330"
     },
+    "MAR RAMIREZ CHRISTI ANNA": null,
     "MARCHAN SYLVIA CASANDRA ETALS": {
       "mail_addr": "",
       "mail_city": "",
@@ -5701,6 +6006,21 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "MARTINEZ ALIYAH SOPHIA": {
+      "appraised_value": 5000.0,
+      "mail_addr": "14254 S PADRE ISLAND DR STE 111 CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_legal": "PERSONAL PROPERTY LOC 14254 S PADRE ISLAND DR STE 111 COMP F&F M&E SUPP MDSE",
+      "ncad_owner_id": "808991",
+      "ncad_prop_id": "611587",
+      "ncad_year": "2026",
+      "site_addr": "14254 S PADRE ISLAND DR STE 111",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
+    },
     "MARTINEZ ELIAS R": {
       "mail_addr": "",
       "mail_city": "",
@@ -5750,6 +6070,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78405"
+    },
+    "MARTINEZ JENNIFER": {
+      "appraised_value": 254654.0,
+      "mail_addr": "2830 SAINT PETER ST CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_legal": "HIGHLAND OAKS 2 LT 25 BLK 2",
+      "ncad_owner_id": "821801",
+      "ncad_prop_id": "243454",
+      "ncad_year": "2026",
+      "site_addr": "2830 ST PETER",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
     },
     "MARTINEZ JOSE A": {
       "mail_addr": "",
@@ -6834,6 +7169,7 @@
       "site_state": "TX",
       "site_zip": "78404"
     },
+    "PAOT DEVELOPMENT LLC": null,
     "PARAGAS-ROBILLARD JOSEPHINE": {
       "mail_addr": "",
       "mail_city": "",
@@ -7377,6 +7713,7 @@
       "site_state": "TX",
       "site_zip": "78408"
     },
+    "POLK AMBER": null,
     "POPEJOY JOHN": {
       "mail_addr": "",
       "mail_city": "",
@@ -7533,6 +7870,7 @@
       "site_state": "TX",
       "site_zip": "78413"
     },
+    "RAMIREZ CELINA": null,
     "RAMIREZ JONATHAN": {
       "mail_addr": "",
       "mail_city": "",
@@ -7878,6 +8216,7 @@
       "site_state": "TX",
       "site_zip": "78404"
     },
+    "RILEY MATTHEW J": null,
     "RINK ISAAC MICHAEL": {
       "mail_addr": "",
       "mail_city": "",
@@ -7888,6 +8227,7 @@
       "site_state": "TX",
       "site_zip": "78412"
     },
+    "RIOS ALBERT": null,
     "RIOS ENRIQUETA P": {
       "mail_addr": "",
       "mail_city": "",
@@ -8411,6 +8751,7 @@
       "site_state": "TX",
       "site_zip": "78408"
     },
+    "SALINAS ALEX": null,
     "SALINAS ESTHER F": {
       "mail_addr": "",
       "mail_city": "",
@@ -8789,6 +9130,7 @@
       "site_state": "TX",
       "site_zip": "78411"
     },
+    "SILVA CRYSTAL LYN": null,
     "SILVA KHIARY": null,
     "SILVA SAMUEL G": {
       "mail_addr": "",
@@ -9001,6 +9343,7 @@
       "site_state": "TX",
       "site_zip": "78409"
     },
+    "SOUTHERN DISTRICT OF TEXAS": null,
     "SOUTHERN OIL SALES": {
       "mail_addr": "",
       "mail_city": "",
@@ -9351,6 +9694,7 @@
       "site_state": "TX",
       "site_zip": "78373"
     },
+    "TORRES BRANDON L": null,
     "TORRES EDMUNDO": {
       "mail_addr": "",
       "mail_city": "",
@@ -9441,6 +9785,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78415"
+    },
+    "TREVINO JUAN JOSE": {
+      "appraised_value": 90604.0,
+      "mail_addr": "334 Balboa St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78405",
+      "ncad_legal": "AUSTIN BLK 1 LOT 27",
+      "ncad_owner_id": "713572",
+      "ncad_prop_id": "186760",
+      "ncad_year": "2026",
+      "site_addr": "334 BALBOA",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78405"
     },
     "TREVINO SYLVIA ANN": {
       "mail_addr": "",
@@ -9554,6 +9913,21 @@
     },
     "VALENCIA RICARDA": null,
     "VALENTIN VARGAS AND NORA L VARGAS": null,
+    "VALENZUELA YANEZ MICHAEL": {
+      "appraised_value": 374831.0,
+      "mail_addr": "SHIRLEY VALENZUELA WFE 6826 BOARDWALK AVE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "ncad_legal": "THE BOARDWALK UNIT 1 BLK 4 LOT 2",
+      "ncad_owner_id": "651671",
+      "ncad_prop_id": "200118114",
+      "ncad_year": "2026",
+      "site_addr": "6826 BOARDWALK AVE",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414"
+    },
     "VALERIO FELIPE": {
       "mail_addr": "",
       "mail_city": "",
@@ -9674,6 +10048,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78416"
+    },
+    "VERA ANITA BELINDA": {
+      "appraised_value": 72750.0,
+      "mail_addr": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "ncad_legal": "MUSTANG TOWERS CONDO, UNIT 1402, 1.5873% COMMON AREA INTEREST",
+      "ncad_owner_id": "820546",
+      "ncad_prop_id": "619119",
+      "ncad_year": "2026",
+      "site_addr": "6109 ST HWY 361",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373"
     },
     "VERA JOHNNY E": {
       "mail_addr": "",
@@ -9890,6 +10279,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "WOODERSON THOMAS B": null,
     "WYNN KENNETH J": {
       "mail_addr": "",
       "mail_city": "",
@@ -9955,6 +10345,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78411"
+    },
+    "YOUNGBLOOD CASANDRA MARI": {
+      "appraised_value": 400000.0,
+      "mail_addr": "1400 OCEAN DR Apt 101A CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78404",
+      "ncad_legal": "MARINA DEL SOL, UNIT 101-A, 0.926958% COMMON AREA INTEREST",
+      "ncad_owner_id": "784610",
+      "ncad_prop_id": "263558",
+      "ncad_year": "2026",
+      "site_addr": "1400 E OCEAN DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78404"
     },
     "ZAMORA NATALIE": {
       "appraised_value": 1000.0,
