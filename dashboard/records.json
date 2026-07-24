@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-07-23T17:43:07.305929+00:00",
+  "fetched_at": "2026-07-24T17:43:30.514414+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-23",
-    "end": "2026-07-23"
+    "start": "2026-06-24",
+    "end": "2026-07-24"
   },
-  "total": 142,
-  "with_address": 54,
+  "total": 140,
+  "with_address": 55,
   "records": [
     {
       "doc_num": "2026025202",
@@ -409,30 +409,6 @@
       "score": 50
     },
     {
-      "doc_num": "2026024845",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-07-16",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "GARCIA PETER J",
-      "grantee": "MIDFIRST BANK",
-      "amount": null,
-      "legal": "210 KISSLING AVENUE ROBSTOWN TEXAS 7838 (Lot 14, Block 1)",
-      "prop_address": "210 KISSLING AVENUE",
-      "prop_city": "ROBSTOWN TEXAS 7838",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024845",
-      "flags": [
-        "New this week"
-      ],
-      "score": 50
-    },
-    {
       "doc_num": "2026025239",
       "doc_type": "APPOINTMENT",
       "filed": "2026-07-20",
@@ -573,6 +549,30 @@
       "mail_state": "TX",
       "mail_zip": "78414",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025586",
+      "flags": [
+        "New this week"
+      ],
+      "score": 50
+    },
+    {
+      "doc_num": "2026025232",
+      "doc_type": "LIEN",
+      "filed": "2026-07-20",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "HERNANDEZ LADISLAO PINEDA",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
+      "amount": null,
+      "legal": "",
+      "prop_address": "605 CADDO",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78412",
+      "mail_address": "605 Caddo St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78412",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025232",
       "flags": [
         "New this week"
       ],
@@ -861,30 +861,6 @@
       "mail_state": "TX",
       "mail_zip": "78405",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025222",
-      "flags": [
-        "New this week"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026024791",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-07-16",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "GARZA JESSICA",
-      "grantee": "MENDOZA ARNOLD",
-      "amount": null,
-      "legal": "WESTCHESTER PLACE ADDITION Lot: 22 Block: 3 (Lot 22, Block 3)",
-      "prop_address": "761 W CORNELIA CIR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78408",
-      "mail_address": "6537 S STAPLES ST Ste 125 PMB 128 CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78413",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024791",
       "flags": [
         "New this week"
       ],
@@ -1251,30 +1227,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026025232",
-      "doc_type": "LIEN",
-      "filed": "2026-07-20",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "HERNANDEZ LADISLAO PINEDA",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025232",
-      "flags": [
-        "New this week"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026025226",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -1533,30 +1485,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023719",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026021818",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-23",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "TEXAS JESTER LLC",
-      "grantee": "CENTRAL NATIONAL BANK",
-      "amount": null,
-      "legal": "104 LILY POND LN PORT ARANSAS TX 78373 (Lot 3, Block 1)",
-      "prop_address": "104 LILY POND LN",
-      "prop_city": "PORT ARANSAS",
-      "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021818",
       "flags": [
         "LLC / corp owner"
       ],
@@ -1893,30 +1821,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022285",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026021755",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-23",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "GOLD REAL ESTATE INVESTMENTS LLC",
-      "grantee": "REALFIN FUND I LLC",
-      "amount": null,
-      "legal": "WOODCREST HEIGHTS Lot: 2 Block: 3 Unit or Part: 3 (Lot 2, Block 3)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026021755",
       "flags": [
         "LLC / corp owner"
       ],
@@ -2461,6 +2365,28 @@
       "score": 35
     },
     {
+      "doc_num": "2026024845",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-07-16",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "GARCIA PETER J",
+      "grantee": "MIDFIRST BANK",
+      "amount": null,
+      "legal": "210 KISSLING AVENUE ROBSTOWN TEXAS 7838 (Lot 14, Block 1)",
+      "prop_address": "210 KISSLING AVENUE",
+      "prop_city": "ROBSTOWN TEXAS 7838",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024845",
+      "flags": [],
+      "score": 35
+    },
+    {
       "doc_num": "2026024621",
       "doc_type": "MODIFICATION",
       "filed": "2026-07-15",
@@ -2703,6 +2629,28 @@
       "score": 35
     },
     {
+      "doc_num": "2026024791",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-07-16",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "GARZA JESSICA",
+      "grantee": "MENDOZA ARNOLD",
+      "amount": null,
+      "legal": "WESTCHESTER PLACE ADDITION Lot: 22 Block: 3 (Lot 22, Block 3)",
+      "prop_address": "761 W CORNELIA CIR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78408",
+      "mail_address": "6537 S STAPLES ST Ste 125 PMB 128 CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78413",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024791",
+      "flags": [],
+      "score": 35
+    },
+    {
       "doc_num": "2026024422",
       "doc_type": "APPOINTMENT",
       "filed": "2026-07-13",
@@ -2743,6 +2691,28 @@
       "mail_state": "ID",
       "mail_zip": "83702",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024360",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026024357",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-07-13",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "IDAHO HOUSING AND FINANCE ASSOCIATION",
+      "grantee": "AUCTION.COM LLC",
+      "amount": null,
+      "legal": "",
+      "prop_address": "1704 RAND MORGAN RD",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78409",
+      "mail_address": "565 W MYRTLE ST BOISE",
+      "mail_city": "",
+      "mail_state": "ID",
+      "mail_zip": "83702",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024357",
       "flags": [],
       "score": 35
     },
@@ -3139,28 +3109,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024491",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026024357",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-07-13",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "IDAHO HOUSING AND FINANCE ASSOCIATION",
-      "grantee": "AUCTION.COM LLC",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024357",
       "flags": [],
       "score": 30
     },
