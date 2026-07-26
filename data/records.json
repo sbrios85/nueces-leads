@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-07-25T17:05:09.545211+00:00",
+  "fetched_at": "2026-07-26T17:07:44.910913+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-25",
-    "end": "2026-07-25"
+    "start": "2026-06-26",
+    "end": "2026-07-26"
   },
-  "total": 139,
+  "total": 137,
   "with_address": 55,
   "records": [
     {
@@ -604,30 +604,6 @@
       "score": 50
     },
     {
-      "doc_num": "2026025231",
-      "doc_type": "LIEN",
-      "filed": "2026-07-20",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "ESTRINGEL MICHAEL",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER DOCTORS REGIONAL",
-      "amount": null,
-      "legal": "",
-      "prop_address": "4025 MANHATTAN DR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78411",
-      "mail_address": "SANDRA A ESTRINGEL 4025 MANHATTAN DRIVE CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78411",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025231",
-      "flags": [
-        "New this week"
-      ],
-      "score": 50
-    },
-    {
       "doc_num": "2026025235",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -652,30 +628,6 @@
       "score": 50
     },
     {
-      "doc_num": "2026025233",
-      "doc_type": "LIEN",
-      "filed": "2026-07-20",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "MARTINEZ ALIYAH SOPHIA",
-      "grantee": "MISSION REGIONAL MEDICAL CENTER",
-      "amount": null,
-      "legal": "",
-      "prop_address": "14254 S PADRE ISLAND DR STE 111",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78418",
-      "mail_address": "14254 S PADRE ISLAND DR STE 111 CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78418",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025233",
-      "flags": [
-        "New this week"
-      ],
-      "score": 50
-    },
-    {
       "doc_num": "2026025236",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -694,6 +646,54 @@
       "mail_state": "TX",
       "mail_zip": "78207",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025236",
+      "flags": [
+        "New this week"
+      ],
+      "score": 50
+    },
+    {
+      "doc_num": "2026025231",
+      "doc_type": "LIEN",
+      "filed": "2026-07-20",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "ESTRINGEL MICHAEL",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER DOCTORS REGIONAL",
+      "amount": null,
+      "legal": "",
+      "prop_address": "4025 MANHATTAN DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78411",
+      "mail_address": "SANDRA A ESTRINGEL 4025 MANHATTAN DRIVE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025231",
+      "flags": [
+        "New this week"
+      ],
+      "score": 50
+    },
+    {
+      "doc_num": "2026025233",
+      "doc_type": "LIEN",
+      "filed": "2026-07-20",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "MARTINEZ ALIYAH SOPHIA",
+      "grantee": "MISSION REGIONAL MEDICAL CENTER",
+      "amount": null,
+      "legal": "",
+      "prop_address": "14254 S PADRE ISLAND DR STE 111",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78418",
+      "mail_address": "14254 S PADRE ISLAND DR STE 111 CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025233",
       "flags": [
         "New this week"
       ],
@@ -772,30 +772,6 @@
       "score": 50
     },
     {
-      "doc_num": "2026025221",
-      "doc_type": "LIEN",
-      "filed": "2026-07-20",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "GARCIA JOE DAVID",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER-BAY AREA MC CAMPUS",
-      "amount": null,
-      "legal": "",
-      "prop_address": "6306 QUEEN BESS DR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78414",
-      "mail_address": "6306 QUEEN BESS DRIVE CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78414",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025221",
-      "flags": [
-        "New this week"
-      ],
-      "score": 50
-    },
-    {
       "doc_num": "2026025224",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -814,6 +790,30 @@
       "mail_state": "TX",
       "mail_zip": "78414",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025224",
+      "flags": [
+        "New this week"
+      ],
+      "score": 50
+    },
+    {
+      "doc_num": "2026025221",
+      "doc_type": "LIEN",
+      "filed": "2026-07-20",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "GARCIA JOE DAVID",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER-BAY AREA MC CAMPUS",
+      "amount": null,
+      "legal": "",
+      "prop_address": "6306 QUEEN BESS DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78414",
+      "mail_address": "6306 QUEEN BESS DRIVE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025221",
       "flags": [
         "New this week"
       ],
@@ -844,30 +844,6 @@
       "score": 50
     },
     {
-      "doc_num": "2026025222",
-      "doc_type": "LIEN",
-      "filed": "2026-07-20",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "TREVINO JUAN JOSE",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
-      "amount": null,
-      "legal": "",
-      "prop_address": "334 BALBOA",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78405",
-      "mail_address": "334 Balboa St Corpus Christi",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78405",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025222",
-      "flags": [
-        "New this week"
-      ],
-      "score": 50
-    },
-    {
       "doc_num": "2026025223",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -886,6 +862,30 @@
       "mail_state": "TX",
       "mail_zip": "78412",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025223",
+      "flags": [
+        "New this week"
+      ],
+      "score": 50
+    },
+    {
+      "doc_num": "2026025222",
+      "doc_type": "LIEN",
+      "filed": "2026-07-20",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "TREVINO JUAN JOSE",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
+      "amount": null,
+      "legal": "",
+      "prop_address": "334 BALBOA",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78405",
+      "mail_address": "334 Balboa St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78405",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025222",
       "flags": [
         "New this week"
       ],
@@ -1156,30 +1156,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026025542",
-      "doc_type": "LIEN",
-      "filed": "2026-07-22",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "SILVA CRYSTAL LYN",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025542",
-      "flags": [
-        "New this week"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026025543",
       "doc_type": "LIEN",
       "filed": "2026-07-22",
@@ -1198,6 +1174,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025543",
+      "flags": [
+        "New this week"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026025542",
+      "doc_type": "LIEN",
+      "filed": "2026-07-22",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "SILVA CRYSTAL LYN",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025542",
       "flags": [
         "New this week"
       ],
@@ -1972,30 +1972,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026022154",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-25",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "THE DAVID DONALD FAMILY TRUST",
-      "grantee": "NICOLE DONALD BRITTANY ANNE",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022154",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026023457",
       "doc_type": "DEED",
       "filed": "2026-07-06",
@@ -2302,28 +2278,6 @@
       "score": 35
     },
     {
-      "doc_num": "2026022691",
-      "doc_type": "LIEN",
-      "filed": "2026-06-29",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "GARZA JAVIER",
-      "grantee": "NOTTINGHAM ACRES HOMEOWNERS ASSOCIATION",
-      "amount": null,
-      "legal": "1349 SOUTHHAMPTON DR CORPUS CHRISTI TX 78415 (Lot 1, Block 5)",
-      "prop_address": "1349 SOUTHHAMPTON DR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78415",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022691",
-      "flags": [],
-      "score": 35
-    },
-    {
       "doc_num": "2026022689",
       "doc_type": "LIEN",
       "filed": "2026-06-29",
@@ -2342,6 +2296,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022689",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026022691",
+      "doc_type": "LIEN",
+      "filed": "2026-06-29",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "GARZA JAVIER",
+      "grantee": "NOTTINGHAM ACRES HOMEOWNERS ASSOCIATION",
+      "amount": null,
+      "legal": "1349 SOUTHHAMPTON DR CORPUS CHRISTI TX 78415 (Lot 1, Block 5)",
+      "prop_address": "1349 SOUTHHAMPTON DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78415",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022691",
       "flags": [],
       "score": 35
     },
@@ -3046,28 +3022,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023135",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026022083",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-25",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "URTADO NOEL",
-      "grantee": "PLAINSCAPITAL BANK",
-      "amount": null,
-      "legal": "SOUTH PARK Lot: 1,2 Block: 2 (Lot 1,2, Block 2)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022083",
       "flags": [],
       "score": 30
     },
