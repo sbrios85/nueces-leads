@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-07-26T17:07:44.910913+00:00",
+  "fetched_at": "2026-07-27T17:48:22.301574+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-26",
-    "end": "2026-07-26"
+    "start": "2026-06-27",
+    "end": "2026-07-27"
   },
-  "total": 137,
-  "with_address": 55,
+  "total": 129,
+  "with_address": 53,
   "records": [
     {
       "doc_num": "2026025202",
@@ -210,31 +210,6 @@
       "score": 55
     },
     {
-      "doc_num": "2026025395",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-07-21",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "GUERRERO ANTHONY",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NUMBER 237000416",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025395",
-      "flags": [
-        "Tax lien",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
       "doc_num": "2026025203",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-07-20",
@@ -253,6 +228,31 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025203",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
+      "doc_num": "2026025395",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-07-21",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "GUERRERO ANTHONY",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NUMBER 237000416",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025395",
       "flags": [
         "Tax lien",
         "New this week"
@@ -380,31 +380,6 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022873",
       "flags": [
         "Lis pendens",
-        "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026022421",
-      "doc_type": "JUDGMENT",
-      "filed": "2026-06-26",
-      "cat": "JUD",
-      "cat_label": "Judgment",
-      "owner": "VAQUERO DRSICOLL PARTNERS LP",
-      "grantee": "THE DRISCOLL PIPE LINE",
-      "amount": null,
-      "legal": "4959 FM 665 DRISCOLL TEXAS 78380 (Lot 5,6,7,8)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022421",
-      "flags": [
-        "Judgment lien",
         "LLC / corp owner"
       ],
       "score": 50
@@ -1564,30 +1539,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026022246",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-26",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "MESTENOS UNIT 65 LLC",
-      "grantee": "EXTRACO BANKS N A",
-      "amount": null,
-      "legal": "APT NO 65 BLDG G",
-      "prop_address": "700 ISLAND RETREAT CT",
-      "prop_city": "PORT ARANSAS",
-      "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "1102 Radio Tower Rd Waco",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "76705",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022246",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026023531",
       "doc_type": "DEED",
       "filed": "2026-07-06",
@@ -1708,54 +1659,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026022422",
-      "doc_type": "LIEN",
-      "filed": "2026-06-26",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "CORPUS CHRISTI GROUNDWORKS LLC",
-      "grantee": "LUSINS JOHN O",
-      "amount": null,
-      "legal": "6901 SIR GAWAIN CORPUS CHRISTI TEXAS 78413",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022422",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026022331",
-      "doc_type": "MECHANICS LIEN",
-      "filed": "2026-06-26",
-      "cat": "LNMECH",
-      "cat_label": "Mechanics Lien",
-      "owner": "FIRETROL PROTECTION SYSTEMS INC",
-      "grantee": "326 N CHAPARRAL LIMITED LIABILITY CO",
-      "amount": null,
-      "legal": "4410 DILLON STE 38 CORPUS CHRISTI TX 78415 (Lot 7, Block 2)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022331",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026025047",
       "doc_type": "MODIFICATION",
       "filed": "2026-07-17",
@@ -1822,30 +1725,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023600",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026022285",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-06-26",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "LINDER VENTURES LLC",
-      "grantee": "PLAINSCAPITAL BANK",
-      "amount": null,
-      "legal": "RUSSELL INDUSTRIAL DISTRICT Lot: 68A Block: 8 (Lot 68A, Block 8)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022285",
       "flags": [
         "LLC / corp owner"
       ],
@@ -2044,15 +1923,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026022590",
+      "doc_num": "2026022587",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-06-29",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "PAGE MANAGEMENT ASSOCIATES",
+      "owner": "MOUTON DANIEL K",
       "grantee": "USA INTERNAL REVENUE",
       "amount": null,
-      "legal": "SERIAL NO 543833426",
+      "legal": "SERIAL NO 543824626",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -2061,7 +1940,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022590",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022587",
       "flags": [
         "Tax lien"
       ],
@@ -2092,15 +1971,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026022587",
+      "doc_num": "2026022590",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-06-29",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "MOUTON DANIEL K",
+      "owner": "PAGE MANAGEMENT ASSOCIATES",
       "grantee": "USA INTERNAL REVENUE",
       "amount": null,
-      "legal": "SERIAL NO 543824626",
+      "legal": "SERIAL NO 543833426",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -2109,7 +1988,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022587",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022590",
       "flags": [
         "Tax lien"
       ],
@@ -2318,28 +2197,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022691",
-      "flags": [],
-      "score": 35
-    },
-    {
-      "doc_num": "2026022410",
-      "doc_type": "LIEN",
-      "filed": "2026-06-26",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "FINANCE AND PROCUREMENT",
-      "grantee": "JK HOSPITALITY MANAGEMENT LLC",
-      "amount": null,
-      "legal": "5224 INTERSTATE HWY 37 CORPUS CHRISTI TX 78407 (Lot 3, Block 0)",
-      "prop_address": "5224 INTERSTATE HWY",
-      "prop_city": "37 CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78407",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022410",
       "flags": [],
       "score": 35
     },
@@ -3176,50 +3033,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022478",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026022367",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-26",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "U S BANK NATIONAL ASSOCIATION",
-      "grantee": "AUCTION.COM LLC",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022367",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026022300",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-26",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "MILLER URSULA G",
-      "grantee": "AVT TITLE SERVICES LLC",
-      "amount": null,
-      "legal": "LINCOLN TERRACE Lot: 30 Block: 8 (Lot 30, Block 8)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022300",
       "flags": [],
       "score": 30
     }
