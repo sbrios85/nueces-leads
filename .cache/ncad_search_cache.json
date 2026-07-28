@@ -349,6 +349,7 @@
       "site_state": "TX",
       "site_zip": "78402"
     },
+    "AGUILLON RAELYN": null,
     "AKHI ARO": {
       "mail_addr": "",
       "mail_city": "",
@@ -712,6 +713,7 @@
       "site_state": "TX",
       "site_zip": "78412"
     },
+    "ARREDONDO JENNIFER S": null,
     "ASHTON DUDLEY AND BRYCE DUDLEY": {
       "appraised_value": 348861.0,
       "mail_addr": "3837 WOODHOUSE LN CORPUS CHRISTI",
@@ -1136,6 +1138,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78404"
+    },
+    "BLALOCK DAVID": {
+      "appraised_value": 117293.0,
+      "mail_addr": "7 The Smt Holmdel",
+      "mail_city": "",
+      "mail_state": "NJ",
+      "mail_zip": "07733",
+      "ncad_legal": "PORT ROYAL BY THE SEA CONDO, BUILDING B, UNIT 3320, 0.4916127% COMMON AREA INTEREST",
+      "ncad_owner_id": "807338",
+      "ncad_prop_id": "287997",
+      "ncad_year": "2026",
+      "site_addr": "6317 STATE HWY 361",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373"
     },
     "BLANCO JUAN L": null,
     "BOETTGER CLAIRE": {
@@ -1913,6 +1930,7 @@
       "site_state": "TX",
       "site_zip": "78415"
     },
+    "CLARK PHILIP DEMARQUES": null,
     "CLARK RONDELL": null,
     "CLARKE RHONDA": {
       "mail_addr": "",
@@ -2032,6 +2050,7 @@
       "site_state": "TX",
       "site_zip": "78415"
     },
+    "COOKE SANDY PRISCILLA": null,
     "COPELAND PATRICIA SHANNAN ETALS": {
       "mail_addr": "",
       "mail_city": "",
@@ -2541,6 +2560,7 @@
       "site_state": "TX",
       "site_zip": "78411"
     },
+    "DICKEY BELINDA": null,
     "DILLARD ERNESTINE": {
       "mail_addr": "",
       "mail_city": "",
@@ -4104,6 +4124,7 @@
     },
     "GUAJARDO CARLOS": null,
     "GUAJARDO TRACEY": null,
+    "GUDAPATI SAI RAGHAVA": null,
     "GUERRA JAMES R": {
       "mail_addr": "",
       "mail_city": "",
@@ -4954,6 +4975,7 @@
       "site_state": "TX",
       "site_zip": "78414"
     },
+    "JET LENDING LLC": null,
     "JHHA ENTERPRISES LLC": {
       "appraised_value": 155361.0,
       "mail_addr": "6262 Weber Rd Ste 112 Corpus Christi",
@@ -8516,6 +8538,7 @@
       "site_state": "TX",
       "site_zip": "78416"
     },
+    "RODRIGUEZ PERSIA": null,
     "RODRIGUEZ RAMON": {
       "mail_addr": "",
       "mail_city": "",
@@ -9837,6 +9860,7 @@
       "site_state": "TX",
       "site_zip": "78404"
     },
+    "TRIDENT REALTY INVESTMENTS ATLAS SPV LLC": null,
     "TSCHOEPE KEITH": {
       "mail_addr": "",
       "mail_city": "",
@@ -10065,21 +10089,7 @@
       "site_state": "TX",
       "site_zip": "78416"
     },
-    "VERA ANITA BELINDA": {
-      "appraised_value": 72750.0,
-      "mail_addr": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "ncad_legal": "MUSTANG TOWERS CONDO, UNIT 1402, 1.5873% COMMON AREA INTEREST",
-      "ncad_owner_id": "820546",
-      "ncad_prop_id": "619119",
-      "ncad_year": "2026",
-      "site_addr": "6109 ST HWY 361",
-      "site_city": "PORT ARANSAS",
-      "site_state": "TX",
-      "site_zip": "78373"
-    },
+    "VERA ANITA BELINDA": null,
     "VERA JOHNNY E": {
       "mail_addr": "",
       "mail_city": "",
@@ -10141,6 +10151,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78411"
+    },
+    "VILLARREAL MARISSA MARIE": {
+      "appraised_value": 1148431.0,
+      "mail_addr": "6202 Green Oaks Dr Austin",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78746",
+      "ncad_legal": "CINNAMON SHORE CONDOS UNIT 2-303 BLDG 2 PLUS 3.60% INT IN COM AREA",
+      "ncad_owner_id": "807903",
+      "ncad_prop_id": "524054",
+      "ncad_year": "2026",
+      "site_addr": "160 SOCIAL CIR 2-303",
+      "site_city": "PORT ARANSAS",
+      "site_state": "TX",
+      "site_zip": "78373"
     },
     "VIVOT INDUSTRIES LLC": null,
     "VIZION247, LLC AND ARTHUR MARTINEZ JR": {
@@ -10273,6 +10298,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "WILLIAMS SHIOBHAN R": null,
     "WILSON FRED J": {
       "mail_addr": "",
       "mail_city": "",
@@ -10336,6 +10362,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78405"
+    },
+    "YBARRA ROLANDO": {
+      "appraised_value": 204151.0,
+      "mail_addr": "902 Oak Ave Bishop",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78343",
+      "ncad_legal": "HARRIS-BISHOP LOT 12 & S/2 LOT 13",
+      "ncad_owner_id": "679321",
+      "ncad_prop_id": "242154",
+      "ncad_year": "2026",
+      "site_addr": "902 N OAK AVE",
+      "site_city": "BISHOP",
+      "site_state": "TX",
+      "site_zip": "78343"
     },
     "YC TEXAS HOTEL LLC": {
       "appraised_value": 6676591.0,
