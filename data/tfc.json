@@ -468,5 +468,6 @@
     "SALE",
     "FUTURE SALE"
   ],
-  "phase": "1-listing-only"
+  "phase": "1-listing-only",
+  "ncad_enriched_at": "2026-07-29T10:13:24+00:00"
 }
