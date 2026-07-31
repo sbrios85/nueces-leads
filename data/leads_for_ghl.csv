@@ -1,10 +1,11 @@
 First Name,Last Name,Mailing Address,Mailing City,Mailing State,Mailing Zip,Property Address,Property City,Property State,Property Zip,Lead Type,Document Type,Date Filed,Document Number,Amount/Debt Owed,Seller Score,Motivated Seller Flags,Source,Public Records URL
+,MPM DEVELOPMENT LP,PO Box 331308 Corpus Christi,,TX,78463,COUNTY RD 43,CORPUS CHRISTI,TX,78415,Loan Modification,MODIFICATION,2026-07-30,2026026538,,60,LLC / corp owner | New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026538
+,DFLC INC,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-30,2026026641,,55,LLC / corp owner | New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026641
 ,TRIDENT REALTY INVESTMENTS ATLAS SPV LLC,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-27,2026026189,,55,LLC / corp owner | New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026189
 ,JET LENDING LLC,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-27,2026025983,,55,LLC / corp owner | New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025983
 ,US BANK TRUST COMPANY NATIONAL ASSOCIATION,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-24,2026025879,,55,LLC / corp owner | New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025879
 Ruth,Scanlan Edna,,,,,,,TX,,Probate,WILL,2026-07-24,2026025893,,55,Probate / estate | New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025893
 ,7PRIMEPARTNERS LLC,,,,,,,TX,,Lis Pendens,LIS PENDENS,2026-07-01,2026023136,,50,Lis pendens | LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023136
-,THE PORT ROYAL BY THE SEA CONDOMINIUM OWNERS ASSOCIATION INC,,,,,,,TX,,Lis Pendens,LIS PENDENS,2026-06-30,2026022873,,50,Lis pendens | LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022873
 Gabriel,Quinones,,,,,4647 RAMIREZ ST,CORPUS CHRISTI TEXAS ROBSTOWN,TX,78380,Mechanics Lien,MECHANICS LIEN,2026-07-27,2026026191,,50,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026191
 ,LA PLAYA MEXICAN GRILL LLC,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-20,2026025202,,50,Tax lien | LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025202
 ,ACCURATE WELDING INSPECTION LLC,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-01,2026023054,,50,Tax lien | LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023054
@@ -20,9 +21,9 @@ Raghava,Gudapati Sai,,,,,,,TX,,Lien,LIEN,2026-07-27,2026026046,,45,New this week
 Raelyn,Aguillon,,,,,,,TX,,Lien,LIEN,2026-07-27,2026026047,,45,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026047
 Priscilla,Cooke Sandy,,,,,,,TX,,Lien,LIEN,2026-07-27,2026026048,,45,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026048
 Persia,Rodriguez,,,,,,,TX,,Lien,LIEN,2026-07-27,2026026045,,45,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026045
-South,Christus Spohn Hospital,,,,,,,TX,,Hospital Lien,HOSPITAL LIEN,2026-07-27,2026026057,,45,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026057
 Shoreline,Christus Spohn Hospital,,,,,,,TX,,Hospital Lien,HOSPITAL LIEN,2026-07-27,2026026055,,45,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026055
 South,Christus Spohn Hospital,,,,,,,TX,,Hospital Lien,HOSPITAL LIEN,2026-07-27,2026026056,,45,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026056
+South,Christus Spohn Hospital,,,,,,,TX,,Hospital Lien,HOSPITAL LIEN,2026-07-27,2026026057,,45,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026057
 Shoreline,Christus Spohn Hospital,,,,,,,TX,,Hospital Lien,HOSPITAL LIEN,2026-07-27,2026026053,,45,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026053
 Shoreline,Christus Spohn Hospital,,,,,,,TX,,Hospital Lien,HOSPITAL LIEN,2026-07-27,2026026054,,45,New this week,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026054
 ,ENVIRONMENTAL DISCIPLINES INC,,,,,4731 GREENWOOD DR,CORPUS CHRISTI,TX,78416,Mechanics Lien,MECHANICS LIEN,2026-07-14,2026024580,,45,LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024580
@@ -47,13 +48,11 @@ Pemberton,Estate Of Beverly Joan,,,,,,,TX,,Judgment,JUDGMENT,2026-07-01,20260230
 ,U S BANK TRUST COMPANY NATIONAL ASSOCIATION,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-13,2026024391,,40,LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024391
 ,LAKEVIEW LOAN SERVICING LLC,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-13,2026024234,,40,LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024234
 ,SB-CSB 1 LLC,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-09,2026024037,,40,LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024037
-,SNAPKA FAMILY LOVING TRUST,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-06-30,2026022954,,40,LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022954
-,THE MOORINGS AT MUSTANG ISLAND COUNCIL OF CO-OWNERS INC,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-06-30,2026022946,,40,LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022946
 ,TAX LIEN FUND LP,,,,,,,TX,,Tax Deed,DEED,2026-07-06,2026023457,,40,LLC / corp owner,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023457
 Arslan,Ijaz,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-14,2026024551,,40,Tax lien,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024551
 A,Christensen Darren,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-20,2026025205,,40,Tax lien,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025205
-A,Christensen Darren,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-20,2026025203,,40,Tax lien,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025203
 Anthony,Guerrero,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-21,2026025395,,40,Tax lien,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025395
+A,Christensen Darren,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-20,2026025203,,40,Tax lien,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025203
 Raquel,Elizondo,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-02,2026023160,,40,Tax lien,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023160
 B,Wooderson Thomas,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-21,2026025394,,40,Tax lien,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025394
 Texas,Southern District Of,,,,,,,TX,,Federal / IRS / Corp Tax Lien,FEDERAL TAX LIEN,2026-07-22,2026025675,,40,Tax lien,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025675
@@ -108,7 +107,7 @@ Olivarez,Dominguez Elena,,,,,,,TX,,Lien,LIEN,2026-07-22,2026025539,,30,,Nueces C
 Anna,Mar Ramirez Christi,,,,,,,TX,,Lien,LIEN,2026-07-22,2026025543,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025543
 Lyn,Silva Crystal,,,,,,,TX,,Lien,LIEN,2026-07-22,2026025542,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025542
 Danny,Keen,,,,,,,TX,,Lien,LIEN,2026-07-22,2026025541,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025541
-J,Riley Matthew,,,,,,,TX,,Lien,LIEN,2026-07-20,2026025267,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025267
+D,Riley Cathy,,,,,,,TX,,Lien,LIEN,2026-07-20,2026025267,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025267
 Belinda,Vera Anita,,,,,,,TX,,Lien,LIEN,2026-07-20,2026025235,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025235
 Brianna,Buentello Jessie,,,,,,,TX,,Lien,LIEN,2026-07-20,2026025226,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025226
 L,Torres Brandon,,,,,,,TX,,Lien,LIEN,2026-07-20,2026025219,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025219
@@ -132,4 +131,3 @@ Garza,Segovia Luis Eduardo,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-0
 Association,U S Bank National,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-13,2026024326,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024326
 Association,U S Bank National,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-13,2026024319,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024319
 Association,U S Bank National,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-07-02,2026023188,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023188
-Association,U S Bank National,,,,,,,TX,,Appointment of Sub Trust,APPOINTMENT,2026-06-30,2026022927,,30,,Nueces County Clerk,https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022927

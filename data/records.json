@@ -1,13 +1,63 @@
 {
-  "fetched_at": "2026-07-30T17:39:46.600487+00:00",
+  "fetched_at": "2026-07-31T17:43:32.030388+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-06-30",
-    "end": "2026-07-30"
+    "start": "2026-07-01",
+    "end": "2026-07-31"
   },
-  "total": 134,
-  "with_address": 50,
+  "total": 132,
+  "with_address": 51,
   "records": [
+    {
+      "doc_num": "2026026538",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-07-30",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "MPM DEVELOPMENT LP",
+      "grantee": "NATIONAL BANK & TRUST",
+      "amount": null,
+      "legal": "SECTION 2 LAURELES FARM TRACTS",
+      "prop_address": "COUNTY RD 43",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78415",
+      "mail_address": "PO Box 331308 Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78463",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026538",
+      "flags": [
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 60
+    },
+    {
+      "doc_num": "2026026641",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-07-30",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "DFLC INC",
+      "grantee": "BLACK ROBERT E",
+      "amount": null,
+      "legal": "ISLAND PARK ESTATES Lot: 15 Block: 2 Reference - 65/121& (Lot 15, Block 2)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026641",
+      "flags": [
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 55
+    },
     {
       "doc_num": "2026026189",
       "doc_type": "APPOINTMENT",
@@ -127,31 +177,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023136",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner"
-      ],
-      "score": 50
-    },
-    {
-      "doc_num": "2026022873",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-06-30",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "THE PORT ROYAL BY THE SEA CONDOMINIUM OWNERS ASSOCIATION INC",
-      "grantee": "DACKO DAVID",
-      "amount": null,
-      "legal": "BLDG E",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022873",
       "flags": [
         "Lis pendens",
         "LLC / corp owner"
@@ -521,30 +546,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026026057",
-      "doc_type": "HOSPITAL LIEN",
-      "filed": "2026-07-27",
-      "cat": "HL",
-      "cat_label": "Hospital Lien",
-      "owner": "CHRISTUS SPOHN HOSPITAL SOUTH",
-      "grantee": "VAZQUEZ VANESSA",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026057",
-      "flags": [
-        "New this week"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026026055",
       "doc_type": "HOSPITAL LIEN",
       "filed": "2026-07-27",
@@ -587,6 +588,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026056",
+      "flags": [
+        "New this week"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026026057",
+      "doc_type": "HOSPITAL LIEN",
+      "filed": "2026-07-27",
+      "cat": "HL",
+      "cat_label": "Hospital Lien",
+      "owner": "CHRISTUS SPOHN HOSPITAL SOUTH",
+      "grantee": "VAZQUEZ VANESSA",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026057",
       "flags": [
         "New this week"
       ],
@@ -1169,54 +1194,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026022954",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-30",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "SNAPKA FAMILY LOVING TRUST",
-      "grantee": "CHARLES KATHRYN SNAPKA",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022954",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026022946",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-30",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "THE MOORINGS AT MUSTANG ISLAND COUNCIL OF CO-OWNERS INC",
-      "grantee": "STONE R BRYAN",
-      "amount": null,
-      "legal": "MOORINGS AT MUSTANG  ISLAND CONDOMINIUM",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022946",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026023457",
       "doc_type": "DEED",
       "filed": "2026-07-06",
@@ -1289,30 +1266,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026025203",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-07-20",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "CHRISTENSEN DARREN A",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 545620326",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025203",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026025395",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-07-21",
@@ -1331,6 +1284,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025395",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026025203",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-07-20",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "CHRISTENSEN DARREN A",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 545620326",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025203",
       "flags": [
         "Tax lien"
       ],
@@ -2544,7 +2521,7 @@
       "filed": "2026-07-20",
       "cat": "LN",
       "cat_label": "Lien",
-      "owner": "RILEY MATTHEW J",
+      "owner": "RILEY CATHY D",
       "grantee": "THE CITY OF PORT ARANSAS",
       "amount": null,
       "legal": "604 PARKPLACE PORT ARANSAS TX 78373 (Lot 1, Block 1)",
@@ -3063,28 +3040,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026023188",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026022927",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-06-30",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "U S BANK NATIONAL ASSOCIATION",
-      "grantee": "AUCTION.COM",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026022927",
       "flags": [],
       "score": 30
     }
