@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-07-30T10:01:04+00:00",
+  "ran_at": "2026-07-31T10:08:47+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -298,6 +298,15 @@
         "mail_zip": "78415",
         "ncad_account_num": "7308-0000-0310"
       }
+    },
+    {
+      "uid": "1009113966",
+      "prop_address": "525 S US HIGHWAY 77, BISHOP TX 78343-2929",
+      "result": "no-match",
+      "query": [
+        "StreetNumber:525 StreetName:S US HIGHWAY 77",
+        "StreetNumber:525 StreetName:HIGHWAY"
+      ]
     },
     {
       "uid": "1008251510",
