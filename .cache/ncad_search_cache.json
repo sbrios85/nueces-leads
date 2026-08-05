@@ -68,6 +68,23 @@
     "miss": true,
     "miss_reason": "no_results"
   },
+  "ccln_addr::2310 HOWARD": {
+    "mail_address": "",
+    "mail_city": "",
+    "mail_state": "",
+    "mail_zip": "",
+    "row": {
+      "account_num": "4528-0001-0370",
+      "appraised": 59386.0,
+      "legal": "LOMA ALTA BLK 1 LOT 37",
+      "owner_id": "661914",
+      "owner_name": "SALDANA NOELIA",
+      "prop_id": "261106",
+      "situs": "2310 HOWARD, CORPUS CHRISTI TX 78408",
+      "type_code": "R",
+      "year": "2026"
+    }
+  },
   "ccln_addr::2626": {
     "miss": true,
     "miss_reason": "unparseable_address"
@@ -2563,6 +2580,7 @@
       "site_state": "TX",
       "site_zip": "78411"
     },
+    "DIAZ TONY": null,
     "DICKEY BELINDA": null,
     "DILLARD ERNESTINE": {
       "mail_addr": "",
@@ -5612,6 +5630,7 @@
       "site_zip": "78412"
     },
     "LINAN ANGELA M": null,
+    "LINCOLN PLAZA LLC": null,
     "LINDER VENTURES LLC": null,
     "LIVINGS JAMES EVART ET UX": {
       "mail_addr": "",
@@ -6983,6 +7002,7 @@
       "site_state": "TX",
       "site_zip": "78407"
     },
+    "NEWREZ LLC": null,
     "NEXT SPORTS COMPANY LLC": null,
     "NIETO FELIPE ROBERT W": {
       "mail_addr": "",
@@ -8807,6 +8827,21 @@
       "ncad_prop_id": "598523",
       "ncad_year": "2026",
       "site_addr": "829 OMAHA DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408"
+    },
+    "SALDANA NOELIA": {
+      "appraised_value": 59386.0,
+      "mail_addr": "2310 HOWARD CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78408",
+      "ncad_legal": "LOMA ALTA BLK 1 LOT 37",
+      "ncad_owner_id": "661914",
+      "ncad_prop_id": "261106",
+      "ncad_year": "2026",
+      "site_addr": "2310 HOWARD",
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78408"
