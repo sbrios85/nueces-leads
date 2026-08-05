@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-08-04T10:12:03+00:00",
+  "ran_at": "2026-08-05T10:10:05+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -297,6 +297,28 @@
         "mail_state": "TX",
         "mail_zip": "78415",
         "ncad_account_num": "7308-0000-0310"
+      }
+    },
+    {
+      "uid": "1008156375",
+      "prop_address": "3767 COBB LN, ROBSTOWN TX 78380",
+      "result": "matched",
+      "ncad_prop_id": "290161",
+      "ncad_owner": "ESCAMILLA MARY ELLEN",
+      "ncad_legal": "RANCHO BANQUETE #2-UNREC LT 121",
+      "market_value": 72266.0,
+      "additions": {
+        "owner": "ESCAMILLA MARY ELLEN",
+        "legal": "RANCHO BANQUETE #2-UNREC LT 121",
+        "market_value": 72266.0,
+        "ncad_prop_id": "290161",
+        "ncad_owner_id": "723393",
+        "ncad_year": "2026",
+        "mail_address": "311 E 7TH ST",
+        "mail_city": "BISHOP",
+        "mail_state": "TX",
+        "mail_zip": "78343",
+        "ncad_account_num": "7102-0000-1210"
       }
     },
     {
