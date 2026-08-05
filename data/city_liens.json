@@ -81358,7 +81358,9 @@
       "ncad_account_num": "4528-0001-0370",
       "market_value": 59386.0,
       "prop_lat": 27.791983,
-      "prop_lng": -97.415297
+      "prop_lng": -97.415297,
+      "state_class": "A1",
+      "property_type": "Single-family"
     }
   ]
 }
