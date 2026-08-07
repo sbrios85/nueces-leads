@@ -68,23 +68,6 @@
     "miss": true,
     "miss_reason": "no_results"
   },
-  "ccln_addr::2310 HOWARD": {
-    "mail_address": "",
-    "mail_city": "",
-    "mail_state": "",
-    "mail_zip": "",
-    "row": {
-      "account_num": "4528-0001-0370",
-      "appraised": 59386.0,
-      "legal": "LOMA ALTA BLK 1 LOT 37",
-      "owner_id": "661914",
-      "owner_name": "SALDANA NOELIA",
-      "prop_id": "261106",
-      "situs": "2310 HOWARD, CORPUS CHRISTI TX 78408",
-      "type_code": "R",
-      "year": "2026"
-    }
-  },
   "ccln_addr::2626": {
     "miss": true,
     "miss_reason": "unparseable_address"
@@ -1523,6 +1506,21 @@
       "site_state": "TX",
       "site_zip": "78380"
     },
+    "CALDERON CLEMENCIA RODRIGUEZ": {
+      "appraised_value": 317570.0,
+      "mail_addr": "1701 Azalea Dr Cedar Park",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78613",
+      "ncad_legal": "MONTE VERDE AT TERRA MAR UNIT 1 BLK 1 LOT 15",
+      "ncad_owner_id": "710281",
+      "ncad_prop_id": "371733",
+      "ncad_year": "2026",
+      "site_addr": "2214 CARDINALES LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414"
+    },
     "CALEY JOHN L": {
       "mail_addr": "",
       "mail_city": "",
@@ -2122,6 +2120,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "CORRIA YOSVANY": null,
     "CORTEZ LEONEL JR": {
       "mail_addr": "",
       "mail_city": "",
@@ -2289,6 +2288,23 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "DANGLADE HOLDINGS LLC": {
+      "appraised_value": 955529.0,
+      "mail_addr": "3241 BIMINI CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_legal": "ISLAND BUSINESS CENTER UNIT 1 BLK C .643 AC",
+      "ncad_owner_id": "795215",
+      "ncad_prop_id": "247244",
+      "ncad_year": "2026",
+      "site_addr": "1455 WALDRON RD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
+    },
+    "DANGLADE JAMES H III": null,
+    "DANGLADE JAMES HAROLD III": null,
     "DAVID BRIAN HALL AND NANCY MARIE RALL": {
       "appraised_value": 240877.0,
       "mail_addr": "7706 Arshan Ln Corpus Christi",
@@ -2936,6 +2952,7 @@
       "site_state": "TX",
       "site_zip": "78407"
     },
+    "ESCALONA ROBERTO ISIDRO": null,
     "ESCOBAR GRACE": {
       "mail_addr": "",
       "mail_city": "",
@@ -3806,6 +3823,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78405"
+    },
+    "GARZA SAMANTHA": {
+      "appraised_value": 200957.0,
+      "mail_addr": "4602 Cedar Pass Dr Apt A Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78413",
+      "ncad_legal": "BRECKENRIDGE TOWNHOMES, UNIT 1-A, 2.083% COMMON AREA INTEREST",
+      "ncad_owner_id": "790284",
+      "ncad_prop_id": "199625",
+      "ncad_year": "2026",
+      "site_addr": "4602 CEDAR PASS DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78413"
     },
     "GARZA VIRGINIA P": {
       "mail_addr": "",
@@ -5652,6 +5684,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "LONDON VILLAGE ASSOCIATION": null,
     "LONGORIA ANITA A": {
       "mail_addr": "",
       "mail_city": "",
@@ -6829,6 +6862,21 @@
       "site_state": "TX",
       "site_zip": "78413"
     },
+    "MUNGIA MITCHELL": {
+      "appraised_value": 111479.0,
+      "mail_addr": "11909 WILDHORSE VALLEY CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78410",
+      "ncad_legal": "PALM COURT BLK 2 LOT 20",
+      "ncad_owner_id": "433798",
+      "ncad_prop_id": "280027",
+      "ncad_year": "2026",
+      "site_addr": "310 ETHEL",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78408"
+    },
     "MUNGUIA JOHN": {
       "appraised_value": 224907.0,
       "mail_addr": "3909 DUNSTAIN ST CORPUS CHRISTI",
@@ -7413,6 +7461,21 @@
       "site_state": "TX",
       "site_zip": "78416"
     },
+    "PENA RAUL": {
+      "appraised_value": 242336.0,
+      "mail_addr": "4930 HIGH MEADOW DRIVE CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78413",
+      "ncad_legal": "CLUB ESTATES  #3 BLK 4 LOT 10",
+      "ncad_owner_id": "429290",
+      "ncad_prop_id": "214004",
+      "ncad_year": "2026",
+      "site_addr": "4930 HIGH MEADOW DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78413"
+    },
     "PENA RICHARD": {
       "mail_addr": "",
       "mail_city": "",
@@ -7988,6 +8051,7 @@
       "site_state": "TX",
       "site_zip": "78415"
     },
+    "RAMIREZ ROXANN": null,
     "RAMIREZ TERESA": {
       "appraised_value": 34820.0,
       "mail_addr": "804 EAST AVE C ROBSTOWN",
