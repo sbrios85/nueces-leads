@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-08-07T08:37:50+00:00",
+  "ran_at": "2026-08-08T08:09:31+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -329,28 +329,6 @@
         "StreetNumber:525 StreetName:S US HIGHWAY 77",
         "StreetNumber:525 StreetName:HIGHWAY"
       ]
-    },
-    {
-      "uid": "1008251510",
-      "prop_address": "2114 HARVARD ST, CORPUS CHRISTI TX 78416-1231",
-      "result": "matched",
-      "ncad_prop_id": "267354",
-      "ncad_owner": "REYNA LEE OSWALD",
-      "ncad_legal": "MIDWAY BLK 8 LOT 7",
-      "market_value": 104742.0,
-      "additions": {
-        "owner": "REYNA LEE OSWALD",
-        "legal": "MIDWAY BLK 8 LOT 7",
-        "market_value": 104742.0,
-        "ncad_prop_id": "267354",
-        "ncad_owner_id": "764625",
-        "ncad_year": "2026",
-        "mail_address": "PO Box 484",
-        "mail_city": "Ingleside",
-        "mail_state": "TX",
-        "mail_zip": "78362",
-        "ncad_account_num": "5175-0008-0070"
-      }
     },
     {
       "uid": "1008122147",
