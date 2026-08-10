@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-08-09T16:40:25.278593+00:00",
+  "fetched_at": "2026-08-10T16:57:51.827436+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-07-10",
-    "end": "2026-08-09"
+    "start": "2026-07-11",
+    "end": "2026-08-10"
   },
   "total": 129,
   "with_address": 47,
@@ -2655,28 +2655,6 @@
       "score": 30
     },
     {
-      "doc_num": "2026026057",
-      "doc_type": "HOSPITAL LIEN",
-      "filed": "2026-07-27",
-      "cat": "HL",
-      "cat_label": "Hospital Lien",
-      "owner": "CHRISTUS SPOHN HOSPITAL SOUTH",
-      "grantee": "VAZQUEZ VANESSA",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026057",
-      "flags": [],
-      "score": 30
-    },
-    {
       "doc_num": "2026026055",
       "doc_type": "HOSPITAL LIEN",
       "filed": "2026-07-27",
@@ -2717,6 +2695,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026056",
+      "flags": [],
+      "score": 30
+    },
+    {
+      "doc_num": "2026026057",
+      "doc_type": "HOSPITAL LIEN",
+      "filed": "2026-07-27",
+      "cat": "HL",
+      "cat_label": "Hospital Lien",
+      "owner": "CHRISTUS SPOHN HOSPITAL SOUTH",
+      "grantee": "VAZQUEZ VANESSA",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026057",
       "flags": [],
       "score": 30
     },

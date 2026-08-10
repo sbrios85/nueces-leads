@@ -122,7 +122,7 @@
   },
   "ccln_addr::5488 S PADRE ISLAND DR": {
     "miss": true,
-    "miss_reason": "no_corroboration"
+    "miss_reason": "no_results"
   },
   "ccln_addr::6001 CIR": {
     "miss": true,
