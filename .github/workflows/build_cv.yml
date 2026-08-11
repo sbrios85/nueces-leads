@@ -63,11 +63,11 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dashboard/code_violations.json
+          git add dashboard/code_violations.json scraper/cv_ledger.json
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "CV: rebuild code_violations.json from cv_input"
+            git commit -m "CV: merge cv_input into ledger + rebuild code_violations.json"
             git push
           fi
 
