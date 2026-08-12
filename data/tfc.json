@@ -36,7 +36,9 @@
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78416",
-      "ncad_account_num": "7614-0001-0200"
+      "ncad_account_num": "7614-0001-0200",
+      "prop_lat": 27.765473,
+      "prop_lng": -97.422516
     },
     {
       "uid": "1008177121",
@@ -74,7 +76,9 @@
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78415",
-      "ncad_account_num": "7308-0000-0310"
+      "ncad_account_num": "7308-0000-0310",
+      "prop_lat": 27.88865,
+      "prop_lng": -97.675141
     },
     {
       "uid": "1008156375",
@@ -112,7 +116,9 @@
       "mail_city": "BISHOP",
       "mail_state": "TX",
       "mail_zip": "78343",
-      "ncad_account_num": "7102-0000-1210"
+      "ncad_account_num": "7102-0000-1210",
+      "prop_lat": 27.804391,
+      "prop_lng": -97.837144
     },
     {
       "uid": "1009113966",
@@ -177,7 +183,9 @@
       "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78416",
-      "ncad_account_num": "7614-0006-0260"
+      "ncad_account_num": "7614-0006-0260",
+      "prop_lat": 27.76428,
+      "prop_lng": -97.420998
     },
     {
       "uid": "1009010204",
@@ -215,7 +223,9 @@
       "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78415",
-      "ncad_account_num": "9827-0004-0100"
+      "ncad_account_num": "9827-0004-0100",
+      "prop_lat": 27.737711,
+      "prop_lng": -97.410336
     },
     {
       "uid": "1008438823",
@@ -253,7 +263,9 @@
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78404",
-      "ncad_account_num": "2760-1404-0250"
+      "ncad_account_num": "2760-1404-0250",
+      "prop_lat": 27.770351,
+      "prop_lng": -97.404985
     },
     {
       "uid": "1009689817",
@@ -291,7 +303,9 @@
       "mail_city": "LAS VEGAS",
       "mail_state": "NV",
       "mail_zip": "89119",
-      "ncad_account_num": "4130-0013-0160"
+      "ncad_account_num": "4130-0013-0160",
+      "prop_lat": 27.620586,
+      "prop_lng": -97.294852
     },
     {
       "uid": "1016578468",
@@ -329,7 +343,9 @@
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78412",
-      "ncad_account_num": "2971-0009-0240"
+      "ncad_account_num": "2971-0009-0240",
+      "prop_lat": 27.686728,
+      "prop_lng": -97.340169
     },
     {
       "uid": "1015203181",
@@ -367,7 +383,9 @@
       "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78411",
-      "ncad_account_num": "9563-0007-0060"
+      "ncad_account_num": "9563-0007-0060",
+      "prop_lat": 27.734793,
+      "prop_lng": -97.396079
     },
     {
       "uid": "1009751711",
@@ -405,7 +423,9 @@
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78405",
-      "ncad_account_num": "1795-0007-0020"
+      "ncad_account_num": "1795-0007-0020",
+      "prop_lat": 27.782308,
+      "prop_lng": -97.434664
     },
     {
       "uid": "1009124377",
@@ -443,7 +463,9 @@
       "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78411",
-      "ncad_account_num": "0386-0004-0020"
+      "ncad_account_num": "0386-0004-0020",
+      "prop_lat": 27.769087,
+      "prop_lng": -97.412173
     },
     {
       "uid": "1009124412",
@@ -481,7 +503,9 @@
       "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78411",
-      "ncad_account_num": "0386-0006-0010"
+      "ncad_account_num": "0386-0006-0010",
+      "prop_lat": 27.76891,
+      "prop_lng": -97.412119
     },
     {
       "uid": "1008816478",
@@ -519,7 +543,9 @@
       "mail_city": "Broken Arrow",
       "mail_state": "OK",
       "mail_zip": "74012",
-      "ncad_account_num": "9377-0051-0100"
+      "ncad_account_num": "9377-0051-0100",
+      "prop_lat": 27.588324,
+      "prop_lng": -97.803264
     },
     {
       "uid": "1008193895",
@@ -557,7 +583,9 @@
       "mail_city": "Corpus Christi",
       "mail_state": "TX",
       "mail_zip": "78405",
-      "ncad_account_num": "8529-0003-0120"
+      "ncad_account_num": "8529-0003-0120",
+      "prop_lat": 27.783628,
+      "prop_lng": -97.417449
     },
     {
       "uid": "1008100226",
@@ -594,7 +622,9 @@
       "mail_address": "2711 N Haskell Ave",
       "mail_city": "Ste 2100",
       "mail_state": "TX",
-      "ncad_account_num": "3700-0002-0040"
+      "ncad_account_num": "3700-0002-0040",
+      "prop_lat": 27.746101,
+      "prop_lng": -97.429684
     },
     {
       "uid": "1007525102",
@@ -632,7 +662,9 @@
       "mail_city": "ROBSTOWN",
       "mail_state": "TX",
       "mail_zip": "78380",
-      "ncad_account_num": "1955-0001-0370"
+      "ncad_account_num": "1955-0001-0370",
+      "prop_lat": 27.796961,
+      "prop_lng": -97.673312
     },
     {
       "uid": "1007630229",
@@ -670,7 +702,9 @@
       "mail_city": "CORPUS CHRISTI",
       "mail_state": "TX",
       "mail_zip": "78418",
-      "ncad_account_num": "7675-0001-0190"
+      "ncad_account_num": "7675-0001-0190",
+      "prop_lat": 27.63977,
+      "prop_lng": -97.302358
     }
   ],
   "total": 18,
