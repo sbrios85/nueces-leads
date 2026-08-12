@@ -272,6 +272,23 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "ADAME JANDEL": null,
+    "ADAME JATHANA": null,
+    "ADAME JORGE": {
+      "appraised_value": 457206.0,
+      "mail_addr": "14822 AQUARIUS ST CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_legal": "BARATARIA BAY  #5 BLK 717 LOT 25",
+      "ncad_owner_id": "535990",
+      "ncad_prop_id": "188837",
+      "ncad_year": "2026",
+      "site_addr": "14822 AQUARUIS",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
+    },
     "ADAMEIT ROBERT C": {
       "mail_addr": "",
       "mail_city": "",
@@ -1430,6 +1447,7 @@
       "site_state": "TX",
       "site_zip": "78412"
     },
+    "BUSKIRK MARK PORTER VAN": null,
     "BUSSEY HORACE L": {
       "mail_addr": "",
       "mail_city": "",
@@ -2131,6 +2149,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "CORY MICHELLE JENNIFER": null,
     "COSTAL BEND WELLHEAD INC AND FORCE TRUCKING LLC": {
       "mail_addr": "",
       "mail_city": "",
@@ -2377,6 +2396,21 @@
     },
     "DAVIS DONNELL": null,
     "DAVIS RODNEY": null,
+    "DE ADAME NALLELY RODRIGUEZ": {
+      "appraised_value": 80466.0,
+      "mail_addr": "1317 Sabinas St Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78405",
+      "ncad_legal": "SOUTHSIDE BLK 24 LOT 7",
+      "ncad_owner_id": "771119",
+      "ncad_prop_id": "200030389",
+      "ncad_year": "2026",
+      "site_addr": "4826 KENDALL DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415"
+    },
     "DE LA CRUZ LAURA": {
       "mail_addr": "",
       "mail_city": "",
@@ -3557,6 +3591,21 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "GARCIA GUSTAVO": {
+      "appraised_value": 178334.0,
+      "mail_addr": "PO Box 232 Premont",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78375",
+      "ncad_legal": "SOUTH SEA ISLANDS #1 BLK 7 LOT 11",
+      "ncad_owner_id": "734346",
+      "ncad_prop_id": "200026273",
+      "ncad_year": "2026",
+      "site_addr": "317 NORFOLK DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
+    },
     "GARCIA HAILIE NICOLE": {
       "appraised_value": 326074.0,
       "mail_addr": "4010 MAXIMUS DR CORPUS CHRISTI",
@@ -4602,6 +4651,21 @@
       "site_zip": "78405"
     },
     "HERNANDEZ PATRICIA RUSCELLO": null,
+    "HERNANDEZ RUDY": {
+      "appraised_value": 132974.0,
+      "mail_addr": "5414 HITCHING POST CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78415",
+      "ncad_legal": "SURREY PLACE UNIT 1 LT 4 BK 2",
+      "ncad_owner_id": "558365",
+      "ncad_prop_id": "200040375",
+      "ncad_year": "2026",
+      "site_addr": "5414 HITCHING POST LN",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78415"
+    },
     "HERRERA JAVIER": {
       "appraised_value": 1178344.0,
       "mail_addr": "1800 W Commerce St San Antonio",
@@ -5442,6 +5506,7 @@
       "site_state": "TX",
       "site_zip": "78408"
     },
+    "KINGOFTHESEVENSEAS LLC": null,
     "KOECKRITZ FRED P": {
       "mail_addr": "",
       "mail_city": "",
