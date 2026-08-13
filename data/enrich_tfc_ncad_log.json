@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-08-12T08:48:30+00:00",
+  "ran_at": "2026-08-13T08:54:11+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -384,6 +384,28 @@
         "mail_state": "TX",
         "mail_zip": "78418",
         "ncad_account_num": "7675-0001-0190"
+      }
+    },
+    {
+      "uid": "1016578660",
+      "prop_address": "3402 OCEAN DR APT 41, CORPUS CHRISTI TX 78411-1469",
+      "result": "matched",
+      "ncad_prop_id": "248856",
+      "ncad_owner": "LUNA JAMIE ALBERTO",
+      "ncad_legal": "JACKSONS LANDING CONDO, UNIT 1, 3.14% COMMON AREA INTEREST",
+      "market_value": 230993.0,
+      "additions": {
+        "owner": "LUNA JAMIE ALBERTO",
+        "legal": "JACKSONS LANDING CONDO, UNIT 1, 3.14% COMMON AREA INTEREST",
+        "market_value": 230993.0,
+        "ncad_prop_id": "248856",
+        "ncad_owner_id": "713980",
+        "ncad_year": "2026",
+        "mail_address": "3402 Ocean Dr   Apt 1",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78411",
+        "ncad_account_num": "3764-0000-0010"
       }
     }
   ]
