@@ -1488,6 +1488,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "BUTLER RHETT P": null,
     "Berenice Aurora Marquez de Guillen": null,
     "Brandon C Cordell and Arlene Madali Cordell": {
       "appraised_value": 387644.0,
@@ -2085,6 +2086,21 @@
       "site_state": "TX",
       "site_zip": "78415"
     },
+    "CONTRERAS JOE": {
+      "appraised_value": 199864.0,
+      "mail_addr": "PO BOX 113 AGUA DULCE",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78330",
+      "ncad_legal": "EAST SIDE NO 3-AGUA DULCE LTS 5 & 6 BLK 31",
+      "ncad_owner_id": "532147",
+      "ncad_prop_id": "227697",
+      "ncad_year": "2026",
+      "site_addr": "422 WILMA AVE",
+      "site_city": "AGUA DULCE",
+      "site_state": "TX",
+      "site_zip": "78330"
+    },
     "COOKE SANDY PRISCILLA": null,
     "COPELAND PATRICIA SHANNAN ETALS": {
       "mail_addr": "",
@@ -2181,6 +2197,7 @@
       "site_zip": "78401"
     },
     "CRAWFORD JOEWEL": null,
+    "CREELY CAROL": null,
     "CRISANTES LUIS W": {
       "mail_addr": "",
       "mail_city": "",
@@ -4997,6 +5014,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "JAQUEZ JOHN R": null,
     "JARAMILLO CARLOS": {
       "mail_addr": "",
       "mail_city": "",
@@ -6265,6 +6283,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "MARTINEZ JUAN D": null,
     "MARTINEZ KRYSTAL": {
       "appraised_value": 290552.0,
       "mail_addr": "2222 Torrente Dr Corpus Christi",
@@ -6842,6 +6861,7 @@
       "site_state": "TX",
       "site_zip": "78415"
     },
+    "MORENO RODOLFO": null,
     "MORRIS DON R": {
       "mail_addr": "",
       "mail_city": "",
@@ -6957,6 +6977,7 @@
       "site_state": "TX",
       "site_zip": "78410"
     },
+    "MUNIZ MARGARITA A": null,
     "MUNOZ GABRIEL": {
       "mail_addr": "",
       "mail_city": "",
@@ -8730,6 +8751,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "ROELSE PARK A": null,
     "ROESLER JASON": {
       "mail_addr": "",
       "mail_city": "",
@@ -9414,6 +9436,7 @@
       "site_state": "TX",
       "site_zip": "78413"
     },
+    "SLATEN JOSEPH": null,
     "SLIDER LEROY": {
       "mail_addr": "",
       "mail_city": "",
@@ -9710,6 +9733,21 @@
       "site_zip": "78414"
     },
     "SUPERFROG ANESTHESIA PLLC AN LLC": null,
+    "SUTTON DAVID": {
+      "appraised_value": 532907.0,
+      "mail_addr": "15641 Cruiser St Apt A Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78418",
+      "ncad_legal": "BARATARIA BAY NO 4 LOT 6 BLK 9",
+      "ncad_owner_id": "798582",
+      "ncad_prop_id": "188640",
+      "ncad_year": "2026",
+      "site_addr": "13838 MIZZEN ST",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
+    },
     "SYFERD SYRUS": null,
     "Steven J. Karg and spouse, April R. Karg": {
       "appraised_value": 260590.0,
@@ -10340,6 +10378,7 @@
       "site_state": "TX",
       "site_zip": "78411"
     },
+    "VILLARREAL JEANNETTE E": null,
     "VILLARREAL MARISSA MARIE": {
       "appraised_value": 1148431.0,
       "mail_addr": "6202 Green Oaks Dr Austin",
@@ -10411,6 +10450,7 @@
       "site_state": "TX",
       "site_zip": "78418"
     },
+    "WATTERS MATTHEW D": null,
     "WELDER LESHIN LLP": {
       "appraised_value": 53391.0,
       "mail_addr": "800 N SHORELINE STE #300N CORPUS CHRISTI",
@@ -10694,6 +10734,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "ZUNIGA ALVARO": null,
     "and Everett": {
       "appraised_value": 154156.0,
       "mail_addr": "3937 Naples St Corpus Christi",
