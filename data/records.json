@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-08-13T17:02:39.276897+00:00",
+  "fetched_at": "2026-08-14T16:57:46.621719+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-07-14",
-    "end": "2026-08-13"
+    "start": "2026-07-15",
+    "end": "2026-08-14"
   },
-  "total": 150,
-  "with_address": 44,
+  "total": 147,
+  "with_address": 45,
   "records": [
     {
       "doc_num": "2026028245",
@@ -134,31 +134,6 @@
       "score": 60
     },
     {
-      "doc_num": "2026027528",
-      "doc_type": "JUDGMENT",
-      "filed": "2026-08-06",
-      "cat": "JUD",
-      "cat_label": "Judgment",
-      "owner": "ESCALONA ROBERTO ISIDRO",
-      "grantee": "ESCALONA ISIDRO",
-      "amount": null,
-      "legal": "NO 2025-PR 00725-1",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027528",
-      "flags": [
-        "Judgment lien",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
       "doc_num": "2026027805",
       "doc_type": "MODIFICATION",
       "filed": "2026-08-10",
@@ -234,6 +209,31 @@
       "score": 55
     },
     {
+      "doc_num": "2026028422",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-08-13",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "THE RONALD ROEWE TRUST",
+      "grantee": "ROEWE ROBERT LOWELL",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028422",
+      "flags": [
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
       "doc_num": "2026028051",
       "doc_type": "APPOINTMENT",
       "filed": "2026-08-11",
@@ -254,6 +254,31 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028051",
       "flags": [
         "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
+      "doc_num": "2026028185",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-08-12",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "VILLARREAL JEANNETTE E",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NO 260436017",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028185",
+      "flags": [
+        "Tax lien",
         "New this week"
       ],
       "score": 55
@@ -334,31 +359,6 @@
       "score": 55
     },
     {
-      "doc_num": "2026028185",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-08-12",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "VILLARREAL JEANNETTE E",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 260436017",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028185",
-      "flags": [
-        "Tax lien",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
       "doc_num": "2026028198",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-08-12",
@@ -384,31 +384,6 @@
       "score": 55
     },
     {
-      "doc_num": "2026028195",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-08-12",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "MORENO RODOLFO",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 547667726",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028195",
-      "flags": [
-        "Tax lien",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
       "doc_num": "2026028193",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-08-12",
@@ -427,6 +402,31 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028193",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
+      "doc_num": "2026028195",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-08-12",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "MORENO RODOLFO",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 547667726",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028195",
       "flags": [
         "Tax lien",
         "New this week"
@@ -509,31 +509,6 @@
       "score": 55
     },
     {
-      "doc_num": "2026028179",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-08-12",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "WATTERS MATTHEW D",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 547029126",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028179",
-      "flags": [
-        "Tax lien",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
       "doc_num": "2026028197",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-08-12",
@@ -552,6 +527,31 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028197",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
+      "doc_num": "2026028179",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-08-12",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "WATTERS MATTHEW D",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 547029126",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028179",
       "flags": [
         "Tax lien",
         "New this week"
@@ -584,6 +584,30 @@
       "score": 55
     },
     {
+      "doc_num": "2026028415",
+      "doc_type": "MECHANICS LIEN",
+      "filed": "2026-08-13",
+      "cat": "LNMECH",
+      "cat_label": "Mechanics Lien",
+      "owner": "IRUJO RAUL",
+      "grantee": "BECTON JEROD",
+      "amount": null,
+      "legal": "6601 WHITE WIND DR CORPUS CHRISTI TEXAS 78413 (Lot 10, Block 106)",
+      "prop_address": "6601 WHITE WIND DR",
+      "prop_city": "CORPUS CHRISTI TEXAS",
+      "prop_state": "TX",
+      "prop_zip": "78413",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028415",
+      "flags": [
+        "New this week"
+      ],
+      "score": 50
+    },
+    {
       "doc_num": "2026027954",
       "doc_type": "MECHANICS LIEN",
       "filed": "2026-08-10",
@@ -608,6 +632,30 @@
       "score": 50
     },
     {
+      "doc_num": "2026028344",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-08-13",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "GOMEZ MARIA ISABEL",
+      "grantee": "WELLS FARGO BANK N A",
+      "amount": null,
+      "legal": "4509 LAMONT ST CORPUS CHRISTI TX 78411 (Lot 3, Block 7)",
+      "prop_address": "4509 LAMONT ST",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78411",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028344",
+      "flags": [
+        "New this week"
+      ],
+      "score": 50
+    },
+    {
       "doc_num": "2026028278",
       "doc_type": "MODIFICATION",
       "filed": "2026-08-12",
@@ -626,6 +674,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028278",
+      "flags": [
+        "New this week"
+      ],
+      "score": 50
+    },
+    {
+      "doc_num": "2026028476",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-08-13",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "U S BANK NATIONAL ASSOCIATION",
+      "grantee": "AUCTION.COM LLC",
+      "amount": null,
+      "legal": "1726 OVERLAND TRAIL",
+      "prop_address": "1726 OVERLAND TRAIL",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028476",
       "flags": [
         "New this week"
       ],
@@ -899,30 +971,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026024580",
-      "doc_type": "MECHANICS LIEN",
-      "filed": "2026-07-14",
-      "cat": "LNMECH",
-      "cat_label": "Mechanics Lien",
-      "owner": "ENVIRONMENTAL DISCIPLINES INC",
-      "grantee": "EVANS GEORGE K",
-      "amount": null,
-      "legal": "4731 GREENWOOD DR CORPUS CHRISTI TX 78416 (Lot 3B,4, Block A)",
-      "prop_address": "4731 GREENWOOD DR",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78416",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024580",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026027804",
       "doc_type": "MODIFICATION",
       "filed": "2026-08-10",
@@ -1163,30 +1211,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026024440",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-07-14",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "SUN GEORGE VENTURES LLC",
-      "grantee": "PLAINS CAPITAL BANK",
-      "amount": null,
-      "legal": "WOOLDRIDGE CREEK Lot: 20 Block: 1 Unit or Part: 14 (Lot 20, Block 1)",
-      "prop_address": "2430 MANUEL LN",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78414",
-      "mail_address": "5626 OCEAN DR CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78412",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024440",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026027275",
       "doc_type": "APPOINTMENT",
       "filed": "2026-08-05",
@@ -1233,6 +1257,30 @@
         "Tax lien"
       ],
       "score": 45
+    },
+    {
+      "doc_num": "2026027528",
+      "doc_type": "JUDGMENT",
+      "filed": "2026-08-06",
+      "cat": "JUD",
+      "cat_label": "Judgment",
+      "owner": "ESCALONA ROBERTO ISIDRO",
+      "grantee": "ESCALONA ISIDRO",
+      "amount": null,
+      "legal": "NO 2025-PR 00725-1",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027528",
+      "flags": [
+        "Judgment lien"
+      ],
+      "score": 40
     },
     {
       "doc_num": "2026025621",
@@ -1523,30 +1571,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026024551",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-07-14",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "IJAZ ARSLAN",
-      "grantee": "USA INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NUMBER 545079526",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024551",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026025205",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-07-20",
@@ -1565,30 +1589,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025205",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026026934",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-08-03",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "AKPUNKU KELECHI K",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 546340926",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026934",
       "flags": [
         "Tax lien"
       ],
@@ -1619,15 +1619,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026025395",
+      "doc_num": "2026026934",
       "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-07-21",
+      "filed": "2026-08-03",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "GUERRERO ANTHONY",
+      "owner": "AKPUNKU KELECHI K",
       "grantee": "USA INTERNAL REVENUE",
       "amount": null,
-      "legal": "SERIAL NUMBER 237000416",
+      "legal": "SERIAL NO 546340926",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -1636,7 +1636,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025395",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026934",
       "flags": [
         "Tax lien"
       ],
@@ -1667,6 +1667,30 @@
       "score": 40
     },
     {
+      "doc_num": "2026025395",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-07-21",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "GUERRERO ANTHONY",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NUMBER 237000416",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025395",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
       "doc_num": "2026026933",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-08-03",
@@ -1685,6 +1709,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026933",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026026937",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-08-03",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "SALAMAH NAIEF",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NO 5465831426",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026937",
       "flags": [
         "Tax lien"
       ],
@@ -1733,30 +1781,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025675",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026026937",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-08-03",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "SALAMAH NAIEF",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 5465831426",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026937",
       "flags": [
         "Tax lien"
       ],
@@ -1917,28 +1941,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024621",
-      "flags": [],
-      "score": 35
-    },
-    {
-      "doc_num": "2026024566",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-07-14",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "RECIO YVONNE D",
-      "grantee": "WELLS FARGO BANK N A",
-      "amount": null,
-      "legal": "4921 BAYOU ST CORPUS CHRISTI TX 78416 (Lot 7, Block 3)",
-      "prop_address": "4921 BAYOU ST",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78416",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024566",
       "flags": [],
       "score": 35
     },
@@ -2207,6 +2209,28 @@
       "score": 35
     },
     {
+      "doc_num": "2026025236",
+      "doc_type": "LIEN",
+      "filed": "2026-07-20",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "HERRERA JAVIER",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
+      "amount": null,
+      "legal": "",
+      "prop_address": "116 WILD INDIGO ST",
+      "prop_city": "PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "1800 W Commerce St San Antonio",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78207",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025236",
+      "flags": [],
+      "score": 35
+    },
+    {
       "doc_num": "2026025231",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -2251,24 +2275,24 @@
       "score": 35
     },
     {
-      "doc_num": "2026025236",
+      "doc_num": "2026025230",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
       "cat": "LN",
       "cat_label": "Lien",
-      "owner": "HERRERA JAVIER",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
+      "owner": "VALENZUELA YANEZ MICHAEL",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER DOCTORS REGIONAL BAY AREA MC CAMPUS",
       "amount": null,
       "legal": "",
-      "prop_address": "116 WILD INDIGO ST",
-      "prop_city": "PORT ARANSAS",
+      "prop_address": "6826 BOARDWALK AVE",
+      "prop_city": "CORPUS CHRISTI",
       "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "1800 W Commerce St San Antonio",
+      "prop_zip": "78414",
+      "mail_address": "SHIRLEY VALENZUELA WFE 6826 BOARDWALK AVE CORPUS CHRISTI",
       "mail_city": "",
       "mail_state": "TX",
-      "mail_zip": "78207",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025236",
+      "mail_zip": "78414",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025230",
       "flags": [],
       "score": 35
     },
@@ -2735,28 +2759,6 @@
       "score": 30
     },
     {
-      "doc_num": "2026025542",
-      "doc_type": "LIEN",
-      "filed": "2026-07-22",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "SILVA CRYSTAL LYN",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025542",
-      "flags": [],
-      "score": 30
-    },
-    {
       "doc_num": "2026025543",
       "doc_type": "LIEN",
       "filed": "2026-07-22",
@@ -2775,6 +2777,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025543",
+      "flags": [],
+      "score": 30
+    },
+    {
+      "doc_num": "2026025542",
+      "doc_type": "LIEN",
+      "filed": "2026-07-22",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "SILVA CRYSTAL LYN",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025542",
       "flags": [],
       "score": 30
     },
@@ -2845,28 +2869,6 @@
       "score": 30
     },
     {
-      "doc_num": "2026025230",
-      "doc_type": "LIEN",
-      "filed": "2026-07-20",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "VALENZUELA YANEZ MICHAEL",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER DOCTORS REGIONAL BAY AREA MC CAMPUS",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025230",
-      "flags": [],
-      "score": 30
-    },
-    {
       "doc_num": "2026025229",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -2907,6 +2909,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025234",
+      "flags": [],
+      "score": 30
+    },
+    {
+      "doc_num": "2026025224",
+      "doc_type": "LIEN",
+      "filed": "2026-07-20",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "AUSTIN JADE",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025224",
       "flags": [],
       "score": 30
     },
@@ -2955,28 +2979,6 @@
       "score": 30
     },
     {
-      "doc_num": "2026025224",
-      "doc_type": "LIEN",
-      "filed": "2026-07-20",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "AUSTIN JADE",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER BAY AREA MC CAMPUS",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025224",
-      "flags": [],
-      "score": 30
-    },
-    {
       "doc_num": "2026025225",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -2999,28 +3001,6 @@
       "score": 30
     },
     {
-      "doc_num": "2026025223",
-      "doc_type": "LIEN",
-      "filed": "2026-07-20",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "ECHAVARRIA JAMES",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER NORTHWEST REGIONAL",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025223",
-      "flags": [],
-      "score": 30
-    },
-    {
       "doc_num": "2026025222",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -3039,6 +3019,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025222",
+      "flags": [],
+      "score": 30
+    },
+    {
+      "doc_num": "2026025223",
+      "doc_type": "LIEN",
+      "filed": "2026-07-20",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "ECHAVARRIA JAMES",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER NORTHWEST REGIONAL",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025223",
       "flags": [],
       "score": 30
     },
@@ -3083,28 +3085,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025220",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026024579",
-      "doc_type": "LIEN",
-      "filed": "2026-07-14",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "RODRIGUEZ NICOLAS AGUSTIN",
-      "grantee": "CAYO DEL OSO HOMEOWNERS ASSOCIATION",
-      "amount": null,
-      "legal": "CAYO DEL OSO SECTION 2 Lot: 37 Block: 1 (Lot 37, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024579",
       "flags": [],
       "score": 30
     },
@@ -3329,28 +3309,6 @@
       "score": 30
     },
     {
-      "doc_num": "2026024465",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-07-14",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "KARG ELIZABETH A",
-      "grantee": "FREEDOM MORTGAGE CORPORATION",
-      "amount": null,
-      "legal": "AMENDING PLAT OF LOTS 1 & 3-22 BLOCK 1 (Lot 3, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024465",
-      "flags": [],
-      "score": 30
-    },
-    {
       "doc_num": "2026027274",
       "doc_type": "APPOINTMENT",
       "filed": "2026-08-05",
@@ -3457,28 +3415,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024778",
-      "flags": [],
-      "score": 30
-    },
-    {
-      "doc_num": "2026024491",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-07-14",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "SEGOVIA LUIS EDUARDO GARZA",
-      "grantee": "LAZARTE FRANK A",
-      "amount": null,
-      "legal": "4346 CARLTON CORPUS CHRISTIT TX 78415 (Lot 8, Block 3)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024491",
       "flags": [],
       "score": 30
     }
