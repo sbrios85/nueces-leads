@@ -1,12 +1,12 @@
 {
-  "fetched_at": "2026-08-14T16:57:46.621719+00:00",
+  "fetched_at": "2026-08-15T16:29:27.070075+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-07-15",
-    "end": "2026-08-14"
+    "start": "2026-07-16",
+    "end": "2026-08-15"
   },
-  "total": 147,
-  "with_address": 45,
+  "total": 142,
+  "with_address": 43,
   "records": [
     {
       "doc_num": "2026028245",
@@ -27,56 +27,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028245",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 60
-    },
-    {
-      "doc_num": "2026027620",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-08-07",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "ADVENTURE INVESTMENTS LTD",
-      "grantee": "PLAINSCAPITAL BANK",
-      "amount": null,
-      "legal": "3794 FIVE POINTS RD CORPUS CHRISTI TX 78410 (Lot 3A, Block 8)",
-      "prop_address": "3794 FIVE POINTS RD",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78410",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027620",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 60
-    },
-    {
-      "doc_num": "2026027697",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-08-07",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "WELDER LESHIN LLP",
-      "grantee": "SHELLY MICHAEL J P C",
-      "amount": null,
-      "legal": "",
-      "prop_address": "800 N SHORELINE BLVD STE 300N",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78401",
-      "mail_address": "800 N SHORELINE STE #300N CORPUS CHRISTI",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78401",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027697",
       "flags": [
         "LLC / corp owner",
         "New this week"
@@ -159,56 +109,6 @@
       "score": 55
     },
     {
-      "doc_num": "2026027622",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-08-07",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "LIVE OAK CONSTRUCTION INC",
-      "grantee": "PLAINSCAPITAL BANK",
-      "amount": null,
-      "legal": "KING'S LANDING Lot: 6 Block: 9 Unit or Part: 5 Reference - 70/524 (Lot 6, Block 9)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027622",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
-      "doc_num": "2026027621",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-08-07",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "LIVE OAK CONSTRUCTION INC",
-      "grantee": "PLAINSCAPITAL BANK",
-      "amount": null,
-      "legal": "KINGS LANDING Lot: 13 Block: 9 Unit or Part: 5 Reference - 70/524 (Lot 13, Block 9)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027621",
-      "flags": [
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
       "doc_num": "2026028422",
       "doc_type": "APPOINTMENT",
       "filed": "2026-08-13",
@@ -254,31 +154,6 @@
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028051",
       "flags": [
         "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
-      "doc_num": "2026028185",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-08-12",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "VILLARREAL JEANNETTE E",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 260436017",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028185",
-      "flags": [
-        "Tax lien",
         "New this week"
       ],
       "score": 55
@@ -359,6 +234,31 @@
       "score": 55
     },
     {
+      "doc_num": "2026028185",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-08-12",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "VILLARREAL JEANNETTE E",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NO 260436017",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028185",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
       "doc_num": "2026028198",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-08-12",
@@ -384,31 +284,6 @@
       "score": 55
     },
     {
-      "doc_num": "2026028193",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-08-12",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "ZUNIGA ALVARO",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 547522126",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028193",
-      "flags": [
-        "Tax lien",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
       "doc_num": "2026028195",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-08-12",
@@ -427,6 +302,31 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028195",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
+      "doc_num": "2026028193",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-08-12",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "ZUNIGA ALVARO",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 547522126",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028193",
       "flags": [
         "Tax lien",
         "New this week"
@@ -509,31 +409,6 @@
       "score": 55
     },
     {
-      "doc_num": "2026028197",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-08-12",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "SLATEN JOSEPH",
-      "grantee": "INTERNAL REVENUE SERVICE",
-      "amount": null,
-      "legal": "SERIAL NO 547679826",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028197",
-      "flags": [
-        "Tax lien",
-        "New this week"
-      ],
-      "score": 55
-    },
-    {
       "doc_num": "2026028179",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-08-12",
@@ -552,6 +427,31 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028179",
+      "flags": [
+        "Tax lien",
+        "New this week"
+      ],
+      "score": 55
+    },
+    {
+      "doc_num": "2026028197",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-08-12",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "SLATEN JOSEPH",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 547679826",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026028197",
       "flags": [
         "Tax lien",
         "New this week"
@@ -875,30 +775,6 @@
       "score": 50
     },
     {
-      "doc_num": "2026027696",
-      "doc_type": "LIEN",
-      "filed": "2026-08-07",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "TLC COMPLETE CARE",
-      "grantee": "CORPUS RENE",
-      "amount": null,
-      "legal": "",
-      "prop_address": "606 S GULF ST",
-      "prop_city": "PORT ARANSAS",
-      "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "1927 FLAMINGO DR SAN ANTONIO",
-      "mail_city": "",
-      "mail_state": "TX",
-      "mail_zip": "78209",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027696",
-      "flags": [
-        "New this week"
-      ],
-      "score": 50
-    },
-    {
       "doc_num": "2026028083",
       "doc_type": "APPOINTMENT",
       "filed": "2026-08-11",
@@ -1019,6 +895,30 @@
       "score": 45
     },
     {
+      "doc_num": "2026027620",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-08-07",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "ADVENTURE INVESTMENTS LTD",
+      "grantee": "PLAINSCAPITAL BANK",
+      "amount": null,
+      "legal": "3794 FIVE POINTS RD CORPUS CHRISTI TX 78410 (Lot 3A, Block 8)",
+      "prop_address": "3794 FIVE POINTS RD",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78410",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027620",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 45
+    },
+    {
       "doc_num": "2026025114",
       "doc_type": "MODIFICATION",
       "filed": "2026-07-20",
@@ -1037,54 +937,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025114",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026024606",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-07-15",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "COZY COASTAL PROPERTIES LLC",
-      "grantee": "PLAINSCAPITAL BANK",
-      "amount": null,
-      "legal": "1290 THAMES CHASE DRIVE CORPUS CHRISTI TX 78415 (Lot 4, Block 17)",
-      "prop_address": "1290 THAMES CHASE DRIVE",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78415",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024606",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026024605",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-07-15",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "COZY COASTAL PROPERTIES LLC",
-      "grantee": "PLAINSCAPITAL BANK",
-      "amount": null,
-      "legal": "4205 WALNUT HILLS DRIVE UNIT A & B CORPUS CHRISTI TEXAS 78413 (Lot 19, Block 2)",
-      "prop_address": "4205 WALNUT HILLS DRIVE",
-      "prop_city": "UNIT A & B CORPUS CHRISTI TEXAS",
-      "prop_state": "TX",
-      "prop_zip": "78413",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024605",
       "flags": [
         "LLC / corp owner"
       ],
@@ -1139,54 +991,6 @@
       "score": 45
     },
     {
-      "doc_num": "2026027734",
-      "doc_type": "DEED",
-      "filed": "2026-08-07",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "NUECES COUNTY SHERIFF J C HOOPER",
-      "grantee": "TAX LIEN HEDGE SEASON 2025 LP",
-      "amount": null,
-      "legal": "2017DCV1354A (Lot 10, Block 2)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027734",
-      "flags": [
-        "New this week"
-      ],
-      "score": 45
-    },
-    {
-      "doc_num": "2026027730",
-      "doc_type": "DEED",
-      "filed": "2026-08-07",
-      "cat": "TAXDEED",
-      "cat_label": "Tax Deed",
-      "owner": "NUECES COUNTY SHERIFF J C HOOPER",
-      "grantee": "TAX LIEN HEDGE SEASON 2025 LP",
-      "amount": null,
-      "legal": "2022DCV2108E (Lot 15,16, Block 3)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027730",
-      "flags": [
-        "New this week"
-      ],
-      "score": 45
-    },
-    {
       "doc_num": "2026026538",
       "doc_type": "MODIFICATION",
       "filed": "2026-07-30",
@@ -1205,6 +1009,30 @@
       "mail_state": "TX",
       "mail_zip": "78463",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026538",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 45
+    },
+    {
+      "doc_num": "2026027697",
+      "doc_type": "APPOINTMENT",
+      "filed": "2026-08-07",
+      "cat": "APPNMT",
+      "cat_label": "Appointment of Sub Trust",
+      "owner": "WELDER LESHIN LLP",
+      "grantee": "SHELLY MICHAEL J P C",
+      "amount": null,
+      "legal": "",
+      "prop_address": "800 N SHORELINE BLVD STE 300N",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78401",
+      "mail_address": "800 N SHORELINE STE #300N CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78401",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027697",
       "flags": [
         "LLC / corp owner"
       ],
@@ -1331,6 +1159,54 @@
       "score": 40
     },
     {
+      "doc_num": "2026027622",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-08-07",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "LIVE OAK CONSTRUCTION INC",
+      "grantee": "PLAINSCAPITAL BANK",
+      "amount": null,
+      "legal": "KING'S LANDING Lot: 6 Block: 9 Unit or Part: 5 Reference - 70/524 (Lot 6, Block 9)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027622",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026027621",
+      "doc_type": "MODIFICATION",
+      "filed": "2026-08-07",
+      "cat": "MODIF",
+      "cat_label": "Loan Modification",
+      "owner": "LIVE OAK CONSTRUCTION INC",
+      "grantee": "PLAINSCAPITAL BANK",
+      "amount": null,
+      "legal": "KINGS LANDING Lot: 13 Block: 9 Unit or Part: 5 Reference - 70/524 (Lot 13, Block 9)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027621",
+      "flags": [
+        "LLC / corp owner"
+      ],
+      "score": 40
+    },
+    {
       "doc_num": "2026027157",
       "doc_type": "MODIFICATION",
       "filed": "2026-08-04",
@@ -1397,30 +1273,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025047",
-      "flags": [
-        "LLC / corp owner"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026024620",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-07-15",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "SUN GEORGE VENTURES LLC",
-      "grantee": "PLAINSCAPITAL BANK",
-      "amount": null,
-      "legal": "STONEGATE Lot: 3 Block: 3 Unit or Part: 2 (Lot 3, Block 3)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024620",
       "flags": [
         "LLC / corp owner"
       ],
@@ -1595,30 +1447,6 @@
       "score": 40
     },
     {
-      "doc_num": "2026026758",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-07-31",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "SCALES WILLIAM J",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NUMBER 546679526",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026758",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
       "doc_num": "2026026934",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-08-03",
@@ -1643,15 +1471,15 @@
       "score": 40
     },
     {
-      "doc_num": "2026025203",
+      "doc_num": "2026026758",
       "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-07-20",
+      "filed": "2026-07-31",
       "cat": "LNFED",
       "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "CHRISTENSEN DARREN A",
-      "grantee": "INTERNAL REVENUE SERVICE",
+      "owner": "SCALES WILLIAM J",
+      "grantee": "USA INTERNAL REVENUE",
       "amount": null,
-      "legal": "SERIAL NO 545620326",
+      "legal": "SERIAL NUMBER 546679526",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -1660,7 +1488,7 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025203",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026758",
       "flags": [
         "Tax lien"
       ],
@@ -1691,6 +1519,30 @@
       "score": 40
     },
     {
+      "doc_num": "2026025203",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-07-20",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "CHRISTENSEN DARREN A",
+      "grantee": "INTERNAL REVENUE SERVICE",
+      "amount": null,
+      "legal": "SERIAL NO 545620326",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025203",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
       "doc_num": "2026026933",
       "doc_type": "FEDERAL TAX LIEN",
       "filed": "2026-08-03",
@@ -1709,30 +1561,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026933",
-      "flags": [
-        "Tax lien"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026026937",
-      "doc_type": "FEDERAL TAX LIEN",
-      "filed": "2026-08-03",
-      "cat": "LNFED",
-      "cat_label": "Federal / IRS / Corp Tax Lien",
-      "owner": "SALAMAH NAIEF",
-      "grantee": "USA INTERNAL REVENUE",
-      "amount": null,
-      "legal": "SERIAL NO 5465831426",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026937",
       "flags": [
         "Tax lien"
       ],
@@ -1781,6 +1609,30 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025675",
+      "flags": [
+        "Tax lien"
+      ],
+      "score": 40
+    },
+    {
+      "doc_num": "2026026937",
+      "doc_type": "FEDERAL TAX LIEN",
+      "filed": "2026-08-03",
+      "cat": "LNFED",
+      "cat_label": "Federal / IRS / Corp Tax Lien",
+      "owner": "SALAMAH NAIEF",
+      "grantee": "USA INTERNAL REVENUE",
+      "amount": null,
+      "legal": "SERIAL NO 5465831426",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026937",
       "flags": [
         "Tax lien"
       ],
@@ -1923,28 +1775,6 @@
       "score": 35
     },
     {
-      "doc_num": "2026024621",
-      "doc_type": "MODIFICATION",
-      "filed": "2026-07-15",
-      "cat": "MODIF",
-      "cat_label": "Loan Modification",
-      "owner": "TOUCHET TAMMY BRESLEY",
-      "grantee": "ROCKET MORTGAGE LLC",
-      "amount": null,
-      "legal": "2025 BECKWORTH TRL CORPUS CHRISTI TX 78410 (Lot 66, Block 1)",
-      "prop_address": "2025 BECKWORTH TRL",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78410",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024621",
-      "flags": [],
-      "score": 35
-    },
-    {
       "doc_num": "2026025239",
       "doc_type": "APPOINTMENT",
       "filed": "2026-07-20",
@@ -1963,6 +1793,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025239",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026027696",
+      "doc_type": "LIEN",
+      "filed": "2026-08-07",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "TLC COMPLETE CARE",
+      "grantee": "CORPUS RENE",
+      "amount": null,
+      "legal": "",
+      "prop_address": "606 S GULF ST",
+      "prop_city": "PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "1927 FLAMINGO DR SAN ANTONIO",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78209",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027696",
       "flags": [],
       "score": 35
     },
@@ -2293,6 +2145,28 @@
       "mail_state": "TX",
       "mail_zip": "78414",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025230",
+      "flags": [],
+      "score": 35
+    },
+    {
+      "doc_num": "2026025229",
+      "doc_type": "LIEN",
+      "filed": "2026-07-20",
+      "cat": "LN",
+      "cat_label": "Lien",
+      "owner": "ABRIGO RENE PABLO",
+      "grantee": "CORPUS CHRISTI MEDICAL CENTER DOCTORS REGIONAL",
+      "amount": null,
+      "legal": "",
+      "prop_address": "1701 TREYWAY LN",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78412",
+      "mail_address": "C/O CORTEZ PABLO FAMILY TRUST PABLO CORTEZ & VINCE CORTEZ AS TRUSTEES 1701 Treyway Ln CORPUS CHRISTI",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78412",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025229",
       "flags": [],
       "score": 35
     },
@@ -2869,28 +2743,6 @@
       "score": 30
     },
     {
-      "doc_num": "2026025229",
-      "doc_type": "LIEN",
-      "filed": "2026-07-20",
-      "cat": "LN",
-      "cat_label": "Lien",
-      "owner": "ABRIGO RENE PABLO",
-      "grantee": "CORPUS CHRISTI MEDICAL CENTER DOCTORS REGIONAL",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026025229",
-      "flags": [],
-      "score": 30
-    },
-    {
       "doc_num": "2026025234",
       "doc_type": "LIEN",
       "filed": "2026-07-20",
@@ -3111,28 +2963,6 @@
       "score": 30
     },
     {
-      "doc_num": "2026026055",
-      "doc_type": "HOSPITAL LIEN",
-      "filed": "2026-07-27",
-      "cat": "HL",
-      "cat_label": "Hospital Lien",
-      "owner": "CHRISTUS SPOHN HOSPITAL SHORELINE",
-      "grantee": "DANIELS JOHN",
-      "amount": null,
-      "legal": "",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026055",
-      "flags": [],
-      "score": 30
-    },
-    {
       "doc_num": "2026026057",
       "doc_type": "HOSPITAL LIEN",
       "filed": "2026-07-27",
@@ -3151,6 +2981,28 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026057",
+      "flags": [],
+      "score": 30
+    },
+    {
+      "doc_num": "2026026055",
+      "doc_type": "HOSPITAL LIEN",
+      "filed": "2026-07-27",
+      "cat": "HL",
+      "cat_label": "Hospital Lien",
+      "owner": "CHRISTUS SPOHN HOSPITAL SHORELINE",
+      "grantee": "DANIELS JOHN",
+      "amount": null,
+      "legal": "",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026026055",
       "flags": [],
       "score": 30
     },
@@ -3397,15 +3249,15 @@
       "score": 30
     },
     {
-      "doc_num": "2026024778",
-      "doc_type": "APPOINTMENT",
-      "filed": "2026-07-15",
-      "cat": "APPNMT",
-      "cat_label": "Appointment of Sub Trust",
-      "owner": "LOVE ROBYN L",
-      "grantee": "CONOLY DAVID Z",
+      "doc_num": "2026027734",
+      "doc_type": "DEED",
+      "filed": "2026-08-07",
+      "cat": "TAXDEED",
+      "cat_label": "Tax Deed",
+      "owner": "NUECES COUNTY SHERIFF J C HOOPER",
+      "grantee": "TAX LIEN HEDGE SEASON 2025 LP",
       "amount": null,
-      "legal": "FLOUR BLUFF AND ENCINAL FARM AND GARDEN TRACTS SECTION 26 Lot: 20,21 Reference - A/41-43 (Lot 20,21)",
+      "legal": "2017DCV1354A (Lot 10, Block 2)",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -3414,7 +3266,29 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026024778",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027734",
+      "flags": [],
+      "score": 30
+    },
+    {
+      "doc_num": "2026027730",
+      "doc_type": "DEED",
+      "filed": "2026-08-07",
+      "cat": "TAXDEED",
+      "cat_label": "Tax Deed",
+      "owner": "NUECES COUNTY SHERIFF J C HOOPER",
+      "grantee": "TAX LIEN HEDGE SEASON 2025 LP",
+      "amount": null,
+      "legal": "2022DCV2108E (Lot 15,16, Block 3)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026027730",
       "flags": [],
       "score": 30
     }
