@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-08-17T16:46:05+00:00",
+  "ran_at": "2026-08-18T16:51:14+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
@@ -131,12 +131,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000462",
+      "doc_num": "2026000456",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000456",
+      "doc_num": "2026000462",
       "prop_address": "",
       "result": "no-prop-id"
     },
