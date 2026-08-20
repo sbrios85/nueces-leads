@@ -3122,6 +3122,7 @@
       "site_state": "TX",
       "site_zip": "78415"
     },
+    "ESTATE OF SCOTT RUSSELL HAWKINS DECD": null,
     "ESTATE OF SHARON ADAMS": {
       "mail_addr": "",
       "mail_city": "",
@@ -3366,6 +3367,7 @@
       "site_state": "TX",
       "site_zip": "78407"
     },
+    "FRIMPONGMANSO MARY ETHEL": null,
     "FUENTES ANTONIA": {
       "mail_addr": "",
       "mail_city": "",
@@ -3472,6 +3474,7 @@
       "site_state": "TX",
       "site_zip": "78405"
     },
+    "GALVAN CASIMIRO ISSAC": null,
     "GALVAN DOLORES": {
       "mail_addr": "",
       "mail_city": "",
@@ -3925,6 +3928,21 @@
       "site_state": "TX",
       "site_zip": "78408"
     },
+    "GEE BRYCE": {
+      "appraised_value": 369484.0,
+      "mail_addr": "3547 Floyd Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78411",
+      "ncad_legal": "P A CLIFFS LTS 8 & 9 BLK 315",
+      "ncad_owner_id": "781987",
+      "ncad_prop_id": "276547",
+      "ncad_year": "2026",
+      "site_addr": "3547 FLOYD",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78411"
+    },
     "GEORGE GARY": {
       "mail_addr": "",
       "mail_city": "",
@@ -4317,6 +4335,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78418"
+    },
+    "GUTIERREZ ASHLEY ANN": {
+      "appraised_value": 478456.0,
+      "mail_addr": "7313 Longitude Ct Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "ncad_legal": "AIRLINE ESTATES BLK 2 LOT 33",
+      "ncad_owner_id": "766260",
+      "ncad_prop_id": "571773",
+      "ncad_year": "2026",
+      "site_addr": "7313 LONGITUDE CT",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78414"
     },
     "GUTIERREZ MARIA": {
       "mail_addr": "",
@@ -5295,6 +5328,7 @@
       "site_state": "TX",
       "site_zip": "78410"
     },
+    "JUAREZ CRISTINA L": null,
     "JULIAN J. VERA": {
       "appraised_value": 764227.0,
       "mail_addr": "5517 S Oso Pkwy Corpus Christi",
@@ -6197,6 +6231,21 @@
       "site_city": "CORPUS CHRISTI",
       "site_state": "TX",
       "site_zip": "78418"
+    },
+    "MARTINEZ DANIELLE": {
+      "appraised_value": 320392.0,
+      "mail_addr": "7526 Sable Creek Dr Corpus Christi",
+      "mail_city": "",
+      "mail_state": "TX",
+      "mail_zip": "78414",
+      "ncad_legal": "SANDY CREEK UNIT 4 BLK 2 LOT 7",
+      "ncad_owner_id": "776578",
+      "ncad_prop_id": "571294",
+      "ncad_year": "2026",
+      "site_addr": "7526 SABLE CREEK",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78412"
     },
     "MARTINEZ ELIAS R": {
       "mail_addr": "",
@@ -7458,6 +7507,7 @@
       "site_state": "TX",
       "site_zip": "78404"
     },
+    "PEARSON CLISYA": null,
     "PECINA PATRICIA": {
       "mail_addr": "",
       "mail_city": "",
@@ -9212,6 +9262,21 @@
       "site_state": "TX",
       "site_zip": "78417"
     },
+    "SARAVIA FERNANDO": {
+      "appraised_value": 277424.0,
+      "mail_addr": "5464 ELGAR CT MISSISSAUGA ONTARIO L5M 5C9",
+      "mail_city": "CAN",
+      "mail_state": "",
+      "mail_zip": "",
+      "ncad_legal": "ARUBA P.U.D. BLK 1 LOT 41",
+      "ncad_owner_id": "795402",
+      "ncad_prop_id": "587223",
+      "ncad_year": "2026",
+      "site_addr": "15101 BOCA GRANDI DR",
+      "site_city": "CORPUS CHRISTI",
+      "site_state": "TX",
+      "site_zip": "78418"
+    },
     "SARINANA MARIA ANTONIA": {
       "mail_addr": "",
       "mail_city": "",
@@ -9824,6 +9889,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "TBI DIAGNOSTICS CORPUS CHRISTI LLC": null,
     "TELLEZ ANDREA": {
       "mail_addr": "",
       "mail_city": "",
