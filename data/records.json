@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-08-26T16:50:27.263661+00:00",
+  "fetched_at": "2026-08-28T00:48:29.361114+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-07-27",
-    "end": "2026-08-26"
+    "start": "2026-07-29",
+    "end": "2026-08-28"
   },
   "total": 2,
   "with_address": 0,
@@ -28,10 +28,9 @@
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026029211",
       "flags": [
-        "Lis pendens",
-        "New this week"
+        "Lis pendens"
       ],
-      "score": 55
+      "score": 40
     },
     {
       "doc_num": "2026029097",
@@ -53,10 +52,9 @@
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026029097",
       "flags": [
-        "Lis pendens",
-        "New this week"
+        "Lis pendens"
       ],
-      "score": 55
+      "score": 40
     }
   ]
 }
