@@ -1,13 +1,63 @@
 {
-  "fetched_at": "2026-08-31T21:23:07.030685+00:00",
+  "fetched_at": "2026-09-01T19:17:38.354386+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-08-01",
-    "end": "2026-08-31"
+    "start": "2026-08-02",
+    "end": "2026-09-01"
   },
-  "total": 2,
-  "with_address": 0,
+  "total": 4,
+  "with_address": 1,
   "records": [
+    {
+      "doc_num": "2026030549",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-08-31",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "PAYNE CYNTHIA GRAHAM",
+      "grantee": "STEEN LINDA DAVID",
+      "amount": null,
+      "legal": "10330 UP RIVER ROAD CORPUS CHRISTI TX 78410 (Lot 8, Block 1)",
+      "prop_address": "10330 UP RIVER ROAD",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78410",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026030549",
+      "flags": [
+        "Lis pendens",
+        "New this week"
+      ],
+      "score": 60
+    },
+    {
+      "doc_num": "2026030548",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-08-31",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "ESTATE OF JUANELL MCKINZIE GRAHAM",
+      "grantee": "PAYNE CYNTHIA GRAHAM",
+      "amount": null,
+      "legal": "CAUSE NO 2026-PR-00475-1 (Lot 9, Block 1)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026030548",
+      "flags": [
+        "Lis pendens",
+        "New this week"
+      ],
+      "score": 55
+    },
     {
       "doc_num": "2026029211",
       "doc_type": "LIS PENDENS",
