@@ -30,7 +30,7 @@
   },
   "ccln_addr::14721 WHITECAP BLVD": {
     "miss": true,
-    "miss_reason": "no_corroboration"
+    "miss_reason": "no_results"
   },
   "ccln_addr::14721 WHITECAP BLVD 328": {
     "miss": true,
@@ -6496,6 +6496,7 @@
       "site_zip": "78401"
     },
     "MC J'S & ASSOCIATES LLC": null,
+    "MCDONALD KENTON": null,
     "MCJUNKINS JAMES": {
       "appraised_value": 454914.0,
       "mail_addr": "326 PALOMA STREET CORPUS CHRISTI",
