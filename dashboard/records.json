@@ -1,38 +1,13 @@
 {
-  "fetched_at": "2026-09-07T19:42:42.249548+00:00",
+  "fetched_at": "2026-09-08T19:23:16.956103+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-08-08",
-    "end": "2026-09-07"
+    "start": "2026-08-09",
+    "end": "2026-09-08"
   },
   "total": 6,
   "with_address": 1,
   "records": [
-    {
-      "doc_num": "2026030549",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-08-31",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "PAYNE CYNTHIA GRAHAM",
-      "grantee": "STEEN LINDA DAVID",
-      "amount": null,
-      "legal": "10330 UP RIVER ROAD CORPUS CHRISTI TX 78410 (Lot 8, Block 1)",
-      "prop_address": "10330 UP RIVER ROAD",
-      "prop_city": "CORPUS CHRISTI",
-      "prop_state": "TX",
-      "prop_zip": "78410",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026030549",
-      "flags": [
-        "Lis pendens",
-        "New this week"
-      ],
-      "score": 60
-    },
     {
       "doc_num": "2026031389",
       "doc_type": "LIS PENDENS",
@@ -84,6 +59,30 @@
       "score": 55
     },
     {
+      "doc_num": "2026030549",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-08-31",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "PAYNE CYNTHIA GRAHAM",
+      "grantee": "STEEN LINDA DAVID",
+      "amount": null,
+      "legal": "10330 UP RIVER ROAD CORPUS CHRISTI TX 78410 (Lot 8, Block 1)",
+      "prop_address": "10330 UP RIVER ROAD",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78410",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026030549",
+      "flags": [
+        "Lis pendens"
+      ],
+      "score": 45
+    },
+    {
       "doc_num": "2026030548",
       "doc_type": "LIS PENDENS",
       "filed": "2026-08-31",
@@ -103,10 +102,9 @@
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026030548",
       "flags": [
-        "Lis pendens",
-        "New this week"
+        "Lis pendens"
       ],
-      "score": 55
+      "score": 40
     },
     {
       "doc_num": "2026029211",
