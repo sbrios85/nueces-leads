@@ -1,9 +1,53 @@
 {
-  "ran_at": "2026-09-10T12:22:49+00:00",
+  "ran_at": "2026-09-11T12:22:54+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
   "entries": [
+    {
+      "uid": "1007939060",
+      "prop_address": "15541 PALMIRA AVE, CORPUS CHRISTI TX 78418",
+      "result": "matched",
+      "ncad_prop_id": "278332",
+      "ncad_owner": "OVADIA DANIEL CHIPRUT",
+      "ncad_legal": "PADRE ISLAND NO 4 LOT 12 BLK 219",
+      "market_value": 110040.0,
+      "additions": {
+        "owner": "OVADIA DANIEL CHIPRUT",
+        "legal": "PADRE ISLAND NO 4 LOT 12 BLK 219",
+        "market_value": 110040.0,
+        "ncad_prop_id": "278332",
+        "ncad_owner_id": "836255",
+        "ncad_year": "2026",
+        "mail_address": "FUENTE DE PISA #31",
+        "mail_city": "LOMAS DE TECAMACHALO",
+        "mail_state": "TX",
+        "mail_zip": "53950",
+        "ncad_account_num": "6129-0219-0120"
+      }
+    },
+    {
+      "uid": "1009338234",
+      "prop_address": "1717 TIMROD ST, CORPUS CHRISTI TX 78404-4031",
+      "result": "matched",
+      "ncad_prop_id": "284942",
+      "ncad_owner": "DOMINGUEZ ROBERT AND",
+      "ncad_legal": "PINEDA PK LT 10 BK 5",
+      "market_value": 122631.0,
+      "additions": {
+        "owner": "DOMINGUEZ ROBERT AND",
+        "legal": "PINEDA PK LT 10 BK 5",
+        "market_value": 122631.0,
+        "ncad_prop_id": "284942",
+        "ncad_owner_id": "464944",
+        "ncad_year": "2026",
+        "mail_address": "4302 Callicoatte Rd",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78410",
+        "ncad_account_num": "6745-0005-0100"
+      }
+    },
     {
       "uid": "1007630229",
       "prop_address": "640 SANTANA DR, CORPUS CHRISTI TX 78418-4830",
@@ -115,6 +159,28 @@
       }
     },
     {
+      "uid": "1007948032",
+      "prop_address": "1021 S CLARKWOOD RD, CORPUS CHRISTI TX 78406",
+      "result": "matched",
+      "ncad_prop_id": "296213",
+      "ncad_owner": "GUZMAN ERNESTO",
+      "ncad_legal": "SAN JUAN-CLARKWOOD LTS 1 & 2 BLK 1",
+      "market_value": 13565.0,
+      "additions": {
+        "owner": "GUZMAN ERNESTO",
+        "legal": "SAN JUAN-CLARKWOOD LTS 1 & 2 BLK 1",
+        "market_value": 13565.0,
+        "ncad_prop_id": "296213",
+        "ncad_owner_id": "586938",
+        "ncad_year": "2026",
+        "mail_address": "PO Box 4575",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78469",
+        "ncad_account_num": "7627-0001-0010"
+      }
+    },
+    {
       "uid": "1015203181",
       "prop_address": "4418 FIR ST, CORPUS CHRISTI TX 78411-3635",
       "result": "matched",
@@ -134,6 +200,28 @@
         "mail_state": "TX",
         "mail_zip": "78411",
         "ncad_account_num": "9563-0007-0060"
+      }
+    },
+    {
+      "uid": "1007989355",
+      "prop_address": "3145 EISENHOWER ST, CORPUS CHRISTI TX 78416-1609",
+      "result": "matched",
+      "ncad_prop_id": "209595",
+      "ncad_owner": "REYNERO MATEO",
+      "ncad_legal": "CASA BLANCA BLK 1 LOT 27",
+      "market_value": 25281.0,
+      "additions": {
+        "owner": "REYNERO MATEO",
+        "legal": "CASA BLANCA BLK 1 LOT 27",
+        "market_value": 25281.0,
+        "ncad_prop_id": "209595",
+        "ncad_owner_id": "146500",
+        "ncad_year": "2026",
+        "mail_address": "3145 EISENHOWER",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78416",
+        "ncad_account_num": "1396-0001-0270"
       }
     },
     {
