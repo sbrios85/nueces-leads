@@ -25,7 +25,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334387",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.595161,
+      "prop_lng": -97.224228
     },
     {
       "uid": "1009338234",
@@ -52,7 +54,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334388",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.763886,
+      "prop_lng": -97.415429
     },
     {
       "uid": "1007630229",
@@ -79,7 +83,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334389",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.63977,
+      "prop_lng": -97.302358
     },
     {
       "uid": "1008816478",
@@ -106,7 +112,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334390",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.588324,
+      "prop_lng": -97.803264
     },
     {
       "uid": "1007525102",
@@ -133,7 +141,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334391",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.796961,
+      "prop_lng": -97.673312
     },
     {
       "uid": "1009751711",
@@ -160,7 +170,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334392",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.782308,
+      "prop_lng": -97.434664
     },
     {
       "uid": "1008156375",
@@ -187,7 +199,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334393",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.804391,
+      "prop_lng": -97.837144
     },
     {
       "uid": "1007948032",
@@ -214,7 +228,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334394",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.767814,
+      "prop_lng": -97.539222
     },
     {
       "uid": "1015203181",
@@ -241,7 +257,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334395",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.734793,
+      "prop_lng": -97.396079
     },
     {
       "uid": "1007989355",
@@ -268,7 +286,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334396",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.766566,
+      "prop_lng": -97.426059
     },
     {
       "uid": "1008193895",
@@ -295,7 +315,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334398",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.783628,
+      "prop_lng": -97.417449
     },
     {
       "uid": "1009124412",
@@ -322,7 +344,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334399",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.76891,
+      "prop_lng": -97.412119
     },
     {
       "uid": "1009124377",
@@ -349,7 +373,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334400",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.769087,
+      "prop_lng": -97.412173
     },
     {
       "uid": "1016578660",
@@ -376,7 +402,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334427",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.757255,
+      "prop_lng": -97.377469
     },
     {
       "uid": "1016578468",
@@ -403,7 +431,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334401",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.686728,
+      "prop_lng": -97.340169
     },
     {
       "uid": "1008100226",
@@ -430,7 +460,9 @@
       "sale_notes": "",
       "property_loc": "https://nueces.texas.sheriffsaleauctions.com/index.cfm?RDR=C1000334402",
       "county_sale_list": "https://taxsalesib.lgbs.com/images/lit_ps_images/ib-emails/County_Sale_list_NUECES_COUNTY_20261006",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.746101,
+      "prop_lng": -97.429684
     },
     {
       "uid": "1007629251",
@@ -457,7 +489,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.765473,
+      "prop_lng": -97.422516
     },
     {
       "uid": "1008177121",
@@ -484,7 +518,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.88865,
+      "prop_lng": -97.675141
     },
     {
       "uid": "1009113966",
@@ -538,7 +574,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.76428,
+      "prop_lng": -97.420998
     },
     {
       "uid": "1009010204",
@@ -565,7 +603,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.737711,
+      "prop_lng": -97.410336
     },
     {
       "uid": "1008438823",
@@ -592,7 +632,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.770351,
+      "prop_lng": -97.404985
     },
     {
       "uid": "1009689817",
@@ -619,7 +661,9 @@
       "sale_notes": "",
       "property_loc": "",
       "county_sale_list": "",
-      "_source": "lgbs"
+      "_source": "lgbs",
+      "prop_lat": 27.620586,
+      "prop_lng": -97.294852
     }
   ],
   "total": 23,
