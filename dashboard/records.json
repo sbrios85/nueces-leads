@@ -1,38 +1,13 @@
 {
-  "fetched_at": "2026-09-11T19:03:34.080690+00:00",
+  "fetched_at": "2026-09-12T18:14:07.553905+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-08-12",
-    "end": "2026-09-11"
+    "start": "2026-08-13",
+    "end": "2026-09-12"
   },
   "total": 6,
   "with_address": 1,
   "records": [
-    {
-      "doc_num": "2026031389",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-09-04",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "MCDONALD KENTON",
-      "grantee": "BRANSCOMB P C ET AL",
-      "amount": null,
-      "legal": "CAUSE NO 2018CCV 62430 3 (Lot 4,5, Block 9)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026031389",
-      "flags": [
-        "Lis pendens",
-        "New this week"
-      ],
-      "score": 55
-    },
     {
       "doc_num": "2026030549",
       "doc_type": "LIS PENDENS",
@@ -56,6 +31,30 @@
         "Lis pendens"
       ],
       "score": 45
+    },
+    {
+      "doc_num": "2026031389",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-09-04",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "MCDONALD KENTON",
+      "grantee": "BRANSCOMB P C ET AL",
+      "amount": null,
+      "legal": "CAUSE NO 2018CCV 62430 3 (Lot 4,5, Block 9)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026031389",
+      "flags": [
+        "Lis pendens"
+      ],
+      "score": 40
     },
     {
       "doc_num": "2026031276",
