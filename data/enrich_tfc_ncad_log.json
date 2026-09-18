@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-09-17T12:45:50+00:00",
+  "ran_at": "2026-09-18T12:24:44+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -409,25 +409,47 @@
       ]
     },
     {
-      "uid": "1008122147",
-      "prop_address": "2214 NOGALES ST, CORPUS CHRISTI TX 78416-1657",
+      "uid": "1008512952",
+      "prop_address": "507 W MAIN AVE, ROBSTOWN TX 78380-3246",
       "result": "matched",
-      "ncad_prop_id": "295938",
-      "ncad_owner": "BITONI ROSA",
-      "ncad_legal": "SAN DIEGO BLK 6 LOT 26",
-      "market_value": 69721.0,
+      "ncad_prop_id": "195180",
+      "ncad_owner": "ALCARAZ JAIME A",
+      "ncad_legal": "BISHOP T/S BLK 46 LOT 4",
+      "market_value": 168738.0,
       "additions": {
-        "owner": "BITONI ROSA",
-        "legal": "SAN DIEGO BLK 6 LOT 26",
-        "market_value": 69721.0,
-        "ncad_prop_id": "295938",
-        "ncad_owner_id": "705441",
+        "owner": "ALCARAZ JAIME A",
+        "legal": "BISHOP T/S BLK 46 LOT 4",
+        "market_value": 168738.0,
+        "ncad_prop_id": "195180",
+        "ncad_owner_id": "540636",
         "ncad_year": "2026",
-        "mail_address": "2214 Nogales St",
-        "mail_city": "Corpus Christi",
+        "mail_address": "507 E MAIN ST",
+        "mail_city": "BISHOP",
         "mail_state": "TX",
-        "mail_zip": "78416",
-        "ncad_account_num": "7614-0006-0260"
+        "mail_zip": "78343",
+        "ncad_account_num": "0696-0046-0040"
+      }
+    },
+    {
+      "uid": "1008512970",
+      "prop_address": "507 W MAIN AVE, ROBSTOWN TX 78380-3246",
+      "result": "matched",
+      "ncad_prop_id": "195180",
+      "ncad_owner": "ALCARAZ JAIME A",
+      "ncad_legal": "BISHOP T/S BLK 46 LOT 4",
+      "market_value": 168738.0,
+      "additions": {
+        "owner": "ALCARAZ JAIME A",
+        "legal": "BISHOP T/S BLK 46 LOT 4",
+        "market_value": 168738.0,
+        "ncad_prop_id": "195180",
+        "ncad_owner_id": "540636",
+        "ncad_year": "2026",
+        "mail_address": "507 E MAIN ST",
+        "mail_city": "BISHOP",
+        "mail_state": "TX",
+        "mail_zip": "78343",
+        "ncad_account_num": "0696-0046-0040"
       }
     },
     {
