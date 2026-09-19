@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-09-18T18:56:46.409115+00:00",
+  "fetched_at": "2026-09-19T18:29:40.367591+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-08-19",
-    "end": "2026-09-18"
+    "start": "2026-08-20",
+    "end": "2026-09-19"
   },
-  "total": 6,
+  "total": 4,
   "with_address": 1,
   "records": [
     {
@@ -99,54 +99,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026030548",
-      "flags": [
-        "Lis pendens"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026029211",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-08-19",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "FRIMPONGMANSO MARY ETHEL",
-      "grantee": "BROWN ELMA",
-      "amount": null,
-      "legal": "2025DCV-1367-G (Lot 15, Block 10)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026029211",
-      "flags": [
-        "Lis pendens"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026029097",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-08-19",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "ESTATE OF SCOTT RUSSELL HAWKINS DECD",
-      "grantee": "HAWKINS VALERIE JEAN",
-      "amount": null,
-      "legal": "CAUSE NO 2026-PR-00520-2 (Lot 3, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026029097",
       "flags": [
         "Lis pendens"
       ],

@@ -30,7 +30,7 @@
   },
   "ccln_addr::14721 WHITECAP BLVD": {
     "miss": true,
-    "miss_reason": "no_corroboration"
+    "miss_reason": "no_results"
   },
   "ccln_addr::14721 WHITECAP BLVD 328": {
     "miss": true,
