@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-09-21T14:31:21+00:00",
+  "ran_at": "2026-09-22T12:51:42+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -452,6 +452,28 @@
       }
     },
     {
+      "uid": "1009513476",
+      "prop_address": "4530 NESBITT DR, CORPUS CHRISTI TX 78415-5116",
+      "result": "matched",
+      "ncad_prop_id": "200045091",
+      "ncad_owner": "DAVILA MARIA INEZ",
+      "ncad_legal": "TROPICAL PARK BLK 2 LOT 17",
+      "market_value": 103030.0,
+      "additions": {
+        "owner": "DAVILA MARIA INEZ",
+        "legal": "TROPICAL PARK BLK 2 LOT 17",
+        "market_value": 103030.0,
+        "ncad_prop_id": "200045091",
+        "ncad_owner_id": "421348",
+        "ncad_year": "2026",
+        "mail_address": "4530 NESBITT",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415",
+        "ncad_account_num": "8882-0002-0170"
+      }
+    },
+    {
       "uid": "1009113966",
       "prop_address": "525 S US HIGHWAY 77, BISHOP TX 78343-2929",
       "result": "no-match",
@@ -568,6 +590,138 @@
         "mail_state": "NV",
         "mail_zip": "89119",
         "ncad_account_num": "4130-0013-0160"
+      }
+    },
+    {
+      "uid": "1009797005",
+      "prop_address": "612 FRANCESCA ST, CORPUS CHRISTI TX 78405-2529",
+      "result": "matched",
+      "ncad_prop_id": "296404",
+      "ncad_owner": "MARTINEZ MARIBEL C",
+      "ncad_legal": "SAN PEDRO BLK 3 LOT 39",
+      "market_value": 15875.0,
+      "additions": {
+        "owner": "MARTINEZ MARIBEL C",
+        "legal": "SAN PEDRO BLK 3 LOT 39",
+        "market_value": 15875.0,
+        "ncad_prop_id": "296404",
+        "ncad_owner_id": "721506",
+        "ncad_year": "2026",
+        "mail_address": "610 Francesca St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78405",
+        "ncad_account_num": "7634-0003-0390"
+      }
+    },
+    {
+      "uid": "1008903668",
+      "prop_address": "4413 CHRISTIE ST, CORPUS CHRISTI TX 78415-5257",
+      "result": "matched",
+      "ncad_prop_id": "200052298",
+      "ncad_owner": "VASQUEZ JOSE LUIS",
+      "ncad_legal": "VIRGINIA PLACE BLK 8 LOT 29",
+      "market_value": 149560.0,
+      "additions": {
+        "owner": "VASQUEZ JOSE LUIS",
+        "legal": "VIRGINIA PLACE BLK 8 LOT 29",
+        "market_value": 149560.0,
+        "ncad_prop_id": "200052298",
+        "ncad_owner_id": "785853",
+        "ncad_year": "2026",
+        "mail_address": "4413 Christie St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78415",
+        "ncad_account_num": "9113-0008-0290"
+      }
+    },
+    {
+      "uid": "1009012023",
+      "prop_address": "205 PARR ST, CORPUS CHRISTI TX 78408",
+      "result": "matched",
+      "ncad_prop_id": "261428",
+      "ncad_owner": "TUNCHES GUADALUPE R &",
+      "ncad_legal": "LOS ANGELES HILLS LT 64 BK 2",
+      "market_value": 7647.0,
+      "additions": {
+        "owner": "TUNCHES GUADALUPE R &",
+        "legal": "LOS ANGELES HILLS LT 64 BK 2",
+        "market_value": 7647.0,
+        "ncad_prop_id": "261428",
+        "ncad_owner_id": "265746",
+        "ncad_year": "2026",
+        "mail_address": "3801 BENTWOOD LN",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78415",
+        "ncad_account_num": "4565-0002-0640"
+      }
+    },
+    {
+      "uid": "1008315512",
+      "prop_address": "4917 URBAN ST, CORPUS CHRISTI TX 78415-2520",
+      "result": "matched",
+      "ncad_prop_id": "200025721",
+      "ncad_owner": "LOPEZ LIONEL & JUANITA",
+      "ncad_legal": "SOUTH PARK BLK 7 LOT 20",
+      "market_value": 26758.0,
+      "additions": {
+        "owner": "LOPEZ LIONEL & JUANITA",
+        "legal": "SOUTH PARK BLK 7 LOT 20",
+        "market_value": 26758.0,
+        "ncad_prop_id": "200025721",
+        "ncad_owner_id": "264857",
+        "ncad_year": "2026",
+        "mail_address": "4325 PHILLIPINE DR",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78411",
+        "ncad_account_num": "8187-0007-0200"
+      }
+    },
+    {
+      "uid": "1007933921",
+      "prop_address": "2033 YALE ST, CORPUS CHRISTI TX 78416",
+      "result": "matched",
+      "ncad_prop_id": "267285",
+      "ncad_owner": "CORTINA ALMA",
+      "ncad_legal": "MIDWAY LT 20 BK 3",
+      "market_value": 18250.0,
+      "additions": {
+        "owner": "CORTINA ALMA",
+        "legal": "MIDWAY LT 20 BK 3",
+        "market_value": 18250.0,
+        "ncad_prop_id": "267285",
+        "ncad_owner_id": "751309",
+        "ncad_year": "2026",
+        "mail_address": "2037 Yale St",
+        "mail_city": "Corpus Christi",
+        "mail_state": "TX",
+        "mail_zip": "78416",
+        "ncad_account_num": "5175-0003-0200"
+      }
+    },
+    {
+      "uid": "1007704187",
+      "prop_address": "333 CHEYENNE ST, CORPUS CHRISTI TX 78405-2714",
+      "result": "matched",
+      "ncad_prop_id": "265219",
+      "ncad_owner": "CHAPA CARLOS",
+      "ncad_legal": "MEADOW PARK BLK 18 LOT 4",
+      "market_value": 90589.0,
+      "additions": {
+        "owner": "CHAPA CARLOS",
+        "legal": "MEADOW PARK BLK 18 LOT 4",
+        "market_value": 90589.0,
+        "ncad_prop_id": "265219",
+        "ncad_owner_id": "202128",
+        "ncad_year": "2026",
+        "mail_address": "333 CHEYENNE",
+        "mail_city": "CORPUS CHRISTI",
+        "mail_state": "TX",
+        "mail_zip": "78405",
+        "ncad_account_num": "5000-0018-0040"
       }
     }
   ]
