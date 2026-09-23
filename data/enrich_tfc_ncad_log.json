@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-09-22T12:51:42+00:00",
+  "ran_at": "2026-09-23T12:58:22+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -449,28 +449,6 @@
         "mail_state": "TX",
         "mail_zip": "78406",
         "ncad_account_num": "7626-0005-0320"
-      }
-    },
-    {
-      "uid": "1009513476",
-      "prop_address": "4530 NESBITT DR, CORPUS CHRISTI TX 78415-5116",
-      "result": "matched",
-      "ncad_prop_id": "200045091",
-      "ncad_owner": "DAVILA MARIA INEZ",
-      "ncad_legal": "TROPICAL PARK BLK 2 LOT 17",
-      "market_value": 103030.0,
-      "additions": {
-        "owner": "DAVILA MARIA INEZ",
-        "legal": "TROPICAL PARK BLK 2 LOT 17",
-        "market_value": 103030.0,
-        "ncad_prop_id": "200045091",
-        "ncad_owner_id": "421348",
-        "ncad_year": "2026",
-        "mail_address": "4530 NESBITT",
-        "mail_city": "CORPUS CHRISTI",
-        "mail_state": "TX",
-        "mail_zip": "78415",
-        "ncad_account_num": "8882-0002-0170"
       }
     },
     {
