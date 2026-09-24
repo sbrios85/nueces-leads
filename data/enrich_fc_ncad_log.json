@@ -1,13 +1,13 @@
 {
-  "ran_at": "2026-09-23T19:46:57+00:00",
+  "ran_at": "2026-09-24T20:06:38+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 124,
+    "no_prop_id": 135,
     "skipped_already": 0,
-    "total": 124
+    "total": 135
   },
   "entries": [
     {
@@ -86,12 +86,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000558",
+      "doc_num": "2026000560",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000560",
+      "doc_num": "2026000558",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -111,12 +111,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000569",
+      "doc_num": "2026000575",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000575",
+      "doc_num": "2026000569",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -141,7 +141,22 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000571",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000562",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000566",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000564",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -152,21 +167,6 @@
     },
     {
       "doc_num": "2026000563",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000564",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000566",
-      "prop_address": "",
-      "result": "no-prop-id"
-    },
-    {
-      "doc_num": "2026000571",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -451,6 +451,31 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000609",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000608",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000611",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000614",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000607",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000603",
       "prop_address": "",
       "result": "no-prop-id"
@@ -622,6 +647,36 @@
     },
     {
       "doc_num": "2026000494",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000613",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000612",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000606",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000610",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000605",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000604",
       "prop_address": "",
       "result": "no-prop-id"
     },
