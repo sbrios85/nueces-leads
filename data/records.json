@@ -1,13 +1,91 @@
 {
-  "fetched_at": "2026-09-23T19:34:20.707561+00:00",
+  "fetched_at": "2026-09-24T19:54:16.475661+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-08-24",
-    "end": "2026-09-23"
+    "start": "2026-08-25",
+    "end": "2026-09-24"
   },
-  "total": 4,
-  "with_address": 1,
+  "total": 7,
+  "with_address": 2,
   "records": [
+    {
+      "doc_num": "2026033407",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-09-23",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "THE PORT ROYAL BY THE SEA CONDOMINUM OWNERS ASSOCIATION INC",
+      "grantee": "DIAZ CLAUDIA",
+      "amount": null,
+      "legal": "6317 STATE HWY 361 UNIT 6204, PORT ARANSAS, TX 78373",
+      "prop_address": "6317 STATE HWY",
+      "prop_city": "361 UNIT 6204, PORT ARANSAS",
+      "prop_state": "TX",
+      "prop_zip": "78373",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026033407",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 70
+    },
+    {
+      "doc_num": "2026033399",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-09-23",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "CUSTOM FILTRATION INC",
+      "grantee": "LKM HOMES INC",
+      "amount": null,
+      "legal": "CAUSE NO 26DBC-1378-JP13 (Lot 40, Block 1)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026033399",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 65
+    },
+    {
+      "doc_num": "2026033398",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-09-23",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "CUSTOM FILTRATION INC",
+      "grantee": "LKM HOMES INC",
+      "amount": null,
+      "legal": "CAUSE NO 26DBC-1379-JP13 (Lot 48, Block 2)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026033398",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 65
+    },
     {
       "doc_num": "2026030549",
       "doc_type": "LIS PENDENS",
