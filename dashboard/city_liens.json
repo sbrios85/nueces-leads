@@ -72327,7 +72327,9 @@
       "ncad_year": "2026",
       "market_value": 99574.0,
       "state_class": "A1",
-      "property_type": "Single-family"
+      "property_type": "Single-family",
+      "prop_lat": 27.784243,
+      "prop_lng": -97.47112
     },
     {
       "doc_num": "2025004742",
@@ -74396,7 +74398,9 @@
       "ncad_year": "2026",
       "market_value": 47655.0,
       "state_class": "F1",
-      "property_type": "Commercial"
+      "property_type": "Commercial",
+      "prop_lat": 27.771719,
+      "prop_lng": -97.402453
     },
     {
       "doc_num": "2025000264",
