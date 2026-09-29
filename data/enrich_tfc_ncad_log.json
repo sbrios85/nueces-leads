@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-09-27T13:18:51+00:00",
+  "ran_at": "2026-09-29T14:21:35+00:00",
   "apply_mode": true,
   "force_mode": true,
   "fetch_mail_address": true,
@@ -443,12 +443,7 @@
         "market_value": 57009.0,
         "ncad_prop_id": "296169",
         "ncad_owner_id": "758132",
-        "ncad_year": "2026",
-        "mail_address": "9142 Scapular St",
-        "mail_city": "Corpus Christi",
-        "mail_state": "TX",
-        "mail_zip": "78406",
-        "ncad_account_num": "7626-0005-0320"
+        "ncad_year": "2026"
       }
     },
     {
