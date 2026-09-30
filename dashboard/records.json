@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-09-29T20:32:24.497678+00:00",
+  "fetched_at": "2026-09-30T20:39:29.139705+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-08-30",
-    "end": "2026-09-29"
+    "start": "2026-08-31",
+    "end": "2026-09-30"
   },
-  "total": 7,
+  "total": 9,
   "with_address": 2,
   "records": [
     {
@@ -33,6 +33,32 @@
         "New this week"
       ],
       "score": 70
+    },
+    {
+      "doc_num": "2026034188",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-09-29",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "CARRINGTON MORTGAGE SERVICES LLC",
+      "grantee": "VILLARREAL DAVID D",
+      "amount": null,
+      "legal": "CAUSE NO 2026DCV2944B (Lot 29, Block 3)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026034188",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 65
     },
     {
       "doc_num": "2026033399",
@@ -85,6 +111,31 @@
         "New this week"
       ],
       "score": 65
+    },
+    {
+      "doc_num": "2026034221",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-09-29",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "CAYO DEL OSO HOMEOWNERS ASSOCIATION",
+      "grantee": "ENCINIA BENITO VILLERREAL JR",
+      "amount": null,
+      "legal": "CAUSE NO 2026DCV-3335-A (Lot 34, Block 1)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026034221",
+      "flags": [
+        "Lis pendens",
+        "New this week"
+      ],
+      "score": 55
     },
     {
       "doc_num": "2026030549",
