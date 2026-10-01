@@ -1,39 +1,13 @@
 {
-  "fetched_at": "2026-09-30T20:39:29.139705+00:00",
+  "fetched_at": "2026-10-01T20:53:47.296874+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-08-31",
-    "end": "2026-09-30"
+    "start": "2026-09-01",
+    "end": "2026-10-01"
   },
-  "total": 9,
-  "with_address": 2,
+  "total": 7,
+  "with_address": 1,
   "records": [
-    {
-      "doc_num": "2026033407",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-09-23",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "THE PORT ROYAL BY THE SEA CONDOMINUM OWNERS ASSOCIATION INC",
-      "grantee": "DIAZ CLAUDIA",
-      "amount": null,
-      "legal": "6317 STATE HWY 361 UNIT 6204, PORT ARANSAS, TX 78373",
-      "prop_address": "6317 STATE HWY",
-      "prop_city": "361 UNIT 6204, PORT ARANSAS",
-      "prop_state": "TX",
-      "prop_zip": "78373",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026033407",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 70
-    },
     {
       "doc_num": "2026034188",
       "doc_type": "LIS PENDENS",
@@ -53,58 +27,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026034188",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 65
-    },
-    {
-      "doc_num": "2026033399",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-09-23",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "CUSTOM FILTRATION INC",
-      "grantee": "LKM HOMES INC",
-      "amount": null,
-      "legal": "CAUSE NO 26DBC-1378-JP13 (Lot 40, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026033399",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 65
-    },
-    {
-      "doc_num": "2026033398",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-09-23",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "CUSTOM FILTRATION INC",
-      "grantee": "LKM HOMES INC",
-      "amount": null,
-      "legal": "CAUSE NO 26DBC-1379-JP13 (Lot 48, Block 2)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026033398",
       "flags": [
         "Lis pendens",
         "LLC / corp owner",
@@ -138,28 +60,79 @@
       "score": 55
     },
     {
-      "doc_num": "2026030549",
+      "doc_num": "2026033407",
       "doc_type": "LIS PENDENS",
-      "filed": "2026-08-31",
+      "filed": "2026-09-23",
       "cat": "LP",
       "cat_label": "Lis Pendens",
-      "owner": "PAYNE CYNTHIA GRAHAM",
-      "grantee": "STEEN LINDA DAVID",
+      "owner": "THE PORT ROYAL BY THE SEA CONDOMINUM OWNERS ASSOCIATION INC",
+      "grantee": "DIAZ CLAUDIA",
       "amount": null,
-      "legal": "10330 UP RIVER ROAD CORPUS CHRISTI TX 78410 (Lot 8, Block 1)",
-      "prop_address": "10330 UP RIVER ROAD",
-      "prop_city": "CORPUS CHRISTI",
+      "legal": "6317 STATE HWY 361 UNIT 6204, PORT ARANSAS, TX 78373",
+      "prop_address": "6317 STATE HWY",
+      "prop_city": "361 UNIT 6204, PORT ARANSAS",
       "prop_state": "TX",
-      "prop_zip": "78410",
+      "prop_zip": "78373",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026030549",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026033407",
       "flags": [
-        "Lis pendens"
+        "Lis pendens",
+        "LLC / corp owner"
       ],
-      "score": 45
+      "score": 55
+    },
+    {
+      "doc_num": "2026033399",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-09-23",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "CUSTOM FILTRATION INC",
+      "grantee": "LKM HOMES INC",
+      "amount": null,
+      "legal": "CAUSE NO 26DBC-1378-JP13 (Lot 40, Block 1)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026033399",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner"
+      ],
+      "score": 50
+    },
+    {
+      "doc_num": "2026033398",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-09-23",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "CUSTOM FILTRATION INC",
+      "grantee": "LKM HOMES INC",
+      "amount": null,
+      "legal": "CAUSE NO 26DBC-1379-JP13 (Lot 48, Block 2)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026033398",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner"
+      ],
+      "score": 50
     },
     {
       "doc_num": "2026031389",
@@ -204,30 +177,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026031276",
-      "flags": [
-        "Lis pendens"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026030548",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-08-31",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "ESTATE OF JUANELL MCKINZIE GRAHAM",
-      "grantee": "PAYNE CYNTHIA GRAHAM",
-      "amount": null,
-      "legal": "CAUSE NO 2026-PR-00475-1 (Lot 9, Block 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026030548",
       "flags": [
         "Lis pendens"
       ],
