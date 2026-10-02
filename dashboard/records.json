@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-10-01T20:53:47.296874+00:00",
+  "fetched_at": "2026-10-02T20:29:27.695919+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-09-01",
-    "end": "2026-10-01"
+    "start": "2026-09-02",
+    "end": "2026-10-02"
   },
   "total": 7,
   "with_address": 1,
