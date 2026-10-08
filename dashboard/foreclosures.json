@@ -1,14 +1,134 @@
 {
-  "fetched_at": "2026-10-07T21:06:22.513363+00:00",
+  "fetched_at": "2026-10-08T21:09:45.847899+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
-    "start": "2026-10-07",
-    "end": "2027-02-04"
+    "start": "2026-10-08",
+    "end": "2027-02-05"
   },
-  "total": 64,
-  "pre_foreclosure": 64,
+  "total": 73,
+  "pre_foreclosure": 73,
   "post_foreclosure": 0,
   "records": [
+    {
+      "doc_num": "2026000640",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-08",
+      "sale_date": "2026-11-03",
+      "legal": "CRESTMONT LT 27 BLK 5 UNIT 8",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000640",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 26
+    },
+    {
+      "doc_num": "2026000639",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-08",
+      "sale_date": "2026-11-03",
+      "legal": "2.60 ACRE TRACT OF LAND BEING OUT OF A 150.0 ACRE TRACT LAND AS TRACT 1",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000639",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 26
+    },
+    {
+      "doc_num": "2026000635",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-08",
+      "sale_date": "2026-11-03",
+      "legal": "TARRANTS ADDITION LT 2 BLK 3",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000635",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 26
+    },
+    {
+      "doc_num": "2026000638",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-08",
+      "sale_date": "2026-11-03",
+      "legal": "WEST 135.94 ACRES SECTION 151 F Z BISHOP OF THE WEIL RANCH",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000638",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 26
+    },
+    {
+      "doc_num": "2026000636",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-08",
+      "sale_date": "2026-11-03",
+      "legal": "LEXINGTON PLACE LT 7 AND LT 8 BLK K, LT 8 BLK L",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000636",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 26
+    },
     {
       "doc_num": "2026000631",
       "doc_type": "FORECLOSURE NOTICE",
@@ -31,7 +151,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000630",
@@ -55,7 +175,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000618",
@@ -79,7 +199,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000620",
@@ -103,7 +223,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000624",
@@ -127,7 +247,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000628",
@@ -151,31 +271,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
-    },
-    {
-      "doc_num": "2026000622",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-10-01",
-      "sale_date": "2026-11-03",
-      "legal": "ZEKE SERNA ESTATES- LOT 10, BLOCK 4, UNIT 1",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000622",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "appraised_value": null,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000623",
@@ -199,7 +295,31 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
+    },
+    {
+      "doc_num": "2026000622",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-01",
+      "sale_date": "2026-11-03",
+      "legal": "ZEKE SERNA ESTATES- LOT 10, BLOCK 4, UNIT 1",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000622",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000617",
@@ -223,7 +343,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000615",
@@ -247,7 +367,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000609",
@@ -271,7 +391,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000608",
@@ -295,7 +415,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000611",
@@ -319,7 +439,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000614",
@@ -343,7 +463,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000607",
@@ -367,7 +487,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000603",
@@ -391,7 +511,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000602",
@@ -415,7 +535,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000601",
@@ -439,7 +559,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000595",
@@ -463,7 +583,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000594",
@@ -487,7 +607,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000597",
@@ -511,7 +631,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000596",
@@ -535,7 +655,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000598",
@@ -559,9 +679,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27,
-      "prop_lat": 27.832321,
-      "prop_lng": -97.573595
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000599",
@@ -585,7 +703,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000593",
@@ -609,7 +727,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000587",
@@ -633,7 +751,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000581",
@@ -657,7 +775,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000582",
@@ -681,7 +799,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000577",
@@ -705,7 +823,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000579",
@@ -729,7 +847,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000550",
@@ -753,7 +871,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000551",
@@ -777,7 +895,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000548",
@@ -801,7 +919,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000549",
@@ -825,7 +943,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000547",
@@ -849,7 +967,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000538",
@@ -873,7 +991,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000535",
@@ -897,7 +1015,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000534",
@@ -921,7 +1039,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000526",
@@ -945,7 +1063,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000518",
@@ -969,7 +1087,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000521",
@@ -993,7 +1111,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000519",
@@ -1017,7 +1135,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000524",
@@ -1041,7 +1159,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000514",
@@ -1065,7 +1183,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000522",
@@ -1089,7 +1207,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000511",
@@ -1113,7 +1231,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000504",
@@ -1137,7 +1255,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000505",
@@ -1161,7 +1279,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000502",
@@ -1185,7 +1303,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
     },
     {
       "doc_num": "2026000494",
@@ -1209,7 +1327,79 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 27
+      "days_until_sale": 26
+    },
+    {
+      "doc_num": "2026000643",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-08",
+      "sale_date": "2026-12-01",
+      "legal": "BUCKINGHAM ESTATES LT 63 BLK 2 UNIT 1",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000643",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 54
+    },
+    {
+      "doc_num": "2026000641",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-08",
+      "sale_date": "2026-12-01",
+      "legal": "ROYAL COURT LT 11 BLK 1",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000641",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 54
+    },
+    {
+      "doc_num": "2026000637",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-08",
+      "sale_date": "2026-12-01",
+      "legal": "6738 WOOD IRON DR CORPUS CHRISTI TX 78413",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000637",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "6738 WOOD IRON DR",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78413",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000625",
@@ -1233,7 +1423,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000626",
@@ -1257,7 +1447,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000627",
@@ -1281,7 +1471,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000621",
@@ -1305,7 +1495,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000619",
@@ -1329,7 +1519,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000629",
@@ -1353,7 +1543,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000616",
@@ -1377,7 +1567,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000613",
@@ -1401,7 +1591,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000612",
@@ -1425,7 +1615,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000606",
@@ -1449,31 +1639,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
-    },
-    {
-      "doc_num": "2026000605",
-      "doc_type": "FORECLOSURE NOTICE",
-      "recorded": "2026-09-24",
-      "sale_date": "2026-12-01",
-      "legal": "CENTRAL PARK- LOT 23, BLOCK 16, UNIT 3",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000605",
-      "owner": "",
-      "loan_amount": null,
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "appraised_value": null,
-      "ncad_prop_id": "",
-      "ncad_year": "",
-      "ncad_owner_id": "",
-      "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000610",
@@ -1497,7 +1663,31 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
+    },
+    {
+      "doc_num": "2026000605",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-09-24",
+      "sale_date": "2026-12-01",
+      "legal": "CENTRAL PARK- LOT 23, BLOCK 16, UNIT 3",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000605",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000604",
@@ -1521,7 +1711,7 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
     },
     {
       "doc_num": "2026000555",
@@ -1545,8 +1735,31 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 55
+      "days_until_sale": 54
+    },
+    {
+      "doc_num": "2026000642",
+      "doc_type": "FORECLOSURE NOTICE",
+      "recorded": "2026-10-08",
+      "sale_date": "2027-01-05",
+      "legal": "929 POST AVE CORPUS CHRISTI TX 78405",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000642",
+      "owner": "",
+      "loan_amount": null,
+      "prop_address": "929 POST AVE",
+      "prop_city": "CORPUS CHRISTI",
+      "prop_state": "TX",
+      "prop_zip": "78405",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "appraised_value": null,
+      "ncad_prop_id": "",
+      "ncad_year": "",
+      "ncad_owner_id": "",
+      "status": "pre-foreclosure",
+      "days_until_sale": 89
     }
-  ],
-  "ncad_account_enriched_at": "2026-10-07T21:19:17+00:00"
+  ]
 }
