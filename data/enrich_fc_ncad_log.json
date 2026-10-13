@@ -1,15 +1,65 @@
 {
-  "ran_at": "2026-10-12T23:00:44+00:00",
+  "ran_at": "2026-10-13T21:16:13+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 92,
+    "no_prop_id": 107,
     "skipped_already": 0,
-    "total": 92
+    "total": 107
   },
   "entries": [
+    {
+      "doc_num": "2026000677",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000676",
+      "prop_address": "4600 OCEAN DRIVE",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000675",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000668",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000672",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000673",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000669",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000665",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000664",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000663",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
     {
       "doc_num": "2026000662",
       "prop_address": "",
@@ -91,12 +141,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000639",
+      "doc_num": "2026000640",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000640",
+      "doc_num": "2026000639",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -357,6 +407,31 @@
     },
     {
       "doc_num": "2026000494",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000674",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000670",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000666",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000667",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000671",
       "prop_address": "",
       "result": "no-prop-id"
     },
