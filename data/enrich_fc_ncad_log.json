@@ -1,13 +1,13 @@
 {
-  "ran_at": "2026-10-21T20:11:54+00:00",
+  "ran_at": "2026-10-25T19:01:25+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 110,
+    "no_prop_id": 128,
     "skipped_already": 0,
-    "total": 110
+    "total": 128
   },
   "entries": [
     {
@@ -141,12 +141,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000640",
+      "doc_num": "2026000639",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000639",
+      "doc_num": "2026000640",
       "prop_address": "",
       "result": "no-prop-id"
     },
@@ -411,6 +411,66 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000700",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000681",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000687",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000695",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000689",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000684",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000694",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000683",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000698",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000686",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000691",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000693",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000679",
       "prop_address": "",
       "result": "no-prop-id"
@@ -551,6 +611,26 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000685",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000696",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000688",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000682",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000678",
       "prop_address": "",
       "result": "no-prop-id"
@@ -558,6 +638,16 @@
     {
       "doc_num": "2026000642",
       "prop_address": "929 POST AVE",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000699",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000697",
+      "prop_address": "",
       "result": "no-prop-id"
     }
   ]
