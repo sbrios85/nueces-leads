@@ -1,13 +1,90 @@
 {
-  "fetched_at": "2026-10-25T18:48:30.183048+00:00",
+  "fetched_at": "2026-10-26T21:03:47.666501+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-09-25",
-    "end": "2026-10-25"
+    "start": "2026-09-26",
+    "end": "2026-10-26"
   },
-  "total": 5,
-  "with_address": 0,
+  "total": 8,
+  "with_address": 1,
   "records": [
+    {
+      "doc_num": "2026037336",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-10-23",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "CC LAKES NORTHWEST HOMEOWNERS ASSOCIATION INC",
+      "grantee": "GALLIMORE VICTORIA M",
+      "amount": null,
+      "legal": "3621 PERFECTION LAKE AVE ROBSTOWN TX 78380 (Lot 33, Block 9)",
+      "prop_address": "3621 PERFECTION LAKE AVE",
+      "prop_city": "ROBSTOWN",
+      "prop_state": "TX",
+      "prop_zip": "78380",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026037336",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 70
+    },
+    {
+      "doc_num": "2026037356",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-10-23",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "CC LAKES NORTHWEST HOMEOWNERS ASSOCIATION INC",
+      "grantee": "CASTRO KATHERINE",
+      "amount": null,
+      "legal": "CAUSE NO 2026DCV-4311-G (Lot 15, Block 13)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026037356",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 65
+    },
+    {
+      "doc_num": "2026037490",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-10-23",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "GAINEY MARK P",
+      "grantee": "GAINEY JILLIANN BARTLETT",
+      "amount": null,
+      "legal": "CAUSE NO 2026CCV 61531-2 (Lot 9, Block 2)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026037490",
+      "flags": [
+        "Lis pendens",
+        "New this week"
+      ],
+      "score": 55
+    },
     {
       "doc_num": "2026035427",
       "doc_type": "LIS PENDENS",
