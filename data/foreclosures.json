@@ -991,7 +991,9 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 26
+      "days_until_sale": 26,
+      "prop_lat": 27.694936,
+      "prop_lng": -97.413105
     },
     {
       "doc_num": "2026000625",
@@ -1783,7 +1785,9 @@
       "ncad_year": "",
       "ncad_owner_id": "",
       "status": "pre-foreclosure",
-      "days_until_sale": 61
+      "days_until_sale": 61,
+      "prop_lat": 27.769358,
+      "prop_lng": -97.43309
     },
     {
       "doc_num": "2026000699",
