@@ -1,79 +1,91 @@
 Sale Date,Days Until Sale,Status,Doc Number,Doc Type,Recorded Date,Property Address (legal),Owner (from PDF),Loan Amount (from PDF),Public Records URL
-2026-12-01,23,pre-foreclosure,2026000730,FORECLOSURE NOTICE,2026-11-06,LA MER CONDOMINIUM APARTMENT 3,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000730
-2026-12-01,23,pre-foreclosure,2026000729,FORECLOSURE NOTICE,2026-11-06,PORT STREET LOT 25 BLOCK 3,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000729
-2026-12-01,23,pre-foreclosure,2026000728,FORECLOSURE NOTICE,2026-11-05,"SANTA FE ARMS CONDOMINIUMS UNIT 16, UNIT 16",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000728
-2026-12-01,23,pre-foreclosure,2026000727,FORECLOSURE NOTICE,2026-11-05,SAN SIMEON LT 1 BLK 2,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000727
-2026-12-01,23,pre-foreclosure,2026000725,FORECLOSURE NOTICE,2026-11-05,"CRESTMONT- LOT 6, BLOCK 10, UNIT 6",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000725
-2026-12-01,23,pre-foreclosure,2026000723,FORECLOSURE NOTICE,2026-11-05,"CINNAMON SHORE SOUTH- , LOT 4, BLOCK 12, UNIT 4A",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000723
-2026-12-01,23,pre-foreclosure,2026000726,FORECLOSURE NOTICE,2026-11-05,"AIRPORT INDUSTRIAL - LOT 1, BLOCK 3 (TRACT I AND TRACT II)",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000726
-2026-12-01,23,pre-foreclosure,2026000709,FORECLOSURE NOTICE,2026-10-29,"WOOD RIVER- LOT 4A, BLOCK 17, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000709
-2026-12-01,23,pre-foreclosure,2026000707,FORECLOSURE NOTICE,2026-10-29,"WINDWARD- LOT 21, BLOCK THREE, UNIT 3B",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000707
-2026-12-01,23,pre-foreclosure,2026000716,FORECLOSURE NOTICE,2026-10-29,"PADRE ISLAND CORPUS CHRISTI PORTS O CALL- LOT 9, BLOCK 7",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000716
-2026-12-01,23,pre-foreclosure,2026000710,FORECLOSURE NOTICE,2026-10-29,"PARKLANE- LOT 31, BLOCK 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000710
-2026-12-01,23,pre-foreclosure,2026000717,FORECLOSURE NOTICE,2026-10-29,"CARROLL PLACE- LOT 15, BLOCK 11, UNIT 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000717
-2026-12-01,23,pre-foreclosure,2026000705,FORECLOSURE NOTICE,2026-10-28,FOX FIRE I INIT 202 BUILDING H,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000705
-2026-12-01,23,pre-foreclosure,2026000703,FORECLOSURE NOTICE,2026-10-27,LOT 6  BLOCK 3 CORONADO ADDITION,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000703
-2026-12-01,23,pre-foreclosure,2026000704,FORECLOSURE NOTICE,2026-10-27,LOT 2 BLOCK 3 BAYVIEW,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000704
-2026-12-01,23,pre-foreclosure,2026000702,FORECLOSURE NOTICE,2026-10-27,SANDY OAKS LOT 23 BLOCK 4,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000702
-2026-12-01,23,pre-foreclosure,2026000701,FORECLOSURE NOTICE,2026-10-26,KINGS CROSSING LOT 34 BLOCK 2 UNIT 14B,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000701
-2026-12-01,23,pre-foreclosure,2026000700,FORECLOSURE NOTICE,2026-10-23,"VILLA DEL SOL CONDOMINIUMS, CONDO UNIT 2137,BLDG A",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000700
-2026-12-01,23,pre-foreclosure,2026000681,FORECLOSURE NOTICE,2026-10-22,HILLTOP VILLAGE- LOT 34,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000681
-2026-12-01,23,pre-foreclosure,2026000687,FORECLOSURE NOTICE,2026-10-22,"BRIGHTON VILLAGE- LOT 17, BLOCK 8, UNIT 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000687
-2026-12-01,23,pre-foreclosure,2026000695,FORECLOSURE NOTICE,2026-10-22,"ABERDEEN SHORES - LOTS 3 & 4, BLOCK 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000695
-2026-12-01,23,pre-foreclosure,2026000689,FORECLOSURE NOTICE,2026-10-22,"LAS COLONIAS- LOT 44, BLOCK 3, UNIT 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000689
-2026-12-01,23,pre-foreclosure,2026000684,FORECLOSURE NOTICE,2026-10-22,"AZALI ESTATES- LOT 42, BLOCK 8, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000684
-2026-12-01,23,pre-foreclosure,2026000694,FORECLOSURE NOTICE,2026-10-22,"INDIAN FLATS PHASE I- LOT 9, BLOCK 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000694
-2026-12-01,23,pre-foreclosure,2026000683,FORECLOSURE NOTICE,2026-10-22,"BAKERS ACRES- LOT 3, BLOCK 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000683
-2026-12-01,23,pre-foreclosure,2026000698,FORECLOSURE NOTICE,2026-10-22,"COUNTRY CLUB ESTATES- LOT 3, BLOCK 1, UNIT 34 P U D",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000698
-2026-12-01,23,pre-foreclosure,2026000686,FORECLOSURE NOTICE,2026-10-22,"MOLINA NO 2 - LOT 12B, BLOCK 9",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000686
-2026-12-01,23,pre-foreclosure,2026000691,FORECLOSURE NOTICE,2026-10-22,"ZEKE SERNA ESTATES- LOT 12A, BLOCK 5, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000691
-2026-12-01,23,pre-foreclosure,2026000693,FORECLOSURE NOTICE,2026-10-22,"GEMINI ACRES- LOT 7, BLOCK 1, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000693
-2026-12-01,23,pre-foreclosure,2026000679,FORECLOSURE NOTICE,2026-10-15,CALLICOATTE ESTATES UNIT 3 LOT4 BLOCK 3,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000679
-2026-12-01,23,pre-foreclosure,2026000680,FORECLOSURE NOTICE,2026-10-15,DELLWOOD ADDITION UNIT NO.1  LOT 19 BLOCK 1,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000680
-2026-12-01,23,pre-foreclosure,2026000674,FORECLOSURE NOTICE,2026-10-13,"WILSON TERRACE ADDITION- LOT 1, BLOCK 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000674
-2026-12-01,23,pre-foreclosure,2026000670,FORECLOSURE NOTICE,2026-10-13,"PAILSLEY PLACE- LOT 13, BLOCK 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000670
-2026-12-01,23,pre-foreclosure,2026000666,FORECLOSURE NOTICE,2026-10-13,"NORTHWEST ESTATES- LOT 6, BLOCK 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000666
-2026-12-01,23,pre-foreclosure,2026000667,FORECLOSURE NOTICE,2026-10-13,"COUNTRY CLUB ESTATES- LOT 18, BLOCK 1, UNIT 30",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000667
-2026-12-01,23,pre-foreclosure,2026000671,FORECLOSURE NOTICE,2026-10-13,"RANCHO VISTA- LOT 63, BLOCK 3, UNIT 9",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000671
-2026-12-01,23,pre-foreclosure,2026000657,FORECLOSURE NOTICE,2026-10-12,"OVERLAND MEADOWS- LOT 3, BLOCK 12, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000657
-2026-12-01,23,pre-foreclosure,2026000659,FORECLOSURE NOTICE,2026-10-12,"SOLAR ESTATES- LOT 15, BLOCK 8, UNIT II",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000659
-2026-12-01,23,pre-foreclosure,2026000658,FORECLOSURE NOTICE,2026-10-12,"NORTHWEST CROSSING- LOTB 30, BLOCK 4, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000658
-2026-12-01,23,pre-foreclosure,2026000646,FORECLOSURE NOTICE,2026-10-09,"BAY VIEW NO 4-LOT 9, BLOCK 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000646
-2026-12-01,23,pre-foreclosure,2026000643,FORECLOSURE NOTICE,2026-10-08,BUCKINGHAM ESTATES LT 63 BLK 2 UNIT 1,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000643
-2026-12-01,23,pre-foreclosure,2026000641,FORECLOSURE NOTICE,2026-10-08,ROYAL COURT LT 11 BLK 1,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000641
-2026-12-01,23,pre-foreclosure,2026000637,FORECLOSURE NOTICE,2026-10-08,6738 WOOD IRON DR CORPUS CHRISTI TX 78413,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000637
-2026-12-01,23,pre-foreclosure,2026000625,FORECLOSURE NOTICE,2026-10-01,"BRIGHTON VILLAGE- LOT 15, UNIT 8B",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000625
-2026-12-01,23,pre-foreclosure,2026000626,FORECLOSURE NOTICE,2026-10-01,"WILLOWOOD- LOT 9, BLOCK 12, UNIT 9",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000626
-2026-12-01,23,pre-foreclosure,2026000627,FORECLOSURE NOTICE,2026-10-01,"MORNINGSTAR ESTATES- LOT 6, BLOCK 2, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000627
-2026-12-01,23,pre-foreclosure,2026000621,FORECLOSURE NOTICE,2026-10-01,"CARROLL WOODS- LOT 33, BLOCK 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000621
-2026-12-01,23,pre-foreclosure,2026000619,FORECLOSURE NOTICE,2026-10-01,"MAPLE HILLS PHASE TWO, LOT 5, BLOCK 5, UNIT 7",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000619
-2026-12-01,23,pre-foreclosure,2026000629,FORECLOSURE NOTICE,2026-10-01,"LYNWOOD PLACE- LOT 16, BLOCK 7, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000629
-2026-12-01,23,pre-foreclosure,2026000616,FORECLOSURE NOTICE,2026-10-01,LOT 2 BLOCK 1 PINEDA PARK,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000616
-2026-12-01,23,pre-foreclosure,2026000613,FORECLOSURE NOTICE,2026-09-24,"THE LAKES- LOT 1, BLOCK 19, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000613
-2026-12-01,23,pre-foreclosure,2026000612,FORECLOSURE NOTICE,2026-09-24,"LEGENDS OF DIAMANTE- LOT 3, BLOCK 1, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000612
-2026-12-01,23,pre-foreclosure,2026000606,FORECLOSURE NOTICE,2026-09-24,"PADRE ISLAND CORPUS CHRISTI PORTS O CALL- LOT 4, BLOCK 10",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000606
-2026-12-01,23,pre-foreclosure,2026000605,FORECLOSURE NOTICE,2026-09-24,"CENTRAL PARK- LOT 23, BLOCK 16, UNIT 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000605
-2026-12-01,23,pre-foreclosure,2026000610,FORECLOSURE NOTICE,2026-09-24,"CAYO DEL OSO SECTION 1- LOT 6, BLOCK 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000610
-2026-12-01,23,pre-foreclosure,2026000604,FORECLOSURE NOTICE,2026-09-24,"COLLIER- LOT 32, BLOCK 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000604
-2026-12-01,23,pre-foreclosure,2026000555,FORECLOSURE NOTICE,2026-09-10,"SARATOGA DOWNS- LOT 36, BLOCK 1, UNIT 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000555
-2027-01-05,58,pre-foreclosure,2026000720,FORECLOSURE NOTICE,2026-11-05,"CARVER ADDITION- LOT 22, BLOCK 201052027",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000720
-2027-01-05,58,pre-foreclosure,2026000721,FORECLOSURE NOTICE,2026-11-05,"SOUTH SEA ISLANDS- LOT 25, BLOCK 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000721
-2027-01-05,58,pre-foreclosure,2026000719,FORECLOSURE NOTICE,2026-11-05,"WINDSOR PARK- LOT 19, BLOCK 26, UNIT 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000719
-2027-01-05,58,pre-foreclosure,2026000722,FORECLOSURE NOTICE,2026-11-05,"CENTRAL PARK- LOT 20, BLOCK 27, UNIT 5",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000722
-2027-01-05,58,pre-foreclosure,2026000724,FORECLOSURE NOTICE,2026-11-05,FM HIGHWAY 666- SEE EXHIBIT A,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000724
-2027-01-05,58,pre-foreclosure,2026000712,FORECLOSURE NOTICE,2026-10-29,"DELLWOOD- LOT L22, BLOCK B1, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000712
-2027-01-05,58,pre-foreclosure,2026000718,FORECLOSURE NOTICE,2026-10-29,"BARCELONA ESTATES- LOT 10, BLOCK 7, UNIT 5",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000718
-2027-01-05,58,pre-foreclosure,2026000706,FORECLOSURE NOTICE,2026-10-29,"CRESTMONT- LOT 10, BLOCK 6, UNIT 5",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000706
-2027-01-05,58,pre-foreclosure,2026000711,FORECLOSURE NOTICE,2026-10-29,SEE EXHIBIT A FOR PROPERTY TO BE SOLD IN THE ROSS PETERS SUBDIVISION,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000711
-2027-01-05,58,pre-foreclosure,2026000708,FORECLOSURE NOTICE,2026-10-29,"CRESTMONT - LOT 18, BLOCK 1, UNIT 6",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000708
-2027-01-05,58,pre-foreclosure,2026000713,FORECLOSURE NOTICE,2026-10-29,"NORTHWEST CROSSING- LOT 83, BLOCK 4, UNIT 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000713
-2027-01-05,58,pre-foreclosure,2026000715,FORECLOSURE NOTICE,2026-10-29,"SAM HOUSTON- LOT 45, BLOCK 9",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000715
-2027-01-05,58,pre-foreclosure,2026000714,FORECLOSURE NOTICE,2026-10-29,"BOTSFORD PLACE- LOT 13, BLOCK 7, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000714
-2027-01-05,58,pre-foreclosure,2026000685,FORECLOSURE NOTICE,2026-10-22,"BOTSFORD PLACE- LOT 25, BLOCK 7, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000685
-2027-01-05,58,pre-foreclosure,2026000696,FORECLOSURE NOTICE,2026-10-22,"OVERLAND MEADOWS- LOT 10, BLOCK 7, UNIT 6",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000696
-2027-01-05,58,pre-foreclosure,2026000682,FORECLOSURE NOTICE,2026-10-22,"KINGS GARDEN-LOT 20, BLOCK 1, UNIT 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000682
-2027-01-05,58,pre-foreclosure,2026000688,FORECLOSURE NOTICE,2026-10-22,"BISHOP- LOT 7, BLOCK 37",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000688
-2027-01-05,58,pre-foreclosure,2026000678,FORECLOSURE NOTICE,2026-10-15,KIRKWOOD ADDITION NO . 2 LOT17 BLOCK 5,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000678
-2027-01-05,58,pre-foreclosure,2026000642,FORECLOSURE NOTICE,2026-10-08,929 POST AVE CORPUS CHRISTI TX 78405,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000642
-2027-01-27,80,pre-foreclosure,2026000699,FORECLOSURE NOTICE,2026-10-22,FERNANDEZ ESTATES- LOT 1,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000699
-2027-02-02,86,pre-foreclosure,2026000697,FORECLOSURE NOTICE,2026-10-22,"MORNIGSTAR STATES- LOT 28, BLOCK 1, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000697
+2026-12-01,21,pre-foreclosure,2026000742,FORECLOSURE NOTICE,2026-11-09,"SHADY ACRES ADDIDTION, LOT 8, BLOCK 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000742
+2026-12-01,21,pre-foreclosure,2026000741,FORECLOSURE NOTICE,2026-11-09,FORST PARK LT 15 UNIT 2,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000741
+2026-12-01,21,pre-foreclosure,2026000740,FORECLOSURE NOTICE,2026-11-09,SOUTHSIDE ADDITION LT 16 BLK 23,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000740
+2026-12-01,21,pre-foreclosure,2026000732,FORECLOSURE NOTICE,2026-11-09,TROPIC ISLES LOT 24 BLOCK 2,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000732
+2026-12-01,21,pre-foreclosure,2026000734,FORECLOSURE NOTICE,2026-11-09,WOOD  RIVER LOT 16 UNIT 5A,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000734
+2026-12-01,21,pre-foreclosure,2026000739,FORECLOSURE NOTICE,2026-11-09,"BEACH PORTION LOT 4, 5 BLOCK 9",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000739
+2026-12-01,21,pre-foreclosure,2026000731,FORECLOSURE NOTICE,2026-11-09,WESTHAVEN TERRACE LT 2 BLK 4,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000731
+2026-12-01,21,pre-foreclosure,2026000730,FORECLOSURE NOTICE,2026-11-06,LA MER CONDOMINIUM APARTMENT 3,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000730
+2026-12-01,21,pre-foreclosure,2026000729,FORECLOSURE NOTICE,2026-11-06,PORT STREET LOT 25 BLOCK 3,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000729
+2026-12-01,21,pre-foreclosure,2026000728,FORECLOSURE NOTICE,2026-11-05,"SANTA FE ARMS CONDOMINIUMS UNIT 16, UNIT 16",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000728
+2026-12-01,21,pre-foreclosure,2026000727,FORECLOSURE NOTICE,2026-11-05,SAN SIMEON LT 1 BLK 2,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000727
+2026-12-01,21,pre-foreclosure,2026000723,FORECLOSURE NOTICE,2026-11-05,"CINNAMON SHORE SOUTH- , LOT 4, BLOCK 12, UNIT 4A",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000723
+2026-12-01,21,pre-foreclosure,2026000725,FORECLOSURE NOTICE,2026-11-05,"CRESTMONT- LOT 6, BLOCK 10, UNIT 6",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000725
+2026-12-01,21,pre-foreclosure,2026000726,FORECLOSURE NOTICE,2026-11-05,"AIRPORT INDUSTRIAL - LOT 1, BLOCK 3 (TRACT I AND TRACT II)",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000726
+2026-12-01,21,pre-foreclosure,2026000709,FORECLOSURE NOTICE,2026-10-29,"WOOD RIVER- LOT 4A, BLOCK 17, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000709
+2026-12-01,21,pre-foreclosure,2026000707,FORECLOSURE NOTICE,2026-10-29,"WINDWARD- LOT 21, BLOCK THREE, UNIT 3B",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000707
+2026-12-01,21,pre-foreclosure,2026000710,FORECLOSURE NOTICE,2026-10-29,"PARKLANE- LOT 31, BLOCK 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000710
+2026-12-01,21,pre-foreclosure,2026000717,FORECLOSURE NOTICE,2026-10-29,"CARROLL PLACE- LOT 15, BLOCK 11, UNIT 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000717
+2026-12-01,21,pre-foreclosure,2026000716,FORECLOSURE NOTICE,2026-10-29,"PADRE ISLAND CORPUS CHRISTI PORTS O CALL- LOT 9, BLOCK 7",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000716
+2026-12-01,21,pre-foreclosure,2026000705,FORECLOSURE NOTICE,2026-10-28,FOX FIRE I INIT 202 BUILDING H,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000705
+2026-12-01,21,pre-foreclosure,2026000703,FORECLOSURE NOTICE,2026-10-27,LOT 6  BLOCK 3 CORONADO ADDITION,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000703
+2026-12-01,21,pre-foreclosure,2026000704,FORECLOSURE NOTICE,2026-10-27,LOT 2 BLOCK 3 BAYVIEW,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000704
+2026-12-01,21,pre-foreclosure,2026000702,FORECLOSURE NOTICE,2026-10-27,SANDY OAKS LOT 23 BLOCK 4,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000702
+2026-12-01,21,pre-foreclosure,2026000701,FORECLOSURE NOTICE,2026-10-26,KINGS CROSSING LOT 34 BLOCK 2 UNIT 14B,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000701
+2026-12-01,21,pre-foreclosure,2026000700,FORECLOSURE NOTICE,2026-10-23,"VILLA DEL SOL CONDOMINIUMS, CONDO UNIT 2137,BLDG A",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000700
+2026-12-01,21,pre-foreclosure,2026000681,FORECLOSURE NOTICE,2026-10-22,HILLTOP VILLAGE- LOT 34,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000681
+2026-12-01,21,pre-foreclosure,2026000683,FORECLOSURE NOTICE,2026-10-22,"BAKERS ACRES- LOT 3, BLOCK 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000683
+2026-12-01,21,pre-foreclosure,2026000687,FORECLOSURE NOTICE,2026-10-22,"BRIGHTON VILLAGE- LOT 17, BLOCK 8, UNIT 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000687
+2026-12-01,21,pre-foreclosure,2026000691,FORECLOSURE NOTICE,2026-10-22,"ZEKE SERNA ESTATES- LOT 12A, BLOCK 5, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000691
+2026-12-01,21,pre-foreclosure,2026000693,FORECLOSURE NOTICE,2026-10-22,"GEMINI ACRES- LOT 7, BLOCK 1, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000693
+2026-12-01,21,pre-foreclosure,2026000695,FORECLOSURE NOTICE,2026-10-22,"ABERDEEN SHORES - LOTS 3 & 4, BLOCK 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000695
+2026-12-01,21,pre-foreclosure,2026000689,FORECLOSURE NOTICE,2026-10-22,"LAS COLONIAS- LOT 44, BLOCK 3, UNIT 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000689
+2026-12-01,21,pre-foreclosure,2026000698,FORECLOSURE NOTICE,2026-10-22,"COUNTRY CLUB ESTATES- LOT 3, BLOCK 1, UNIT 34 P U D",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000698
+2026-12-01,21,pre-foreclosure,2026000684,FORECLOSURE NOTICE,2026-10-22,"AZALI ESTATES- LOT 42, BLOCK 8, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000684
+2026-12-01,21,pre-foreclosure,2026000694,FORECLOSURE NOTICE,2026-10-22,"INDIAN FLATS PHASE I- LOT 9, BLOCK 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000694
+2026-12-01,21,pre-foreclosure,2026000686,FORECLOSURE NOTICE,2026-10-22,"MOLINA NO 2 - LOT 12B, BLOCK 9",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000686
+2026-12-01,21,pre-foreclosure,2026000679,FORECLOSURE NOTICE,2026-10-15,CALLICOATTE ESTATES UNIT 3 LOT4 BLOCK 3,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000679
+2026-12-01,21,pre-foreclosure,2026000680,FORECLOSURE NOTICE,2026-10-15,DELLWOOD ADDITION UNIT NO.1  LOT 19 BLOCK 1,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000680
+2026-12-01,21,pre-foreclosure,2026000674,FORECLOSURE NOTICE,2026-10-13,"WILSON TERRACE ADDITION- LOT 1, BLOCK 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000674
+2026-12-01,21,pre-foreclosure,2026000667,FORECLOSURE NOTICE,2026-10-13,"COUNTRY CLUB ESTATES- LOT 18, BLOCK 1, UNIT 30",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000667
+2026-12-01,21,pre-foreclosure,2026000666,FORECLOSURE NOTICE,2026-10-13,"NORTHWEST ESTATES- LOT 6, BLOCK 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000666
+2026-12-01,21,pre-foreclosure,2026000670,FORECLOSURE NOTICE,2026-10-13,"PAILSLEY PLACE- LOT 13, BLOCK 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000670
+2026-12-01,21,pre-foreclosure,2026000671,FORECLOSURE NOTICE,2026-10-13,"RANCHO VISTA- LOT 63, BLOCK 3, UNIT 9",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000671
+2026-12-01,21,pre-foreclosure,2026000659,FORECLOSURE NOTICE,2026-10-12,"SOLAR ESTATES- LOT 15, BLOCK 8, UNIT II",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000659
+2026-12-01,21,pre-foreclosure,2026000658,FORECLOSURE NOTICE,2026-10-12,"NORTHWEST CROSSING- LOTB 30, BLOCK 4, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000658
+2026-12-01,21,pre-foreclosure,2026000657,FORECLOSURE NOTICE,2026-10-12,"OVERLAND MEADOWS- LOT 3, BLOCK 12, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000657
+2026-12-01,21,pre-foreclosure,2026000646,FORECLOSURE NOTICE,2026-10-09,"BAY VIEW NO 4-LOT 9, BLOCK 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000646
+2026-12-01,21,pre-foreclosure,2026000637,FORECLOSURE NOTICE,2026-10-08,6738 WOOD IRON DR CORPUS CHRISTI TX 78413,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000637
+2026-12-01,21,pre-foreclosure,2026000643,FORECLOSURE NOTICE,2026-10-08,BUCKINGHAM ESTATES LT 63 BLK 2 UNIT 1,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000643
+2026-12-01,21,pre-foreclosure,2026000641,FORECLOSURE NOTICE,2026-10-08,ROYAL COURT LT 11 BLK 1,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000641
+2026-12-01,21,pre-foreclosure,2026000627,FORECLOSURE NOTICE,2026-10-01,"MORNINGSTAR ESTATES- LOT 6, BLOCK 2, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000627
+2026-12-01,21,pre-foreclosure,2026000621,FORECLOSURE NOTICE,2026-10-01,"CARROLL WOODS- LOT 33, BLOCK 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000621
+2026-12-01,21,pre-foreclosure,2026000619,FORECLOSURE NOTICE,2026-10-01,"MAPLE HILLS PHASE TWO, LOT 5, BLOCK 5, UNIT 7",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000619
+2026-12-01,21,pre-foreclosure,2026000626,FORECLOSURE NOTICE,2026-10-01,"WILLOWOOD- LOT 9, BLOCK 12, UNIT 9",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000626
+2026-12-01,21,pre-foreclosure,2026000629,FORECLOSURE NOTICE,2026-10-01,"LYNWOOD PLACE- LOT 16, BLOCK 7, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000629
+2026-12-01,21,pre-foreclosure,2026000625,FORECLOSURE NOTICE,2026-10-01,"BRIGHTON VILLAGE- LOT 15, UNIT 8B",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000625
+2026-12-01,21,pre-foreclosure,2026000616,FORECLOSURE NOTICE,2026-10-01,LOT 2 BLOCK 1 PINEDA PARK,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000616
+2026-12-01,21,pre-foreclosure,2026000605,FORECLOSURE NOTICE,2026-09-24,"CENTRAL PARK- LOT 23, BLOCK 16, UNIT 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000605
+2026-12-01,21,pre-foreclosure,2026000604,FORECLOSURE NOTICE,2026-09-24,"COLLIER- LOT 32, BLOCK 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000604
+2026-12-01,21,pre-foreclosure,2026000606,FORECLOSURE NOTICE,2026-09-24,"PADRE ISLAND CORPUS CHRISTI PORTS O CALL- LOT 4, BLOCK 10",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000606
+2026-12-01,21,pre-foreclosure,2026000610,FORECLOSURE NOTICE,2026-09-24,"CAYO DEL OSO SECTION 1- LOT 6, BLOCK 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000610
+2026-12-01,21,pre-foreclosure,2026000612,FORECLOSURE NOTICE,2026-09-24,"LEGENDS OF DIAMANTE- LOT 3, BLOCK 1, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000612
+2026-12-01,21,pre-foreclosure,2026000613,FORECLOSURE NOTICE,2026-09-24,"THE LAKES- LOT 1, BLOCK 19, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000613
+2026-12-01,21,pre-foreclosure,2026000555,FORECLOSURE NOTICE,2026-09-10,"SARATOGA DOWNS- LOT 36, BLOCK 1, UNIT 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000555
+2027-01-05,56,pre-foreclosure,2026000733,FORECLOSURE NOTICE,2026-11-09,MAPLE HILLS LOT 12 BLOCK 2 UNIT 5,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000733
+2027-01-05,56,pre-foreclosure,2026000736,FORECLOSURE NOTICE,2026-11-09,VIRGINIA PLACE LOT 12 BLOCK 8,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000736
+2027-01-05,56,pre-foreclosure,2026000737,FORECLOSURE NOTICE,2026-11-09,AZALI ESTATES LOT 19 & 20 BLOCK 2 UNIT 1,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000737
+2027-01-05,56,pre-foreclosure,2026000735,FORECLOSURE NOTICE,2026-11-09,NUECES ACRES LOT 6A,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000735
+2027-01-05,56,pre-foreclosure,2026000738,FORECLOSURE NOTICE,2026-11-09,CRESTMONT LOT 62 BLOCK 8 UNIT 9,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000738
+2027-01-05,56,pre-foreclosure,2026000721,FORECLOSURE NOTICE,2026-11-05,"SOUTH SEA ISLANDS- LOT 25, BLOCK 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000721
+2027-01-05,56,pre-foreclosure,2026000719,FORECLOSURE NOTICE,2026-11-05,"WINDSOR PARK- LOT 19, BLOCK 26, UNIT 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000719
+2027-01-05,56,pre-foreclosure,2026000722,FORECLOSURE NOTICE,2026-11-05,"CENTRAL PARK- LOT 20, BLOCK 27, UNIT 5",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000722
+2027-01-05,56,pre-foreclosure,2026000720,FORECLOSURE NOTICE,2026-11-05,"CARVER ADDITION- LOT 22, BLOCK 201052027",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000720
+2027-01-05,56,pre-foreclosure,2026000724,FORECLOSURE NOTICE,2026-11-05,FM HIGHWAY 666- SEE EXHIBIT A,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000724
+2027-01-05,56,pre-foreclosure,2026000708,FORECLOSURE NOTICE,2026-10-29,"CRESTMONT - LOT 18, BLOCK 1, UNIT 6",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000708
+2027-01-05,56,pre-foreclosure,2026000718,FORECLOSURE NOTICE,2026-10-29,"BARCELONA ESTATES- LOT 10, BLOCK 7, UNIT 5",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000718
+2027-01-05,56,pre-foreclosure,2026000713,FORECLOSURE NOTICE,2026-10-29,"NORTHWEST CROSSING- LOT 83, BLOCK 4, UNIT 4",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000713
+2027-01-05,56,pre-foreclosure,2026000714,FORECLOSURE NOTICE,2026-10-29,"BOTSFORD PLACE- LOT 13, BLOCK 7, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000714
+2027-01-05,56,pre-foreclosure,2026000712,FORECLOSURE NOTICE,2026-10-29,"DELLWOOD- LOT L22, BLOCK B1, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000712
+2027-01-05,56,pre-foreclosure,2026000706,FORECLOSURE NOTICE,2026-10-29,"CRESTMONT- LOT 10, BLOCK 6, UNIT 5",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000706
+2027-01-05,56,pre-foreclosure,2026000711,FORECLOSURE NOTICE,2026-10-29,SEE EXHIBIT A FOR PROPERTY TO BE SOLD IN THE ROSS PETERS SUBDIVISION,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000711
+2027-01-05,56,pre-foreclosure,2026000715,FORECLOSURE NOTICE,2026-10-29,"SAM HOUSTON- LOT 45, BLOCK 9",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000715
+2027-01-05,56,pre-foreclosure,2026000682,FORECLOSURE NOTICE,2026-10-22,"KINGS GARDEN-LOT 20, BLOCK 1, UNIT 3",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000682
+2027-01-05,56,pre-foreclosure,2026000685,FORECLOSURE NOTICE,2026-10-22,"BOTSFORD PLACE- LOT 25, BLOCK 7, UNIT 2",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000685
+2027-01-05,56,pre-foreclosure,2026000688,FORECLOSURE NOTICE,2026-10-22,"BISHOP- LOT 7, BLOCK 37",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000688
+2027-01-05,56,pre-foreclosure,2026000696,FORECLOSURE NOTICE,2026-10-22,"OVERLAND MEADOWS- LOT 10, BLOCK 7, UNIT 6",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000696
+2027-01-05,56,pre-foreclosure,2026000678,FORECLOSURE NOTICE,2026-10-15,KIRKWOOD ADDITION NO . 2 LOT17 BLOCK 5,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000678
+2027-01-05,56,pre-foreclosure,2026000642,FORECLOSURE NOTICE,2026-10-08,929 POST AVE CORPUS CHRISTI TX 78405,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000642
+2027-01-27,78,pre-foreclosure,2026000699,FORECLOSURE NOTICE,2026-10-22,FERNANDEZ ESTATES- LOT 1,,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000699
+2027-02-02,84,pre-foreclosure,2026000697,FORECLOSURE NOTICE,2026-10-22,"MORNIGSTAR STATES- LOT 28, BLOCK 1, UNIT 1",,,https://nueces.tx.publicsearch.us/results?department=FC&searchValue=2026000697

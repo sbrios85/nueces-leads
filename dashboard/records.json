@@ -1,13 +1,39 @@
 {
-  "fetched_at": "2026-11-08T20:17:41.749048+00:00",
+  "fetched_at": "2026-11-10T00:02:01.593872+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-10-09",
-    "end": "2026-11-08"
+    "start": "2026-10-11",
+    "end": "2026-11-10"
   },
-  "total": 7,
+  "total": 9,
   "with_address": 2,
   "records": [
+    {
+      "doc_num": "2026039346",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-11-09",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "MONICA MENDOZA CONSULTING LLC",
+      "grantee": "DIRT ROCKS CONSTRUCTION INDUSTRY SOLUTIONS LLC",
+      "amount": null,
+      "legal": "CAUSE NO 2026CCV 60395 1 (Lot 24, Block 5)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026039346",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 65
+    },
     {
       "doc_num": "2026038965",
       "doc_type": "LIS PENDENS",
@@ -35,29 +61,29 @@
       "score": 65
     },
     {
-      "doc_num": "2026038549",
+      "doc_num": "2026039088",
       "doc_type": "LIS PENDENS",
-      "filed": "2026-11-02",
+      "filed": "2026-11-06",
       "cat": "LP",
       "cat_label": "Lis Pendens",
-      "owner": "MEDRANO MILAN",
-      "grantee": "1ST BAPTIST CHURCH OF DRSICOLL INC",
+      "owner": "AMSBERRY RUSSELL J G",
+      "grantee": "MATTESON JASON",
       "amount": null,
-      "legal": "212 E DRAGON ST DRISCOLL TX 78351 (Lot 9,10, Block 16)",
-      "prop_address": "212 E DRAGON ST",
-      "prop_city": "DRISCOLL",
+      "legal": "CAUSE NO 2022C106752 (Lot 6)",
+      "prop_address": "",
+      "prop_city": "",
       "prop_state": "TX",
-      "prop_zip": "78351",
+      "prop_zip": "",
       "mail_address": "",
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026038549",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026039088",
       "flags": [
         "Lis pendens",
         "New this week"
       ],
-      "score": 60
+      "score": 55
     },
     {
       "doc_num": "2026037336",
@@ -133,6 +159,30 @@
         "LLC / corp owner"
       ],
       "score": 50
+    },
+    {
+      "doc_num": "2026038549",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-11-02",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "MEDRANO MILAN",
+      "grantee": "1ST BAPTIST CHURCH OF DRSICOLL INC",
+      "amount": null,
+      "legal": "212 E DRAGON ST DRISCOLL TX 78351 (Lot 9,10, Block 16)",
+      "prop_address": "212 E DRAGON ST",
+      "prop_city": "DRISCOLL",
+      "prop_state": "TX",
+      "prop_zip": "78351",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026038549",
+      "flags": [
+        "Lis pendens"
+      ],
+      "score": 45
     },
     {
       "doc_num": "2026037490",
