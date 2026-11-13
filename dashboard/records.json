@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-11-12T22:08:51.763566+00:00",
+  "fetched_at": "2026-11-13T21:50:47.979581+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-10-13",
-    "end": "2026-11-12"
+    "start": "2026-10-14",
+    "end": "2026-11-13"
   },
-  "total": 9,
+  "total": 8,
   "with_address": 2,
   "records": [
     {
@@ -27,32 +27,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026039346",
-      "flags": [
-        "Lis pendens",
-        "LLC / corp owner",
-        "New this week"
-      ],
-      "score": 65
-    },
-    {
-      "doc_num": "2026038965",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-11-05",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "SERIES 16-319 12TH STREET LLC",
-      "grantee": "STEARNS BANK NATIONAL ASSOCIATION",
-      "amount": null,
-      "legal": "CAUSE NO 2026CCV 61117 2 (Lot 1)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026038965",
       "flags": [
         "Lis pendens",
         "LLC / corp owner",
@@ -109,6 +83,31 @@
         "LLC / corp owner"
       ],
       "score": 55
+    },
+    {
+      "doc_num": "2026038965",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-11-05",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "SERIES 16-319 12TH STREET LLC",
+      "grantee": "STEARNS BANK NATIONAL ASSOCIATION",
+      "amount": null,
+      "legal": "CAUSE NO 2026CCV 61117 2 (Lot 1)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026038965",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner"
+      ],
+      "score": 50
     },
     {
       "doc_num": "2026037559",
@@ -203,30 +202,6 @@
       "mail_state": "",
       "mail_zip": "",
       "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026037490",
-      "flags": [
-        "Lis pendens"
-      ],
-      "score": 40
-    },
-    {
-      "doc_num": "2026036031",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-10-13",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "UNITED STATES OF AMERICA",
-      "grantee": "ESTES ADAM KYLE",
-      "amount": null,
-      "legal": "NO 2 26 CR 611 (Lot 17, Block 2)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026036031",
       "flags": [
         "Lis pendens"
       ],
