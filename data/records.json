@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-11-13T21:50:47.979581+00:00",
+  "fetched_at": "2026-11-15T20:54:12.806039+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-10-14",
-    "end": "2026-11-13"
+    "start": "2026-10-16",
+    "end": "2026-11-15"
   },
   "total": 8,
   "with_address": 2,
@@ -33,31 +33,6 @@
         "New this week"
       ],
       "score": 65
-    },
-    {
-      "doc_num": "2026039088",
-      "doc_type": "LIS PENDENS",
-      "filed": "2026-11-06",
-      "cat": "LP",
-      "cat_label": "Lis Pendens",
-      "owner": "AMSBERRY RUSSELL J G",
-      "grantee": "MATTESON JASON",
-      "amount": null,
-      "legal": "CAUSE NO 2022C106752 (Lot 6)",
-      "prop_address": "",
-      "prop_city": "",
-      "prop_state": "TX",
-      "prop_zip": "",
-      "mail_address": "",
-      "mail_city": "",
-      "mail_state": "",
-      "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026039088",
-      "flags": [
-        "Lis pendens",
-        "New this week"
-      ],
-      "score": 55
     },
     {
       "doc_num": "2026037336",
@@ -182,6 +157,30 @@
         "Lis pendens"
       ],
       "score": 45
+    },
+    {
+      "doc_num": "2026039088",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-11-06",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "AMSBERRY RUSSELL J G",
+      "grantee": "MATTESON JASON",
+      "amount": null,
+      "legal": "CAUSE NO 2022C106752 (Lot 6)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026039088",
+      "flags": [
+        "Lis pendens"
+      ],
+      "score": 40
     },
     {
       "doc_num": "2026037490",
