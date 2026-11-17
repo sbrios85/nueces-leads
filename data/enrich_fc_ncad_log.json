@@ -1,13 +1,13 @@
 {
-  "ran_at": "2026-11-13T22:03:03+00:00",
+  "ran_at": "2026-11-17T00:17:44+00:00",
   "apply_mode": true,
   "force_mode": false,
   "summary": {
     "matched": 0,
     "no_account_on_page": 0,
-    "no_prop_id": 108,
+    "no_prop_id": 110,
     "skipped_already": 0,
-    "total": 108
+    "total": 110
   },
   "entries": [
     {
@@ -386,6 +386,16 @@
       "result": "no-prop-id"
     },
     {
+      "doc_num": "2026000761",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
+      "doc_num": "2026000762",
+      "prop_address": "",
+      "result": "no-prop-id"
+    },
+    {
       "doc_num": "2026000756",
       "prop_address": "",
       "result": "no-prop-id"
@@ -541,12 +551,12 @@
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000760",
+      "doc_num": "2026000697",
       "prop_address": "",
       "result": "no-prop-id"
     },
     {
-      "doc_num": "2026000697",
+      "doc_num": "2026000760",
       "prop_address": "",
       "result": "no-prop-id"
     }
