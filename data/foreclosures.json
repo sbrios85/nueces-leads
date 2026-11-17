@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-11-17T00:04:23.134322+00:00",
+  "fetched_at": "2026-11-17T23:24:32.170164+00:00",
   "source": "Nueces County Clerk (FC tab)",
   "date_range": {
     "start": "2026-11-17",
@@ -2653,6 +2653,5 @@
       "status": "pre-foreclosure",
       "days_until_sale": 77
     }
-  ],
-  "ncad_account_enriched_at": "2026-11-17T00:17:44+00:00"
+  ]
 }
