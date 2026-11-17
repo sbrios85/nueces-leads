@@ -30,7 +30,7 @@
   },
   "ccln_addr::14721 WHITECAP BLVD": {
     "miss": true,
-    "miss_reason": "no_results"
+    "miss_reason": "no_corroboration"
   },
   "ccln_addr::14721 WHITECAP BLVD 328": {
     "miss": true,
@@ -2057,6 +2057,7 @@
       "site_state": "TX",
       "site_zip": "78401"
     },
+    "CONNELLY RYANT": null,
     "CONSTANTE SAN JOSE": {
       "mail_addr": "",
       "mail_city": "",

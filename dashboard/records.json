@@ -1,23 +1,23 @@
 {
-  "fetched_at": "2026-11-15T20:54:12.806039+00:00",
+  "fetched_at": "2026-11-17T00:04:23.139825+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-10-16",
-    "end": "2026-11-15"
+    "start": "2026-10-18",
+    "end": "2026-11-17"
   },
-  "total": 8,
+  "total": 9,
   "with_address": 2,
   "records": [
     {
-      "doc_num": "2026039346",
+      "doc_num": "2026040017",
       "doc_type": "LIS PENDENS",
-      "filed": "2026-11-09",
+      "filed": "2026-11-16",
       "cat": "LP",
       "cat_label": "Lis Pendens",
-      "owner": "MONICA MENDOZA CONSULTING LLC",
-      "grantee": "DIRT ROCKS CONSTRUCTION INDUSTRY SOLUTIONS LLC",
+      "owner": "CONNELLY RYANT",
+      "grantee": "TEGGE JOHN HAROLD",
       "amount": null,
-      "legal": "CAUSE NO 2026CCV 60395 1 (Lot 24, Block 5)",
+      "legal": "CAUSE NO 2025CCV-61620-1 (Lot 29, Block 74)",
       "prop_address": "",
       "prop_city": "",
       "prop_state": "TX",
@@ -26,13 +26,12 @@
       "mail_city": "",
       "mail_state": "",
       "mail_zip": "",
-      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026039346",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026040017",
       "flags": [
         "Lis pendens",
-        "LLC / corp owner",
         "New this week"
       ],
-      "score": 65
+      "score": 55
     },
     {
       "doc_num": "2026037336",
@@ -58,6 +57,31 @@
         "LLC / corp owner"
       ],
       "score": 55
+    },
+    {
+      "doc_num": "2026039346",
+      "doc_type": "LIS PENDENS",
+      "filed": "2026-11-09",
+      "cat": "LP",
+      "cat_label": "Lis Pendens",
+      "owner": "MONICA MENDOZA CONSULTING LLC",
+      "grantee": "DIRT ROCKS CONSTRUCTION INDUSTRY SOLUTIONS LLC",
+      "amount": null,
+      "legal": "CAUSE NO 2026CCV 60395 1 (Lot 24, Block 5)",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026039346",
+      "flags": [
+        "Lis pendens",
+        "LLC / corp owner"
+      ],
+      "score": 50
     },
     {
       "doc_num": "2026038965",
