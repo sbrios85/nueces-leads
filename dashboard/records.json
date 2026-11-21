@@ -1,13 +1,39 @@
 {
-  "fetched_at": "2026-11-20T22:36:43.820341+00:00",
+  "fetched_at": "2026-11-21T21:34:55.204581+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-10-21",
-    "end": "2026-11-20"
+    "start": "2026-10-22",
+    "end": "2026-11-21"
   },
-  "total": 1,
+  "total": 2,
   "with_address": 0,
   "records": [
+    {
+      "doc_num": "2026040733",
+      "doc_type": "JUDGMENT",
+      "filed": "2026-11-20",
+      "cat": "JUD",
+      "cat_label": "Judgment",
+      "owner": "PLANET HOME LENDING LLC",
+      "grantee": "GONZALES VERONICA T",
+      "amount": null,
+      "legal": "CAUSE NO 2024DCV 2440 G",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026040733",
+      "flags": [
+        "Judgment lien",
+        "LLC / corp owner",
+        "New this week"
+      ],
+      "score": 65
+    },
     {
       "doc_num": "2026038652",
       "doc_type": "JUDGMENT",
