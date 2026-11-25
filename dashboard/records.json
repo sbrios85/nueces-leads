@@ -1,11 +1,11 @@
 {
-  "fetched_at": "2026-11-24T02:52:20.807163+00:00",
+  "fetched_at": "2026-11-25T00:31:48.717219+00:00",
   "source": "Nueces County Clerk + NCAD",
   "date_range": {
-    "start": "2026-10-25",
-    "end": "2026-11-24"
+    "start": "2026-10-26",
+    "end": "2026-11-25"
   },
-  "total": 2,
+  "total": 3,
   "with_address": 0,
   "records": [
     {
@@ -33,6 +33,31 @@
         "New this week"
       ],
       "score": 65
+    },
+    {
+      "doc_num": "2026040826",
+      "doc_type": "JUDGMENT",
+      "filed": "2026-11-23",
+      "cat": "JUD",
+      "cat_label": "Judgment",
+      "owner": "ESTATE OF GILBERTO URESTI",
+      "grantee": "URESTI AARON RENE",
+      "amount": null,
+      "legal": "CAUSE NO 24 3288",
+      "prop_address": "",
+      "prop_city": "",
+      "prop_state": "TX",
+      "prop_zip": "",
+      "mail_address": "",
+      "mail_city": "",
+      "mail_state": "",
+      "mail_zip": "",
+      "clerk_url": "https://nueces.tx.publicsearch.us/results?department=RP&searchValue=2026040826",
+      "flags": [
+        "Judgment lien",
+        "New this week"
+      ],
+      "score": 55
     },
     {
       "doc_num": "2026038652",
